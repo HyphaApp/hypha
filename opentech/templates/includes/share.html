@@ -1,0 +1,25 @@
+{% load util_tags wagtailimages_tags %}
+<div class="share">
+    {% image page.social_image fill-150x150 as social_img %}
+    {% with settings.utils.SocialMediaSettings as social_media_settings %}
+        <ul>
+            <!-- see https://dev.twitter.com/web/tweet-button/web-intent -->
+            <li><a  href="https://twitter.com/intent/tweet?text={{ page|social_text:request.site|urlencode }}&amp;url={{ page.full_url|urlencode }}&amp;via={{ social_media_settings.twitter_handle|urlencode }}" title="Share on Twitter">Share on Twitter</a></li>
+
+            <!-- see https://developer.linkedin.com/docs/share-on-linkedin -->
+            <li><a 
+                href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ page.full_url|urlencode }}&amp;title={{ page.title|urlencode }}&amp;summary={{ page|social_text:request.site|urlencode }}&amp;source={{ social_media_settings.site_name|urlencode }}"
+                title="Share on LinkedIn">Share on LinkedIn</a></li>
+
+            <!-- see https://developers.facebook.com/docs/sharing/reference/feed-dialog/v2.5 -->
+            <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+            <li><a href="https://www.facebook.com/dialog/feed?app_id={{ social_media_settings.facebook_app_id }}&amp;link={{ page.full_url|urlencode }}&amp;picture={% if social_img %}{{ 'http://'|add:request.site.hostname|add:social_img.url|urlencode }}{% endif %}&amp;name={{ page.title|urlencode }}&amp;description={{ page|social_text:request.site|urlencode }}&amp;redirect_uri={{ page.full_url|urlencode }}" title="Share on Facebook">Share on Facebook</a></li>
+
+            <!-- see https://developers.google.com/+/web/share/#sharelink -->
+            <li><a href="https://plus.google.com/share?url={{ page.full_url|urlencode }}" title="Share on Google Plus">Share on Google Plus</a></li>
+            
+        </ul>
+        
+    {% endwith %}
+</div>
+

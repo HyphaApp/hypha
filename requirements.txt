@@ -1,0 +1,16 @@
+Django==1.11.7
+wagtail==1.13.1
+psycopg2==2.7.3.1
+Pillow==2.9.0
+django-extensions==1.7.4
+Werkzeug==0.11.11
+stellar==0.4.3
+wagtail-django-recaptcha==0.1
+uwsgidecorators==1.1.0
+
+# Production dependencies
+dj-database-url==0.4.1
+whitenoise==2.0.4
+uwsgi==2.0.15
+ConcurrentLogHandler==0.9.1
+raven==6.1.0

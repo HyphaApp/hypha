@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags util_tags static %}
+
+{% block content %}
+
+    <div class="intro">
+        <div class="container">
+            {% include "includes/share.html" %}
+            <h1>{{ page.title }}</h1>
+            <p>{{ page.introduction }}</p>
+        </div>
+    </div>
+
+    <section class="main-body">
+        <div class="container">
+            {% if page.form_fields %}
+                <form action="{% pageurl page %}" method="post">
+                    <div>
+                        {% csrf_token %}
+
+                        {% if form.errors %}
+                            There were some errors with your form. Please amend the fields highlighted below.
+                        {% endif %}
+
+                        {% for field in form %}
+                            {{ field.errors }}
+
+                            {% with widget_type=field|widget_type field_type=field|field_type %}
+
+                                {% if widget_type == 'checkbox_input' %}
+                                    <label for="{{ field.id_for_label }}" class="{{ field_type }} {{ widget_type }} {% if field.field.required %}required{% endif %}">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+                                    <div class="form-help">{% if field.help_text %}{{ field.help_text }}{% endif %}</div>
+                                    {{ field }}
+                                {% else %}
+                                    <label for="{{ field.id_for_label }}" class="{{ field_type }} {{ widget_type}} {% if field.field.required %}required{% endif %}">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+                                    <div class="form-help">{% if field.help_text %}{{ field.help_text }}{% endif %}</div>
+
+                                    {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}<div class="{{ widget_type }}">{% endif %}
+                                    {{ field }}
+                                    {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}</div>{% endif %}
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                        <input type="submit" value="{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}" />
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

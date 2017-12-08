@@ -1,0 +1,44 @@
+{% load wagtailcore_tags %}
+<nav role="navigation" aria-label="Primary">
+    <ul class="primary" role="menubar">
+        {% for snippet in primarynav %}
+            <li {% if snippet.submenus.exists %} class="parent" {% endif %} role="presentation">
+                {% pageurl page=snippet.menu_item as menu_item_url %}
+                <a href="{{ menu_item_url }}"
+                    role="menuitem"
+                    {% if snippet.submenus.exists %} aria-haspopup="true" {% endif %}
+                >
+                    {% if snippet.menu_label %}
+                        {{ snippet.menu_label }}
+                    {% else %}
+                        {{ snippet.menu_item.title }}
+                    {% endif %}
+
+                    {% if snippet.submenus.exists %}
+                        <span class="expander">+</span>
+                    {% endif %}
+                </a>
+
+                {% if snippet.submenus.exists %}
+                    <ul role="menu">
+                        {% for submenu in snippet.submenus.all %}
+                            <li role="presentation">
+                                {% pageurl page=submenu.menu_item as submenu_item_url %}
+                                <a href="{{ submenu_item_url }}"
+                                        role="menuitem"
+                                    >
+                                    {% if submenu.menu_label %}
+                                        {{ submenu.menu_label }}
+                                    {% else %}
+                                        {{ submenu.menu_item.title }}
+
+                                    {% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

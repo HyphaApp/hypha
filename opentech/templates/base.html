@@ -1,0 +1,145 @@
+{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        {# TODO fallbacks if page is not defined e.g. for 404 page #}
+        <meta charset="utf-8" />
+        <title>{% block title_prefix %}{{ TITLE_PREFIX }}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
+        <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {% if GOOGLE_TAG_MANAGER_ID %}
+            {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
+            <!-- Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{ GOOGLE_TAG_MANAGER_ID|escapejs }}');</script>
+            <!-- End Google Tag Manager -->
+        {% endif %}
+
+        <!-- favicons -->
+        {% comment %}
+            Generate favicons by http://realfavicongenerator.net using the following path: settings.STATIC_URL + img/favicons.
+            Then favicon.ico should be copied to a directory called "public" in the application root and puppet does some magic to serve it up at the site root.
+        {% endcomment %}
+
+        <!-- Twitter summary card - see https://dev.twitter.com/cards/types/summary -->
+        <!--  and https://dev.twitter.com/cards/getting-started -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="@{{ settings.utils.SocialMediaSettings.twitter_handle }}" />
+        <meta name="twitter:title" content="{{ page.title }}" />
+        <meta name="twitter:description" content="{{ page|social_text:request.site }}">
+        {% if page.social_image  %}
+            {% image page.social_image width-320 as social_img %}
+            <meta name="twitter:image" content="{{ request.site.root_url }}{{ social_img.url }}">
+        {% else %}
+            <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+        {% endif %}
+
+        <!--facebook opengraph tags-->
+        <meta property="fb:app_id" content="{{ settings.utils.SocialMediaSettings.facebook_app_id }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ page.url }}" />
+        <meta property="og:title" content="{{ page.title }}" />
+        {% if page.social_image %}
+            <meta property="og:image" content="http://{{ request.site.hostname }}{{ social_img.url }}" />
+        {% else %}
+            <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+        {% endif %}
+        <meta property="og:description" content="{{ page|social_text:request.site }}" />
+        <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
+
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+        {% block extra_css %}{% endblock %}
+    </head>
+
+    <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
+        {% if GOOGLE_TAG_MANAGER_ID %}
+            {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
+            <!-- Google Tag Manager (noscript) -->
+            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ GOOGLE_TAG_MANAGER_ID|escapejs }}"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
+        {% endif %}
+
+        {% wagtailuserbar %}
+
+        <header>
+            <div class="container logo-container">
+                <a href="{% slugurl 'home' %}" class="logo">
+                    opentech.fund
+                </a>
+            </div>
+            <section>
+                <a href="#" class="menu-button">Menu</a>
+                <div class="container">
+
+                    {% primarynav %}
+
+                    {% secondarynav %}
+
+                    <form action="{% url 'search' %}" method="get" role="search">
+                        <input type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
+                        <input type="submit" value="Search">
+                    </form>
+
+                </div>
+            </section>
+
+            {% block breadcrumbs %}
+                {% include "navigation/breadcrumbs.html" %}
+            {% endblock %}
+
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+
+            <div class="newsletter">
+                <h1>Stay up to date</h1>
+                <p>Sign up to receive our quarterly newsletter</p>
+            </div>
+
+            <section>
+                <h2> Follow us </h2>
+                {% if settings.utils.SocialMediaSettings.twitter_handle %}
+                    <div>
+                        <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
+                            on Twitter
+                        </a>
+                    </div>
+                {% endif %}
+                {% if settings.utils.SocialMediaSettings.facebook_app_id %}
+                    <div>
+                        <a href="https://www.facebook.com/{{ settings.utils.SocialMediaSettings.facebook_app_id }}">
+                            on Facebook
+                        </a>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section>
+                {% footernav %}
+            </section>
+
+            <div class="container copyright" role="contentinfo">
+                {% if COPYRIGHT %}
+                    <p>© {% now "Y" %} {{ COPYRIGHT }}</p>
+                {% endif %}
+
+                <div class="site-credit">Site by <a href="https://torchbox.com/">Torchbox</a></div>
+            </div>
+
+        </footer>
+
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>
+

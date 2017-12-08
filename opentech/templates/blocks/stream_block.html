@@ -1,0 +1,7 @@
+{% for block in value %}
+    {% if block.block_type == 'heading' %}
+        <h2>{{ block.value }}</h2>
+    {% else %}
+        {{ block }}
+    {% endif %}
+{% endfor %}

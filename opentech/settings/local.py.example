@@ -1,0 +1,13 @@
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+# On staging, uncomment the following to enable the styleguide
+# ENABLE_STYLEGUIDE = True
+
+# DO NOT use on production
+RECAPTCHA_PUBLIC_KEY = '6LelrggUAAAAANL1b4NcQpJxjgoWQEugpoGqeq2q'
+RECAPTCHA_PRIVATE_KEY = '6LelrggUAAAAAD2gDgs43P9NSa9ScvkU6ZmBAW_F'
+NOCAPTCHA = True

@@ -1,0 +1,14 @@
+{
+    "validateIndentation": 4,
+    "requireSpaceBeforeKeywords": [
+        "else",
+        "while",
+        "catch"
+    ],
+    "disallowMultipleVarDecl": {
+        "allExcept": ["undefined"]
+    },
+    "fileExtensions": [".js"],
+    "preset":"airbnb",
+    "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties"
+}
