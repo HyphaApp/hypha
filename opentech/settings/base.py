@@ -12,6 +12,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    'opentech.apply',
     'opentech.categories',
     'opentech.esi',
     'opentech.forms',
