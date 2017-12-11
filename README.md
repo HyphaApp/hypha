@@ -19,7 +19,7 @@ a fabfile for running common commands with Fabric.
 To set up a new build:
 
 ``` bash
-git clone [URL TO GIT REMOTE]
+git clone git@github.com:OpenTechFund/opentech.fund.git
 cd opentech
 vagrant up
 vagrant ssh
