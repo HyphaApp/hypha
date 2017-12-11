@@ -13,8 +13,7 @@ If you need to preview work on `staging`, this can be merged and deployed manual
 
 # Setting up a local build
 
-This repository includes a Vagrantfile for running the project in a Debian VM and
-a fabfile for running common commands with Fabric.
+This repository includes a Vagrantfile for running the project in a Debian VM.
 
 To set up a new build:
 
