@@ -20,7 +20,7 @@ To set up a new build:
 
 ``` bash
 git clone git@github.com:OpenTechFund/opentech.fund.git
-cd opentech
+cd opentech.fund
 vagrant up
 vagrant ssh
 ```
