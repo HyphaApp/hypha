@@ -1,5 +1,5 @@
 class Workflow:
-    def __init__(self, name, *stages):
+    def __init__(self, name: str, *stages: Stage) -> None:
         self.name = name
         if not stages:
             raise ValueError('Stages must be supplied')
@@ -7,5 +7,5 @@ class Workflow:
 
 
 class Stage:
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
