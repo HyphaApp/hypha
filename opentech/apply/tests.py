@@ -6,8 +6,15 @@ from .workflow import Workflow, Stage
 class TestWorkflowCreation(SimpleTestCase):
     def test_can_create_workflow(self):
         name = 'single_stage'
-        workflow = Workflow(name)
+        stage = Stage('stage_name')
+        workflow = Workflow(name, stage)
         self.assertEqual(workflow.name, name)
+        self.assertCountEqual(workflow.stages, [stage])
+
+    def test_stages_required_for_workflow(self):
+        name = 'single_stage'
+        with self.assertRaises(ValueError):
+            Workflow(name)
 
 
 class TestStageCreation(SimpleTestCase):
