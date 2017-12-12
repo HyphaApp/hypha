@@ -16,6 +16,13 @@ class TestWorkflowCreation(SimpleTestCase):
         with self.assertRaises(ValueError):
             Workflow(name)
 
+    def test_can_iterate_through_workflow(self):
+        stage1 = Stage('stage_one')
+        stage2 = Stage('stage_two')
+        workflow = Workflow('two_stage', stage1, stage2)
+        for stage, check in zip(workflow, [stage1, stage2]):
+            self.assertEqual(stage, check)
+
 
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
