@@ -1,5 +1,7 @@
 from typing import Iterator, Iterable
 
+from django.forms import Form
+
 
 class Workflow(Iterable['Stage']):
     def __init__(self, name: str, *stages: 'Stage') -> None:
@@ -13,5 +15,6 @@ class Workflow(Iterable['Stage']):
 
 
 class Stage:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, form: Form) -> None:
         self.name = name
+        self.form = form
