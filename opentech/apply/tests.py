@@ -28,6 +28,10 @@ class TestWorkflowCreation(SimpleTestCase):
         workflow = WorkflowFactory(num_stages=1)
         self.assertEqual(workflow.next(), workflow.stages[0])
 
+    def test_returns_none_if_no_next(self):
+        workflow = WorkflowFactory(num_stages=1)
+        self.assertEqual(workflow.next(workflow.stages[0]), None)
+
 
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):

@@ -1,4 +1,4 @@
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, Union
 
 from django.forms import Form
 
@@ -13,8 +13,11 @@ class Workflow(Iterable['Stage']):
     def __iter__(self) -> Iterator['Stage']:
         yield from self.stages
 
-    def next(self):
-        return self.stages[0]
+    def next(self, current_stage: Union['Stage', None]=None) -> Union['Stage', None]:
+        if not current_stage:
+            return self.stages[0]
+
+        return None
 
 
 class Stage:
