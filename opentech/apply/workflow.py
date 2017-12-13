@@ -1,13 +1,11 @@
-from typing import Iterator, Iterable, Union
+from typing import Iterator, Iterable, Sequence, Union
 
 from django.forms import Form
 
 
 class Workflow(Iterable['Stage']):
-    def __init__(self, name: str, *stages: 'Stage') -> None:
+    def __init__(self, name: str, stages: Sequence['Stage']) -> None:
         self.name = name
-        if not stages:
-            raise ValueError('Stages must be supplied')
         self.stages = stages
 
     def __iter__(self) -> Iterator['Stage']:
@@ -16,6 +14,13 @@ class Workflow(Iterable['Stage']):
     def next(self, current_stage: Union['Stage', None]=None) -> Union['Stage', None]:
         if not current_stage:
             return self.stages[0]
+
+        for i, stage in enumerate(self):
+            if stage == current_stage:
+                try:
+                    return self.stages[i+1]
+                except IndexError:
+                    pass
 
         return None
 

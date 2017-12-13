@@ -9,18 +9,13 @@ class TestWorkflowCreation(SimpleTestCase):
     def test_can_create_workflow(self):
         name = 'single_stage'
         stage = StageFactory()
-        workflow = Workflow(name, stage)
+        workflow = Workflow(name, [stage])
         self.assertEqual(workflow.name, name)
         self.assertCountEqual(workflow.stages, [stage])
 
-    def test_stages_required_for_workflow(self):
-        name = 'single_stage'
-        with self.assertRaises(ValueError):
-            Workflow(name)
-
     def test_can_iterate_through_workflow(self):
         stages = StageFactory.create_batch(2)
-        workflow = Workflow('two_stage', *stages)
+        workflow = Workflow('two_stage', stages)
         for stage, check in zip(workflow, stages):
             self.assertEqual(stage, check)
 
@@ -32,6 +27,9 @@ class TestWorkflowCreation(SimpleTestCase):
         workflow = WorkflowFactory(num_stages=1)
         self.assertEqual(workflow.next(workflow.stages[0]), None)
 
+    def test_returns_next_stage(self):
+        workflow = WorkflowFactory(num_stages=2)
+        self.assertEqual(workflow.next(workflow.stages[0]), workflow.stages[1])
 
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
