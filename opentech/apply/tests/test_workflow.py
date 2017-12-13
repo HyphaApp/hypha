@@ -1,8 +1,9 @@
 from django.test import SimpleTestCase
 from django.forms import Form
 
+from opentech.apply.workflow import Stage, Workflow
+
 from .factories import StageFactory, WorkflowFactory
-from .workflow import Stage, Workflow
 
 
 class TestWorkflowCreation(SimpleTestCase):

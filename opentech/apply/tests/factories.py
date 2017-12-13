@@ -1,7 +1,7 @@
 from django.forms import Form
 import factory
 
-from .workflow import Stage, Workflow
+from opentech.apply.workflow import Stage, Workflow
 
 
 class StageFactory(factory.Factory):
