@@ -18,7 +18,7 @@ class Workflow(Iterable['Stage']):
         for i, stage in enumerate(self):
             if stage == current_stage:
                 try:
-                    return self.stages[i+1]
+                    return self.stages[i + 1]
                 except IndexError:
                     pass
 

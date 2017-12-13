@@ -32,6 +32,7 @@ class TestWorkflowCreation(SimpleTestCase):
         workflow = WorkflowFactory(num_stages=2)
         self.assertEqual(workflow.next(workflow.stages[0]), workflow.stages[1])
 
+
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
         name = 'the_stage'
