@@ -43,6 +43,9 @@ script:
   # Type check the project
   - mypy .
 
+  # Type check the apply module
+  - mypy opentech/apply --check-untyped-defs --ignore-missing-imports
+
   # Run system checks
   - python manage.py check
 
