@@ -11,10 +11,11 @@ class StageFactory(factory.Factory):
     name = factory.Faker('word')
     form = factory.LazyFunction(Form)
 
-.
+
 class WorkflowFactory(factory.Factory):
     class Meta:
         model = Workflow
+        inline_args = ('name', 'stages',)
 
     class Params:
         num_stages = factory.Faker('random_int', min=1, max=3)

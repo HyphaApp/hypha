@@ -13,6 +13,9 @@ class Workflow(Iterable['Stage']):
     def __iter__(self) -> Iterator['Stage']:
         yield from self.stages
 
+    def next(self):
+        return self.stages[0]
+
 
 class Stage:
     def __init__(self, name: str, form: Form) -> None:

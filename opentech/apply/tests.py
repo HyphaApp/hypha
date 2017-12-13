@@ -24,8 +24,9 @@ class TestWorkflowCreation(SimpleTestCase):
         for stage, check in zip(workflow, stages):
             self.assertEqual(stage, check)
 
-    # def test_returns_none_if_no_next_stage(self):
-    #     workflow = Workflow('two_stage', stage1, stage2)
+    def test_returns_first_stage_if_no_arg(self):
+        workflow = WorkflowFactory(num_stages=1)
+        self.assertEqual(workflow.next(), workflow.stages[0])
 
 
 class TestStageCreation(SimpleTestCase):
