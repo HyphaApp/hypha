@@ -1,3 +1,4 @@
+import itertools
 from django.test import SimpleTestCase
 from django.forms import Form
 
@@ -14,23 +15,17 @@ class TestWorkflowCreation(SimpleTestCase):
         self.assertEqual(workflow.name, name)
         self.assertCountEqual(workflow.stages, [stage])
 
-    def test_can_iterate_through_workflow(self):
-        stages = StageFactory.create_batch(2)
-        workflow = Workflow('two_stage', stages)
-        for stage, check in zip(workflow, stages):
-            self.assertEqual(stage, check)
-
-    def test_returns_first_stage_if_no_arg(self):
-        workflow = WorkflowFactory(num_stages=1)
-        self.assertEqual(workflow.next(), workflow.stages[0])
+    def test_returns_first_phase_if_no_arg(self):
+        workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
+        self.assertEqual(workflow.next(), workflow.stages[0].phases[0])
 
     def test_returns_none_if_no_next(self):
-        workflow = WorkflowFactory(num_stages=1)
-        self.assertEqual(workflow.next(workflow.stages[0]), None)
+        workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
+        self.assertEqual(workflow.next(workflow.stages[0].phases[0]), None)
 
-    def test_returns_next_stage(self):
-        workflow = WorkflowFactory(num_stages=2)
-        self.assertEqual(workflow.next(workflow.stages[0]), workflow.stages[1])
+    def test_returns_next_phase(self):
+        workflow = WorkflowFactory(num_stages=2, stages__num_phases=1)
+        self.assertEqual(workflow.next(workflow.stages[0].phases[0]), workflow.stages[1].phases[0])
 
 
 class TestStageCreation(SimpleTestCase):
