@@ -43,6 +43,11 @@ class TestStageCreation(SimpleTestCase):
         self.assertEqual(stage.form, form)
         self.assertEqual(stage.phases, phases)
 
+    def test_can_iterate_through_phases(self):
+        stage = StageFactory()
+        for phase, check in zip(stage, stage.phases):
+            self.assertEqual(phase, check)
+
 
 class TestPhaseCreation(SimpleTestCase):
     def test_can_create_phase(self):

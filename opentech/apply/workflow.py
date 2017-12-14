@@ -31,6 +31,9 @@ class Stage:
         self.form = form
         self.phases = phases
 
+    def __iter__(self) -> Iterator['Phase']:
+        yield from self.phases
+
 
 class Phase:
     def __init__(self, name: str) -> None:
