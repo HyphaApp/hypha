@@ -29,3 +29,8 @@ class Stage:
     def __init__(self, name: str, form: Form) -> None:
         self.name = name
         self.form = form
+
+
+class Phase:
+    def __init__(self, name: str) -> None:
+        self.name = name
