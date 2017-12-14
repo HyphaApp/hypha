@@ -26,9 +26,10 @@ class Workflow(Iterable['Stage']):
 
 
 class Stage:
-    def __init__(self, name: str, form: Form) -> None:
+    def __init__(self, name: str, form: Form, phases: Sequence['Phase']) -> None:
         self.name = name
         self.form = form
+        self.phases = phases
 
 
 class Phase:

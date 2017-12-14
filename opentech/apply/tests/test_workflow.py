@@ -3,7 +3,7 @@ from django.forms import Form
 
 from opentech.apply.workflow import Phase, Stage, Workflow
 
-from .factories import StageFactory, WorkflowFactory
+from .factories import PhaseFactory, StageFactory, WorkflowFactory
 
 
 class TestWorkflowCreation(SimpleTestCase):
@@ -37,9 +37,11 @@ class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
         name = 'the_stage'
         form = Form()
-        stage = Stage(name, form)
+        phases = PhaseFactory.create_batch(2)
+        stage = Stage(name, form, phases)
         self.assertEqual(stage.name, name)
         self.assertEqual(stage.form, form)
+        self.assertEqual(stage.phases, phases)
 
 
 class TestPhaseCreation(SimpleTestCase):
