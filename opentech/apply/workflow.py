@@ -7,11 +7,16 @@ class Workflow:
     def __init__(self, name: str, stages: Sequence['Stage']) -> None:
         self.name = name
         self.stages = stages
-        self.mapping = {
-            str(phase): (i, j)
-            for i, stage in enumerate(stages)
-            for j, phase in enumerate(stage)
-        }
+        self.mapping = self.build_mapping(stages)
+
+    def build_mapping(self, stages):
+        mapping = {}
+        for i, stage in enumerate(stages):
+            for j, phase in enumerate(stage):
+                while str(phase) in mapping:
+                    phase.occurance += 1
+                mapping[str(phase)] = (i, j)
+        return mapping
 
     def current_index(self, phase: Union['Phase', str, None]):
         if isinstance(phase, Phase):
@@ -52,6 +57,7 @@ class Stage(Iterable['Phase']):
 class Phase:
     def __init__(self, name: str) -> None:
         self.name = name
+        self.occurance = 0
 
     def __str__(self):
-        return '__'.join([self.stage.name, self.name])
+        return '__'.join([self.stage.name, self.name, str(self.occurance)])

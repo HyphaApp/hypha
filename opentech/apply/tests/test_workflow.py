@@ -27,6 +27,10 @@ class TestWorkflowCreation(SimpleTestCase):
         workflow = WorkflowFactory(num_stages=2, stages__num_phases=1)
         self.assertEqual(workflow.next(workflow.stages[0].phases[0]), workflow.stages[1].phases[0])
 
+    def test_returns_next_phase_shared_name(self):
+        workflow = WorkflowFactory(num_stages=1, stages__num_phases=3, stages__phases__name='the_same')
+        self.assertEqual(workflow.next(workflow.stages[0].phases[0]), workflow.stages[0].phases[1])
+
 
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
