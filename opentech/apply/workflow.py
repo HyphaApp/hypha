@@ -10,7 +10,7 @@ class Workflow:
         self.mapping = self.build_mapping(stages)
 
     def build_mapping(self, stages: Sequence['Stage']) -> Dict[str, Tuple[int, int]]:
-        mapping:  Dict[str, Tuple[int, int]] = {}
+        mapping: Dict[str, Tuple[int, int]] = {}
         for i, stage in enumerate(stages):
             for j, phase in enumerate(stage):
                 while str(phase) in mapping:
@@ -39,8 +39,7 @@ class Workflow:
 
 class Stage(Iterable['Phase']):
     def __init__(self, name: str, form: Form, phases: Sequence['Phase'],
-                 current_phase: Union['Phase', None]=None
-    ) -> None:
+                 current_phase: Union['Phase', None]=None) -> None:
         self.name = name
         self.form = form
         for phase in phases:

@@ -1,4 +1,3 @@
-import itertools
 from django.test import SimpleTestCase
 from django.forms import Form
 

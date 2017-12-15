@@ -43,9 +43,6 @@ script:
   # Type check the project
   - mypy .
 
-  # Type check the project
-  - mypy .
-
   # Run system checks
   - python manage.py check
 
