@@ -63,6 +63,11 @@ class Phase:
         return '__'.join([self.stage.name, self.name, str(self.occurance)])
 
 
+class Action:
+    def __init__(self, name: str):
+        self.name = name
+
+
 # --- OTF Workflow ---
 
 class ReviewPhase(Phase):

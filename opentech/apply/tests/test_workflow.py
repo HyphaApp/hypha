@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from django.forms import Form
 
-from opentech.apply.workflow import Phase, Stage, Workflow
+from opentech.apply.workflow import Action, Phase, Stage, Workflow
 
 from .factories import PhaseFactory, StageFactory, WorkflowFactory
 
@@ -52,3 +52,10 @@ class TestPhaseCreation(SimpleTestCase):
         name = 'the_phase'
         phase = Phase(name)
         self.assertEqual(phase.name, name)
+
+
+class TestActions(SimpleTestCase):
+    def test_can_create_action(self):
+        name = 'action stations'
+        action = Action(name)
+        self.assertEqual(action.name, name)
