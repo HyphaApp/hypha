@@ -61,3 +61,24 @@ class Phase:
 
     def __str__(self):
         return '__'.join([self.stage.name, self.name, str(self.occurance)])
+
+
+# --- OTF Workflow ---
+
+review = Phase('Under Review')
+
+response = Phase('Ready to Respond')
+
+rejected = Phase('Rejected')
+
+accepted = Phase('Accepted')
+
+progress = Phase('Progress')
+
+standard_stage = Stage('Standard', Form(), [review, response, review, response, accepted, rejected])
+
+first_stage = Stage('Standard', Form(), [review, response, progress, rejected])
+
+single_stage = Workflow('Single Stage', [standard_stage])
+
+two_stage = Workflow('Two Stage', [first_stage, standard_stage])
