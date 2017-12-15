@@ -103,7 +103,7 @@ ac_review = ReviewPhase('Under Review', [next_phase])
 
 response = Phase('Ready to Respond', [next_phase])
 
-rejected = Phase('Rejected', [next_phase])
+rejected = Phase('Rejected', [])
 
 accepted = Phase('Accepted', [next_phase])
 
