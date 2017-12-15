@@ -54,9 +54,10 @@ class Stage(Iterable['Phase']):
 
 
 class Phase:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, actions: Sequence['Action']) -> None:
         self.name = name
         self.stage: Union['Stage', None] = None
+        self.actions = actions
         self.occurance = 0
 
     def __str__(self):
@@ -64,7 +65,7 @@ class Phase:
 
 
 class Action:
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         self.name = name
 
 
@@ -74,17 +75,19 @@ class ReviewPhase(Phase):
     pass
 
 
-internal_review = ReviewPhase('Under Review')
+next_phase = Action('next')
 
-ac_review = ReviewPhase('Under Review')
+internal_review = ReviewPhase('Under Review', [next_phase])
 
-response = Phase('Ready to Respond')
+ac_review = ReviewPhase('Under Review', [next_phase])
 
-rejected = Phase('Rejected')
+response = Phase('Ready to Respond', [next_phase])
 
-accepted = Phase('Accepted')
+rejected = Phase('Rejected', [next_phase])
 
-progress = Phase('Progress')
+accepted = Phase('Accepted', [next_phase])
+
+progress = Phase('Progress', [next_phase])
 
 standard_stage = Stage('Standard', Form(), [internal_review, response, ac_review, response, accepted, rejected])
 

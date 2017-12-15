@@ -1,7 +1,7 @@
 from django.forms import Form
 import factory
 
-from opentech.apply.workflow import Phase, Stage, Workflow
+from opentech.apply.workflow import Action, Phase, Stage, Workflow
 
 
 class ListSubFactory(factory.SubFactory):
@@ -26,11 +26,22 @@ class ListSubFactory(factory.SubFactory):
         ]
 
 
+class ActionFactory(factory.Factory):
+    class Meta:
+        model = Action
+
+    name = factory.Faker('word')
+
+
 class PhaseFactory(factory.Factory):
     class Meta:
         model = Phase
 
+    class Params:
+        num_actions = factory.Faker('random_int', min=1, max=5)
+
     name = factory.Faker('word')
+    actions = ListSubFactory(ActionFactory, count=factory.SelfAttribute('num_actions'))
 
 
 class StageFactory(factory.Factory):
