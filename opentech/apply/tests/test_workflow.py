@@ -58,7 +58,7 @@ class TestPhaseCreation(SimpleTestCase):
         name = 'the_phase'
         phase = Phase(name, actions)
         self.assertEqual(phase.name, name)
-        self.assertEqual(phase.actions, {action.name: action for action in actions})
+        self.assertEqual(phase.actions, [action.name for action in actions])
 
     def test_can_get_action_from_phase(self):
         actions = ActionFactory.create_batch(3)

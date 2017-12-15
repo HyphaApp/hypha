@@ -63,14 +63,18 @@ class Phase:
     def __init__(self, name: str, actions: Sequence['Action']) -> None:
         self.name = name
         self.stage: Union['Stage', None] = None
-        self.actions = {action.name: action for action in actions}
+        self._actions= {action.name: action for action in actions}
         self.occurance: int = 0
+
+    @property
+    def actions(self):
+        return list(self._actions.keys())
 
     def __str__(self):
         return '__'.join([self.stage.name, self.name, str(self.occurance)])
 
     def __getitem__(self, value):
-        return self.actions[value]
+        return self._actions[value]
 
 
 class Action:
