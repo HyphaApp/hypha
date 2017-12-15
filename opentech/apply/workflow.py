@@ -63,7 +63,7 @@ class Phase:
     def __init__(self, name: str, actions: Sequence['Action']) -> None:
         self.name = name
         self.stage: Union['Stage', None] = None
-        self._actions= {action.name: action for action in actions}
+        self._actions = {action.name: action for action in actions}
         self.occurance: int = 0
 
     @property
