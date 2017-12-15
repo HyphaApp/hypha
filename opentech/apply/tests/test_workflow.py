@@ -18,6 +18,11 @@ class TestWorkflowCreation(SimpleTestCase):
         workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
         self.assertEqual(workflow.next(), workflow.stages[0].phases[0])
 
+    def test_can_get_the_current_phase(self):
+        workflow = WorkflowFactory(num_stages=1, stages__num_phases=2)
+        phase = workflow.stages[0].phases[0]
+        self.assertEqual(workflow.current(str(phase)), phase)
+
     def test_returns_none_if_no_next(self):
         workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
         self.assertEqual(workflow.next(workflow.stages[0].phases[0]), None)
@@ -53,7 +58,13 @@ class TestPhaseCreation(SimpleTestCase):
         name = 'the_phase'
         phase = Phase(name, actions)
         self.assertEqual(phase.name, name)
-        self.assertEqual(phase.actions, actions)
+        self.assertEqual(phase.actions, {action.name: action for action in actions})
+
+    def test_can_get_action_from_phase(self):
+        actions = ActionFactory.create_batch(3)
+        action = actions[1]
+        phase = PhaseFactory(actions=actions)
+        self.assertEqual(phase[action.name], action)
 
 
 class TestActions(SimpleTestCase):
@@ -61,3 +72,8 @@ class TestActions(SimpleTestCase):
         name = 'action stations'
         action = Action(name)
         self.assertEqual(action.name, name)
+
+    def test_calling_processes_the_action(self):
+        action = ActionFactory()
+        with self.assertRaises(NotImplementedError):
+            action()

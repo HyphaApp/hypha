@@ -26,13 +26,19 @@ class Workflow:
         except KeyError:
             return 0, -1
 
+    def __getitem__(self, value):
+        return self.stages[value[0]].phases[value[1]]
+
+    def current(self, current_phase: str):
+        return self[self.current_index(current_phase)]
+
     def next(self, current_phase: Union['Phase', str]=None) -> Union['Phase', None]:
         stage_idx, phase_idx = self.current_index(current_phase)
         try:
-            return self.stages[stage_idx].phases[phase_idx + 1]
+            return self[stage_idx, phase_idx + 1]
         except IndexError:
             try:
-                return self.stages[stage_idx + 1].phases[0]
+                return self[stage_idx + 1, 0]
             except IndexError:
                 return None
 
@@ -57,16 +63,26 @@ class Phase:
     def __init__(self, name: str, actions: Sequence['Action']) -> None:
         self.name = name
         self.stage: Union['Stage', None] = None
-        self.actions = actions
-        self.occurance = 0
+        self.actions = {action.name: action for action in actions}
+        self.occurance: int = 0
 
     def __str__(self):
         return '__'.join([self.stage.name, self.name, str(self.occurance)])
+
+    def __getitem__(self, value):
+        return self.actions[value]
 
 
 class Action:
     def __init__(self, name: str) -> None:
         self.name = name
+
+    def __call__(self, *args, **kwargs):
+        return self.process(*args, **kwargs)
+
+    def process(self, *args, **kwargs):
+        # Use this to define the behaviour of the action
+        raise NotImplementedError
 
 
 # --- OTF Workflow ---
