@@ -35,13 +35,13 @@ install:
   # Install project dependencies
   - pip install -r requirements.txt
 
-  # Install test dependencies
-  - pip install flake8
-
 # Run the tests
 script:
   # Run python code style checks
-  - flake8 opentech --ignore=E501,F405 --exclude=*/migrations/*
+  - flake8
+
+  # Type check the project
+  - mypy .
 
   # Run system checks
   - python manage.py check
