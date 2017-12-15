@@ -44,7 +44,7 @@ class TestStageCreation(SimpleTestCase):
 
     def test_can_iterate_through_phases(self):
         stage = StageFactory()
-        for phase, check in zip(stage, stage.phases):
+        for phase, check in zip(stage, stage.phases):  # type: ignore # spurious error
             self.assertEqual(phase, check)
 
 

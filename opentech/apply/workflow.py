@@ -1,4 +1,4 @@
-from typing import Iterator, Iterable, Sequence, Union
+from typing import Dict, Iterator, Iterable, Sequence, Tuple, Union
 
 from django.forms import Form
 
@@ -9,8 +9,8 @@ class Workflow:
         self.stages = stages
         self.mapping = self.build_mapping(stages)
 
-    def build_mapping(self, stages):
-        mapping = {}
+    def build_mapping(self, stages: Sequence['Stage']) -> Dict[str, Tuple[int, int]]:
+        mapping:  Dict[str, Tuple[int, int]] = {}
         for i, stage in enumerate(stages):
             for j, phase in enumerate(stage):
                 while str(phase) in mapping:
@@ -26,7 +26,7 @@ class Workflow:
         except KeyError:
             return 0, -1
 
-    def next(self, current_phase: Union['Phase', str, None]=None) -> Union['Phase', None]:
+    def next(self, current_phase: Union['Phase', str]=None) -> Union['Phase', None]:
         stage_idx, phase_idx = self.current_index(current_phase)
         try:
             return self.stages[stage_idx].phases[phase_idx + 1]
@@ -57,6 +57,7 @@ class Stage(Iterable['Phase']):
 class Phase:
     def __init__(self, name: str) -> None:
         self.name = name
+        self.stage: Union['Stage', None] = None
         self.occurance = 0
 
     def __str__(self):

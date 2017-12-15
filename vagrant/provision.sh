@@ -51,6 +51,6 @@ source $VIRTUALENV_DIR/bin/activate
 export PS1="[$PROJECT_NAME \W]\\$ "
 cd $PROJECT_DIR
 
-alias djtestapply="dj test opentech.apply --keepdb; mypy opentech/apply --check-untyped-defs --ignore-missing-imports"
+alias djtestapply="dj test opentech.apply --keepdb; mypy ."
 
 EOF
