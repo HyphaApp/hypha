@@ -65,7 +65,12 @@ class Phase:
 
 # --- OTF Workflow ---
 
-review = Phase('Under Review')
+class ReviewPhase(Phase):
+    pass
+
+internal_review = ReviewPhase('Under Review')
+
+ac_review = ReviewPhase('Under Review')
 
 response = Phase('Ready to Respond')
 
@@ -75,9 +80,9 @@ accepted = Phase('Accepted')
 
 progress = Phase('Progress')
 
-standard_stage = Stage('Standard', Form(), [review, response, review, response, accepted, rejected])
+standard_stage = Stage('Standard', Form(), [internal_review, response, ac_review, response, accepted, rejected])
 
-first_stage = Stage('Standard', Form(), [review, response, progress, rejected])
+first_stage = Stage('Standard', Form(), [internal_review, response, progress, rejected])
 
 single_stage = Workflow('Single Stage', [standard_stage])
 
