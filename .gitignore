@@ -30,3 +30,6 @@ wheels/
 .installed.cfg
 *.egg
 
+
+# Cache
+.mypy_cache/
