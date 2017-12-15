@@ -50,4 +50,7 @@ alias djrunp="dj runserver_plus 0.0.0.0:8000"
 source $VIRTUALENV_DIR/bin/activate
 export PS1="[$PROJECT_NAME \W]\\$ "
 cd $PROJECT_DIR
+
+alias djtestapply="dj test opentech.apply --keepdb; mypy ."
+
 EOF
