@@ -28,6 +28,11 @@
                 <h4>There are no actions</h4>
             {% endfor %}
             </form>
+            <ul>
+            {% for log in logs %}
+                <li>{{ log }}</li>
+            {% endfor %}
+            </ul>
         </section>
         <section class="container">
             <a class="button" href="">Reset</a>

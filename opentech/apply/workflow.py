@@ -224,8 +224,7 @@ class ConceptStage(Stage):
     phases = [
         DeterminationWithNextPhase(),
         ReviewPhase(),
-        DeterminationPhase(),
-        accepted,
+        DeterminationWithProgressionPhase(),
         rejected,
     ]
 
