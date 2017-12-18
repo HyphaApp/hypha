@@ -43,6 +43,11 @@ class PhaseFactory(factory.Factory):
     name = factory.Faker('word')
     actions = ListSubFactory(ActionFactory, count=factory.SelfAttribute('num_actions'))
 
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        actions = kwargs.pop('actions')
+        new_class = type(model_class.__name__, (model_class,), {'actions': actions})
+        return new_class(*args, **kwargs)
 
 class StageFactory(factory.Factory):
     class Meta:

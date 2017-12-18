@@ -23,6 +23,10 @@ class TestWorkflowCreation(SimpleTestCase):
         phase = workflow.stages[0].phases[0]
         self.assertEqual(workflow.current(str(phase)), phase)
 
+    def test_returns_next_stage(self):
+        workflow = WorkflowFactory(num_stages=2, stages__num_phases=1)
+        self.assertEqual(workflow.next_stage(workflow.stages[0]), workflow.stages[1])
+
     def test_returns_none_if_no_next(self):
         workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
         self.assertEqual(workflow.next(workflow.stages[0].phases[0]), None)
@@ -46,19 +50,20 @@ class TestStageCreation(SimpleTestCase):
         self.assertEqual(stage.form, form)
         self.assertEqual(stage.phases, phases)
 
-    def test_can_iterate_through_phases(self):
-        stage = StageFactory()
-        for phase, check in zip(stage, stage.phases):  # type: ignore # spurious error
-            self.assertEqual(phase, check)
+    def test_can_get_next_phase(self):
+        stage = StageFactory(num_phases=2)
+        self.assertEqual(stage.next(stage.phases[0]), stage.phases[1])
+
+    def test_get_none_if_no_next_phase(self):
+        stage = StageFactory(num_phases=1)
+        self.assertEqual(stage.next(stage.phases[0]), None)
 
 
 class TestPhaseCreation(SimpleTestCase):
     def test_can_create_phase(self):
-        actions = ActionFactory.create_batch(2)
         name = 'the_phase'
-        phase = Phase(name, actions)
+        phase = Phase(name)
         self.assertEqual(phase.name, name)
-        self.assertEqual(phase.actions, [action.name for action in actions])
 
     def test_can_get_action_from_phase(self):
         actions = ActionFactory.create_batch(3)
