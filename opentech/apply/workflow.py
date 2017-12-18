@@ -185,11 +185,6 @@ class ReviewPhase(Phase):
     actions = [NextPhaseAction('Close Review')]
 
 
-class DeterminationPhase(Phase):
-    name = 'Under Discussion'
-    actions = [accept_action, reject_action]
-
-
 class DeterminationWithProgressionPhase(Phase):
     name = 'Under Discussion'
     actions = [progress_stage, reject_action]
@@ -200,14 +195,6 @@ class DeterminationWithNextPhase(Phase):
     actions = [NextPhaseAction('Open Review'), reject_action]
 
 
-review = ReviewPhase()
-
-under_discussion = DeterminationPhase()
-
-under_discussion_next = DeterminationWithNextPhase()
-
-should_progress = DeterminationWithProgressionPhase()
-
 rejected = Phase(name='Rejected')
 
 accepted = Phase(name='Accepted')
@@ -215,12 +202,25 @@ accepted = Phase(name='Accepted')
 
 class ConceptStage(Stage):
     name = 'Concept'
-    phases = [under_discussion_next, review, should_progress, rejected]
+    phases = [
+        DeterminationWithNextPhase(),
+        ReviewPhase(),
+        DeterminationWithProgressionPhase(),
+        rejected
+    ]
 
 
 class ProposalStage(Stage):
     name = 'Proposal'
-    phases = [under_discussion_next, review, under_discussion_next, ReviewPhase('AC Review'), under_discussion, accepted, rejected]
+    phases = [
+        DeterminationWithNextPhase(),
+        ReviewPhase(),
+        DeterminationWithNextPhase(),
+        ReviewPhase('AC Review'),
+        DeterminationWithNextPhase(),
+        accepted,
+        rejected,
+    ]
 
 single_stage = Workflow('Single Stage', [ConceptStage(Form())])
 
