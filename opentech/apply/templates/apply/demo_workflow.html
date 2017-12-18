@@ -16,7 +16,8 @@
         </section>
         <section class="container">
             <h2>{{ workflow}}</h2>
-            <h3>{{ phase }}</h3>
+            <h3>{{ phase.stage }}</h3>
+            <h4>{{ phase.name }}</h4>
             <form method="post">
             {% csrf_token %}
             <input id="current" type="hidden" name="current" value="{{ phase }}" />
