@@ -179,7 +179,7 @@ next_phase = NextPhaseAction('Progress')
 
 class ReviewPhase(Phase):
     name = 'Internal Review'
-    actions = [next_phase]
+    actions = [NextPhaseAction('Close Review')]
 
 
 class DeterminationPhase(Phase):
@@ -194,7 +194,7 @@ class DeterminationWithProgressionPhase(Phase):
 
 class DeterminationWithNextPhase(Phase):
     name = 'Under Discussion'
-    actions = [next_phase, reject_action]
+    actions = [NextPhaseAction('Open Review'), reject_action]
 
 
 review = ReviewPhase()
@@ -209,9 +209,9 @@ rejected = Phase(name='Rejected')
 
 accepted = Phase(name='Accepted')
 
-concept_note = Stage('Concept', Form(), [review, should_progress, rejected])
+concept_note = Stage('Concept', Form(), [under_discussion_next, review, should_progress, rejected])
 
-proposal = Stage('Proposal', Form(), [review, under_discussion_next, review, under_discussion, accepted, rejected])
+proposal = Stage('Proposal', Form(), [under_discussion_next, review, under_discussion_next, ReviewPhase('AC Review'), under_discussion, accepted, rejected])
 
 single_stage = Workflow('Single Stage', [proposal])
 
