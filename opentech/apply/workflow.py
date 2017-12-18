@@ -185,7 +185,7 @@ reject_action = ChangePhaseAction('rejected', 'Reject')
 
 accept_action = ChangePhaseAction('accepted', 'Accept')
 
-progress_stage = ChangePhaseAction(None, 'Progress Stage')
+progress_stage = ChangePhaseAction(None, 'Invite to Proposal')
 
 next_phase = NextPhaseAction('Progress')
 
@@ -200,6 +200,12 @@ class DeterminationWithProgressionPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [progress_stage, reject_action]
+
+
+class DeterminationPhase(Phase):
+    name = 'Under Discussion'
+    public_name = 'In review'
+    actions = [accept_action, reject_action]
 
 
 class DeterminationWithNextPhase(Phase):
@@ -218,8 +224,9 @@ class ConceptStage(Stage):
     phases = [
         DeterminationWithNextPhase(),
         ReviewPhase(),
-        DeterminationWithProgressionPhase(),
-        rejected
+        DeterminationPhase(),
+        accepted,
+        rejected,
     ]
 
 
@@ -229,8 +236,8 @@ class ProposalStage(Stage):
         DeterminationWithNextPhase(),
         ReviewPhase(),
         DeterminationWithNextPhase(),
-        ReviewPhase('AC Review'),
-        DeterminationWithNextPhase(),
+        ReviewPhase('AC Review', public_name='In AC review'),
+        DeterminationPhase(public_name='In AC review'),
         accepted,
         rejected,
     ]
