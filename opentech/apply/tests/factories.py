@@ -49,6 +49,12 @@ class PhaseFactory(factory.Factory):
         new_class = type(model_class.__name__, (model_class,), {'actions': actions})
         return new_class(*args, **kwargs)
 
+    @classmethod
+    def _build(cls, model_class, *args, **kwargs):
+        # defer to create because parent uses build
+        return cls._create(model_class, *args, **kwargs)
+
+
 class StageFactory(factory.Factory):
     class Meta:
         model = Stage
@@ -63,18 +69,38 @@ class StageFactory(factory.Factory):
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
+        # Returns a new class
         phases = kwargs.pop('phases')
-        new_class = type(model_class.__name__, (model_class,), {'phases': phases})
+        name = kwargs.pop('name')
+        return type(model_class.__name__, (model_class,), {'phases': phases, 'name': name})
+
+    @classmethod
+    def _build(cls, model_class, *args, **kwargs):
+        # returns an instance of the stage class
+        phases = kwargs.pop('phases')
+        name = kwargs.pop('name')
+        new_class = type(model_class.__name__, (model_class,), {'phases': phases, 'name': name})
         return new_class(*args, **kwargs)
 
 
 class WorkflowFactory(factory.Factory):
     class Meta:
         model = Workflow
-        inline_args = ('name', 'stages',)
+        rename = {'stages': 'stage_classes'}
 
     class Params:
         num_stages = factory.Faker('random_int', min=1, max=3)
 
     name = factory.Faker('word')
     stages = ListSubFactory(StageFactory, count=factory.SelfAttribute('num_stages'))
+
+    @factory.LazyAttribute
+    def forms(self):
+        return [Form() for _ in range(self.num_stages)]
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        name = kwargs.pop('name')
+        stages = kwargs.pop('stage_classes')
+        new_class = type(model_class.__name__, (model_class,), {'name': name, 'stage_classes': stages})
+        return new_class(*args, **kwargs)

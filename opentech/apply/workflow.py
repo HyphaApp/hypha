@@ -1,15 +1,20 @@
 import copy
 
-from typing import Dict, Iterator, Iterable, List, Sequence, Tuple, Union
+from typing import List, Sequence, Type, Union
 
 from django.forms import Form
 from django.utils.text import slugify
 
 
 class Workflow:
-    def __init__(self, name: str, stages: Sequence['Stage']) -> None:
-        self.name = name
-        self.stages = stages
+    name: str = ''
+    stage_classes: Sequence[Type['Stage']] = list()
+
+    def __init__(self, forms: Sequence[Form]) -> None:
+        if len(self.stage_classes) != len(forms):
+            raise ValueError('Number of forms does not equal the number of stages')
+
+        self.stages = [stage(form) for stage, form in zip(self.stage_classes, forms)]
 
     def current(self, current_phase: Union[str, 'Phase']) -> Union['Phase', None]:
         if isinstance(current_phase, Phase):
@@ -230,6 +235,12 @@ class ProposalStage(Stage):
         rejected,
     ]
 
-single_stage = Workflow('Single Stage', [ConceptStage(Form())])
 
-two_stage = Workflow('Two Stage', [ConceptStage(Form()), ProposalStage(Form())])
+class SingleStage(Workflow):
+    name = 'Single Stage'
+    stage_classes = [ConceptStage]
+
+
+class DoubleStage(Workflow):
+    name = 'Two Stage'
+    stage_classes = [ConceptStage, ProposalStage]

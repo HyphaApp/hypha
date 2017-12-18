@@ -1,14 +1,18 @@
+from django.forms import Form
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 
-from .workflow import single_stage, two_stage
+from .workflow import SingleStage, DoubleStage
 
 
-workflows = [single_stage, two_stage]
+workflows = [SingleStage, DoubleStage]
 
 
 def demo_workflow(request, wf_id):
-    workflow = workflows[int(wf_id)-1]
+    wf = int(wf_id)
+    workflow_class = workflows[wf-1]
+    workflow = workflow_class([Form()] * wf)
+
     current_phase = request.POST.get('current')
     if request.POST:
         phase = workflow.process(current_phase, request.POST['action'])

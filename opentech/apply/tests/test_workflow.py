@@ -8,11 +8,13 @@ from .factories import ActionFactory, PhaseFactory, StageFactory, WorkflowFactor
 
 class TestWorkflowCreation(SimpleTestCase):
     def test_can_create_workflow(self):
-        name = 'single_stage'
         stage = StageFactory()
-        workflow = Workflow(name, [stage])
-        self.assertEqual(workflow.name, name)
-        self.assertCountEqual(workflow.stages, [stage])
+        class NewWorkflow(Workflow):
+            name = 'single_stage'
+            stage_classes = [stage]
+        workflow = NewWorkflow([Form()])
+        self.assertEqual(workflow.name, NewWorkflow.name)
+        self.assertEqual(len(workflow.stages), 1)
 
     def test_returns_first_phase_if_no_arg(self):
         workflow = WorkflowFactory(num_stages=1, stages__num_phases=1)
@@ -49,11 +51,11 @@ class TestStageCreation(SimpleTestCase):
         self.assertEqual(stage.form, form)
 
     def test_can_get_next_phase(self):
-        stage = StageFactory(num_phases=2)
+        stage = StageFactory.build(num_phases=2)
         self.assertEqual(stage.next(stage.phases[0]), stage.phases[1])
 
     def test_get_none_if_no_next_phase(self):
-        stage = StageFactory(num_phases=1)
+        stage = StageFactory.build(num_phases=1)
         self.assertEqual(stage.next(stage.phases[0]), None)
 
 
