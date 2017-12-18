@@ -1,3 +1,5 @@
+import copy
+
 from typing import Dict, Iterator, Iterable, List, Sequence, Tuple, Union
 
 from django.forms import Form
@@ -15,10 +17,10 @@ class Workflow:
         if not current_phase:
             return self.first()
 
-        stage_name, phase_name, _ = current_phase.split('__')
+        stage_name, phase_name, occurance = current_phase.split('__')
         for stage in self.stages:
             if stage.name == stage_name:
-                return stage.current(phase_name)
+                return stage.current(phase_name, occurance)
         return None
 
     def first(self) -> 'Phase':
@@ -29,7 +31,8 @@ class Workflow:
         new_phase = phase.process(action)
         if not new_phase:
             new_stage = self.next_stage(phase.stage)
-            return new_stage.first()
+            if new_stage:
+                return new_stage.first()
         return new_phase
 
     def next_stage(self, current_stage: 'Stage') -> 'Stage':
@@ -70,16 +73,23 @@ class Stage:
                  current_phase: Union['Phase', None]=None) -> None:
         self.name = name
         self.form = form
+        # Make the phases new instances to prevent errors with mutability
+        existing_phases: set = set()
+        new_phases: list = list()
         for phase in phases:
             phase.stage = self
-        self.phases = phases
+            while str(phase) in existing_phases:
+                phase.occurance += 1
+            existing_phases.add(str(phase))
+            new_phases.append(copy.copy(phase))
+        self.phases = new_phases
 
     def __str__(self) -> str:
         return self.name
 
-    def current(self, phase_name: str) -> 'Phase':
+    def current(self, phase_name: str, occurance: str) -> 'Phase':
         for phase in self.phases:
-            if phase.name == phase_name:
+            if phase.name == phase_name and int(occurance) == phase.occurance:
                 return phase
         return None
 
@@ -100,12 +110,18 @@ class Stage:
 
 class Phase:
     actions: Sequence['Action'] = list()
+    name: str = ''
 
-    def __init__(self, name: str) -> None:
-        self.name = name
+    def __init__(self, name: str='') -> None:
+        if name:
+            self.name = name
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
         self.occurance: int = 0
+
+    def __eq__(self, other: object) -> bool:
+        to_match = ['name', 'occurance']
+        return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
     def action_names(self) -> List[str]:
@@ -118,17 +134,14 @@ class Phase:
         return self._actions[value]
 
     def process(self, action: str) -> Union['Phase', None]:
-        return self[action]()
+        return self[action].process(self)
 
 
 class Action:
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def __call__(self) -> Union['Phase', None]:
-        return self.process()
-
-    def process(self) -> Union['Phase', None]:
+    def process(self, phase: 'Phase') -> Union['Phase', None]:
         # Use this to define the behaviour of the action
         raise NotImplementedError
 
@@ -140,7 +153,7 @@ class ChangePhaseAction(Action):
         self.target_phase = phase
         super().__init__(*args, **kwargs)
 
-    def process(self) -> Union['Phase', None]:
+    def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
             phase = globals()[self.target_phase]
         else:
@@ -148,40 +161,55 @@ class ChangePhaseAction(Action):
         return phase
 
 
+class NextPhaseAction(Action):
+    def process(self, phase: 'Phase') -> Union['Phase', None]:
+        return phase.stage.next(phase)
+
+
 reject_action = ChangePhaseAction('rejected', 'Reject')
 
 accept_action = ChangePhaseAction('accepted', 'Accept')
 
-progress_external = ChangePhaseAction('external_review', 'Progress')
-
 progress_stage = ChangePhaseAction(None, 'Progress Stage')
+
+next_phase = NextPhaseAction('Progress')
 
 
 class ReviewPhase(Phase):
-    actions = [progress_stage, reject_action]
+    name = 'Internal Review'
+    actions = [next_phase]
 
 
-class ProposalReviewPhase(Phase):
-    actions = [progress_external, reject_action]
-
-
-class FinalReviewPhase(Phase):
+class DeterminationPhase(Phase):
+    name = 'Under Discussion'
     actions = [accept_action, reject_action]
 
 
-concept_review = ReviewPhase('Internal Review')
+class DeterminationWithProgressionPhase(Phase):
+    name = 'Under Discussion'
+    actions = [progress_stage, reject_action]
 
-proposal_review = ProposalReviewPhase('Internal Review')
 
-external_review = FinalReviewPhase('AC Review')
+class DeterminationWithNextPhase(Phase):
+    name = 'Under Discussion'
+    actions = [next_phase, reject_action]
 
-rejected = Phase('Rejected')
 
-accepted = Phase('Accepted')
+review = ReviewPhase()
 
-concept_note = Stage('Concept', Form(), [concept_review, accepted, rejected])
+under_discussion = DeterminationPhase()
 
-proposal = Stage('Proposal', Form(), [proposal_review, external_review, accepted, rejected])
+under_discussion_next = DeterminationWithNextPhase()
+
+should_progress = DeterminationWithProgressionPhase()
+
+rejected = Phase(name='Rejected')
+
+accepted = Phase(name='Accepted')
+
+concept_note = Stage('Concept', Form(), [review, should_progress, rejected])
+
+proposal = Stage('Proposal', Form(), [review, under_discussion_next, review, under_discussion, accepted, rejected])
 
 single_stage = Workflow('Single Stage', [proposal])
 

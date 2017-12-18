@@ -81,4 +81,4 @@ class TestActions(SimpleTestCase):
     def test_calling_processes_the_action(self):
         action = ActionFactory()
         with self.assertRaises(NotImplementedError):
-            action()
+            action.process('')
