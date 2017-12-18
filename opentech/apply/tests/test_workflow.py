@@ -44,11 +44,9 @@ class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
         name = 'the_stage'
         form = Form()
-        phases = PhaseFactory.create_batch(2)
-        stage = Stage(name, form, phases)
+        stage = Stage(form, name=name)
         self.assertEqual(stage.name, name)
         self.assertEqual(stage.form, form)
-        self.assertEqual(stage.phases, phases)
 
     def test_can_get_next_phase(self):
         stage = StageFactory(num_phases=2)

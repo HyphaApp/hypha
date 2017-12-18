@@ -52,7 +52,7 @@ class PhaseFactory(factory.Factory):
 class StageFactory(factory.Factory):
     class Meta:
         model = Stage
-        inline_args = ('name', 'form', 'phases',)
+        inline_args = ('form',)
 
     class Params:
         num_phases = factory.Faker('random_int', min=1, max=3)
@@ -60,6 +60,12 @@ class StageFactory(factory.Factory):
     name = factory.Faker('word')
     form = factory.LazyFunction(Form)
     phases = ListSubFactory(PhaseFactory, count=factory.SelfAttribute('num_phases'))
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        phases = kwargs.pop('phases')
+        new_class = type(model_class.__name__, (model_class,), {'phases': phases})
+        return new_class(*args, **kwargs)
 
 
 class WorkflowFactory(factory.Factory):

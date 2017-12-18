@@ -70,14 +70,17 @@ class Workflow:
 
 
 class Stage:
-    def __init__(self, name: str, form: Form, phases: Sequence['Phase'],
-                 current_phase: Union['Phase', None]=None) -> None:
-        self.name = name
+    name: str = 'Stage'
+    phases: list = list()
+
+    def __init__(self, form: Form, name: str='') -> None:
+        if name:
+            self.name = name
         self.form = form
         # Make the phases new instances to prevent errors with mutability
         existing_phases: set = set()
         new_phases: list = list()
-        for phase in phases:
+        for phase in self.phases:
             phase.stage = self
             while str(phase) in existing_phases:
                 phase.occurance += 1
@@ -209,10 +212,16 @@ rejected = Phase(name='Rejected')
 
 accepted = Phase(name='Accepted')
 
-concept_note = Stage('Concept', Form(), [under_discussion_next, review, should_progress, rejected])
 
-proposal = Stage('Proposal', Form(), [under_discussion_next, review, under_discussion_next, ReviewPhase('AC Review'), under_discussion, accepted, rejected])
+class ConceptStage(Stage):
+    name = 'Concept'
+    phases = [under_discussion_next, review, should_progress, rejected]
 
-single_stage = Workflow('Single Stage', [proposal])
 
-two_stage = Workflow('Two Stage', [concept_note, proposal])
+class ProposalStage(Stage):
+    name = 'Proposal'
+    phases = [under_discussion_next, review, under_discussion_next, ReviewPhase('AC Review'), under_discussion, accepted, rejected]
+
+single_stage = Workflow('Single Stage', [ConceptStage(Form())])
+
+two_stage = Workflow('Two Stage', [ConceptStage(Form()), ProposalStage(Form())])
