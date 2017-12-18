@@ -1,0 +1,34 @@
+<head>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+</head>
+<body>
+    <main class="wrapper">
+        <nav>
+            <section class="container">
+                <a class="button button-clear" href="{% url 'workflow_demo' 1 %}">Single Stage</a>
+                <a class="button button-clear" href="{% url 'workflow_demo' 2 %}">Double Stage</a>
+            </section>
+        </nav>
+        <section class="container">
+            <h1>Demo of interacting with the workflow</h1>
+        </section>
+        <section class="container">
+            <h2>{{ workflow}}</h2>
+            <h3>{{ phase }}</h3>
+            <form method="post">
+            {% csrf_token %}
+            <input id="current" type="hidden" name="current" value="{{ phase }}" />
+            {% for action in phase.action_names %}
+                <button id="action" name="action" value="{{ action }}">{{ action }}</button>
+            {% empty %}
+                <h4>There are no actions</h4>
+            {% endfor %}
+            </form>
+        </section>
+        <section class="container">
+            <a class="button" href="">Reset</a>
+        </section>
+    </main>
+</body>
