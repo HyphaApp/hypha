@@ -3,6 +3,7 @@ import copy
 from typing import Dict, Iterator, Iterable, List, Sequence, Tuple, Union
 
 from django.forms import Form
+from django.utils.text import slugify
 
 
 class Workflow:
@@ -89,7 +90,7 @@ class Stage:
 
     def current(self, phase_name: str, occurance: str) -> 'Phase':
         for phase in self.phases:
-            if phase.name == phase_name and int(occurance) == phase.occurance:
+            if phase._internal == phase_name and int(occurance) == phase.occurance:
                 return phase
         return None
 
@@ -115,6 +116,7 @@ class Phase:
     def __init__(self, name: str='') -> None:
         if name:
             self.name = name
+        self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
         self.occurance: int = 0
@@ -128,7 +130,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return '__'.join([self.stage.name, self.name, str(self.occurance)])
+        return '__'.join([self.stage.name, self._internal, str(self.occurance)])
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
