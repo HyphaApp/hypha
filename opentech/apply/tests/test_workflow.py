@@ -69,6 +69,23 @@ class TestPhaseCreation(SimpleTestCase):
         phase = PhaseFactory(actions=actions)
         self.assertEqual(phase[action.name], action)
 
+    def test_uses_name_if_no_public(self):
+        phase = Phase('Phase Name')
+        self.assertEqual(phase.public_name, phase.name)
+
+    def test_uses_public_if_provided(self):
+        public_name = 'Public Name'
+        phase = Phase('Phase Name', public_name=public_name)
+        self.assertEqual(phase.public_name, public_name)
+        self.assertNotEqual(phase.public_name, phase.name)
+
+    def test_uses_public_if_provided_on_class(self):
+        class NewPhase(Phase):
+            public_name = 'Public Name'
+        phase = NewPhase('Phase Name')
+        self.assertEqual(phase.public_name, NewPhase.public_name)
+        self.assertNotEqual(phase.public_name, phase.name)
+
 
 class TestActions(SimpleTestCase):
     def test_can_create_action(self):

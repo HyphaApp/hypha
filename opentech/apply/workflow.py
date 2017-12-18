@@ -115,10 +115,17 @@ class Stage:
 class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
+    public_name: str = ''
 
-    def __init__(self, name: str='') -> None:
+    def __init__(self, name: str='', public_name:str = '') -> None:
         if name:
             self.name = name
+
+        if public_name:
+            self.public_name = public_name
+        elif not self.public_name:
+            self.public_name = self.name
+
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
@@ -160,10 +167,8 @@ class ChangePhaseAction(Action):
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            phase = globals()[self.target_phase]
-        else:
-            phase = self.target_phase
-        return phase
+            return phase.stage.current(self.target_phase, '0')
+        return self.target_phase
 
 
 class NextPhaseAction(Action):
@@ -182,16 +187,19 @@ next_phase = NextPhaseAction('Progress')
 
 class ReviewPhase(Phase):
     name = 'Internal Review'
+    public_name = 'In review'
     actions = [NextPhaseAction('Close Review')]
 
 
 class DeterminationWithProgressionPhase(Phase):
     name = 'Under Discussion'
+    public_name = 'In review'
     actions = [progress_stage, reject_action]
 
 
 class DeterminationWithNextPhase(Phase):
     name = 'Under Discussion'
+    public_name = 'In review'
     actions = [NextPhaseAction('Open Review'), reject_action]
 
 
