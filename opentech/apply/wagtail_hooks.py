@@ -4,4 +4,3 @@ from .admin import ApplyAdminGroup
 
 
 modeladmin_register(ApplyAdminGroup)
-
