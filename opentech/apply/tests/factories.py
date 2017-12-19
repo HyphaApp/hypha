@@ -43,7 +43,7 @@ class PhaseFactory(factory.Factory):
     name = factory.Faker('word')
     actions = ListSubFactory(ActionFactory, count=factory.SelfAttribute('num_actions'))
     stage = factory.PostGeneration(
-            lambda obj, create, extracted, **kwargs: StageFactory.build(phases=[obj])
+        lambda obj, create, extracted, **kwargs: StageFactory.build(phases=[obj])
     )
 
     @classmethod
