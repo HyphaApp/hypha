@@ -1,7 +1,14 @@
 from django.test import SimpleTestCase
 from django.forms import Form
 
-from opentech.apply.workflow import Action, Phase, Stage, Workflow
+from opentech.apply.workflow import (
+    Action,
+    ChangePhaseAction,
+    NextPhaseAction,
+    Phase,
+    Stage,
+    Workflow,
+)
 
 from .factories import ActionFactory, PhaseFactory, StageFactory, WorkflowFactory
 
@@ -100,3 +107,15 @@ class TestActions(SimpleTestCase):
         action = ActionFactory()
         with self.assertRaises(NotImplementedError):
             action.process('')
+
+
+class TestCustomActions(SimpleTestCase):
+    def test_next_phase_action_returns_none_if_no_next(self):
+        action = NextPhaseAction('the next!')
+        phase = PhaseFactory(actions=[action])
+        self.assertEqual(phase.process(action.name), None)
+
+    def test_next_phase_action_returns_next_phase(self):
+        action = NextPhaseAction('the next!')
+        stage = StageFactory.build(num_phases=2, phases__actions=[action])
+        self.assertEqual(stage.phases[0].process(action.name), stage.phases[1])
