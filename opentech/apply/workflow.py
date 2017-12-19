@@ -45,7 +45,7 @@ class Workflow:
         for i, stage in enumerate(self.stages):
             if stage == current_stage:
                 try:
-                    return self.stages[i+1]
+                    return self.stages[i + 1]
                 except IndexError:
                     pass
 
@@ -68,7 +68,6 @@ class Workflow:
         if next_stage:
             return stage.next()
         return None
-
 
     def __str__(self) -> str:
         return self.name
@@ -112,17 +111,18 @@ class Stage:
         for i, phase in enumerate(self.phases):
             if phase == current_phase:
                 try:
-                    return self.phases[i+1]
+                    return self.phases[i + 1]
                 except IndexError:
                     pass
         return None
+
 
 class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
 
-    def __init__(self, name: str='', public_name:str = '') -> None:
+    def __init__(self, name: str='', public_name: str ='') -> None:
         if name:
             self.name = name
 

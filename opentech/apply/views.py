@@ -1,5 +1,4 @@
 from django import forms
-from django.shortcuts import render
 from django.template.response import TemplateResponse
 
 from .workflow import SingleStage, DoubleStage
@@ -18,7 +17,7 @@ class BasicSubmissionForm(forms.Form):
 
 def demo_workflow(request, wf_id):
     wf = int(wf_id)
-    workflow_class = workflows[wf-1]
+    workflow_class = workflows[wf - 1]
     workflow = workflow_class([BasicSubmissionForm] * wf)
 
     current_phase = request.POST.get('current')
@@ -59,5 +58,3 @@ def demo_workflow(request, wf_id):
         'form': form,
     }
     return TemplateResponse(request, 'apply/demo_workflow.html', context)
-
-

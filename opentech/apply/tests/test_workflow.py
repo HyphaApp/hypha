@@ -9,6 +9,7 @@ from .factories import ActionFactory, PhaseFactory, StageFactory, WorkflowFactor
 class TestWorkflowCreation(SimpleTestCase):
     def test_can_create_workflow(self):
         stage = StageFactory()
+
         class NewWorkflow(Workflow):
             name = 'single_stage'
             stage_classes = [stage]
