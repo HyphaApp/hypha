@@ -119,3 +119,11 @@ class TestCustomActions(SimpleTestCase):
         action = NextPhaseAction('the next!')
         stage = StageFactory.build(num_phases=2, phases__actions=[action])
         self.assertEqual(stage.phases[0].process(action.name), stage.phases[1])
+
+    def test_change_phase_will_skip_phase(self):
+        target_phase = PhaseFactory()
+        action = ChangePhaseAction(target_phase.name, 'skip!')
+        other_phases = PhaseFactory.create_batch(2, actions=[action])
+        stage = StageFactory.build(phases=[*other_phases, target_phase])
+        self.assertEqual(stage.phases[0].process(action.name), stage.phases[2])
+        self.assertEqual(stage.phases[1].process(action.name), stage.phases[2])
