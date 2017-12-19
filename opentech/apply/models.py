@@ -8,6 +8,10 @@ from opentech.utils.models import SocialFields, ListingFields
 
 from .workflow import SingleStage, DoubleStage
 
+WORKFLOW_CLASS = {
+    SingleStage.name: SingleStage,
+    DoubleStage.name: DoubleStage,
+}
 
 class ApplyHomePage(Page, SocialFields, ListingFields):
     # Only allow creating HomePages at the root level
@@ -32,9 +36,13 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
 class FundPage(Page):
     parent_page_types = [ApplyHomePage]
     WORKFLOWS = (
-        ('single', SingleStage),
-        ('double', DoubleStage),
+        ('single', SingleStage.name),
+        ('double', DoubleStage.name),
     )
 
     name = models.CharField(max_length=60)
     workflow = models.CharField(choices=WORKFLOWS, max_length=100, default=WORKFLOWS[0][0])
+
+    @property
+    def workflow_class(self):
+        return WORKFLOW_CLASS[self.get_workflow_display()]
