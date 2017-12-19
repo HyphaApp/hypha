@@ -9,7 +9,7 @@ workflows = [SingleStage, DoubleStage]
 
 logs = []
 
-submission = {}
+submission: dict = {}
 
 
 class BasicSubmissionForm(forms.Form):
