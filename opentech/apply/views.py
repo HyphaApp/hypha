@@ -6,16 +6,15 @@ from .workflow import SingleStage, DoubleStage
 
 workflows = [SingleStage, DoubleStage]
 
-logs = []
-
-submission: dict = {}
-
 
 class BasicSubmissionForm(forms.Form):
     who_are_you = forms.CharField()
 
 
 def demo_workflow(request, wf_id):
+    logs = request.session.get('logs', list())
+    submission = request.session.get('submission', dict())
+
     wf = int(wf_id)
     workflow_class = workflows[wf - 1]
     workflow = workflow_class([BasicSubmissionForm] * wf)
@@ -27,7 +26,7 @@ def demo_workflow(request, wf_id):
         if current.stage.name not in submission:
             submitted_form = current.stage.form(request.POST)
             if submitted_form.is_valid():
-                submission[current.stage.name] = submitted_form
+                submission[current.stage.name] = submitted_form.cleaned_data
                 phase = current
                 logs.append(
                     f'{phase.stage}: Form was submitted'
@@ -49,6 +48,9 @@ def demo_workflow(request, wf_id):
         form = phase.stage.form
     else:
         form = None
+
+    request.session['logs'] = logs
+    request.session['submission'] = submission
 
     context = {
         'workflow': workflow,
