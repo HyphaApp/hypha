@@ -17,8 +17,8 @@ def create_homepage(apps, schema_editor):
 
     # Create a new homepage
     applyhomepage = ApplyHomePage.objects.create(
-        title="ApplyHomepage",
-        draft_title="ApplyHomepage",
+        title="Apply Homepage",
+        draft_title="Apply Homepage",
         slug='apply',
         content_type=homepage_content_type,
         path='00010002',
@@ -29,7 +29,7 @@ def create_homepage(apps, schema_editor):
 
     # Create a site with the new homepage set as the root
     Site.objects.create(
-        hostname='apply.localhost', root_page=applyhomepage, is_default_site=True)
+        hostname='apply.localhost', root_page=applyhomepage, is_default_site=False)
 
 
 class Migration(migrations.Migration):
