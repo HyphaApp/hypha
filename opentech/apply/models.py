@@ -6,6 +6,8 @@ from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 
 from opentech.utils.models import SocialFields, ListingFields
 
+from .workflow import SingleStage, DoubleStage
+
 
 class ApplyHomePage(Page, SocialFields, ListingFields):
     # Only allow creating HomePages at the root level
@@ -25,8 +27,14 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
         Page.promote_panels +
         SocialFields.promote_panels +
         ListingFields.promote_panels
-    )
 
 
 class FundPage(Page):
     parent_page_types = [ApplyHomePage]
+    WORKFLOWS = (
+        ('single', SingleStage),
+        ('double', DoubleStage),
+    )
+
+    name = models.CharField(max_length=60)
+    workflow = models.CharField(choices=WORKFLOWS, max_length=100, default=WORKFLOWS[0][0])
