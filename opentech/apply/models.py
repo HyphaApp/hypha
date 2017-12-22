@@ -6,10 +6,10 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailforms.models import AbstractForm
 from wagtail.wagtailsearch import index
 
 from opentech.stream_forms.blocks import FormFieldsBlock
+from opentech.stream_forms.models import AbstractStreamForm
 from opentech.utils.models import SocialFields, ListingFields
 
 from .workflow import SingleStage, DoubleStage
@@ -42,7 +42,7 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
     )
 
 
-class FundPage(AbstractForm):
+class FundPage(AbstractStreamForm):
     parent_page_types = [ApplyHomePage]
     WORKFLOWS = (
         ('single', SingleStage.name),
@@ -56,7 +56,7 @@ class FundPage(AbstractForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
-    content_panels = AbstractForm.content_panels + [
+    content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         StreamFieldPanel('form_fields'),
     ]
