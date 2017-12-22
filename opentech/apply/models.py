@@ -2,7 +2,6 @@ from django.db import models
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch import index
-from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 
 from opentech.utils.models import SocialFields, ListingFields
 
@@ -13,6 +12,7 @@ WORKFLOW_CLASS = {
     SingleStage.name: SingleStage,
     DoubleStage.name: DoubleStage,
 }
+
 
 class ApplyHomePage(Page, SocialFields, ListingFields):
     # Only allow creating HomePages at the root level

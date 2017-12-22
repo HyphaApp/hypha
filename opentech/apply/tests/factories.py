@@ -1,6 +1,8 @@
 from django.forms import Form
 import factory
+import wagtail_factories
 
+from opentech.apply.models import FundPage
 from opentech.apply.workflow import Action, Phase, Stage, Workflow
 
 
@@ -107,3 +109,8 @@ class WorkflowFactory(factory.Factory):
         stages = kwargs.pop('stage_classes')
         new_class = type(model_class.__name__, (model_class,), {'name': name, 'stage_classes': stages})
         return new_class(*args, **kwargs)
+
+
+class FundPageFactory(wagtail_factories.PageFactory):
+    class Meta:
+        model = FundPage
