@@ -1,8 +1,15 @@
 from django.db import models
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    StreamFieldPanel,
+)
+from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailforms.models import AbstractForm
 from wagtail.wagtailsearch import index
 
+from opentech.stream_forms.blocks import FormFieldsBlock
 from opentech.utils.models import SocialFields, ListingFields
 
 from .workflow import SingleStage, DoubleStage
@@ -35,7 +42,7 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
     )
 
 
-class FundPage(Page):
+class FundPage(AbstractForm):
     parent_page_types = [ApplyHomePage]
     WORKFLOWS = (
         ('single', SingleStage.name),
@@ -43,11 +50,13 @@ class FundPage(Page):
     )
 
     workflow = models.CharField(choices=WORKFLOWS, max_length=100, default=WORKFLOWS[0][0])
+    form_fields = StreamField(FormFieldsBlock())
 
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
-    content_panels = Page.content_panels + [
+    content_panels = AbstractForm.content_panels + [
         FieldPanel('workflow'),
+        StreamFieldPanel('form_fields'),
     ]
