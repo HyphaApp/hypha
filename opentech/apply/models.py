@@ -47,3 +47,7 @@ class FundPage(Page):
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
+
+    content_panels = Page.content_panels + [
+        FieldPanel('workflow'),
+    ]
