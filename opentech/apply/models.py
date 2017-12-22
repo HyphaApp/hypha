@@ -32,6 +32,7 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
         Page.promote_panels +
         SocialFields.promote_panels +
         ListingFields.promote_panels
+    )
 
 
 class FundPage(Page):
@@ -41,7 +42,6 @@ class FundPage(Page):
         ('double', DoubleStage.name),
     )
 
-    name = models.CharField(max_length=60)
     workflow = models.CharField(choices=WORKFLOWS, max_length=100, default=WORKFLOWS[0][0])
 
     @property
