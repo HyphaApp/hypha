@@ -8,6 +8,7 @@ from opentech.utils.models import SocialFields, ListingFields
 
 from .workflow import SingleStage, DoubleStage
 
+
 WORKFLOW_CLASS = {
     SingleStage.name: SingleStage,
     DoubleStage.name: DoubleStage,
