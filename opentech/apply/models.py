@@ -1,11 +1,13 @@
 from django.db import models
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
     InlinePanel,
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailsearch import index
 
 from opentech.stream_forms.blocks import FormFieldsBlock
@@ -59,4 +61,18 @@ class FundPage(AbstractStreamForm):
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         StreamFieldPanel('form_fields'),
+    ]
+
+
+class Option(Orderable):
+    value = models.CharField(max_length=255)
+    category = ParentalKey('Category', related_name='options')
+
+
+class Category(ClusterableModel):
+    name = models.CharField(max_length=255)
+
+    panels = [
+        FieldPanel('name'),
+        InlinePanel('options', label='Options'),
     ]

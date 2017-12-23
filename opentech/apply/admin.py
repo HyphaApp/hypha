@@ -1,3 +1,7 @@
-# from django.contrib import admin
+from wagtail.contrib.modeladmin.options import ModelAdmin
 
-# Register your models here.
+from .models import Category
+
+
+class CategoryAdmin(ModelAdmin):
+    model = Category
