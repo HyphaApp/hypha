@@ -25,6 +25,8 @@ class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
         super().__init__(*args, **kwargs)
 
     def _html_output(self, *args, **kwargs):
+        # Replaces the form fields with the display fields
+        # should only add new streamblocks and wont affect validation
         fields = self.fields.copy()
         self.fields = self.display
         render = super()._html_output(*args, **kwargs)
@@ -33,6 +35,7 @@ class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
 
 
 class BlockFieldWrapper:
+    """Wraps block stream blocks so that they can be rendered as a field within a form"""
     is_hidden = False
     label = None
     help_text = None
