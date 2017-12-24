@@ -1,11 +1,12 @@
 from collections import OrderedDict
 
-from django.forms.forms import BaseForm, DeclarativeFieldsMetaclass
-from django.forms.fields import Field
+from django.forms.forms import DeclarativeFieldsMetaclass
 
+from wagtail.wagtailforms.forms import BaseForm
 from wagtail.wagtailforms.models import AbstractForm
 
 from .blocks import FormFieldBlock
+
 
 class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
     def __new__(mcs, name, bases, attrs):
@@ -16,14 +17,6 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
 
 
 class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('label_suffix', '')
-
-        self.user = kwargs.pop('user', None)
-        self.page = kwargs.pop('page', None)
-
-        super().__init__(*args, **kwargs)
-
     def _html_output(self, *args, **kwargs):
         # Replaces the form fields with the display fields
         # should only add new streamblocks and wont affect validation
