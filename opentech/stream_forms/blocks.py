@@ -52,6 +52,7 @@ CHARFIELD_FORMATS = [
     ('url', _('URL')),
 ]
 
+
 class CharFieldBlock(OptionalFormFieldBlock):
     format = ChoiceBlock(choices=CHARFIELD_FORMATS, required=False, label=_('Format'))
     default_value = CharBlock(required=False, label=_('Default value'))

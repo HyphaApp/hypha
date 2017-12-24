@@ -32,6 +32,7 @@ class BlockFieldWrapper:
     is_hidden = False
     label = None
     help_text = None
+
     def __init__(self, block):
         self.block = block
 
