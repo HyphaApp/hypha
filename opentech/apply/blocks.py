@@ -24,7 +24,11 @@ class CategoryQuestionBlock(FormFieldBlock):
     category = CategoryChooserBlock('apply.Category')
     multi = BooleanBlock(label='Multi select', required=False)
 
-    field_class = forms.MultipleChoiceField
+    def get_field_class(self, struct_value):
+        if struct_value['multi']:
+            return forms.MultipleChoiceField
+        else:
+            return forms.ChoiceField
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
