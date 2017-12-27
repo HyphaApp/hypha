@@ -32,8 +32,8 @@ class CategoryQuestionBlock(FormFieldBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        options = struct_value['category'].options.all()
-        choices = ((option.id, option.value) for option in options)
+        category  = struct_value['category']
+        choices = category.options.values_list('id', 'value')
         kwargs.update({'choices': choices})
         return kwargs
 
