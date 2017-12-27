@@ -1,57 +1,9 @@
 from collections import OrderedDict
 
-from django.forms.forms import DeclarativeFieldsMetaclass
-
-from wagtail.wagtailforms.forms import BaseForm
 from wagtail.wagtailforms.models import AbstractForm
 
 from .blocks import FormFieldBlock
-
-
-class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
-    def __new__(mcs, name, bases, attrs):
-        display = attrs.copy()
-        new_class = super(MixedFieldMetaclass, mcs).__new__(mcs, name, bases, attrs)
-        new_class.display = display
-        return new_class
-
-
-class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
-    def _html_output(self, *args, **kwargs):
-        # Replaces the form fields with the display fields
-        # should only add new streamblocks and wont affect validation
-        fields = self.fields.copy()
-        self.fields = self.display
-        render = super()._html_output(*args, **kwargs)
-        self.fields = fields
-        return render
-
-
-class BlockFieldWrapper:
-    """Wraps block stream blocks so that they can be rendered as a field within a form"""
-    is_hidden = False
-    label = None
-    help_text = None
-
-    def __init__(self, block):
-        self.block = block
-
-    def get_bound_field(self, *args, **kwargs):
-        return self
-
-    def css_classes(self):
-        return list()
-
-    @property
-    def errors(self):
-        return list()
-
-    @property
-    def html_name(self):
-        return self.block.id
-
-    def __str__(self):
-        return str(self.block.value)
+from .forms import BlockFieldWrapper, StreamBaseForm
 
 
 class AbstractStreamForm(AbstractForm):
