@@ -14,6 +14,7 @@ from opentech.stream_forms.models import AbstractStreamForm
 from opentech.utils.models import SocialFields, ListingFields
 
 from .blocks import CustomFormFieldsBlock
+from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
 
@@ -46,12 +47,13 @@ class ApplyHomePage(Page, SocialFields, ListingFields):
 
 class FundPage(AbstractStreamForm):
     parent_page_types = [ApplyHomePage]
-    WORKFLOWS = (
-        ('single', SingleStage.name),
-        ('double', DoubleStage.name),
-    )
+    base_form_class = WorkflowFormAdminForm
+    WORKFLOWS = {
+        'single': SingleStage.name,
+        'double': DoubleStage.name,
+    }
 
-    workflow = models.CharField(choices=WORKFLOWS, max_length=100, default=WORKFLOWS[0][0])
+    workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
     form_fields = StreamField(CustomFormFieldsBlock())
 
     @property
