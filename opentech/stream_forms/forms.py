@@ -4,6 +4,10 @@ from wagtail.wagtailforms.forms import BaseForm
 
 
 class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
+    """Stores all fields passed to the class and not just the field type.
+    This allows the form to be rendered when Field-like blocks are passed
+    in as part of the definition
+    """
     def __new__(mcs, name, bases, attrs):
         display = attrs.copy()
         new_class = super(MixedFieldMetaclass, mcs).__new__(mcs, name, bases, attrs)
@@ -23,7 +27,7 @@ class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
 
 
 class BlockFieldWrapper:
-    """Wraps block stream blocks so that they can be rendered as a field within a form"""
+    """Wraps stream blocks so that they can be rendered as a field within a form"""
     is_hidden = False
     label = None
     help_text = None
