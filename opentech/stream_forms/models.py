@@ -10,9 +10,12 @@ class AbstractStreamForm(AbstractForm):
     class Meta:
         abstract = True
 
+    def get_defined_fields(self):
+        return self.form_fields
+
     def get_form_fields(self):
         form_fields = OrderedDict()
-        field_blocks = self.form_fields
+        field_blocks = self.get_defined_fields()
         for struct_child in field_blocks:
             block = struct_child.block
             struct_value = struct_child.value

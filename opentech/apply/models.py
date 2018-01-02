@@ -56,6 +56,9 @@ class FundPage(AbstractStreamForm):
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
     forms = StreamField(FormsBlock())
 
+    def get_defined_fields(self):
+        return self.forms[0].value['fields']
+
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
