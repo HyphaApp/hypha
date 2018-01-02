@@ -13,7 +13,7 @@ from wagtail.wagtailsearch import index
 from opentech.stream_forms.models import AbstractStreamForm
 from opentech.utils.models import SocialFields, ListingFields
 
-from .blocks import CustomFormFieldsBlock
+from .blocks import FormsBlock
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -54,7 +54,7 @@ class FundPage(AbstractStreamForm):
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
-    form_fields = StreamField(CustomFormFieldsBlock())
+    forms = StreamField(FormsBlock())
 
     @property
     def workflow_class(self):
@@ -62,7 +62,7 @@ class FundPage(AbstractStreamForm):
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
-        StreamFieldPanel('form_fields'),
+        StreamFieldPanel('forms'),
     ]
 
 

@@ -10,7 +10,7 @@ import modelcluster.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('apply', '0004_fundpage_form_fields'),
+        ('apply', '0004_fundpage_add_forms'),
     ]
 
     operations = [
