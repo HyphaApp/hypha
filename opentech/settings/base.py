@@ -12,16 +12,18 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    'opentech.apply',
-    'opentech.categories',
     'opentech.esi',
     'opentech.forms',
     'opentech.home',
     'opentech.images',
     'opentech.navigation',
+    'opentech.news',
+    'opentech.people',
     'opentech.search',
+    'opentech.standardpages',
     'opentech.utils',
 
+    'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
     'wagtail.contrib.wagtailsearchpromotions',
@@ -52,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -161,7 +163,7 @@ USE_TZ = True
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'static_compiled'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -220,10 +222,25 @@ LOGGING = {
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "opentech.fund"
+WAGTAIL_SITE_NAME = "opentech"
 
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
+
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.wagtailadmin.rich_text.HalloRichTextArea',
+        'OPTIONS': {
+            'features': [
+                'bold', 'italic',
+                'h3', 'h4', 'h5',
+                'ol', 'ul',
+                'link'
+            ]
+        }
+    },
+}
+
 
 PASSWORD_REQUIRED_TEMPLATE = 'password_required.html'
 

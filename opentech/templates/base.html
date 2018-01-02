@@ -64,77 +64,83 @@
             <!-- End Google Tag Manager (noscript) -->
         {% endif %}
 
+        {% include "includes/sprites.html" %}
+
         {% wagtailuserbar %}
 
-        <header>
-            <div class="container logo-container">
-                <a href="{% slugurl 'home' %}" class="logo">
-                    opentech.fund
+        <header class="header">
+            <div class="header__inner wrapper wrapper--large">
+                <a href="{% slugurl 'home' %}">
+                    <img class="header__logo" src="https://placehold.it/150x100" alt="Logo for opentech">
                 </a>
-            </div>
-            <section>
-                <a href="#" class="menu-button">Menu</a>
-                <div class="container">
+
+                <div class="header__menu-toggle">
+                    <span>Menu</span>
+                    <button class="button button-menu-toggle js-mobile-menu-toggle" aria-haspopup="true">
+                        <span class="button-menu-toggle__line"></span>
+                        <span class="button-menu-toggle__line"></span>
+                        <span class="button-menu-toggle__line"></span>
+                        <span class="button-menu-toggle__line"></span>
+                    </button>
+                </div>
+
+                <section class="header__menus header__menus--desktop">
+                    <div class="header__inner--top">
+                        {% secondarynav %}
+                        <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search">
+                            <input class="input" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
+                            <button class="button" type="submit">
+                                <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
+                            </button>
+                        </form>
+                    </div>
 
                     {% primarynav %}
+                </section>
 
-                    {% secondarynav %}
-
-                    <form action="{% url 'search' %}" method="get" role="search">
-                        <input type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
-                        <input type="submit" value="Search">
-                    </form>
-
-                </div>
-            </section>
-
-            {% block breadcrumbs %}
-                {% include "navigation/breadcrumbs.html" %}
-            {% endblock %}
-
+                <section class="header__menus header__menus--mobile">
+                    {% primarynav %}
+                </section>
+            </div>
         </header>
 
-        <main>
+        <main class="wrapper wrapper--large wrapper--main">
             {% block content %}{% endblock %}
         </main>
 
-        <footer>
+        <footer class="footer">
+            <div class="footer__inner wrapper wrapper--large">
+                <div class="footer__nav-container">
+                    <section class="footer__social-links">
+                        <h5 class="footer__heading">Follow us:</h5>
+                        {% if settings.utils.SocialMediaSettings.twitter_handle %}
+                            <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
+                                <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
+                            </a>
+                        {% endif %}
+                        {% if settings.utils.SocialMediaSettings.facebook_app_id %}
+                            <a href="https://www.facebook.com/{{ settings.utils.SocialMediaSettings.facebook_app_id }}">
+                                <svg class="icon icon--footer-social"><use xlink:href="#facebook"></use></svg>
+                            </a>
+                        {% endif %}
+                    </section>
 
-            <div class="newsletter">
-                <h1>Stay up to date</h1>
-                <p>Sign up to receive our quarterly newsletter</p>
+                    <section>
+                        {% footernav %}
+                    </section>
+
+                    <section>
+                        {% footerlinks %}
+                    </section>
+                </div>
+
+                <div class="footer__credit" role="contentinfo">
+                    {% if COPYRIGHT %}
+                        <p>© {% now "Y" %} {{ COPYRIGHT }}</p>
+                    {% endif %}
+                    <div>Site by <a href="https://torchbox.com/">Torchbox</a></div>
+                </div>
             </div>
-
-            <section>
-                <h2> Follow us </h2>
-                {% if settings.utils.SocialMediaSettings.twitter_handle %}
-                    <div>
-                        <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
-                            on Twitter
-                        </a>
-                    </div>
-                {% endif %}
-                {% if settings.utils.SocialMediaSettings.facebook_app_id %}
-                    <div>
-                        <a href="https://www.facebook.com/{{ settings.utils.SocialMediaSettings.facebook_app_id }}">
-                            on Facebook
-                        </a>
-                    </div>
-                {% endif %}
-            </section>
-
-            <section>
-                {% footernav %}
-            </section>
-
-            <div class="container copyright" role="contentinfo">
-                {% if COPYRIGHT %}
-                    <p>© {% now "Y" %} {{ COPYRIGHT }}</p>
-                {% endif %}
-
-                <div class="site-credit">Site by <a href="https://torchbox.com/">Torchbox</a></div>
-            </div>
-
         </footer>
 
         <script type="text/javascript" src="{% static 'js/main.js' %}"></script>

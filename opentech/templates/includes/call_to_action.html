@@ -13,13 +13,13 @@ Example:
 {% if call_to_action %}
     <div class="call-to-action">
 
-        {{ call_to_action.title }}
+        <h2>{{ call_to_action.title }}</h2>
 
         {{ call_to_action.summary|richtext }}
 
         {% image call_to_action.image fill-450x300 %}
 
-        <a href="{{ call_to_action.get_link_url }}">{{ call_to_action.get_link_text }}</a>
+        <p><a href="{{ call_to_action.get_link_url }}">{{ call_to_action.get_link_text }}</a></p>
 
     </div>
 {% endif %}

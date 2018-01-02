@@ -5,10 +5,10 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 
-from opentech.utils.models import SocialFields, ListingFields
+from opentech.utils.models import BasePage
 
 
-class HomePage(Page, SocialFields, ListingFields):
+class HomePage(BasePage):
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
 
@@ -23,9 +23,3 @@ class HomePage(Page, SocialFields, ListingFields):
         FieldPanel('strapline'),
         SnippetChooserPanel('call_to_action'),
     ]
-
-    promote_panels = (
-        Page.promote_panels +
-        SocialFields.promote_panels +
-        ListingFields.promote_panels
-    )

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <div class="intro">
+        <div class="container">
+            <h1>{{ page.first_name }} {{ page.last_name }}</h1>
+            {% if page.introduction %}
+                <p>{{ page.introduction }}</p>
+            {% endif %}
+            {% if page.photo %}
+                {% image page.photo original %}
+            {% endif %}
+            {% if page.job_title %}
+                <p>{{ page.job_title }}</p>
+            {% endif %}
+            {% if page.website %}
+                <p>{{ page.website }}</p>
+            {% endif %}
+            {% if page.email %}
+                <p>{{ page.email }}</p>
+            {% endif %}
+
+            {% with phone_numbers=page.phone_numbers.all %}
+                {% if phone_numbers %}
+
+                    {% for related_phone_number in phone_numbers %}
+                        <p>{{ related_phone_number.phone_number }}</p>
+                    {% endfor %}
+
+                {% endif %}
+            {% endwith %}
+
+        </div>
+    </div>
+
+    <section class="main-body">
+        <div class="container">
+            {% include_block page.biography %}
+        </div>
+
+        <div class="container">
+            <h2>Person types</h2>
+            {% for person_type in page.person_types.all %}
+                <p>{{ person_type }}</p>
+            {% endfor %}
+
+            <h2>Social Media Links</h2>
+            {% for item in page.social_media_profile.all %}
+                <h3>{{ item.get_service_display }}</h3>
+                <p>{{ item.profile_url }}</p>
+            {% endfor %}
+        </div>
+    </section>
+
+{% endblock %}

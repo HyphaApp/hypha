@@ -1,44 +1,19 @@
 {% load wagtailcore_tags %}
 <nav role="navigation" aria-label="Primary">
-    <ul class="primary" role="menubar">
-        {% for snippet in primarynav %}
-            <li {% if snippet.submenus.exists %} class="parent" {% endif %} role="presentation">
-                {% pageurl page=snippet.menu_item as menu_item_url %}
-                <a href="{{ menu_item_url }}"
-                    role="menuitem"
-                    {% if snippet.submenus.exists %} aria-haspopup="true" {% endif %}
-                >
-                    {% if snippet.menu_label %}
-                        {{ snippet.menu_label }}
-                    {% else %}
-                        {{ snippet.menu_item.title }}
-                    {% endif %}
-
-                    {% if snippet.submenus.exists %}
-                        <span class="expander">+</span>
-                    {% endif %}
-                </a>
-
-                {% if snippet.submenus.exists %}
-                    <ul role="menu">
-                        {% for submenu in snippet.submenus.all %}
-                            <li role="presentation">
-                                {% pageurl page=submenu.menu_item as submenu_item_url %}
-                                <a href="{{ submenu_item_url }}"
-                                        role="menuitem"
-                                    >
-                                    {% if submenu.menu_label %}
-                                        {{ submenu.menu_label }}
-                                    {% else %}
-                                        {{ submenu.menu_item.title }}
-
-                                    {% endif %}
-                                </a>
-                            </li>
+    <ul class="nav nav--primary" role="menubar">
+        {% for link in primarynav %}
+            {% with children=link.value.page.get_children.live.public.in_menu %}
+                {% include_block link with has_children=children.exists class="primary" %}
+                {% if children.exists %}
+                    <ul class="nav nav--subnav" role="menu">
+                        <li class="nav__item nav__item--back js-subnav-back">&lsaquo; Back</li>
+                        {% include_block link %}
+                        {% for child in children.all %}
+                            {% include "navigation/includes/menu_item.html" with page=child class="secondary" %}
                         {% endfor %}
                     </ul>
                 {% endif %}
-            </li>
+            {% endwith %}
         {% endfor %}
     </ul>
 </nav>

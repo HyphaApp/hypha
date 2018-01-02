@@ -14,6 +14,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_PASSWORD_VALIDATORS = []
 
+INSTALLED_APPS = INSTALLED_APPS + [
+    'wagtail.contrib.wagtailstyleguide',
+]
 
 try:
     from .local import *  # noqa

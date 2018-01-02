@@ -13,17 +13,14 @@ from wagtail.wagtailsearch import index
 
 from wagtailcaptcha.models import WagtailCaptchaEmailForm
 
-from opentech.utils.models import (
-    ListingFields,
-    SocialFields,
-)
+from opentech.utils.models import BasePage
 
 
 class FormField(AbstractFormField):
     page = ParentalKey('FormPage', related_name='form_fields')
 
 
-class FormPage(WagtailCaptchaEmailForm, SocialFields, ListingFields):
+class FormPage(WagtailCaptchaEmailForm, BasePage):
     subpage_types = []
 
     introduction = models.TextField(blank=True)
@@ -47,9 +44,3 @@ class FormPage(WagtailCaptchaEmailForm, SocialFields, ListingFields):
             FieldPanel('subject'),
         ], "Email"),
     ]
-
-    promote_panels = (
-        Page.promote_panels +
-        SocialFields.promote_panels +
-        ListingFields.promote_panels
-    )
