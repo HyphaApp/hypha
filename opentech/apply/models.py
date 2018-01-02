@@ -24,7 +24,7 @@ WORKFLOW_CLASS = {
 }
 
 
-class ApplyHomePage(Page, SocialFields, ListingFields):
+class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
 

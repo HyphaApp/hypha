@@ -32,7 +32,7 @@ class CategoryQuestionBlock(FormFieldBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        category  = struct_value['category']
+        category = struct_value['category']
         choices = category.options.values_list('id', 'value')
         kwargs.update({'choices': choices})
         return kwargs
@@ -47,8 +47,11 @@ class CategoryQuestionBlock(FormFieldBlock):
 class CustomFormFieldsBlock(FormFieldsBlock):
     category = CategoryQuestionBlock(group=_('Custom'))
 
+
 class FormsBlock(StreamBlock):
     form = StructBlock([
-            ('form', StaticBlock(admin_text='Please add additional fields to this form or create an additional form below')),
-            ('fields', CustomFormFieldsBlock()),
-        ])
+        ('form', StaticBlock(
+            admin_text='Please add additional fields to this form or create an additional form below',
+        )),
+        ('fields', CustomFormFieldsBlock()),
+    ])

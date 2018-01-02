@@ -1,4 +1,3 @@
-from django import forms
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 
 
@@ -6,7 +5,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        model= self._meta.model
+        model = self._meta.model
 
         from .models import WORKFLOW_CLASS
         workflow = WORKFLOW_CLASS[model.WORKFLOWS[cleaned_data['workflow']]]
