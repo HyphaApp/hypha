@@ -1,6 +1,7 @@
 from wagtail.wagtailcore import blocks
-from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtail.wagtaildocs.blocks import DocumentChooserBlock
 from wagtail.wagtailembeds.blocks import EmbedBlock
+from wagtail.wagtailimages.blocks import ImageChooserBlock
 from wagtail.wagtailsnippets.blocks import SnippetChooserBlock
 
 
@@ -13,6 +14,15 @@ class ImageBlock(blocks.StructBlock):
         template = "blocks/image_block.html"
 
 
+class DocumentBlock(blocks.StructBlock):
+    document = DocumentChooserBlock()
+    title = blocks.CharBlock(required=False)
+
+    class Meta:
+        icon = "doc-full-inverse"
+        template = "blocks/document_block.html"
+
+
 class QuoteBlock(blocks.StructBlock):
     quote = blocks.CharBlock(classname="title")
     citation_link = blocks.URLBlock(required=False)
@@ -23,9 +33,8 @@ class QuoteBlock(blocks.StructBlock):
 
 
 # Main streamfield block to be inherited by Pages
-
 class StoryBlock(blocks.StreamBlock):
-    heading = blocks.CharBlock(classname="full title")
+    heading = blocks.CharBlock(classname="full title", icon='title')
     paragraph = blocks.RichTextBlock()
     image = ImageBlock()
     quote = QuoteBlock()
@@ -34,6 +43,7 @@ class StoryBlock(blocks.StreamBlock):
         'utils.CallToActionSnippet',
         template="blocks/call_to_action_block.html"
     )
+    document = DocumentBlock()
 
     class Meta:
         template = "blocks/stream_block.html"

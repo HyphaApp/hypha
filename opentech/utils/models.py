@@ -4,11 +4,12 @@ from django.db import models
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
-    PageChooserPanel
+    PageChooserPanel,
+    StreamFieldPanel,
 )
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
+from wagtail.wagtailcore import blocks
+from wagtail.wagtailcore.fields import StreamField, RichTextField
+from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.contrib.settings.models import BaseSetting, register_setting
@@ -88,21 +89,6 @@ class RelatedPage(Orderable, models.Model):
     ]
 
 
-# Related documents
-class RelatedDocument(Orderable, models.Model):
-    title = models.CharField(max_length=255, help_text="Document name")
-    document = models.ForeignKey('wagtaildocs.Document', null=True, blank=True, on_delete=models.SET_NULL, related_name='+', help_text="Please upload related documents")
-
-    class Meta:
-        abstract = True
-        ordering = ['sort_order']
-
-    panels = [
-        FieldPanel('title'),
-        DocumentChooserPanel('document'),
-    ]
-
-
 # Generic social fields abstract class to add social image/text to any new content type easily.
 class SocialFields(models.Model):
     social_image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
@@ -145,17 +131,58 @@ class ListingFields(models.Model):
 
 
 @register_snippet
-class CallToActionSnippet(LinkFields):
+class CallToActionSnippet(models.Model):
     title = models.CharField(max_length=255)
     summary = RichTextField(blank=True, max_length=255)
     image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
 
+    link = StreamField(
+        blocks.StreamBlock([
+            (
+                'external_link', blocks.StructBlock([
+                    ('url', blocks.URLBlock()),
+                    ('title', blocks.CharBlock()),
+                ], icon='link')
+            ),
+            (
+                'internal_link', blocks.StructBlock([
+                    ('page', blocks.PageChooserBlock()),
+                    ('title', blocks.CharBlock(required=False)),
+                ], icon='link'),
+            ),
+        ], max_num=1, required=True),
+        blank=True
+    )
+
     panels = [
         FieldPanel('title'),
         FieldPanel('summary'),
-    ] + LinkFields.panels + [
         ImageChooserPanel('image'),
+        StreamFieldPanel('link'),
     ]
+
+    def get_link_text(self):
+        # Link is required, so we should always have
+        # an element with index 0
+        block = self.link[0]
+
+        title = block.value['title']
+        if block.block_type == 'external_link':
+            return title
+
+        # Title is optional for internal_link
+        # so fallback to page's title, if it's empty
+        return title or block.value['page'].title
+
+    def get_link_url(self):
+        # Link is required, so we should always have
+        # an element with index 0
+        block = self.link[0]
+
+        if block.block_type == 'external_link':
+            return block.value['url']
+
+        return block.value['page'].get_url()
 
     def __str__(self):
         return self.title
@@ -181,7 +208,7 @@ class SocialMediaSettings(BaseSetting):
     site_name = models.CharField(
         max_length=255,
         blank=True,
-        default='opentech.fund',
+        default='opentech',
         help_text='Site name, used by Open Graph.',
     )
 
@@ -207,3 +234,16 @@ class SystemMessagesSettings(BaseSetting):
             FieldPanel('body_404'),
         ], '404 page'),
     ]
+
+
+class BasePage(SocialFields, ListingFields, Page):
+    show_in_menus_default = True
+
+    class Meta:
+        abstract = True
+
+    promote_panels = (
+        Page.promote_panels +
+        SocialFields.promote_panels +
+        ListingFields.promote_panels
+    )

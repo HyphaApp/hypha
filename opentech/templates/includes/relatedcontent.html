@@ -1,51 +1,41 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% if related_documents or related_pages %}
-    <section class="related">
-        <div class="container">
-            <ul>
+    <section class="grid">
+            {% for related_document in related_documents %}
+                {% with document=related_document.document %}
+                    <div class="card">
+                        <a href="{{ document.url }}">
+                            <h2>
+                                {% if related_document.title %}
+                                    {{ related_document.title }}
+                                    ({{ document.file_extension }})
+                                {% else %}
+                                    {{ document.filename }}
+                                {% endif %}
+                            </h2>
+                        </a>
+                    </div>
+                {% endwith %}
+            {% endfor %}
 
-                {% for related_document in related_documents %}
-                    {% with document=related_document.document %}
-                        <li>
-                            <a href="{{ document.url }}">
-                                <h2>
-                                    {% if related_document.title %}
-                                        {{ related_document.title }}
-                                        ({{ document.file_extension }})
-                                    {% else %}
-                                        {{ document.filename }}
-                                    {% endif %}
-                                </h2>
-                            </a>
-                        </li>
+            {% for related in related_pages %}
+                {# a related object links to the original page (related.source_page) and a related one (related.page) #}
+                {% if related.page.live %}
+                    {% with specific_related_page=related.page.specific %}
+                        <a class="card" href="{% pageurl specific_related_page %}">
+                            {% if specific_related_page.listing_image %}
+                                {% image specific_related_page.listing_image fill-450x300 %}
+                            {% endif %}
+                            <h2>
+                                {{ specific_related_page.listing_title|default:specific_related_page.title }}
+                            </h2>
+                            {% if specific_related_page.listing_summary or specific_related_page.introduction %}
+                                <p>{{ specific_related_page.listing_summary|default:specific_related_page.introduction }}</p>
+                            {% endif %}
+                        </a>
                     {% endwith %}
-                {% endfor %}
-
-                {% for related in related_pages %}
-                    {# a related object links to the original page (related.source_page) and a related one (related.page) #}
-                    {% if related.page.live %}
-                        {% with specific_related_page=related.page.specific %}
-                            <li>
-                                <a href="{% pageurl specific_related_page %}">
-                                    {% if specific_related_page.listing_image %}
-                                        {% image specific_related_page.listing_image fill-450x300 %}
-                                    {% endif %}
-                                    <div>
-                                        <h2>
-                                            {{ specific_related_page.listing_title|default:specific_related_page.title }}
-                                        </h2>
-                                        {% if specific_related_page.listing_summary or specific_related_page.introduction %}
-                                            <p>{{ specific_related_page.listing_summary|default:specific_related_page.introduction }}</p>
-                                        {% endif %}
-                                    </div>
-                                </a>
-                            </li>
-                        {% endwith %}
-                    {% endif %}
-                {% endfor %}
-
-            </ul>
-        </div>
+                {% endif %}
+            {% endfor %}
     </section>
 {% endif %}

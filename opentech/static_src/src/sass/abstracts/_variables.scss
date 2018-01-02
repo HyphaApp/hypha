@@ -1,0 +1,65 @@
+$color--primary: #6a737c;
+$color--secondary: #eaeaea;
+$color--tertiary: #f9f9f9;
+
+$color--white: #fff;
+$color--black: #141414;
+
+$color--default: $color--black;
+
+// Button colours
+$button-colours: (
+    primary:    (bg: $color--primary, color: #fff),
+    secondary:  (bg: $color--secondary, color: #000),
+    tertiary:   (bg: $color--tertiary, color: #000),
+);
+
+// Fonts
+$font--primary: Sans-Serif;
+$font--secondary: Sans-Serif;
+
+// Font weights
+$weight--bold: 700;
+$weight--semibold: 600;
+$weight--medium: 500;
+$weight--normal: 400;
+$weight--light: 200;
+
+// Font sizes
+$base-font-size: 16px;
+$base-line-height: 25px;
+$font-sizes: (
+
+    // non-standard large sizes
+    giga:    80px,
+    mega:    60px,
+    kilo:    48px,
+
+    // standard sizes
+    alpha:   38px,
+    beta:    30px,
+    gamma:   28px,
+    delta:   22px,
+    epsilon: 20px,
+    zeta:    16px,
+
+    // non-standard small sizes
+    milli:   14px
+);
+
+// Wrappers
+$site-width: 1280px;
+$wrapper--small: 790px;
+
+// Breakpoints
+$breakpoints: (
+    'mob-portrait'      '(min-width: 320px)',
+    'mob-landscape'     '(min-width: 480px)',
+    'tablet-portrait'   '(min-width: 768px)',
+    'tablet-landscape'  '(min-width: 1024px)',
+    'desktop'           '(min-width: 1280px)',
+    'deskop-wide'       '(min-width: 2556px)'
+);
+
+// Transition speeds
+$transition: 0.25s ease-out;

@@ -1,0 +1,12 @@
+{% load wagtailcore_tags %}{% pageurl page=page as item_url %}
+<li class="nav__item{% if class %} nav__item--{{class}}{% endif %}{% if has_children %} nav__item--is-parent{% endif %}" role="presentation">
+    <a class="nav__link{% if has_children %} js-open-subnav{% endif %}" href="{{ item_url }}"
+        role="menuitem"
+        {% if has_children %} aria-haspopup="true" {% endif %}
+        >
+        {{ title|default:page.title }}
+        {% if has_children %}
+            <span class="nav__icon">&rsaquo;</span>
+        {% endif %}
+    </a>
+</li>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+    <div class="intro">
+        <div class="container">
+            <h1>{{ page.title }}</h1>
+        </div>
+    </div>
+
+    <section class="main-body">
+        <div class="container">
+            {% if people.paginator.count %}
+                {% for person in people %}
+                    <article class="person">
+                        <h2><a href="{% pageurl person %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
+
+                        {% if person.listing_summary or person.introduction %}
+                            <p>{{ person.listing_summary|default:person.introduction }}</p>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+
+                {% include "includes/pagination.html" with paginator_page=people %}
+            {% else %}
+                {# no results #}
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}

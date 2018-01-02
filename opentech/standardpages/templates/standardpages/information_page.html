@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
+
+{% block content %}
+
+    <div class="wrapper wrapper--flex">
+        <section class="section section--main">
+            {% block breadcrumbs %}
+                {% include "navigation/breadcrumbs.html" %}
+            {% endblock %}
+
+            <h1>{{ page.title }}</h1>
+            <h5>{{ page.introduction }}</h5>
+
+            {% include_block page.body %}
+            {% include "includes/share.html" %}
+
+        </section>
+
+        {% sidebar %}
+
+    </div>
+
+    {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
+
+{% endblock %}

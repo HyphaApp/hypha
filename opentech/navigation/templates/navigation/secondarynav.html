@@ -1,19 +1,8 @@
 {% load wagtailcore_tags %}
 <nav role="navigation" aria-label="Secondary">
-    <ul class="secondary" role="menubar">
-        {% for label in secondarynav %}
-            <li role="presentation">
-                {% pageurl page=label.menu_item as menu_item_url %}
-                <a href="{{ menu_item_url }}"
-                    role="menuitem"
-                >
-                    {% if label.menu_label %}
-                        {{ label.menu_label }}
-                    {% else %}
-                        {{ label.menu_item.title }}
-                    {% endif %}
-                </a>
-            </li>
+    <ul class="nav nav--secondary" role="menubar">
+        {% for link in secondarynav %}
+            {% include_block link %}
         {% endfor %}
     </ul>
 </nav>

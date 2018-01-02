@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
+
+{% block content %}
+<div class="wrapper wrapper--flex">
+    <section class="section section--main">
+        <h1>{{ page.title }}</h1>
+        <p>{{ page.introduction }}</p>
+
+        {% if subpages.paginator.count %}
+            <div class="grid">
+                {% if subpages.object_list.exists %}
+                    {% for subpage in subpages.object_list.specific %}
+                        <a class="card-with-image" href="{% pageurl subpage %}">
+                            {% if subpage.listing_image %}
+                                {% image subpage.listing_image fill-450x300 %}
+                            {% else %}
+                                <img src="https://placehold.it/450x300">
+                            {% endif %}
+                            <div class="card">
+                                <h3 role="listitem">
+                                    {{ subpage.listing_title|default:subpage.title }}
+                                </h3>
+                                {% if subpage.listing_summary or subpage.introduction %}
+                                    <p>{{ subpage.listing_summary|default:subpage.introduction }}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    {# no items on this page #}
+                {% endif %}
+            </div>
+
+            {% include "includes/pagination.html" with paginator_page=subpages %}
+
+        {% else %}
+            {# no items on any page #}
+        {% endif %}
+
+    </section>
+
+    {% sidebar %}
+</div>
+{% endblock %}

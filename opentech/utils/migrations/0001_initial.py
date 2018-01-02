@@ -21,12 +21,10 @@ class Migration(migrations.Migration):
             name='CallToActionSnippet',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('link_url', models.URLField(blank=True)),
-                ('link_text', models.CharField(blank=True, max_length=255)),
                 ('title', models.CharField(max_length=255)),
+                ('link', wagtail.wagtailcore.fields.StreamField((('external_link', wagtail.wagtailcore.blocks.StructBlock((('url', wagtail.wagtailcore.blocks.URLBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock())), icon='link')), ('internal_link', wagtail.wagtailcore.blocks.StructBlock((('page', wagtail.wagtailcore.blocks.PageChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(required=False))), icon='link'))), blank=True)),
                 ('summary', wagtail.wagtailcore.fields.RichTextField(blank=True, max_length=255)),
                 ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('link_page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='wagtailcore.Page')),
             ],
             options={
                 'abstract': False,
@@ -39,7 +37,7 @@ class Migration(migrations.Migration):
                 ('twitter_handle', models.CharField(blank=True, help_text='Your Twitter username without the @, e.g. katyperry', max_length=255)),
                 ('facebook_app_id', models.CharField(blank=True, help_text='Your Facebook app ID.', max_length=255)),
                 ('default_sharing_text', models.CharField(blank=True, help_text='Default sharing text to use if social text has not been set on a page.', max_length=255)),
-                ('site_name', models.CharField(blank=True, default='opentech.fund', help_text='Site name, used by Open Graph.', max_length=255)),
+                ('site_name', models.CharField(blank=True, default='opentech', help_text='Site name, used by Open Graph.', max_length=255)),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
             ],
             options={

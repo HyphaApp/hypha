@@ -30,7 +30,7 @@ def register_inclusion_tag(register):
                 else:
                     return render_to_string(template, func(context))
 
-            return func
+            return tag_func
         return dec
     return esi_inclusion_tag
 
