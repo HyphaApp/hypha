@@ -1,11 +1,12 @@
-$color--primary: #6a737c;
-$color--secondary: #eaeaea;
-$color--tertiary: #f9f9f9;
-
 $color--white: #fff;
 $color--black: #141414;
+$color--light-blue: #43bbf1;
+$color--dark-blue: #25aae1;
 
 $color--default: $color--black;
+$color--primary: $color--light-blue;
+$color--secondary: #eaeaea;
+$color--tertiary: #f9f9f9;
 
 // Button colours
 $button-colours: (
