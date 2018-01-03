@@ -77,3 +77,20 @@
         @include rem-font-size($size);
     }
 }
+
+// button mixin
+@mixin button($bg) {
+    padding: 10px 60px;
+    background: $bg;
+    border: 1px solid $color--white;
+    transition: background $transition;
+
+    &:hover {
+        background: darken($bg, 8%);
+        transition: background $transition;
+    }
+
+    &:active {
+        background: darken($bg, 25%);
+    }
+}
