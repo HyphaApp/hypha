@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
             ],
             options={
-                'abstract': False,
+                'verbose_name_plural': 'Categories',
             },
         ),
         migrations.CreateModel(

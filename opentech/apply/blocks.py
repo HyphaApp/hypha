@@ -46,12 +46,3 @@ class CategoryQuestionBlock(FormFieldBlock):
 
 class CustomFormFieldsBlock(FormFieldsBlock):
     category = CategoryQuestionBlock(group=_('Custom'))
-
-
-class FormsBlock(StreamBlock):
-    form = StructBlock([
-        ('form', StaticBlock(
-            admin_text='Please add additional fields to this form or create an additional form below',
-        )),
-        ('fields', CustomFormFieldsBlock()),
-    ])
