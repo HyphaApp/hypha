@@ -27,6 +27,7 @@ WORKFLOW_CLASS = {
 class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
+    subpage_types = ['FundPage']
 
     strapline = models.CharField(blank=True, max_length=255)
 
