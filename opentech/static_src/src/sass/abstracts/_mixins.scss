@@ -1,11 +1,4 @@
-/*------------------------------------*\
-    $MIXINS
-\*------------------------------------*/
-
-
-/* ============================================
-    Media queries
-*/
+// Media queries
 @mixin media-query($queries...) {
     @each $query in $queries {
         @each $breakpoint in $breakpoints {
@@ -21,10 +14,7 @@
     }
 }
 
-
-/* ============================================
-  Placeholder text
-*/
+//   Placeholder text
 @mixin placeholder-text {
     // sass-lint:disable no-vendor-prefixes
     &.placeholder { @content; }
@@ -35,10 +25,7 @@
     // sass-lint:enddisable
 }
 
-
-/* ============================================
-  Hide text
-*/
+// Hide text
 @mixin hidden {
     position: absolute;
     width: 1px;
@@ -47,20 +34,14 @@
     clip: rect(1px, 1px, 1px, 1px);
 }
 
-
-/* ============================================
-  iOS Native vertical scroll
-*/
+// iOS Native vertical scroll
 @mixin native-vertical-scroll {
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-misspelled-properties
 }
 
-
-/* ============================================
-    Output a rem and px fallback value for the given property
-*/
+// Output a rem and px fallback value for the given property
 @mixin rem($property, $values) {
 
     $px:  ();
@@ -81,18 +62,12 @@
     // sass-lint:enddisable
 }
 
-
-/* ============================================
-    Output a `font-size: [x]rem;` declaration for the given px value
-*/
+// Output a `font-size: [x]rem;` declaration for the given px value
 @mixin rem-font-size($font-size) {
     @include rem(font-size, $font-size);
 }
 
-
-/* ============================================
-    Font sizes
-*/
+// Font sizes
 @mixin font-size($keyword) {
     $size: map-get($font-sizes, $keyword);
 
@@ -100,5 +75,22 @@
         @warn 'Font size ‘#{$keyword}’ does not exist';
     } @else {
         @include rem-font-size($size);
+    }
+}
+
+// button mixin
+@mixin button($bg) {
+    padding: 10px 60px;
+    background: $bg;
+    border: 1px solid $color--white;
+    transition: background $transition;
+
+    &:hover {
+        background: darken($bg, 8%);
+        transition: background $transition;
+    }
+
+    &:active {
+        background: darken($bg, 25%);
     }
 }

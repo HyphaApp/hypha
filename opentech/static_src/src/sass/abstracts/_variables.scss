@@ -1,11 +1,12 @@
-$color--primary: #6a737c;
-$color--secondary: #eaeaea;
-$color--tertiary: #f9f9f9;
-
 $color--white: #fff;
 $color--black: #141414;
+$color--light-blue: #43bbf1;
+$color--dark-blue: #25aae1;
 
 $color--default: $color--black;
+$color--primary: $color--light-blue;
+$color--secondary: #eaeaea;
+$color--tertiary: #f9f9f9;
 
 // Button colours
 $button-colours: (
@@ -15,13 +16,13 @@ $button-colours: (
 );
 
 // Fonts
-$font--primary: Sans-Serif;
+$font--primary: 'proxima-nova';
 $font--secondary: Sans-Serif;
 
 // Font weights
+$weight--black: 800;
 $weight--bold: 700;
 $weight--semibold: 600;
-$weight--medium: 500;
 $weight--normal: 400;
 $weight--light: 200;
 
@@ -36,15 +37,15 @@ $font-sizes: (
     kilo:    48px,
 
     // standard sizes
-    alpha:   38px,
-    beta:    30px,
-    gamma:   28px,
-    delta:   22px,
-    epsilon: 20px,
-    zeta:    16px,
+    alpha:   72px,
+    beta:    42px,
+    gamma:   36px,
+    delta:   24px,
+    epsilon: 17px,
+    zeta:    15px,
 
     // non-standard small sizes
-    milli:   14px
+    milli:   13px
 );
 
 // Wrappers

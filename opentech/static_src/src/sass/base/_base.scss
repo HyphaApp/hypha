@@ -20,7 +20,6 @@ html {
 
 body {
     overflow-x: hidden;
-    background-color: $color--tertiary;
 
     &.no-scroll {
         overflow-y: hidden;
@@ -61,4 +60,28 @@ ol {
     padding: 0;
     margin: 0;
     list-style: none;
+}
+
+.is-invisible,
+%is-invisible {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity, z-index, $transition;
+}
+
+.is-visible,
+%is-visible {
+    z-index: 5;
+    opacity: 1;
+    transition: opacity, z-index, $transition;
+}
+
+.is-hidden,
+%is-hidden {
+    display: none;
+}
+
+.is-unhidden,
+%is-unhidden {
+    display: block;
 }
