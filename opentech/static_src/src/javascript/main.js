@@ -1,6 +1,7 @@
 import $ from './globals';
 import MobileMenu from './components/mobile-menu';
 import MobileSubMenu from './components/mobile-sub-menu';
+import DesktopSearch from './components/desktop-search';
 
 // Open the mobile menu callback
 function openMobileMenu() {
@@ -21,6 +22,10 @@ $(function () {
 
     $(MobileSubMenu.selector()).each((index, el) => {
         new MobileSubMenu($(el));
+    });
+
+    $(DesktopSearch.selector()).each((index, el) => {
+        new DesktopSearch($(el), $('.header__search--desktop'));
     });
 
     // Toggle subnav visibility
