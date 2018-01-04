@@ -5,8 +5,18 @@ from typing import List, Sequence, Type, Union
 from django.forms import Form
 from django.utils.text import slugify
 
+"""
+This file defines classes which allow you to compose workflows based on the following strucutre:
+
+Workflow -> Stage -> Phase -> Action
+"""
+
 
 class Workflow:
+    """
+    Holds the stages of a workflow. When a stage finishes will return the next stage in the workflow
+    or `None` if no such stage exists.
+    """
     name: str = ''
     stage_classes: Sequence[Type['Stage']] = list()
 
@@ -74,6 +84,9 @@ class Workflow:
 
 
 class Stage:
+    """
+    Holds the Phases that are progressed through as part of the workflow process
+    """
     name: str = 'Stage'
     phases: list = list()
 
@@ -118,6 +131,10 @@ class Stage:
 
 
 class Phase:
+    """
+    Holds the Actions which a user can perform at each stage. A phase with no actions is
+    essentially locked
+    """
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
@@ -155,6 +172,12 @@ class Phase:
 
 
 class Action:
+    """
+    Base action class.
+
+    Actions return the phase within the current Stage which the workflow should progress to next.
+    A value of `None` will allow the Stage to progress.
+    """
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -166,6 +189,7 @@ class Action:
 # --- OTF Workflow ---
 
 class ChangePhaseAction(Action):
+    # Change to a specific phase
     def __init__(self, phase: Union['Phase', str], *args: str, **kwargs: str) -> None:
         self.target_phase = phase
         super().__init__(*args, **kwargs)
@@ -177,6 +201,7 @@ class ChangePhaseAction(Action):
 
 
 class NextPhaseAction(Action):
+    # Change to the next action in the current Stage
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         return phase.stage.next(phase)
 
@@ -196,19 +221,19 @@ class ReviewPhase(Phase):
     actions = [NextPhaseAction('Close Review')]
 
 
-class DeterminationWithProgressionPhase(Phase):
+class DiscussionWithProgressionPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [progress_stage, reject_action]
 
 
-class DeterminationPhase(Phase):
+class DiscussionPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [accept_action, reject_action]
 
 
-class DeterminationWithNextPhase(Phase):
+class DiscussionWithNextPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [NextPhaseAction('Open Review'), reject_action]
@@ -219,12 +244,23 @@ rejected = Phase(name='Rejected')
 accepted = Phase(name='Accepted')
 
 
+class RequestStage(Stage):
+    name = 'Request'
+    phases = [
+        DiscussionWithNextPhase(),
+        ReviewPhase(),
+        DiscussionPhase(),
+        accepted,
+        rejected,
+    ]
+
+
 class ConceptStage(Stage):
     name = 'Concept'
     phases = [
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase(),
-        DeterminationWithProgressionPhase(),
+        DiscussionWithProgressionPhase(),
         rejected,
     ]
 
@@ -232,11 +268,11 @@ class ConceptStage(Stage):
 class ProposalStage(Stage):
     name = 'Proposal'
     phases = [
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase(),
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase('AC Review', public_name='In AC review'),
-        DeterminationPhase(public_name='In AC review'),
+        DiscussionPhase(public_name='In AC review'),
         accepted,
         rejected,
     ]
@@ -244,7 +280,7 @@ class ProposalStage(Stage):
 
 class SingleStage(Workflow):
     name = 'Single Stage'
-    stage_classes = [ConceptStage]
+    stage_classes = [RequestStage]
 
 
 class DoubleStage(Workflow):
