@@ -59,14 +59,82 @@ blockquote {
 }
 
 // Default sizes
-h1, .alpha   { @include font-size(alpha); }
-h2, .beta    { @include font-size(beta); }
-h3, .gamma   { @include font-size(gamma); }
-h4, .delta   { @include font-size(delta); }
-h5, .epsilon { @include font-size(epsilon); }
-h6, .zeta    { @include font-size(zeta); }
+h1, .alpha   {
+    @include font-size(alpha);
+    font-weight: $weight--black;
+}
+
+h2, .beta    {
+    @include font-size(beta);
+    font-weight: $weight--bold;
+}
+
+h3, .gamma   {
+    @include font-size(gamma);
+    font-weight: $weight--light;
+}
+
+h4, .delta   {
+    @include font-size(delta);
+    font-weight: $weight--bold;
+}
+
+h5, .epsilon {
+    @include font-size(epsilon);
+    font-weight: $weight--bold;
+}
+
+h6, .zeta    {
+    @include font-size(zeta);
+    font-weight: $weight--bold;
+}
 
 .giga { @include font-size(giga); }
 .mega { @include font-size(mega); }
 .kilo { @include font-size(kilo); }
 small, .milli { @include font-size(milli); }
+
+// thin
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 200;
+    src: url('./../fonts/proxima-nova/proxima-nova-thin.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// regular
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./../fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// semibold
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 600;
+    src: url('./../fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// bold
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./../fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// black
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 800;
+    src: url('./../fonts/proxima-nova/proxima-nova-black.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
