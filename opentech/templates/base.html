@@ -68,10 +68,11 @@
 
         {% wagtailuserbar %}
 
-        <header class="header">
+        <header class="header header--standard">
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}">
-                    <img class="header__logo" src="https://placehold.it/150x100" alt="Logo for opentech">
+                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
 
                 <div class="header__menu-toggle">
@@ -86,22 +87,21 @@
 
                 <section class="header__menus header__menus--desktop">
                     <div class="header__inner--top">
-                        {% secondarynav %}
-                        <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search">
-                            <input class="input" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
-                            <button class="button" type="submit">
-                                <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
-                            </button>
-                        </form>
-                    </div>
+                        {% primarynav %}
 
-                    {% primarynav %}
+                    </div>
                 </section>
 
                 <section class="header__menus header__menus--mobile">
                     {% primarynav %}
                 </section>
             </div>
+
+            <div class="wrapper wrapper--small">
+                <h1 class="header__title">{{ page.title }}</h1>
+            </div>
+            <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
+            <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
         </header>
 
         <main class="wrapper wrapper--large wrapper--main">
