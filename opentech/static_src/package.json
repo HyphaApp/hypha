@@ -16,9 +16,11 @@
     "src_js": "src/javascript",
     "src_css": "src/sass",
     "src_img": "src/images",
+    "src_font": "src/fonts",
     "dest_js": "../static_compiled/js",
     "dest_css": "../static_compiled/css",
     "dest_img": "../static_compiled/images",
+    "dest_font": "../static_compiled/fonts",
     "dist": "../static_compiled"
   },
   "scripts": {
@@ -30,6 +32,7 @@
     "create_dirs:dest_js": "mkdir -p $npm_package_config_dest_js",
     "create_dirs:dest_css": "mkdir -p $npm_package_config_dest_css",
     "create_dirs:dest_img": "mkdir -p $npm_package_config_dest_img",
+    "create_dirs:dest_font": "mkdir -p $npm_package_config_dest_font",
     "create_dirs": "npm-run-all -p create_dirs:*",
     "clean:dist": "rm -rf $npm_package_config_dist/{js/**,css/**,images/**}",
     "clean": "npm-run-all -p clean:*",
@@ -56,6 +59,8 @@
     "lint": "npm-run-all -p lint:js lint:css",
 
     "//[ Watches ]//": "",
+    "watch:font": "onchange $npm_package_config_src_font'/**/**' -- npm-run-all sync:font reload",
+    "watch:font:debug": "onchange $npm_package_config_src_font'/**/**' -- npm-run-all sync:font",
     "watch:img": "onchange $npm_package_config_src_img'/**/**' -- npm-run-all sync:img reload",
     "watch:img:debug": "onchange $npm_package_config_src_img'/**/**' -- npm-run-all sync:img",
     "watch:js": "onchange $npm_package_config_dest_js'/**/**' -- npm-run-all -p reload lint:js",
@@ -64,6 +69,7 @@
     "watch": "npm-run-all -p watch:*",
 
     "//[ Syncs ]//": "",
+    "sync:fonts": "rsync -rtvu --delete $npm_package_config_src_font/ $npm_package_config_dest_font/",
     "sync:img": "rsync -rtvu --delete $npm_package_config_src_img/ $npm_package_config_dest_img/",
     "sync": "npm-run-all -p sync:*",
 
