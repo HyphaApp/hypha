@@ -12,15 +12,7 @@ from opentech.users.groups import GROUPS
 def add_groups(apps, schema_editor):
     # Workaround for https://code.djangoproject.com/ticket/23422
     db_alias = schema_editor.connection.alias
-    try:
-        emit_post_migrate_signal(2, False, db_alias)
-    except TypeError:
-        # Django < 1.9
-        try:
-            # Django 1.8
-            emit_post_migrate_signal(2, False, 'default', db_alias)
-        except TypeError:  # Django < 1.8
-            emit_post_migrate_signal([], 2, False, 'default', db_alias)
+    emit_post_migrate_signal(2, False, db_alias)
 
     Group = apps.get_model('auth.Group')
     Permission = apps.get_model('auth.Permission')

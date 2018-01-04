@@ -18,18 +18,29 @@ GROUPS = [
     {
         'name': 'Manager',
         'permissions': [
-            'add_image', 'change_image', 'delete_image',
-            'add_document', 'change_document', 'delete_document',
-            'access_admin'
+            'add_image',
+            'change_image',
+            'delete_image',
+            'add_document',
+            'change_document',
+            'delete_document',
+            'access_admin',
         ],
     },
     {
         'name': 'Administrator',
         'permissions': [
-            'add_image', 'change_image', 'delete_image',
-            'add_document', 'change_document', 'delete_document',
-            'add_user', 'change_user', 'delete_user',
-            'access_admin', 'change_site'
+            'add_image',
+            'change_image',
+            'delete_image',
+            'add_document',
+            'change_document',
+            'delete_document',
+            'add_user',
+            'change_user',
+            'delete_user',
+            'access_admin',
+            'change_site',
         ],
     }
 ]
