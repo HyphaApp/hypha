@@ -23,7 +23,6 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
             number_of_stages = len(workflow.stage_classes)
             plural_stage = 's' if number_of_stages > 1 else ''
 
-
             if number_of_forms != number_of_stages:
                 self.add_error(
                     None,

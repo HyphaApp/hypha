@@ -2,7 +2,7 @@ from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.wagtailcore.blocks import BooleanBlock, ChooserBlock, StreamBlock, StructBlock, StaticBlock
+from wagtail.wagtailcore.blocks import BooleanBlock, ChooserBlock
 from wagtail.wagtailcore.utils import resolve_model_string
 
 from opentech.stream_forms.blocks import FormFieldBlock, FormFieldsBlock
