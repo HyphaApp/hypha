@@ -114,6 +114,19 @@
     }
 
     &__icon {
+        &--cross {
+            @extend %is-hidden;
+        }
+
+        &--pixels {
+            position: absolute;
+            bottom: 0;
+            display: none;
+
+            @include media-query(tablet-portrait) {
+                display: block;
+            }
+        }
 
         &--pixels-left {
             left: 0;
@@ -130,4 +143,19 @@
         }
     }
 
+    &__search {
+        &--desktop {
+            @extend %is-invisible;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+            height: 180px;
+            padding-bottom: 50px;
+            background: $color--dark-blue;
+        }
+    }
 }
