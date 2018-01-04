@@ -68,7 +68,12 @@
 
         {% wagtailuserbar %}
 
-        <header class="header header--standard">
+        {# {% if page.header_image %} #}
+            <!-- <header class="header header--standard header--has-bg-image" style="background-image:url('')"> -->
+        {# {% else %} #}
+            <header class="header header--standard">
+        {# {% endif %} #}
+
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}">
                     <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
