@@ -89,12 +89,26 @@
                     <div class="header__inner--top">
                         {% primarynav %}
 
+                        <button class="button js-desktop-search-toggle">
+                            <svg class="header__icon header__icon--magnifying-glass icon"><use xlink:href="#magnifying-glass"></use></svg>
+                            <svg class="header__icon header__icon--cross icon"><use xlink:href="#cross"></use></svg>
+                        </button>
                     </div>
                 </section>
 
                 <section class="header__menus header__menus--mobile">
                     {% primarynav %}
                 </section>
+
+            </div>
+
+            <div class="header__search header__search--desktop">
+                <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
+                    <button class="button" type="submit">
+                        <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
+                    </button>
+                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
+                </form>
             </div>
 
             <div class="wrapper wrapper--small">
