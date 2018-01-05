@@ -48,6 +48,8 @@ install:
   # Build the static files
   - npm run build:prod
 
+  # Change back to the original folder
+  - cd -
 
 # Run the tests
 script:
