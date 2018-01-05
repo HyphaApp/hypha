@@ -190,7 +190,7 @@ class Action:
     """
     Base Action class.
 
-    Actions return the Uhase within the current Stage which the workflow should progress to next.
+    Actions return the Phase within the current Stage which the workflow should progress to next.
     A value of `None` will allow the Stage to progress.
     """
     def __init__(self, name: str) -> None:
