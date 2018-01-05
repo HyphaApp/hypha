@@ -23,11 +23,11 @@
                 <p>{{ page.email }}</p>
             {% endif %}
 
-            {% with phone_numbers=page.phone_numbers.all %}
-                {% if phone_numbers %}
+            {% with contact_details=page.contact_details.all %}
+                {% if contact_details %}
 
-                    {% for related_phone_number in phone_numbers %}
-                        <p>{{ related_phone_number.phone_number }}</p>
+                    {% for contact in contact_details %}
+                        <p>{{ contact.method_display }}: {{ contact.contact_detail }}</p>
                     {% endfor %}
 
                 {% endif %}
