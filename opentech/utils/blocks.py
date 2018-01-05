@@ -26,6 +26,7 @@ class DocumentBlock(blocks.StructBlock):
 class QuoteBlock(blocks.StructBlock):
     quote = blocks.CharBlock(classname="title")
     attribution = blocks.CharBlock(required=False)
+    job_title = blocks.CharBlock(required=False)
 
     class Meta:
         icon = "openquote"
