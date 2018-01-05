@@ -50,7 +50,13 @@ alias djrunp="dj runserver_plus 0.0.0.0:8000"
 source $VIRTUALENV_DIR/bin/activate
 export PS1="[$PROJECT_NAME \W]\\$ "
 cd $PROJECT_DIR
-
-alias djtestapply="dj test opentech.apply --keepdb; mypy ."
-
 EOF
+
+# Install node.js and npm
+su - vagrant -c "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -"
+su - vagrant -c "sudo apt-get install -y nodejs"
+
+# Build the static files
+su - vagrant -c "sudo npm install -g yarn"
+su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn install"
+su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn build"

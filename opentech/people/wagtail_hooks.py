@@ -7,5 +7,5 @@ from wagtail.wagtailcore import hooks
 @hooks.register('insert_editor_js')
 def editor_js():
     return mark_safe(
-        '<script src="%s"></script>' % static('js/update_person_title.js')
+        '<script src="%s"></script>' % static('people/admin/js/update_person_title.js')
     )
