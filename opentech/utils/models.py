@@ -250,7 +250,6 @@ class BasePage(SocialFields, ListingFields, Page):
     class Meta:
         abstract = True
 
-
     content_panels = Page.content_panels + [
         ImageChooserPanel('header_image')
     ]
