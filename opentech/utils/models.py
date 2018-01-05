@@ -239,8 +239,21 @@ class SystemMessagesSettings(BaseSetting):
 class BasePage(SocialFields, ListingFields, Page):
     show_in_menus_default = True
 
+    header_image = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
     class Meta:
         abstract = True
+
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel('header_image')
+    ]
 
     promote_panels = (
         Page.promote_panels +

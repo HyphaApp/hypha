@@ -5,7 +5,6 @@ from django.conf import settings
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
@@ -97,7 +96,7 @@ class PersonPage(BasePage):
     biography = StreamField(StoryBlock(), blank=True)
     email = models.EmailField(blank=True)
 
-    content_panels = Page.content_panels + [
+    content_panels = BasePage.content_panels + [
         MultiFieldPanel([
             FieldPanel('first_name'),
             FieldPanel('last_name'),
