@@ -58,5 +58,5 @@ su - vagrant -c "sudo apt-get install -y nodejs"
 
 # Build the static files
 su - vagrant -c "sudo npm install -g yarn"
-su - vagrant -c "cd $PROJECT_DIR/$DEST_DIR/$PROJECT_NAME/$PROJECT_NAME/static_src; yarn install"
-su - vagrant -c "cd $PROJECT_DIR/$DEST_DIR/$PROJECT_NAME/$PROJECT_NAME/static_src; yarn build"
+su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn install"
+su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn build"
