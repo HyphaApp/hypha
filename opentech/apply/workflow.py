@@ -6,7 +6,7 @@ from django.forms import Form
 from django.utils.text import slugify
 
 """
-This file defines classes which allow you to compose workflows based on the following strucutre:
+This file defines classes which allow you to compose workflows based on the following structure:
 
 Workflow -> Stage -> Phase -> Action
 """
@@ -14,8 +14,8 @@ Workflow -> Stage -> Phase -> Action
 
 class Workflow:
     """
-    Holds the stages of a workflow. When a stage finishes will return the next stage in the workflow
-    or `None` if no such stage exists.
+    A Workflow is a collection of Stages an application goes through. When a Stage is complete,
+    it will return the next Stage in the list or `None` if no such Stage exists.
     """
     name: str = ''
     stage_classes: Sequence[Type['Stage']] = list()
@@ -93,6 +93,10 @@ class Stage:
     def __init__(self, form: Form, name: str='') -> None:
         if name:
             self.name = name
+        # For OTF each stage is associated with a form submission
+        # So each time they start a stage they should submit new information
+        # TODO: consider removing form from stage as the stage is generic and
+        # shouldn't care about forms.
         self.form = form
         # Make the phases new instances to prevent errors with mutability
         existing_phases: set = set()
@@ -100,7 +104,7 @@ class Stage:
         for phase in self.phases:
             phase.stage = self
             while str(phase) in existing_phases:
-                phase.occurance += 1
+                phase.occurrence += 1
             existing_phases.add(str(phase))
             new_phases.append(copy.copy(phase))
         self.phases = new_phases
@@ -132,7 +136,7 @@ class Stage:
 
 class Phase:
     """
-    Holds the Actions which a user can perform at each stage. A phase with no actions is
+    Holds the Actions which a user can perform at each stage. A Phase with no actions is
     essentially locked
     """
     actions: Sequence['Action'] = list()
@@ -151,10 +155,10 @@ class Phase:
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
-        self.occurance: int = 0
+        self.occurrence: int = 0
 
     def __eq__(self, other: object) -> bool:
-        to_match = ['name', 'occurance']
+        to_match = ['name', 'occurrence']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
@@ -162,7 +166,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return '__'.join([self.stage.name, self._internal, str(self.occurance)])
+        return '__'.join([self.stage.name, self._internal, str(self.occurrence)])
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
@@ -173,9 +177,9 @@ class Phase:
 
 class Action:
     """
-    Base action class.
+    Base Action class.
 
-    Actions return the phase within the current Stage which the workflow should progress to next.
+    Actions return the Uhase within the current Stage which the workflow should progress to next.
     A value of `None` will allow the Stage to progress.
     """
     def __init__(self, name: str) -> None:
@@ -186,10 +190,8 @@ class Action:
         raise NotImplementedError
 
 
-# --- OTF Workflow ---
-
 class ChangePhaseAction(Action):
-    # Change to a specific phase
+    # Change to a specific Phase
     def __init__(self, phase: Union['Phase', str], *args: str, **kwargs: str) -> None:
         self.target_phase = phase
         super().__init__(*args, **kwargs)
@@ -204,6 +206,9 @@ class NextPhaseAction(Action):
     # Change to the next action in the current Stage
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         return phase.stage.next(phase)
+
+
+# --- OTF Workflow ---
 
 
 reject_action = ChangePhaseAction('rejected', 'Reject')
