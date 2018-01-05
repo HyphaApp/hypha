@@ -5,8 +5,28 @@ from typing import List, Sequence, Type, Union
 from django.forms import Form
 from django.utils.text import slugify
 
+"""
+This file defines classes which allow you to compose workflows based on the following structure:
+
+Workflow -> Stage -> Phase -> Action
+"""
+
+
+def phase_name(stage: 'Stage', phase: Union['Phase', str], occurrence: int) -> str:
+    # Build the identifiable name for a phase
+    if not isinstance(phase, str):
+        phase_name = phase._internal
+    else:
+        phase_name = phase
+
+    return '__'.join([stage.name, phase_name, str(occurrence)])
+
 
 class Workflow:
+    """
+    A Workflow is a collection of Stages an application goes through. When a Stage is complete,
+    it will return the next Stage in the list or `None` if no such Stage exists.
+    """
     name: str = ''
     stage_classes: Sequence[Type['Stage']] = list()
 
@@ -23,10 +43,11 @@ class Workflow:
         if not current_phase:
             return self.first()
 
-        stage_name, phase_name, occurance = current_phase.split('__')
         for stage in self.stages:
-            if stage.name == stage_name:
-                return stage.current(phase_name, occurance)
+            phase = stage.get_phase(current_phase)
+            if phase:
+                return phase
+
         return None
 
     def first(self) -> 'Phase':
@@ -74,12 +95,19 @@ class Workflow:
 
 
 class Stage:
+    """
+    Holds the Phases that are progressed through as part of the workflow process
+    """
     name: str = 'Stage'
     phases: list = list()
 
     def __init__(self, form: Form, name: str='') -> None:
         if name:
             self.name = name
+        # For OTF each stage is associated with a form submission
+        # So each time they start a stage they should submit new information
+        # TODO: consider removing form from stage as the stage is generic and
+        # shouldn't care about forms.
         self.form = form
         # Make the phases new instances to prevent errors with mutability
         existing_phases: set = set()
@@ -87,7 +115,7 @@ class Stage:
         for phase in self.phases:
             phase.stage = self
             while str(phase) in existing_phases:
-                phase.occurance += 1
+                phase.occurrence += 1
             existing_phases.add(str(phase))
             new_phases.append(copy.copy(phase))
         self.phases = new_phases
@@ -95,9 +123,9 @@ class Stage:
     def __str__(self) -> str:
         return self.name
 
-    def current(self, phase_name: str, occurance: str) -> 'Phase':
+    def get_phase(self, phase_name: str) -> 'Phase':
         for phase in self.phases:
-            if phase._internal == phase_name and int(occurance) == phase.occurance:
+            if str(phase) == phase_name:
                 return phase
         return None
 
@@ -118,6 +146,10 @@ class Stage:
 
 
 class Phase:
+    """
+    Holds the Actions which a user can perform at each stage. A Phase with no actions is
+    essentially locked
+    """
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
@@ -134,10 +166,10 @@ class Phase:
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
-        self.occurance: int = 0
+        self.occurrence: int = 0
 
     def __eq__(self, other: object) -> bool:
-        to_match = ['name', 'occurance']
+        to_match = ['name', 'occurrence']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
@@ -145,7 +177,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return '__'.join([self.stage.name, self._internal, str(self.occurance)])
+        return phase_name(self.stage, self, self.occurrence)
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
@@ -155,6 +187,12 @@ class Phase:
 
 
 class Action:
+    """
+    Base Action class.
+
+    Actions return the Phase within the current Stage which the workflow should progress to next.
+    A value of `None` will allow the Stage to progress.
+    """
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -163,22 +201,25 @@ class Action:
         raise NotImplementedError
 
 
-# --- OTF Workflow ---
-
 class ChangePhaseAction(Action):
+    # Change to a specific Phase
     def __init__(self, phase: Union['Phase', str], *args: str, **kwargs: str) -> None:
         self.target_phase = phase
         super().__init__(*args, **kwargs)
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            return phase.stage.current(self.target_phase, '0')
+            return phase.stage.get_phase(phase_name(phase.stage, self.target_phase, 0))
         return self.target_phase
 
 
 class NextPhaseAction(Action):
+    # Change to the next action in the current Stage
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         return phase.stage.next(phase)
+
+
+# --- OTF Workflow ---
 
 
 reject_action = ChangePhaseAction('rejected', 'Reject')
@@ -196,19 +237,19 @@ class ReviewPhase(Phase):
     actions = [NextPhaseAction('Close Review')]
 
 
-class DeterminationWithProgressionPhase(Phase):
+class DiscussionWithProgressionPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [progress_stage, reject_action]
 
 
-class DeterminationPhase(Phase):
+class DiscussionPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [accept_action, reject_action]
 
 
-class DeterminationWithNextPhase(Phase):
+class DiscussionWithNextPhase(Phase):
     name = 'Under Discussion'
     public_name = 'In review'
     actions = [NextPhaseAction('Open Review'), reject_action]
@@ -219,12 +260,23 @@ rejected = Phase(name='Rejected')
 accepted = Phase(name='Accepted')
 
 
+class RequestStage(Stage):
+    name = 'Request'
+    phases = [
+        DiscussionWithNextPhase(),
+        ReviewPhase(),
+        DiscussionPhase(),
+        accepted,
+        rejected,
+    ]
+
+
 class ConceptStage(Stage):
     name = 'Concept'
     phases = [
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase(),
-        DeterminationWithProgressionPhase(),
+        DiscussionWithProgressionPhase(),
         rejected,
     ]
 
@@ -232,11 +284,11 @@ class ConceptStage(Stage):
 class ProposalStage(Stage):
     name = 'Proposal'
     phases = [
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase(),
-        DeterminationWithNextPhase(),
+        DiscussionWithNextPhase(),
         ReviewPhase('AC Review', public_name='In AC review'),
-        DeterminationPhase(public_name='In AC review'),
+        DiscussionPhase(public_name='In AC review'),
         accepted,
         rejected,
     ]
@@ -244,7 +296,7 @@ class ProposalStage(Stage):
 
 class SingleStage(Workflow):
     name = 'Single Stage'
-    stage_classes = [ConceptStage]
+    stage_classes = [RequestStage]
 
 
 class DoubleStage(Workflow):
