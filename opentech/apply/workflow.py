@@ -12,14 +12,14 @@ Workflow -> Stage -> Phase -> Action
 """
 
 
-def phase_name(stage: 'Stage', phase: Union['Phase', str], occurance: int) -> str:
+def phase_name(stage: 'Stage', phase: Union['Phase', str], occurrence: int) -> str:
     # Build the identifiable name for a phase
     if not isinstance(phase, str):
         phase_name = phase._internal
     else:
         phase_name = phase
 
-    return '__'.join([stage.name, phase_name, str(occurance)])
+    return '__'.join([stage.name, phase_name, str(occurrence)])
 
 
 class Workflow:
