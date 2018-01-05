@@ -35,6 +35,19 @@ install:
   # Install project dependencies
   - pip install -r requirements.txt
 
+  # Install test dependencies
+  - pip install flake8
+
+  # Install node
+  - nvm install 8
+
+  # Install node dependencies
+  - cd ./opentech/static_src && npm install --quiet
+
+  # Build the static files
+  - cd ./opentech/static_src && npm run build:prod
+
+
 # Run the tests
 script:
   # Run python code style checks

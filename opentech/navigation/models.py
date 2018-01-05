@@ -16,7 +16,7 @@ class LinkBlock(blocks.StructBlock):
 
 
 class LinkColumnWithHeader(blocks.StructBlock):
-    heading = blocks.CharBlock(blank=True, help_text="Leave blank if no header required.")
+    heading = blocks.CharBlock(required=False, help_text="Leave blank if no header required.")
     links = blocks.ListBlock(LinkBlock())
 
     class Meta:

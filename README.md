@@ -34,3 +34,19 @@ djrun
 ```
 
 This will make the site available on the host machine at: http://127.0.0.1:8000/
+
+# Updating front-end files
+
+Any changes made to sass or js files will need to be recompiled using:
+
+``` bash
+yarn build
+```
+
+Alternatively you can run the watcher that will rebuild on change to files:
+
+``` bash
+yarn start
+```
+
+Both commands should be run from within the `opentech/static_src` folder in the vagrant box.
