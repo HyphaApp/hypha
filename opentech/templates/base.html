@@ -68,10 +68,16 @@
 
         {% wagtailuserbar %}
 
-        <header class="header">
+        {# {% if page.header_image %} #}
+            <!-- <header class="header header--standard header--has-bg-image" style="background-image:url('')"> -->
+        {# {% else %} #}
+            <header class="header header--standard">
+        {# {% endif %} #}
+
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}">
-                    <img class="header__logo" src="https://placehold.it/150x100" alt="Logo for opentech">
+                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
 
                 <div class="header__menu-toggle">
@@ -86,22 +92,35 @@
 
                 <section class="header__menus header__menus--desktop">
                     <div class="header__inner--top">
-                        {% secondarynav %}
-                        <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search">
-                            <input class="input" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
-                            <button class="button" type="submit">
-                                <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
-                            </button>
-                        </form>
-                    </div>
+                        {% primarynav %}
 
-                    {% primarynav %}
+                        <button class="button js-desktop-search-toggle">
+                            <svg class="header__icon header__icon--magnifying-glass icon"><use xlink:href="#magnifying-glass"></use></svg>
+                            <svg class="header__icon header__icon--cross icon"><use xlink:href="#cross"></use></svg>
+                        </button>
+                    </div>
                 </section>
 
                 <section class="header__menus header__menus--mobile">
                     {% primarynav %}
                 </section>
+
             </div>
+
+            <div class="header__search header__search--desktop">
+                <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
+                    <button class="button" type="submit">
+                        <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
+                    </button>
+                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
+                </form>
+            </div>
+
+            <div class="wrapper wrapper--small">
+                <h1 class="header__title">{{ page.title }}</h1>
+            </div>
+            <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
+            <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
         </header>
 
         <main class="wrapper wrapper--large wrapper--main">
