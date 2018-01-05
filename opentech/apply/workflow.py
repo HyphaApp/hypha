@@ -12,6 +12,16 @@ Workflow -> Stage -> Phase -> Action
 """
 
 
+def phase_name(stage: 'Stage', phase: Union['Phase', str], occurance: int) -> str:
+    # Build the identifiable name for a phase
+    if not isinstance(phase, str):
+        phase_name = phase._internal
+    else:
+        phase_name = phase
+
+    return '__'.join([stage.name, phase_name, str(occurance)])
+
+
 class Workflow:
     """
     A Workflow is a collection of Stages an application goes through. When a Stage is complete,
@@ -33,10 +43,11 @@ class Workflow:
         if not current_phase:
             return self.first()
 
-        stage_name, phase_name, occurance = current_phase.split('__')
         for stage in self.stages:
-            if stage.name == stage_name:
-                return stage.current(phase_name, occurance)
+            phase = stage.get_phase(current_phase)
+            if phase:
+                return phase
+
         return None
 
     def first(self) -> 'Phase':
@@ -112,9 +123,9 @@ class Stage:
     def __str__(self) -> str:
         return self.name
 
-    def current(self, phase_name: str, occurance: str) -> 'Phase':
+    def get_phase(self, phase_name: str) -> 'Phase':
         for phase in self.phases:
-            if phase._internal == phase_name and int(occurance) == phase.occurance:
+            if str(phase) == phase_name:
                 return phase
         return None
 
@@ -166,7 +177,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return '__'.join([self.stage.name, self._internal, str(self.occurrence)])
+        return phase_name(self.stage, self, self.occurrence)
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
@@ -198,7 +209,7 @@ class ChangePhaseAction(Action):
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            return phase.stage.current(self.target_phase, '0')
+            return phase.stage.get_phase(phase_name(phase.stage, self.target_phase, 0))
         return self.target_phase
 
 
