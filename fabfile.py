@@ -140,12 +140,13 @@ def _run_migrate():
 
 @runs_once
 def _post_deploy():
-    # clear frontend cache
-    run(
-        'for host in $(echo $CFG_HOSTNAMES | tr \',\' \' \'); do echo "Purge cache for $host";'
-        'ats-cache-purge $host; '
-        'done'
-    )
+    # clear frontend cache only on production
+    if 'production' in env.effective_roles:
+        run(
+            'for host in $(echo $CFG_HOSTNAMES | tr \',\' \' \'); do echo "Purge cache for $host";'
+            'ats-cache-purge $host; '
+            'done'
+        )
 
     # update search index
     run('django-admin update_index')
