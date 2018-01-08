@@ -1,3 +1,4 @@
+# Credit to https://github.com/BertrandBordage for initial implementation
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
 from django.utils.dateparse import parse_datetime

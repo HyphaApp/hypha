@@ -1,3 +1,4 @@
+# Credit to https://github.com/BertrandBordage for initial implementation
 from collections import OrderedDict
 
 from wagtail.wagtailforms.models import AbstractForm
