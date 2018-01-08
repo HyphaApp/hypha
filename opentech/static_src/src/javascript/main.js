@@ -1,6 +1,5 @@
 import $ from './globals';
 import MobileMenu from './components/mobile-menu';
-import MobileSubMenu from './components/mobile-sub-menu';
 import DesktopSearch from './components/desktop-search';
 
 // Open the mobile menu callback
@@ -18,10 +17,6 @@ function closeMobileMenu() {
 $(function () {
     $(MobileMenu.selector()).each((index, el) => {
         new MobileMenu($(el), openMobileMenu, closeMobileMenu);
-    });
-
-    $(MobileSubMenu.selector()).each((index, el) => {
-        new MobileSubMenu($(el));
     });
 
     $(DesktopSearch.selector()).each((index, el) => {
