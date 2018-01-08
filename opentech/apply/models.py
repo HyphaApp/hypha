@@ -100,6 +100,11 @@ class Option(Orderable):
 
 
 class Category(ClusterableModel):
+    """Used to manage the global select questions used in most of the application form
+    Also used in the front end by editors when writing about projects.
+
+    When used in a form: name -> field label and help_text -> help_text
+    """
     name = models.CharField(max_length=255)
     help_text = models.CharField(max_length=255, blank=True)
 
