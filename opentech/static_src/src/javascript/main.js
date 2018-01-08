@@ -21,9 +21,6 @@ $(function () {
 
     });
 
-    // Toggle subnav visibility
-    $('.js-subnav-back').on('click', function(){
-        this.parentNode.classList.remove('is-visible');
     $(Search.selector()).each((index, el) => {
         new Search($(el), $('.header__search'));
     });
