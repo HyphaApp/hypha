@@ -5,7 +5,6 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailadmin.edit_handlers import (
     StreamFieldPanel, FieldPanel, InlinePanel
@@ -62,12 +61,12 @@ class NewsPage(BasePage):
     introduction = models.TextField(blank=True)
     body = StreamField(StoryBlock())
 
-    search_fields = Page.search_fields + [
+    search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
         index.SearchField('body')
     ]
 
-    content_panels = Page.content_panels + [
+    content_panels = BasePage.content_panels + [
         FieldPanel('publication_date'),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),

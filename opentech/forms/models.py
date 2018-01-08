@@ -2,7 +2,6 @@ from django.db import models
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailcore.models import Page
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, FieldRowPanel,
@@ -27,11 +26,11 @@ class FormPage(WagtailCaptchaEmailForm, BasePage):
     thank_you_text = RichTextField(blank=True, help_text="Text displayed to the user on successful submission of the form")
     action_text = models.CharField(max_length=32, blank=True, help_text="Form action text. Defaults to \"Submit\"")
 
-    search_fields = Page.search_fields + [
+    search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
     ]
 
-    content_panels = Page.content_panels + [
+    content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
         InlinePanel('form_fields', label="Form fields"),
         FieldPanel('action_text'),
