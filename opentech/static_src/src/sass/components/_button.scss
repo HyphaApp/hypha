@@ -13,6 +13,11 @@
         margin-left: 20px;
     }
 
+    &--contains-icons {
+        display: flex;
+        align-items: center;
+    }
+
     // cannot conform to BEM here in order to be able to override google button styles
     &--google-translate {
         display: none;
