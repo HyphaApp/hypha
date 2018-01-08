@@ -49,8 +49,8 @@ def pull_production_media():
 
 @roles('staging')
 def deploy_staging():
-    build_static()
-    deploy_static()
+    _build_static()
+    _deploy_static()
 
     run('git pull')
     run('pip install -r requirements.txt')
@@ -152,7 +152,7 @@ def _post_deploy():
 
 
 @runs_once
-def build_static():
+def _build_static():
     # Build a specific branch
     build_branch = 'master'
     current_branch = local('git rev-parse --abbrev-ref HEAD')
@@ -165,6 +165,6 @@ def build_static():
 
 
 @runs_once
-def deploy_static():
+def _deploy_static():
     # Copy the compiled static files to the server
     local("rsync -avz /vagrant/opentech/static_compiled %s:'../app/opentech/'" % (env['host_string']))
