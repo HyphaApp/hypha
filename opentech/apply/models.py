@@ -48,7 +48,7 @@ class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
 
 class FundType(AbstractStreamForm):
     parent_page_types = [ApplyHomePage]
-    subpage_types = []
+    subpage_types = []  # type: ignore
 
     base_form_class = WorkflowFormAdminForm
     WORKFLOWS = {
