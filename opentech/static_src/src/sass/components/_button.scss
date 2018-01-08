@@ -7,6 +7,43 @@
     &:hover {
         cursor: pointer;
     }
+
+    // cannot conform to BEM here in order to be able to override google button styles
+    &--google-translate {
+        display: none;
+        width: 180px;
+
+        @include media-query(tablet-portrait) {
+            display: block;
+        }
+
+        .goog-te-gadget-simple {
+            @include button(transparent);
+            padding: 5px 15px;
+            font-family: $font--primary;
+            font-size: 15px;
+            font-weight: $weight--bold;
+
+            .goog-te-menu-value {
+                color: $color--white;
+
+                span {
+                    // color of the arrow is inlined hence !important
+                    color: $color--white !important; // sass-lint:disable-line no-important
+
+                    &:nth-of-type(2) {
+                        // hide the pipe
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .goog-te-gadget-icon {
+            // hide the google icon
+            display: none;
+        }
+    }
 }
 
 .button-menu-toggle {
