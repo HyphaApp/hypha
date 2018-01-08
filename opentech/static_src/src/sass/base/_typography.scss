@@ -1,10 +1,5 @@
-/*------------------------------------*\
-    $TYPOGRAPHY
-\*------------------------------------*/
-
-/* ============================================
-    Base font
-*/
+// $TYPOGRAPHY
+// Base font
 html {
     font-size: ($base-font-size / 16px) * 100%;
     line-height: $base-line-height / $base-font-size;
@@ -17,9 +12,10 @@ html {
     :: to its default value, usually `inherit`) in all other font mixins.
 */
 @mixin heading-text {
+    margin: 0 0 1rem;
     font-family: $font--primary;
     font-style: inherit;
-    font-weight: inherit;
+    font-weight: $weight--bold;
 }
 
 @mixin body-text {
@@ -28,19 +24,6 @@ html {
     font-weight: inherit;
     text-transform: inherit;
 }
-
-@mixin quote-text {
-    font-family: $font--secondary;
-    font-style: italic;
-    font-weight: inherit;
-    text-transform: inherit;
-}
-
-// sass-lint:disable single-line-per-selector
-h1, h2, h3, h4, h5, h6 {
-    margin: 0 0 1rem;
-}
-// sass-lint:enddisable
 
 // sass-lint:disable single-line-per-selector
 h1, h2, h3, h4, h5, h6,
@@ -51,47 +34,35 @@ h1, h2, h3, h4, h5, h6,
 
 html,
 .body-text {
-    @include body-text;
-}
-
-blockquote {
-    @include quote-text;
+    @include responsive-font-sizes(16px, 19px);
 }
 
 // Default sizes
-h1, .alpha   {
-    @include font-size(alpha);
+h1, %h1, .alpha   {
+    @include responsive-font-sizes(40px, map-get($font-sizes, alpha));
     font-weight: $weight--black;
 }
 
-h2, .beta    {
-    @include font-size(beta);
-    font-weight: $weight--bold;
+h2, %h2, .beta    {
+    @include responsive-font-sizes(30px, map-get($font-sizes, beta));
 }
 
-h3, .gamma   {
-    @include font-size(gamma);
-    font-weight: $weight--light;
+h3, %h3, .gamma   {
+    @include responsive-font-sizes(20px, map-get($font-sizes, gamma));
 }
 
-h4, .delta   {
-    @include font-size(delta);
-    font-weight: $weight--bold;
+h4, %h4, .delta   {
+    @include responsive-font-sizes(18px, map-get($font-sizes, delta));
 }
 
-h5, .epsilon {
-    @include font-size(epsilon);
-    font-weight: $weight--bold;
+h5, %h5, .epsilon {
+    @include responsive-font-sizes(15px, map-get($font-sizes, epsilon));
 }
 
-h6, .zeta    {
-    @include font-size(zeta);
-    font-weight: $weight--bold;
+h6, %h6, .zeta    {
+    font-size: 15px;
 }
 
-.giga { @include font-size(giga); }
-.mega { @include font-size(mega); }
-.kilo { @include font-size(kilo); }
 small, .milli { @include font-size(milli); }
 
 // thin
