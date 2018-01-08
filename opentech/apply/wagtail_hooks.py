@@ -1,7 +1,6 @@
 from wagtail.contrib.modeladmin.options import modeladmin_register
 
-from .admin import ApplicationFormAdmin, CategoryAdmin
+from .admin import ApplyAdminGroup
 
 
-modeladmin_register(ApplicationFormAdmin)
-modeladmin_register(CategoryAdmin)
+modeladmin_register(ApplyAdminGroup)
