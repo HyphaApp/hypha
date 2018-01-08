@@ -13,7 +13,7 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from opentech.apply import urls as apply_urls
 from opentech.esi import views as esi_views
 from opentech.search import views as search_views
-
+from opentech.users import urls as users_urls
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -25,6 +25,7 @@ urlpatterns = [
     url('^sitemap\.xml$', sitemap),
 
     url(r'^apply/', include(apply_urls)),
+    url(r'^user/', include(users_urls))
 ]
 
 

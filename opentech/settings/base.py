@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'opentech.people',
     'opentech.search',
     'opentech.standardpages',
+    'opentech.users',
     'opentech.utils',
 
     'wagtail.contrib.modeladmin',
@@ -173,6 +174,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+AUTH_USER_MODEL = 'users.User'
+# TODO populate me with the dashboard URL when ready
+LOGIN_REDIRECT_URL = '/'
 
 # Logging
 
