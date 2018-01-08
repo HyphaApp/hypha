@@ -36,11 +36,6 @@
         &.is-visible {
             transform: translate3d(0%, 0%, 0);
         }
-
-        @include media-query(tablet-portrait) {
-            // @todo - desktop dropdown styles
-            display: none;
-        }
     }
 
     &--tertiary {
@@ -168,13 +163,6 @@
                 color: lighten($color--primary, 20%);
                 border-bottom: 1px solid $color--primary;
             }
-        }
-    }
-
-    &__icon {
-        @include media-query(tablet-landscape) {
-            // @todo - desktop dropdown styles
-            display: none;
         }
     }
 }
