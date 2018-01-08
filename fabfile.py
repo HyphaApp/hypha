@@ -156,7 +156,7 @@ def _post_deploy():
 def _build_static():
     # Build a specific branch
     build_branch = 'master'
-    current_branch = local('git rev-parse --abbrev-ref HEAD')
+    current_branch = local('git rev-parse --abbrev-ref HEAD', capture=True)
     if current_branch != build_branch:
         raise RuntimeError("Please switch to '{}' before deploying".format(build_branch))
 
