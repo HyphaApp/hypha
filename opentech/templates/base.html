@@ -69,7 +69,7 @@
         {% wagtailuserbar %}
 
         {# {% if page.header_image %} #}
-            {% image page.header_image original as header_image %}
+            {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard header--has-bg-image" style="background-image:url('{{ header_image.url }}')">
         {# {% else %} #}
             <header class="header header--standard">
