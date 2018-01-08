@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from fabric.api import roles, runs_once, run, local, env, prompt, get
+from fabric.api import lcd, roles, runs_once, run, local, env, prompt, get
 
 
 env.roledefs = {
@@ -50,8 +50,8 @@ def pull_production_media():
 
 @roles('staging')
 def deploy_staging():
-    # Remove this line when you're happy that this task is correct
-    raise RuntimeError("Please check the fabfile before using it")
+    build_static()
+    deploy_static()
 
     run('git pull')
     run('pip install -r requirements.txt')
@@ -150,3 +150,21 @@ def _post_deploy():
 
     # update search index
     run('django-admin update_index')
+
+
+@runs_once
+def build_static():
+    # Build a specific branch
+    build_branch = 'master'
+    current_branch = local('git rev-parse --abbrev-ref HEAD')
+    if current_branch != build_branch:
+        raise RuntimeError("Please switch to '{}' before deploying".format(build_branch))
+
+    local('git pull')
+    with lcd('/vagrant/opentech/static_src/'):
+        local('yarn build:prod')
+
+@runs_once
+def deploy_static():
+    # Copy the compiled static files to the server
+    local("rsync -avz /vagrant/opentech/static_compiled %s:'../app/opentech/'" % (env['host_string']))
