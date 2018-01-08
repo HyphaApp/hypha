@@ -1,4 +1,6 @@
 .wrapper {
+    width: 100%;
+
     &--small {
         max-width: $wrapper--small;
         margin: 0 auto;

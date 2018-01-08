@@ -1,38 +1,27 @@
 .footer {
-    padding: 20px 10px;
-    color: $color--secondary;
-    background-color: $color--primary;
+    color: $color--white;
+
+    @include media-query(tablet-portrait) {
+        background: linear-gradient(to right, $color--dark-blue 50%, $color--light-blue 50%);
+    }
+
+    a {
+        color: inherit;
+    }
 
     &__inner {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
+        padding: 20px;
 
         @include media-query(tablet-portrait) {
-            align-items: flex-end;
-            flex-direction: row;
-            justify-content: space-between;
+            padding: 40px 80px;
         }
-    }
 
-    &__nav-container {
-        width: 100%;
-
-        @include media-query(tablet-landscape) {
-            flex: 1;
-            width: auto;
+        &:first-child {
+            background: $color--dark-blue;
         }
-    }
 
-    &__social-links {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 10px;
-
-        @include media-query(tablet-portrait) {
-            align-items: center;
-            justify-content: flex-start;
-            margin-bottom: 20px;
+        &:last-child {
+            background: $color--light-blue;
         }
     }
 
@@ -45,15 +34,37 @@
         }
     }
 
-    &__credit {
-        margin-top: 10px;
-
-        @include media-query(tablet-portrait) {
-            margin-top: 0;
-        }
-
+    &__social-links {
         a {
-            color: $color--secondary;
+            display: flex;
+            align-items: center;
         }
+
+        h4 {
+            margin: 0;
+        }
+    }
+
+    input[type='text'] {
+        width: 100%;
+        max-width: 390px;
+        margin-bottom: 1rem;
+        color: $color--white;
+        background: transparent;
+        border-top: 0;
+        border-right: 0;
+        border-bottom: 4px solid $color--light-blue;
+        border-left: 0;
+    }
+
+    label {
+        display: block;
+    }
+
+    &__credits {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 3rem 0 0;
     }
 }

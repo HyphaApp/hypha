@@ -46,5 +46,14 @@
                 text-align: left;
             }
         }
+
+        &--two {
+            grid-template-columns: 100%;
+            grid-gap: 0;
+
+            @include media-query(tablet-portrait) {
+                grid-template-columns: 50% 50%;
+            }
+        }
 	}
 }

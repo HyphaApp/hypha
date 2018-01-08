@@ -1,0 +1,19 @@
+.link {
+    &--button {
+        @include button($color--light-blue);
+        display: inline-block;
+    }
+
+    &--button-transparent {
+        @include button(transparent);
+        color: $color--white;
+    }
+
+    &--underlined {
+        text-decoration: underline;
+    }
+
+    &--footer-signup {
+        margin-top: 1rem;
+    }
+}
