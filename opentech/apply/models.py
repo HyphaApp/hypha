@@ -48,6 +48,8 @@ class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
 
 class FundPage(AbstractStreamForm):
     parent_page_types = [ApplyHomePage]
+    subpage_types = []
+
     base_form_class = WorkflowFormAdminForm
     WORKFLOWS = {
         'single': SingleStage.name,
