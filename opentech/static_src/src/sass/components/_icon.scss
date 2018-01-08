@@ -13,12 +13,17 @@
         height: 15px;
         margin-right: 5px;
         fill: $color--primary;
-  }
+    }
 
     &--footer-social {
         @include media-query(tablet-portrait) {
             margin-right: 10px;
         }
+    }
+
+    &--mobile-menu {
+        width: 32px;
+        height: 28px;
     }
 
     &--footer-credit {

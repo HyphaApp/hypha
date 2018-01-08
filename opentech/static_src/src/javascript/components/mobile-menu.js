@@ -3,40 +3,40 @@ class MobileMenu {
         return '.js-mobile-menu-toggle';
     }
 
-    constructor(node, openCb = () => {}, closeCb = () => {}) {
+    constructor(node, closeButton, mobileMenu, search) {
         this.node = node;
-
-        // Any callbacks to be called on open or close.
-        this.openCb = openCb;
-        this.closeCb = closeCb;
-
-        this.state = {
-            open: false,
-        };
+        this.closeButton = closeButton;
+        this.mobileMenu = mobileMenu;
+        this.search = search;
 
         this.bindEventListeners();
     }
 
     bindEventListeners() {
         this.node.click(this.toggle.bind(this));
+        this.closeButton.click(this.toggle.bind(this));
     }
 
     toggle() {
-        this.state.open ? this.close() : this.open();
-    }
+        // toggle mobile menu
+        this.mobileMenu[0].classList.toggle('is-visible');
 
-    open() {
-        this.node.addClass('is-open');
-        this.openCb();
+        // toggle modifier to change position of the search div when the mobile menu is open
+        this.search[0].classList.toggle('header__search--mobile-menu-open');
 
-        this.state.open = true;
-    }
+        // reset the search whenever the mobile menu is toggled
+        if(this.search[0].classList.contains('is-visible')){
+            this.search[0].classList.toggle('is-visible');
+            document.querySelector('.header__inner--menu-open').classList.toggle('header__inner--search-open');
+        }
 
-    close() {
-        this.node.removeClass('is-open');
-        this.closeCb();
-
-        this.state.open = false;
+        // reset the search show/hide icons
+        if(this.mobileMenu[0].classList.contains('is-visible')){
+            document.querySelector('.header__icon--open-search-menu-open').classList.remove('is-hidden');
+            document.querySelector('.header__icon--close-search-menu-open').classList.remove('is-unhidden');
+            document.querySelector('.header__icon--open-search-menu-closed').classList.remove('is-hidden');
+            document.querySelector('.header__icon--close-search-menu-closed').classList.remove('is-unhidden');
+        }
     }
 }
 
