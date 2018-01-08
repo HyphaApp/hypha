@@ -2,7 +2,7 @@ from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.wagtailcore.blocks import BooleanBlock, ChooserBlock
+from wagtail.wagtailcore.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
 from wagtail.wagtailcore.utils import resolve_model_string
 
 from opentech.stream_forms.blocks import FormFieldBlock, FormFieldsBlock
@@ -21,6 +21,17 @@ class CategoryChooserBlock(ChooserBlock):
 
 
 class CategoryQuestionBlock(FormFieldBlock):
+    # Overwrite field label and help text so we can defer to the category
+    # as required
+    field_label = CharBlock(
+        label=_('Label'),
+        required=False,
+        help_text=_('Leave blank to use the default on the category'),
+    )
+    help_text = TextBlock(
+        required=False,
+        label=_('Leave blank to use the default on the category'),
+    )
     category = CategoryChooserBlock('apply.Category')
     multi = BooleanBlock(label='Multi select', required=False)
 
@@ -30,9 +41,17 @@ class CategoryQuestionBlock(FormFieldBlock):
         else:
             return forms.ChoiceField
 
+    def use_defaults_from_category(self, kwargs, category):
+        for field in ['field_label', 'help_text']:
+            if not kwargs[field]:
+                kwargs[field] = getattr(category, field)
+
+        return kwargs
+
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
         category = struct_value['category']
+        kwargs = self.use_defaults_from_category(kwargs, category)
         choices = category.options.values_list('id', 'value')
         kwargs.update({'choices': choices})
         return kwargs
