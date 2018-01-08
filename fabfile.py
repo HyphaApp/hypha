@@ -162,7 +162,7 @@ def build_static():
 
     local('git pull')
     with lcd('/vagrant/opentech/static_src/'):
-        local('yarn build:prod')
+        local('yarn build:prod --silent')
 
 @runs_once
 def deploy_static():
