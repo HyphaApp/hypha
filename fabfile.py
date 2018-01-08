@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 from fabric.api import lcd, roles, runs_once, run, local, env, prompt, get
@@ -163,6 +162,7 @@ def build_static():
     local('git pull')
     with lcd('/vagrant/opentech/static_src/'):
         local('yarn build:prod --silent')
+
 
 @runs_once
 def deploy_static():
