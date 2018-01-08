@@ -68,12 +68,12 @@
 
         {% wagtailuserbar %}
 
-        {# {% if page.header_image %} #}
+        {% if page.header_image %}
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard header--has-bg-image" style="background-image:url('{{ header_image.url }}')">
-        {# {% else %} #}
+        {% else %}
             <header class="header header--standard">
-        {# {% endif %} #}
+        {% endif %}
 
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}">
