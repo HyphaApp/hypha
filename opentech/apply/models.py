@@ -27,7 +27,7 @@ WORKFLOW_CLASS = {
 class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
-    subpage_types = ['FundPage']
+    subpage_types = ['FundType']
 
     strapline = models.CharField(blank=True, max_length=255)
 
@@ -46,7 +46,7 @@ class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
     )
 
 
-class FundPage(AbstractStreamForm):
+class FundType(AbstractStreamForm):
     parent_page_types = [ApplyHomePage]
     subpage_types = []
 
@@ -59,6 +59,7 @@ class FundPage(AbstractStreamForm):
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
 
     def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
         return self.forms.all()[0].fields
 
     @property
@@ -71,9 +72,9 @@ class FundPage(AbstractStreamForm):
     ]
 
 
-class FundPageForm(Orderable):
+class FundForm(Orderable):
     form = models.ForeignKey('ApplicationForm')
-    fund = ParentalKey('FundPage', related_name='forms')
+    fund = ParentalKey('FundType', related_name='forms')
 
     @property
     def fields(self):

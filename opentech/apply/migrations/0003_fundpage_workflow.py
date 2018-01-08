@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='fundpage',
+            model_name='fundtype',
             name='workflow',
             field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100),
         ),

@@ -36,12 +36,12 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='FundPageForm',
+            name='FundForm',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
                 ('form', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apply.ApplicationForm')),
-                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='apply.FundPage')),
+                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='apply.FundType')),
             ],
             options={
                 'ordering': ['sort_order'],

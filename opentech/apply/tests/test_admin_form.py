@@ -2,9 +2,9 @@ from django.test import TestCase
 
 import factory
 
-from opentech.apply.models import FundPage
+from opentech.apply.models import FundType
 
-from .factories import ApplicationFormFactory, FundPageFactory
+from .factories import ApplicationFormFactory, FundTypeFactory
 
 
 def formset_base(field, total, delete):
@@ -29,14 +29,14 @@ def formset_base(field, total, delete):
 
 def form_data(number_forms=0, delete=0):
     base_data = formset_base('forms', number_forms, delete)
-    base_data.update(factory.build(dict, FACTORY_CLASS=FundPageFactory))
+    base_data.update(factory.build(dict, FACTORY_CLASS=FundTypeFactory))
     return base_data
 
 
 class TestWorkflowFormAdminForm(TestCase):
 
     def submit_data(self, data):
-        form_class = FundPage.get_edit_handler().get_form_class(FundPage)
+        form_class = FundType.get_edit_handler().get_form_class(FundType)
         return form_class(data=data)
 
     def test_doesnt_validates_with_no_form(self):
