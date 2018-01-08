@@ -19,5 +19,11 @@
         @include media-query(tablet-portrait) {
             margin-right: 10px;
         }
-	}
+    }
+
+    &--footer-credit {
+        width: 70px;
+        height: 45px;
+        margin-right: 3rem;
+    }
 }

@@ -130,21 +130,75 @@
         </main>
 
         <footer class="footer">
-            <div class="footer__inner wrapper wrapper--large">
-                <div class="footer__nav-container">
-                    <section class="footer__social-links">
-                        <h5 class="footer__heading">Follow us:</h5>
+            <div class="grid grid--two wrapper wrapper--large">
+                <div class="footer__inner">
+                    <h4>Get the latest internet freedom news</h4>
+                    <form class="form">
+                        <div>
+                            <div class="mailchimp-signup-subscribe-form-description"></div>
+                            <div id="mailchimp-newsletter-32632431e3-mergefields" class="mailchimp-newsletter-mergefields">
+                                <div class="form-item form-type-textfield form-item-mergevars-EMAIL">
+                                    <label for="edit-mergevars-email">Email Address <span class="form-required" title="This field is required.">*</span></label>
+                                    <input type="text" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="128" class="form-text required">
+                                </div>
+
+                                <div class="form-item form-type-textfield form-item-mergevars-FNAME">
+                                    <label for="edit-mergevars-fname">First Name </label>
+                                    <input type="text" id="edit-mergevars-fname" name="mergevars[FNAME]" value="" size="25" maxlength="128" class="form-text">
+                                </div>
+
+                                <div class="form-item form-type-textfield form-item-mergevars-LNAME">
+                                    <label for="edit-mergevars-lname">Last Name </label>
+                                    <input type="text" id="edit-mergevars-lname" name="mergevars[LNAME]" value="" size="25" maxlength="128" class="form-text">
+                                </div>
+
+                            </div>
+                            <input type="hidden" name="form_build_id" value="form-2Dy9x5istHLUmufjcHabtyuZ_niL-RlfSoHBIq39hpI">
+                            <input type="hidden" name="form_id" value="mailchimp_signup_subscribe_block_otf_newsletter_form">
+                            <div class="form-actions form-wrapper" id="edit-actions--3">
+                                <input type="submit" id="edit-submit--3" name="op" value="Sign up" class="form-submit link link--button-transparent link--footer-signup">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="footer__inner">
+                    <div class="footer__social-links">
                         {% if settings.utils.SocialMediaSettings.twitter_handle %}
                             <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
                                 <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
+                                <h4 class="heading heading--no-margin">@OpenTechFund</h4>
                             </a>
                         {% endif %}
-                        {% if settings.utils.SocialMediaSettings.facebook_app_id %}
-                            <a href="https://www.facebook.com/{{ settings.utils.SocialMediaSettings.facebook_app_id }}">
-                                <svg class="icon icon--footer-social"><use xlink:href="#facebook"></use></svg>
+                    </div>
+
+                        <p>2025 M Street NW, Suite 300</br>
+                        Washington, DC 20036 USA</p>
+
+                        <p>
+                            <a href="mailto:hello@opentech.fund">hello@opentech.fund</a></br>
+                            <a href="mailto:press@opentech.fund">press@opentech.fund</a></br>
+                            <span>PGP: 67AC DDCF B909 4685 36DD BC03 F766 3861 965A 90D2</span>
+                        </p>
+
+
+                        <p><a href="/rss.xml">RSS Feed</a></p>
+
+                        <p><a class="link link--underlined" href="#">Terms of Use</a></p>
+
+                        <p>Test the OTF website for censorship</p>
+
+                        <a class="link link--button" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
+
+                        <div class="footer__credits">
+                            <a href="https://www.bbg.gov/">
+                                <svg class="icon icon--footer-credit"><use xlink:href="#bbg-logo"></use></svg>
                             </a>
-                        {% endif %}
-                    </section>
+
+                            <a href="http://www.rfa.org/english/">
+                                <img src="{% static 'images/radio-free-asia-logo.svg' %}" alt="logo fo radio free asia">
+                            </a>
+                        </div>
 
                     <section>
                         {% footernav %}
@@ -154,14 +208,8 @@
                         {% footerlinks %}
                     </section>
                 </div>
-
-                <div class="footer__credit" role="contentinfo">
-                    {% if COPYRIGHT %}
-                        <p>© {% now "Y" %} {{ COPYRIGHT }}</p>
-                    {% endif %}
-                    <div>Site by <a href="https://torchbox.com/">Torchbox</a></div>
-                </div>
             </div>
+
         </footer>
 
         <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
