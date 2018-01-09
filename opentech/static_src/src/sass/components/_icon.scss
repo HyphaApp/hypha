@@ -4,10 +4,6 @@
     transition: fill $transition;
     fill: $color--white;
 
-    &:hover {
-        fill: darken($color--white, 20%);
-    }
-
     &--home {
         width: 15px;
         height: 15px;
