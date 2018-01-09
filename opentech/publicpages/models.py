@@ -10,8 +10,9 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 from wagtail.wagtailcore.fields import StreamField
 
-from opentech.utils.blocks import StoryBlock
 from opentech.utils.models import BasePage
+
+from .blocks import FundBlock
 
 
 class FundPage(BasePage):
@@ -26,7 +27,7 @@ class FundPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    body = StreamField(StoryBlock())
+    body = StreamField(FundBlock())
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
