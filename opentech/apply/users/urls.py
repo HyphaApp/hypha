@@ -22,6 +22,16 @@ urlpatterns = [
     # Log out
     url(r'^logout/$', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
 
+    # Password change
+    url(
+        r'^password/$',
+        auth_views.PasswordChangeView.as_view(
+            template_name="users/change_password.html",
+            success_url=reverse_lazy('users:account')
+        ),
+        name='password_change',
+    ),
+
     # Password reset
     url(r'^reset/$', auth_views.PasswordResetView.as_view(
         template_name='users/password_reset/form.html',
