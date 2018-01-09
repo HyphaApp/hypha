@@ -5,9 +5,13 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
 
+from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailadmin.edit_handlers import (
-    StreamFieldPanel, FieldPanel, InlinePanel
+    InlinePanel,
+    FieldPanel,
+    PageChooserPanel,
+    StreamFieldPanel,
 )
 from wagtail.wagtailsearch import index
 
@@ -48,6 +52,24 @@ class NewsPageRelatedPage(RelatedPage):
     )
 
 
+class NewsPageAuthor(Orderable):
+    source_page = ParentalKey(
+        'news.NewsPage',
+        related_name='authors'
+    )
+    author = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+
+    panels = [
+        PageChooserPanel('author', 'people.PersonPage')
+    ]
+
+
 class NewsPage(BasePage):
     subpage_types = []
     parent_page_types = ['NewsIndex']
@@ -68,6 +90,7 @@ class NewsPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('publication_date'),
+        InlinePanel('authors', label="Authors"),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
         InlinePanel('news_types', label="News types"),

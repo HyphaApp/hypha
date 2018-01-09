@@ -5,6 +5,11 @@
 <div class="wrapper wrapper--small">
 
     <h1>{{ page.title }}</h1>
+
+    {% for author in page.authors.all %}
+        <p><a href="{% pageurl author.author %}">{{ author.author }}</a><p>
+    {% endfor %}
+
     <p>{{ page.introduction }}</p>
 
     <section class="main-body">
