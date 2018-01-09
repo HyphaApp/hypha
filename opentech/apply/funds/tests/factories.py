@@ -2,8 +2,8 @@ from django.forms import Form
 import factory
 import wagtail_factories
 
-from opentech.apply.models import ApplicationForm, FundType, FundForm
-from opentech.apply.workflow import Action, Phase, Stage, Workflow
+from opentech.apply.funds.models import ApplicationForm, FundType, FundForm
+from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
 
 class ListSubFactory(factory.SubFactory):

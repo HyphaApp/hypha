@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from opentech.apply.workflow import SingleStage
+from opentech.apply.funds.workflow import SingleStage
 
 from .factories import FundTypeFactory
 

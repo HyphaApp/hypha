@@ -2,7 +2,7 @@ from django.test import TestCase
 
 import factory
 
-from opentech.apply.models import FundType
+from opentech.apply.funds.models import FundType
 
 from .factories import ApplicationFormFactory, FundTypeFactory
 

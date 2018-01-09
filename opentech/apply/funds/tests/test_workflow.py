@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from django.forms import Form
 
-from opentech.apply.workflow import (
+from opentech.apply.funds.workflow import (
     Action,
     ChangePhaseAction,
     NextPhaseAction,
