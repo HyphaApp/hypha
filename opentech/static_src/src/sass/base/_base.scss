@@ -47,10 +47,8 @@ button, input, select, textarea {
 a {
     color: $color--primary;
     text-decoration: none;
-    transition: color $transition;
 
     &:hover {
-        color: darken($color--primary, 20%);
         cursor: pointer;
   }
 }
