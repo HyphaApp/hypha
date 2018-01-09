@@ -1,5 +1,10 @@
 .responsive-object {
     position: relative;
+    margin-bottom: 2rem;
+
+    @include media-query(tablet-portrait) {
+        margin-bottom: 4rem;
+    }
 
     iframe,
     object,

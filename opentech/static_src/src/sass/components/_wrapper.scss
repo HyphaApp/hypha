@@ -75,8 +75,11 @@
         }
     }
 
+    &--streamfield {
+        margin-bottom: 2rem;
+
         @include media-query(tablet-portrait) {
-            flex-direction: row;
+            margin-bottom: 4rem;
         }
     }
 }
