@@ -34,7 +34,7 @@ before_script:
 install:
   - pip install pipenv
   # Install project dependencies
-  - pipenv install
+  - pipenv install --dev
 
   - pipenv install codecov
 
