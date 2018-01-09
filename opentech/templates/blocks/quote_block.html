@@ -1,5 +1,15 @@
-<blockquote>
-    <p>{{ value.quote }}</p>
-    {% if value.attribution %}{{ value.attribution }}{% endif %}
-    {% if value.attribution %}{{ value.job_title }}{% endif %}
-</blockquote>
+<div class="wrapper wrapper--breakout wrapper--blockquote">
+    <svg><use xlink:href="#hero-standard-left-pixels"></use></svg>
+    <div class="wrapper wrapper--medium">
+        <blockquote class="blockquote" {% if value.attribution %} cite="{{ value.attribution }}"{% endif %}>
+            <p>{{ value.quote }}</p>
+            {% if value.attribution %}
+                <cite class="blockquote__cite"><h5>{{ value.attribution }}</h5></cite>
+            {% endif %}
+            {% if value.job_title %}
+                <div class="blockquote__job-title">{{ value.job_title }}</div>
+            {% endif %}
+        </blockquote>
+    </div>
+    <svg><use xlink:href="#hero-standard-left-pixels"></use></svg>
+</div>

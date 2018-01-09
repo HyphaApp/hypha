@@ -1,6 +1,25 @@
-blockquote {
-    padding: 1rem;
-    margin: 1rem 0;
-    background: $color--tertiary;
-    border-left: 10px solid $color--secondary;
+.blockquote {
+    @extend %h3;
+    position: relative;
+    font-weight: $weight--black;
+    text-align: center;
+
+    &__cite,
+    &__job-title {
+        @include responsive-font-sizes(15px, 17px);
+        display: block;
+        font-style: normal;
+        color: $color--darkest-blue;
+        text-transform: uppercase;
+    }
+
+    &__cite {
+        h5 {
+            margin: 0;
+        }
+    }
+
+    &__job-title {
+        font-weight: $weight--normal;
+    }
 }

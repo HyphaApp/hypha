@@ -19,6 +19,61 @@
     &--flex {
         display: flex;
         flex-direction: column;
+    &--breakout {
+        position: relative;
+        right: 50%;
+        left: 50%;
+        width: 100vw;
+        margin-right: -50vw;
+        margin-left: -50vw;
+    }
+
+    &--blockquote {
+        padding: 1rem 0;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        background: $color--light-grey;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 0;
+            margin-top: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        svg {
+            position: absolute;
+            display: none;
+            width: 110px;
+            height: 110px;
+            fill: $color--white;
+
+            @include media-query(tablet-portrait) {
+                display: block;
+            }
+
+            &:first-child {
+                top: 0;
+                left: 0;
+                transform: rotate(90deg);
+            }
+
+            &:last-child {
+                right: 0;
+                bottom: 0;
+                transform: rotate(-90deg);
+            }
+        }
+    }
+
+    &--dark-bg {
+        padding: 2rem 20px;
+        color: $color--white;
+        background-color: $color--mustard;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 20px;
+        }
+    }
 
         @include media-query(tablet-portrait) {
             flex-direction: row;
