@@ -2,9 +2,15 @@ $color--white: #fff;
 $color--black: #141414;
 $color--light-blue: #43bbf1;
 $color--dark-blue: #25aae1;
-$color--darkest-blue: #16729e;
 $color--dark-grey: #404041;
 $color--purple: #8b1fbc;
+$color--darkest-blue: #3d6bdb;
+$color--twitter: #1da6f6;
+$color--linkedin: #137ab8;
+$color--facebook: #396ab5;
+$color--mid-grey: #cfcfcf;
+$color--light-grey: #f7f7f7;
+$color--mustard: #e6ab32;
 
 $color--default: $color--dark-grey;
 $color--primary: $color--light-blue;
@@ -47,6 +53,7 @@ $font-sizes: (
 
 // Wrappers
 $site-width: 1280px;
+$wrapper--medium: 1020px;
 $wrapper--small: 790px;
 
 // Breakpoints
