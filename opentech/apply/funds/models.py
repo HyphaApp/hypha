@@ -7,11 +7,9 @@ from wagtail.wagtailadmin.edit_handlers import (
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailsearch import index
+from wagtail.wagtailcore.models import Orderable
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
-from opentech.public.utils.models import SocialFields, ListingFields
 
 from .blocks import CustomFormFieldsBlock
 from .forms import WorkflowFormAdminForm
@@ -23,31 +21,8 @@ WORKFLOW_CLASS = {
     DoubleStage.name: DoubleStage,
 }
 
-
-class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
-    # Only allow creating HomePages at the root level
-    parent_page_types = ['wagtailcore.Page']
-    subpage_types = ['FundType']
-
-    strapline = models.CharField(blank=True, max_length=255)
-
-    search_fields = Page.search_fields + [
-        index.SearchField('strapline'),
-    ]
-
-    content_panels = Page.content_panels + [
-        FieldPanel('strapline'),
-    ]
-
-    promote_panels = (
-        Page.promote_panels +
-        SocialFields.promote_panels +
-        ListingFields.promote_panels
-    )
-
-
 class FundType(AbstractStreamForm):
-    parent_page_types = [ApplyHomePage]
+    parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
     base_form_class = WorkflowFormAdminForm

@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'opentech.images',
 
     'opentech.apply.funds',
+    'opentech.apply.home',
     'opentech.apply.users',
     'opentech.apply.stream_forms',
 

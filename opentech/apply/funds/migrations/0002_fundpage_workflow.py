@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0002_create_apply_homepage'),
+        ('funds', '0001_initial'),
     ]
 
     operations = [

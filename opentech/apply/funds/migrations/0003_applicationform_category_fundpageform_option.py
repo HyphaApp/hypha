@@ -13,7 +13,7 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0003_fundpage_workflow'),
+        ('funds', '0002_fundpage_workflow'),
     ]
 
     operations = [
@@ -41,8 +41,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apply.ApplicationForm')),
-                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='apply.FundType')),
+                ('form', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='funds.ApplicationForm')),
+                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='funds.FundType')),
             ],
             options={
                 'ordering': ['sort_order'],
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
                 ('value', models.CharField(max_length=255)),
-                ('category', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='options', to='apply.Category')),
+                ('category', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='options', to='funds.Category')),
             ],
             options={
                 'ordering': ['sort_order'],
