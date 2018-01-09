@@ -12,19 +12,21 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
-    'opentech.apply',
-    'opentech.esi',
-    'opentech.forms',
-    'opentech.home',
     'opentech.images',
-    'opentech.navigation',
-    'opentech.news',
-    'opentech.people',
-    'opentech.search',
-    'opentech.standardpages',
-    'opentech.users',
-    'opentech.utils',
-    'opentech.stream_forms',
+
+    'opentech.apply.funds',
+    'opentech.apply.users',
+    'opentech.apply.stream_forms',
+
+    'opentech.public.esi',
+    'opentech.public.forms',
+    'opentech.public.home',
+    'opentech.public.navigation',
+    'opentech.public.news',
+    'opentech.public.people',
+    'opentech.public.search',
+    'opentech.public.standardpages',
+    'opentech.public.utils',
 
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
@@ -68,7 +70,7 @@ MIDDLEWARE = [
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
-    'opentech.esi.middleware.ESIMiddleware',
+    'opentech.public.esi.middleware.ESIMiddleware',
 ]
 
 ROOT_URLCONF = 'opentech.urls'
@@ -87,7 +89,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
-                'opentech.utils.context_processors.global_vars',
+                'opentech.public.utils.context_processors.global_vars',
             ],
         },
     },
