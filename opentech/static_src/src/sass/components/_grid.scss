@@ -55,5 +55,18 @@
                 grid-template-columns: 50% 50%;
             }
         }
+
+        &--max-three {
+            grid-template-columns: 1fr;
+            grid-gap: 30px;
+
+            @include media-query(mob-landscape) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @include media-query(tablet-portrait) {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
 	}
 }
