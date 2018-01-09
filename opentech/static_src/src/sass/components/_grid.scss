@@ -17,7 +17,9 @@
 
     &--two {
         > * {
-            flex-basis: calc(50% - 20px);
+            // fix for IE11 not rendering calc flex-basis correctly
+            flex-basis: auto;
+            width: calc(50% - 20px);
         }
     }
 
@@ -40,6 +42,7 @@
         > * {
             flex-basis: initial;
             margin: 0;
+            width: auto;
         }
 
         &--narrow {
