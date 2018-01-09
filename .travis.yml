@@ -28,13 +28,14 @@ env:
 before_script:
   # Create a database
   - psql -c 'create database test_db;' -U postgres
+  - pip install pipenv
 
 # Package installation
 install:
-  - pip install codecov
-
   # Install project dependencies
-  - pip install -r requirements.txt
+  - pipenv install
+
+  - pipenv install codecov
 
   # Install node
   - nvm install 8

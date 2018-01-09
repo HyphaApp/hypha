@@ -1,0 +1,35 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+Django = "==1.11.8"
+wagtail = "==1.13.1"
+"psycopg2" = "==2.7.3.1"
+Pillow = "==4.3.0"
+stellar = "==0.4.3"
+wagtail-django-recaptcha = "==0.1"
+uwsgidecorators = "==1.1.0"
+dj-database-url = "==0.4.1"
+whitenoise = "==2.0.4"
+uWSGI = "==2.0.15"
+ConcurrentLogHandler = "==0.9.1"
+raven = "==6.1.0"
+
+
+[dev-packages]
+
+django-extensions = "==1.7.4"
+Werkzeug = "==0.11.11"
+stellar = "==0.4.3"
+factory_boy = "==2.9.2"
+mypy = "==0.550"
+wagtail-factories = "==0.3.0"
+"flake8" = "*"
+
+
+[requires]
+python = "3.6.1"
