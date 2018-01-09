@@ -1,0 +1,8 @@
+.heading {
+    &--introduction {
+        padding: 0 0 2rem;
+        margin: 2rem 0;
+        font-weight: $weight--light;
+        border-bottom: 1px solid $color--mid-grey;
+    }
+}
