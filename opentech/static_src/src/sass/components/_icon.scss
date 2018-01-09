@@ -32,6 +32,26 @@
         margin-right: 3rem;
     }
 
+    &--social-share {
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        margin-right: 5px;
+    }
+
+    &--twitter-share {
+        background: $color--twitter;
+    }
+
+    &--linkedin-share {
+        background: $color--linkedin;
+    }
+
+    &--facebook-share {
+        background: $color--facebook;
+    }
+
+
     &--person {
         width: 15px;
         height: 15px;
