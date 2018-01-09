@@ -1,11 +1,12 @@
 .card {
-    padding: 20px;
-    background-color: $color--tertiary;
-    transition: background-color $transition;
+    position: relative;
+    padding: 30px 30px 100px;
+    background-color: $color--white;
 
-    &:hover {
-        background-color: darken($color--tertiary, 10%);
-	}
+    &__teaser {
+        font-size: 16px;
+        color: $color--default;
+    }
 }
 
 .card-with-image {
