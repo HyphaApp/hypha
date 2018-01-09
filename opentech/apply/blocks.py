@@ -26,11 +26,11 @@ class CategoryQuestionBlock(FormFieldBlock):
     field_label = CharBlock(
         label=_('Label'),
         required=False,
-        help_text=_('Leave blank to use the default on the category'),
+        help_text=_('Leave blank to use the default Category label'),
     )
     help_text = TextBlock(
         required=False,
-        label=_('Leave blank to use the default on the category'),
+        label=_('Leave blank to use the default Category help text'),
     )
     category = CategoryChooserBlock('apply.Category')
     multi = BooleanBlock(label='Multi select', required=False)
