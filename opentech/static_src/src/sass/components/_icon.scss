@@ -52,6 +52,26 @@
         }
     }
 
+
+    &--social-share {
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        margin-right: 5px;
+    }
+
+    &--twitter-share {
+        background: $color--twitter;
+    }
+
+    &--linkedin-share {
+        background: $color--linkedin;
+    }
+
+    &--facebook-share {
+        background: $color--facebook;
+    }
+
     &--card-pixels {
         position: absolute;
         right: 0;
