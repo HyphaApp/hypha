@@ -1,17 +1,12 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from .models import ApplicationForm, Category, FundType
+from .models import ApplicationForm, FundType
+from opentech.apply.categories.admin import CategoryAdmin
 
 
 class FundAdmin(ModelAdmin):
     model = FundType
     menu_icon = 'doc-empty'
-
-
-class CategoryAdmin(ModelAdmin):
-    menu_label = 'Category Questions'
-    menu_icon = 'list-ul'
-    model = Category
 
 
 class ApplicationFormAdmin(ModelAdmin):
