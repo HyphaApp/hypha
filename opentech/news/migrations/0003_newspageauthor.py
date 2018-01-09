@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailcore', '0040_page_draft_title'),
-        ('news', '0001_initial'),
+        ('news', '0002_add_header_image'),
     ]
 
     operations = [
