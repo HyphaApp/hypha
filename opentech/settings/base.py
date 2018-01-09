@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'opentech.standardpages',
     'opentech.users',
     'opentech.utils',
+    'opentech.stream_forms',
 
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',

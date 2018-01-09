@@ -1,6 +1,8 @@
 from django.forms import Form
 import factory
+import wagtail_factories
 
+from opentech.apply.models import ApplicationForm, FundType, FundForm
 from opentech.apply.workflow import Action, Phase, Stage, Workflow
 
 
@@ -107,3 +109,29 @@ class WorkflowFactory(factory.Factory):
         stages = kwargs.pop('stage_classes')
         new_class = type(model_class.__name__, (model_class,), {'name': name, 'stage_classes': stages})
         return new_class(*args, **kwargs)
+
+
+class FundTypeFactory(wagtail_factories.PageFactory):
+    class Meta:
+        model = FundType
+
+    class Params:
+        workflow_stages = 1
+        number_forms = 1
+
+    # Will need to update how the stages are identified as Fund Page changes
+    workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+
+
+class FundFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = FundForm
+    fund = factory.SubFactory(FundTypeFactory, parent=None)
+    form = factory.SubFactory('opentech.apply.tests.factories.ApplicationFormFactory')
+
+
+class ApplicationFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ApplicationForm
+
+    name = factory.Faker('word')
