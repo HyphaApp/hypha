@@ -4,10 +4,8 @@ from wagtail.wagtailsearch import index
 
 from django.db import models
 
-from opentech.public.utils.models import SocialFields, ListingFields
 
-
-class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
+class ApplyHomePage(Page):
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
     subpage_types = ['funds.FundType']
@@ -21,9 +19,3 @@ class ApplyHomePage(Page, SocialFields, ListingFields):  # type: ignore
     content_panels = Page.content_panels + [
         FieldPanel('strapline'),
     ]
-
-    promote_panels = (
-        Page.promote_panels +
-        SocialFields.promote_panels +
-        ListingFields.promote_panels
-    )
