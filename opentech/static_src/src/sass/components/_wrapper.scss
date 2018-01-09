@@ -6,6 +6,11 @@
         margin: 0 auto;
     }
 
+    &--medium {
+        max-width: $wrapper--medium;
+        margin: 0 auto;
+    }
+
     &--large {
         max-width: $site-width;
         margin: 0 auto;
