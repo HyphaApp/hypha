@@ -1,7 +1,9 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 
-from .views import demo_workflow
+from .funds import urls as funds_urls
+from .users import urls as users_urls
 
 urlpatterns = [
-    url(r'^demo/(?P<wf_id>[1-2])/$', demo_workflow, name="workflow_demo")
+    url(r'^apply/', include(funds_urls)),
+    url(r'^user/', include(users_urls))
 ]

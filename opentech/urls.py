@@ -10,22 +10,18 @@ from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 
+from opentech.public import urls as public_urls
 from opentech.apply import urls as apply_urls
-from opentech.esi import views as esi_views
-from opentech.search import views as search_views
-from opentech.users import urls as users_urls
+
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
     url(r'^admin/', include(wagtailadmin_urls)),
 
     url(r'^documents/', include(wagtaildocs_urls)),
-    url(r'^search/$', search_views.search, name='search'),
-    url(r'^esi/(.*)/$', esi_views.esi, name='esi'),
     url('^sitemap\.xml$', sitemap),
-
-    url(r'^apply/', include(apply_urls)),
-    url(r'^user/', include(users_urls))
+    url('^', include(public_urls)),
+    url('^', include(apply_urls)),
 ]
 
 
