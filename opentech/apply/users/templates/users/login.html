@@ -10,5 +10,5 @@
     <button type="submit">Login</button>
   </form>
 
-  <a href="{% url "social:begin" "google-oauth2" %}">Google+</a>
+  <a href="{% url "social:begin" "google-oauth2" %}?next={% url "users:account" %}">Log in with your OTF email</a>
 {% endblock %}
