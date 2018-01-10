@@ -45,12 +45,21 @@
             border: 1px solid $color--white;
             transition: background, color,  $transition;
 
+            &:hover {
+                .goog-te-menu-value {
+                    span {
+                        color: $color--dark-blue !important; // sass-lint:disable-line no-important
+                    }
+                }
+            }
+
             .goog-te-menu-value {
                 color: $color--white;
 
                 span {
                     // color of the arrow is inlined hence !important
                     color: $color--white !important; // sass-lint:disable-line no-important
+                    transition: color  $transition;
 
                     &:nth-of-type(2) {
                         // hide the pipe
