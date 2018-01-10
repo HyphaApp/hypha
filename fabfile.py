@@ -49,7 +49,7 @@ def pull_production_media():
 
 @roles('staging')
 def deploy_staging():
-    _build_static()
+    _build_static(build_branch='staging')
     _deploy_static()
 
     run('git pull')
@@ -153,9 +153,8 @@ def _post_deploy():
 
 
 @runs_once
-def _build_static():
+def _build_static(build_branch='master'):
     # Build a specific branch
-    build_branch = 'master'
     current_branch = local('git rev-parse --abbrev-ref HEAD', capture=True)
     if current_branch != build_branch:
         raise RuntimeError("Please switch to '{}' before deploying".format(build_branch))
