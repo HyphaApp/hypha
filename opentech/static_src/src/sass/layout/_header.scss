@@ -96,7 +96,7 @@
             width: 60px;
             height: 60px;
 
-            @include media-query(tablet-portrait) {
+            @include media-query(tablet-landscape) {
                 display: none;
             }
         }
@@ -104,7 +104,7 @@
         &--desktop {
             display: none;
 
-            @include media-query(tablet-portrait) {
+            @include media-query(tablet-landscape) {
                 display: block;
                 height: 50px;
                 max-width: 215px;
