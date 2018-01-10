@@ -13,6 +13,7 @@ from wagtail.wagtailadmin.edit_handlers import (
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
+    PageChooserPanel,
     StreamFieldPanel
 )
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -69,6 +70,29 @@ class PersonPagePersonType(models.Model):
 
     def __str__(self):
         return self.person_type.title
+
+
+class Funding(Orderable):
+    page = ParentalKey('PersonPage', related_name='funding')
+    value = models.PositiveIntegerField()
+    year = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField(help_text='In months')
+    source = models.ForeignKey(
+        'wagtailcore.Page',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel('year'),
+            FieldPanel('value'),
+            FieldPanel('duration'),
+        ]),
+        # This is stubbed as we need to be able to select from multiple
+        PageChooserPanel('source'),
+    ]
 
 
 class PersonContactInfomation(Orderable):
@@ -144,7 +168,8 @@ class PersonPage(BasePage):
         ], heading='Contact information'),
         InlinePanel('person_types', label='Person types'),
         FieldPanel('introduction'),
-        StreamFieldPanel('biography')
+        StreamFieldPanel('biography'),
+        InlinePanel('funding', label='Funding'),
     ]
 
 

@@ -23,7 +23,7 @@ class LinkFields(models.Model):
     """
 
     link_page = models.ForeignKey(
-        'wagtailcore.Page',
+        'wagtailcore.FieldPanelPage',
         blank=True,
         null=True,
         on_delete=models.SET_NULL
