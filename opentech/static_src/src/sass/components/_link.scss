@@ -40,7 +40,7 @@
     }
 
     &--fixed-apply {
-        @include button($color--purple);
+        @include button($color--purple, darken($color--purple, 20%));
         position: fixed;
         bottom: 0;
         z-index: 100;
