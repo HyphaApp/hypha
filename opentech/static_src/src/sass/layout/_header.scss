@@ -167,4 +167,12 @@
             height: 120px;
         }
     }
+
+    &__button-container {
+        display: none;
+
+        @include media-query(tablet-portrait) {
+            display: flex;
+        }
+    }
 }

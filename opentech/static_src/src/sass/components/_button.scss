@@ -18,14 +18,19 @@
         align-items: center;
     }
 
+    &--transparent {
+        @include button(transparent);
+    }
+
+    &--narrow {
+        padding: 5px 15px;
+        font-size: 15px;
+    }
+
     // cannot conform to BEM here in order to be able to override google button styles
     &--google-translate {
-        display: none;
         width: 180px;
-
-        @include media-query(tablet-portrait) {
-            display: block;
-        }
+        margin-left: 10px;
 
         .goog-te-gadget-simple {
             @include button(transparent);
