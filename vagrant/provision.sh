@@ -4,34 +4,31 @@ PROJECT_NAME=$1
 MODULE_NAME=$2
 
 PROJECT_DIR=/vagrant
-
-PIPENV_DIR=/home/vagrant/.local/bin
-# Pew(Pipenv dep) need to know the pipenv_dir
-# cd means the virtualenv is created in the right location
-PIPENV="cd $PROJECT_DIR; export PATH=$PATH:$PIPENV_DIR; pipenv"
-
-
-# Create database
-
-su - vagrant -c "createdb $MODULE_NAME"
+PIPENV_DIR="/home/vagrant/.local/bin"
 
 # Install pipenv
 su - vagrant -c "pip3 install pipenv --user"
 
-# Setup environment and install
-su - vagrant -c "$PIPENV install --dev"
+su - vagrant -c "echo \"export PATH=$PATH:$PIPENV_DIR\" > /home/vagrant/.bash_profile"
+su - vagrant -c "source ~/.bash_profile"
 
+# Setup environment and install
+su - vagrant -c "cd /vagrant; pipenv install --dev"
+
+
+# Create database
+su - vagrant -c "createdb $MODULE_NAME"
 
 # Set execute permissions on manage.py as they get lost if we build from a zip file
 chmod a+x $PROJECT_DIR/manage.py
 
 
 # running migrations here is typically not necessary because of fab pull_data
-# su - vagrant -c "PIPENV run django-admin.py migrate --noinput"
+# su - vagrant -c "pipenv run django-admin.py migrate --noinput"
 
 
 # Add a couple of aliases to manage.py into .bashrc
-cat << EOF >> /home/vagrant/.bashrc
+cat << EOF > /home/vagrant/.bash_profile
 export PYTHONPATH=$PROJECT_DIR
 export DJANGO_SETTINGS_MODULE=$MODULE_NAME.settings.dev
 
