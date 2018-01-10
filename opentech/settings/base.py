@@ -13,7 +13,6 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     'opentech.images',
-    'opentech.publicpages',
 
     'opentech.apply.categories',
     'opentech.apply.funds',
@@ -23,6 +22,7 @@ INSTALLED_APPS = [
 
     'opentech.public.esi',
     'opentech.public.forms',
+    'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.navigation',
     'opentech.public.news',

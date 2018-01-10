@@ -9,7 +9,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 from wagtail.wagtailcore.fields import StreamField
 
-from opentech.utils.models import BasePage
+from opentech.public.utils.models import BasePage
 
 from .blocks import FundBlock
 
@@ -30,7 +30,7 @@ class FundPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
-        PageChooserPanel('fund_type', 'apply.FundType'),
+        PageChooserPanel('fund_type', 'funds.FundType'),
         StreamFieldPanel('body'),
     ]
 
