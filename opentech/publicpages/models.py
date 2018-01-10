@@ -21,6 +21,8 @@ class FundPage(BasePage):
     introduction = models.TextField(blank=True)
     fund_type = models.ForeignKey(
         'wagtailcore.Page',
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL,
         related_name='+',
     )
@@ -33,14 +35,12 @@ class FundPage(BasePage):
     ]
 
 
-class NewsIndex(BasePage):
+class FundIndex(BasePage):
     subpage_types = ['FundPage']
     parent_page_types = ['home.HomePage']
 
     def get_context(self, request, *args, **kwargs):
-        funds = FundPage.objects.live().public().descendant_of(self).annotate(
-            date=Coalesce('publication_date', 'first_published_at')
-        ).order_by('-date')
+        funds = FundPage.objects.live().public().descendant_of(self)
 
         # Pagination
         page = request.GET.get('page', 1)
