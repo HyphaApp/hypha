@@ -84,6 +84,22 @@ def pull_staging_media():
     local('rsync -avz %s:\'%s\' /vagrant/media/' % (env['host_string'], '$CFG_MEDIA_DIR'))
 
 
+@roles('pre-production')
+def deploy_pre_production():
+    _build_static()
+    _deploy_static()
+
+    run('git pull')
+    run('pip install -r requirements.txt')
+    _run_migrate()
+    run('django-admin collectstatic --noinput')
+
+    # 'restart' should be an alias to a script that restarts the web server
+    run('restart')
+
+    _post_deploy()
+
+
 @runs_once
 def _pull_data(env_name, remote_db_name, local_db_name, remote_dump_path, local_dump_path):
     timestamp = datetime.now().strftime('%Y%m%d-%I%M%S')
