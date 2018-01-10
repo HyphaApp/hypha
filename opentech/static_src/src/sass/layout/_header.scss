@@ -128,7 +128,7 @@
             bottom: 0;
             display: none;
 
-            @include media-query(tablet-portrait) {
+            @include media-query(tablet-landscape) {
                 display: block;
             }
         }

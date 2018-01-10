@@ -4,10 +4,6 @@
     transition: fill $transition;
     fill: $color--white;
 
-    &:hover {
-        fill: darken($color--white, 20%);
-    }
-
     &--home {
         width: 15px;
         height: 15px;
@@ -32,6 +28,26 @@
         margin-right: 3rem;
     }
 
+    &--social-share {
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        margin-right: 5px;
+    }
+
+    &--twitter-share {
+        background: $color--twitter;
+    }
+
+    &--linkedin-share {
+        background: $color--linkedin;
+    }
+
+    &--facebook-share {
+        background: $color--facebook;
+    }
+
+
     &--person {
         width: 15px;
         height: 15px;
@@ -50,5 +66,13 @@
         .search-open & {
             fill: $color--white;
         }
+    }
+
+    &--card-pixels {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 35px;
+        height: 52px;
     }
 }
