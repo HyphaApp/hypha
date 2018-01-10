@@ -36,7 +36,7 @@ def register_inclusion_tag(register):
 
 
 def purge_esi():
-    from opentech.utils.cache import purge_cache_on_all_sites
+    from opentech.public.utils.cache import purge_cache_on_all_sites
 
     for name in ESI_REGISTRY:
         # TODO: might need a separate domain for ESI and call wagtail.contrib.wagtailfrontendcache.utils.purge_url_from_cache
