@@ -37,6 +37,11 @@
         height: 15px;
         margin-right: 5px;
         fill: $color--white;
+        transition: fill $transition;
+
+        .button:hover & {
+            fill: $color--dark-blue;
+        }
 
         .header--has-bg-image & {
             fill: $color--dark-blue;
