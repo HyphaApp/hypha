@@ -23,6 +23,9 @@ class Search {
 
         // add modifier to header__inner when the menu is open to style search element
         document.querySelector('.header__inner--menu-open').classList.toggle('header__inner--search-open');
+
+        // add modifier to header to be able to change header icon colours
+        document.querySelector('.header').classList.toggle('search-open');
     }
 }
 
