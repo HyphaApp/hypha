@@ -9,21 +9,49 @@
         cursor: pointer;
     }
 
+    &--left-space {
+        margin-left: 20px;
+    }
+
+    &--contains-icons {
+        display: flex;
+        align-items: center;
+    }
+
+    &--transparent {
+        @include button(transparent, $color--white);
+
+        &:hover {
+            color: $color--dark-blue;
+        }
+    }
+
+    &--narrow {
+        padding: 5px 15px;
+        font-size: 15px;
+    }
+
     // cannot conform to BEM here in order to be able to override google button styles
     &--google-translate {
-        display: none;
         width: 180px;
-
-        @include media-query(tablet-portrait) {
-            display: block;
-        }
+        margin-left: 10px;
 
         .goog-te-gadget-simple {
-            @include button(transparent);
+            @include button(transparent, $color--white);
             padding: 5px 15px;
             font-family: $font--primary;
             font-size: 15px;
             font-weight: $weight--bold;
+            border: 1px solid $color--white;
+            transition: background, color,  $transition;
+
+            &:hover {
+                .goog-te-menu-value {
+                    span {
+                        color: $color--dark-blue !important; // sass-lint:disable-line no-important
+                    }
+                }
+            }
 
             .goog-te-menu-value {
                 color: $color--white;
@@ -31,6 +59,7 @@
                 span {
                     // color of the arrow is inlined hence !important
                     color: $color--white !important; // sass-lint:disable-line no-important
+                    transition: color  $transition;
 
                     &:nth-of-type(2) {
                         // hide the pipe
@@ -47,69 +76,3 @@
     }
 }
 
-.button-menu-toggle {
-    position: relative;
-    z-index: 10;
-    display: block;
-    width: 40px;
-    height: 30px;
-    margin-top: 5px;
-    background: transparent;
-    border: 0;
-    transform: rotate(0deg);
-    transition: $transition;
-
-    &__line {
-        position: absolute;
-        left: 0;
-        display: block;
-        width: 100%;
-        height: 4px;
-        background: $color--white;
-        opacity: 1;
-        transform: rotate(0deg);
-        transition: top, width, opacity, transform, left, $transition;
-
-        &:nth-child(1) {
-            top: 0;
-
-            .is-open & {
-                top: 10px;
-                left: 50%;
-                width: 0%;
-            }
-        }
-
-        &:nth-child(2),
-        &:nth-child(3) {
-            top: 12px;
-            opacity: 0.25;
-
-            .is-open & {
-                opacity: 1;
-            }
-        }
-
-        &:nth-child(2) {
-            .is-open & {
-                transform: rotate(45deg);
-            }
-        }
-
-        &:nth-child(3) {
-            .is-open & {
-                transform: rotate(-45deg);
-            }
-        }
-
-        &:nth-child(4) {
-            top: 24px;
-
-            .is-open & {
-                top: 10px;
-                left: 50%;
-                width: 0%;
-            }
-        }
-    }
-}

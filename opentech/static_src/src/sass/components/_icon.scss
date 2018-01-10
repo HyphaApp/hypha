@@ -13,7 +13,7 @@
         height: 15px;
         margin-right: 5px;
         fill: $color--primary;
-  }
+    }
 
     &--footer-social {
         @include media-query(tablet-portrait) {
@@ -21,9 +21,34 @@
         }
     }
 
+    &--mobile-menu {
+        width: 32px;
+        height: 28px;
+    }
+
     &--footer-credit {
         width: 70px;
         height: 45px;
         margin-right: 3rem;
+    }
+
+    &--person {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        transition: fill $transition;
+        fill: $color--white;
+
+        .button:hover & {
+            fill: $color--dark-blue;
+        }
+
+        .header--has-bg-image & {
+            fill: $color--dark-blue;
+        }
+
+        .search-open & {
+            fill: $color--white;
+        }
     }
 }

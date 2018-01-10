@@ -79,20 +79,18 @@
 }
 
 // button mixin
-@mixin button($bg) {
+@mixin button($bg, $hover-bg) {
     padding: 10px 60px;
     font-weight: $weight--bold;
+    color: $color--white;
     background: $bg;
     border: 1px solid $color--white;
-    transition: background $transition;
+    transition: color, background, border, $transition;
 
-    &:hover {
-        background: darken($bg, 8%);
-        transition: background $transition;
-    }
-
+    &:hover,
     &:active {
-        background: darken($bg, 25%);
+        cursor: pointer;
+        background: $hover-bg;
     }
 }
 

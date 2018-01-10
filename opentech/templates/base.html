@@ -81,35 +81,52 @@
                     <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
 
-                <div class="header__menu-toggle">
-                    <span>Menu</span>
-                    <button class="button button-menu-toggle js-mobile-menu-toggle" aria-haspopup="true">
-                        <span class="button-menu-toggle__line"></span>
-                        <span class="button-menu-toggle__line"></span>
-                        <span class="button-menu-toggle__line"></span>
-                        <span class="button-menu-toggle__line"></span>
+                <div class="header__inner header__inner--mobile-buttons">
+                    <button class="button js-search-toggle" aria-haspopup="true">
+                        <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                        <svg class="header__icon header__icon--close-search header__icon--close-search-menu-closed icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                    </button>
+                    <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
+                        <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
                     </button>
                 </div>
 
                 <section class="header__menus header__menus--desktop">
-                    <div class="header__inner--top">
-                        {% primarynav %}
+                    {% primarynav %}
 
-                        <button class="button js-desktop-search-toggle">
-                            <svg class="header__icon header__icon--magnifying-glass icon"><use xlink:href="#magnifying-glass"></use></svg>
-                            <svg class="header__icon header__icon--cross icon"><use xlink:href="#cross"></use></svg>
-                        </button>
-                    </div>
+                    <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true">
+                        <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
+                        <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
+                    </button>
                 </section>
 
                 <section class="header__menus header__menus--mobile">
+                    <div class="header__inner header__inner--menu-open">
+                        <a href="{% slugurl 'home' %}">
+                            <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                        </a>
+                        <div class="header__inner header__inner--mobile-buttons">
+                            <button class="button js-search-toggle" aria-haspopup="true">
+                                <svg class="header__icon header__icon--open-search header__icon--open-search-menu-open icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                                <svg class="header__icon header__icon--close-search header__icon--close-search-menu-open icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                            </button>
+                            <button class="button button--left-space js-mobile-menu-close">
+                                <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                            </button>
+                        </div>
+                    </div>
                     {% primarynav %}
                 </section>
-
-                <div class="button button--google-translate" id="google_translate_element"></div>
+                <div class="header__button-container">
+                    <a href="#" class="button button--transparent button--narrow button--contains-icons">
+                        <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+                        Log in
+                    </a>
+                    <div class="button button--google-translate" id="google_translate_element"></div>
+                </div>
             </div>
 
-            <div class="header__search header__search--desktop">
+            <div class="header__search">
                 <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
                     <button class="button" type="submit">
                         <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
@@ -181,14 +198,13 @@
                             <span>PGP: 67AC DDCF B909 4685 36DD BC03 F766 3861 965A 90D2</span>
                         </p>
 
-
                         <p><a href="/rss.xml">RSS Feed</a></p>
 
                         <p><a class="link link--underlined" href="#">Terms of Use</a></p>
 
                         <p>Test the OTF website for censorship</p>
 
-                        <a class="link link--button" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
+                        <a class="link link--button link--button-transparent" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
 
                         <div class="footer__credits">
                             <a href="https://www.bbg.gov/">
