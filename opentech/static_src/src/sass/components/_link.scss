@@ -1,17 +1,21 @@
 .link {
     &--button {
-        @include button($color--light-blue);
+        @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
     }
 
     &--button-secondary {
-        @include button($color--purple);
+        @include button($color--purple, darken($color--purple, 20%));
         border: 0;
     }
 
     &--button-transparent {
-        @include button(transparent);
+        @include button(transparent, $color--darkest-blue);
         color: $color--white;
+
+        &:hover {
+            border: 1px solid transparent;
+        }
     }
 
     &--underlined {

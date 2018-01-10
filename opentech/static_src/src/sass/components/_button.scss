@@ -19,7 +19,11 @@
     }
 
     &--transparent {
-        @include button(transparent);
+        @include button(transparent, $color--white);
+
+        &:hover {
+            color: $color--dark-blue;
+        }
     }
 
     &--narrow {
@@ -33,12 +37,13 @@
         margin-left: 10px;
 
         .goog-te-gadget-simple {
-            @include button(transparent);
+            @include button(transparent, $color--white);
             padding: 5px 15px;
             font-family: $font--primary;
             font-size: 15px;
             font-weight: $weight--bold;
             border: 1px solid $color--white;
+            transition: background, color,  $transition;
 
             .goog-te-menu-value {
                 color: $color--white;
