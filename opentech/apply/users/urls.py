@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 
 from wagtail.wagtailadmin.forms import PasswordResetForm
 
-from opentech.users.views import account
+from opentech.apply.users.views import account
 
 urlpatterns = [
     url(r'^$', account, name='account'),

@@ -5,5 +5,5 @@ from .users import urls as users_urls
 
 urlpatterns = [
     url(r'^apply/', include(funds_urls)),
-    url(r'^user/', include(users_urls, namespace='users')
+    url(r'^user/', include(users_urls, namespace='users')),
 ]
