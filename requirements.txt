@@ -12,7 +12,7 @@ factory_boy==2.9.2
 wagtail_factories==0.3.0
 flake8
 
-social_auth_app_django-2.1.0=2.1.0
+social_auth_app_django==2.1.0
 
 # Production dependencies
 dj-database-url==0.4.1
