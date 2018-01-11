@@ -1,3 +1,4 @@
+from django import forms
 from django.test import TestCase
 
 from opentech.apply.categories.blocks import CategoryQuestionBlock
@@ -34,3 +35,11 @@ class TestCategoryQuestionBlock(TestCase):
         field = self.get_field(**values)
         self.assertEqual(values['field_label'], field.label)
         self.assertEqual(values['help_text'], field.help_text)
+
+    def test_multi_select_enabled(self):
+        field = self.get_field(multi=True)
+        self.assertTrue(isinstance(field, forms.MultipleChoiceField))
+
+    def test_multi_select_disabled(self):
+        field = self.get_field(multi=True)
+        self.assertTrue(isinstance(field, forms.ChoiceField))
