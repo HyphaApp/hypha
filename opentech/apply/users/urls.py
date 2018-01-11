@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from opentech.apply.users.views import account
+from opentech.apply.users.views import account, oauth
 
 urlpatterns = [
     url(r'^$', account, name='account'),
@@ -53,4 +53,5 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset/complete.html'),
         name='password_reset_complete'
     ),
+    url(r'^oauth$', oauth, name='oauth'),
 ]
