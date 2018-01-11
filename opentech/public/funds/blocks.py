@@ -7,14 +7,14 @@ class ProjectsBlock(StaticBlock):
     class Meta:
         icon = 'grip'
         label = 'List of Projects funded'
-        template = 'funds/blocks/related_projects.html'
+        template = 'public_funds/blocks/related_projects.html'
 
 
 class ReviewersBlock(StaticBlock):
     class Meta:
         icon = 'grip'
         label = 'List of fund Reviewers'
-        template = 'funds/blocks/related_reviewers.html'
+        template = 'public_funds/blocks/related_reviewers.html'
 
 
 class FundBlock(StoryBlock):
