@@ -73,6 +73,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
     'opentech.public.esi.middleware.ESIMiddleware',
@@ -276,10 +278,28 @@ ENABLE_STYLEGUIDE = False
 
 # Social Auth
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_GOOGLEOAUTH2_WHITELISTED_DOMAINS = ['opentechfund.org']
 
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['opentechfund.org']
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:account'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
+
+# For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
+# Create / associate accounts (including by email)
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.associate_by_email',
+)
