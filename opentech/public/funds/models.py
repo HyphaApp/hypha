@@ -48,14 +48,14 @@ class FundIndex(BasePage):
         page = request.GET.get('page', 1)
         paginator = Paginator(funds, settings.DEFAULT_PER_PAGE)
         try:
-            news = paginator.page(page)
+            funds = paginator.page(page)
         except PageNotAnInteger:
-            news = paginator.page(1)
+            funds = paginator.page(1)
         except EmptyPage:
-            news = paginator.page(paginator.num_pages)
+            funds = paginator.page(paginator.num_pages)
 
         context = super().get_context(request, *args, **kwargs)
-        context.update(news=news)
+        context.update(subpages=funds)
         return context
 
 
@@ -64,6 +64,13 @@ class LabPage(BasePage):
     parent_page_types = ['LabIndex']
 
     introduction = models.TextField(blank=True)
+    icon = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
     lab_type = models.ForeignKey(
         'wagtailcore.Page',
         blank=True,
@@ -71,18 +78,25 @@ class LabPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='+',
     )
-    lab_link = models.URLField(blank=True, verbose_name="External link")
+    lab_link = models.URLField(blank=True, verbose_name='External link')
+    link_text = models.CharField(max_length=255, help_text='text to display on the button')
     body = StreamField(FundBlock())
 
     content_panels = BasePage.content_panels + [
+        FieldPanel('icon'),
         FieldPanel('introduction'),
         MultiFieldPanel([
             # Limit to lab pages once created
             PageChooserPanel('lab_type'),
             FieldPanel('lab_link'),
+            FieldPanel('link_text'),
         ], heading='Link for lab application'),
         StreamFieldPanel('body'),
     ]
+
+    @property
+    def link_to_lab(self):
+        return self.lab_link or self.lab_type.get_url()
 
     def clean(self):
         if self.lab_type and self.lab_link:
@@ -109,18 +123,18 @@ class LabIndex(BasePage):
     ]
 
     def get_context(self, request, *args, **kwargs):
-        funds = LabPage.objects.live().public().descendant_of(self)
+        labs = LabPage.objects.live().public().descendant_of(self)
 
         # Pagination
         page = request.GET.get('page', 1)
-        paginator = Paginator(funds, settings.DEFAULT_PER_PAGE)
+        paginator = Paginator(labs, settings.DEFAULT_PER_PAGE)
         try:
-            news = paginator.page(page)
+            labs = paginator.page(page)
         except PageNotAnInteger:
-            news = paginator.page(1)
+            labs = paginator.page(1)
         except EmptyPage:
-            news = paginator.page(paginator.num_pages)
+            labs = paginator.page(paginator.num_pages)
 
         context = super().get_context(request, *args, **kwargs)
-        context.update(news=news)
+        context.update(subpages=labs)
         return context
