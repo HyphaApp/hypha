@@ -13,13 +13,7 @@
         <div class="container">
             {% if people.paginator.count %}
                 {% for person in people %}
-                    <article class="person">
-                        <h2><a href="{% pageurl person %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
-
-                        {% if person.listing_summary or person.introduction %}
-                            <p>{{ person.listing_summary|default:person.introduction }}</p>
-                        {% endif %}
-                    </article>
+                    {% include "people/includes/person_listing.html" with person=person %}
                 {% endfor %}
 
                 {% include "includes/pagination.html" with paginator_page=people %}

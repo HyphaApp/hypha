@@ -22,6 +22,7 @@ INSTALLED_APPS = [
 
     'opentech.public.esi',
     'opentech.public.forms',
+    'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.navigation',
     'opentech.public.news',
