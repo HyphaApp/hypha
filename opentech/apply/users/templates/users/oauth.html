@@ -10,7 +10,7 @@
         <ul>
         {% for association in backends.associated %}
             <li>
-                {% if user.password %}
+                {% if user.has_usable_password %}
                     <form id="{{ association.provider|backend_name }}-disconnect" class="disconnect-form col-md-2" action="{% url 'social:disconnect_individual' backend=association.provider association_id=association.id %}?next={% url "users:account" %}"
                         method="post">
                         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -26,12 +26,12 @@
         </ul>
     {% endif %}
     {% if backends.not_associated %}
-        <h3>Available OAuth providers</h3>
+        <h3>Available providers</h3>
         <ul>
         {% for backend in backends.not_associated %}
             <li>
                 <a id="{{ name }}-button" class="col-md-2 btn btn-default" name="{{ backend }}" href="{% url 'social:begin' backend=backend %}">
-                    Associate with {{ backend|backend_name }}
+                    {{ backend|backend_name }}
                 </a>
             </li>
         {% endfor %}
