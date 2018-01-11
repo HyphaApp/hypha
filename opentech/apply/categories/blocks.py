@@ -42,11 +42,11 @@ class CategoryQuestionBlock(FormFieldBlock):
             return forms.ChoiceField
 
     def use_defaults_from_category(self, kwargs, category):
-        map = {'field_label': 'label', 'help_text': 'help_text'}
+        category_fields = {'label': 'name', 'help_text': 'help_text'}
 
-        for field in ['field_label', 'help_text']:
-            if field not in kwargs:
-                kwargs[map[field]] = getattr(category, field)
+        for field in category_fields.keys():
+            if not kwargs.get(field):
+                kwargs[field] = getattr(category, category_fields[field])
 
         return kwargs
 
