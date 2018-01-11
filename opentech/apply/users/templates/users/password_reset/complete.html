@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Reset password" %}{% endblock %} {% block content %}
+    <h1>{% trans "Password change successful" %}</h1>
+    <p>
+        <a href="{% url 'users:login' %}">{% trans "Log in" %}</a>
+    </p>
+{% endblock %}

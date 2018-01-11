@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Reset password" %}{% endblock %}
+
+
+{% block content %}
+    {% if form.non_field_errors %}
+        <div class="messages">
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li class="error">{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.email.label_tag }}
+        {{ form.email }}
+
+        <button type="submit">{% trans 'Reset password' %}</button>
+    </form>
+{% endblock %}
