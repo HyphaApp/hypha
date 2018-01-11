@@ -1,10 +1,6 @@
 from django.conf.urls import url
-
 from django.contrib.auth import views as auth_views
-
 from django.urls import reverse_lazy
-
-from wagtail.wagtailadmin.forms import PasswordResetForm
 
 from opentech.apply.users.views import account
 
@@ -36,8 +32,7 @@ urlpatterns = [
     url(r'^reset/$', auth_views.PasswordResetView.as_view(
         template_name='users/password_reset/form.html',
         email_template_name='users/password_reset/email.txt',
-        success_url=reverse_lazy('users:password_reset_done'),
-        form_class=PasswordResetForm
+        success_url=reverse_lazy('users:password_reset_done')
     )),
     url(
         r'^reset/done/$',
