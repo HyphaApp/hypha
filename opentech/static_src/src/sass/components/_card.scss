@@ -1,11 +1,23 @@
 .card {
+    $root: &;
     position: relative;
     padding: 30px 30px 100px;
     background-color: $color--white;
+    transition: background-color, color, $transition;
+
+    &:hover {
+        color: $color--white;
+        background: $color--light-blue;
+    }
 
     &__teaser {
         font-size: 16px;
         color: $color--default;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
     }
 }
 
