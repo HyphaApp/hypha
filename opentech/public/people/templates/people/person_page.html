@@ -23,11 +23,11 @@
                 <p>{{ page.email }}</p>
             {% endif %}
 
-            {% with phone_numbers=page.phone_numbers.all %}
-                {% if phone_numbers %}
+            {% with contact_details=page.contact_details.all %}
+                {% if contact_details %}
 
-                    {% for related_phone_number in phone_numbers %}
-                        <p>{{ related_phone_number.phone_number }}</p>
+                    {% for contact in contact_details %}
+                        <p>{{ contact.method_display }}: {{ contact.contact_detail }}</p>
                     {% endfor %}
 
                 {% endif %}
@@ -52,6 +52,18 @@
                 <h3>{{ item.get_service_display }}</h3>
                 <p>{{ item.profile_url }}</p>
             {% endfor %}
+            <h2>Funding to date</h2>
+            {% for funding in page.funding.all %}
+            <table>
+                <tr>
+                    <td>{{ funding.year }}</td>
+                    <td>${{ funding.value }}</td>
+                    <td>{{ funding.duration }} months</td>
+                    <td><a href="{% pageurl funding.source %}">{{ funding.source }}</a></td>
+                </tr>
+            </table>
+            {% endfor %}
+            <p>Total Funding: {{ page.total_funding }}</p>
         </div>
     </section>
 

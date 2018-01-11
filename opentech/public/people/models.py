@@ -1,15 +1,19 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.functional import cached_property
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.conf import settings
 
 from modelcluster.fields import ParentalKey
 
+from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
+    FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
+    PageChooserPanel,
     StreamFieldPanel
 )
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
@@ -25,7 +29,7 @@ class SocialMediaProfile(models.Model):
     )
     site_titles = (
         ('twitter', "Twitter"),
-        ('linkedin', "LinkedIn")
+        ('linkedin', "LinkedIn"),
     )
     site_urls = (
         ('twitter', 'https://twitter.com/'),
@@ -68,13 +72,64 @@ class PersonPagePersonType(models.Model):
         return self.person_type.title
 
 
-class PersonPagePhoneNumber(models.Model):
-    page = ParentalKey('PersonPage', related_name='phone_numbers')
-    phone_number = models.CharField(max_length=255)
+class Funding(Orderable):
+    page = ParentalKey('PersonPage', related_name='funding')
+    value = models.PositiveIntegerField()
+    year = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField(help_text='In months')
+    source = models.ForeignKey(
+        'wagtailcore.Page',
+        on_delete=models.PROTECT,
+    )
 
     panels = [
-        FieldPanel('phone_number')
+        FieldRowPanel([
+            FieldPanel('year'),
+            FieldPanel('value'),
+            FieldPanel('duration'),
+        ]),
+        # This is stubbed as we need to be able to select from multiple
+        PageChooserPanel('source'),
     ]
+
+
+class PersonContactInfomation(Orderable):
+    methods = (
+        ('irc', 'IRC'),
+        ('im_jabber_xmpp', 'IM/Jabber/XMPP'),
+        ('phone', 'Phone'),
+        ('pgp', 'PGP fingerprint'),
+        ('otr', 'OTR fingerprint'),
+    )
+    page = ParentalKey('PersonPage', related_name='contact_details')
+    contact_method = models.CharField(max_length=255, choices=methods, blank=True)
+    other_method = models.CharField(max_length=255, blank=True, verbose_name='Other')
+    contact_detail = models.CharField(max_length=255)
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel('contact_method'),
+            FieldPanel('other_method'),
+        ]),
+        FieldPanel('contact_detail'),
+    ]
+
+    @property
+    def method_display(self):
+        return self.other_method or self.get_contact_method_display()
+
+    def clean(self):
+        if not (self.contact_method or self.other_method):
+            raise ValidationError({
+                'contact_method': 'Please select or type at least one contact method.',
+                'other_method': '',
+            })
+
+        if self.contact_method and self.other_method:
+            raise ValidationError({
+                'contact_method': 'Please only select or type one contact method.',
+                'other_method': '',
+            })
 
 
 class PersonPage(BasePage):
@@ -107,12 +162,17 @@ class PersonPage(BasePage):
         FieldPanel('website'),
         MultiFieldPanel([
             FieldPanel('email'),
-            InlinePanel('phone_numbers', label='Phone numbers'),
+            InlinePanel('contact_details', label='Other Contact Methods'),
         ], heading='Contact information'),
         InlinePanel('person_types', label='Person types'),
         FieldPanel('introduction'),
-        StreamFieldPanel('biography')
+        StreamFieldPanel('biography'),
+        InlinePanel('funding', label='Funding'),
     ]
+
+    @property
+    def total_funding(self):
+        return sum(funding.value for funding in self.funding.all())
 
 
 class PersonIndexPage(BasePage):
