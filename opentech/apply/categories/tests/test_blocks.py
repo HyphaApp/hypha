@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 
-from .factories import CategoryFactory
+from .factories import CategoryFactory, OptionFactory
 
 
 class TestCategoryQuestionBlock(TestCase):
@@ -43,3 +43,12 @@ class TestCategoryQuestionBlock(TestCase):
     def test_multi_select_disabled(self):
         field = self.get_field(multi=True)
         self.assertTrue(isinstance(field, forms.ChoiceField))
+
+    def test_options_included_in_choices(self):
+        # Don't assign to variable as the ordering wont match choices
+        OptionFactory.create_batch(3, category=self.category)
+        field = self.get_field()
+        self.assertEqual(
+            field.choices,
+            [(option.id, option.value) for option in self.category.options.all()]
+        )
