@@ -2,6 +2,7 @@ from wagtail.wagtailcore.blocks import StaticBlock
 
 from opentech.public.utils.blocks import StoryBlock
 
+
 class ProjectsBlock(StaticBlock):
     class Meta:
         icon = 'grip'
