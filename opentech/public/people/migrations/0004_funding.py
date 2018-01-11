@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('year', models.PositiveIntegerField()),
                 ('duration', models.PositiveIntegerField(help_text='In months')),
                 ('page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='funding', to='people.PersonPage')),
-                ('source', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='wagtailcore.Page')),
+                ('source', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='wagtailcore.Page')),
             ],
             options={
                 'ordering': ['sort_order'],

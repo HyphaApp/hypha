@@ -79,9 +79,7 @@ class Funding(Orderable):
     duration = models.PositiveIntegerField(help_text='In months')
     source = models.ForeignKey(
         'wagtailcore.Page',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.PROTECT,
     )
 
     panels = [
@@ -171,6 +169,10 @@ class PersonPage(BasePage):
         StreamFieldPanel('biography'),
         InlinePanel('funding', label='Funding'),
     ]
+
+    @property
+    def total_funding(self):
+        return sum(funding.value for funding in self.funding.all())
 
 
 class PersonIndexPage(BasePage):
