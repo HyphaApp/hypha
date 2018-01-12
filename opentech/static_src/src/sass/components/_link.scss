@@ -30,12 +30,31 @@
         display: block;
         width: 100%;
         max-width: 250px;
-        margin: 2rem auto 0;
+        margin: 1rem auto 0;
         font-weight: $weight--bold;
         text-align: center;
 
         @include media-query(tablet-portrait) {
             display: none;
+        }
+    }
+
+    &--fixed-apply {
+        @include button($color--purple, darken($color--purple, 20%));
+        position: fixed;
+        bottom: 0;
+        z-index: 100;
+        display: none;
+        color: $color--white;
+        border: 0;
+
+        @include media-query(tablet-portrait) {
+            right: 5%;
+            display: block;
+        }
+
+        @include media-query(tablet-landscape) {
+            right: 10%;
         }
     }
 }

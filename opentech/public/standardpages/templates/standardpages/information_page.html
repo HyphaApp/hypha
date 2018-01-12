@@ -9,16 +9,15 @@
                 {% include "navigation/breadcrumbs.html" %}
             {% endblock %}
 
-            <h1>{{ page.title }}</h1>
-            <h5>{{ page.introduction }}</h5>
+            {% if page.introduction %}
+                <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
+            {% endif %}
 
             {% include_block page.body %}
             {% include "includes/share.html" %}
 
         </section>
-
         {% sidebar %}
-
     </div>
 
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}

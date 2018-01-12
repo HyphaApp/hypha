@@ -1,9 +1,30 @@
 .rich-text {
+    margin-bottom: 2rem;
+
+    a {
+        font-weight: $weight--bold;
+        border-bottom: 1px solid transparent;
+        transition: border, color, 0.15s ease-in-out;
+
+        &:hover {
+            border-bottom: 1px solid $color--primary;
+      }
+    }
+
     ul {
-        list-style: inside disc;
+        padding-left: 20px;
+        list-style: outside disc;
+
+        li {
+            margin-bottom: 1rem;
+        }
     }
 
     ol {
         list-style: inside decimal;
+
+        li {
+            margin-bottom: 1rem;
+        }
     }
 }
