@@ -3,15 +3,21 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 
+from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
+    InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
-from opentech.public.utils.models import BasePage
+from opentech.public.utils.models import (
+    BasePage,
+    RelatedPage,
+)
 
 from .blocks import FundBlock
 
@@ -59,6 +65,10 @@ class FundIndex(BasePage):
         return context
 
 
+class LabPageRelatedPage(RelatedPage):
+    source_page = ParentalKey('LabPage', related_name='related_pages')
+
+
 class LabPage(BasePage):
     subpage_types = []
     parent_page_types = ['LabIndex']
@@ -83,7 +93,7 @@ class LabPage(BasePage):
     body = StreamField(FundBlock())
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('icon'),
+        ImageChooserPanel('icon'),
         FieldPanel('introduction'),
         MultiFieldPanel([
             # Limit to lab pages once created
@@ -92,6 +102,7 @@ class LabPage(BasePage):
             FieldPanel('link_text'),
         ], heading='Link for lab application'),
         StreamFieldPanel('body'),
+        InlinePanel('related_pages', label="Related pages"),
     ]
 
     @property
