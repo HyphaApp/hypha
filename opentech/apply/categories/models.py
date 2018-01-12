@@ -24,6 +24,7 @@ class Category(ClusterableModel):
 
     panels = [
         FieldPanel('name'),
+        FieldPanel('help_text'),
         InlinePanel('options', label='Options'),
     ]
 
