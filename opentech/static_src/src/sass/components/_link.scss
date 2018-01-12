@@ -1,12 +1,21 @@
 .link {
     &--button {
-        @include button($color--light-blue);
+        @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
     }
 
+    &--button-secondary {
+        @include button($color--purple, darken($color--purple, 20%));
+        border: 0;
+    }
+
     &--button-transparent {
-        @include button(transparent);
+        @include button(transparent, $color--darkest-blue);
         color: $color--white;
+
+        &:hover {
+            border: 1px solid transparent;
+        }
     }
 
     &--underlined {
@@ -15,5 +24,18 @@
 
     &--footer-signup {
         margin-top: 1rem;
+    }
+
+    &--mobile-standout {
+        display: block;
+        width: 100%;
+        max-width: 250px;
+        margin: 2rem auto 0;
+        font-weight: $weight--bold;
+        text-align: center;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
     }
 }
