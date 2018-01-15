@@ -22,6 +22,10 @@ from opentech.public.utils.models import (
 from .blocks import FundBlock
 
 
+class FundPageRelatedPage(RelatedPage):
+    source_page = ParentalKey('FundPage', related_name='related_pages')
+
+
 class FundPage(BasePage):
     subpage_types = []
     parent_page_types = ['FundIndex']
@@ -40,6 +44,7 @@ class FundPage(BasePage):
         FieldPanel('introduction'),
         PageChooserPanel('fund_type', 'funds.FundType'),
         StreamFieldPanel('body'),
+        InlinePanel('related_pages', label="Related pages"),
     ]
 
 
