@@ -242,7 +242,7 @@ class FormFieldsBlock(StreamBlock):
     datetime = DateTimeFieldBlock(group=_('Fields'))
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
-    text_markup = RichTextBlock(group=_('Other'))
+    text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
 
     class Meta:
         label = _('Form fields')
