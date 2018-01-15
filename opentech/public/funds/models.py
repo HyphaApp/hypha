@@ -1,15 +1,23 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 
+from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
-from opentech.public.utils.models import BasePage
+from opentech.public.utils.models import (
+    BasePage,
+    RelatedPage,
+)
 
 from .blocks import FundBlock
 
@@ -46,12 +54,98 @@ class FundIndex(BasePage):
         page = request.GET.get('page', 1)
         paginator = Paginator(funds, settings.DEFAULT_PER_PAGE)
         try:
-            news = paginator.page(page)
+            funds = paginator.page(page)
         except PageNotAnInteger:
-            news = paginator.page(1)
+            funds = paginator.page(1)
         except EmptyPage:
-            news = paginator.page(paginator.num_pages)
+            funds = paginator.page(paginator.num_pages)
 
         context = super().get_context(request, *args, **kwargs)
-        context.update(news=news)
+        context.update(subpages=funds)
+        return context
+
+
+class LabPageRelatedPage(RelatedPage):
+    source_page = ParentalKey('LabPage', related_name='related_pages')
+
+
+class LabPage(BasePage):
+    subpage_types = []
+    parent_page_types = ['LabIndex']
+
+    introduction = models.TextField(blank=True)
+    icon = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
+    lab_type = models.ForeignKey(
+        'wagtailcore.Page',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+    )
+    lab_link = models.URLField(blank=True, verbose_name='External link')
+    link_text = models.CharField(max_length=255, help_text='Text to display on the button')
+    body = StreamField(FundBlock())
+
+    content_panels = BasePage.content_panels + [
+        ImageChooserPanel('icon'),
+        FieldPanel('introduction'),
+        MultiFieldPanel([
+            # Limit to lab pages once created
+            PageChooserPanel('lab_type'),
+            FieldPanel('lab_link'),
+            FieldPanel('link_text'),
+        ], heading='Link for lab application'),
+        StreamFieldPanel('body'),
+        InlinePanel('related_pages', label="Related pages"),
+    ]
+
+    @property
+    def link_to_lab(self):
+        return self.lab_link or self.lab_type.get_url()
+
+    def clean(self):
+        if self.lab_type and self.lab_link:
+            raise ValidationError({
+                'lab_type': 'Cannot link to both a Lab page and external link',
+                'lab_link': 'Cannot link to both a Lab page and external link',
+            })
+
+        if not self.lab_type and not self.lab_link:
+            raise ValidationError({
+                'lab_type': 'Please provide a way for applicants to apply',
+                'lab_link': 'Please provide a way for applicants to apply',
+            })
+
+
+class LabIndex(BasePage):
+    subpage_types = ['LabPage']
+    parent_page_types = ['home.HomePage']
+
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction')
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        labs = LabPage.objects.live().public().descendant_of(self)
+
+        # Pagination
+        page = request.GET.get('page', 1)
+        paginator = Paginator(labs, settings.DEFAULT_PER_PAGE)
+        try:
+            labs = paginator.page(page)
+        except PageNotAnInteger:
+            labs = paginator.page(1)
+        except EmptyPage:
+            labs = paginator.page(paginator.num_pages)
+
+        context = super().get_context(request, *args, **kwargs)
+        context.update(subpages=labs)
         return context
