@@ -18,7 +18,9 @@ from wagtail.wagtailsearch import index
 
 from opentech.public.utils.blocks import StoryBlock
 from opentech.public.utils.models import (
+    BaseFunding,
     BasePage,
+    FundingMixin,
     RelatedPage,
 )
 
@@ -76,7 +78,11 @@ class ProjectPageRelatedPage(RelatedPage):
     ]
 
 
-class ProjectPage(BasePage):
+class ProjectFunding(BaseFunding):
+    page = ParentalKey('ProjectPage', related_name='funding')
+
+
+class ProjectPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['ProjectIndexPage']
 
@@ -93,7 +99,6 @@ class ProjectPage(BasePage):
     # Fields to add:
     # otf_status
     # status
-    # funding
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -106,6 +111,7 @@ class ProjectPage(BasePage):
         StreamFieldPanel('body'),
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('funding', label="Funding"),
     ]
 
 
