@@ -89,7 +89,7 @@ class LabPage(BasePage):
         related_name='+',
     )
     lab_link = models.URLField(blank=True, verbose_name='External link')
-    link_text = models.CharField(max_length=255, help_text='text to display on the button')
+    link_text = models.CharField(max_length=255, help_text='Text to display on the button')
     body = StreamField(FundBlock())
 
     content_panels = BasePage.content_panels + [
