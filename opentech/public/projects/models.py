@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core.validators import URLValidator
 
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
@@ -11,6 +13,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 
 from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 
 from opentech.public.utils.blocks import StoryBlock
@@ -18,6 +21,51 @@ from opentech.public.utils.models import (
     BasePage,
     RelatedPage,
 )
+
+
+class ProjectContactDetails(models.Model):
+    project_page = ParentalKey(
+        'ProjectPage',
+        related_name='contact_details'
+    )
+    site_titles = (
+        ('website', "Main Website URL"),
+        ('twitter', "Twitter Handle"),
+        ('github', "Github Organisation or Project"),
+    )
+    site_urls = (
+        ('website', ''),
+        ('twitter', 'https://twitter.com/'),
+        ('github', 'https://github.com/'),
+    )
+    service = models.CharField(
+        max_length=200,
+        choices=site_titles,
+    )
+    value = models.CharField(max_length=255)
+
+    @property
+    def url(self):
+        return dict(self.site_urls)[self.service] + self.value
+
+    def service_name(self):
+        site_display = {
+            'twitter': '@' + self.value,
+            'github': 'Github',
+            'website': 'Main Website',
+        }
+        return site_display[self.service]
+
+    def clean(self):
+        if self.service == 'twitter' and self.value.startswith('@'):
+            self.username = self.username[1:]
+
+        if self.service == 'website':
+            validate = URLValidator()
+            try:
+                validate(self.value)
+            except ValidationError as e:
+                raise ValidationError({'value': e})
 
 
 class ProjectPageRelatedPage(RelatedPage):
@@ -33,13 +81,18 @@ class ProjectPage(BasePage):
     parent_page_types = ['ProjectIndexPage']
 
     introduction = models.TextField(blank=True)
+    icon = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        related_name='+',
+        on_delete=models.SET_NULL
+    )
     body = StreamField(StoryBlock())
 
     # Fields to add:
     # otf_status
     # status
-    # social_accounts
-    # website
     # funding
 
     search_fields = BasePage.search_fields + [
@@ -48,8 +101,10 @@ class ProjectPage(BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
+        ImageChooserPanel('icon'),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
+        InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related pages"),
     ]
 
