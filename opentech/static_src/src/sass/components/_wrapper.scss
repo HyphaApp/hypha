@@ -70,7 +70,7 @@
     &--dark-bg {
         padding: 2rem 20px;
         color: $color--white;
-        background-color: $color--mustard;
+        background-color: $color--dark-grey;
 
         @include media-query(tablet-portrait) {
             padding: 4rem 20px;
