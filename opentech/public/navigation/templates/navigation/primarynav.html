@@ -2,18 +2,7 @@
 <nav role="navigation" aria-label="Primary">
     <ul class="nav nav--primary" role="menubar">
         {% for link in primarynav %}
-            {% with children=link.value.page.get_children.live.public.in_menu %}
-                {% include_block link with has_children=children.exists class="primary" %}
-                {% if children.exists %}
-                    <ul class="nav nav--subnav" role="menu">
-                        <li class="nav__item nav__item--back js-subnav-back">&lsaquo; Back</li>
-                        {% include_block link %}
-                        {% for child in children.all %}
-                            {% include "navigation/includes/menu_item.html" with page=child class="secondary" %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
+            {% include_block link with class="primary" %}
         {% endfor %}
     </ul>
 </nav>
@@ -22,4 +11,3 @@
     Log in
 </a>
 <a href="#" class="link link--button-secondary link--mobile-standout">Apply</a>
-
