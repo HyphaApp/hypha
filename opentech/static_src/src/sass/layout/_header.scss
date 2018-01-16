@@ -48,10 +48,6 @@
             background: transparent;
             transition: background $transition;
         }
-
-        &--search-open {
-            background: $color--dark-blue;
-        }
     }
 
     &__menus {
@@ -164,12 +160,6 @@
         height: 180px;
         padding-bottom: 50px;
         background: $color--dark-blue;
-
-        &--mobile-menu-open {
-            top: 80px;
-            z-index: 12;
-            height: 120px;
-        }
     }
 
     &__button-container {
