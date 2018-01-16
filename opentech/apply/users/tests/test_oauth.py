@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.test import TestCase, modify_settings, override_settings
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
@@ -51,4 +51,3 @@ class TestOAuthAcces(TestCase):
         )
 
         return user
-
