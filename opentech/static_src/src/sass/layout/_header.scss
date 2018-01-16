@@ -4,6 +4,11 @@
     padding: 10px;
     background-color: $color--primary;
 
+    &::before {
+        @extend %overlay;
+        height: 300px;
+    }
+
     @include media-query(tablet-portrait) {
         height: 410px;
         padding: 20px;
