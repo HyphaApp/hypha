@@ -5,8 +5,36 @@ from fabric.api import lcd, roles, runs_once, run, local, env, prompt, get
 
 env.roledefs = {
     'production': [],
-    'pre-production': ['otfpreprod@staging-1-a.bmyrk.torchbox.net'],
-    'staging': ['otfstaging@staging-1-a.bmyrk.torchbox.net'],
+    'pre-production': {
+        'hosts': ['otfpreprod@staging-1-a.bmyrk.torchbox.net'],
+        'config': {
+            'env_name': 'pre-production',
+            'remote_db_name': 'otfpreprod',
+            'local_db_name': 'otfpreprod',
+            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_dump_path': '/tmp/',
+        }
+    },
+    'staging': {
+        'hosts': ['otfstaging@staging-1-a.bmyrk.torchbox.net'],
+        'config': {
+            'env_name': 'staging',
+            'remote_db_name': 'otfstaging',
+            'local_db_name': 'otfstaging',
+            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_dump_path': '/tmp/',
+        },
+    },
+    'dev': {
+        'hosts': ['otfdev@staging-1-a.bmyrk.torchbox.net'],
+        'config': {
+            'env_name': 'dev',
+            'remote_db_name': 'otfdev',
+            'local_db_name': 'otfdev',
+            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_dump_path': '/tmp/',
+        },
+    },
 }
 
 
@@ -15,15 +43,7 @@ def deploy_production():
     # Remove this line when you're happy that this task is correct
     raise RuntimeError("Please check the fabfile before using it")
 
-    run('git pull')
-    run('pip install -r requirements.txt')
-    _run_migrate()
-    run('django-admin collectstatic --noinput')
-
-    # 'restart' should be an alias to a script that restarts the web server
-    run('restart')
-
-    _post_deploy()
+    _deploy()
 
 
 @runs_once
@@ -32,61 +52,70 @@ def pull_production_data():
     # Remove this line when you're happy that this task is correct
     raise RuntimeError("Please check the fabfile before using it")
 
-    _pull_data(
-        env_name='production',
-        remote_db_name='opentech',
-        local_db_name='opentech',
-        remote_dump_path='/usr/local/django/otf/tmp/',
-        local_dump_path='/tmp/',
-    )
+    _pull_data_wrapper()
 
 
 @runs_once
 @roles('production')
 def pull_production_media():
-    local('rsync -avz %s:\'%s\' /vagrant/media/' % (env['host_string'], '$CFG_MEDIA_DIR'))
+    _pull_media()
 
 
 @roles('staging')
 def deploy_staging():
-    _build_static(build_branch='staging')
-    _deploy_static()
-
-    run('git pull')
-    run('pip install -r requirements.txt')
-    _run_migrate()
-    run('django-admin collectstatic --noinput')
-
-    # 'restart' should be an alias to a script that restarts the web server
-    run('restart')
-
-    _post_deploy()
+    _deploy()
 
 
 @runs_once
 @roles('staging')
 def pull_staging_data():
-    # Remove this line when you're happy that this task is correct
-    raise RuntimeError("Please check the fabfile before using it")
-
-    _pull_data(
-        env_name='staging',
-        remote_db_name='otfstaging',
-        local_db_name='otfstaging',
-        remote_dump_path='/usr/local/django/otf/tmp/',
-        local_dump_path='/tmp/',
-    )
+    _pull_data_wrapper()
 
 
 @runs_once
 @roles('staging')
 def pull_staging_media():
-    local('rsync -avz %s:\'%s\' /vagrant/media/' % (env['host_string'], '$CFG_MEDIA_DIR'))
+    _pull_media()
 
 
 @roles('pre-production')
 def deploy_pre_production():
-    _build_static()
+    _deploy()
+
+
+@runs_once
+@roles('pre-production')
+def pull_pre_production_data():
+    _pull_data_wrapper()
+
+
+@runs_once
+@roles('pre-production')
+def pull_pre_production_media():
+    _pull_media()
+
+
+@roles('dev')
+def deploy_dev():
+    _deploy('dev')
+
+
+@runs_once
+@roles('dev')
+def pull_dev_data():
+    _pull_data_wrapper()
+
+
+@runs_once
+@roles('dev')
+def pull_dev_media():
+    _pull_media()
+
+
+def _deploy(branch='master'):
+    """Generic deployment tasks. Inherits the active role"""
+
+    _build_static(branch=branch)
     _deploy_static()
 
     run('git pull')
@@ -98,6 +127,24 @@ def deploy_pre_production():
     run('restart')
 
     _post_deploy()
+
+
+def _pull_data_wrapper():
+    role = env.effective_roles[0]
+    config = env.roledefs[role]['config']
+
+    _pull_data(
+        env_name=config['env_name'],
+        remote_db_name=config['remote_db_name'],
+        local_db_name=config['local_db_name'],
+        remote_dump_path=config['remote_dump_path'],
+        local_dump_path=config['local_dump_path'],
+    )
+
+
+@runs_once
+def _pull_media():
+    local('rsync -avz %s:\'%s\' /vagrant/media/' % (env['host_string'], '$CFG_MEDIA_DIR'))
 
 
 @runs_once
