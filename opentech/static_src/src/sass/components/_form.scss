@@ -26,6 +26,9 @@
         @extend %h6;
     }
 
+    &__item {
+        padding-bottom: 10px;
+    }
     input[type='url'],
     input[type='text'],
     input[type='email'],
