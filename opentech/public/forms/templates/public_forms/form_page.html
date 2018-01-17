@@ -18,8 +18,17 @@
                     <div>
                         {% csrf_token %}
 
-                        {% if form.errors %}
-                            There were some errors with your form. Please amend the fields highlighted below.
+                        {% if form.errors or form.non_field_errors %}
+                            <div class="messages">
+                                 There were some errors with your form. Please amend the fields highlighted below.
+                                 {% if form.non_field_errors %}
+                                <ul>
+                                    {% for error in form.non_field_errors %}
+                                    <li class="error">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                 {% endif %}
+                            </div>
                         {% endif %}
 
                         {% for field in form %}
