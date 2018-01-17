@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load users_tags %}
+
+{% block title %}OAuth{% endblock %}
+
+{% block content %}
+<div class="social">
+    {% if backends.associated %}
+        <h3>Providers</h3>
+        <ul>
+        {% for association in backends.associated %}
+            <li>
+                {% if user.has_usable_password %}
+                    <form id="{{ association.provider|backend_name }}-disconnect" class="disconnect-form col-md-2" action="{% url 'social:disconnect_individual' backend=association.provider association_id=association.id %}?next={% url "users:account" %}"
+                        method="post">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <button class="btn btn-danger" name="{{ association.provider|backend_class }}">
+                            Disconnect {{ association.provider|backend_name }}
+                        </button>
+                    </form>
+                {% else %}
+                    {{ association.provider|backend_name }}
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if backends.not_associated %}
+        <h3>Available providers</h3>
+        <ul>
+        {% for backend in backends.not_associated %}
+            <li>
+                <a id="{{ name }}-button" class="col-md-2 btn btn-default" name="{{ backend }}" href="{% url 'social:begin' backend=backend %}">
+                    {{ backend|backend_name }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

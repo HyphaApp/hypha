@@ -22,6 +22,7 @@ urlpatterns = [
     url('^sitemap\.xml$', sitemap),
     url('^', include(public_urls)),
     url('^', include(apply_urls)),
+    url('^', include('social_django.urls', namespace='social')),
 ]
 
 

@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'opentech.public.standardpages',
     'opentech.public.utils',
 
+    'social_django',
+
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
@@ -72,6 +74,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
     'opentech.public.esi.middleware.ESIMiddleware',
@@ -94,6 +98,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
                 'opentech.public.utils.context_processors.global_vars',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -188,6 +194,11 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = '/'
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 # Logging
 
 LOGGING = {
@@ -266,3 +277,31 @@ ESI_ENABLED = False
 # Custom settings
 
 ENABLE_STYLEGUIDE = False
+
+# Social Auth
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+# Set the Google OAuth2 credentials in ENV variables or local.py
+# To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
+# Make sure the Google+ API is enabled for your API project
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['opentechfund.org']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:account'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
+
+# For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
+# Create / associate accounts (including by email)
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)

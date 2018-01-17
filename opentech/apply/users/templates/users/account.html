@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n users_tags %}
 
 {% block title %}Account{% endblock %}
 
 {% block content %}
 <h2>Welcome {{ user }}</h2>
 
-{% if show_change_password %}
+{% if show_change_password and user.has_usable_password and not backends.associated %}
     <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
+{% endif %}
+
+{% can_use_oauth as show_oauth_link %}
+{% if show_oauth_link %}
+    <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
 {% endif %}
 {% endblock %}
