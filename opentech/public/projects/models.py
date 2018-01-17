@@ -83,6 +83,13 @@ class ProjectFunding(BaseFunding):
 
 
 class ProjectPage(FundingMixin, BasePage):
+    STATUSES = (
+        ('idea', "Just an Idea (Pre-alpha)"),
+        ('exists', "It Exists! (Alpha/Beta)"),
+        ('release', "It's basically done. (Release)"),
+        ('production', "People Use It. (Production)"),
+    )
+
     subpage_types = []
     parent_page_types = ['ProjectIndexPage']
 
@@ -94,11 +101,8 @@ class ProjectPage(FundingMixin, BasePage):
         related_name='+',
         on_delete=models.SET_NULL
     )
+    status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
     body = StreamField(StoryBlock())
-
-    # Fields to add:
-    # otf_status
-    # status
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -108,6 +112,7 @@ class ProjectPage(FundingMixin, BasePage):
     content_panels = BasePage.content_panels + [
         ImageChooserPanel('icon'),
         FieldPanel('introduction'),
+        FieldPanel('status'),
         StreamFieldPanel('body'),
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related pages"),
@@ -116,6 +121,8 @@ class ProjectPage(FundingMixin, BasePage):
 
 
 class ProjectIndexPage(BasePage):
+    subpage_types = ['ProjectPage']
+    parent_page_types = ['home.Homepage']
 
     introduction = models.TextField(blank=True)
 
