@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.wagtailcore.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
 from wagtail.wagtailcore.utils import resolve_model_string
 
-from opentech.apply.stream_forms.blocks import FormFieldBlock
+from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock
 
 
 class ModelChooserBlock(ChooserBlock):
@@ -20,7 +20,7 @@ class ModelChooserBlock(ChooserBlock):
         return resolve_model_string(self._target_model)
 
 
-class CategoryQuestionBlock(FormFieldBlock):
+class CategoryQuestionBlock(OptionalFormFieldBlock):
     # Overwrite field label and help text so we can defer to the category
     # as required
     field_label = CharBlock(
