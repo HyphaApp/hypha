@@ -59,6 +59,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='formfield',
             name='page',
-            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='form_fields', to='forms.FormPage'),
+            field=modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='form_fields', to='public_forms.FormPage'),
         ),
     ]
