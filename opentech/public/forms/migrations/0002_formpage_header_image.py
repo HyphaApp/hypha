@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('images', '0001_initial'),
-        ('forms', '0001_initial'),
+        ('public_forms', '0001_initial'),
     ]
 
     operations = [
