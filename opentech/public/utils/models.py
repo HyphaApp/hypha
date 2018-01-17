@@ -4,6 +4,7 @@ from django.db import models
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
+    InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
@@ -287,8 +288,9 @@ class BaseFunding(Orderable):
 class FundingMixin(models.Model):
     '''Implements the funding total calculation
 
-    You still need to include the InlinePanel('funding') in the child class
+    You still need to include the content panel in the child class
     '''
+    content_panels = [InlinePanel('funding', label="Funding")]
 
     class Meta:
         abstract = True

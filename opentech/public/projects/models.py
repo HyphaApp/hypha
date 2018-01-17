@@ -116,8 +116,7 @@ class ProjectPage(FundingMixin, BasePage):
         StreamFieldPanel('body'),
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related Projects"),
-        InlinePanel('funding', label="Funding"),
-    ]
+    ] + FundingMixin.content_panels
 
 
 class ProjectIndexPage(BasePage):

@@ -149,8 +149,7 @@ class PersonPage(FundingMixin, BasePage):
         InlinePanel('person_types', label='Person types'),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),
-        InlinePanel('funding', label='Funding'),
-    ]
+    ] + FundingMixin.content_panels
 
 
 class PersonIndexPage(BasePage):
