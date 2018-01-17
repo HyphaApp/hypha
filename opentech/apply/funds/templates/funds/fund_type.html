@@ -1,10 +1,24 @@
 {% extends "base.html" %}
-
 {% load wagtailcore_tags %}
+
 {% block content %}
     <h1>{{ page.title }}</h1>
+
     <form action="{% pageurl page %}" method="POST">
         {% csrf_token %}
+
+        {% if form.errors or form.non_field_errors %}
+            <div class="messages">
+                There were some errors with your form. Please amend the fields highlighted below. {% if form.non_field_errors %}
+                <ul>
+                    {% for error in form.non_field_errors %}
+                    <li class="error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+
         {{ form.as_p }}
         <input type="submit">
     </form>
