@@ -34,6 +34,7 @@ class CategoryQuestionBlock(FormFieldBlock):
     )
     category = ModelChooserBlock('categories.Category')
     multi = BooleanBlock(label='Multi select', required=False)
+    required = BooleanBlock(label='Required', required=False)
 
     def get_field_class(self, struct_value):
         if struct_value['multi']:
