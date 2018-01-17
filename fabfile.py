@@ -115,7 +115,7 @@ def pull_dev_media():
 def _deploy(branch='master'):
     """Generic deployment tasks. Inherits the active role"""
 
-    _build_static(branch=branch)
+    _build_static(branch)
     _deploy_static()
 
     run('git pull')
