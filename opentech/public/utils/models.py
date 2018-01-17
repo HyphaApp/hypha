@@ -277,8 +277,7 @@ class BaseFunding(Orderable):
             FieldPanel('value'),
             FieldPanel('duration'),
         ]),
-        # This is stubbed as we need to be able to select from multiple
-        PageChooserPanel('source'),
+        PageChooserPanel('source', ['public_funds.FundPage', 'public_funds.LabPage']),
     ]
 
     class Meta(Orderable.Meta):
