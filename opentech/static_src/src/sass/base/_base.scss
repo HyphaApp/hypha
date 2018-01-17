@@ -84,6 +84,12 @@ ol {
     display: block;
 }
 
+.off-screen,
+%off-screen {
+    position: absolute;
+    left: -9999px;
+}
+
 .overlay,
 %overlay {
     position: absolute;
