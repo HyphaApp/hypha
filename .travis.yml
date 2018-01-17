@@ -63,10 +63,10 @@ script:
   - python manage.py check
 
   # Check for missing migrations
-  - python manage.py makemigrations --check --noinput
+  - python manage.py makemigrations --check --noinput --verbosity=0
 
   # Collect static
-  - python manage.py collectstatic --noinput
+  - python manage.py collectstatic --noinput --verbosity=0
 
   # Run tests
   - coverage run --source='.' manage.py test opentech
