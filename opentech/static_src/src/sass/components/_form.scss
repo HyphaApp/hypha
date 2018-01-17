@@ -8,8 +8,13 @@
         margin: 2rem 0;
     }
 
-    &__label {
+    &__question {
         @extend %h4;
+        font-weight: $weight--bold;
+    }
+
+    &__label {
+        @extend %h5;
         font-weight: $weight--bold;
     }
 
