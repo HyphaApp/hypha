@@ -285,7 +285,7 @@ class BaseFunding(Orderable):
 
 
 class FundingMixin(models.Model):
-    '''Impliments the funding total calulation
+    '''Implements the funding total calculation
 
     You still need to include the InlinePanel('funding') in the child class
     '''
