@@ -13,7 +13,7 @@ class TestOAuthAccess(TestCase):
         oauth_page = reverse('users:oauth')
         response = self.client.get(oauth_page, follow=True)
         self.assertRedirects(response, reverse(
-            'users:login') + '?next=' + reverse('users:oauth') , status_code=301, target_status_code=200)
+            'users:login') + '?next=' + reverse('users:oauth'), status_code=301, target_status_code=200)
 
     @override_settings()
     def test_oauth_not_set_up(self):

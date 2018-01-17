@@ -65,6 +65,9 @@ script:
   # Check for missing migrations
   - python manage.py makemigrations --check --noinput
 
+  # Collect static
+  - django-admin collectstatic --noinput
+
   # Run tests
   - coverage run --source='.' manage.py test opentech
 
