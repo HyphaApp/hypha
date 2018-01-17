@@ -3,4 +3,38 @@
         width: 300px;
         border-bottom: 1px solid $color--white;
     }
+
+    &__group {
+        margin: 2rem 0;
+    }
+
+    &__label {
+        @extend %h4;
+        font-weight: $weight--bold;
+    }
+
+    &__required {
+        color: $color--purple;
+    }
+
+    &__help {
+        @extend %h6;
+    }
+
+    input[type='url'],
+    input[type='text'],
+    input[type='email'],
+    input[type='number'],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid lightgrey;
+    }
+
+    input[type='url'],
+    input[type='text'],
+    input[type='email'],
+    input[type='number'] {
+        max-width: 385px;
+    }
 }
