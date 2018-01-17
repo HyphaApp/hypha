@@ -1,7 +1,13 @@
 .header {
     position: relative;
+    min-height: 300px;
     padding: 10px;
     background-color: $color--primary;
+
+    &::before {
+        @extend %overlay;
+        height: 300px;
+    }
 
     @include media-query(tablet-portrait) {
         height: 410px;
@@ -21,7 +27,9 @@
     }
 
     &__title {
+        margin: 0;
         color: $color--white;
+        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         text-transform: uppercase;
     }
 
@@ -45,10 +53,6 @@
             padding: 10px;
             background: transparent;
             transition: background $transition;
-        }
-
-        &--search-open {
-            background: $color--dark-blue;
         }
     }
 
@@ -162,12 +166,6 @@
         height: 180px;
         padding-bottom: 50px;
         background: $color--dark-blue;
-
-        &--mobile-menu-open {
-            top: 80px;
-            z-index: 12;
-            height: 120px;
-        }
     }
 
     &__button-container {

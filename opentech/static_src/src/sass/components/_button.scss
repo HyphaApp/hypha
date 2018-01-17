@@ -27,23 +27,35 @@
     }
 
     &--narrow {
-        padding: 5px 15px;
+        padding: 5px;
         font-size: 15px;
+
+        @include media-query(tablet-landscape) {
+            padding: 5px 15px;
+        }
     }
 
     // cannot conform to BEM here in order to be able to override google button styles
     &--google-translate {
-        width: 180px;
+        width: 160px;
         margin-left: 10px;
+
+        @include media-query(tablet-landscape) {
+            width: 180px;
+        }
 
         .goog-te-gadget-simple {
             @include button(transparent, $color--white);
-            padding: 5px 15px;
+            padding: 5px;
             font-family: $font--primary;
             font-size: 15px;
             font-weight: $weight--bold;
             border: 1px solid $color--white;
             transition: background, color,  $transition;
+
+            @include media-query(tablet-landscape) {
+                padding: 5px 15px;
+            }
 
             &:hover {
                 .goog-te-menu-value {

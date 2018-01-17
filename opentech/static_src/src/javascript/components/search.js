@@ -21,9 +21,6 @@ class Search {
         this.node[0].querySelector('.header__icon--open-search').classList.toggle('is-hidden');
         this.node[0].querySelector('.header__icon--close-search').classList.toggle('is-unhidden');
 
-        // add modifier to header__inner when the menu is open to style search element
-        document.querySelector('.header__inner--menu-open').classList.toggle('header__inner--search-open');
-
         // add modifier to header to be able to change header icon colours
         document.querySelector('.header').classList.toggle('search-open');
     }

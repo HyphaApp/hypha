@@ -1,5 +1,5 @@
 {% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8" />
@@ -77,7 +77,7 @@
 
             <a href="#" class="link link--fixed-apply">Apply</a>
             <div class="header__inner wrapper wrapper--large">
-                <a href="{% slugurl 'home' %}">
+                <a href="{% slugurl 'home' %}" aria-label="Home link">
                     <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
                     <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
@@ -95,7 +95,7 @@
                 <section class="header__menus header__menus--desktop">
                     {% primarynav %}
 
-                    <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true">
+                    <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
                         <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
                         <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
                     </button>
@@ -103,13 +103,12 @@
 
                 <section class="header__menus header__menus--mobile">
                     <div class="header__inner header__inner--menu-open">
-                        <a href="{% slugurl 'home' %}">
+                        <a href="{% slugurl 'home' %}" aria-label="Home link">
                             <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                         </a>
                         <div class="header__inner header__inner--mobile-buttons">
-                            <button class="button js-search-toggle" aria-haspopup="true">
+                            <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
                                 <svg class="header__icon header__icon--open-search header__icon--open-search-menu-open icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                                <svg class="header__icon header__icon--close-search header__icon--close-search-menu-open icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
                             </button>
                             <button class="button button--left-space js-mobile-menu-close">
                                 <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
@@ -118,6 +117,7 @@
                     </div>
                     {% primarynav %}
                 </section>
+
                 <div class="header__button-container">
                     <a href="#" class="button button--transparent button--narrow button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
@@ -129,10 +129,10 @@
 
             <div class="header__search">
                 <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
-                    <button class="button" type="submit">
+                    <button class="button" type="submit" aria-label="Search">
                         <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
                     </button>
-                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}">
+                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
                 </form>
             </div>
 
@@ -208,11 +208,11 @@
                         <a class="link link--button link--button-transparent" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
 
                         <div class="footer__credits">
-                            <a href="https://www.bbg.gov/">
+                            <a href="https://www.bbg.gov/" aria-label="Link to the Broadcasting Board of Governors website">
                                 <svg class="icon icon--footer-credit"><use xlink:href="#bbg-logo"></use></svg>
                             </a>
 
-                            <a href="http://www.rfa.org/english/">
+                            <a href="http://www.rfa.org/english/" aria-label="Link to the Radio Free Asia website">
                                 <img src="{% static 'images/radio-free-asia-logo.svg' %}" alt="logo fo radio free asia">
                             </a>
                         </div>
