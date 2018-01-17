@@ -29,6 +29,30 @@
     &__item {
         padding-bottom: 10px;
     }
+
+    &__select {
+        max-width: 385px;
+        background: url('./../images/dropdown.svg') $color--white no-repeat 95% center;
+        background-size: 8px;
+
+        select[multiple='multiple'] {
+            display: block;
+        }
+
+        select {
+            background: transparent;
+            border-radius: 0;
+            appearance: none;
+            -ms-appearance: none;
+            -webkit-appearance: none;
+
+            option {
+
+                background-color: white;
+            }
+        }
+    }
+
     input[type='url'],
     input[type='text'],
     input[type='email'],
