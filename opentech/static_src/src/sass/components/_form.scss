@@ -37,4 +37,75 @@
     input[type='number'] {
         max-width: 385px;
     }
+
+    // Radio + Checkbox
+    [type='radio'],
+    [type='checkbox'] {
+        @extend %off-screen;
+    }
+
+    [type='radio'] + label,
+    [type='checkbox'] + label {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+    }
+
+    [type='radio'] + label::before,
+    [type='checkbox'] + label::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: $color--white;
+        border: 1px solid $color--mid-grey;
+        content: '';
+
+    }
+
+    // Radio specific
+    [type='radio'] {
+        & + label::before {
+            border-radius: 100%;
+        }
+
+        & + label::after {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 10px;
+            height: 10px;
+            background: $color--dark-blue;
+            border-radius: 100%;
+            content: '';
+            transition: transform, opacity, $transition;
+        }
+
+        &:not(:checked) + label::after {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        &:checked + label::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        &:checked + label::before {
+            border: 1px solid $color--dark-blue;
+        }
+    }
+
+    // Checkbox specific
+    input[type='checkbox'] {
+        & + label::before {
+            transition: background-color $transition;
+        }
+
+        &:checked + label::before {
+            background: url('./../images/tick.svg') $color--dark-blue center no-repeat;
+            border: 1px solid $color--dark-blue;
+        }
+    }
 }
