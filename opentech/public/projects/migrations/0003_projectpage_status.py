@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='projectpage',
             name='status',
-            field=models.CharField(choices=[('idea', 'Just an Idea (Pre-alpha)'), ('exists', 'It Exists! (Alpha/Beta)'), ('release', "It's basically done. (Release)"), ('production', 'People Use It. (Production)')], default='idea', max_length=25),
+            field=models.CharField(choices=[('idea', 'Just an Idea. (Pre-alpha)'), ('exists', 'It Exists! (Alpha/Beta)'), ('release', "It's basically done. (Release)"), ('production', 'People Use it. (Production)')], default='idea', max_length=25),
         ),
     ]

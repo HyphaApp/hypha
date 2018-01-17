@@ -84,10 +84,10 @@ class ProjectFunding(BaseFunding):
 
 class ProjectPage(FundingMixin, BasePage):
     STATUSES = (
-        ('idea', "Just an Idea (Pre-alpha)"),
+        ('idea', "Just an Idea. (Pre-alpha)"),
         ('exists', "It Exists! (Alpha/Beta)"),
         ('release', "It's basically done. (Release)"),
-        ('production', "People Use It. (Production)"),
+        ('production', "People Use it. (Production)"),
     )
 
     subpage_types = []
