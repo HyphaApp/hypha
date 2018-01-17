@@ -2,14 +2,9 @@
 {% load wagtailcore_tags wagtailimages_tags util_tags static %}
 
 {% block content %}
-
-    <div class="intro">
-        <div class="container">
-            {% include "includes/share.html" %}
-            <h1>{{ page.title }}</h1>
-            <p>{{ page.introduction }}</p>
-        </div>
-    </div>
+<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    <h2>{{ page.title }}</h2>
+    <p>{{ page.introduction }}</p>
 
     <section class="main-body">
         <div class="container">
@@ -56,5 +51,6 @@
             {% endif %}
         </div>
     </section>
+</div>
 
 {% endblock %}

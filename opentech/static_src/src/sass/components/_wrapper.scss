@@ -84,4 +84,16 @@
             margin-bottom: 4rem;
         }
     }
+
+    &--light-grey-bg {
+        background-color: $color--light-grey;
+    }
+
+    &--form {
+        padding: 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 2rem 17rem 2rem 5rem;
+        }
+    }
 }
