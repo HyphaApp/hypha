@@ -58,16 +58,19 @@
     }
 
     select,
-    textarea,
     input[type='url'],
     input[type='text'],
     input[type='date'],
+    input[type='time'],
     input[type='email'],
     input[type='number'],
     input[type='datetime-local'] {
         width: 100%;
+        max-width: 385px;
         padding: 10px;
-        border: 1px solid lightgrey;
+        border: 1px solid $color--mid-grey;
+    }
+
     &__error {
         select,
         textarea,
@@ -109,14 +112,6 @@
 
     }
 
-    select,
-    input[type='url'],
-    input[type='text'],
-    input[type='date'],
-    input[type='email'],
-    input[type='number'],
-    input[type='datetime-local'] {
-        max-width: 385px;
     // make date & time input siblings inline
     input[type='date'] {
         max-width: calc(385px - 90px);
@@ -125,6 +120,10 @@
     input[type='date'] + input[type='time'] {
         width: 90px;
     }
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid lightgrey;
     }
 
     // Radio + Checkbox
