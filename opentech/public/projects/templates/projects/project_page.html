@@ -31,4 +31,17 @@
     </div>
     {% include "utils/includes/funding.html" %}
 
+    {% regroup page.category_options by category as categories %}
+    {% for category, options in categories %}
+    <ul>
+        <li><h3>{{ category.name }}</h3>
+            <ul>
+                {% for option in options %}
+                <li>{{ option.value }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    {% endfor %}
+
 {% endblock content %}

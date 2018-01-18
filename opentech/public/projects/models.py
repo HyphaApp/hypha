@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -16,6 +18,7 @@ from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailsearch import index
 
+from opentech.apply.categories.models import Option
 from opentech.public.utils.blocks import StoryBlock
 from opentech.public.utils.models import (
     BaseFunding,
@@ -23,6 +26,8 @@ from opentech.public.utils.models import (
     FundingMixin,
     RelatedPage,
 )
+
+from .widgets import CategoriesWidget
 
 
 class ProjectContactDetails(models.Model):
@@ -104,6 +109,8 @@ class ProjectPage(FundingMixin, BasePage):
     status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
     body = StreamField(StoryBlock())
 
+    categories = models.TextField()
+
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
         index.SearchField('body'),
@@ -114,10 +121,15 @@ class ProjectPage(FundingMixin, BasePage):
         FieldPanel('introduction'),
         FieldPanel('status'),
         StreamFieldPanel('body'),
+        FieldPanel('categories', widget=CategoriesWidget),
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related Projects"),
     ] + FundingMixin.content_panels
 
+    def category_options(self):
+        categories = json.loads(self.categories)
+        options = [int(id) for options in categories.values() for id in options]
+        return Option.objects.select_related().filter(id__in=options).order_by('category')
 
 class ProjectIndexPage(BasePage):
     subpage_types = ['ProjectPage']
