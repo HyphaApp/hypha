@@ -121,10 +121,11 @@ class ProjectPage(FundingMixin, BasePage):
         FieldPanel('introduction'),
         FieldPanel('status'),
         StreamFieldPanel('body'),
-        FieldPanel('categories', widget=CategoriesWidget),
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related Projects"),
-    ] + FundingMixin.content_panels
+    ] + FundingMixin.content_panels + [
+        FieldPanel('categories', widget=CategoriesWidget),
+    ]
 
     def category_options(self):
         categories = json.loads(self.categories)
