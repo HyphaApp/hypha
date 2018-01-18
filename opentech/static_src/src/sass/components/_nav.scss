@@ -156,6 +156,14 @@
             &:hover {
                 color: lighten($color--secondary, 20%);
                 border-bottom: 1px solid $color--secondary;
+
+                .header--light-bg & {
+                    border-bottom: 1px solid $color--dark-grey;
+                }
+            }
+
+            .header--light-bg & {
+                color: $color--dark-grey;
             }
         }
 

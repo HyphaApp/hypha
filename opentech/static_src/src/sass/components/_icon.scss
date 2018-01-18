@@ -4,6 +4,14 @@
     transition: fill $transition;
     fill: $color--white;
 
+    .header--light-bg & {
+        fill: $color--dark-grey;
+    }
+
+    .header__menus--mobile.is-visible & {
+        fill: $color--white;
+    }
+
     &--home {
         width: 15px;
         height: 15px;
@@ -37,6 +45,10 @@
 
         .button:hover & {
             fill: $color--dark-blue;
+
+            .header--light-bg & {
+                fill: $color--white;
+            }
         }
 
         .header--has-bg-image & {
@@ -46,8 +58,11 @@
         .search-open & {
             fill: $color--white;
         }
-    }
 
+        .header--light-bg.search-open & {
+            fill: $color--dark-grey;
+        }
+    }
 
     &--social-share {
         width: 40px;
