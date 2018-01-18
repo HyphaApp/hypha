@@ -1,7 +1,6 @@
 import json
 
 from django import forms
-from django.utils.functional import LazyObject
 
 from opentech.apply.categories.models import Category
 
@@ -46,7 +45,6 @@ class CategoriesWidget(forms.MultiWidget):
         kwargs['widgets'] = list()
         super().__init__(*args, **kwargs)
         self.widgets = LazyWidgets(OptionsWidget, Category)
-
 
     def decompress(self, value):
         data = json.loads(value)
