@@ -149,10 +149,6 @@
         border-bottom: 1px solid transparent;
         transition: color, border $transition;
 
-        &:hover {
-            cursor: pointer;
-        }
-
         @include media-query(tablet-landscape) {
             display: initial;
             padding: 0;
