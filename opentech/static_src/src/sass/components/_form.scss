@@ -131,7 +131,12 @@
     // Radio + Checkbox
     [type='radio'],
     [type='checkbox'] {
-        @extend %off-screen;
+        position: absolute;
+        top: 10px;
+        left: 5px;
+        z-index: -1;
+        width: 1px;
+        height: 1px;
     }
 
     [type='radio'] + label,
