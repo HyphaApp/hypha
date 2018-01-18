@@ -13,6 +13,8 @@
 
     &__question {
         @extend %h4;
+        display: block;
+        margin-bottom: 10px;
         font-weight: $weight--bold;
     }
 
