@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags util_tags static %}
-
+{% block header_modifier %}header--light-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <h2>{{ page.title }}</h2>
