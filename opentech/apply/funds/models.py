@@ -1,4 +1,3 @@
-from django import forms
 from django.db import models
 
 from modelcluster.fields import ParentalKey
@@ -75,7 +74,6 @@ class ApplicationForm(models.Model):
 class Round(AbstractStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
-
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
