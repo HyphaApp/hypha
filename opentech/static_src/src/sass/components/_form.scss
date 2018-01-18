@@ -25,6 +25,10 @@
 
     &__required {
         color: $color--purple;
+
+        .form__question--re_captcha_field & {
+            display: none;
+        }
     }
 
     &__help {
