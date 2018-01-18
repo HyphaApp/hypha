@@ -109,7 +109,7 @@ class ProjectPage(FundingMixin, BasePage):
     status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
     body = StreamField(StoryBlock())
 
-    categories = models.TextField(default="{}")
+    categories = models.TextField(default='{}', blank=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),

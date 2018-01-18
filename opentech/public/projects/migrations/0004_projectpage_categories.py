@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='projectpage',
             name='categories',
-            field=models.TextField(default='{}'),
+            field=models.TextField(default='{}', blank=True),
         ),
     ]
