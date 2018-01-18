@@ -30,6 +30,7 @@
     }
 
     &__item {
+        position: relative;
         padding-bottom: 10px;
     }
 
@@ -67,6 +68,45 @@
         width: 100%;
         padding: 10px;
         border: 1px solid lightgrey;
+    &__error {
+        select,
+        textarea,
+        input[type='url'],
+        input[type='text'],
+        input[type='date'],
+        input[type='time'],
+        input[type='email'],
+        input[type='number'],
+        input[type='datetime-local'] {
+            border: 2px solid $color--error;
+        }
+    }
+
+    &__error-text {
+        max-width: 200px;
+        padding: 5px;
+        margin: 20px 0 0;
+        color: $color--white;
+        background: $color--error;
+
+        @include media-query(tablet-landscape) {
+            position: absolute;
+            top: 0;
+            right: 0;
+            max-width: auto;
+            margin: 0;
+
+            &::before {
+                position: absolute;
+                top: 12px;
+                left: -10px;
+                border-color: transparent $color--error transparent transparent;
+                border-style: solid;
+                border-width: 5px 10px 5px 0;
+                content: '';
+            }
+        }
+
     }
 
     select,
