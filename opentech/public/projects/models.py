@@ -109,7 +109,7 @@ class ProjectPage(FundingMixin, BasePage):
     status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
     body = StreamField(StoryBlock())
 
-    categories = models.TextField()
+    categories = models.TextField(default="{}")
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -130,6 +130,7 @@ class ProjectPage(FundingMixin, BasePage):
         categories = json.loads(self.categories)
         options = [int(id) for options in categories.values() for id in options]
         return Option.objects.select_related().filter(id__in=options).order_by('category')
+
 
 class ProjectIndexPage(BasePage):
     subpage_types = ['ProjectPage']
