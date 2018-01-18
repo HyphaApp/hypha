@@ -27,15 +27,14 @@ class FundType(AbstractStreamForm):
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
+    base_form_class = WorkflowFormAdminForm
+
     WORKFLOWS = {
         'single': SingleStage.name,
         'double': DoubleStage.name,
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
-
-
-    base_form_class = WorkflowFormAdminForm
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
