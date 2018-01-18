@@ -6,6 +6,9 @@
 
     &__group {
         margin: 2rem 0;
+        input[type='date']:last-child {
+            max-width: 385px;
+        }
     }
 
     &__question {
@@ -74,6 +77,14 @@
     input[type='number'],
     input[type='datetime-local'] {
         max-width: 385px;
+    // make date & time input siblings inline
+    input[type='date'] {
+        max-width: calc(385px - 90px);
+    }
+
+    input[type='date'] + input[type='time'] {
+        width: 90px;
+    }
     }
 
     // Radio + Checkbox
