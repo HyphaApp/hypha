@@ -16,6 +16,8 @@
 
     &--light-bg {
         height: auto;
+        min-height: 250px;
+        padding-bottom: 0;
         background: $color--white;
 
         &::before {
