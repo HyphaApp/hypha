@@ -21,7 +21,7 @@ class LazyWidgets:
         self.widget = widget
 
     def __iter__(self):
-        for obj in self.model.objects.all():
+        for obj in self.model.objects.order_by('id'):
             yield self.widget(
                 attrs={'id': obj.id, 'label_tag': obj.name},
                 choices=LazyChoices(obj.options, ['id', 'value']),

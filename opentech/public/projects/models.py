@@ -135,7 +135,7 @@ class ProjectPage(FundingMixin, BasePage):
     def category_options(self):
         categories = json.loads(self.categories)
         options = [int(id) for options in categories.values() for id in options]
-        return Option.objects.select_related().filter(id__in=options).order_by('category')
+        return Option.objects.select_related().filter(id__in=options).order_by('category_id', 'sort_order')
 
 
 class ProjectIndexPage(BasePage):
