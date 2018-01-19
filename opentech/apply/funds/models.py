@@ -89,8 +89,13 @@ class Round(AbstractStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
-    start_date = models.DateField(blank=True, default=date.today)
-    end_date = models.DateField(blank=True, default=date.today)
+    start_date = models.DateField(default=date.today)
+    end_date = models.DateField(
+        blank=True,
+        null=True,
+        default=date.today,
+        help_text='If no end date is provided the round will remain open.'
+    )
 
     content_panels = AbstractStreamForm.content_panels + [
         MultiFieldPanel([
@@ -108,22 +113,36 @@ class Round(AbstractStreamForm):
     def clean(self):
         super().clean()
 
-        if self.start_date > self.end_date:
+        if self.end_date and self.start_date > self.end_date:
             raise ValidationError({
                 'end_date': 'End date must come after the start date',
             })
 
+
+        if self.end_date:
+            conflict_query = (
+                Q(start_date__range=[self.start_date, self.end_date]) |
+                Q(end_date__range=[self.start_date, self.end_date]) |
+                Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
+            )
+        else:
+            conflict_query = (
+                Q(start_date__lte=self.start_date, end_date__isnull=True) |
+                Q(end_date__gte=self.start_date)
+            )
+
         conflicting_rounds = Round.objects.sibling_of(self).filter(
-            Q(start_date__range=[self.start_date, self.end_date]) |
-            Q(end_date__range=[self.start_date, self.end_date]) |
-            Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
+            conflict_query
         ).exclude(id=self.id)
 
         if conflicting_rounds.exists():
             error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
                 '<br>'.join([f'{round.start_date} - {round.end_date}' for round in conflicting_rounds])
             ))
-            raise ValidationError({
+            error = {
                 'start_date': error_message,
-                'end_date': error_message,
-            })
+            }
+            if self.end_date:
+                error['end_date'] = error_message
+
+            raise ValidationError(error)
