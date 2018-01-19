@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'opentech.public.navigation',
     'opentech.public.news',
     'opentech.public.people',
+    'opentech.public.projects',
     'opentech.public.search',
     'opentech.public.standardpages',
     'opentech.public.utils',

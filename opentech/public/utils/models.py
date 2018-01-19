@@ -3,6 +3,8 @@ from django.db import models
 
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
+    FieldRowPanel,
+    InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
@@ -259,3 +261,40 @@ class BasePage(SocialFields, ListingFields, Page):
         SocialFields.promote_panels +
         ListingFields.promote_panels
     )
+
+
+class BaseFunding(Orderable):
+    value = models.PositiveIntegerField()
+    year = models.PositiveIntegerField()
+    duration = models.PositiveIntegerField(help_text='In months')
+    source = models.ForeignKey(
+        'wagtailcore.Page',
+        on_delete=models.PROTECT,
+    )
+
+    panels = [
+        FieldRowPanel([
+            FieldPanel('year'),
+            FieldPanel('value'),
+            FieldPanel('duration'),
+        ]),
+        PageChooserPanel('source', ['public_funds.FundPage', 'public_funds.LabPage']),
+    ]
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+
+class FundingMixin(models.Model):
+    '''Implements the funding total calculation
+
+    You still need to include the content panel in the child class
+    '''
+    content_panels = [InlinePanel('funding', label="Funding")]
+
+    class Meta:
+        abstract = True
+
+    @property
+    def total_funding(self):
+        return sum(funding.value for funding in self.funding.all())

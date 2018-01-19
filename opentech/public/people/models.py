@@ -13,13 +13,12 @@ from wagtail.wagtailadmin.edit_handlers import (
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
-    PageChooserPanel,
     StreamFieldPanel
 )
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
 from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import BasePage
+from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin
 
 
 class SocialMediaProfile(models.Model):
@@ -72,25 +71,8 @@ class PersonPagePersonType(models.Model):
         return self.person_type.title
 
 
-class Funding(Orderable):
+class Funding(BaseFunding):
     page = ParentalKey('PersonPage', related_name='funding')
-    value = models.PositiveIntegerField()
-    year = models.PositiveIntegerField()
-    duration = models.PositiveIntegerField(help_text='In months')
-    source = models.ForeignKey(
-        'wagtailcore.Page',
-        on_delete=models.PROTECT,
-    )
-
-    panels = [
-        FieldRowPanel([
-            FieldPanel('year'),
-            FieldPanel('value'),
-            FieldPanel('duration'),
-        ]),
-        # This is stubbed as we need to be able to select from multiple
-        PageChooserPanel('source'),
-    ]
 
 
 class PersonContactInfomation(Orderable):
@@ -132,7 +114,7 @@ class PersonContactInfomation(Orderable):
             })
 
 
-class PersonPage(BasePage):
+class PersonPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['PersonIndexPage']
 
@@ -167,12 +149,7 @@ class PersonPage(BasePage):
         InlinePanel('person_types', label='Person types'),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),
-        InlinePanel('funding', label='Funding'),
-    ]
-
-    @property
-    def total_funding(self):
-        return sum(funding.value for funding in self.funding.all())
+    ] + FundingMixin.content_panels
 
 
 class PersonIndexPage(BasePage):

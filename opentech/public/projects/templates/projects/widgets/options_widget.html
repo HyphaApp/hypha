@@ -1,0 +1,15 @@
+<li>
+<h1>{{ widget.attrs.label_tag }}</h1>
+<fieldset>
+{% with id=widget.attrs.id %}
+<ul{% if id %} id="{{ id }}"{% endif %}class="fields {% if widget.attrs.class %}{{ widget.attrs.class }}{% endif %}">{% for group, options, index in widget.optgroups %}
+        {% for option in options %}
+        <li {% if id %} id="{{ id }}_{{ index }}"{% endif %}>
+            <div class="field checkbox_input boolean_field">
+            {% include option.template_name with widget=option %}{% endfor %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>{% endwith %}
+</fieldset>
+</li>
