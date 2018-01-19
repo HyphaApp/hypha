@@ -149,6 +149,14 @@
         border-bottom: 1px solid transparent;
         transition: color, border $transition;
 
+        .header--light-bg & {
+            color: $color--dark-grey;
+        }
+
+        .header__menus--mobile & {
+            color: $color--white;
+        }
+
         @include media-query(tablet-landscape) {
             display: initial;
             padding: 0;
@@ -160,10 +168,6 @@
                 .header--light-bg & {
                     border-bottom: 1px solid $color--dark-grey;
                 }
-            }
-
-            .header--light-bg & {
-                color: $color--dark-grey;
             }
         }
 
