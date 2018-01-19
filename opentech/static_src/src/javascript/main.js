@@ -4,6 +4,9 @@ import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 
 $(function () {
+    // remove no-js class if js is enabled
+    document.querySelector('html').classList.remove('no-js');
+
     $(MobileMenu.selector()).each((index, el) => {
         new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
     });
