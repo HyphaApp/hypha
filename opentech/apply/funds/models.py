@@ -2,6 +2,8 @@ from datetime import date
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
+from django.utils.text import mark_safe
 
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
@@ -109,4 +111,19 @@ class Round(AbstractStreamForm):
         if self.start_date > self.end_date:
             raise ValidationError({
                 'end_date': 'End date must come after the start date',
+            })
+
+        conflicting_rounds = Round.objects.sibling_of(self).filter(
+            Q(start_date__range=[self.start_date, self.end_date]) |
+            Q(end_date__range=[self.start_date, self.end_date]) |
+            Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
+        ).exclude(id=self.id)
+
+        if conflicting_rounds.exists():
+            error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
+                '<br>'.join([f'{round.start_date} - {round.end_date}' for round in conflicting_rounds])
+            ))
+            raise ValidationError({
+                'start_date': error_message,
+                'end_date': error_message,
             })
