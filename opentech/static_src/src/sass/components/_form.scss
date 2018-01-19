@@ -110,7 +110,7 @@
         select {
             background: transparent;
             border-radius: 0;
-            appearance: none;
+            appearance: none; // sass-lint:disable-line
 
             option {
 
