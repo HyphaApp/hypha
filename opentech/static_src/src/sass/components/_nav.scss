@@ -150,7 +150,7 @@
         transition: color, border $transition;
 
         .header--light-bg & {
-            color: $color--dark-grey;
+            color: $color--default;
         }
 
         .header__menus--mobile & {
@@ -166,7 +166,8 @@
                 border-bottom: 1px solid $color--secondary;
 
                 .header--light-bg & {
-                    border-bottom: 1px solid $color--dark-grey;
+                    color: $color--default;
+                    border-bottom: 1px solid $color--default;
                 }
             }
         }
