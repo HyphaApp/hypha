@@ -3,6 +3,7 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.http import Http404
 from django.utils.text import mark_safe
 
 from modelcluster.fields import ParentalKey
@@ -65,6 +66,14 @@ class FundType(AbstractStreamForm):
         FieldPanel('workflow'),
         InlinePanel('forms', label="Forms"),
     ]
+
+    def serve(self, request):
+        if hasattr(request, 'is_preview'):
+            return super().serve(request)
+
+        # delegate to the open_round to use the latest form instances
+        request.show_page = True
+        return self.open_round.serve(request)
 
 
 class FundForm(Orderable):
@@ -150,3 +159,11 @@ class Round(AbstractStreamForm):
                 error['end_date'] = error_message
 
             raise ValidationError(error)
+
+    def serve(self, request):
+        if hasattr(request, 'is_preview') or hasattr(request, 'show_page'):
+            return super().serve(request)
+
+        # We hide the round as only the open round is used which is displayed through the
+        # fund page
+        raise Http404()
