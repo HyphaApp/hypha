@@ -10,6 +10,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
     InlinePanel,
+    MultiFieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
@@ -124,7 +125,11 @@ class ProjectPage(FundingMixin, BasePage):
         InlinePanel('contact_details', label="Contact Details"),
         InlinePanel('related_pages', label="Related Projects"),
     ] + FundingMixin.content_panels + [
-        FieldPanel('categories', widget=CategoriesWidget),
+        MultiFieldPanel(
+            [FieldPanel('categories', widget=CategoriesWidget)],
+            heading="Categories",
+            classname="collapsible collapsed",
+        ),
     ]
 
     def category_options(self):
