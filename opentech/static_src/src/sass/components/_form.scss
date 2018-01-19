@@ -121,7 +121,7 @@
 
     select,
     input[type='url'],
-    input[type='text'],
+    input[type='text']:not(.input--search),
     input[type='date'],
     input[type='time'],
     input[type='email'],

@@ -96,4 +96,10 @@
         height: 25px;
         margin-right: 10px;
     }
+
+    &--search {
+        .header--light-bg.search-open & {
+            fill: $color--white;
+        }
+    }
 }
