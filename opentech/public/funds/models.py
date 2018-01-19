@@ -47,6 +47,10 @@ class FundPage(BasePage):
         InlinePanel('related_pages', label="Related pages"),
     ]
 
+    @property
+    def deadline(self):
+        return self.fund_type.specific.next_deadline()
+
 
 class FundIndex(BasePage):
     subpage_types = ['FundPage']

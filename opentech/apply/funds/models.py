@@ -1,9 +1,14 @@
+from datetime import date
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
     InlinePanel,
+    FieldRowPanel,
+    MultiFieldPanel,
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
@@ -43,6 +48,13 @@ class FundType(AbstractStreamForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
+    def next_deadline(self):
+        rounds = Round.objects.child_of(self).live().public().specific()
+        open_rounds = rounds.filter(
+            end_date__gte=date.today(),
+        )
+        return open_rounds.first().end_date
+
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         InlinePanel('forms', label="Forms"),
@@ -75,6 +87,26 @@ class Round(AbstractStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    start_date = models.DateField(blank=True, default=date.today)
+    end_date = models.DateField(blank=True, default=date.today)
+
+    content_panels = AbstractStreamForm.content_panels + [
+        MultiFieldPanel([
+            FieldRowPanel([
+                FieldPanel('start_date'),
+                FieldPanel('end_date'),
+            ]),
+        ], heading="Dates")
+    ]
+
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
+
+    def clean(self):
+        super().clean()
+
+        if self.start_date > self.end_date:
+            raise ValidationError({
+                'end_date': 'End date must come after the start date',
+            })
