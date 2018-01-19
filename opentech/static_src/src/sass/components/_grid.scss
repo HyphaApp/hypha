@@ -39,6 +39,10 @@
         grid-gap: 10px;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
+        .form & {
+            margin: 0;
+        }
+
         > * {
             flex-basis: initial;
             width: auto;

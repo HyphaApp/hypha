@@ -5,7 +5,13 @@
     }
 
     &__group {
-        margin: 2rem 0;
+        position: relative;
+        margin: 1rem 0;
+
+        @include media-query(tablet-portrait) {
+            margin: 2rem 0;
+        }
+
         input[type='date']:last-child {
             max-width: 385px;
         }
