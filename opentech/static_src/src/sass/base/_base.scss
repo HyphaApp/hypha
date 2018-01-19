@@ -90,6 +90,12 @@ ol {
     left: -9999px;
 }
 
+.on-screen,
+%on-screen {
+    position: relative;
+    left: 0;
+}
+
 .overlay,
 %overlay {
     position: absolute;
