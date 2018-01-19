@@ -1,1 +1,9 @@
-<p>A PROJECT</p>
+{% load wagtailcore_tags wagtailimages_tags %}
+<article class="project">
+    {% image project.icon %}
+    <h2><a href="{% pageurl project %}">{{ project.title }}</a></h2>
+
+    {% if project.listing_summary or project.introduction %}
+        <p>{{ project.listing_summary|default:project.introduction }}</p>
+    {% endif %}
+</article>

@@ -1,3 +1,3 @@
-{% for project in page.projects %}
-    {% include "public_funds/includes/project_listing.html" with project=project %}
+{% for funding in page.projectfunding_set.all %}
+    {% include "public_funds/includes/project_listing.html" with project=funding.page %}
 {% endfor %}
