@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'taggit',
     'django_extensions',
     'captcha',
+    'tinymce',
     'wagtailcaptcha',
     'django_tables2',
 

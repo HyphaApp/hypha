@@ -7,8 +7,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import mark_safe
 
 from wagtail.wagtailcore.blocks import StaticBlock
-from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock
 
+from tinymce.widgets import TinyMCE
+
+from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock, TextFieldBlock
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 
 
@@ -20,7 +22,19 @@ def find_duplicates(items):
     return duplicates
 
 
+class RichTextFieldBlock(TextFieldBlock):
+    widget = TinyMCE(mce_attrs={
+        'elementpath': False,
+        'branding': False,
+    })
+
+    class Meta:
+        label = _('Rich text field')
+        icon = 'form'
+
+
 class CustomFormFieldsBlock(FormFieldsBlock):
+    rich_text = RichTextFieldBlock(group=_('Fields'))
     category = CategoryQuestionBlock(group=_('Custom'))
 
     def __init__(self, *args, **kwargs):
