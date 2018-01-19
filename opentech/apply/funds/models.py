@@ -131,7 +131,6 @@ class Round(AbstractStreamForm):
                 'end_date': 'End date must come after the start date',
             })
 
-
         if self.end_date:
             conflict_query = (
                 Q(start_date__range=[self.start_date, self.end_date]) |
