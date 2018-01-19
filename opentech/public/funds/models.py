@@ -48,6 +48,10 @@ class FundPage(BasePage):
     ]
 
     @property
+    def has_open(self):
+        return bool(self.fund_type.specific.open_round)
+
+    @property
     def deadline(self):
         return self.fund_type.specific.next_deadline()
 

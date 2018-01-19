@@ -2,10 +2,12 @@
 
 <div class="wrapper wrapper--flex">
     <div class="section section--apply-cta">
-        {% if fund_page.deadline %}
+        {% if fund_page.has_open %}
+            {% if fund_page.deadline %}
             <div class="deadline">
                 {% trans "Next deadline" %}: {{ fund_page.deadline|date:"M j, Y" }}
             </div>
+            {% endif %}
             <div class="apply-link">
                 <a class="button" href="{% pageurl fund_page.fund_type %}">{% trans "Apply for this fund" %}</a>
             </div>

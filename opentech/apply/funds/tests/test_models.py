@@ -8,11 +8,49 @@ from opentech.apply.funds.workflow import SingleStage
 from .factories import FundTypeFactory, RoundFactory
 
 
+def days_from_today(days):
+    return date.today() + timedelta(days=days)
+
+
 class TestFundModel(TestCase):
     def test_can_access_workflow_class(self):
         fund = FundTypeFactory(parent=None)
         self.assertEqual(fund.workflow, 'single')
         self.assertEqual(fund.workflow_class, SingleStage)
+
+    def test_no_open_rounds(self):
+        fund = FundTypeFactory(parent=None)
+        self.assertIsNone(fund.open_round)
+
+    def test_open_ended_round(self):
+        fund = FundTypeFactory(parent=None)
+        open_round = RoundFactory(end_date=None, parent=fund)
+        self.assertEqual(fund.open_round, open_round)
+
+    def test_normal_round(self):
+        fund = FundTypeFactory(parent=None)
+        open_round = RoundFactory(parent=fund)
+        self.assertEqual(fund.open_round, open_round)
+
+    def test_closed_round(self):
+        fund = FundTypeFactory(parent=None)
+        yesterday = days_from_today(-1)
+        last_week = days_from_today(-7)
+        RoundFactory(start_date=last_week, end_date=yesterday, parent=fund)
+        self.assertIsNone(fund.open_round)
+
+    def test_round_not_open(self):
+        fund = FundTypeFactory(parent=None)
+        tomorrow = days_from_today(1)
+        RoundFactory(start_date=tomorrow, parent=fund)
+        self.assertIsNone(fund.open_round)
+
+    def test_multiple_open_rounds(self):
+        fund = FundTypeFactory(parent=None)
+        open_round = RoundFactory(parent=fund)
+        next_round_start = open_round.end_date + timedelta(days=1)
+        RoundFactory(start_date=next_round_start, end_date=None, parent=fund)
+        self.assertEqual(fund.open_round, open_round)
 
 
 class TestRoundModel(TestCase):

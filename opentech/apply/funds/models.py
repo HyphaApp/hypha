@@ -50,12 +50,16 @@ class FundType(AbstractStreamForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
-    def next_deadline(self):
+    @property
+    def open_round(self):
         rounds = Round.objects.child_of(self).live().public().specific()
-        open_rounds = rounds.filter(
-            end_date__gte=date.today(),
-        )
-        return open_rounds.first().end_date
+        return rounds.filter(
+            Q(start_date__lte=date.today()) &
+            Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
+        ).first()
+
+    def next_deadline(self):
+        return self.open_round.end_date
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
