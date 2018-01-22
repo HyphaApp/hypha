@@ -143,7 +143,7 @@
             <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
         </header>
 
-        <main class="wrapper wrapper--large wrapper--main">
+        <main class="wrapper wrapper--large wrapper--main {% block main_modifier %}{% endblock %}">
             {% block content %}{% endblock %}
         </main>
 
