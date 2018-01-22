@@ -72,7 +72,7 @@
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard header--has-bg-image" style="background-image:url('{{ header_image.url }}')">
         {% else %}
-            <header class="header header--standard">
+            <header class="header header--standard {% block header_modifier %}{% endblock %}">
         {% endif %}
 
             <a href="#" class="link link--fixed-apply">Apply</a>
