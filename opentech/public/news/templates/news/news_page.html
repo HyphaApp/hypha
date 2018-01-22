@@ -22,8 +22,15 @@
         {% include_block page.body %}
     </section>
 
-    {% include "includes/share.html" %}
+    {% if page.news_types.all %}
+        <ul class="list list--flex">
+            {% for news_type in page.news_types.all %}
+                <li class="list__label">{{ news_type }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
+    {% include "includes/share.html" %}
 </div>
 
 {% include "includes/relatedcontent.html" with related_documents=page.related_documents.all related_pages=page.related_pages.all %}
