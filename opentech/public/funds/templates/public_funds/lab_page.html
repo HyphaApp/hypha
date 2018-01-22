@@ -4,8 +4,8 @@
 {% block content %}
     <div class="wrapper wrapper--flex">
         <section class="section section--main">
-            <h1>{{ page.icon }}{{ page.title }}</h1>
             <h5>{{ page.introduction }}</h5>
+            {{ page.icon }}
 
             {% include_block page.body %}
         </section>
