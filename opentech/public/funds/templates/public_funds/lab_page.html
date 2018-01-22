@@ -11,9 +11,9 @@
             {{ page.icon }}
 
             {% include_block page.body %}
-        </section>
-        <section>
-            <a href="{{ page.link_to_lab }}">{{ page.link_text }}</a>
+            <section>
+                <a href="{{ page.link_to_lab }}">{{ page.link_text }}</a>
+            </section>
         </section>
     </div>
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
