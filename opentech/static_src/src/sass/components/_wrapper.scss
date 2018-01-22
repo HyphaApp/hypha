@@ -84,4 +84,12 @@
             margin-bottom: 4rem;
         }
     }
+
+    &--light-grey-bg {
+        background: $color--light-grey;
+    }
+
+    &--bottom-space {
+        padding-bottom: 3rem;
+    }
 }
