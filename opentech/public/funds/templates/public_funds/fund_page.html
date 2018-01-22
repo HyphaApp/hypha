@@ -4,9 +4,8 @@
 
 {% block content %}
     {% include "public_funds/includes/fund_apply_cta.html" with fund_type=page.fund_type.specific %}
-    <div class="wrapper wrapper--flex">
+    <div class="wrapper">
         <section class="section section--main">
-            <h1>{{ page.title }}</h1>
             <h5>{{ page.introduction }}</h5>
 
             {% include_block page.body %}
