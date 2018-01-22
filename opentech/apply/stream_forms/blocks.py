@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from unidecode import unidecode
 from wagtail.wagtailcore.blocks import (
     StructBlock, TextBlock, CharBlock, BooleanBlock, ListBlock, StreamBlock,
-    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock,
+    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock,StaticBlock
 )
 
 
