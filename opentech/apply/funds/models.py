@@ -21,7 +21,7 @@ from wagtail.wagtailforms.models import AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
-from .blocks import CustomFormFieldsBlock
+from .blocks import CustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -189,4 +189,8 @@ class Round(AbstractStreamForm):
 
 
 class ApplicationSubmission(AbstractFormSubmission):
-    pass
+    def __getattr__(self, item):
+        # fall back to values defined on the data
+        if item in REQUIRED_BLOCK_NAMES:
+            return self.get_data()[item]
+        return super().__getattr__(item)

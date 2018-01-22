@@ -26,15 +26,14 @@ class CustomFormFieldsBlock(FormFieldsBlock):
         else:
             error_dict = dict()
 
-        required_block_names = [block.name  for block in MustIncludeFieldBlock.__subclasses__()]
 
         block_types = [block.block_type for block in value]
-        missing = set(required_block_names) - set(block_types)
+        missing = set(REQUIRED_BLOCK_NAMES) - set(block_types)
 
         counted_types = Counter(block_types)
         duplicates = [
             name for name, count in counted_types.items()
-            if name in required_block_names and count > 1
+            if name in REQUIRED_BLOCK_NAMES and count > 1
         ]
 
         all_errors = list()
@@ -75,6 +74,7 @@ class MustIncludeStatic(StaticBlock):
     def render_form(self, *args, **kwargs):
         errors = kwargs.pop('errors')
         if errors:
+            # Pretend the error is a readonly input so that we get nice formatting
             error_message= '<div class="error"><input readonly placeholder="{}"></div>'.format(errors[0])
         else:
             error_message = ''
@@ -98,3 +98,6 @@ class TitleBlock(MustIncludeFieldBlock):
 class ValueBlock(MustIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
+
+
+REQUIRED_BLOCK_NAMES = [block.name  for block in MustIncludeFieldBlock.__subclasses__()]
