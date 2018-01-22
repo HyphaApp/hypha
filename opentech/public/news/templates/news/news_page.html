@@ -4,12 +4,16 @@
 {% block content %}
 <div class="wrapper wrapper--small">
 
-
-    {% for author in page.authors.all %}
-        <p><a href="{% pageurl author.author %}">{{ author.author }}</a><p>
-    {% endfor %}
-
     <p>{{ page.introduction }}</p>
+    <h5 class="heading heading--author">
+        {{ page.display_date|date:"D, Y-m-d H:i" }}
+        {% if page.authors.all %}
+            | By:
+            {% for author in page.authors.all %}
+                <a href="{% pageurl author.author %}">{{ author.author }}</a>
+            {% endfor %}
+        {% endif %}
+    </h5>
 
     <section class="main-body">
         {% include_block page.body %}
