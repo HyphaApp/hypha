@@ -144,6 +144,10 @@
             width: 105px;
             height: 98px;
             fill: $color--white;
+
+            .header--grey-pixels & {
+                fill: $color--light-grey;
+            }
         }
 
         &--pixels-right {
