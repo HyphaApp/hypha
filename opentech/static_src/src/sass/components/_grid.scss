@@ -56,6 +56,11 @@
             }
         }
 
+        &--one {
+            grid-template-columns: 1fr;
+            grid-gap: 30px;
+        }
+
         &--two {
             grid-template-columns: 100%;
             grid-gap: 0;
@@ -76,6 +81,10 @@
             @include media-query(tablet-portrait) {
                 grid-template-columns: repeat(3, 1fr);
             }
+        }
+
+        &--no-margin {
+            margin: 0;
         }
 	}
 }
