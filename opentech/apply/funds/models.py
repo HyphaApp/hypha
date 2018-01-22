@@ -17,6 +17,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailforms.models import AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
@@ -51,6 +52,9 @@ class FundType(AbstractStreamForm):
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.forms.all()[0].fields
+
+    def get_submission_class(self):
+        return ApplicationSubmission
 
     @property
     def workflow_class(self):
@@ -182,3 +186,7 @@ class Round(AbstractStreamForm):
         # We hide the round as only the open round is used which is displayed through the
         # fund page
         raise Http404()
+
+
+class ApplicationSubmission(AbstractFormSubmission):
+    pass

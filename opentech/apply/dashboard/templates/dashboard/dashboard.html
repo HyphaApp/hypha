@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Recieved Content</h1>
+<h3>Track and explore recent submissions</h3>
+<table>
+{% for submission in applicationsubmission_list %}
+    <tr>
+        <td>
+            {{ submission }}
+        </td>
+    </tr>
+{% empty %}
+    There are no submissions to review.
+{% endfor %}
+</table>
+{% endblock %}

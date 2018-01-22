@@ -16,6 +16,7 @@ INSTALLED_APPS = [
 
     'opentech.apply.categories',
     'opentech.apply.funds',
+    'opentech.apply.dashboard',
     'opentech.apply.home',
     'opentech.apply.users',
     'opentech.apply.stream_forms',
