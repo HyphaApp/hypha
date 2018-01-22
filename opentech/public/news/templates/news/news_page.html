@@ -4,7 +4,6 @@
 {% block content %}
 <div class="wrapper wrapper--small">
 
-    <p>{{ page.introduction }}</p>
     <h5 class="heading heading--author">
         {{ page.display_date|date:"D, Y-m-d H:i" }}
         {% if page.authors.all %}
@@ -14,6 +13,10 @@
             {% endfor %}
         {% endif %}
     </h5>
+
+    {% if page.introduction %}
+        <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
+    {% endif %}
 
     <section class="main-body">
         {% include_block page.body %}
