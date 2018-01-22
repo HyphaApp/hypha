@@ -8,6 +8,11 @@
         flex-direction: row;
     }
 
+    &--reverse {
+        flex-direction: row-reverse;
+        border: 0;
+    }
+
     &__images {
         position: relative;
     }
@@ -38,6 +43,10 @@
                 border: 10px solid $color--light-blue;
                 transition: border $transition;
             }
+
+            .media-box--reverse:hover & {
+                border: 0;
+            }
         }
     }
 
@@ -51,6 +60,16 @@
         #{$root}:hover & {
             color: $color--white;
             background-color: $color--light-blue;
+        }
+
+        .media-box--reverse & {
+            padding: 0 20px 0 0;
+            color: $color--default;
+        }
+
+        .media-box--reverse:hover & {
+            color: $color--default;
+            background-color: inherit;
         }
 
         @include media-query(mob-landscape) {
