@@ -77,5 +77,9 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        &--medium-gap {
+            grid-gap: 35px; // sass-lint:disable-line no-misspelled-properties
+        }
 	}
 }
