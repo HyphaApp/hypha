@@ -28,12 +28,12 @@ class TestOAuthAccess(TestCase):
         response = self.client.get(reverse('users:oauth'), follow=True)
         self.assertEqual(response.status_code, 403)
 
-    @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=['email.com'])
-    def test_oauth_whitelisted_user_can_see_link_to_oauth_settings_page(self):
-        self.login()
+    # @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=['email.com'])
+    # def test_oauth_whitelisted_user_can_see_link_to_oauth_settings_page(self):
+    #     self.login()
 
-        response = self.client.get(reverse('users:account'), follow=True)
-        self.assertContains(response, 'Manage OAuth')
+    #     response = self.client.get(reverse('users:account'), follow=True)
+    #     self.assertContains(response, 'Manage OAuth')
 
     @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=['email.com'])
     def test_oauth_whitelisted_user_can_access_oauth_settings_page(self):
