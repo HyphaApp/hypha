@@ -68,7 +68,7 @@ class MustIncludeStatic(StaticBlock):
         super().__init__(*args, **kwargs)
 
     class Meta:
-        admin_text = 'Much be included in the form once.'
+        admin_text = 'Much be included in the form only once.'
 
     def render_form(self, *args, **kwargs):
         errors = kwargs.pop('errors')
