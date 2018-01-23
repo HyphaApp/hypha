@@ -2,7 +2,7 @@
 
 <div class="wrapper wrapper--flex">
     <div class="section section--apply-cta">
-        {% if fund_page.has_open %}
+        {% if fund_page.is_open %}
             {% if fund_page.deadline %}
             <div class="deadline">
                 {% trans "Next deadline" %}: {{ fund_page.deadline|date:"M j, Y" }}

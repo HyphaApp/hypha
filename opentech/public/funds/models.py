@@ -48,7 +48,7 @@ class FundPage(BasePage):
     ]
 
     @property
-    def has_open(self):
+    def is_open(self):
         return bool(self.fund_type.specific.open_round)
 
     @property
