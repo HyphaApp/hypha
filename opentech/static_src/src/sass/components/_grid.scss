@@ -70,7 +70,7 @@
             grid-gap: 0; // sass-lint:disable-line no-misspelled-properties
 
             @include media-query(tablet-portrait) {
-                grid-template-columns: 50% 50%;
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -89,6 +89,10 @@
 
         &--no-margin {
             margin: 0;
+        }
+
+        &--medium-gap {
+            grid-gap: 35px; // sass-lint:disable-line no-misspelled-properties
         }
 	}
 }

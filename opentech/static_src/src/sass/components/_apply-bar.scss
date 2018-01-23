@@ -1,0 +1,31 @@
+.apply-bar {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    @include media-query(mob-landscape) {
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    &__heading,
+    &__subheading {
+        margin: 0;
+    }
+
+    &__heading {
+        display: flex;
+        align-items: center;
+        font-size: 36px;
+        margin-bottom: 5px;
+
+        @include media-query(tablet-portrait) {
+            margin: inherit;
+        }
+    }
+
+    &__icon {
+        margin-right: 10px;
+    }
+}

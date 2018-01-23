@@ -1,3 +1,11 @@
-{% for project in page.projects %}
-    {% include "public_funds/includes/project_listing.html" with project=project %}
-{% endfor %}
+{% if page.projectfunding_set.all %}
+    <div class="wrapper wrapper--breakout">
+        <div class="wrapper--media-boxes">
+            <div class="grid grid--two grid--medium-gap">
+                {% for funding in page.projectfunding_set.all %}
+                    {% include "public_funds/includes/project_listing.html" with project=funding.page %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}

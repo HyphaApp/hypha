@@ -17,7 +17,7 @@
     }
 
     &--main {
-        padding: 20px 20px 0;
+        padding: 0 20px;
     }
 
     &--breakout {
@@ -84,10 +84,6 @@
         }
     }
 
-    &--light-grey-bg {
-        background-color: $color--light-grey;
-    }
-
     &--form {
         padding: 20px;
 
@@ -108,5 +104,25 @@
 
     &--bottom-space {
         padding-bottom: 3rem;
+    }
+
+    &--light-grey-bg {
+        padding: 2rem 20px;
+        background-color: $color--light-grey;
+    }
+
+
+    &--media-boxes {
+        max-width: 1220px;
+        padding: 0 20px;
+        margin: 0 auto;
+    }
+
+    &--bottom-space {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-portrait) {
+            margin-bottom: 3rem;
+        }
     }
 }

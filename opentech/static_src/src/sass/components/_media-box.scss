@@ -1,0 +1,109 @@
+.media-box {
+    $root: &;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $color--mid-grey;
+
+    @include media-query(mob-landscape) {
+        flex-direction: row;
+    }
+
+    &--reverse {
+        flex-direction: row-reverse;
+        border: 0;
+    }
+
+    &__images {
+        position: relative;
+
+        &::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(27, 27, 27, 0.6);
+            content: '';
+        }
+    }
+
+    &__image {
+        &--large {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+
+            @include media-query(mob-landscape) {
+                width: auto;
+                height: auto;
+                object-fit: initial;
+            }
+        }
+
+        &--small {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            max-width: 105px;
+            border: 0 solid;
+            transform: translate(-50%, -50%);
+            box-sizing: content-box;
+            transition: border $transition;
+
+            #{$root}:hover & {
+                border: 10px solid $color--light-blue;
+                transition: border $transition;
+            }
+
+            .media-box--reverse:hover & {
+                border: 0;
+            }
+        }
+    }
+
+    &__content {
+        flex: 1;
+        padding: 20px 30px;
+        color: $color--light-blue;
+        background-color: $color--white;
+        transition: color, background-color, $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+            background-color: $color--light-blue;
+        }
+
+        .media-box--reverse & {
+            padding: 0 20px 0 0;
+            color: $color--default;
+        }
+
+        .media-box--reverse:hover & {
+            color: $color--default;
+            background-color: inherit;
+        }
+
+        @include media-query(mob-landscape) {
+            padding: 15px 20px;
+        }
+    }
+
+    &__teaser {
+        display: none;
+        margin: 0;
+        font-weight: $weight--normal;
+
+        @include media-query(mob-landscape) {
+            display: block;
+        }
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+
+        @include media-query(tablet-landscape) {
+            display: block;
+        }
+    }
+}
