@@ -48,6 +48,7 @@
             max-width: 105px;
             border: 0 solid;
             transform: translate(-50%, -50%);
+            box-sizing: content-box;
             transition: border $transition;
 
             #{$root}:hover & {
