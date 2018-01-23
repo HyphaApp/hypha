@@ -92,11 +92,9 @@
 
 
     &--media-boxes {
+        max-width: 1220px;
         padding: 0 20px;
-
-        @include media-query(tablet-portrait) {
-            padding: 0 30px;
-        }
+        margin: 0 auto;
     }
 
     &--bottom-space {
