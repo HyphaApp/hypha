@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.core.exceptions import ValidationError
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -55,6 +56,13 @@ class FundType(AbstractStreamForm):
 
     def get_submission_class(self):
         return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        # Handle passing to JSONField
+        return self.get_submission_class().objects.create(
+            form_data=form.cleaned_data,
+            page=self,
+        )
 
     @property
     def workflow_class(self):
@@ -189,8 +197,22 @@ class Round(AbstractStreamForm):
 
 
 class ApplicationSubmission(AbstractFormSubmission):
+    form_data = JSONField()
+
+    def get_data(self):
+        # Updated for JSONField
+        form_data = self.form_data
+        form_data.update({
+            'submit_time': self.submit_time,
+        })
+
+        return form_data
+
     def __getattr__(self, item):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
             return self.get_data()[item]
         return super().__getattr__(item)
+
+    def __str__(self):
+        return str(super().__str__())
