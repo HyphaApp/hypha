@@ -3,4 +3,274 @@
         width: 300px;
         border-bottom: 1px solid $color--white;
     }
+
+    &__group {
+        position: relative;
+        margin: 1rem 0;
+
+        @include media-query(tablet-portrait) {
+            margin: 2rem 0;
+        }
+
+        input[type='date']:last-child {
+            max-width: 385px;
+        }
+    }
+
+    &__question {
+        @extend %h4;
+        display: block;
+        margin-bottom: 10px;
+        font-weight: $weight--bold;
+
+        // sass-lint:disable class-name-format
+        &--image_field,
+        &--file_field {
+            @include button($color--light-blue, $color--dark-blue);
+            max-width: 290px;
+            margin-top: 80px;
+            text-align: center;
+            background: url('./../images/upload.svg') $color--light-blue no-repeat 50px center;
+            border: 0;
+
+            .no-js & {
+                max-width: initial;
+                padding: 0;
+                margin-top: initial;
+                color: $color--black;
+                text-align: left;
+                background: none;
+            }
+
+            &::before {
+                position: absolute;
+                top: -50px;
+                left: 0;
+                color: $color--default;
+
+                .no-js & {
+                    display: none;
+                }
+            }
+
+            &:hover {
+                background: url('./../images/upload.svg') $color--dark-blue no-repeat 50px center;
+
+                .no-js & {
+                    background: none;
+                }
+            }
+        }
+
+        &--image_field {
+            &::before {
+                content: 'Upload supporting images';
+            }
+        }
+
+        &--file_field {
+            &::before {
+                content: 'Upload supporting files';
+            }
+        }
+        // sass-lint:enddisable
+    }
+
+    &__label {
+        @extend %h5;
+        font-weight: $weight--bold;
+    }
+
+    &__required {
+        color: $color--purple;
+
+        .form__question--re_captcha_field & {
+            display: none;
+        }
+    }
+
+    &__help {
+        @extend %h6;
+    }
+
+    &__item {
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    &__select {
+        max-width: 385px;
+        background: url('./../images/dropdown.svg') $color--white no-repeat 95% center;
+        background-size: 8px;
+
+        select[multiple='multiple'] {
+            display: block;
+        }
+
+        select {
+            background: transparent;
+            border-radius: 0;
+            appearance: none; // sass-lint:disable-line
+
+            option {
+
+                background-color: white;
+            }
+        }
+    }
+
+    select,
+    input[type='url'],
+    input[type='text']:not(.input--search),
+    input[type='date'],
+    input[type='time'],
+    input[type='email'],
+    input[type='number'],
+    input[type='datetime-local'] {
+        width: 100%;
+        max-width: 385px;
+        padding: 10px;
+        border: 1px solid $color--mid-grey;
+    }
+
+    &__error {
+        select,
+        textarea,
+        input[type='url'],
+        input[type='text'],
+        input[type='date'],
+        input[type='time'],
+        input[type='email'],
+        input[type='number'],
+        input[type='datetime-local'] {
+            border: 2px solid $color--error;
+        }
+    }
+
+    &__error-text {
+        max-width: 200px;
+        padding: 5px;
+        margin: 20px 0 0;
+        color: $color--white;
+        background: $color--error;
+
+        @include media-query(tablet-landscape) {
+            position: absolute;
+            top: 0;
+            right: 0;
+            max-width: auto;
+            margin: 0;
+
+            &::before {
+                position: absolute;
+                top: 12px;
+                left: -10px;
+                border-color: transparent $color--error transparent transparent;
+                border-style: solid;
+                border-width: 5px 10px 5px 0;
+                content: '';
+            }
+        }
+
+    }
+
+    // make date & time input siblings inline
+    input[type='date'] {
+        max-width: calc(385px - 90px);
+    }
+
+    input[type='date'] + input[type='time'] {
+        width: 90px;
+    }
+
+    input[type='file'] {
+        @extend %off-screen;
+
+        .no-js & {
+            @extend %on-screen;
+        }
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid lightgrey;
+    }
+
+    // Radio + Checkbox
+    [type='radio'],
+    [type='checkbox'] {
+        position: absolute;
+        top: 10px;
+        left: 5px;
+        z-index: -1;
+        width: 1px;
+        height: 1px;
+    }
+
+    [type='radio'] + label,
+    [type='checkbox'] + label {
+        position: relative;
+        padding-left: 30px;
+        cursor: pointer;
+    }
+
+    [type='radio'] + label::before,
+    [type='checkbox'] + label::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: $color--white;
+        border: 1px solid $color--mid-grey;
+        content: '';
+
+    }
+
+    // Radio specific
+    [type='radio'] {
+        & + label::before {
+            border-radius: 100%;
+        }
+
+        & + label::after {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 10px;
+            height: 10px;
+            background: $color--dark-blue;
+            border-radius: 100%;
+            content: '';
+            transition: transform, opacity, $transition;
+        }
+
+        &:not(:checked) + label::after {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        &:checked + label::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        &:checked + label::before {
+            border: 1px solid $color--dark-blue;
+        }
+    }
+
+    // Checkbox specific
+    input[type='checkbox'] {
+        & + label::before {
+            transition: background-color $transition;
+        }
+
+        &:checked + label::before {
+            background: url('./../images/tick.svg') $color--dark-blue center no-repeat;
+            background-size: 12px;
+            border: 1px solid $color--dark-blue;
+        }
+    }
 }

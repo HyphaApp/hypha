@@ -84,4 +84,26 @@
             margin-bottom: 4rem;
         }
     }
+
+    &--light-grey-bg {
+        background-color: $color--light-grey;
+    }
+
+    &--form {
+        padding: 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 2rem 17rem 2rem 5rem;
+        }
+    }
+
+    &--error {
+        display: flex;
+        align-items: center;
+        max-width: 830px;
+        padding: 10px;
+        margin: 0 auto 2rem;
+        background: $color--light-pink;
+        border: 1px solid $color--tomato;
+    }
 }

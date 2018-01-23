@@ -78,7 +78,7 @@
     }
 }
 
-// button mixin
+// Button mixin
 @mixin button($bg, $hover-bg) {
     padding: 10px 60px;
     font-weight: $weight--bold;
@@ -91,6 +91,16 @@
     &:active {
         cursor: pointer;
         background: $hover-bg;
+    }
+}
+
+// Narrow button mixin
+@mixin button--narrow {
+    padding: 5px;
+    font-size: 15px;
+
+    @include media-query(tablet-landscape) {
+        padding: 5px 15px;
     }
 }
 

@@ -72,13 +72,14 @@
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard header--has-bg-image" style="background-image:url('{{ header_image.url }}')">
         {% else %}
-            <header class="header header--standard">
+            <header class="header header--standard {% block header_modifier %}{% endblock %}">
         {% endif %}
 
             <a href="#" class="link link--fixed-apply">Apply</a>
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}" aria-label="Home link">
-                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
                     <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
 
@@ -108,7 +109,7 @@
                         </a>
                         <div class="header__inner header__inner--mobile-buttons">
                             <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
-                                <svg class="header__icon header__icon--open-search header__icon--open-search-menu-open icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                                <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
                             </button>
                             <button class="button button--left-space js-mobile-menu-close">
                                 <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
@@ -119,7 +120,7 @@
                 </section>
 
                 <div class="header__button-container">
-                    <a href="#" class="button button--transparent button--narrow button--contains-icons">
+                    <a href="#" class="button button--transparent button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
                         Log in
                     </a>
@@ -130,9 +131,9 @@
             <div class="header__search">
                 <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
                     <button class="button" type="submit" aria-label="Search">
-                        <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
+                        <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                     </button>
-                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
+                    <input class="input input--transparent input--search" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
                 </form>
             </div>
 
