@@ -1,1 +1,3 @@
-{% include "funds/fund_type.html" %}
+{% extends "funds/fund_type.html" %}
+
+{% block title %}{{ page.get_parent.title }}{% endblock %}
