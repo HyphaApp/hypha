@@ -107,7 +107,7 @@ class Round(AbstractStreamForm):
         blank=True,
         null=True,
         default=date.today,
-        help_text='If no end date is provided the round will remain open.'
+        help_text='When no end date is provided the round will remain open indefinitely.'
     )
 
     content_panels = AbstractStreamForm.content_panels + [

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='round',
             name='end_date',
-            field=models.DateField(blank=True, default=datetime.date.today, help_text='If no end date is provided the round will remain open.', null=True),
+            field=models.DateField(blank=True, default=datetime.date.today, help_text='When no end date is provided the round will remain open indefinitely.', null=True),
         ),
         migrations.AlterField(
             model_name='round',
