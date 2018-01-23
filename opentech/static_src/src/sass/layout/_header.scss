@@ -40,7 +40,7 @@
     &__title {
         margin: 0;
         color: $color--white;
-        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 2px 15px $color--black-10;
         text-transform: uppercase;
 
         .header--light-bg & {
@@ -192,6 +192,10 @@
             width: 105px;
             height: 98px;
             fill: $color--white;
+
+            .light-grey-bg & {
+                fill: $color--light-grey;
+            }
         }
 
         &--pixels-right {
