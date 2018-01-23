@@ -74,6 +74,7 @@ class MustIncludeStatic(StaticBlock):
         errors = kwargs.pop('errors')
         if errors:
             # Pretend the error is a readonly input so that we get nice formatting
+            # Issue discussed here: https://github.com/wagtail/wagtail/issues/4122
             error_message = '<div class="error"><input readonly placeholder="{}"></div>'.format(errors[0])
         else:
             error_message = ''
