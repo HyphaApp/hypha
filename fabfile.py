@@ -97,7 +97,7 @@ def pull_pre_production_media():
 
 @roles('dev')
 def deploy_dev():
-    _deploy('dev')
+    _deploy('develop')
 
 
 @runs_once
