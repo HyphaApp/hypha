@@ -1,4 +1,5 @@
 from django.db import models
+
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
@@ -23,9 +24,10 @@ WORKFLOW_CLASS = {
 
 class FundType(AbstractStreamForm):
     parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = []  # type: ignore
+    subpage_types = ['funds.Round']
 
     base_form_class = WorkflowFormAdminForm
+
     WORKFLOWS = {
         'single': SingleStage.name,
         'double': DoubleStage.name,
@@ -67,3 +69,12 @@ class ApplicationForm(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Round(AbstractStreamForm):
+    parent_page_types = ['funds.FundType']
+    subpage_types = []  # type: ignore
+
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.get_parent().specific.forms.all()[0].fields
