@@ -15,13 +15,23 @@
 
     &__images {
         position: relative;
+
+        &::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(27, 27, 27, 0.8);
+            content: '';
+        }
     }
 
     &__image {
         &--large {
             width: 100%;
             height: 150px;
-            filter: brightness(50%);
             object-fit: cover;
 
             @include media-query(mob-landscape) {
