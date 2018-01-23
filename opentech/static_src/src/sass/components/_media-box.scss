@@ -85,12 +85,13 @@
         }
 
         @include media-query(mob-landscape) {
-            padding: 20px;
+            padding: 15px 20px;
         }
     }
 
     &__teaser {
         display: none;
+        margin: 0;
         font-weight: $weight--normal;
 
         @include media-query(mob-landscape) {
