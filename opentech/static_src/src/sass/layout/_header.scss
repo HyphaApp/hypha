@@ -144,6 +144,10 @@
             width: 105px;
             height: 98px;
             fill: $color--white;
+
+            .light-grey-bg & {
+                fill: $color--light-grey;
+            }
         }
 
         &--pixels-right {
