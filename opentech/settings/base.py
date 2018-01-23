@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'captcha',
     'wagtailcaptcha',
+    'django_tables2',
 
     'django.contrib.admin',
     'django.contrib.auth',
