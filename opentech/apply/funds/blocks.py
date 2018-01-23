@@ -82,7 +82,7 @@ class MustIncludeStatic(StaticBlock):
         return mark_safe(form)
 
     def deconstruct(self):
-        return ('wagtail.core.blocks.StaticBlock', [], {})
+        return ('wagtail.wagtailcore.blocks.static_block.StaticBlock', (), {})
 
 
 class MustIncludeFieldBlock(FormFieldBlock):
