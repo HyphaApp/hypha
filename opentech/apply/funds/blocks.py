@@ -81,6 +81,9 @@ class MustIncludeStatic(StaticBlock):
         form = '<br>'.join([self.description, form]) + error_message
         return mark_safe(form)
 
+    def deconstruct(self):
+        return ('wagtail.core.blocks.StaticBlock', [], {})
+
 
 class MustIncludeFieldBlock(FormFieldBlock):
     def __init__(self, *args, **kwargs):
