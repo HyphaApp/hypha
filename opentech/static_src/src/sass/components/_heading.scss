@@ -5,4 +5,8 @@
         font-weight: $weight--light;
         border-bottom: 1px solid $color--mid-grey;
     }
+
+    &--author {
+        margin: 2rem 0 0;
+    }
 }
