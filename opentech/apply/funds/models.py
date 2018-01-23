@@ -1,6 +1,8 @@
 from datetime import date
 
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models.expressions import RawSQL, OrderBy
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import Q
@@ -196,8 +198,27 @@ class Round(AbstractStreamForm):
         raise Http404()
 
 
+class JSONOrderable(models.QuerySet):
+    def order_by(self, *field_names):
+        def build_json_order_by(field):
+            if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                return field
+
+            if field[0] == '-':
+                descending = True
+                field = field[1:]
+            else:
+                descending = False
+            return OrderBy(RawSQL("LOWER(form_data->>%s)", (field,)), descending=descending)
+
+        field_ordering = [build_json_order_by(field) for field in field_names]
+        return super().order_by(*field_ordering)
+
+
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField()
+
+    objects = JSONOrderable.as_manager()
 
     def get_data(self):
         # Updated for JSONField
