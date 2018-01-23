@@ -91,6 +91,11 @@ class MustIncludeFieldBlock(FormFieldBlock):
         child_blocks = [('info', MustIncludeStatic(label=info_name, description=self.description))]
         super().__init__(child_blocks, *args, **kwargs)
 
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['required'] = True
+        return kwargs
+
 
 class TitleBlock(MustIncludeFieldBlock):
     name = 'title'
