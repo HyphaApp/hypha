@@ -21,8 +21,7 @@ class AbstractStreamForm(AbstractForm):
             block = struct_child.block
             struct_value = struct_child.value
             if isinstance(block, FormFieldBlock):
-                field_name = block.get_slug(struct_value)
-                form_fields[field_name] = block.get_field(struct_value)
+                form_fields[struct_child.id] = block.get_field(struct_value)
             else:
                 form_fields[struct_child.id] = BlockFieldWrapper(struct_child)
         return form_fields
