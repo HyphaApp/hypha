@@ -64,6 +64,9 @@ class CustomFormFieldsBlock(FormFieldsBlock):
 
 
 class MustIncludeStatic(StaticBlock):
+    """Helper block which displays additional information about the must include block and
+    helps display the error in a noticeable way.
+    """
     def __init__(self, *args, description='', **kwargs):
         self.description = description
         super().__init__(*args, **kwargs)
@@ -88,6 +91,9 @@ class MustIncludeStatic(StaticBlock):
 
 
 class MustIncludeFieldBlock(FormFieldBlock):
+    """Any block inheriting from this will need to be included in the application forms
+    This data will also be available to query on the submission object
+    """
     def __init__(self, *args, **kwargs):
         info_name = f'{self.name.title()} Field'
         child_blocks = [('info', MustIncludeStatic(label=info_name, description=self.description))]
