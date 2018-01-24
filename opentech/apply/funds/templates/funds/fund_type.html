@@ -18,7 +18,6 @@
 {% endif %}
 
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
-    <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
     <form class="form" action="" method="POST">
         {% csrf_token %}
@@ -34,7 +33,7 @@
                             {% endif %}
                         </label>
                         {% if field.help_text %}
-                            <p class="form-help">{{ field.help_text }}</p>
+                            <p class="form__help">{{ field.help_text }}</p>
                         {% endif %}
                         <div class="form__item">
                             {{ field }}
@@ -51,7 +50,7 @@
                             {% endif %}
                         </label>
                         {% if field.help_text %}
-                            <p class="form-help">{{ field.help_text }}</p>
+                            <p class="form__help">{{ field.help_text }}</p>
                         {% endif %}
                         <div class="form__item">
                             {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
