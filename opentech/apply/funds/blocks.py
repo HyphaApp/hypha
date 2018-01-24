@@ -55,7 +55,7 @@ class CustomFormFieldsBlock(FormFieldsBlock):
                                 [ValidationError('Error', params={'info': ErrorList(['Duplicate'])})]
                             )
 
-        if all_errors:
+        if all_errors or error_dict:
             error_dict['__all__'] = all_errors
             raise ValidationError('Error', params=error_dict)
 
