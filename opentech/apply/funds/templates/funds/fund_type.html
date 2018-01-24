@@ -1,26 +1,32 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags static %}
+{% load wagtailcore_tags static i18n %}
+
 
 {% block content %}
     <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
-    <form action="" method="POST">
-        {{ form.media }}
-        {% csrf_token %}
+    {% if not page.open_round and not page.start_date %}
+        {# the fund has no open rounds and we arent on a round page #}
+        <h3>{% trans "Sorry this fund is not accepting applications at the moment" %}</h3>
+    {% else%}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form.media }}
 
-        {% if form.errors or form.non_field_errors %}
-            <div class="messages">
-                There were some errors with your form. Please amend the fields highlighted below. {% if form.non_field_errors %}
-                <ul>
-                    {% for error in form.non_field_errors %}
-                    <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-        {% endif %}
+            {% if form.errors or form.non_field_errors %}
+                <div class="messages">
+                    There were some errors with your form. Please amend the fields highlighted below. {% if form.non_field_errors %}
+                    <ul>
+                        {% for error in form.non_field_errors %}
+                        <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            {% endif %}
 
-        {{ form.as_p }}
-        <input type="submit">
-    </form>
+            {{ form.as_p }}
+            <input type="submit">
+        </form>
+    {% endif %}
 {% endblock %}
