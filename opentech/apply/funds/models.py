@@ -143,7 +143,7 @@ class Round(AbstractStreamForm):
                 Q(end_date__gte=self.start_date)
             )
 
-        conflicting_rounds = Round.objects.sibling_of(self).filter(
+        conflicting_rounds = Round.objects.child_of(self.parent_page).filter(
             conflict_query
         ).exclude(id=self.id)
 
