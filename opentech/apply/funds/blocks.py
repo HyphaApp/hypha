@@ -12,7 +12,7 @@ from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 
 
-def find_duplciates(items):
+def find_duplicates(items):
     counted = Counter(items)
     duplicates = [
         name for name, count in counted.items() if count > 1
@@ -39,7 +39,7 @@ class CustomFormFieldsBlock(FormFieldsBlock):
         missing = set(REQUIRED_BLOCK_NAMES) - set(block_types)
 
         duplicates = [
-            name for name in find_duplciates(block_types)
+            name for name in find_duplicates(block_types)
             if name in REQUIRED_BLOCK_NAMES
         ]
 
