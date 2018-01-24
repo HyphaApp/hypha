@@ -9,8 +9,11 @@
     }
 
     &--reverse {
-        flex-direction: row-reverse;
         border: 0;
+
+        @include media-query(mob-landscape) {
+            flex-direction: row-reverse;
+        }
     }
 
     &__images {
