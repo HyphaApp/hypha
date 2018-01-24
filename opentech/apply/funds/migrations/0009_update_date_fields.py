@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0006_add_dates_to_round'),
+        ('funds', '0008_add_date_to_round'),
     ]
 
     operations = [
