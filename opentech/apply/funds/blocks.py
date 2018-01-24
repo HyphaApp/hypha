@@ -140,4 +140,15 @@ class ValueBlock(MustIncludeFieldBlock):
     widget = forms.NumberInput
 
 
+class EmailBlock(MustIncludeFieldBlock):
+    name = 'email'
+    description = 'The applicant email address'
+    widget = forms.EmailField
+
+
+class FullNameBlock(MustIncludeFieldBlock):
+    name = 'full_name'
+    description = 'Full name'
+
+
 REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]
