@@ -151,7 +151,7 @@ class ValueBlock(MustIncludeFieldBlock):
 class EmailBlock(MustIncludeFieldBlock):
     name = 'email'
     description = 'The applicant email address'
-    widget = forms.EmailField
+    widget = forms.EmailInput
 
 
 class FullNameBlock(MustIncludeFieldBlock):
