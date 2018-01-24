@@ -12,6 +12,14 @@ from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 
 
+def find_duplciates(items):
+    counted = Counter(items)
+    duplicates = [
+        name for name, count in counted.items() if count > 1
+    ]
+    return duplicates
+
+
 class CustomFormFieldsBlock(FormFieldsBlock):
     category = CategoryQuestionBlock(group=_('Custom'))
 
@@ -30,10 +38,9 @@ class CustomFormFieldsBlock(FormFieldsBlock):
         block_types = [block.block_type for block in value]
         missing = set(REQUIRED_BLOCK_NAMES) - set(block_types)
 
-        counted_types = Counter(block_types)
         duplicates = [
-            name for name, count in counted_types.items()
-            if name in REQUIRED_BLOCK_NAMES and count > 1
+            name for name in find_duplciates(block_types)
+            if name in REQUIRED_BLOCK_NAMES
         ]
 
         all_errors = list()
@@ -46,21 +53,24 @@ class CustomFormFieldsBlock(FormFieldsBlock):
             all_errors.append(
                 'You have duplicates of the following required fields: {}'.format(', '.join(duplicates).title())
             )
-            for name in duplicates:
-                for i, block_name in enumerate(block_types):
-                    if block_name == name:
-                        try:
-                            error_dict[i].data[0].params['info'] = ErrorList(['Duplicate'])
-                        except KeyError:
-                            error_dict[i] = ErrorList(
-                                [ValidationError('Error', params={'info': ErrorList(['Duplicate'])})]
-                            )
+            for i, block_name in enumerate(block_types):
+                if block_name in duplicates:
+                    self.add_error_to_child(error_dict, i, 'info', 'Duplicate field')
 
         if all_errors or error_dict:
             error_dict['__all__'] = all_errors
             raise ValidationError('Error', params=error_dict)
 
         return value
+
+    def add_error_to_child(self, errors, child_number, field, message):
+        new_error = ErrorList([message])
+        try:
+            errors[child_number].data[0].params[field] = new_error
+        except KeyError:
+            errors[child_number] = ErrorList(
+                [ValidationError('Error', params={field: new_error})]
+            )
 
 
 class MustIncludeStatic(StaticBlock):
