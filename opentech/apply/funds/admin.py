@@ -1,5 +1,4 @@
 from django.urls import reverse
-from django.utils.text import mark_safe
 
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 from wagtail.contrib.modeladmin.helpers import PageButtonHelper
