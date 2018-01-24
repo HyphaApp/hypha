@@ -36,6 +36,10 @@
     box-shadow: 0 2px 15px 0 $color--black-10;
     transition: background-color, color, $transition;
 
+    @include media-query(tablet-landscape) {
+        padding: 25px 50px 30px 35px;
+    }
+
     &:hover {
         color: $color--white;
         background-color: $color--light-blue;
@@ -49,6 +53,7 @@
 
         > div {
             flex: 1;
+            max-width: 450px;
         }
     }
 
@@ -66,6 +71,14 @@
 
     &__summary {
         display: none;
+        margin: 0;
+        font-size: 16px;
+        color: $color--default;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
 
         @include media-query(mob-landscape) {
             display: block;
