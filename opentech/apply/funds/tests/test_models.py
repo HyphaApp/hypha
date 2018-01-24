@@ -48,6 +48,12 @@ class TestFundModel(TestCase):
         RoundFactory(start_date=next_round_start, end_date=None, parent=self.fund)
         self.assertEqual(self.fund.open_round, open_round)
 
+    def test_can_not_be_open_with_draft_round(self):
+        new_round = RoundFactory(parent=self.fund)
+        new_round.live = False
+        new_round.save()
+        self.assertEqual(self.fund.open_round, None)
+
 
 class TestRoundModel(TestCase):
     def setUp(self):
