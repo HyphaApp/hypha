@@ -39,28 +39,7 @@ def admin_url(page):
     return reverse('wagtailadmin_pages:edit', args=(page.id,))
 
 
-class AbstractApplicationStreamForm(AbstractStreamForm):
-    def get_submission_class(self):
-        return ApplicationSubmission
-
-    def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
-            page=self,
-        )
-
-    class Meta:
-        abstract = True
-
-
-class FundType(AbstractApplicationStreamForm):
+class FundType(AbstractStreamForm):
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
@@ -128,7 +107,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(AbstractApplicationStreamForm):
+class Round(AbstractStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
@@ -152,6 +131,24 @@ class Round(AbstractApplicationStreamForm):
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
+
+    def get_submission_class(self):
+        return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
+        return self.get_submission_class().objects.create(
+            form_data=cleaned_data,
+            page=self.get_parent(),
+            round=self,
+        )
+
 
     def clean(self):
         super().clean()
@@ -228,6 +225,7 @@ class JSONOrderable(models.QuerySet):
 
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
+    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions')
 
     objects = JSONOrderable.as_manager()
 
