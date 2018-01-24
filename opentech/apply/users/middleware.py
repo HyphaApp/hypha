@@ -1,6 +1,7 @@
 from social_core.exceptions import AuthForbidden
 from social_django.middleware import SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware
 
+
 class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
     """
     Wrapper around SocialAuthExceptionMiddleware to customise messages
