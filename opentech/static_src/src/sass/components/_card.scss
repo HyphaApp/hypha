@@ -71,6 +71,14 @@
 
     &__summary {
         display: none;
+        margin: 0;
+        font-size: 16px;
+        color: $color--default;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
 
         @include media-query(mob-landscape) {
             display: block;
