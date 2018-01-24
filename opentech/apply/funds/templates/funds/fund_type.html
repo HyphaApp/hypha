@@ -5,7 +5,7 @@
 {% block content %}
     <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
-    {% if not page.open_round and not page.start_date %}
+    {% if not page.open_round and not page.start_date and not request.is_preview %}
         {# the fund has no open rounds and we arent on a round page #}
         <h3>{% trans "Sorry this fund is not accepting applications at the moment" %}</h3>
     {% else%}
