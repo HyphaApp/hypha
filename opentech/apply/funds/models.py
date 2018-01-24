@@ -143,7 +143,15 @@ class Round(AbstractStreamForm):
                 Q(end_date__gte=self.start_date)
             )
 
-        conflicting_rounds = Round.objects.child_of(self.parent_page).filter(
+        if hasattr(self, 'parent_page'):
+            # Check if the create hook has added the parent page, we aren't an object yet.
+            # Ensures we can access related objects during the clean phase instead of save.
+            base_query = Round.objects.child_of(self.parent_page)
+        else:
+            # don't need parent page, we are an actual object now.
+            base_query = Round.objects.sibling_of(self)
+
+        conflicting_rounds = base_query.filter(
             conflict_query
         ).exclude(id=self.id)
 

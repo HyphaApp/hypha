@@ -111,3 +111,14 @@ class TestRoundModel(TestCase):
         overlapping_start = existing_round.end_date - timedelta(1)
         with self.assertRaises(ValidationError):
             self.make_round(start_date=overlapping_start, end_date=None)
+
+    def test_can_not_overlap_clean(self):
+        existing_round = self.make_round()
+        overlapping_start = existing_round.end_date - timedelta(1)
+        new_round = RoundFactory.build(start_date=overlapping_start, end_date=None)
+
+        # we add on the parent page which gets included from a pre_create_hook
+        new_round.parent_page = self.fund
+
+        with self.assertRaises(ValidationError):
+            new_round.clean()
