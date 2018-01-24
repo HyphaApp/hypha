@@ -1,5 +1,6 @@
 from collections import Counter
 
+from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
@@ -106,6 +107,7 @@ class TitleBlock(MustIncludeFieldBlock):
 class ValueBlock(MustIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
+    widget = forms.NumberInput
 
 
 REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]
