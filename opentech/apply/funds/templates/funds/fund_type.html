@@ -1,6 +1,8 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags util_tags %}
+{% load wagtailcore_tags util_tags static %}
+
 {% block header_modifier %}header--light-bg{% endblock %}
+
 {% block content %}
 
 {% if form.errors or form.non_field_errors %}
@@ -20,6 +22,7 @@
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
 
     <form class="form" action="" method="POST">
+        {{ form.media }}
         {% csrf_token %}
 
         {% for field in form %}

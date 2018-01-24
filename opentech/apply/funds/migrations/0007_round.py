@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailcore', '0040_page_draft_title'),
-        ('funds', '0004_categoryblock_add_required_option'),
+        ('funds', '0006_update_block_definitions'),
     ]
 
     operations = [

@@ -1,8 +1,10 @@
 from datetime import date
 
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
 from django.urls import reverse
 from django.utils.text import mark_safe
@@ -17,10 +19,11 @@ from wagtail.wagtailadmin.edit_handlers import (
 )
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailforms.models import AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
-from .blocks import CustomFormFieldsBlock
+from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -51,6 +54,22 @@ class FundType(AbstractStreamForm):
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.forms.all()[0].fields
+
+    def get_submission_class(self):
+        return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
+        return self.get_submission_class().objects.create(
+            form_data=cleaned_data,
+            page=self,
+        )
 
     @property
     def workflow_class(self):
@@ -182,3 +201,44 @@ class Round(AbstractStreamForm):
         # We hide the round as only the open round is used which is displayed through the
         # fund page
         raise Http404()
+
+
+class JSONOrderable(models.QuerySet):
+    def order_by(self, *field_names):
+        def build_json_order_by(field):
+            if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                return field
+
+            if field[0] == '-':
+                descending = True
+                field = field[1:]
+            else:
+                descending = False
+            return OrderBy(RawSQL("LOWER(form_data->>%s)", (field,)), descending=descending)
+
+        field_ordering = [build_json_order_by(field) for field in field_names]
+        return super().order_by(*field_ordering)
+
+
+class ApplicationSubmission(AbstractFormSubmission):
+    form_data = JSONField()
+
+    objects = JSONOrderable.as_manager()
+
+    def get_data(self):
+        # Updated for JSONField
+        form_data = self.form_data
+        form_data.update({
+            'submit_time': self.submit_time,
+        })
+
+        return form_data
+
+    def __getattr__(self, item):
+        # fall back to values defined on the data
+        if item in REQUIRED_BLOCK_NAMES:
+            return self.get_data()[item]
+        return super().__getattr__(item)
+
+    def __str__(self):
+        return str(super().__str__())
