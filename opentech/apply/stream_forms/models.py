@@ -8,6 +8,8 @@ from .forms import BlockFieldWrapper, StreamBaseForm
 
 
 class AbstractStreamForm(AbstractForm):
+    page_form_class = StreamBaseForm
+
     class Meta:
         abstract = True
 
@@ -27,4 +29,4 @@ class AbstractStreamForm(AbstractForm):
         return form_fields
 
     def get_form_class(self):
-        return type('WagtailStreamForm', (StreamBaseForm,), self.get_form_fields())
+        return type('WagtailStreamForm', (self.page_form_class,), self.get_form_fields())
