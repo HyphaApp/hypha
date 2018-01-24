@@ -20,7 +20,7 @@
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
-    <form action="" method="POST">
+    <form class="form" action="" method="POST">
         {% csrf_token %}
 
         {% for field in form %}
