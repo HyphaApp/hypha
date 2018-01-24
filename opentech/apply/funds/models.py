@@ -1,11 +1,10 @@
 from datetime import date
 
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.expressions import RawSQL, OrderBy
-from django.contrib.postgres.fields import JSONField
-from django.db import models
 from django.db.models import Q
+from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
 from django.urls import reverse
 from django.utils.text import mark_safe
