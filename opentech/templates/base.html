@@ -138,7 +138,7 @@
             </div>
 
             <div class="wrapper wrapper--small">
-                <h1 class="header__title">{{ page.title }}</h1>
+                <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
             </div>
             <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
             <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>

@@ -18,9 +18,9 @@
 {% endif %}
 
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
-    <h1>{{ page.title }}</h1>
+    <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
-    <form class="form" action="{% pageurl page %}" method="post">
+    <form action="" method="POST">
         {% csrf_token %}
 
         {% for field in form %}
