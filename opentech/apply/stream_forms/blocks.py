@@ -158,6 +158,7 @@ class DatePickerInput(forms.DateInput):
             'data-date-format': 'yyyy-mm-dd',
         })
         kwargs['attrs'] = attrs
+        kwargs['format'] = '%Y-%m-%d'
         super().__init__(*args, **kwargs)
 
 
