@@ -3,17 +3,25 @@
 
 {% block content %}
     <div class="wrapper">
-        <section class="section section--main">
-            {% if page.introduction %}
-                <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
-            {% endif %}
+        <section class="section section--main section--top-bottom-space">
 
-            {{ page.icon }}
+            <div class="media-box media-box--reverse">
+                <div class="media-box__images">
+                    {% image page.icon max-210x235 as page_icon %}
+                    <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                    <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                </div>
+
+                <div class="media-box__content">
+                    <h4>{{ page.title }}</h4>
+                    {% if page.introduction %}
+                        <h5 class="media-box__teaser">{{ page.introduction }}</h5>
+                    {% endif %}
+                </div>
+            </div>
 
             {% include_block page.body %}
-            <section>
-                <a href="{{ page.link_to_lab }}">{{ page.link_text }}</a>
-            </section>
+            <a class="link link--button" href="{{ page.link_to_lab }}">{{ page.link_text }}</a>
         </section>
     </div>
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
