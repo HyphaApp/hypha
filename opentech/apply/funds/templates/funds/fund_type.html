@@ -2,9 +2,9 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
-    <h1>{{ page.title }}</h1>
+    <h1>{% block title %}{{ page.title }}{% endblock %}</h1>
 
-    <form action="{% pageurl page %}" method="POST">
+    <form action="" method="POST">
         {% csrf_token %}
 
         {% if form.errors or form.non_field_errors %}
