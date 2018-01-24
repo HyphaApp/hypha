@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
+from django.urls import reverse
 from django.utils.text import mark_safe
 
 from modelcluster.fields import ParentalKey
@@ -28,6 +29,10 @@ WORKFLOW_CLASS = {
     SingleStage.name: SingleStage,
     DoubleStage.name: DoubleStage,
 }
+
+
+def admin_url(page):
+    return reverse('wagtailadmin_pages:edit', args=(page.id,))
 
 
 class FundType(AbstractStreamForm):
@@ -157,7 +162,10 @@ class Round(AbstractStreamForm):
 
         if conflicting_rounds.exists():
             error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
-                '<br>'.join([f'{round.start_date} - {round.end_date}' for round in conflicting_rounds])
+                '<br>'.join([
+                    f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
+                    for round in conflicting_rounds]
+                )
             ))
             error = {
                 'start_date': error_message,
