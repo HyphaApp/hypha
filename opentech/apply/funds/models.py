@@ -38,23 +38,7 @@ def admin_url(page):
     return reverse('wagtailadmin_pages:edit', args=(page.id,))
 
 
-class FundType(AbstractStreamForm):
-    parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = ['funds.Round']
-
-    base_form_class = WorkflowFormAdminForm
-
-    WORKFLOWS = {
-        'single': SingleStage.name,
-        'double': DoubleStage.name,
-    }
-
-    workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
-
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.forms.all()[0].fields
-
+class AbstractApplicationStreamForm(AbstractStreamForm):
     def get_submission_class(self):
         return ApplicationSubmission
 
@@ -70,6 +54,27 @@ class FundType(AbstractStreamForm):
             form_data=cleaned_data,
             page=self,
         )
+
+    class Meta:
+        abstract = True
+
+
+class FundType(AbstractApplicationStreamForm):
+    parent_page_types = ['apply_home.ApplyHomePage']
+    subpage_types = ['funds.Round']
+
+    base_form_class = WorkflowFormAdminForm
+
+    WORKFLOWS = {
+        'single': SingleStage.name,
+        'double': DoubleStage.name,
+    }
+
+    workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.forms.all()[0].fields
 
     @property
     def workflow_class(self):
@@ -122,7 +127,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(AbstractStreamForm):
+class Round(AbstractApplicationStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
