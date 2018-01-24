@@ -8,6 +8,6 @@ class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
     """
     def get_message(self, request, exception):
         if isinstance(exception, AuthForbidden):
-            return 'Your credentials are not allowed'
+            return 'Your credentials are not recognised.'
 
         super().get_message(request, exception)
