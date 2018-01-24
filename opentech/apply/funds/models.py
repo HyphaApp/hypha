@@ -2,6 +2,7 @@ from datetime import date
 
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
@@ -226,7 +227,7 @@ class JSONOrderable(models.QuerySet):
 
 
 class ApplicationSubmission(AbstractFormSubmission):
-    form_data = JSONField()
+    form_data = JSONField(encoder=DjangoJSONEncoder)
 
     objects = JSONOrderable.as_manager()
 
