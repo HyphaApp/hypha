@@ -121,12 +121,13 @@
 
     select,
     input[type='url'],
-    input[type='text']:not(.input--search),
+    input[type='text'],
     input[type='date'],
     input[type='time'],
     input[type='email'],
     input[type='number'],
-    input[type='datetime-local'] {
+    input[type='datetime-local'],
+    input:not(.input--secondary), {
         width: 100%;
         max-width: 385px;
         padding: 10px;
