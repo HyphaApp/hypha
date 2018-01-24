@@ -21,6 +21,10 @@
         background-color: $color--white;
     }
 
+    &--admin {
+        padding: 20px;
+    }
+
     &--breakout {
         position: relative;
         right: 50%;
