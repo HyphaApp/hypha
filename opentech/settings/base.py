@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'opentech.apply.stream_forms',
 
     'opentech.public.esi',
-    'opentech.public.forms',
     'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.navigation',
