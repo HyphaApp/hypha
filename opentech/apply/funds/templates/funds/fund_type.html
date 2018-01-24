@@ -1,8 +1,10 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags util_tags %}
-{% block header_modifier %}header--light-bg{% endblock %}
-{% block content %}
 
+{% load wagtailcore_tags %}
+
+{% block header_modifier %}header--light-bg{% endblock %}
+
+{% block content %}
 {% if form.errors or form.non_field_errors %}
 <div class="wrapper wrapper--medium wrapper--error">
     <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
@@ -23,48 +25,11 @@
         {% csrf_token %}
 
         {% for field in form %}
-            {% with widget_type=field|widget_type field_type=field|field_type %}
-                {% if widget_type == 'checkbox_input' %}
-                    <div class="form__group">
-                        <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
-                            <span>{{ field.label }}</span>
-                            {% if field.field.required %}
-                                <span class="form__required">*</span>
-                            {% endif %}
-                        </label>
-                        {% if field.help_text %}
-                            <p class="form__help">{{ field.help_text }}</p>
-                        {% endif %}
-                        <div class="form__item">
-                            {{ field }}
-                            {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text }}</h6>{% endif %}
-                            <label for="{{ field.id_for_label }}"></label>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="form__group">
-                        <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type}}" {% if field.field.required %}required{% endif %}>
-                            <span>{{ field.label }}</span>
-                            {% if field.field.required %}
-                                <span class="form__required">*</span>
-                            {% endif %}
-                        </label>
-                        {% if field.help_text %}
-                            <p class="form__help">{{ field.help_text }}</p>
-                        {% endif %}
-                        <div class="form__item">
-                            {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
-                                <div class="{{ widget_type }}">
-                            {% endif %}
-                            {{ field }}
-                            {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text }}</h6>{% endif %}
-                            {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+            {% if field.field %}
+                {% include "funds/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
         {% endfor %}
         <input class="link link--button-secondary" type="submit" value="{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}" />
     </form>
