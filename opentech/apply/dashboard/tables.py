@@ -8,5 +8,5 @@ class DashboardTable(tables.Table):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('title', 'page', 'submit_time')
+        fields = ('title', 'page', 'round', 'submit_time')
         template = "dashboard/tables/table.html"
