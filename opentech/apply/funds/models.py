@@ -92,11 +92,11 @@ class FundType(AbstractStreamForm):
     ]
 
     def serve(self, request):
-        if hasattr(request, 'is_preview'):
+        if hasattr(request, 'is_preview') or not self.open_round:
             return super().serve(request)
 
         # delegate to the open_round to use the latest form instances
-        request.show_page = True
+        request.show_round = True
         return self.open_round.serve(request)
 
 
@@ -195,7 +195,7 @@ class Round(AbstractStreamForm):
             raise ValidationError(error)
 
     def serve(self, request):
-        if hasattr(request, 'is_preview') or hasattr(request, 'show_page'):
+        if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
             return super().serve(request)
 
         # We hide the round as only the open round is used which is displayed through the
