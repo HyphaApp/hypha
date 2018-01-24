@@ -24,7 +24,7 @@ from wagtail.wagtailforms.models import AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
-from .blocks import CustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
+from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -60,9 +60,15 @@ class FundType(AbstractStreamForm):
         return ApplicationSubmission
 
     def process_form_submission(self, form):
-        # Handle passing to JSONField
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
         return self.get_submission_class().objects.create(
-            form_data=form.cleaned_data,
+            form_data=cleaned_data,
             page=self,
         )
 
