@@ -29,6 +29,7 @@
     &--narrow {
         height: auto;
         min-height: initial;
+        padding: 20px;
 
         &::before {
             display: none;
