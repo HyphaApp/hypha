@@ -149,7 +149,6 @@ class Round(AbstractStreamForm):
             round=self,
         )
 
-
     def clean(self):
         super().clean()
 
