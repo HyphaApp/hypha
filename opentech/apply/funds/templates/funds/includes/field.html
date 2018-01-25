@@ -3,15 +3,27 @@
 {% with widget_type=field|widget_type field_type=field|field_type %}
 
 <div class="form__group">
-    <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
-        <span>{{ field.label }}</span>
-        {% if field.field.required %}
-            <span class="form__required">*</span>
-        {% endif %}
-    </label>
+    {% if widget_type == 'clearable_file_input' %}
+        <span class="form__question">{{ field.label }}</span>
+        <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
+            <span>Upload</span>
+            {% if field.field.required %}
+                <span class="form__required">*</span>
+            {% endif %}
+        </label>
+    {% else %}
+        <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
+            <span>{{ field.label }}</span>
+            {% if field.field.required %}
+                <span class="form__required">*</span>
+            {% endif %}
+        </label>
+    {% endif %}
+
     {% if field.help_text %}
         <p class="form__help">{{ field.help_text }}</p>
     {% endif %}
+
     <div class="form__item">
         {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             <div class="{{ widget_type }}">
