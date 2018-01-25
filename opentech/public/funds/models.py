@@ -109,8 +109,7 @@ class LabPage(BasePage):
         ImageChooserPanel('icon'),
         FieldPanel('introduction'),
         MultiFieldPanel([
-            # Limit to lab pages once created
-            PageChooserPanel('lab_type'),
+            PageChooserPanel('lab_type', 'funds.LabType'),
             FieldPanel('lab_link'),
             FieldPanel('link_text'),
         ], heading='Link for lab application'),
