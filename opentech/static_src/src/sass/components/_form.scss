@@ -28,29 +28,12 @@
         &--file_field {
             @include button($color--light-blue, $color--dark-blue);
             max-width: 290px;
-            margin-top: 80px;
             text-align: center;
             background: url('./../images/upload.svg') $color--light-blue no-repeat 50px center;
             border: 0;
 
             .no-js & {
-                max-width: initial;
-                padding: 0;
-                margin-top: initial;
-                color: $color--black;
-                text-align: left;
-                background: none;
-            }
-
-            &::before {
-                position: absolute;
-                top: -50px;
-                left: 0;
-                color: $color--default;
-
-                .no-js & {
-                    display: none;
-                }
+                display: none;
             }
 
             &:hover {
@@ -59,18 +42,6 @@
                 .no-js & {
                     background: none;
                 }
-            }
-        }
-
-        &--image_field {
-            &::before {
-                content: 'Upload supporting images';
-            }
-        }
-
-        &--file_field {
-            &::before {
-                content: 'Upload supporting files';
             }
         }
         // sass-lint:enddisable
@@ -83,10 +54,6 @@
 
     &__required {
         color: $color--purple;
-
-        .form__question--re_captcha_field & {
-            display: none;
-        }
     }
 
     &__help {
@@ -176,11 +143,11 @@
 
     // make date & time input siblings inline
     input[type='date'] {
-        max-width: calc(385px - 90px);
+        max-width: calc(385px - 100px);
     }
 
     input[type='date'] + input[type='time'] {
-        width: 90px;
+        width: 100px;
     }
 
     input[type='file'] {
