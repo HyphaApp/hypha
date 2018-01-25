@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from opentech.apply.users.views import account, oauth, ActivationView
+from opentech.apply.users.views import account, oauth, ActivationView, create_password
 
 urlpatterns = [
     url(r'^$', account, name='account'),
@@ -58,5 +58,6 @@ urlpatterns = [
         ActivationView.as_view(),
         name='activate'
     ),
+    url(r'^activate/password/', create_password, name="activate_password"),
     url(r'^oauth$', oauth, name='oauth'),
 ]
