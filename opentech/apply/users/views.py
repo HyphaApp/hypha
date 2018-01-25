@@ -1,5 +1,7 @@
-from django.contrib.auth import get_user_model, login
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
@@ -40,7 +42,7 @@ class ActivationView(TemplateView):
         if user:
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
-            return redirect('users:password_change')
+            return redirect('users:activate_password')
 
         return render(request, 'users/activation/invalid.html')
 
@@ -84,3 +86,20 @@ class ActivationView(TemplateView):
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
+
+
+def create_password(request):
+    if request.method == 'POST':
+        form = AdminPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('users:account')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AdminPasswordChangeForm(request.user)
+    return render(request, 'users/change_password.html', {
+        'form': form
+    })
