@@ -2,6 +2,7 @@ from datetime import date
 
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
@@ -54,22 +55,6 @@ class FundType(AbstractStreamForm):
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.forms.all()[0].fields
-
-    def get_submission_class(self):
-        return ApplicationSubmission
-
-    def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
-            page=self,
-        )
 
     @property
     def workflow_class(self):
@@ -147,6 +132,23 @@ class Round(AbstractStreamForm):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
 
+    def get_submission_class(self):
+        return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
+        return self.get_submission_class().objects.create(
+            form_data=cleaned_data,
+            page=self.get_parent(),
+            round=self,
+        )
+
     def clean(self):
         super().clean()
 
@@ -221,7 +223,8 @@ class JSONOrderable(models.QuerySet):
 
 
 class ApplicationSubmission(AbstractFormSubmission):
-    form_data = JSONField()
+    form_data = JSONField(encoder=DjangoJSONEncoder)
+    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions')
 
     objects = JSONOrderable.as_manager()
 
