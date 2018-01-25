@@ -228,12 +228,12 @@ class Round(SubmittableStreamForm):
         raise Http404()
 
 
-class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):
+class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     class Meta:
         verbose_name = _("Lab")
 
     parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = []
+    subpage_types = []  # type: ignore
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
