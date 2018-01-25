@@ -6,7 +6,12 @@
     {% include "public_funds/includes/fund_apply_cta.html" with fund_page=page %}
     <div class="wrapper">
         <section class="section section--main">
-            <h5>{{ page.introduction }}</h5>
+
+            {% if page.introduction %}
+                <h4 class="heading heading--introduction">
+                    {{ page.introduction }}
+                </h4>
+            {% endif %}
 
             {% include_block page.body %}
         </section>
