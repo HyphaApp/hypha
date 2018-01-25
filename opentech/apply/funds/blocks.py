@@ -154,7 +154,7 @@ class EmailBlock(MustIncludeFieldBlock):
     widget = forms.EmailInput
 
     class Meta:
-        icon = 'user'
+        icon = 'mail'
 
 
 class FullNameBlock(MustIncludeFieldBlock):
@@ -162,7 +162,7 @@ class FullNameBlock(MustIncludeFieldBlock):
     description = 'Full name'
 
     class Meta:
-        icon = 'mail'
+        icon = 'user'
 
 
 REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]
