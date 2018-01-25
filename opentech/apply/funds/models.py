@@ -59,7 +59,12 @@ class SubmittableStreamForm(AbstractStreamForm):
 
         user = form.user
 
-        if form.user.id is None and cleaned_data.get('email'):
+        if form.user.id is not None:
+            if cleaned_data.get('email'):
+                cleaned_data['email'] = user.email
+            if cleaned_data.get('full_name'):
+                cleaned_data['full_name'] = user.get_full_name()
+        elif cleaned_data.get('email'):
             User = get_user_model()
             email = cleaned_data.get('email')
             full_name = cleaned_data.get('full_name')
@@ -84,11 +89,11 @@ class SubmittableStreamForm(AbstractStreamForm):
             except IntegrityError:
                 pass
 
-            self.send_confirmation_email(form, cleaned_data)
+        self.send_confirmation_email(form, cleaned_data)
 
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
-            **self.get_submit_meta_data(**kwargs),
+            **self.get_submit_meta_data(user=user),
         )
 
     def get_submit_meta_data(self, **kwargs):
@@ -209,7 +214,6 @@ class Round(SubmittableStreamForm):
         return super().get_submit_meta_data(
             page=self.get_parent(),
             round=self,
-            user=user,
             **kwargs,
         )
 
