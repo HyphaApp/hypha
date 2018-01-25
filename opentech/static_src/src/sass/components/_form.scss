@@ -8,6 +8,10 @@
         position: relative;
         margin: 1rem 0;
 
+        &:nth-of-type(1) {
+            margin-top: 0;
+        }
+
         @include media-query(tablet-portrait) {
             margin: 2rem 0;
         }
