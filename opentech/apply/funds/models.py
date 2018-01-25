@@ -39,9 +39,33 @@ def admin_url(page):
     return reverse('wagtailadmin_pages:edit', args=(page.id,))
 
 
-class FundType(AbstractStreamForm):
-    parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = ['funds.Round']
+class SubmittableStreamForm(AbstractStreamForm):
+    class Meta:
+        abstract = True
+
+    def get_submission_class(self):
+        return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
+        return self.get_submission_class().objects.create(
+            form_data=cleaned_data,
+            **self.get_submit_meta_data(),
+        )
+
+    def get_submit_meta_data(self, **kwargs):
+        return kwargs
+
+
+class DefinableWorkflowStreamForm(AbstractStreamForm):
+    class Meta:
+        abstract = True
 
     base_form_class = WorkflowFormAdminForm
 
@@ -60,6 +84,16 @@ class FundType(AbstractStreamForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
+    content_panels = AbstractStreamForm.content_panels + [
+        FieldPanel('workflow'),
+        InlinePanel('forms', label="Forms"),
+    ]
+
+
+class FundType(DefinableWorkflowStreamForm):
+    parent_page_types = ['apply_home.ApplyHomePage']
+    subpage_types = ['funds.Round']
+
     @property
     def open_round(self):
         rounds = Round.objects.child_of(self).live().public().specific()
@@ -70,11 +104,6 @@ class FundType(AbstractStreamForm):
 
     def next_deadline(self):
         return self.open_round.end_date
-
-    content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow'),
-        InlinePanel('forms', label="Forms"),
-    ]
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or not self.open_round:
@@ -107,7 +136,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(AbstractStreamForm):
+class Round(SubmittableStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
@@ -119,7 +148,7 @@ class Round(AbstractStreamForm):
         help_text='When no end date is provided the round will remain open indefinitely.'
     )
 
-    content_panels = AbstractStreamForm.content_panels + [
+    content_panels = SubmittableStreamForm.content_panels + [
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
@@ -128,26 +157,16 @@ class Round(AbstractStreamForm):
         ], heading="Dates")
     ]
 
+    def get_submit_meta_data(self, **kwargs):
+        return super().get_submit_meta_data(
+            page=self.get_parent(),
+            round=self,
+            **kwargs,
+        )
+
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
-
-    def get_submission_class(self):
-        return ApplicationSubmission
-
-    def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
-            page=self.get_parent(),
-            round=self,
-        )
 
     def clean(self):
         super().clean()
@@ -205,6 +224,30 @@ class Round(AbstractStreamForm):
         raise Http404()
 
 
+class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):
+    parent_page_types = ['apply_home.ApplyHomePage']
+    subpage_types = []
+
+    def get_submit_meta_data(self, **kwargs):
+        return super().get_submit_meta_data(
+            page=self,
+            round=None,
+            **kwargs,
+        )
+
+    def open_round(self):
+        return self.live
+
+
+class LabForm(Orderable):
+    form = models.ForeignKey('ApplicationForm')
+    lab = ParentalKey('LabType', related_name='forms')
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+
 class JSONOrderable(models.QuerySet):
     def order_by(self, *field_names):
         def build_json_order_by(field):
@@ -224,7 +267,7 @@ class JSONOrderable(models.QuerySet):
 
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
-    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions')
+    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions', null=True)
 
     objects = JSONOrderable.as_manager()
 
