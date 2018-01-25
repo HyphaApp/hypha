@@ -37,6 +37,20 @@
         background-size: cover;
     }
 
+    &--narrow {
+        height: auto;
+        min-height: initial;
+        padding: 20px;
+
+        &::before {
+            display: none;
+        }
+    }
+
+    &--white-bg {
+        background-color: $color--white;
+    }
+
     &__title {
         margin: 0;
         color: $color--white;

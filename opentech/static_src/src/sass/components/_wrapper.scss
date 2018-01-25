@@ -20,6 +20,12 @@
         padding: 0 20px;
     }
 
+    &--admin {
+        padding: 20px;
+        color: $color--white;
+        background-color: $color--dark-grey;
+    }
+
     &--breakout {
         position: relative;
         right: 50%;
@@ -129,5 +135,9 @@
 
     &--apply-bar {
         padding: 2rem 20px;
+    }
+
+    &--top-bottom-space {
+        padding: 3rem 0;
     }
 }

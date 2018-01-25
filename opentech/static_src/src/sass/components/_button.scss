@@ -16,6 +16,10 @@
     &--contains-icons {
         display: flex;
         align-items: center;
+
+        .header--narrow & {
+            margin-right: 20px;
+        }
     }
 
     &--transparent {
