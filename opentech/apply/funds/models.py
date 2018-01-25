@@ -1,11 +1,13 @@
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
+from django.db.utils import IntegrityError
 from django.http import Http404
 from django.urls import reverse
 from django.utils.text import mark_safe
@@ -55,9 +57,35 @@ class SubmittableStreamForm(AbstractStreamForm):
                 response = cleaned_data.pop(field.id)
                 cleaned_data[field.block.name] = response
 
+        if cleaned_data.get('email'):
+            # TODO: link with active submission user.
+            User = get_user_model()
+            email = cleaned_data.get('email')
+            full_name = cleaned_data.get('full_name')
+
+            try:
+                user_data = {
+                    'username': full_name if full_name else email,
+                    'email': email,
+                    'is_active': False,  # User needs to activate account
+                }
+
+                if full_name and hasattr(User, 'full_name'):
+                    user_data['full_name'] = full_name
+
+                user = User.objects.create_user(**user_data)
+
+                # TODO: send activation email
+                if user:
+                    # user.email_user(...)
+                    pass
+
+            except IntegrityError:
+                pass
+
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
-            **self.get_submit_meta_data(),
+            **self.get_submit_meta_data(**kwargs),
         )
 
     def get_submit_meta_data(self, **kwargs):

@@ -20,4 +20,3 @@ class User(AbstractUser):
     def get_user_by_email(self, email):
         email_field = getattr(self, 'EMAIL_FIELD', 'email')
         return self.objects.filter(**{email_field + '__iexact': email})
-
