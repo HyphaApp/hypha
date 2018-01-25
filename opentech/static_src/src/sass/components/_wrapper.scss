@@ -23,6 +23,8 @@
 
     &--admin {
         padding: 20px;
+        color: $color--white;
+        background-color: $color--dark-grey;
     }
 
     &--breakout {
@@ -87,5 +89,9 @@
         @include media-query(tablet-portrait) {
             margin-bottom: 4rem;
         }
+    }
+
+    &--top-bottom-space {
+        padding: 3rem 0;
     }
 }

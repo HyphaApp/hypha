@@ -7,7 +7,14 @@
 {% endblock %}
 
 {% block content %}
-<h3>Received Content</h3>
-<h5>Track and explore recent submissions</h5>
-{% render_table object_list %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h3>Received Content</h3>
+        <h5>Track and explore recent submissions</h5>
+    </div>
+</div>
+
+<div class="wrapper wrapper--medium wrapper--top-bottom-space">
+    {% render_table object_list %}
+</div>
 {% endblock %}
