@@ -172,11 +172,11 @@
 
     // make date & time input siblings inline
     input[type='date'] {
-        max-width: calc(385px - 90px);
+        max-width: calc(385px - 100px);
     }
 
     input[type='date'] + input[type='time'] {
-        width: 90px;
+        width: 100px;
     }
 
     input[type='file'] {
