@@ -3,7 +3,7 @@
 {% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
 
 {% block content %}
-    {% include "public_funds/includes/fund_apply_cta.html" with fund_type=page.fund_type.specific class="wrapper--bottom-space" %}
+    {% include "public_funds/includes/fund_apply_cta.html" with fund_type=page.fund_type.specific %}
     <div class="wrapper">
         <section class="section section--main">
             <h5>{{ page.introduction }}</h5>
