@@ -139,7 +139,7 @@ class LabPage(BasePage):
 
         if self.lab_type and self.link_text:
             raise ValidationError({
-                'link_text': 'You cant customise the text for internal lab pages, leave blank',
+                'link_text': 'Cannot customise the text for internal lab pages, leave blank',
             })
 
         if self.lab_link and not self.link_text:
