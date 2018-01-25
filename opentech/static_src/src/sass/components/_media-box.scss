@@ -95,7 +95,14 @@
     &__teaser {
         display: none;
         margin: 0;
+        font-size: 16px;
         font-weight: $weight--normal;
+        color: $color--dark-grey;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
 
         @include media-query(mob-landscape) {
             display: block;
