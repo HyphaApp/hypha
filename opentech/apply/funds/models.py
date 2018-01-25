@@ -176,10 +176,10 @@ class Round(AbstractStreamForm):
 
                 user = User.objects.create_user(**user_data)
 
-                # TODO: send activation email
                 if user:
-                    # user.email_user(...)
-                    pass
+                    # TODO: move to method on User?
+                    from opentech.apply.users.utils import send_activation_email
+                    send_activation_email(user)
 
             except IntegrityError:
                 pass
