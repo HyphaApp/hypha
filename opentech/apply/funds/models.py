@@ -183,6 +183,7 @@ class Round(AbstractStreamForm):
             full_name = cleaned_data.get('full_name')
 
             try:
+                # Cannot use get_or_create because we treat email as canonical, but username is not retired yet
                 user_data = {
                     'username': full_name if full_name else email,
                     'email': email,
@@ -200,7 +201,11 @@ class Round(AbstractStreamForm):
                     send_activation_email(user)
 
             except IntegrityError:
-                pass
+                email_field = getattr(User, 'EMAIL_FIELD', 'email')
+                try:
+                    user = User.objects.get(**{email_field: email})
+                except User.DoesNotExist:
+                    user = None
 
         self.send_confirmation_email(form, cleaned_data)
 
