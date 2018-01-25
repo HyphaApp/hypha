@@ -158,8 +158,9 @@ class Round(AbstractStreamForm):
                 response = cleaned_data.pop(field.id)
                 cleaned_data[field.block.name] = response
 
-        if cleaned_data.get('email'):
-            # TODO: link with active submission user.
+        user = form.user
+
+        if form.user.id is None and cleaned_data.get('email'):
             User = get_user_model()
             email = cleaned_data.get('email')
             full_name = cleaned_data.get('full_name')
@@ -168,7 +169,7 @@ class Round(AbstractStreamForm):
                 user_data = {
                     'username': full_name if full_name else email,
                     'email': email,
-                    'is_active': False,  # User needs to activate account
+                    'is_active': False,  # The user needs to activate account
                 }
 
                 if full_name and hasattr(User, 'full_name'):
@@ -190,6 +191,7 @@ class Round(AbstractStreamForm):
             form_data=cleaned_data,
             page=self.get_parent(),
             round=self,
+            user=user,
         )
 
     def send_confirmation_email(self, form, cleaned_data):
@@ -288,6 +290,7 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     objects = JSONOrderable.as_manager()
 
