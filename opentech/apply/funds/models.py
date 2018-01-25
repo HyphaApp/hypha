@@ -16,14 +16,14 @@ from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
-    InlinePanel,
     FieldRowPanel,
+    InlinePanel,
     MultiFieldPanel,
     StreamFieldPanel,
 )
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailforms.models import AbstractFormSubmission
+from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
@@ -92,7 +92,7 @@ class SubmittableStreamForm(AbstractStreamForm):
         return kwargs
 
 
-class DefinableWorkflowStreamForm(AbstractStreamForm):
+class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     class Meta:
         abstract = True
 
@@ -104,6 +104,7 @@ class DefinableWorkflowStreamForm(AbstractStreamForm):
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
@@ -116,6 +117,18 @@ class DefinableWorkflowStreamForm(AbstractStreamForm):
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         InlinePanel('forms', label="Forms"),
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel('from_address', classname="col6"),
+                    FieldPanel('to_address', classname="col6"),
+                ]),
+                FieldPanel('subject'),
+                FieldPanel('confirmation_text_extra'),
+            ],
+            heading="Confirmation email",
+            classname="collapsible collapsed"
+        ),
     ]
 
 
@@ -262,6 +275,10 @@ class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: igno
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
+
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.specific.forms.all()[0].fields
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
