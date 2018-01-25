@@ -18,10 +18,13 @@ from wagtail.wagtailadmin.edit_handlers import (
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
+    ObjectList,
     StreamFieldPanel,
+    TabbedInterface
 )
+
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable
+from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
@@ -77,6 +80,9 @@ class FundType(AbstractStreamForm, AbstractEmailForm):
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         InlinePanel('forms', label="Forms"),
+    ]
+
+    email_confirmation_panels = [
         MultiFieldPanel(
             [
                 FieldRowPanel([
@@ -87,9 +93,15 @@ class FundType(AbstractStreamForm, AbstractEmailForm):
                 FieldPanel('confirmation_text_extra'),
             ],
             heading="Confirmation email",
-            classname="collapsible collapsed"
-        ),
+        )
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(email_confirmation_panels, heading='Confirmation email'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+    ])
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or not self.open_round:

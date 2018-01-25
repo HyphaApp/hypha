@@ -34,44 +34,31 @@ def oauth(request):
 
 
 class ActivationView(TemplateView):
-    """
-    Inspired by https://github.com/ubernostrum/django-registration
-    """
-
     def get(self, request, *args, **kwargs):
-        user = self.activate(*args, **kwargs)
-        if user:
+        user = self.get_user(kwargs.get('uidb64'))
+
+        if self.valid(user, kwargs.get('token')):
+            user.is_active = True
+            user.save()
+
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             return redirect('users:activate_password')
 
         return render(request, 'users/activation/invalid.html')
 
-    def activate(self, *args, **kwargs):
-        user = self.validate_token(kwargs.get('uidb64'), kwargs.get('token'))
-        if user:
-            user.is_active = True
-            user.save()
-            return user
-        return False
 
-    def validate_token(self, uidb64, token):
+    def valid(self, user, token):
         """
-        Verify that the activation key is valid and within the
-        permitted activation time window, returning the username if
-        valid or ``None`` if not.
+        Verify that the activation token is valid and within the
+        permitted activation time window.
         """
 
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = self.get_user(uid)
         token_generator = PasswordResetTokenGenerator()
+        return user is not None and token_generator.check_token(user, token)
 
-        if user is not None and token_generator.check_token(user, token):
-            return user
 
-        return False
-
-    def get_user(self, uid):
+    def get_user(self, uidb64):
         """
         Given the verified uid, look up and return the
         corresponding user account if it exists, or ``None`` if it
@@ -81,7 +68,7 @@ class ActivationView(TemplateView):
 
         try:
             user = User.objects.get(**{
-                'pk': uid,
+                'pk': force_text(urlsafe_base64_decode(uidb64)),
                 'is_active': False
             })
             return user
@@ -93,8 +80,6 @@ def create_password(request):
     """
     A custom view for the admin password change form used for account activation.
     """
-    if request.user.is_active:
-        raise PermissionDenied
 
     if request.method == 'POST':
         form = AdminPasswordChangeForm(request.user, request.POST)
