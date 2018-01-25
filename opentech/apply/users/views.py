@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
@@ -47,7 +46,6 @@ class ActivationView(TemplateView):
 
         return render(request, 'users/activation/invalid.html')
 
-
     def valid(self, user, token):
         """
         Verify that the activation token is valid and within the
@@ -56,7 +54,6 @@ class ActivationView(TemplateView):
 
         token_generator = PasswordResetTokenGenerator()
         return user is not None and token_generator.check_token(user, token)
-
 
     def get_user(self, uidb64):
         """

@@ -156,4 +156,5 @@ class FullNameBlock(MustIncludeFieldBlock):
     class Meta:
         icon = 'mail'
 
+
 REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]
