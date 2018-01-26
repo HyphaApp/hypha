@@ -29,7 +29,6 @@ class RoundFundChooserView(ChooseParentView):
         return FundChooserForm(parents, request.POST or None)
 
 
-
 class ButtonsWithPreview(PageButtonHelper):
     def preview_button(self, obj, classnames_add, classnames_exclude):
         classnames = self.copy_button_classnames + classnames_add

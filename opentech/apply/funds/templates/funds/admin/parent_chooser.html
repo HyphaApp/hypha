@@ -10,7 +10,7 @@
 
     <div class="nice-padding">
         <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
-        <p>{% blocktrans with view.verbose_name_plural|capfirst as plural %}{{ plural }} must be associated with a Fund. For which Fund are you creating a new {{ view.verbose_name|capfirst }} for?{% endblocktrans %}</p>
+        <p>{% blocktrans %}Rounds must be associated with a Fund. For which Fund are you creating a new Round for?{% endblocktrans %}</p>
 
         <form action="" method="post" novalidate>
             {% csrf_token %}
