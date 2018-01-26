@@ -1,0 +1,28 @@
+{% extends "modeladmin/choose_parent.html" %}
+{% load i18n admin_static %}
+
+{% block content %}
+<div>
+    {% block header %}
+        {% include "modeladmin/includes/breadcrumb.html" %}
+        {% include "wagtailadmin/shared/header.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon %}
+    {% endblock %}
+
+    <div class="nice-padding">
+        <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
+        <p>{% blocktrans with view.verbose_name_plural|capfirst as plural %}{{ plural }} must be associated with a Fund. For which Fund are you creating a new {{ view.verbose_name|capfirst }} for?{% endblocktrans %}</p>
+
+        <form action="" method="post" novalidate>
+            {% csrf_token %}
+
+            <ul class="fields">
+                {% include "wagtailadmin/shared/field_as_li.html" with field=form.parent_page %}
+                <li>
+                    <input type="submit" class="button" value="{% trans 'Continue' %}">
+                </li>
+            </ul>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

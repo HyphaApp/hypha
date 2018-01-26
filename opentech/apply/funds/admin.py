@@ -1,10 +1,33 @@
+from django import forms
 from django.urls import reverse
+from django.utils.translation import ugettext as _
 
-from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
+from wagtail.contrib.modeladmin.forms import ParentChooserForm
 from wagtail.contrib.modeladmin.helpers import PageButtonHelper
+from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
+from wagtail.contrib.modeladmin.views import ChooseParentView
+from wagtail.wagtailcore.models import Page
 
 from .models import ApplicationForm, FundType, Round
 from opentech.apply.categories.admin import CategoryAdmin
+
+
+class FundChooserForm(ParentChooserForm):
+    """Changes the default chooser to be fund orientated """
+    parent_page = forms.ModelChoiceField(
+        label=_('Fund'),
+        required=True,
+        empty_label=None,
+        queryset=Page.objects.none(),
+        widget=forms.RadioSelect(),
+    )
+
+
+class RoundFundChooserView(ChooseParentView):
+    def get_form(self, request):
+        parents = self.permission_helper.get_valid_parent_pages(request.user)
+        return FundChooserForm(parents, request.POST or None)
+
 
 
 class ButtonsWithPreview(PageButtonHelper):
@@ -30,6 +53,8 @@ class ButtonsWithPreview(PageButtonHelper):
 
 class RoundAdmin(ModelAdmin):
     model = Round
+    choose_parent_view_class = RoundFundChooserView
+    choose_parent_template_name = 'funds/admin/parent_chooser.html'
     menu_icon = 'doc-empty'
     list_display = ('title', 'fund', 'start_date', 'end_date')
     button_helper_class = ButtonsWithPreview
