@@ -16,14 +16,23 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
 
 
 class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
+    def swap_fields_for_display(func):
+        def wrapped(self, *args, **kwargs):
+            # Replaces the form fields with the display fields
+            # should only add new streamblocks and wont affect validation
+            fields = self.fields.copy()
+            self.fields = self.display
+            yield from func(self, *args, **kwargs)
+            self.fields = fields
+        return wrapped
+
+    @swap_fields_for_display
+    def __iter__(self):
+        yield from super().__iter__()
+
+    @swap_fields_for_display
     def _html_output(self, *args, **kwargs):
-        # Replaces the form fields with the display fields
-        # should only add new streamblocks and wont affect validation
-        fields = self.fields.copy()
-        self.fields = self.display
-        render = super()._html_output(*args, **kwargs)
-        self.fields = fields
-        return render
+        return super()._html_output(*args, **kwargs)
 
 
 class BlockFieldWrapper:

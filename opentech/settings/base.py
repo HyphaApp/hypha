@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'opentech.apply.stream_forms',
 
     'opentech.public.esi',
-    'opentech.public.forms',
     'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.navigation',
@@ -55,6 +54,7 @@ INSTALLED_APPS = [
     'taggit',
     'django_extensions',
     'captcha',
+    'tinymce',
     'wagtailcaptcha',
     'django_tables2',
 
@@ -77,7 +77,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'opentech.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',

@@ -24,18 +24,21 @@
 
     &--transparent {
         @include button(transparent, $color--white);
+        @include button--narrow;
+
+        .header--light-bg & {
+            @include button(transparent, $color--black);
+            @include button--narrow;
+            color: $color--black;
+            border: 1px solid $color--black;
+        }
 
         &:hover {
             color: $color--dark-blue;
-        }
-    }
 
-    &--narrow {
-        padding: 5px;
-        font-size: 15px;
-
-        @include media-query(tablet-landscape) {
-            padding: 5px 15px;
+            .header--light-bg & {
+                color: $color--white;
+            }
         }
     }
 
@@ -50,21 +53,26 @@
 
         .goog-te-gadget-simple {
             @include button(transparent, $color--white);
+            @include button--narrow;
             padding: 5px;
             font-family: $font--primary;
-            font-size: 15px;
             font-weight: $weight--bold;
-            border: 1px solid $color--white;
             transition: background, color,  $transition;
 
-            @include media-query(tablet-landscape) {
-                padding: 5px 15px;
+            .header--light-bg & {
+                @include button(transparent, $color--black);
+                @include button--narrow;
+                border: 1px solid $color--black;
             }
 
             &:hover {
                 .goog-te-menu-value {
                     span {
                         color: $color--dark-blue !important; // sass-lint:disable-line no-important
+
+                        .header--light-bg & {
+                            color: $color--white !important; // sass-lint:disable-line no-important
+                        }
                     }
                 }
             }
@@ -72,10 +80,18 @@
             .goog-te-menu-value {
                 color: $color--white;
 
+                .header--light-bg & {
+                    color: $color--black; // sass-lint:disable-line no-important
+                }
+
                 span {
                     // color of the arrow is inlined hence !important
                     color: $color--white !important; // sass-lint:disable-line no-important
                     transition: color  $transition;
+
+                    .header--light-bg & {
+                        color: $color--black !important; // sass-lint:disable-line no-important
+                    }
 
                     &:nth-of-type(2) {
                         // hide the pipe
