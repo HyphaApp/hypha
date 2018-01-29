@@ -124,3 +124,8 @@ class TestRoundModel(TestCase):
 
         with self.assertRaises(ValidationError):
             new_round.clean()
+
+
+class TestFormSubmission(TestCase):
+    def test_can_submit_if_new(self):
+        pass
