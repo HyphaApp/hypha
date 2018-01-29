@@ -72,13 +72,14 @@
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard header--has-bg-image" style="background-image:url('{{ header_image.url }}')">
         {% else %}
-            <header class="header header--standard">
+            <header class="header header--standard {% block header_modifier %}{% endblock %}">
         {% endif %}
 
             <a href="#" class="link link--fixed-apply">Apply</a>
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}" aria-label="Home link">
-                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
+                    <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
                     <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                 </a>
 
@@ -108,7 +109,7 @@
                         </a>
                         <div class="header__inner header__inner--mobile-buttons">
                             <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
-                                <svg class="header__icon header__icon--open-search header__icon--open-search-menu-open icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                                <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
                             </button>
                             <button class="button button--left-space js-mobile-menu-close">
                                 <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
@@ -119,7 +120,7 @@
                 </section>
 
                 <div class="header__button-container">
-                    <a href="#" class="button button--transparent button--narrow button--contains-icons">
+                    <a href="#" class="button button--transparent button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
                         Log in
                     </a>
@@ -130,9 +131,9 @@
             <div class="header__search">
                 <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
                     <button class="button" type="submit" aria-label="Search">
-                        <svg class="icon icon--magnifying-glass"><use xlink:href="#magnifying-glass"></use></svg>
+                        <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                     </button>
-                    <input class="input input--transparent" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
+                    <input class="input input--transparent input--secondary" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
                 </form>
             </div>
 
@@ -157,17 +158,17 @@
                             <div id="mailchimp-newsletter-32632431e3-mergefields" class="mailchimp-newsletter-mergefields">
                                 <div class="form-item form-type-textfield form-item-mergevars-EMAIL">
                                     <label for="edit-mergevars-email">Email Address <span class="form-required" title="This field is required.">*</span></label>
-                                    <input type="text" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="128" class="form-text required">
+                                    <input type="text" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="128" class="form-text required input--secondary">
                                 </div>
 
                                 <div class="form-item form-type-textfield form-item-mergevars-FNAME">
                                     <label for="edit-mergevars-fname">First Name </label>
-                                    <input type="text" id="edit-mergevars-fname" name="mergevars[FNAME]" value="" size="25" maxlength="128" class="form-text">
+                                    <input type="text" id="edit-mergevars-fname" name="mergevars[FNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
                                 </div>
 
                                 <div class="form-item form-type-textfield form-item-mergevars-LNAME">
                                     <label for="edit-mergevars-lname">Last Name </label>
-                                    <input type="text" id="edit-mergevars-lname" name="mergevars[LNAME]" value="" size="25" maxlength="128" class="form-text">
+                                    <input type="text" id="edit-mergevars-lname" name="mergevars[LNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
                                 </div>
 
                             </div>

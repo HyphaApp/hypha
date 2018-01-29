@@ -85,7 +85,27 @@
     }
 
     &--light-grey-bg {
-        background: $color--light-grey;
+        background-color: $color--light-grey;
+    }
+
+    &--form {
+        padding: 20px;
+        margin: 20px auto;
+
+        @include media-query(tablet-portrait) {
+            padding: 2rem 17rem 2rem 5rem;
+            margin: 1rem auto 3rem;
+        }
+    }
+
+    &--error {
+        display: flex;
+        align-items: center;
+        max-width: 830px;
+        padding: 10px;
+        margin: 0 auto 2rem;
+        background: $color--light-pink;
+        border: 1px solid $color--tomato;
     }
 
     &--bottom-space {
