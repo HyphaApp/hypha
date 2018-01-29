@@ -5,14 +5,18 @@ Pillow==4.3.0
 django-extensions==1.7.4
 Werkzeug==0.11.11
 stellar==0.4.3
+django-tinymce4-lite==1.7.0
 wagtail-django-recaptcha==0.1
 uwsgidecorators==1.1.0
+
 mypy==0.550
 factory_boy==2.9.2
 wagtail_factories==0.3.0
+
 flake8
 
 social_auth_app_django==2.1.0
+django-tables2==1.17.1
 
 # Production dependencies
 dj-database-url==0.4.1

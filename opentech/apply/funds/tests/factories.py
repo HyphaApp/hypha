@@ -1,8 +1,10 @@
+import datetime
+
 from django.forms import Form
 import factory
 import wagtail_factories
 
-from opentech.apply.funds.models import ApplicationForm, FundType, FundForm
+from opentech.apply.funds.models import ApplicationForm, FundType, FundForm, Round
 from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
 
@@ -135,3 +137,12 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
         model = ApplicationForm
 
     name = factory.Faker('word')
+
+
+class RoundFactory(wagtail_factories.PageFactory):
+    class Meta:
+        model = Round
+
+    title = factory.Sequence('Round {}'.format)
+    start_date = factory.LazyFunction(datetime.date.today)
+    end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))

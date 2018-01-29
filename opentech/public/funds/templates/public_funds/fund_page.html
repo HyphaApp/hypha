@@ -3,7 +3,8 @@
 {% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
 
 {% block content %}
-    {% include "public_funds/includes/fund_apply_cta.html" with fund_type=page.fund_type.specific %}
+
+    {% include "public_funds/includes/fund_apply_cta.html" with fund_page=page %}
     <div class="wrapper">
         <section class="section section--main">
 
@@ -16,6 +17,6 @@
             {% include_block page.body %}
         </section>
     </div>
-    {% include "public_funds/includes/fund_apply_cta.html" with fund_type=page.fund_type.specific %}
+    {% include "public_funds/includes/fund_apply_cta.html" with fund_page=page %}
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
 {% endblock %}

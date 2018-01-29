@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from unidecode import unidecode
 from wagtail.wagtailcore.blocks import (
     StructBlock, TextBlock, CharBlock, BooleanBlock, ListBlock, StreamBlock,
-    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock,
+    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock
 )
 
 
@@ -158,6 +158,7 @@ class DatePickerInput(forms.DateInput):
             'data-date-format': 'yyyy-mm-dd',
         })
         kwargs['attrs'] = attrs
+        kwargs['format'] = '%Y-%m-%d'
         super().__init__(*args, **kwargs)
 
 
@@ -230,6 +231,7 @@ class FileFieldBlock(OptionalFormFieldBlock):
 
 
 class FormFieldsBlock(StreamBlock):
+    text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
     char = CharFieldBlock(group=_('Fields'))
     text = TextFieldBlock(group=_('Fields'))
     number = NumberFieldBlock(group=_('Fields'))
@@ -242,7 +244,6 @@ class FormFieldsBlock(StreamBlock):
     datetime = DateTimeFieldBlock(group=_('Fields'))
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
-    text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
 
     class Meta:
         label = _('Form fields')

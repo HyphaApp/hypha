@@ -149,8 +149,12 @@
         border-bottom: 1px solid transparent;
         transition: color, border $transition;
 
-        &:hover {
-            cursor: pointer;
+        .header--light-bg & {
+            color: $color--default;
+        }
+
+        .header__menus--mobile & {
+            color: $color--white;
         }
 
         @include media-query(tablet-landscape) {
@@ -160,6 +164,11 @@
             &:hover {
                 color: lighten($color--secondary, 20%);
                 border-bottom: 1px solid $color--secondary;
+
+                .header--light-bg & {
+                    color: $color--default;
+                    border-bottom: 1px solid $color--default;
+                }
             }
         }
 

@@ -36,7 +36,7 @@
                                     {% if specific_related_page.listing_summary or specific_related_page.introduction %}
                                         <p class="card__teaser">{{ specific_related_page.listing_summary|default:specific_related_page.introduction|truncatechars_html:130  }}</p>
                                     {% endif %}
-                                    <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels"></use></svg>
+                                    <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
                                 </a>
                             {% endwith %}
                         {% endif %}
