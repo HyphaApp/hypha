@@ -1,9 +1,15 @@
 {% load wagtailcore_tags wagtailimages_tags %}
-<article class="project">
-    {% image project.icon %}
-    <h2><a href="{% pageurl project %}">{{ project.title }}</a></h2>
+<a class="media-box" href="{% pageurl project %}">
+    <div class="media-box__images">
+        {% image project.icon max-210x235 as project_icon %}
+        <img class="media-box__image media-box__image--large" src="{{ project_icon.url }}" alt="{{project_icon.alt}}">
+        <img class="media-box__image media-box__image--small" src="{{ project_icon.url }}" alt="{{project_icon.alt}}">
+    </div>
+    <div class="media-box__content">
+        <h4>{{ project.title }}</h4>
+        {% if project.listing_summary or project.introduction %}
+            <h5 class="media-box__teaser">{{ project.listing_summary|default:project.introduction|truncatechars_html:160 }}</h5>
+        {% endif %}
+    </div>
+</a>
 
-    {% if project.listing_summary or project.introduction %}
-        <p>{{ project.listing_summary|default:project.introduction }}</p>
-    {% endif %}
-</article>

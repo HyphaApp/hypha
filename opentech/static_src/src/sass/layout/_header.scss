@@ -193,7 +193,8 @@
             height: 98px;
             fill: $color--white;
 
-            .light-grey-bg & {
+            .light-grey-bg &,
+            .header--grey-pixels & {
                 fill: $color--light-grey;
             }
         }

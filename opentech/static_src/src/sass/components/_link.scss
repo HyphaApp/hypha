@@ -6,7 +6,6 @@
 
     &--button-secondary {
         @include button($color--purple, darken($color--purple, 20%));
-        border: 0;
     }
 
     &--button-transparent {

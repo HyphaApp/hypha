@@ -17,7 +17,7 @@
     }
 
     &--main {
-        padding: 20px 20px 0;
+        padding: 0 20px;
     }
 
     &--breakout {
@@ -88,6 +88,24 @@
         background-color: $color--light-grey;
     }
 
+    &--media-boxes {
+        max-width: 1220px;
+        padding: 0 20px;
+        margin: 0 auto;
+    }
+
+    &--bottom-space {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-portrait) {
+            margin-bottom: 3rem;
+        }
+    }
+
+    &--apply-bar {
+        padding: 30px 20px;
+    }
+  
     &--form {
         padding: 20px;
         margin: 20px auto;
