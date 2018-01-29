@@ -53,6 +53,13 @@ class NewsPageRelatedPage(RelatedPage):
 
 
 class NewsProjectRelatedPage(RelatedPage):
+    page = models.ForeignKey(
+        'wagtailcore.Page',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='news_mentions',
+    )
     source_page = ParentalKey(
         'news.NewsPage',
         related_name='related_projects'
