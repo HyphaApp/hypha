@@ -52,6 +52,17 @@ class NewsPageRelatedPage(RelatedPage):
     )
 
 
+class NewsProjectRelatedPage(RelatedPage):
+    source_page = ParentalKey(
+        'news.NewsPage',
+        related_name='related_projects'
+    )
+
+    panels = [
+        PageChooserPanel('page', 'projects.ProjectPage'),
+    ]
+
+
 class NewsPageAuthor(Orderable):
     source_page = ParentalKey(
         'news.NewsPage',
@@ -92,6 +103,7 @@ class NewsPage(BasePage):
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
         InlinePanel('news_types', label="News types"),
+        InlinePanel('related_projects', label="Mentioned project"),
         InlinePanel('related_pages', label="Related pages"),
     ]
 
