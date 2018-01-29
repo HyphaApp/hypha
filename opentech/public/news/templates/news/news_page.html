@@ -30,6 +30,15 @@
         </ul>
     {% endif %}
 
+    {% if page.related_projects.all %}
+        <h4 class="heading">Projects Mentioned</h4>
+        <ul class="list">
+            {% for project in page.related_projects.all %}
+            <li><a href="{% pageurl project.page %}">{{ project.page }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% include "includes/share.html" %}
 </div>
 
