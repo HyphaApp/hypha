@@ -6,6 +6,7 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
+    FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
@@ -102,7 +103,7 @@ class LabPage(BasePage):
         related_name='+',
     )
     lab_link = models.URLField(blank=True, verbose_name='External link')
-    link_text = models.CharField(max_length=255, help_text='Text to display on the button')
+    link_text = models.CharField(max_length=255, help_text='Text to display on the button for external links', blank=True)
     body = StreamField(FundBlock())
 
     content_panels = BasePage.content_panels + [
@@ -110,16 +111,18 @@ class LabPage(BasePage):
         FieldPanel('introduction'),
         MultiFieldPanel([
             PageChooserPanel('lab_type', 'funds.LabType'),
-            FieldPanel('lab_link'),
-            FieldPanel('link_text'),
+            FieldRowPanel([
+                FieldPanel('lab_link'),
+                FieldPanel('link_text'),
+            ]),
         ], heading='Link for lab application'),
         StreamFieldPanel('body'),
         InlinePanel('related_pages', label="Related pages"),
     ]
 
     @property
-    def link_to_lab(self):
-        return self.lab_link or self.lab_type.get_url()
+    def is_open(self):
+        return bool(self.lab_type.specific.open_round)
 
     def clean(self):
         if self.lab_type and self.lab_link:
@@ -132,6 +135,16 @@ class LabPage(BasePage):
             raise ValidationError({
                 'lab_type': 'Please provide a way for applicants to apply',
                 'lab_link': 'Please provide a way for applicants to apply',
+            })
+
+        if self.lab_type and self.link_text:
+            raise ValidationError({
+                'link_text': 'You cant customise the text for internal lab pages, leave blank',
+            })
+
+        if self.lab_link and not self.link_text:
+            raise ValidationError({
+                'link_text': 'Please provide some text for the link button',
             })
 
 

@@ -9,6 +9,7 @@ from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
 from django.urls import reverse
 from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
@@ -91,6 +92,9 @@ class DefinableWorkflowStreamForm(AbstractStreamForm):
 
 
 class FundType(DefinableWorkflowStreamForm):
+    class Meta:
+        verbose_name = _("Fund")
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
@@ -225,6 +229,9 @@ class Round(SubmittableStreamForm):
 
 
 class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):
+    class Meta:
+        verbose_name = _("Lab")
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []
 

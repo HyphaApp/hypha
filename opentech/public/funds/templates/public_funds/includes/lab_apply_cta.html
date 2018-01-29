@@ -1,0 +1,7 @@
+{% if page.lab_type %}
+    {% include "public_funds/includes/fund_apply_cta.html" with page=page apply_page=page.lab_type %}
+{% else %}
+<section>
+    <a href="{{ page.lab_link }}">{{ page.link_text }}</a>
+</section>
+{% endif %}
