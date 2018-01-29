@@ -44,4 +44,14 @@
     </ul>
     {% endfor %}
 
+    {% if page.news_mentions.all %}
+        <h4 class="heading">We wrote about it</h4>
+        <ul class="list">
+            {% for news in page.news_mentions.all %}
+            <li><a href="{% pageurl news.source_page %}">{{ news.source_page }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
 {% endblock content %}

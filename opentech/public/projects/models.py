@@ -119,12 +119,12 @@ class ProjectPage(FundingMixin, BasePage):
 
     content_panels = BasePage.content_panels + [
         ImageChooserPanel('icon'),
-        FieldPanel('introduction'),
         FieldPanel('status'),
+        FieldPanel('introduction'),
         StreamFieldPanel('body'),
         InlinePanel('contact_details', label="Contact Details"),
-        InlinePanel('related_pages', label="Related Projects"),
     ] + FundingMixin.content_panels + [
+        InlinePanel('related_pages', label="Related Projects"),
         MultiFieldPanel(
             [FieldPanel('categories', widget=CategoriesWidget)],
             heading="Categories",
