@@ -3,14 +3,28 @@
 
 {% block content %}
     {% include "public_funds/includes/lab_apply_cta.html" %}
-    <div class="wrapper wrapper--flex">
+    <div class="wrapper">
         <section class="section section--main">
-            <h1>{{ page.icon }}{{ page.title }}</h1>
-            <h5>{{ page.introduction }}</h5>
+            <div class="media-box media-box--reverse">
+                {% if page.icon %}
+                    <div class="media-box__images">
+                        {% image page.icon max-210x235 as page_icon %}
+                        <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                        <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                    </div>
+                {% endif %}
+
+                <div class="media-box__content">
+                    <h4>{{ page.title }}</h4>
+                    {% if page.introduction %}
+                        <h5 class="media-box__teaser">{{ page.introduction }}</h5>
+                    {% endif %}
+                </div>
+            </div>
 
             {% include_block page.body %}
         </section>
     </div>
-    {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
     {% include "public_funds/includes/lab_apply_cta.html" %}
+    {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
 {% endblock %}
