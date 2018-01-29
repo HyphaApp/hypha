@@ -1,13 +1,15 @@
 {% load wagtailcore_tags %}
-<h2>Funding to date</h2>
-{% for funding in page.funding.all %}
-<table>
-    <tr>
-        <td>{{ funding.year }}</td>
-        <td>${{ funding.value }}</td>
-        <td>{{ funding.duration }} months</td>
-        <td><a href="{% pageurl funding.source %}">{{ funding.source }}</a></td>
-    </tr>
-</table>
-{% endfor %}
-<p>Total Funding: {{ page.total_funding }}</p>
+{% if page.total_funding %}
+    <h2>Funding to date</h2>
+    {% for funding in page.funding.all %}
+    <table>
+        <tr>
+            <td>{{ funding.year }}</td>
+            <td>${{ funding.value }}</td>
+            <td>{{ funding.duration }} months</td>
+            <td><a href="{% pageurl funding.source %}">{{ funding.source }}</a></td>
+        </tr>
+    </table>
+    {% endfor %}
+    <p>Total Funding: {{ page.total_funding }}</p>
+{% endif %}
