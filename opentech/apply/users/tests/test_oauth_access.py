@@ -33,7 +33,7 @@ class TestOAuthAccess(TestCase):
         self.login()
 
         response = self.client.get(reverse('users:account'), follow=True)
-        self.assertContains(response, 'Manage OAuth')
+        self.assertNotContains(response, 'Manage OAuth')
 
     @override_settings(SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS=['email.com'])
     def test_oauth_whitelisted_user_can_access_oauth_settings_page(self):

@@ -26,3 +26,63 @@
         max-width: 260px;
 	}
 }
+
+.card-slim {
+    $root: &;
+    padding: 20px;
+    color: $color--light-blue;
+    background-color: $color--white;
+    border-left: 5px solid $color--light-blue;
+    box-shadow: 0 2px 15px 0 $color--black-10;
+    transition: background-color, color, $transition;
+
+    @include media-query(tablet-landscape) {
+        padding: 25px 50px 30px 35px;
+    }
+
+    &:hover {
+        color: $color--white;
+        background-color: $color--light-blue;
+        border-left: 5px solid $color--dark-blue;
+    }
+
+    &__contents {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        > div {
+            flex: 1;
+            max-width: 450px;
+        }
+    }
+
+    &__icon {
+        width: 20px;
+        height: 30px;
+        margin-left: 20px;
+        transition: fill $transition;
+        fill: $color--light-blue;
+
+        #{$root}:hover & {
+            fill: $color--white;
+        }
+    }
+
+    &__summary {
+        display: none;
+        margin: 0;
+        font-size: 16px;
+        color: $color--default;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
+
+        @include media-query(mob-landscape) {
+            display: block;
+        }
+    }
+}
+

@@ -5,10 +5,6 @@
 
     <div class="wrapper wrapper--flex">
         <section class="section section--main">
-            {% block breadcrumbs %}
-                {% include "navigation/breadcrumbs.html" %}
-            {% endblock %}
-
             {% if page.introduction %}
                 <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
             {% endif %}

@@ -10,8 +10,8 @@ env.roledefs = {
         'config': {
             'env_name': 'pre-production',
             'remote_db_name': 'otfpreprod',
-            'local_db_name': 'otfpreprod',
-            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_db_name': 'opentech',
+            'remote_dump_path': '/var/www/otfpreprod/tmp/',
             'local_dump_path': '/tmp/',
         }
     },
@@ -20,8 +20,8 @@ env.roledefs = {
         'config': {
             'env_name': 'staging',
             'remote_db_name': 'otfstaging',
-            'local_db_name': 'otfstaging',
-            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_db_name': 'opentech',
+            'remote_dump_path': '/var/www/otfstaging/tmp/',
             'local_dump_path': '/tmp/',
         },
     },
@@ -30,8 +30,8 @@ env.roledefs = {
         'config': {
             'env_name': 'dev',
             'remote_db_name': 'otfdev',
-            'local_db_name': 'otfdev',
-            'remote_dump_path': '/usr/local/django/otf/tmp/',
+            'local_db_name': 'opentech',
+            'remote_dump_path': '/var/www/otfdev/tmp/',
             'local_dump_path': '/tmp/',
         },
     },
@@ -97,7 +97,7 @@ def pull_pre_production_media():
 
 @roles('dev')
 def deploy_dev():
-    _deploy('dev')
+    _deploy('develop')
 
 
 @runs_once
