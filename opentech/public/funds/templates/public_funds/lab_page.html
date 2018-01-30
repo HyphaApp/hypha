@@ -13,6 +13,10 @@
                         <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
                         <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
                     </div>
+                {% else %}
+                    <div class="media-box__default-image">
+                        <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+                    </div>
                 {% endif %}
 
                 <div class="media-box__content">

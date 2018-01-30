@@ -132,4 +132,19 @@
             display: block;
         }
     }
+
+    &__default-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 210px;
+        height: 210px;
+        background-color: $color--light-blue;
+
+        > svg {
+            width: 80px;
+            height: 70px;
+            fill: $color--white;
+        }
+    }
 }
