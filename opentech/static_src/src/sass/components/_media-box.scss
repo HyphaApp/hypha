@@ -16,6 +16,14 @@
         }
     }
 
+    &--bottom-space {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-landscape) {
+            margin-bottom: 3rem;
+        }
+    }
+
     &__images {
         position: relative;
 
