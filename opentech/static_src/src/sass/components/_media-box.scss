@@ -112,6 +112,14 @@
             color: $color--white;
         }
 
+        .media-box--reverse & {
+            @extend %h5;
+        }
+
+        .media-box--reverse:hover & {
+            color: $color--default;
+        }
+
         @include media-query(mob-landscape) {
             display: block;
         }
