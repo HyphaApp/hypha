@@ -32,4 +32,10 @@
     &--top-space {
         margin-top: 1rem;
     }
+
+    &--total-funding {
+        span {
+            color: $color--purple;
+        }
+    }
 }
