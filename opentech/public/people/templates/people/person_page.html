@@ -4,12 +4,11 @@
 
 {% block content %}
 <div class="wrapper wrapper--small wrapper--flex wrapper--person">
+    <div>
         {% for person_type in page.person_types.all %}
             <h5 class="heading heading--no-margin">{{ person_type }}</h5>
         {% endfor %}
 
-    <div class="intro">
-        <div class="container">
         <h2 class="heading heading--person">{{ page.first_name }} {{ page.last_name }}</h2>
 
         {% if page.job_title %}
@@ -19,6 +18,10 @@
         {% if page.introduction %}
             <h4 class="heading heading--person-introduction">{{ page.introduction }}</h4>
         {% endif %}
+
+        <section class="main-body">
+            {% include_block page.biography %}
+
             {% if page.website %}
                 <p class="list list--contact"><span>Website:</span> <a href="{{ page.website }}">{{ page.website }}</a></p>
             {% endif %}
@@ -36,20 +39,11 @@
 
                 {% endif %}
             {% endwith %}
-
-        </div>
+            {% include "utils/includes/funding.html" %}
+        </section>
     </div>
 
-    <section class="main-body">
-        <div class="container">
-            {% include_block page.biography %}
-        </div>
-
-        <div class="container">
-            <h2>Person types</h2>
-            {% for person_type in page.person_types.all %}
-                <p>{{ person_type }}</p>
-            {% endfor %}
+    <div>
         {% if page.photo %}
             {% image page.photo fill-210x235 %}
         {% endif %}
@@ -59,10 +53,7 @@
                 <h3>{{ item.get_service_display }}</h3>
                 <p>{{ item.profile_url }}</p>
             {% endfor %}
-
-            {% include "utils/includes/funding.html" %}
-        </div>
-    </section>
+    </div>
 
 </div>
 {% endblock %}
