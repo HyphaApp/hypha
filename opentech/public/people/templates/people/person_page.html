@@ -48,11 +48,14 @@
             {% image page.photo fill-210x235 %}
         {% endif %}
 
-            <h2>Social Media Links</h2>
+        {% if page.social_media_profile.all %}
+            <h5 class="heading heading--top-space">Follow {{ page.first_name }}</h5>
             {% for item in page.social_media_profile.all %}
-                <h3>{{ item.get_service_display }}</h3>
-                <p>{{ item.profile_url }}</p>
+                <a href="{{ item.profile_url }}">
+                    <svg class="icon icon--social-share icon--{{item.service}}-share"><use xlink:href="#{{item.service}}"></use></svg>
+                </a>
             {% endfor %}
+        {% endif %}
     </div>
 
 </div>
