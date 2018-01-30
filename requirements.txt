@@ -3,6 +3,7 @@ wagtail==1.13.1
 psycopg2==2.7.3.1
 Pillow==4.3.0
 django-extensions==1.7.4
+django-countries==5.1
 Werkzeug==0.11.11
 stellar==0.4.3
 django-tinymce4-lite==1.7.0

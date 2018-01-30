@@ -10,8 +10,14 @@ from wagtail.wagtailcore.blocks import StaticBlock
 
 from tinymce.widgets import TinyMCE
 
-from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock, TextFieldBlock
+from opentech.apply.stream_forms.blocks import (
+    FormFieldsBlock,
+    FormFieldBlock,
+    OptionalFormFieldBlock,
+    TextFieldBlock,
+)
 from opentech.apply.categories.blocks import CategoryQuestionBlock
+from .widgets import AddressWidget
 
 
 def find_duplicates(items):
@@ -41,8 +47,17 @@ class RichTextFieldBlock(TextFieldBlock):
         icon = 'form'
 
 
+class AddressFieldBlock(OptionalFormFieldBlock):
+    widget = AddressWidget
+
+    class Meta:
+        label = _('Address')
+        icon = 'home'
+
+
 class CustomFormFieldsBlock(FormFieldsBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))
+    address = AddressFieldBlock(group=_('Fields'))
     category = CategoryQuestionBlock(group=_('Custom'))
 
     def __init__(self, *args, **kwargs):
