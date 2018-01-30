@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="wrapper wrapper--small wrapper--flex wrapper--person">
+        {% for person_type in page.person_types.all %}
+            <h5 class="heading heading--no-margin">{{ person_type }}</h5>
+        {% endfor %}
 
     <div class="intro">
         <div class="container">
