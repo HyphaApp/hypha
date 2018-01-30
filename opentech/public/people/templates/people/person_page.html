@@ -10,9 +10,6 @@
 
     <div class="intro">
         <div class="container">
-            {% if page.photo %}
-                {% image page.photo original %}
-            {% endif %}
         <h2 class="heading heading--person">{{ page.first_name }} {{ page.last_name }}</h2>
 
         {% if page.job_title %}
@@ -52,6 +49,9 @@
             {% for person_type in page.person_types.all %}
                 <p>{{ person_type }}</p>
             {% endfor %}
+        {% if page.photo %}
+            {% image page.photo fill-210x235 %}
+        {% endif %}
 
             <h2>Social Media Links</h2>
             {% for item in page.social_media_profile.all %}
