@@ -22,6 +22,14 @@ def find_duplicates(items):
     return duplicates
 
 
+def prettify_names(sequence):
+    return [nice_field_name(item) for item in sequence]
+
+
+def nice_field_name(name):
+    return name.title().replace('_', ' ')
+
+
 class RichTextFieldBlock(TextFieldBlock):
     widget = TinyMCE(mce_attrs={
         'elementpath': False,
@@ -60,12 +68,12 @@ class CustomFormFieldsBlock(FormFieldsBlock):
         all_errors = list()
         if missing:
             all_errors.append(
-                'You are missing the following required fields: {}'.format(', '.join(missing).title())
+                'You are missing the following required fields: {}'.format(', '.join(prettify_names(missing)))
             )
 
         if duplicates:
             all_errors.append(
-                'You have duplicates of the following required fields: {}'.format(', '.join(duplicates).title())
+                'You have duplicates of the following required fields: {}'.format(', '.join(prettify_names(duplicates)))
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
