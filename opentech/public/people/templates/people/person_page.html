@@ -10,7 +10,6 @@
 
     <div class="intro">
         <div class="container">
-            <h1>{{ page.first_name }} {{ page.last_name }}</h1>
             {% if page.introduction %}
                 <p>{{ page.introduction }}</p>
             {% endif %}
@@ -20,6 +19,7 @@
             {% if page.job_title %}
                 <p>{{ page.job_title }}</p>
             {% endif %}
+        <h2 class="heading heading--person">{{ page.first_name }} {{ page.last_name }}</h2>
             {% if page.website %}
                 <p>{{ page.website }}</p>
             {% endif %}
