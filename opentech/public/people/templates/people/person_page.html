@@ -20,17 +20,18 @@
             <h4 class="heading heading--person-introduction">{{ page.introduction }}</h4>
         {% endif %}
             {% if page.website %}
-                <p>{{ page.website }}</p>
+                <p class="list list--contact"><span>Website:</span> <a href="{{ page.website }}">{{ page.website }}</a></p>
             {% endif %}
+
             {% if page.email %}
-                <p>{{ page.email }}</p>
+                <p class="list list--contact"><span>Email:</span> <a href="{{ page.email }}">{{ page.email }}</a></p>
             {% endif %}
 
             {% with contact_details=page.contact_details.all %}
                 {% if contact_details %}
 
                     {% for contact in contact_details %}
-                        <p>{{ contact.method_display }}: {{ contact.contact_detail }}</p>
+                        <p class="list list--contact"><span>{{ contact.method_display }}:</span> {{ contact.contact_detail }}</p>
                     {% endfor %}
 
                 {% endif %}

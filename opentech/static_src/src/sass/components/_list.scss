@@ -3,6 +3,14 @@
         display: flex;
     }
 
+    &--contact {
+        margin: 0;
+
+        > span {
+            font-weight: $weight--bold;
+        }
+    }
+
     &__label {
         padding: 10px;
         margin-right: 20px;
