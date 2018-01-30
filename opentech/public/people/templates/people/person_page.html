@@ -10,9 +10,6 @@
 
     <div class="intro">
         <div class="container">
-            {% if page.introduction %}
-                <p>{{ page.introduction }}</p>
-            {% endif %}
             {% if page.photo %}
                 {% image page.photo original %}
             {% endif %}
@@ -20,6 +17,10 @@
 
         {% if page.job_title %}
             <h4 class="heading heading--no-margin">{{ page.job_title }}</h4>
+        {% endif %}
+
+        {% if page.introduction %}
+            <h4 class="heading heading--person-introduction">{{ page.introduction }}</h4>
         {% endif %}
             {% if page.website %}
                 <p>{{ page.website }}</p>
