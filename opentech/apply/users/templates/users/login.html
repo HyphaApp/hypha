@@ -13,6 +13,7 @@
       </ul>
       {% endif %}
 
+      <form class="form form--login" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="link link--button-secondary" type="submit">Login</button>
@@ -25,6 +26,5 @@
 
   </div>
 
-  <form method="post">
 
 {% endblock %}

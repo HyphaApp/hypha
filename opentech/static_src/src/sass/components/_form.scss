@@ -4,6 +4,17 @@
         border-bottom: 1px solid $color--white;
     }
 
+    &--login {
+        p {
+            label {
+                @extend %h4;
+                display: block;
+                margin-bottom: 10px;
+                font-weight: $weight--bold;
+            }
+        }
+    }
+
     &__group {
         position: relative;
         margin: 1rem 0;
