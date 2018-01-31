@@ -25,7 +25,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
 
     def __init__(self, *args, **kwargs):
         widgets = [
-            widget(attrs={'class': field}) for field, widget in self.components.items()
+            widget(attrs={'class': field, 'required': False}) for field, widget in self.components.items()
         ]
         super().__init__(widgets, *args, **kwargs)
 

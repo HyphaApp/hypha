@@ -47,17 +47,8 @@ class RichTextFieldBlock(TextFieldBlock):
         icon = 'form'
 
 
-class AddressFieldBlock(OptionalFormFieldBlock):
-    widget = AddressWidget
-
-    class Meta:
-        label = _('Address')
-        icon = 'home'
-
-
 class CustomFormFieldsBlock(FormFieldsBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))
-    address = AddressFieldBlock(group=_('Fields'))
     category = CategoryQuestionBlock(group=_('Custom'))
 
     def __init__(self, *args, **kwargs):
@@ -170,6 +161,16 @@ class EmailBlock(MustIncludeFieldBlock):
 
     class Meta:
         icon = 'mail'
+
+
+class AddressFieldBlock(MustIncludeFieldBlock):
+    name = 'address'
+    description = 'The postal address of the user'
+    widget = AddressWidget
+
+    class Meta:
+        label = _('Address')
+        icon = 'home'
 
 
 class FullNameBlock(MustIncludeFieldBlock):
