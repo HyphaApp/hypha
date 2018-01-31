@@ -1,13 +1,59 @@
 (function ($) {
+    // add the require attribute to the field configs
+    function addRequiredToKey(fields, findKey){
+        $.each(fields, (index, value) => {
+            var fieldName = Object.keys(value)[0];
+            var data = value[fieldName];
+            if (fieldName===findKey) {
+                data.required = true;
+            } else if (Array.isArray(data)) {
+                // Handle nested fields
+                addRequiredToKey(data, findKey);
+            }
+        });
+    }
+
+
+    // hook into the transform to update with the required attribute
     var oldTransform = $.fn.addressfield.transform;
     $.fn.addressfield.transform = function(data) {
         var mappedData = oldTransform.call(this, data);
+        $.each(mappedData, (key, value) => {
+            $.each(value.required, (index, field) => {
+                addRequiredToKey(mappedData[key].fields, field);
+            });
+        });
         return mappedData;
     };
 
-    $('.form').bind('addressfield:after', function (e, data) {
-        debugger;
-    });
+    function labelFor(field){
+        return $('label[for="'+ $(field).attr('id') +'"]');
+    }
+
+    function makeFieldNotRequired(field){
+        var $field = $(field);
+        $(this).prop('required', false);
+        var $label = labelFor($field);
+        $label.children('span').remove();
+    }
+
+    function makeFieldRequired(field){
+        var $field = $(field);
+        $field.prop('required', true);
+        var $label = labelFor($field);
+        $label.append('<span class="form__required">*</span>');
+    }
+
+    // Hook into the validate process to update the required display
+    var oldValidate = $.fn.addressfield.validate;
+    $.fn.addressfield.validate = function(field, config) {
+        if (config.required) {
+            makeFieldRequired(this);
+        } else {
+            makeFieldNotRequired(this);
+        }
+        oldValidate.call(this, field, config);
+    };
 
     $(document).ready(function formReady() {
         $('.form div.address').addressfield({
