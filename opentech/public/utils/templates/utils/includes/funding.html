@@ -9,8 +9,8 @@
             <span>{{ funding.duration }} months</span>
         </div>
 
-        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding }}</span></h4>
         <a href="{% pageurl funding.source %}">{{ funding.source }}</a>
         {% endfor %}
+            <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding }}</span></h4>
     </div>
 {% endif %}
