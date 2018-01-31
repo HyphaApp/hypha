@@ -17,6 +17,14 @@
         }
     }
 
+    &--button-long-text {
+        padding: 10px;
+
+        @include media-query(tablet-portrait) {
+            padding: 10px 60px;
+        }
+    }
+
     &--underlined {
         text-decoration: underline;
     }
