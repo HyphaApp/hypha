@@ -24,5 +24,13 @@
             padding: 0 20px;
         }
     }
+
+    &__link {
+        display: inline-block;
+        margin-bottom: 20px;
+
+        &:last-of-type {
+            margin-bottom: 0;
+        }
     }
 }
