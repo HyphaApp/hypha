@@ -140,23 +140,26 @@
         padding-bottom: 3rem;
     }
 
-    &--flex {
-        display: flex;
-    }
-
     &--person {
-        padding: 3rem 0;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            flex-direction: row;
+            padding: 3rem 0;
+
+            > div:last-child {
+                flex-basis: 210px;
+            }
+        }
 
         > div:first-child {
             flex: 1;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(tablet-portrait) {
                 padding-right: 20px;
             }
-        }
-
-        > div:last-child {
-            flex-basis: 210px;
         }
     }
 }

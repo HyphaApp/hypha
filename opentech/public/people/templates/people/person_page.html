@@ -3,7 +3,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-<section class="wrapper wrapper--small wrapper--flex wrapper--person">
+<section class="wrapper wrapper--small wrapper--person">
     <div>
         {% for person_type in page.person_types.all %}
             <h5 class="heading heading--no-margin">{{ person_type }}</h5>
