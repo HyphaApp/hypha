@@ -60,7 +60,6 @@ class AddressWidget(NestedMultiWidget):
 
     class Media:
         js = (
-            "http://code.jquery.com/jquery-3.3.1.min.js",
             'https://cdn.jsdelivr.net/npm/jquery.addressfield@1.1.0/dist/jquery.addressfield.js',
             "address_form.js",
             )
