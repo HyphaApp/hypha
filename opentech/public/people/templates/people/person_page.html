@@ -53,7 +53,7 @@
         {% if page.social_media_profile.all %}
             <h5 class="heading heading--top-space">Follow {{ page.first_name }}</h5>
             {% for item in page.social_media_profile.all %}
-                <a href="{{ item.profile_url }}">
+                <a aria-label="Social media link" href="{{ item.profile_url }}">
                     <svg class="icon icon--social-share icon--{{item.service}}-share"><use xlink:href="#{{item.service}}"></use></svg>
                 </a>
             {% endfor %}
