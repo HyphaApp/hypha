@@ -5,26 +5,22 @@
 
 {% block content %}
   <div class="wrapper wrapper--small">
-      {% if messages %}
-      <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-      {% endif %}
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 
-      <form class="form form--login" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="link link--button-secondary" type="submit">Login</button>
-      </form>
+    <form class="form form--login" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="link link--button-secondary" type="submit">Login</button>
+    </form>
 
-
-      <div class="wrapper wrapper--top-bottom-space">
-        <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}?next={% url "users:account" %}">Log in with your OTF email</a>
-      </div>
-
+    <div class="wrapper wrapper--top-bottom-space">
+      <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}?next={% url "users:account" %}">Log in with your OTF email</a>
+    </div>
   </div>
-
-
 {% endblock %}
