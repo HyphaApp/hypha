@@ -16,7 +16,7 @@ from opentech.apply.stream_forms.blocks import (
     TextFieldBlock,
 )
 from opentech.apply.categories.blocks import CategoryQuestionBlock
-from .widgets import AddressWidget
+from addressfield.widgets import AddressWidget
 
 
 def find_duplicates(items):

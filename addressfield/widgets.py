@@ -21,7 +21,7 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
 
 
 class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
-    template_name = 'funds/widgets/nested_with_label.html'
+    template_name = 'addressfield/widgets/nested_with_label.html'
 
     def __init__(self, *args, **kwargs):
         widgets = [
