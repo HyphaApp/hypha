@@ -4,31 +4,28 @@
 
 
 {% block content %}
-    <div class="intro">
-        <div class="container">
-            {% if page.icon %}
-                {% image page.icon original %}
-            {% endif %}
-            <h1>{{ page.title }}</h1>
-            {% if page.introduction %}
-                <p>{{ page.introduction }}</p>
-            {% endif %}
+<div class="wrapper wrapper--small">
+    {% if page.icon %}
+        {% image page.icon original %}
+    {% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.introduction %}
+        <p>{{ page.introduction }}</p>
+    {% endif %}
 
-            {{ page.body }}
+    {{ page.body }}
 
-            {% with contact_details=page.contact_details.all %}
-                {% if contact_details %}
-                    {% for contact in contact_details %}
-                <p><a href="{{ contact.url }}">
-                    <span class="icon {{ contact.service }}">{{ contact.service_name }}
-                        </a></p>
-                    {% endfor %}
+    {% with contact_details=page.contact_details.all %}
+        {% if contact_details %}
+            {% for contact in contact_details %}
+        <p><a href="{{ contact.url }}">
+            <span class="icon {{ contact.service }}">{{ contact.service_name }}
+                </a></p>
+            {% endfor %}
 
-                {% endif %}
-            {% endwith %}
+        {% endif %}
+    {% endwith %}
 
-        </div>
-    </div>
     {% include "utils/includes/funding.html" %}
 
     {% regroup page.category_options by category as categories %}
@@ -52,6 +49,7 @@
             {% endfor %}
         </ul>
     {% endif %}
+</div>
 
 
 {% endblock content %}
