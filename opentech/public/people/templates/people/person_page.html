@@ -15,6 +15,10 @@
             <h4 class="heading">{{ page.job_title }}</h4>
         {% endif %}
 
+        {% if page.photo %}
+            {% image page.photo fill-210x235 class="image image--headshot-mobile" %}
+        {% endif %}
+
         {% if page.introduction %}
             <h4 class="heading heading--person-introduction">{{ page.introduction }}</h4>
         {% endif %}
@@ -43,7 +47,7 @@
 
     <div>
         {% if page.photo %}
-            {% image page.photo fill-210x235 %}
+            {% image page.photo fill-210x235 class="image image--headshot-desktop" %}
         {% endif %}
 
         {% if page.social_media_profile.all %}
