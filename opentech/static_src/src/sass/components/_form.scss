@@ -257,4 +257,10 @@
             border: 1px solid $color--dark-blue;
         }
     }
+
+    .errorlist {
+        padding: 5px;
+        background: $color--light-pink;
+        border: 1px solid $color--tomato;
+    }
 }
