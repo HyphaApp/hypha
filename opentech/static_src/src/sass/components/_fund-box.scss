@@ -1,7 +1,11 @@
 .fund-box {
-    padding: 20px 30px;
+    padding: 10px 15px;
     margin: 1rem 0;
     border: 1px solid $color--mid-grey;
+
+    @include media-query(mob-landscape) {
+        padding: 20px 30px;
+    }
 
     @include media-query(tablet-landscape) {
         margin: 3rem 0;
@@ -12,8 +16,13 @@
         align-items: center;
         justify-content: space-between;
         height: 50px;
-        padding: 0 20px;
+        padding: 0 10px;
         margin-bottom: 5px;
         background-color: $color--light-grey;
+
+        @include media-query(mob-landscape) {
+            padding: 0 20px;
+        }
+    }
     }
 }

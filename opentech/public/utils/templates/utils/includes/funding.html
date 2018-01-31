@@ -3,14 +3,13 @@
     <div class="fund-box">
         <h4>Funding to date</h4>
         {% for funding in page.funding.all %}
-        <div class="fund-box__row">
-            <span>{{ funding.year }}</span>
-            <span>${{ funding.value }}</span>
-            <span>{{ funding.duration }} months</span>
-        </div>
-
         <a href="{% pageurl funding.source %}">{{ funding.source }}</a>
+            <div class="fund-box__row">
+                <span>{{ funding.year }}</span>
+                <span>${{ funding.value }}</span>
+                <span>{{ funding.duration }} months</span>
+            </div>
         {% endfor %}
-            <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding }}</span></h4>
+        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding }}</span></h4>
     </div>
 {% endif %}
