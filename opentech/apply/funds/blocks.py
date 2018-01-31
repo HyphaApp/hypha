@@ -13,7 +13,6 @@ from tinymce.widgets import TinyMCE
 from opentech.apply.stream_forms.blocks import (
     FormFieldsBlock,
     FormFieldBlock,
-    OptionalFormFieldBlock,
     TextFieldBlock,
 )
 from opentech.apply.categories.blocks import CategoryQuestionBlock
