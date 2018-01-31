@@ -60,8 +60,8 @@ class AddressWidget(NestedMultiWidget):
 
     class Media:
         js = (
-            'https://cdn.jsdelivr.net/npm/jquery.addressfield@1.1.0/dist/jquery.addressfield.js',
-            "address_form.js",
+            'jquery.addressfield.min.js',
+            'address_form.js',
             )
 
     def __init__(self, *args, **kwargs):
