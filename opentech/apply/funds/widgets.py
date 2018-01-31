@@ -6,7 +6,7 @@ from django_countries import countries
 
 class KeepOwnAttrsWidget(forms.Widget):
     def get_context(self, name, value, attrs):
-        name = self.attrs.pop('name') or name
+        name = self.attrs.get('name') or name
         attrs.update(self.attrs)
         return super().get_context(name, value, attrs)
 
@@ -22,6 +22,8 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
 
 
 class NestedMultiWidget(forms.MultiWidget):
+    template_name = 'funds/widgets/nested_with_label.html'
+
     def __init__(self, *args, **kwargs):
         widgets = [
             widget(attrs={'name': field}) for field, widget in self.components.items()
