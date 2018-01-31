@@ -32,7 +32,7 @@
 
     function makeFieldNotRequired(field){
         var $field = $(field);
-        $(this).prop('required', false);
+        $field.removeAttr('required');
         var $label = labelFor($field);
         $label.children('span').remove();
     }
