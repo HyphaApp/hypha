@@ -91,7 +91,11 @@
     }
 
     &--top-bottom-space {
-        padding: 3rem 0;
+        padding: 1rem 0;
+
+        @include media-query(tablet-portrait) {
+            padding: 3rem 0;
+        }
     }
   
     &--light-grey-bg {
