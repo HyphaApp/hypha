@@ -4,21 +4,27 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-  <h2>Login</h2>
+  <div class="wrapper wrapper--small">
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
 
-  {% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-      {% endfor %}
-  </ul>
-  {% endif %}
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="link link--button-secondary" type="submit">Login</button>
+      </form>
+
+
+      <div class="wrapper wrapper--top-bottom-space">
+        <a class="link link--button" href="{% url "social:begin" "google-oauth2" %}?next={% url "users:account" %}">Log in with your OTF email</a>
+      </div>
+
+  </div>
 
   <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
 
-  <a href="{% url "social:begin" "google-oauth2" %}?next={% url "users:account" %}">Log in with your OTF email</a>
 {% endblock %}
