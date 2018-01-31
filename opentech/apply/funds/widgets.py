@@ -6,7 +6,6 @@ from django_countries import countries
 
 class KeepOwnAttrsWidget(forms.Widget):
     def get_context(self, name, value, attrs):
-        name = self.attrs.get('name') or name
         attrs.update(self.attrs)
         return super().get_context(name, value, attrs)
 
@@ -21,12 +20,12 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
     pass
 
 
-class NestedMultiWidget(forms.MultiWidget):
+class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
     template_name = 'funds/widgets/nested_with_label.html'
 
     def __init__(self, *args, **kwargs):
         widgets = [
-            widget(attrs={'name': field}) for field, widget in self.components.items()
+            widget(attrs={'class': field}) for field, widget in self.components.items()
         ]
         super().__init__(widgets, *args, **kwargs)
 
@@ -36,8 +35,9 @@ class NestedMultiWidget(forms.MultiWidget):
         return [None] * len(self.components)
 
     def value_from_datadict(self, data, files, name):
+        field_names = list(self.components.keys())
         return {
-            widget.value_from_datadict(data, files, name + '_%s' % i)
+            field_names[i]: widget.value_from_datadict(data, files, name + '_%s' % i)
             for i, widget in enumerate(self.widgets)
         }
 
@@ -45,9 +45,9 @@ class NestedMultiWidget(forms.MultiWidget):
 
 class LocalityWidget(NestedMultiWidget):
     components = {
-        'city': KeepAttrsTextInput,
-        'state': KeepAttrsTextInput,
-        'zip': KeepAttrsTextInput,
+        'localityname': KeepAttrsTextInput,
+        'administrativearea': KeepAttrsTextInput,
+        'postalcode': KeepAttrsTextInput,
     }
 
 
@@ -55,8 +55,8 @@ class LocalityWidget(NestedMultiWidget):
 class AddressWidget(NestedMultiWidget):
     components = {
         'country': CountrySelectWithChoices,
-        'address_1': KeepAttrsTextInput,
-        'address_2': KeepAttrsTextInput,
+        'thoroughfare': KeepAttrsTextInput,
+        'premise': KeepAttrsTextInput,
         'locality': LocalityWidget,
     }
 

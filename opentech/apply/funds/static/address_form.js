@@ -8,13 +8,13 @@
         $('.form div.address').addressfield({
             json: '/static/addressfield.min.json',
             fields: {
-                country: "[name='country']",
-                thoroughfare: "[name='address_1']",
-                premise: "[name='address_2']",
-                locality: "[name='locality']",
-                localityname: "[name='city']",
-                administrativearea: "[name='state']",
-                postalcode: "[name='zip']"
+                country: ".country",
+                thoroughfare: ".thoroughfare",
+                premise: ".premise",
+                locality: ".locality",
+                localityname: ".localityname",
+                administrativearea: ".administrativearea",
+                postalcode: ".postalcode"
             }
         });
     });
