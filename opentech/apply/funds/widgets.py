@@ -42,14 +42,12 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
         }
 
 
-
 class LocalityWidget(NestedMultiWidget):
     components = {
         'localityname': KeepAttrsTextInput,
         'administrativearea': KeepAttrsTextInput,
         'postalcode': KeepAttrsTextInput,
     }
-
 
 
 class AddressWidget(NestedMultiWidget):
