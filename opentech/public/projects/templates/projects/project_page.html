@@ -48,24 +48,25 @@
 
     {% regroup page.category_options by category as categories %}
     {% for category, options in categories %}
-        <ul>
-            <li><h3>{{ category.name }}</h3>
+            <h3>{{ category.name }}</h3>
+            <div class="rich-text">
                 <ul>
                     {% for option in options %}
                         <li>{{ option.value }}</li>
                     {% endfor %}
                 </ul>
-            </li>
-        </ul>
+            </div>
     {% endfor %}
 
     {% if page.news_mentions.all %}
-        <h4 class="heading">We wrote about it</h4>
-        <ul class="list">
-            {% for news in page.news_mentions.all %}
-            <li><a href="{% pageurl news.source_page %}">{{ news.source_page }}</a></li>
-            {% endfor %}
-        </ul>
+        <h3>We wrote about it</h3>
+        <div class="rich-text">
+            <ul>
+                {% for news in page.news_mentions.all %}
+                <li><a href="{% pageurl news.source_page %}">{{ news.source_page }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
 </div>
 
