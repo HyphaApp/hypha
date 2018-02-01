@@ -16,6 +16,14 @@
         }
     }
 
+    &--bottom-space {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-landscape) {
+            margin-bottom: 3rem;
+        }
+    }
+
     &__images {
         position: relative;
 
@@ -104,6 +112,14 @@
             color: $color--white;
         }
 
+        .media-box--reverse & {
+            @extend %h5;
+        }
+
+        .media-box--reverse:hover & {
+            color: $color--default;
+        }
+
         @include media-query(mob-landscape) {
             display: block;
         }
@@ -114,6 +130,21 @@
 
         @include media-query(tablet-landscape) {
             display: block;
+        }
+    }
+
+    &__default-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 210px;
+        height: 210px;
+        background-color: $color--light-blue;
+
+        > svg {
+            width: 80px;
+            height: 70px;
+            fill: $color--white;
         }
     }
 }
