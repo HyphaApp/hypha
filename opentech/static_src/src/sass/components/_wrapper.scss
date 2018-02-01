@@ -91,7 +91,11 @@
     }
 
     &--top-bottom-space {
-        padding: 3rem 0;
+        padding: 20px 0;
+
+        @include media-query(mob-landscape) {
+            padding: 2rem 0;
+        }
     }
 
     &--light-grey-bg {
