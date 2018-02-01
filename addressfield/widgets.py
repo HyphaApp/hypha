@@ -29,18 +29,31 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
         ]
         super().__init__(widgets, *args, **kwargs)
 
+    @property
+    def field_names(self):
+        return list(self.components.keys())
+
     def decompress(self, value):
         if value:
-            return [value.get(field) for field in self.components.keys()]
+            decompressed = list()
+            for i, widget in enumerate(self.widgets):
+                if hasattr(widget, 'components'):
+                    decompressed.append(widget.decompress(value))
+                else:
+                    decompressed.append(value.get(self.field_names[i]))
+            return decompressed
         return [None] * len(self.components)
 
     def value_from_datadict(self, data, files, name):
-        field_names = list(self.components.keys())
-        return {
-            field_names[i]: widget.value_from_datadict(data, files, name + '_%s' % i)
-            for i, widget in enumerate(self.widgets)
-        }
-
+        value = dict()
+        for i, widget in enumerate(self.widgets):
+            widget_value = widget.value_from_datadict(data, files, name + '_%s' % i)
+            # flatten the data structure to a single dict
+            if hasattr(widget, 'widgets'):
+                value.update(widget_value)
+            else:
+                value[self.field_names[i]] = widget_value
+        return value
 
 class LocalityWidget(NestedMultiWidget):
     components = {
