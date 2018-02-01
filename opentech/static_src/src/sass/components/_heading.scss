@@ -12,9 +12,30 @@
 
     &--no-margin {
         margin: 0;
+        line-height: 1;
     }
 
     &--regular {
         font-weight: $weight--normal;
+    }
+
+    &--person {
+        margin: 10px 0;
+        line-height: 1;
+    }
+
+    &--person-introduction {
+        margin: 1rem 0;
+        font-weight: $weight--light;
+    }
+
+    &--top-space {
+        margin-top: 1rem;
+    }
+
+    &--total-funding {
+        span {
+            color: $color--purple;
+        }
     }
 }

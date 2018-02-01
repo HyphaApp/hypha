@@ -93,7 +93,7 @@
     &--top-bottom-space {
         padding: 3rem 0;
     }
-  
+
     &--light-grey-bg {
         background-color: $color--light-grey;
     }
@@ -115,7 +115,7 @@
     &--apply-bar {
         padding: 30px 20px;
     }
-  
+
     &--form {
         padding: 20px;
         margin: 20px auto;
@@ -138,5 +138,28 @@
 
     &--bottom-space {
         padding-bottom: 3rem;
+    }
+
+    &--person {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            flex-direction: row;
+            padding: 3rem 0;
+
+            > div:last-child {
+                flex-basis: 210px;
+            }
+        }
+
+        > div:first-child {
+            flex: 1;
+
+            @include media-query(tablet-portrait) {
+                padding-right: 20px;
+            }
+        }
     }
 }
