@@ -90,11 +90,19 @@
         }
     }
 
-    &--top-bottom-space {
+    &--top-bottom-inner-space {
         padding: 20px 0;
 
         @include media-query(mob-landscape) {
             padding: 2rem 0;
+        }
+    }
+
+    &--top-bottom-outer-space {
+        margin: 20px 0;
+
+        @include media-query(mob-landscape) {
+            margin: 2rem 0;
         }
     }
 
@@ -109,9 +117,11 @@
     }
 
     &--bottom-space {
-        margin-bottom: 1rem;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
 
         @include media-query(tablet-portrait) {
+            padding-bottom: 3rem;
             margin-bottom: 3rem;
         }
     }
@@ -140,8 +150,6 @@
         border: 1px solid $color--tomato;
     }
 
-    &--bottom-space {
-        padding-bottom: 3rem;
     &--person {
         @include media-query(tablet-portrait) {
             padding: 3rem 0;
@@ -155,7 +163,6 @@
 
         @include media-query(tablet-portrait) {
             flex-direction: row;
-            padding: 3rem 0;
 
             > div:last-child {
                 flex-basis: 210px;
