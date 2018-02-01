@@ -115,4 +115,15 @@
             fill: $color--white;
         }
     }
+
+    &--status {
+        width: 65px;
+        height: 100%;
+        stroke: $color--mid-grey;
+        fill: transparent;
+
+        .is-active & {
+            stroke: $color--correct;
+        }
+    }
 }

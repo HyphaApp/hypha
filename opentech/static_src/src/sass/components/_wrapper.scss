@@ -177,4 +177,14 @@
             }
         }
     }
+
+    &--status {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        @include media-query(mob-landscape) {
+            flex-direction: row;
+        }
+    }
 }
