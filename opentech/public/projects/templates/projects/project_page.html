@@ -25,18 +25,26 @@
         </div>
     </div>
 
-    {% with contact_details=page.contact_details.all %}
-        {% if contact_details %}
-            {% for contact in contact_details %}
-        <p><a href="{{ contact.url }}">
-            <span class="icon {{ contact.service }}">{{ contact.service_name }}
-                </a></p>
-            {% endfor %}
+    <div class="wrapper wrapper--sidebar">
+        <div>
+            {% include "utils/includes/funding.html" %}
+        </div>
 
-        {% endif %}
-    {% endwith %}
+        <div>
+            {% with contact_details=page.contact_details.all %}
+                {% if contact_details %}
+                    <h5>Get the word out</h5>
+                    {% for contact in contact_details %}
+                        <a aria-label="Social media link" href="{{ contact.url }}">
+                            <svg class="icon icon--social-share icon--{{contact.service}}-share"><use xlink:href="#{{contact.service}}"></use></svg>
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
 
-    {% include "utils/includes/funding.html" %}
+
 
     {% regroup page.category_options by category as categories %}
     {% for category, options in categories %}
