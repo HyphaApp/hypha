@@ -16,7 +16,6 @@
             {% endif %}
         </div>
 
-    {{ page.body }}
         <div class="media-box__content">
             <h4>{{ page.title }}</h4>
             {% if page.introduction %}
@@ -45,6 +44,7 @@
     </div>
 
 
+    {{ page.body }}
 
     {% regroup page.category_options by category as categories %}
     {% for category, options in categories %}
