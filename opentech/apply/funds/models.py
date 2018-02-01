@@ -321,7 +321,7 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions', null=True)
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
 
     objects = JSONOrderable.as_manager()
 
