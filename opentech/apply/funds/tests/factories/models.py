@@ -7,7 +7,7 @@ import wagtail_factories
 from opentech.apply.funds.models import ApplicationForm, FundType, FundForm, Round
 from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
-from .blocks import CustomFormBlockFactory
+from . import blocks
 
 
 class ListSubFactory(factory.SubFactory):
@@ -139,7 +139,10 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
         model = ApplicationForm
 
     name = factory.Faker('word')
-    form_fields = wagtail_factories.StreamFieldFactory({'field': CustomFormBlockFactory})
+    form_fields = wagtail_factories.StreamFieldFactory({
+        'email': blocks.EmailBlockFactory,
+        'full_name': blocks.FullNameBlockFactory,
+    })
 
 
 class RoundFactory(wagtail_factories.PageFactory):

@@ -60,42 +60,18 @@ class SubmittableStreamForm(AbstractStreamForm):
                 response = cleaned_data.pop(field.id)
                 cleaned_data[field.block.name] = response
 
-        user = form.user
-
-        if form.user.id is not None:
-            if cleaned_data.get('email'):
-                cleaned_data['email'] = user.email
-            if cleaned_data.get('full_name'):
-                cleaned_data['full_name'] = user.get_full_name()
-        elif cleaned_data.get('email'):
+        if form.user.is_authenticated():
+            user = form.user
+            cleaned_data['email'] = user.email
+            cleaned_data['full_name'] = user.get_full_name()
+        else:
             User = get_user_model()
             email = cleaned_data.get('email')
             full_name = cleaned_data.get('full_name')
-
-            try:
-                # Cannot use get_or_create because we treat email as canonical, but username is not retired yet
-                user_data = {
-                    'username': full_name if full_name else email,
-                    'email': email,
-                    'is_active': False,  # The user needs to activate account
-                }
-
-                if full_name and hasattr(User, 'full_name'):
-                    user_data['full_name'] = full_name
-
-                user = User.objects.create_user(**user_data)
-
-                if user:
-                    # TODO: move to method on User?
-                    from opentech.apply.users.utils import send_activation_email
-                    send_activation_email(user)
-
-            except IntegrityError:
-                email_field = getattr(User, 'EMAIL_FIELD', 'email')
-                try:
-                    user = User.objects.get(**{email_field: email})
-                except User.DoesNotExist:
-                    user = None
+            user = User.get_or_create_new(
+                email=email,
+                defaults={'full_name': full_name}
+            )
 
         self.send_confirmation_email(form, cleaned_data)
 

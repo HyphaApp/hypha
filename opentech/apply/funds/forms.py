@@ -1,5 +1,7 @@
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 
+from opentech.apply.stream_forms.forms import StreamBaseForm
+
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):
     def clean(self):

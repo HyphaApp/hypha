@@ -1,8 +1,19 @@
 import wagtail_factories
 
-from opentech.apply.funds.blocks import CustomFormFieldsBlock
+from opentech.apply.stream_forms.blocks import FormFieldBlock
+from opentech.apply.funds import blocks
 
 
-class CustomFormBlockFactory(wagtail_factories.StructBlockFactory):
+class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
     class Meta:
-        model = CustomFormFieldsBlock
+        model = FormFieldBlock
+
+
+class EmailBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.EmailBlock
+
+
+class FullNameBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.FullNameBlock
