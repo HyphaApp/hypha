@@ -7,8 +7,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
-from django.db.utils import IntegrityError
 from django.http import Http404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -24,6 +24,7 @@ from wagtail.wagtailadmin.edit_handlers import (
     TabbedInterface
 )
 
+from wagtail.wagtailadmin.utils import send_mail
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
@@ -105,6 +106,19 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
+
+    def send_confirmation_email(self, form, cleaned_data):
+        email = cleaned_data.get('email')
+        context = {
+            'name': cleaned_data.get('full_name'),
+            'email': email,
+            'project_name': cleaned_data.get('title'),
+            'extra_text': self.confirmation_text_extra,
+            'fund_type': self.title,
+        }
+
+        subject = self.subject if self.subject else 'Thank You for Your submission to Open Technology Fund'
+        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
@@ -209,6 +223,10 @@ class Round(SubmittableStreamForm):
             round=self,
             **kwargs,
         )
+
+    def send_confirmation_email(self, form, cleaned_data):
+        # Parent holds the configuration about emails
+        self.get_parent().specific.send_confirmation_email(form, cleaned_data)
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
