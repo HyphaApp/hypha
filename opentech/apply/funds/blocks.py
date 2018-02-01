@@ -16,7 +16,7 @@ from opentech.apply.stream_forms.blocks import (
     TextFieldBlock,
 )
 from opentech.apply.categories.blocks import CategoryQuestionBlock
-from addressfield.widgets import AddressWidget
+from addressfield.fields import AddressField
 
 
 def find_duplicates(items):
@@ -165,7 +165,8 @@ class EmailBlock(MustIncludeFieldBlock):
 class AddressFieldBlock(MustIncludeFieldBlock):
     name = 'address'
     description = 'The postal address of the user'
-    widget = AddressWidget
+
+    field_class = AddressField
 
     class Meta:
         label = _('Address')
