@@ -29,11 +29,15 @@ urlpatterns = [
     ),
 
     # Password reset
-    url(r'^reset/$', auth_views.PasswordResetView.as_view(
-        template_name='users/password_reset/form.html',
-        email_template_name='users/password_reset/email.txt',
-        success_url=reverse_lazy('users:password_reset_done')
-    )),
+    url(
+        r'^reset/$',
+        auth_views.PasswordResetView.as_view(
+            template_name='users/password_reset/form.html',
+            email_template_name='users/password_reset/email.txt',
+            success_url=reverse_lazy('users:password_reset_done')
+        ),
+        name='password_reset',
+    ),
     url(
         r'^reset/done/$',
         auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset/done.html'),

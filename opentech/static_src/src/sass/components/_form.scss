@@ -6,12 +6,18 @@
 
     &--login {
         p {
+            margin: 0 0 10px;
+
             label {
                 @extend %h4;
                 display: block;
                 margin-bottom: 10px;
                 font-weight: $weight--bold;
             }
+        }
+
+        button {
+            margin-top: 10px;
         }
     }
 
