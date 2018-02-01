@@ -142,9 +142,13 @@
 
     &--bottom-space {
         padding-bottom: 3rem;
+    &--person {
+        @include media-query(tablet-portrait) {
+            padding: 3rem 0;
+        }
     }
 
-    &--person {
+    &--sidebar {
         display: flex;
         flex-direction: column;
         padding: 20px 0;
