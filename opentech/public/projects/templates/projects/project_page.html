@@ -4,18 +4,18 @@
 {% block content %}
 <div class="wrapper wrapper--small wrapper--top-inner-space">
     <div class="media-box media-box--reverse">
-        <div class="media-box__images">
-            {% if page.icon %}
         <h4 class="media-box__title media-box__title--mobile">{{ page.title }}</h4>
+        {% if page.icon %}
+            <div class="media-box__images">
                 {% image page.icon max-210x235 as page_icon %}
                 <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
                 <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
-            {% else %}
-                <div class="media-box__default-image">
-                    <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
-                </div>
-            {% endif %}
-        </div>
+            </div>
+        {% else %}
+            <div class="media-box__default-image">
+                <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+            </div>
+        {% endif %}
 
         <div class="media-box__content">
             <h4 class="media-box__title media-box__title--desktop">{{ page.title }}</h4>
