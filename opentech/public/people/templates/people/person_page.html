@@ -3,7 +3,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-<section class="wrapper wrapper--small wrapper--person wrapper--sidebar">
+<section class="wrapper wrapper--small wrapper--top-inner-space wrapper--sidebar">
     <div>
         {% for person_type in page.person_types.all %}
             <h5 class="heading heading--no-margin">{{ person_type }}</h5>
@@ -40,7 +40,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        {% include "utils/includes/funding.html" with class="wrapper--top-bottom-outer-space" %}
+        {% include "utils/includes/funding.html" with class="wrapper--top-outer-space-small" %}
     </div>
 
     <div>
@@ -49,7 +49,7 @@
         {% endif %}
 
         {% if page.social_media_profile.all %}
-            <h5 class="heading heading--top-space">Follow {{ page.first_name }}</h5>
+            <h5>Follow {{ page.first_name }}</h5>
             {% for item in page.social_media_profile.all %}
                 <a aria-label="Social media link" href="{{ item.profile_url }}">
                     <svg class="icon icon--social-share icon--{{item.service}}-share"><use xlink:href="#{{item.service}}"></use></svg>
