@@ -91,6 +91,10 @@
             grid-gap: 35px; // sass-lint:disable-line no-misspelled-properties
         }
 
+        &--small-gap {
+            grid-gap: 20px; // sass-lint:disable-line no-misspelled-properties
+        }
+
         &--no-margin {
             margin: 0;
         }

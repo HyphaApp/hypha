@@ -83,6 +83,15 @@
         background: $color--facebook;
     }
 
+    &--website-share {
+        padding: 12px;
+        background: $color--purple;
+    }
+
+    &--github-share {
+        background: $color--black;
+    }
+
     &--card-pixels {
         position: absolute;
         right: 0;
@@ -93,7 +102,7 @@
 
     &--calendar {
         fill: $color--pink;
-    } 
+    }
 
     &--error {
         width: 25px;
@@ -104,6 +113,17 @@
     &--search {
         .header--light-bg.search-open & {
             fill: $color--white;
+        }
+    }
+
+    &--status {
+        width: 65px;
+        height: 100%;
+        stroke: $color--mid-grey;
+        fill: transparent;
+
+        .is-active & {
+            stroke: $color--correct;
         }
     }
 }

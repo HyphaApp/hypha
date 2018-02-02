@@ -98,6 +98,22 @@
         }
     }
 
+    &--top-bottom-inner-space {
+        padding: 20px 0;
+
+        @include media-query(mob-landscape) {
+            padding: 2rem 0;
+        }
+    }
+
+    &--top-bottom-outer-space {
+        margin: 20px 0;
+
+        @include media-query(mob-landscape) {
+            margin: 2rem 0;
+        }
+    }
+
     &--light-grey-bg {
         background-color: $color--light-grey;
     }
@@ -109,9 +125,11 @@
     }
 
     &--bottom-space {
-        margin-bottom: 1rem;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
 
         @include media-query(tablet-portrait) {
+            padding-bottom: 3rem;
             margin-bottom: 3rem;
         }
     }
@@ -140,18 +158,36 @@
         border: 1px solid $color--tomato;
     }
 
-    &--bottom-space {
-        padding-bottom: 3rem;
-    }
-
-    &--person {
-        display: flex;
-        flex-direction: column;
+    &--top-inner-space {
         padding: 20px 0;
 
         @include media-query(tablet-portrait) {
-            flex-direction: row;
             padding: 3rem 0;
+        }
+    }
+
+    &--top-inner-space-small {
+        padding: 20px 0;
+    }
+
+    &--top-outer-space {
+        margin: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            margin: 3rem 0;
+        }
+    }
+
+    &--top-outer-space-small {
+        margin: 20px 0 0;
+    }
+
+    &--sidebar {
+        display: flex;
+        flex-direction: column;
+
+        @include media-query(tablet-portrait) {
+            flex-direction: row;
 
             > div:last-child {
                 flex-basis: 210px;
@@ -160,10 +196,26 @@
 
         > div:first-child {
             flex: 1;
+            margin-bottom: 20px;
 
             @include media-query(tablet-portrait) {
                 padding-right: 20px;
+                margin-bottom: 0;
             }
         }
+    }
+
+    &--status {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        @include media-query(mob-landscape) {
+            flex-direction: row;
+        }
+    }
+
+    &--project {
+        padding-top: 2rem;
     }
 }
