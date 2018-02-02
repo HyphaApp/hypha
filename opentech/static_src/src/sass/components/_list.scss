@@ -24,6 +24,15 @@
         }
     }
 
+    &--disc {
+        padding-left: 20px;
+        list-style: outside disc;
+
+        li {
+            margin-bottom: 1rem;
+        }
+    }
+
     &__label {
         padding: 10px;
         margin-right: 20px;
