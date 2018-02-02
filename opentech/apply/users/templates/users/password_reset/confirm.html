@@ -1,25 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
-
+{% block header_modifier %}header--light-bg{% endblock %}
+{% block page_title %}Set your new password{% endblock %}
 {% block content %}
-    <form method="post" novalidate>
+<div class="wrapper wrapper--small wrapper--bottom-space">
+    <form class="form form--login" method="post" novalidate>
         {% csrf_token %}
-        <h1>{% trans "Set your new password" %}</h1>
-
-        <ul class="fields">
-            <li>
-                <div class="field">
-                    {{ form.new_password1.label_tag }} {{ form.new_password1 }}
-                </div>
-            </li>
-            <li>
-                <div class="field">
-                    {{ form.new_password2.label_tag }} {{ form.new_password2 }}
-                </div>
-            </li>
-            <li class="submit">
-                <button type="submit">{% trans 'Reset password' %}</button>
-            </li>
-        </ul>
+        <p>{{ form.new_password1.label_tag }} {{ form.new_password1 }}</p>
+        <p>{{ form.new_password2.label_tag }} {{ form.new_password2 }}</p>
+        <button class="link link--button-secondary" type="submit">{% trans 'Reset password' %}</button>
     </form>
+</div>
 {% endblock %}
