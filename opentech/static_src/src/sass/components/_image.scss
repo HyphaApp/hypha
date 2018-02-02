@@ -12,6 +12,7 @@
 
         @include media-query(tablet-portrait) {
             display: block;
+            margin-bottom: 20px;
         }
     }
 }
