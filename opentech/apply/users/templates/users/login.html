@@ -13,7 +13,7 @@
     </ul>
     {% endif %}
 
-    <form class="form form--login" method="post">
+    <form class="form form--with-p-tags" method="post">
       {% csrf_token %}
       {{ form.as_p }}
       <p><a class="link link--small" href="{% url 'users:password_reset' %}">Forgot your password?</a></p>

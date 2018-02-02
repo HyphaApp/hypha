@@ -17,7 +17,7 @@
             </div>
         {% endif %}
 
-        <form class="form form--login" method="post">
+        <form class="form form--with-p-tags" method="post">
             {% csrf_token %}
             <p>{{ form.email.label_tag }}</p>
             <p>{{ form.email }}</p>

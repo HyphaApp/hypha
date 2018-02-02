@@ -4,7 +4,7 @@
 {% block page_title %}Set your new password{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small wrapper--bottom-space">
-    <form class="form form--login" method="post" novalidate>
+    <form class="form form--with-p-tags" method="post" novalidate>
         {% csrf_token %}
         <p>{{ form.new_password1.label_tag }} {{ form.new_password1 }}</p>
         <p>{{ form.new_password2.label_tag }} {{ form.new_password2 }}</p>
