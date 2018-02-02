@@ -86,8 +86,12 @@
         }
 
         .media-box--reverse & {
-            padding: 0 20px 0 0;
+            padding: 20px 0 0;
             color: $color--default;
+
+            @include media-query(mob-landscape) {
+                padding: 0 20px 0 0;
+            }
         }
 
         .media-box--reverse:hover & {
@@ -114,6 +118,7 @@
 
         .media-box--reverse & {
             @extend %h5;
+            display: block;
         }
 
         .media-box--reverse:hover & {
