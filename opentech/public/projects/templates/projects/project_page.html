@@ -74,4 +74,5 @@
     {% endif %}
 </div>
 
+{% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
 {% endblock content %}
