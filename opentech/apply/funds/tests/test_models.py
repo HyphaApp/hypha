@@ -8,7 +8,6 @@ from django.test import RequestFactory, TestCase
 
 from wagtail.wagtailcore.models import Site
 
-from opentech.apply.funds import blocks
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import SingleStage
 
