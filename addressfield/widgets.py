@@ -55,6 +55,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
                 value[self.field_names[i]] = widget_value
         return value
 
+
 class LocalityWidget(NestedMultiWidget):
     components = {
         'localityname': KeepAttrsTextInput,
@@ -73,8 +74,7 @@ class AddressWidget(NestedMultiWidget):
 
     class Media:
         js = (
-            'https://cdn.jsdelivr.net/npm/jquery.addressfield@1.1.0/dist/jquery.addressfield.js',
-            # 'jquery.addressfield.min.js',
+            'jquery.addressfield.min.js',
             'address_form.js',
             )
 
