@@ -200,7 +200,7 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
     def test_associated_if_logged_in(self):
-        user = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         self.assertEqual(self.User.objects.count(), 1)
 
@@ -213,7 +213,7 @@ class TestFormSubmission(TestCase):
 
     # This will need to be updated when we hide user information contextually
     def test_errors_if_blank_user_data_even_if_logged_in(self):
-        user = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         self.assertEqual(self.User.objects.count(), 1)
 

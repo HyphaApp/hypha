@@ -17,6 +17,20 @@ from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 from . import blocks
 
 
+__all__ = [
+    'ActionFactory',
+    'PhaseFactory',
+    'StageFactory',
+    'WorkflowFactory',
+    'FundTypeFactory',
+    'FundFormFactory',
+    'ApplicationFormFactory',
+    'RoundFactory',
+    'LabFactory',
+    'LabFormFactory',
+]
+
+
 class ListSubFactory(factory.SubFactory):
     def __init__(self, *args, count=0, **kwargs):
         self.count = count
