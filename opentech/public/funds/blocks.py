@@ -22,3 +22,7 @@ class ReviewersBlock(StaticBlock):
 class FundBlock(StoryBlock):
     project_list = ProjectsBlock()
     reviewer_list = ReviewersBlock()
+
+
+class LabBlock(StoryBlock):
+    reviewer_list = ReviewersBlock()
