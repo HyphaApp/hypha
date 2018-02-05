@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import RequestFactory, TestCase
 
@@ -15,6 +16,8 @@ from .factories import (
     ApplicationFormFactory,
     FundFormFactory,
     FundTypeFactory,
+    LabFactory,
+    LabFormFactory,
     RoundFactory,
 )
 
@@ -155,22 +158,28 @@ class TestFormSubmission(TestCase):
         fund = FundTypeFactory()
         FundFormFactory(fund=fund, form=form)
         self.round_page = RoundFactory(parent=fund)
+        self.lab_page = LabFactory()
+        LabFormFactory(lab=self.lab_page, form=form)
 
 
-    def submit_form(self, email=None, name=None, user=AnonymousUser()):
+    def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
         if email is None:
             email = self.email
         if name is None:
-            name= self.name
+            name = self.name
 
-        fields = self.round_page.get_form_fields()
+        page = page or self.round_page
+        fields = page.get_form_fields()
         data = {k: v for k, v in zip(fields, [email, name])}
 
         request = self.request_factory.post('', data)
         request.user = user
         request.site = self.site
 
-        return self.round_page.get_parent().serve(request)
+        try:
+            return page.get_parent().serve(request)
+        except AttributeError:
+            return page.serve(request)
 
     def test_can_submit_if_new(self):
         self.submit_form()
@@ -216,3 +225,15 @@ class TestFormSubmission(TestCase):
         self.assertEqual(self.User.objects.count(), 1)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
+
+    def test_email_sent_to_user_on_submission_fund(self):
+        self.submit_form()
+        # "Thank you for your submission" and "Account Creation"
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].to[0], self.email)
+
+    def test_email_sent_to_user_on_submission_lab(self):
+        self.submit_form(page=self.lab_page)
+        # "Thank you for your submission" and "Account Creation"
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].to[0], self.email)

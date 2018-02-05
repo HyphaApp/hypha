@@ -4,7 +4,14 @@ from django.forms import Form
 import factory
 import wagtail_factories
 
-from opentech.apply.funds.models import ApplicationForm, FundType, FundForm, Round
+from opentech.apply.funds.models import (
+    ApplicationForm,
+    FundType,
+    FundForm,
+    LabForm,
+    LabType,
+    Round,
+)
 from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
 from . import blocks
@@ -152,3 +159,22 @@ class RoundFactory(wagtail_factories.PageFactory):
     title = factory.Sequence('Round {}'.format)
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
+
+
+class LabFactory(wagtail_factories.PageFactory):
+    class Meta:
+        model = LabType
+
+    class Params:
+        workflow_stages = 1
+        number_forms = 1
+
+    # Will need to update how the stages are identified as Fund Page changes
+    workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+
+
+class LabFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = LabForm
+    lab = factory.SubFactory(LabFactory, parent=None)
+    form = factory.SubFactory('opentech.apply.tests.factories.ApplicationFormFactory')

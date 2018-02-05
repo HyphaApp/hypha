@@ -74,8 +74,6 @@ class SubmittableStreamForm(AbstractStreamForm):
                 defaults={'full_name': full_name}
             )
 
-        self.send_confirmation_email(form, cleaned_data)
-
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
             **self.get_submit_meta_data(user=user),
@@ -107,12 +105,18 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
-    def send_confirmation_email(self, form, cleaned_data):
-        email = cleaned_data.get('email')
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.send_mail(form)
+        return submission
+
+    def send_mail(self, form):
+        data = form.cleaned_data
+        email = data.get('email')
         context = {
-            'name': cleaned_data.get('full_name'),
+            'name': data.get('full_name'),
             'email': email,
-            'project_name': cleaned_data.get('title'),
+            'project_name': data.get('title'),
             'extra_text': self.confirmation_text_extra,
             'fund_type': self.title,
         }
@@ -224,9 +228,10 @@ class Round(SubmittableStreamForm):
             **kwargs,
         )
 
-    def send_confirmation_email(self, form, cleaned_data):
-        # Parent holds the configuration about emails
-        self.get_parent().specific.send_confirmation_email(form, cleaned_data)
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.get_parent().specific.send_mail(form)
+        return submission
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
