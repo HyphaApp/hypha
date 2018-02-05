@@ -142,6 +142,9 @@ class TestFormSubmission(TestCase):
         self.site = Site.objects.first()
         self.User = get_user_model()
 
+        self.email = 'test@test.com'
+        self.name = 'My Name'
+
         self.request_factory = RequestFactory()
         # set up application form with minimal requirement for creating user
         application_form = {
@@ -153,7 +156,13 @@ class TestFormSubmission(TestCase):
         FundFormFactory(fund=fund, form=form)
         self.round_page = RoundFactory(parent=fund)
 
-    def submit_form(self, email='', name='', user=AnonymousUser()):
+
+    def submit_form(self, email=None, name=None, user=AnonymousUser()):
+        if email is None:
+            email = self.email
+        if name is None:
+            name= self.name
+
         fields = self.round_page.get_form_fields()
         data = {k: v for k, v in zip(fields, [email, name])}
 
@@ -164,38 +173,31 @@ class TestFormSubmission(TestCase):
         return self.round_page.get_parent().serve(request)
 
     def test_can_submit_if_new(self):
-        email = 'test@test.com'
-        full_name = 'My Name'
-        self.submit_form(email, full_name)
+        self.submit_form()
 
         self.assertEqual(self.User.objects.count(), 1)
-        new_user = self.User.objects.get(email=email)
-        self.assertEqual(new_user.full_name, full_name)
+        new_user = self.User.objects.get(email=self.email)
+        self.assertEqual(new_user.full_name, self.name)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, new_user)
 
     def test_associated_if_not_new(self):
-        email = 'test@test.com'
-        full_name = 'My Name'
-
-        self.submit_form(email, full_name)
-        self.submit_form(email, full_name)
+        self.submit_form()
+        self.submit_form()
 
         self.assertEqual(self.User.objects.count(), 1)
 
-        user = self.User.objects.get(email=email)
+        user = self.User.objects.get(email=self.email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
     def test_associated_if_logged_in(self):
-        email = 'test@test.com'
-        full_name = 'My Name'
-        user = self.User.objects.create(email=email, full_name=full_name)
+        user = self.User.objects.create(email=self.email, full_name=self.name)
 
         self.assertEqual(self.User.objects.count(), 1)
 
-        self.submit_form(email=email, name=full_name, user=user)
+        self.submit_form(email=self.email, name=self.name, user=user)
 
         self.assertEqual(self.User.objects.count(), 1)
 
@@ -204,9 +206,7 @@ class TestFormSubmission(TestCase):
 
     # This will need to be updated when we hide user information contextually
     def test_errors_if_blank_user_data_even_if_logged_in(self):
-        email = 'test@test.com'
-        full_name = 'My Name'
-        user = self.User.objects.create(email=email, full_name=full_name)
+        user = self.User.objects.create(email=self.email, full_name=self.name)
 
         self.assertEqual(self.User.objects.count(), 1)
 
