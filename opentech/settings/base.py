@@ -193,9 +193,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'users.User'
-WAGTAIL_USER_ADD_FORM = 'opentech.apply.users.forms.CustomUserCreationForm'
-WAGTAIL_USER_EDIT_FORM = 'opentech.apply.users.forms.CustomUserEditForm'
-WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
+
 
 # TODO populate me with the dashboard URL when ready
 LOGIN_URL = 'users:login'

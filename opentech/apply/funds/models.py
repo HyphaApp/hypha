@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
@@ -344,7 +345,7 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions', null=True)
-    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     objects = JSONOrderable.as_manager()
 

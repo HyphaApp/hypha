@@ -161,7 +161,6 @@ class TestFormSubmission(TestCase):
         self.lab_page = LabFactory()
         LabFormFactory(lab=self.lab_page, form=form)
 
-
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
         if email is None:
             email = self.email
@@ -186,7 +185,7 @@ class TestFormSubmission(TestCase):
 
         self.assertEqual(self.User.objects.count(), 1)
         new_user = self.User.objects.get(email=self.email)
-        self.assertEqual(new_user.full_name, self.name)
+        self.assertEqual(new_user.get_full_name(), self.name)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, new_user)
@@ -202,7 +201,7 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
     def test_associated_if_logged_in(self):
-        user = self.User.objects.create(email=self.email, full_name=self.name)
+        user = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         self.assertEqual(self.User.objects.count(), 1)
 
@@ -215,7 +214,7 @@ class TestFormSubmission(TestCase):
 
     # This will need to be updated when we hide user information contextually
     def test_errors_if_blank_user_data_even_if_logged_in(self):
-        user = self.User.objects.create(email=self.email, full_name=self.name)
+        user = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         self.assertEqual(self.User.objects.count(), 1)
 
