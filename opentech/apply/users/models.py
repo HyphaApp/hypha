@@ -12,15 +12,18 @@ def convert_full_name_to_parts(full_name):
 
 class UserManager(BaseUserManager):
     def get_or_create(self, defaults, **kwargs):
-        defaults.update(is_active=False)
-
+        # Allow passing of 'full_name' but replace it with actual database fields
         first_name, last_name = convert_full_name_to_parts(defaults.pop('full_name', ''))
         defaults.update(first_name=first_name, last_name=last_name)
 
-        user, created = super().get_or_create(defaults=defaults, **kwargs)
+        return super().get_or_create(defaults=defaults, **kwargs)
+
+    def get_or_create_and_notify(self, defaults=dict(), **kwargs):
+        defaults.update(is_active=False)
+        user, created = self.get_or_create(defaults=defaults, **kwargs)
         if created:
             send_activation_email(user)
-        return user
+        return user, created
 
 
 class User(AbstractUser):
