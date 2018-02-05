@@ -1,11 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 from .utils import send_activation_email
 
 
+class UserManager(BaseUserManager):
+    def get_or_create(self, defaults, **kwargs):
+        defaults.update(is_active=False)
+        user, created = super().get_or_create(defaults=defaults, **kwargs)
+        if created:
+            send_activation_email(user)
+        return user
+
+
 class User(AbstractUser):
     full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
+
+    objects = UserManager()
 
     class Meta:
         unique_together = ('email',)
@@ -18,15 +29,3 @@ class User(AbstractUser):
             return self.full_name.strip()
 
         return super().get_full_name()
-
-    def get_user_by_email(self, email):
-        email_field = getattr(self, 'EMAIL_FIELD', 'email')
-        return self.objects.filter(**{email_field + '__iexact': email})
-
-    @classmethod
-    def get_or_create_new(cls, defaults, **kwargs):
-        defaults.update(is_active=False)
-        user, created = cls.objects.get_or_create(defaults=defaults, **kwargs)
-        if created:
-            send_activation_email(user)
-        return user

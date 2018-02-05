@@ -69,7 +69,7 @@ class SubmittableStreamForm(AbstractStreamForm):
             User = get_user_model()
             email = cleaned_data.get('email')
             full_name = cleaned_data.get('full_name')
-            user = User.get_or_create_new(
+            user = User.objects.get_or_create(
                 email=email,
                 defaults={'full_name': full_name}
             )
