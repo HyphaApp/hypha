@@ -19,7 +19,7 @@ from opentech.public.utils.models import (
     RelatedPage,
 )
 
-from .blocks import FundBlock
+from .blocks import FundBlock, LabBlock
 
 
 class FundPageRelatedPage(RelatedPage):
@@ -95,7 +95,7 @@ class LabPage(BasePage):
     )
     lab_link = models.URLField(blank=True, verbose_name='External link')
     link_text = models.CharField(max_length=255, help_text='Text to display on the button')
-    body = StreamField(FundBlock())
+    body = StreamField(LabBlock())
 
     content_panels = BasePage.content_panels + [
         ImageChooserPanel('icon'),
