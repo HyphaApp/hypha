@@ -5,6 +5,13 @@ from django.urls import reverse
 
 
 class TestOAuthAccess(TestCase):
+    def login(self):
+        email = 'test@email.com'
+        password = 'password'
+        user = get_user_model().objects.create_user(email=email, password=password)
+        logged_in = self.client.login(email=email, password=password)
+        self.assertTrue(logged_in)
+        return user
 
     def test_oauth_page_requires_login(self):
         """
@@ -48,11 +55,3 @@ class TestOAuthAccess(TestCase):
         self.assertNotContains(response, 'Disconnect Google OAuth')
 
         self.assertTemplateUsed(response, 'users/oauth.html')
-
-    def login(self):
-        user = get_user_model().objects.create_user(username='test', email='test@email.com', password='password')
-        self.assertTrue(
-            self.client.login(username='test', password='password')
-        )
-
-        return user
