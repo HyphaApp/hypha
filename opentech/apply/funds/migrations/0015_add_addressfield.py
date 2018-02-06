@@ -12,7 +12,7 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0011_update_encoder_add_round_to_submission'),
+        ('funds', '00014_add_meta_names'),
     ]
 
     operations = [
