@@ -17,9 +17,8 @@
         </form>
 
         {% if news %}
-            <ul role="list">
+            <div class="wrapper wrapper--listings wrapper--top-space">
                 {% for n in news %}
-                    <li>
                         <a href="{% pageurl n %}">
                             {% if n.listing_image %}
                                 {% image n.listing_image fill-450x300 %}
@@ -34,9 +33,8 @@
                                 {% endif %}
                             </div>
                         </a>
-                    </li>
                 {% endfor %}
-            </ul>
+            </div>
             {% include "includes/pagination.html" with paginator_page=news %}
         {% else %}
             {# no items #}
