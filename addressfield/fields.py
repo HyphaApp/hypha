@@ -29,17 +29,18 @@ def flatten_data(data):
 
 class AddressField(forms.CharField):
     widget = AddressWidget
+    data = VALIDATION_DATA
 
     def clean(self, value, **kwargs):
         country = value['country']
         try:
-            country_data = VALIDATION_DATA[country]
+            country_data = self.data[country]
         except KeyError:
             raise ValidationError('Invalid country selected')
 
         fields = flatten_data(country_data['fields'])
 
-        missing_fields = set(country_data['required']) - set(value.keys())
+        missing_fields = set(country_data['required']) - set(field for field, value in value.items() if value)
         if missing_fields:
             missing_field_name = [fields[field]['label'] for field in missing_fields]
             raise ValidationError('Please provide data for: {}'.format(', '.join(missing_field_name)))
