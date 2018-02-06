@@ -1,0 +1,23 @@
+<div class="wrapper--top-bottom-outer-space">
+    <div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--top-bottom-inner-space">
+        <h3 class="heading heading--center heading--no-margin">Current project status</h3>
+        <div class="wrapper wrapper--large wrapper--status">
+            <div class="list list--status {% if page.status == 'idea' %}is-active{% endif %}">
+                <svg class="icon icon--status"><use xlink:href="#bulb"></use></svg>
+                <h5>Just an idea (Pre-alpha)</h5>
+            </div>
+            <div class="list list--status {% if page.status == 'exists' %}is-active{% endif %}">
+                <svg class="icon icon--status"><use xlink:href="#tick"></use></svg>
+                <h5>It exists! (Alpha/Beta)</h5>
+            </div>
+            <div class="list list--status {% if page.status == 'release' %}is-active{% endif %}">
+                <svg class="icon icon--status"><use xlink:href="#flags"></use></svg>
+                <h5>It's basically done (Release)</h5>
+            </div>
+            <div class="list list--status {% if page.status == 'production' %}is-active{% endif %}">
+                <svg class="icon icon--status"><use xlink:href="#tap-phone"></use></svg>
+                <h5>People use it (Production)</h5>
+            </div>
+        </div>
+    </div>
+</div>

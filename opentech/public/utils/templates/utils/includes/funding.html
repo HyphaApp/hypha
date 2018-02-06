@@ -1,6 +1,6 @@
 {% load wagtailcore_tags %}
 {% if page.total_funding %}
-    <div class="fund-box">
+    <div class="fund-box {% if class %}{{class}}{% endif %}">
         <h4>Funding to date</h4>
         {% for funding in page.funding.all %}
             <div class="fund-box__row">

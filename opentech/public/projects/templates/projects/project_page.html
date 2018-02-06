@@ -1,57 +1,79 @@
 {% extends "base.html" %}
-
+{% block page_title %}Projects{% endblock %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
-
 {% block content %}
-    <div class="intro">
-        <div class="container">
-            {% if page.icon %}
-                {% image page.icon original %}
-            {% endif %}
-            <h1>{{ page.title }}</h1>
+<div class="wrapper wrapper--small wrapper--top-inner-space">
+    <div class="media-box media-box--reverse">
+        <h4 class="media-box__title media-box__title--mobile">{{ page.title }}</h4>
+        {% if page.icon %}
+            <div class="media-box__images">
+                {% image page.icon max-210x235 as page_icon %}
+                <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+            </div>
+        {% else %}
+            <div class="media-box__default-image">
+                <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+            </div>
+        {% endif %}
+
+        <div class="media-box__content">
+            <h4 class="media-box__title media-box__title--desktop">{{ page.title }}</h4>
             {% if page.introduction %}
-                <p>{{ page.introduction }}</p>
+                <h5 class="media-box__teaser">{{ page.introduction }}</h5>
             {% endif %}
-
-            {{ page.body }}
-
-            {% with contact_details=page.contact_details.all %}
-                {% if contact_details %}
-                    {% for contact in contact_details %}
-                <p><a href="{{ contact.url }}">
-                    <span class="icon {{ contact.service }}">{{ contact.service_name }}
-                        </a></p>
-                    {% endfor %}
-
-                {% endif %}
-            {% endwith %}
-
         </div>
     </div>
-    {% include "utils/includes/funding.html" %}
 
-    {% regroup page.category_options by category as categories %}
-    {% for category, options in categories %}
-    <ul>
-        <li><h3>{{ category.name }}</h3>
-            <ul>
-                {% for option in options %}
-                <li>{{ option.value }}</li>
-                {% endfor %}
-            </ul>
-        </li>
-    </ul>
-    {% endfor %}
+    <div class="wrapper wrapper--sidebar wrapper--top-inner-space-small">
+        <div>
+            {% include "utils/includes/funding.html" %}
+        </div>
+
+        <div>
+            {% with contact_details=page.contact_details.all %}
+                {% if contact_details %}
+                    <h5>Get the word out</h5>
+                    {% for contact in contact_details %}
+                        <a aria-label="Social media link" href="{{ contact.url }}">
+                            <svg class="icon icon--social-share icon--{{contact.service}}-share"><use xlink:href="#{{contact.service}}"></use></svg>
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    {% include "projects/includes/project_status.html" %}
+
+    {{ page.body }}
+
+    {% if page.category_options.all %}
+        <div class="grid grid--two grid--small-gap">
+            {% regroup page.category_options by category as categories %}
+            {% for category, options in categories %}
+                <div>
+                    <h4>{{ category.name }}</h4>
+                    <ul class="list list--disc">
+                        {% for option in options %}
+                        <li>{{ option.value }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     {% if page.news_mentions.all %}
-        <h4 class="heading">We wrote about it</h4>
-        <ul class="list">
+        <h4>We wrote about it</h4>
+        <ul class="list list--disc">
             {% for news in page.news_mentions.all %}
-            <li><a href="{% pageurl news.source_page %}">{{ news.source_page }}</a></li>
+                <li><a href="{% pageurl news.source_page %}">{{ news.source_page }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
+</div>
 
-
+{% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
 {% endblock content %}
