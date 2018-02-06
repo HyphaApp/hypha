@@ -1,0 +1,31 @@
+.listing {
+    $root: &;
+    padding: 30px;
+    margin-bottom: 20px;
+    background: $color--white;
+    transition: box-shadow $transition;
+
+    &:hover {
+        box-shadow: 0 2px 15px 0 $color--black-10;
+    }
+
+    &__title {
+        margin-bottom: 5px;
+        line-height: 1;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--dark-blue;
+        }
+    }
+
+    &__teaser {
+        font-weight: $weight--normal;
+        color: $color--default;
+    }
+
+    &__meta {
+        font-size: 15px;
+        color: $color--mid-grey;
+    }
+}
