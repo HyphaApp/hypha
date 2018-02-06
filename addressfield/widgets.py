@@ -20,18 +20,27 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
     pass
 
 
+def classify(field):
+    return field.replace('_', '')
+
+
+def display(field):
+    return field.replace('_', ' ').title()
+
+
 class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
     template_name = 'addressfield/widgets/nested_with_label.html'
 
     def __init__(self, *args, **kwargs):
         widgets = [
-            widget(attrs={'class': field, 'required': False}) for field, widget in self.components.items()
+            widget(attrs={'class': classify(field), 'required': False, 'display': display(field)})
+            for field, widget in self.components.items()
         ]
         super().__init__(widgets, *args, **kwargs)
 
     @property
     def field_names(self):
-        return list(self.components.keys())
+        return [classify(field) for field in self.components.keys()]
 
     def decompress(self, value):
         if value:
@@ -58,9 +67,9 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
 
 class LocalityWidget(NestedMultiWidget):
     components = {
-        'localityname': KeepAttrsTextInput,
-        'administrativearea': KeepAttrsTextInput,
-        'postalcode': KeepAttrsTextInput,
+        'locality_name': KeepAttrsTextInput,
+        'administrative_area': KeepAttrsTextInput,
+        'postal_code': KeepAttrsTextInput,
     }
 
 
