@@ -5,17 +5,51 @@ from django.utils.translation import gettext_lazy as _
 from .utils import send_activation_email
 
 
-def convert_full_name_to_parts(full_name):
+def convert_full_name_to_parts(defaults):
+    full_name = defaults.pop('full_name', ' ')
     first_name, last_name = full_name.split(' ', 1)
-    return first_name, last_name
+    if first_name:
+        defaults.update(first_name=first_name)
+    if last_name:
+        defaults.update(last_name=last_name)
+    return defaults
 
 
 class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        extra_fields = convert_full_name_to_parts(extra_fields)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self._create_user(email, password, **extra_fields)
+
     def get_or_create(self, defaults, **kwargs):
         # Allow passing of 'full_name' but replace it with actual database fields
-        first_name, last_name = convert_full_name_to_parts(defaults.pop('full_name', ''))
-        defaults.update(first_name=first_name, last_name=last_name)
-
+        defaults = convert_full_name_to_parts(defaults)
         return super().get_or_create(defaults=defaults, **kwargs)
 
     def get_or_create_and_notify(self, defaults=dict(), **kwargs):
