@@ -3,8 +3,6 @@
 {% block body_class %}light-grey-bg{% endblock %}
 
 {% block content %}
-    <section class="section section--main">
-        <h1>{{ page.title }}</h1>
 <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
 
         {% if news %}
@@ -32,8 +30,6 @@
         {% else %}
             {# no items #}
         {% endif %}
-    </section>
-    <aside class="sidebar sidebar--filters">
         <form method="GET">
             <select name="news_type">
                 <option value="">All</option>
@@ -42,6 +38,5 @@
                 {% endfor %}
             </select>
         </form>
-    </aside>
 </div>
 {% endblock %}
