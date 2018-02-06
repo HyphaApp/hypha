@@ -55,6 +55,24 @@
         oldValidate.call(this, field, config);
     };
 
+    var selectWrap = '<div class="form__select"></div>';
+
+    // Hook into the select builder to update the display
+    var oldConvertToSelect = $.fn.addressfield.convertToSelect;
+    $.fn.addressfield.convertToSelect = function() {
+        var $select = oldConvertToSelect.call(this);
+        $select.wrap(selectWrap);
+        return $select;
+    };
+
+    // Hook into the text builder to update the display
+    var oldConvertToText = $.fn.addressfield.convertToText;
+    $.fn.addressfield.convertToText = function() {
+        var $text = oldConvertToText.call(this);
+        $text.unwrap(selectWrap);
+        return $text;
+    };
+
     $(document).ready(function formReady() {
         $('.form div.address').addressfield({
             json: '/static/addressfield.min.json',
