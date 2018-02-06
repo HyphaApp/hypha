@@ -65,4 +65,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     REQUIRED_FIELDS = []
 
+    # Remove the username field which is no longer used
+    username = None
+
     objects = UserManager()
