@@ -199,6 +199,18 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
+    def test_associated_if_another_user_exists(self):
+        self.submit_form()
+        # Someone else submits a form
+        self.submit_form(email='another@email.com')
+
+        self.assertEqual(self.User.objects.count(), 2)
+
+        first_user, second_user = self.User.objects.all()
+        self.assertEqual(ApplicationSubmission.objects.count(), 2)
+        self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
+        self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
+
     def test_associated_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
