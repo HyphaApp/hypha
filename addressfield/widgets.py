@@ -85,7 +85,7 @@ class AddressWidget(NestedMultiWidget):
         js = (
             'jquery.addressfield.min.js',
             'address_form.js',
-            )
+        )
 
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get('attrs', dict())
