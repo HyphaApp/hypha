@@ -1,6 +1,8 @@
-
 {% load wagtailcore_tags wagtailimages_tags %}
 <a class="listing {% if person.photo %}listing--with-image{% endif %}" href="{% pageurl person %}">
+    {% if person.photo %}
+        {% image person.photo fill-180x180 class="listing__image" %}
+    {% endif %}
     {% if person.listing_summary or person.introduction %}
         <p>{{ person.listing_summary|default:person.introduction }}</p>
     {% endif %}
