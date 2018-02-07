@@ -3,6 +3,9 @@
     {% if person.photo %}
         {% image person.photo fill-180x180 class="listing__image" %}
     {% endif %}
+    {% for type in person.person_types.all %}
+        <h6 class="listing__category">{{ type }}</h6>
+    {% endfor %}
     {% if person.listing_summary or person.introduction %}
         <p>{{ person.listing_summary|default:person.introduction }}</p>
     {% endif %}
