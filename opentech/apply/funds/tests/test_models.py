@@ -156,6 +156,12 @@ class TestRoundModelWorkflowAndForms(TestCase):
         for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
             self.assertEqual(round_form, fund_form)
 
+    def test_can_change_round_form_not_fund(self):
+        self.round.save()
+        # We are no longer creating a round
+        del self.round.parent_page
+        form = self.round.forms.first()
+
 
 class TestFormSubmission(TestCase):
     def setUp(self):
