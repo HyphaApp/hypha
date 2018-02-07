@@ -5,6 +5,19 @@
 <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
     <div class="wrapper wrapper--listings">
 
+        {% if subpages.object_list.exists %}
+            {% for subpage in subpages.object_list.specific %}
+
+                <a class="listing" href="{% pageurl subpage %}">
+                </a>
+
+            {% endfor %}
+
+            {% include "includes/pagination.html" with paginator_page=subpages %}
+
+        {% else %}
+            {# no items on this page #}
+        {% endif %}
     </div>
 </div>
 
