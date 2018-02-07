@@ -38,7 +38,7 @@
 
     &__meta {
         font-size: 15px;
-        color: $color--mid-grey;
+        color: darken($color--mid-grey, 20%);
     }
 
     &__image {
