@@ -14,6 +14,7 @@ from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
     ApplicationFormFactory,
+    CustomFormFieldsFactory,
     FundFormFactory,
     FundTypeFactory,
     LabFactory,
@@ -160,7 +161,13 @@ class TestRoundModelWorkflowAndForms(TestCase):
         self.round.save()
         # We are no longer creating a round
         del self.round.parent_page
-        form = self.round.forms.first()
+        form = self.round.forms.first().form
+        # Not ideal, would prefer better way to create the stream values
+        new_field = CustomFormFieldsFactory.generate(None, {'0__email__': ''})
+        form.form_fields = new_field
+        form.save()
+        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+            self.assertNotEqual(round_form, fund_form)
 
 
 class TestFormSubmission(TestCase):
