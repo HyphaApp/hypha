@@ -3,14 +3,7 @@
 {% block body_class %}light-grey-bg{% endblock %}
 {% block content %}
 
-    <div class="intro">
-        <div class="container">
-            <h1>{{ page.title }}</h1>
-        </div>
-    </div>
 
-    <section class="main-body">
-        <div class="container">
             {% if people.paginator.count %}
                 {% for person in people %}
                     {% include "people/includes/person_listing.html" with person=person %}
@@ -20,7 +13,5 @@
             {% else %}
                 {# no results #}
             {% endif %}
-        </div>
-    </section>
 
 {% endblock %}
