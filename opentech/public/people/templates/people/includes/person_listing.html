@@ -6,7 +6,8 @@
     {% for type in person.person_types.all %}
         <h6 class="listing__category">{{ type }}</h6>
     {% endfor %}
+    <h4 class="listing__title">{{ person.first_name }} {{ person.last_name }}</h4>
     {% if person.listing_summary or person.introduction %}
-        <p>{{ person.listing_summary|default:person.introduction }}</p>
+        <h6 class="listing__teaser">{{ person.listing_summary|default:person.introduction }}</h6>
     {% endif %}
 </a>
