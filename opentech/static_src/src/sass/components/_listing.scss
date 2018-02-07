@@ -49,6 +49,21 @@
             top: 0;
             right: 0;
         }
+
+        &--default {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            height: 180px;
+            background-color: $color--light-blue;
+
+            > svg {
+                width: 80px;
+                height: 70px;
+                fill: $color--white;
+            }
+        }
     }
 
     &__category {
