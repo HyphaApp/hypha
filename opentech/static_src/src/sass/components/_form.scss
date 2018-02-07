@@ -91,6 +91,10 @@
                 background-color: white;
             }
         }
+
+        &--narrow {
+            max-width: 280px;
+        }
     }
 
     select,
