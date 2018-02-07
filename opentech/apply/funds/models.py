@@ -72,6 +72,7 @@ class SubmittableStreamForm(AbstractStreamForm):
             full_name = cleaned_data.get('full_name')
             user, _ = User.objects.get_or_create_and_notify(
                 email=email,
+                site=self.get_site(),
                 defaults={'full_name': full_name}
             )
 

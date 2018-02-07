@@ -155,6 +155,10 @@ class TestFormSubmission(TestCase):
         }
         form = ApplicationFormFactory(**application_form)
         fund = FundTypeFactory()
+
+        self.site.root_page = fund
+        self.site.save()
+
         FundFormFactory(fund=fund, form=form)
         self.round_page = RoundFactory(parent=fund)
         self.lab_page = LabFactory()
