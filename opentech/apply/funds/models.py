@@ -222,6 +222,12 @@ class Round(SubmittableStreamForm):
         ], heading="Dates")
     ]
 
+    def save(self, *args, **kwargs):
+        if hasattr(self, 'parent_page'):
+            # We attached the parent page as part of the before_create_hook
+            self.workflow = self.parent_page.workflow
+        super().save(*args, **kwargs)
+
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self.get_parent(),
