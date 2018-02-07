@@ -68,7 +68,7 @@ class TestFundModel(TestCase):
         self.assertEqual(self.fund.open_round, None)
 
 
-class TestRoundModel(TestCase):
+class TestRoundModelDates(TestCase):
     def setUp(self):
         self.fund = FundTypeFactory(parent=None)
 
@@ -137,6 +137,18 @@ class TestRoundModel(TestCase):
 
         with self.assertRaises(ValidationError):
             new_round.clean()
+
+
+class TestRoundModelWorkflowAndForms(TestCase):
+    def setUp(self):
+        self.fund = FundTypeFactory(parent=None)
+        # we only add parent_page on create, so if the object exists already this should not affect testing
+        self.round = RoundFactory()
+        self.round.parent_page = self.fund
+
+    def test_workflow_is_copied_to_new_rounds(self):
+        self.round.save()
+        self.assertEqual(self.round.workflow, self.fund.workflow)
 
 
 class TestFormSubmission(TestCase):
