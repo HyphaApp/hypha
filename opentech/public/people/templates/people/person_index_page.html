@@ -5,16 +5,15 @@
 <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
     <div class="wrapper wrapper--listings">
 
+        {% if people.paginator.count %}
+            {% for person in people %}
+                {% include "people/includes/person_listing.html" with person=person %}
+            {% endfor %}
 
-            {% if people.paginator.count %}
-                {% for person in people %}
-                    {% include "people/includes/person_listing.html" with person=person %}
-                {% endfor %}
-
-                {% include "includes/pagination.html" with paginator_page=people %}
-            {% else %}
-                {# no results #}
-            {% endif %}
+            {% include "includes/pagination.html" with paginator_page=people %}
+        {% else %}
+            {# no results #}
+        {% endif %}
     </div>
 </div>
 
