@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -7,6 +9,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -14,14 +17,18 @@ from django.utils.translation import ugettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
-    InlinePanel,
     FieldRowPanel,
+    InlinePanel,
     MultiFieldPanel,
+    ObjectList,
     StreamFieldPanel,
+    TabbedInterface
 )
+
+from wagtail.wagtailadmin.utils import send_mail
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailforms.models import AbstractFormSubmission
+from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
@@ -55,16 +62,29 @@ class SubmittableStreamForm(AbstractStreamForm):
                 response = cleaned_data.pop(field.id)
                 cleaned_data[field.block.name] = response
 
+        if form.user.is_authenticated():
+            user = form.user
+            cleaned_data['email'] = user.email
+            cleaned_data['full_name'] = user.get_full_name()
+        else:
+            User = get_user_model()
+            email = cleaned_data.get('email')
+            full_name = cleaned_data.get('full_name')
+            user, _ = User.objects.get_or_create_and_notify(
+                email=email,
+                defaults={'full_name': full_name}
+            )
+
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
-            **self.get_submit_meta_data(),
+            **self.get_submit_meta_data(user=user),
         )
 
     def get_submit_meta_data(self, **kwargs):
         return kwargs
 
 
-class DefinableWorkflowStreamForm(AbstractStreamForm):
+class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     class Meta:
         abstract = True
 
@@ -76,6 +96,7 @@ class DefinableWorkflowStreamForm(AbstractStreamForm):
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
@@ -85,10 +106,50 @@ class DefinableWorkflowStreamForm(AbstractStreamForm):
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
 
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.send_mail(form)
+        return submission
+
+    def send_mail(self, form):
+        data = form.cleaned_data
+        email = data.get('email')
+        context = {
+            'name': data.get('full_name'),
+            'email': email,
+            'project_name': data.get('title'),
+            'extra_text': self.confirmation_text_extra,
+            'fund_type': self.title,
+        }
+
+        subject = self.subject if self.subject else 'Thank You for Your submission to Open Technology Fund'
+        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
+
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
         InlinePanel('forms', label="Forms"),
     ]
+
+    email_confirmation_panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel('from_address', classname="col6"),
+                    FieldPanel('to_address', classname="col6"),
+                ]),
+                FieldPanel('subject'),
+                FieldPanel('confirmation_text_extra'),
+            ],
+            heading="Confirmation email",
+        )
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(email_confirmation_panels, heading='Confirmation email'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+    ])
 
 
 class FundType(DefinableWorkflowStreamForm):
@@ -168,6 +229,11 @@ class Round(SubmittableStreamForm):
             **kwargs,
         )
 
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.get_parent().specific.send_mail(form)
+        return submission
+
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
@@ -235,6 +301,10 @@ class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: igno
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.specific.forms.all()[0].fields
+
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self,
@@ -275,6 +345,7 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions', null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     objects = JSONOrderable.as_manager()
 
