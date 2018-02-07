@@ -2,6 +2,8 @@
 {% load wagtailcore_tags %}
 {% block body_class %}light-grey-bg{% endblock %}
 {% block content %}
+<div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
+    <div class="wrapper wrapper--listings">
 
 
             {% if people.paginator.count %}
@@ -13,5 +15,7 @@
             {% else %}
                 {# no results #}
             {% endif %}
+    </div>
+</div>
 
 {% endblock %}
