@@ -1,9 +1,15 @@
 .listing {
     $root: &;
-    padding: 30px;
+    padding: 20px;
     margin-bottom: 20px;
     background: $color--white;
     transition: box-shadow $transition;
+
+    @include media-query(tablet-portrait) {
+        position: relative;
+        height: 180px;
+        padding: 30px;
+    }
 
     &:hover {
         box-shadow: 0 2px 15px 0 $color--black-10;
