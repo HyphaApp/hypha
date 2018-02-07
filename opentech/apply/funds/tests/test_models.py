@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import itertools
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
@@ -149,6 +150,11 @@ class TestRoundModelWorkflowAndForms(TestCase):
     def test_workflow_is_copied_to_new_rounds(self):
         self.round.save()
         self.assertEqual(self.round.workflow, self.fund.workflow)
+
+    def test_forms_are_copied_to_new_rounds(self):
+        self.round.save()
+        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+            self.assertEqual(round_form, fund_form)
 
 
 class TestFormSubmission(TestCase):
