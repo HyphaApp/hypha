@@ -9,6 +9,13 @@
             {% for subpage in subpages.object_list.specific %}
 
                 <a class="listing" href="{% pageurl subpage %}">
+                    {% if subpage.icon %}
+                        {% image subpage.icon fill-180x180 class="listing__image" %}
+                    {% else %}
+                        <div class="listing__image listing__image--default">
+                            <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+                        </div>
+                    {% endif %}
                 </a>
 
             {% endfor %}
