@@ -72,6 +72,7 @@ class SubmittableStreamForm(AbstractStreamForm):
             full_name = cleaned_data.get('full_name')
             user, _ = User.objects.get_or_create_and_notify(
                 email=email,
+                site=self.get_site(),
                 defaults={'full_name': full_name}
             )
 
@@ -122,7 +123,7 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
             'fund_type': self.title,
         }
 
-        subject = self.subject if self.subject else 'Thank You for Your submission to Open Technology Fund'
+        subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
         send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
 
     content_panels = AbstractStreamForm.content_panels + [

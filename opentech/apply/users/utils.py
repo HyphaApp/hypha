@@ -20,7 +20,7 @@ def can_use_oauth_check(user):
     return False
 
 
-def send_activation_email(user):
+def send_activation_email(user, site):
     """
     Send the activation email. The activation key is the username,
     signed using TimestampSigner.
@@ -33,6 +33,8 @@ def send_activation_email(user):
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': token_generator.make_token(user),
     }
+    if site:
+        context.update(site=site)
 
     subject = render_to_string('users/activation/email_subject.txt', context)
     # Force subject to a single line to avoid header-injection issues.

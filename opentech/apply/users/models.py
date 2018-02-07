@@ -52,11 +52,11 @@ class UserManager(BaseUserManager):
         defaults = convert_full_name_to_parts(defaults)
         return super().get_or_create(defaults=defaults, **kwargs)
 
-    def get_or_create_and_notify(self, defaults=dict(), **kwargs):
+    def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
         defaults.update(is_active=False)
         user, created = self.get_or_create(defaults=defaults, **kwargs)
         if created:
-            send_activation_email(user)
+            send_activation_email(user, site)
         return user, created
 
 
