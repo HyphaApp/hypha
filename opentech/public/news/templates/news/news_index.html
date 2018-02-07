@@ -10,7 +10,7 @@
                 <select name="news_type">
                     <option value="">All</option>
                     {% for news_type in news_types %}
-                    <option value="{{ news_type.0 }}" {% if request.GET.news_type == news_type.0|slugify %}selected="selected"{% endif %}>{{ news_type.1 }}</option>
+                        <option value="{{ news_type.0 }}" {% if request.GET.news_type == news_type.0|slugify %}selected="selected"{% endif %}>{{ news_type.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
