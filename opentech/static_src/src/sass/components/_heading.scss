@@ -42,4 +42,9 @@
     &--center {
         text-align: center;
     }
+
+    &--listings-introduction {
+        margin: 1rem 0;
+        font-weight: $weight--normal;
+    }
 }
