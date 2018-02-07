@@ -1,6 +1,7 @@
 <article class="person">
     <h2><a href="{% pageurl person %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
 
+{% load wagtailcore_tags wagtailimages_tags %}
     {% if person.listing_summary or person.introduction %}
         <p>{{ person.listing_summary|default:person.introduction }}</p>
     {% endif %}
