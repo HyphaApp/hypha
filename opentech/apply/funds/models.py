@@ -180,13 +180,29 @@ class FundType(DefinableWorkflowStreamForm):
         return self.open_round.serve(request)
 
 
-class FundForm(Orderable):
+class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm')
-    fund = ParentalKey('FundType', related_name='forms')
 
     @property
     def fields(self):
         return self.form.form_fields
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields
+        except AttributeError:
+            return False
+
+
+class FundForm(AbstractRelatedForm):
+    fund = ParentalKey('FundType', related_name='forms')
+
+
+class RoundForm(AbstractRelatedForm):
+    round = ParentalKey('Round', related_name='forms')
 
 
 class ApplicationForm(models.Model):
@@ -227,6 +243,9 @@ class Round(SubmittableStreamForm):
         if hasattr(self, 'parent_page'):
             # We attached the parent page as part of the before_create_hook
             self.workflow = self.parent_page.workflow
+            for form in self.parent_page.forms.all():
+                RoundForm.objects.create(round=self, form=form.form)
+
         super().save(*args, **kwargs)
 
     def get_submit_meta_data(self, **kwargs):
