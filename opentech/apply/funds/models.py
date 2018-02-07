@@ -236,17 +236,23 @@ class Round(SubmittableStreamForm):
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ]),
-        ], heading="Dates")
+        ], heading="Dates"),
     ]
 
-    def save(self, *args, **kwargs):
+    def create(self, *args, **kwargs):
         if hasattr(self, 'parent_page'):
             # We attached the parent page as part of the before_create_hook
             self.workflow = self.parent_page.workflow
-            for form in self.parent_page.forms.all():
-                RoundForm.objects.create(round=self, form=form.form)
 
         super().save(*args, **kwargs)
+        if hasattr(self, 'parent_page'):
+            for form in self.parent_page.forms.all():
+                # Create a copy of the existing form object
+                new_form = form.form
+                new_form.id = None
+                new_form.save()
+                RoundForm.objects.create(round=self, form=new_form)
+
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(

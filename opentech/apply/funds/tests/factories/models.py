@@ -149,8 +149,17 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
+            fields = {
+                f'form__form_fields__{i}__{field}__': ''
+                for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys())
+            }
+            fields.update(**kwargs)
             for _ in range(len(self.workflow_class.stage_classes)):
-                FundFormFactory(fund=self)
+                # Generate a form based on all defined fields on the model
+                FundFormFactory(
+                    fund=self,
+                    **fields,
+                )
 
 
 class FundFormFactory(factory.DjangoModelFactory):
@@ -165,11 +174,7 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
         model = ApplicationForm
 
     name = factory.Faker('word')
-    form_fields = wagtail_factories.StreamFieldFactory({
-        'email': blocks.EmailBlockFactory,
-        'full_name': blocks.FullNameBlockFactory,
-    })
-
+    form_fields = blocks.CustomFormFieldsFactory
 
 class RoundFactory(wagtail_factories.PageFactory):
     class Meta:
