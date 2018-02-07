@@ -8,17 +8,11 @@
     @include media-query(tablet-portrait) {
         position: relative;
         height: 180px;
-        padding: 30px;
+        padding: 30px 210px 30px 30px;
     }
 
     &:hover {
         box-shadow: 0 2px 15px 0 $color--black-10;
-    }
-
-    &--with-image {
-        @include media-query(tablet-portrait) {
-            padding-right: 210px;
-        }
     }
 
     &__title {

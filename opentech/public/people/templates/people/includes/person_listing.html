@@ -1,5 +1,5 @@
 {% load wagtailcore_tags wagtailimages_tags %}
-<a class="listing {% if person.photo %}listing--with-image{% endif %}" href="{% pageurl person %}">
+<a class="listing" href="{% pageurl person %}">
     {% if person.photo %}
         {% image person.photo fill-180x180 class="listing__image" %}
     {% endif %}

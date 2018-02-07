@@ -8,7 +8,7 @@
         {% if subpages.object_list.exists %}
             {% for subpage in subpages.object_list.specific %}
 
-                <a class="listing listing--with-image" href="{% pageurl subpage %}">
+                <a class="listing" href="{% pageurl subpage %}">
                     {% if subpage.icon %}
                         {% image subpage.icon fill-180x180 class="listing__image" %}
                     {% else %}
