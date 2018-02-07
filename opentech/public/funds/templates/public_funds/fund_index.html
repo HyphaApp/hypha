@@ -15,6 +15,12 @@
                             <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
                         </p>
                     {% endif %}
+
+                    <h4 class="listing__title">{{ subpage.listing_title|default:subpage.title }}</h4>
+
+                    {% if subpage.listing_summary or subpage.introduction %}
+                        <h6 class="listing__teaser">{{ subpage.listing_summary|default:subpage.introduction|truncatechars_html:155 }}</h6>
+                    {% endif %}
                 </a>
 
             {% endfor %}
