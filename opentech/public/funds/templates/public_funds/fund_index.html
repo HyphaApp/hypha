@@ -9,6 +9,12 @@
             {% for subpage in subpages.object_list.specific %}
 
                 <a class="listing" href="{% pageurl subpage %}">
+                    {% if subpage.deadline %}
+                        <p class="listing__deadline">
+                            <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                            <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
+                        </p>
+                    {% endif %}
                 </a>
 
             {% endfor %}

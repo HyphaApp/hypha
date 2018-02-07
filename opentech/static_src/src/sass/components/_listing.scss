@@ -64,4 +64,17 @@
         margin-bottom: 5px;
         color: $color--default;
     }
+
+    &__deadline {
+        @extend %h6;
+        display: flex;
+        align-items: center;
+        margin: 0 0 10px;
+        font-weight: $weight--semibold;
+        color: $color--pink;
+
+        span {
+            margin-left: 5px;
+        }
+    }
 }
