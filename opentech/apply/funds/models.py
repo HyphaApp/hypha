@@ -122,7 +122,7 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
             'fund_type': self.title,
         }
 
-        subject = self.subject if self.subject else 'Thank You for Your submission to Open Technology Fund'
+        subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
         send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
 
     content_panels = AbstractStreamForm.content_panels + [
