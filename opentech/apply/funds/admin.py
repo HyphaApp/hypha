@@ -1,6 +1,10 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from .admin_helpers import ButtonsWithPreview, RoundFundChooserView
+from .admin_helpers import (
+    ButtonsWithPreview,
+    FormsFundRoundListFilter,
+    RoundFundChooserView,
+)
 from .models import ApplicationForm, FundType, LabType, Round
 from opentech.apply.categories.admin import CategoryAdmin
 
@@ -32,6 +36,20 @@ class LabAdmin(ModelAdmin):
 class ApplicationFormAdmin(ModelAdmin):
     model = ApplicationForm
     menu_icon = 'form'
+    list_display = ('name', 'funds', 'rounds', 'labs')
+    list_filter = (FormsFundRoundListFilter,)
+
+    def _list_related(self, obj, field):
+        return ', '.join(getattr(obj, f'{field}form_set').values_list(f'{field}__title', flat=True))
+
+    def funds(self, obj):
+        return self._list_related(obj, 'fund')
+
+    def labs(self, obj):
+        return self._list_related(obj, 'lab')
+
+    def rounds(self, obj):
+        return self._list_related(obj, 'round')
 
 
 class ApplyAdminGroup(ModelAdminGroup):

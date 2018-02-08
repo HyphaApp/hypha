@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib import admin
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
@@ -44,3 +45,22 @@ class ButtonsWithPreview(PageButtonHelper):
         btns.insert(-1, self.preview_button(obj, classnames_add, classnames_exclude))
 
         return btns
+
+
+class FormsFundRoundListFilter(admin.SimpleListFilter):
+    title = 'useage'
+    parameter_name = 'form-usage'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('fund', _('Funds')),
+            ('round', _('Rounds')),
+            ('lab', _('Labs')),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            query = {f'{value}form__isnull': False}
+            return queryset.filter(**query)
+        return queryset
