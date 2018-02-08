@@ -152,22 +152,4 @@
             fill: $color--white;
         }
     }
-
-    &__title {
-        &--mobile {
-            display: block;
-
-            @include media-query(mob-landscape) {
-                display: none;
-            }
-        }
-
-        &--desktop {
-            display: none;
-
-            @include media-query(mob-landscape) {
-                display: block;
-            }
-        }
-    }
 }
