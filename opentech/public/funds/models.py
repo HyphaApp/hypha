@@ -61,6 +61,12 @@ class FundIndex(BasePage):
     subpage_types = ['FundPage']
     parent_page_types = ['home.HomePage']
 
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction')
+    ]
+
     def get_context(self, request, *args, **kwargs):
         funds = FundPage.objects.live().public().descendant_of(self)
 
