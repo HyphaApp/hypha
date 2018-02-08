@@ -62,5 +62,5 @@ class FormsFundRoundListFilter(admin.SimpleListFilter):
         value = self.value()
         if value:
             query = {f'{value}form__isnull': False}
-            return queryset.filter(**query)
+            return queryset.filter(**query).distinct()
         return queryset
