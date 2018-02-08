@@ -4,7 +4,7 @@
     padding: 10px;
     background-color: $color--primary;
 
-    &::before {
+    &::after {
         @extend %overlay;
         height: 300px;
     }
@@ -52,15 +52,11 @@
     }
 
     &__title {
-        padding: 0 10px;
-        margin: 0;
+        margin: 0 0 20px;
+        line-height: 1;
         color: $color--white;
         text-shadow: 0 2px 15px $color--black-10;
         text-transform: uppercase;
-
-        @include media-query(tablet-portrait) {
-            padding: 0;
-        }
 
         .header--light-bg & {
             color: $color--dark-grey;
