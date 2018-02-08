@@ -140,7 +140,7 @@ class ProjectPage(FundingMixin, BasePage):
 
 class ProjectIndexPage(BasePage):
     subpage_types = ['ProjectPage']
-    parent_page_types = ['home.Homepage', 'standardpage.IndexPage']
+    parent_page_types = ['home.Homepage', 'standardpages.IndexPage']
 
     introduction = models.TextField(blank=True)
 
