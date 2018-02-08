@@ -1,3 +1,4 @@
+from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from .admin_helpers import (
@@ -33,11 +34,17 @@ class LabAdmin(ModelAdmin):
     menu_label = 'Labs'
 
 
+class NoDeletePermission(PermissionHelper):
+    def user_can_delete_obj(self, user, obj):
+        return False
+
+
 class ApplicationFormAdmin(ModelAdmin):
     model = ApplicationForm
     menu_icon = 'form'
     list_display = ('name', 'funds', 'rounds', 'labs')
     list_filter = (FormsFundRoundListFilter,)
+    permission_helper_class = NoDeletePermission
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
