@@ -19,6 +19,13 @@
         input[type='date']:last-child {
             max-width: 385px;
         }
+
+        &:last-child {
+            .locality & {
+                // remove margin from last item in address field set
+                margin-bottom: 0;
+            }
+        }
     }
 
     &__question {
