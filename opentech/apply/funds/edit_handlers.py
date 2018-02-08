@@ -4,7 +4,7 @@ from django.utils.html import format_html, mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import EditHandler
+from wagtail.wagtailadmin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
 
 
 class BaseReadOnlyPanel(EditHandler):
@@ -72,3 +72,30 @@ class ReadOnlyInlinePanel:
         return type(str(_('ReadOnlyPanel')), (BaseReadOnlyInlinePanel,),
                     {'attr': self.attr, 'heading': self.heading,
                      'classname': self.classname})
+
+
+class BaseFilteredFieldPanel(BaseFieldPanel):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        target_model = self.bound_field.field.queryset.model
+
+        self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)
+
+
+class FilteredFieldPanel(FieldPanel):
+    def __init__(self, *args, filter_query=dict(), **kwargs):
+        self.filter_query = filter_query
+        super().__init__(*args, **kwargs)
+
+    def bind_to_model(self, model):
+        base = {
+            'model': model,
+            'field_name': self.field_name,
+            'classname': self.classname,
+            'filter_query': self.filter_query
+        }
+
+        if self.widget:
+            base['widget'] = self.widget
+
+        return type(str('_BaseFilteredFieldPanel'), (BaseFilteredFieldPanel,), base)

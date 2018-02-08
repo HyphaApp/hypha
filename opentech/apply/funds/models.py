@@ -33,7 +33,7 @@ from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmissio
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
-from .edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
+from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -182,6 +182,10 @@ class FundType(DefinableWorkflowStreamForm):
 
 class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm')
+
+    panels = [
+        FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
+    ]
 
     @property
     def fields(self):
