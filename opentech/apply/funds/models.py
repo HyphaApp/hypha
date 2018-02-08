@@ -358,13 +358,8 @@ class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: igno
         return self.live
 
 
-class LabForm(Orderable):
-    form = models.ForeignKey('ApplicationForm')
+class LabForm(AbstractRelatedForm):
     lab = ParentalKey('LabType', related_name='forms')
-
-    @property
-    def fields(self):
-        return self.form.form_fields
 
 
 class JSONOrderable(models.QuerySet):
