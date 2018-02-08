@@ -36,6 +36,13 @@
         input[type='date']:last-child {
             max-width: 385px;
         }
+
+        &:last-child {
+            .locality & {
+                // remove margin from last item in address field set
+                margin-bottom: 0;
+            }
+        }
     }
 
     &__question {
@@ -102,9 +109,7 @@
             -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
             -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
 
-
             option {
-
                 background-color: white;
             }
         }
