@@ -39,6 +39,11 @@ class ApplicationFormAdmin(ModelAdmin):
     list_display = ('name', 'funds', 'rounds', 'labs')
     list_filter = (FormsFundRoundListFilter,)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        related = [f'{field}form_set__{field}' for field in ['fund', 'round', 'lab']]
+        return qs.prefetch_related(*related)
+
     def _list_related(self, obj, field):
         return ', '.join(getattr(obj, f'{field}form_set').values_list(f'{field}__title', flat=True))
 
