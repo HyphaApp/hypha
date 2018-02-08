@@ -33,6 +33,7 @@ from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmissio
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
+from .edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -180,13 +181,32 @@ class FundType(DefinableWorkflowStreamForm):
         return self.open_round.serve(request)
 
 
-class FundForm(Orderable):
+class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm')
-    fund = ParentalKey('FundType', related_name='forms')
 
     @property
     def fields(self):
         return self.form.form_fields
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return self.form.name
+
+
+class FundForm(AbstractRelatedForm):
+    fund = ParentalKey('FundType', related_name='forms')
+
+
+class RoundForm(AbstractRelatedForm):
+    round = ParentalKey('Round', related_name='forms')
 
 
 class ApplicationForm(models.Model):
@@ -206,6 +226,7 @@ class Round(SubmittableStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    workflow = models.CharField(max_length=100, default='single')
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -220,8 +241,28 @@ class Round(SubmittableStreamForm):
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ]),
-        ], heading="Dates")
+        ], heading="Dates"),
+        ReadOnlyPanel('workflow'),
+        ReadOnlyInlinePanel('forms'),
     ]
+
+    def save(self, *args, **kwargs):
+        is_new = not self.id
+        if is_new and hasattr(self, 'parent_page'):
+            # We attached the parent page as part of the before_create_hook
+            self.workflow = self.parent_page.workflow
+
+        super().save(*args, **kwargs)
+
+        if is_new and hasattr(self, 'parent_page'):
+            for form in self.parent_page.forms.all():
+                # Create a copy of the existing form object
+                new_form = form.form
+                new_form.id = None
+                new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
+                new_form.save()
+                RoundForm.objects.create(round=self, form=new_form)
+
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
@@ -317,13 +358,8 @@ class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: igno
         return self.live
 
 
-class LabForm(Orderable):
-    form = models.ForeignKey('ApplicationForm')
+class LabForm(AbstractRelatedForm):
     lab = ParentalKey('LabType', related_name='forms')
-
-    @property
-    def fields(self):
-        return self.form.form_fields
 
 
 class JSONOrderable(models.QuerySet):

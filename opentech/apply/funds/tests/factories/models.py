@@ -142,17 +142,31 @@ class FundTypeFactory(wagtail_factories.PageFactory):
 
     class Params:
         workflow_stages = 1
-        number_forms = 1
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+
+    @factory.post_generation
+    def forms(self, create, extracted, **kwargs):
+        if create:
+            fields = {
+                f'form__form_fields__{i}__{field}__': ''
+                for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys())
+            }
+            fields.update(**kwargs)
+            for _ in range(len(self.workflow_class.stage_classes)):
+                # Generate a form based on all defined fields on the model
+                FundFormFactory(
+                    fund=self,
+                    **fields,
+                )
 
 
 class FundFormFactory(factory.DjangoModelFactory):
     class Meta:
         model = FundForm
     fund = factory.SubFactory(FundTypeFactory, parent=None)
-    form = factory.SubFactory('opentech.apply.tests.factories.ApplicationFormFactory')
+    form = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationFormFactory')
 
 
 class ApplicationFormFactory(factory.DjangoModelFactory):
@@ -160,11 +174,7 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
         model = ApplicationForm
 
     name = factory.Faker('word')
-    form_fields = wagtail_factories.StreamFieldFactory({
-        'email': blocks.EmailBlockFactory,
-        'full_name': blocks.FullNameBlockFactory,
-    })
-
+    form_fields = blocks.CustomFormFieldsFactory
 
 class RoundFactory(wagtail_factories.PageFactory):
     class Meta:
