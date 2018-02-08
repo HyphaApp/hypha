@@ -33,6 +33,7 @@ from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmissio
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
+from .edit_handlers import ReadOnlyPanel
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -222,6 +223,7 @@ class Round(SubmittableStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    workflow = models.CharField(max_length=100, default='single')
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -237,6 +239,7 @@ class Round(SubmittableStreamForm):
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
+        ReadOnlyPanel('workflow'),
     ]
 
     def save(self, *args, **kwargs):
