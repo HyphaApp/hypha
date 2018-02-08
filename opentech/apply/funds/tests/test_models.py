@@ -144,9 +144,11 @@ class TestRoundModelDates(TestCase):
 class TestRoundModelWorkflowAndForms(TestCase):
     def setUp(self):
         self.fund = FundTypeFactory(parent=None)
-        # we only add parent_page on create, so if the object exists already this should not affect testing
-        self.round = RoundFactory()
+
+        self.round = RoundFactory.build()
         self.round.parent_page = self.fund
+
+        self.fund.add_child(instance=self.round)
 
     def test_workflow_is_copied_to_new_rounds(self):
         self.round.save()

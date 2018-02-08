@@ -239,13 +239,15 @@ class Round(SubmittableStreamForm):
         ], heading="Dates"),
     ]
 
-    def create(self, *args, **kwargs):
-        if hasattr(self, 'parent_page'):
+    def save(self, *args, **kwargs):
+        is_new = not self.id
+        if is_new and hasattr(self, 'parent_page'):
             # We attached the parent page as part of the before_create_hook
             self.workflow = self.parent_page.workflow
 
         super().save(*args, **kwargs)
-        if hasattr(self, 'parent_page'):
+
+        if is_new and hasattr(self, 'parent_page'):
             for form in self.parent_page.forms.all():
                 # Create a copy of the existing form object
                 new_form = form.form
