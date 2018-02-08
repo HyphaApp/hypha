@@ -52,6 +52,10 @@
 
     &--breadcrumb {
         flex-direction: row;
+
+        .header--light-bg & {
+            display: none;
+        }
     }
 
     &__item {
