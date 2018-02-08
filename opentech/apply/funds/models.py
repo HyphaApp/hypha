@@ -33,7 +33,7 @@ from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmissio
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
-from .edit_handlers import ReadOnlyPanel
+from .edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -196,6 +196,9 @@ class AbstractRelatedForm(Orderable):
         except AttributeError:
             return False
 
+    def __str__(self):
+        return self.form.name
+
 
 class FundForm(AbstractRelatedForm):
     fund = ParentalKey('FundType', related_name='forms')
@@ -239,6 +242,7 @@ class Round(SubmittableStreamForm):
             ]),
         ], heading="Dates"),
         ReadOnlyPanel('workflow'),
+        ReadOnlyInlinePanel('forms'),
     ]
 
     def save(self, *args, **kwargs):
@@ -254,6 +258,7 @@ class Round(SubmittableStreamForm):
                 # Create a copy of the existing form object
                 new_form = form.form
                 new_form.id = None
+                new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
                 new_form.save()
                 RoundForm.objects.create(round=self, form=new_form)
 
