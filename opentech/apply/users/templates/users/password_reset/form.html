@@ -1,25 +1,28 @@
 {% extends 'base.html' %}
 {% load i18n %}
-
+{% block header_modifier %}header--light-bg{% endblock %}
+{% block page_title %}Reset password{% endblock %}
 {% block title %}{% trans "Reset password" %}{% endblock %}
 
 
 {% block content %}
-    {% if form.non_field_errors %}
-        <div class="messages">
-            <ul>
-                {% for error in form.non_field_errors %}
-                <li class="error">{{ error }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+    <div class="wrapper wrapper--small wrapper--bottom-space">
+        {% if form.non_field_errors %}
+            <div class="messages">
+                <ul>
+                    {% for error in form.non_field_errors %}
+                    <li class="error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.email.label_tag }}
-        {{ form.email }}
+        <form class="form form--with-p-tags" method="post">
+            {% csrf_token %}
+            <p>{{ form.email.label_tag }}</p>
+            <p>{{ form.email }}</p>
 
-        <button type="submit">{% trans 'Reset password' %}</button>
-    </form>
+            <button class="link link--button-secondary" type="submit">{% trans 'Reset password' %}</button>
+        </form>
+    </div>
 {% endblock %}
