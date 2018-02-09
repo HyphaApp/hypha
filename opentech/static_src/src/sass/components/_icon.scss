@@ -119,4 +119,9 @@
             stroke: $color--correct;
         }
     }
+
+    &--small {
+        width: 14px;
+        height: 14px;
+    }
 }

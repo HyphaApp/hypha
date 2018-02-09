@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% block body_class %}light-grey-bg{% endblock %}
+{% block content %}
+<div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
+    {% if page.introduction %}
+        <h4 class="heading heading--listings-introduction">{{ page.introduction }}</h4>
+    {% endif %}
+
+    <div class="wrapper wrapper--listings">
+
+        {% if subpages.object_list.exists %}
+            {% for subpage in subpages.object_list.specific %}
+
+                <a class="listing" href="{% pageurl subpage %}">
+                    {% if subpage.icon %}
+                        {% image subpage.icon fill-180x180 class="listing__image" %}
+                    {% else %}
+                        <div class="listing__image listing__image--default">
+                            <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+                        </div>
+                    {% endif %}
+
+                    {% if subpage.deadline %}
+                        <p class="listing__deadline">
+                            <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                            <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
+                        </p>
+                    {% endif %}
+
+                    <h4 class="listing__title">{{ subpage.listing_title|default:subpage.title }}</h4>
+
+                    {% if subpage.listing_summary or subpage.introduction %}
+                        <h6 class="listing__teaser">{{ subpage.listing_summary|default:subpage.introduction|truncatechars_html:155 }}</h6>
+                    {% endif %}
+                </a>
+
+            {% endfor %}
+
+            {% include "includes/pagination.html" with paginator_page=subpages %}
+
+        {% else %}
+            {# no items on this page #}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
