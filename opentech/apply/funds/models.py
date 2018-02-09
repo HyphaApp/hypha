@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
@@ -7,20 +9,26 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
-    InlinePanel,
     FieldRowPanel,
+    InlinePanel,
     MultiFieldPanel,
+    ObjectList,
     StreamFieldPanel,
+    TabbedInterface
 )
+
+from wagtail.wagtailadmin.utils import send_mail
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailforms.models import AbstractFormSubmission
+from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
@@ -39,9 +47,47 @@ def admin_url(page):
     return reverse('wagtailadmin_pages:edit', args=(page.id,))
 
 
-class FundType(AbstractStreamForm):
-    parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = ['funds.Round']
+class SubmittableStreamForm(AbstractStreamForm):
+    class Meta:
+        abstract = True
+
+    def get_submission_class(self):
+        return ApplicationSubmission
+
+    def process_form_submission(self, form):
+        cleaned_data = form.cleaned_data
+        for field in self.get_defined_fields():
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = cleaned_data.pop(field.id)
+                cleaned_data[field.block.name] = response
+
+        if form.user.is_authenticated():
+            user = form.user
+            cleaned_data['email'] = user.email
+            cleaned_data['full_name'] = user.get_full_name()
+        else:
+            User = get_user_model()
+            email = cleaned_data.get('email')
+            full_name = cleaned_data.get('full_name')
+            user, _ = User.objects.get_or_create_and_notify(
+                email=email,
+                site=self.get_site(),
+                defaults={'full_name': full_name}
+            )
+
+        return self.get_submission_class().objects.create(
+            form_data=cleaned_data,
+            **self.get_submit_meta_data(user=user),
+        )
+
+    def get_submit_meta_data(self, **kwargs):
+        return kwargs
+
+
+class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
+    class Meta:
+        abstract = True
 
     base_form_class = WorkflowFormAdminForm
 
@@ -51,6 +97,7 @@ class FundType(AbstractStreamForm):
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
@@ -59,6 +106,59 @@ class FundType(AbstractStreamForm):
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
+
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.send_mail(form)
+        return submission
+
+    def send_mail(self, form):
+        data = form.cleaned_data
+        email = data.get('email')
+        context = {
+            'name': data.get('full_name'),
+            'email': email,
+            'project_name': data.get('title'),
+            'extra_text': self.confirmation_text_extra,
+            'fund_type': self.title,
+        }
+
+        subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
+        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
+
+    content_panels = AbstractStreamForm.content_panels + [
+        FieldPanel('workflow'),
+        InlinePanel('forms', label="Forms"),
+    ]
+
+    email_confirmation_panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel([
+                    FieldPanel('from_address', classname="col6"),
+                    FieldPanel('to_address', classname="col6"),
+                ]),
+                FieldPanel('subject'),
+                FieldPanel('confirmation_text_extra'),
+            ],
+            heading="Confirmation email",
+        )
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(email_confirmation_panels, heading='Confirmation email'),
+        ObjectList(Page.promote_panels, heading='Promote'),
+        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
+    ])
+
+
+class FundType(DefinableWorkflowStreamForm):
+    class Meta:
+        verbose_name = _("Fund")
+
+    parent_page_types = ['apply_home.ApplyHomePage']
+    subpage_types = ['funds.Round']
 
     @property
     def open_round(self):
@@ -70,11 +170,6 @@ class FundType(AbstractStreamForm):
 
     def next_deadline(self):
         return self.open_round.end_date
-
-    content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow'),
-        InlinePanel('forms', label="Forms"),
-    ]
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or not self.open_round:
@@ -107,7 +202,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(AbstractStreamForm):
+class Round(SubmittableStreamForm):
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
@@ -119,7 +214,7 @@ class Round(AbstractStreamForm):
         help_text='When no end date is provided the round will remain open indefinitely.'
     )
 
-    content_panels = AbstractStreamForm.content_panels + [
+    content_panels = SubmittableStreamForm.content_panels + [
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
@@ -128,26 +223,21 @@ class Round(AbstractStreamForm):
         ], heading="Dates")
     ]
 
+    def get_submit_meta_data(self, **kwargs):
+        return super().get_submit_meta_data(
+            page=self.get_parent(),
+            round=self,
+            **kwargs,
+        )
+
+    def process_form_submission(self, form):
+        submission = super().process_form_submission(form)
+        self.get_parent().specific.send_mail(form)
+        return submission
+
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.get_parent().specific.forms.all()[0].fields
-
-    def get_submission_class(self):
-        return ApplicationSubmission
-
-    def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
-            page=self.get_parent(),
-            round=self,
-        )
 
     def clean(self):
         super().clean()
@@ -205,6 +295,37 @@ class Round(AbstractStreamForm):
         raise Http404()
 
 
+class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: ignore
+    class Meta:
+        verbose_name = _("Lab")
+
+    parent_page_types = ['apply_home.ApplyHomePage']
+    subpage_types = []  # type: ignore
+
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.specific.forms.all()[0].fields
+
+    def get_submit_meta_data(self, **kwargs):
+        return super().get_submit_meta_data(
+            page=self,
+            round=None,
+            **kwargs,
+        )
+
+    def open_round(self):
+        return self.live
+
+
+class LabForm(Orderable):
+    form = models.ForeignKey('ApplicationForm')
+    lab = ParentalKey('LabType', related_name='forms')
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+
 class JSONOrderable(models.QuerySet):
     def order_by(self, *field_names):
         def build_json_order_by(field):
@@ -224,7 +345,8 @@ class JSONOrderable(models.QuerySet):
 
 class ApplicationSubmission(AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
-    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions')
+    round = models.ForeignKey('wagtailcore.Page', on_delete=models.CASCADE, related_name='submissions', null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     objects = JSONOrderable.as_manager()
 

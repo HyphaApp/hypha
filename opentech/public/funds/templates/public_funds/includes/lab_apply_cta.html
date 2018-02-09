@@ -1,0 +1,11 @@
+{% if page.lab_type %}
+    {% include "public_funds/includes/fund_apply_cta.html" with page=page apply_page=page.lab_type %}
+{% else %}
+<div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--apply-bar{% if class %} {{class}} {% endif %}">
+    <div class="wrapper wrapper--small apply-bar">
+        <a href="{{ page.lab_link }}" class="link link--button-secondary">
+            {{ page.link_text }}
+        </a>
+    </div>
+</div>
+{% endif %}

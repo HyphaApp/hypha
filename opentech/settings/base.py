@@ -172,10 +172,17 @@ TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
+DATE_FORMAT = 'Y-m-d'
+
+DATETIME_FORMAT = 'Y-m-d\TH:i:s'
+
+SHORT_DATE_FORMAT = 'Y-m-d'
+
+SHORT_DATETIME_FORMAT = 'Y-m-d\TH:i:s'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/

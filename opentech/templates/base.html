@@ -75,7 +75,10 @@
             <header class="header header--standard {% block header_modifier %}{% endblock %}">
         {% endif %}
 
-            <a href="#" class="link link--fixed-apply">Apply</a>
+            {% block apply_button %}
+                {% include "includes/apply_button.html" %}
+            {% endblock %}
+
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}" aria-label="Home link">
                     <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
@@ -137,7 +140,10 @@
                 </form>
             </div>
 
-            <div class="wrapper wrapper--small">
+            <div class="wrapper wrapper--small wrapper--page-title">
+                {% block breadcrumbs %}
+                    {% include "navigation/breadcrumbs.html" %}
+                {% endblock %}
                 <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
             </div>
             <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>

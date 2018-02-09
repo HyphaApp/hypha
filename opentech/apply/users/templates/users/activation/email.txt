@@ -1,0 +1,21 @@
+{% load wagtailadmin_tags %}
+{% base_url_setting as base_url %}
+Dear {{ name|default:username }},
+
+An account on Open Technology Fund has been created. Activate your account by clicking this link or copying and pasting it to your browser:
+
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:activate' uidb64=uid token=token %}
+
+This link can be used once to log in and will lead you to a page where you can set your password.
+
+After setting your password, you will be able to log in at {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} in the future using:
+
+username: {{ username }}
+password: Your chosen password
+
+Thanks,
+The OTF Team
+
+--
+Open Technology Fund
+https://www.opentech.fund/

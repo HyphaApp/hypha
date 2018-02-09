@@ -16,6 +16,14 @@
         }
     }
 
+    &--bottom-space {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-landscape) {
+            margin-bottom: 3rem;
+        }
+    }
+
     &__images {
         position: relative;
 
@@ -78,8 +86,12 @@
         }
 
         .media-box--reverse & {
-            padding: 0 20px 0 0;
+            padding: 20px 0 0;
             color: $color--default;
+
+            @include media-query(mob-landscape) {
+                padding: 0 20px 0 0;
+            }
         }
 
         .media-box--reverse:hover & {
@@ -104,6 +116,15 @@
             color: $color--white;
         }
 
+        .media-box--reverse & {
+            @extend %h5;
+            display: block;
+        }
+
+        .media-box--reverse:hover & {
+            color: $color--default;
+        }
+
         @include media-query(mob-landscape) {
             display: block;
         }
@@ -114,6 +135,21 @@
 
         @include media-query(tablet-landscape) {
             display: block;
+        }
+    }
+
+    &__default-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 210px;
+        height: 210px;
+        background-color: $color--light-blue;
+
+        > svg {
+            width: 80px;
+            height: 70px;
+            fill: $color--white;
         }
     }
 }

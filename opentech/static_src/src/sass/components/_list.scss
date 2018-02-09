@@ -3,6 +3,36 @@
         display: flex;
     }
 
+    &--contact {
+        margin: 0;
+
+        > span {
+            font-weight: $weight--bold;
+        }
+    }
+
+    &--status {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 20px;
+        color: $color--mid-grey;
+        text-align: center;
+
+        &.is-active {
+            color: $color--default;
+        }
+    }
+
+    &--disc {
+        padding-left: 20px;
+        list-style: outside disc;
+
+        li {
+            margin-bottom: 1rem;
+        }
+    }
+
     &__label {
         padding: 10px;
         margin-right: 20px;

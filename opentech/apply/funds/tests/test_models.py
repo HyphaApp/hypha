@@ -1,11 +1,24 @@
 from datetime import date, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
+from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
+from wagtail.wagtailcore.models import Site
+
+from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import SingleStage
 
-from .factories import FundTypeFactory, RoundFactory
+from .factories import (
+    ApplicationFormFactory,
+    FundFormFactory,
+    FundTypeFactory,
+    LabFactory,
+    LabFormFactory,
+    RoundFactory,
+)
 
 
 def days_from_today(days):
@@ -124,3 +137,117 @@ class TestRoundModel(TestCase):
 
         with self.assertRaises(ValidationError):
             new_round.clean()
+
+
+class TestFormSubmission(TestCase):
+    def setUp(self):
+        self.site = Site.objects.first()
+        self.User = get_user_model()
+
+        self.email = 'test@test.com'
+        self.name = 'My Name'
+
+        self.request_factory = RequestFactory()
+        # set up application form with minimal requirement for creating user
+        application_form = {
+            'form_fields__0__email__': '',
+            'form_fields__1__full_name__': '',
+        }
+        form = ApplicationFormFactory(**application_form)
+        fund = FundTypeFactory()
+
+        self.site.root_page = fund
+        self.site.save()
+
+        FundFormFactory(fund=fund, form=form)
+        self.round_page = RoundFactory(parent=fund)
+        self.lab_page = LabFactory()
+        LabFormFactory(lab=self.lab_page, form=form)
+
+    def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
+        if email is None:
+            email = self.email
+        if name is None:
+            name = self.name
+
+        page = page or self.round_page
+        fields = page.get_form_fields()
+        data = {k: v for k, v in zip(fields, [email, name])}
+
+        request = self.request_factory.post('', data)
+        request.user = user
+        request.site = self.site
+
+        try:
+            return page.get_parent().serve(request)
+        except AttributeError:
+            return page.serve(request)
+
+    def test_can_submit_if_new(self):
+        self.submit_form()
+
+        self.assertEqual(self.User.objects.count(), 1)
+        new_user = self.User.objects.get(email=self.email)
+        self.assertEqual(new_user.get_full_name(), self.name)
+
+        self.assertEqual(ApplicationSubmission.objects.count(), 1)
+        self.assertEqual(ApplicationSubmission.objects.first().user, new_user)
+
+    def test_associated_if_not_new(self):
+        self.submit_form()
+        self.submit_form()
+
+        self.assertEqual(self.User.objects.count(), 1)
+
+        user = self.User.objects.get(email=self.email)
+        self.assertEqual(ApplicationSubmission.objects.count(), 2)
+        self.assertEqual(ApplicationSubmission.objects.first().user, user)
+
+    def test_associated_if_another_user_exists(self):
+        self.submit_form()
+        # Someone else submits a form
+        self.submit_form(email='another@email.com')
+
+        self.assertEqual(self.User.objects.count(), 2)
+
+        first_user, second_user = self.User.objects.all()
+        self.assertEqual(ApplicationSubmission.objects.count(), 2)
+        self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
+        self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
+
+    def test_associated_if_logged_in(self):
+        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+
+        self.assertEqual(self.User.objects.count(), 1)
+
+        self.submit_form(email=self.email, name=self.name, user=user)
+
+        self.assertEqual(self.User.objects.count(), 1)
+
+        self.assertEqual(ApplicationSubmission.objects.count(), 1)
+        self.assertEqual(ApplicationSubmission.objects.first().user, user)
+
+    # This will need to be updated when we hide user information contextually
+    def test_errors_if_blank_user_data_even_if_logged_in(self):
+        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+
+        self.assertEqual(self.User.objects.count(), 1)
+
+        response = self.submit_form(email='', name='', user=user)
+        self.assertContains(response, 'This field is required')
+
+        self.assertEqual(self.User.objects.count(), 1)
+
+        self.assertEqual(ApplicationSubmission.objects.count(), 0)
+
+    def test_email_sent_to_user_on_submission_fund(self):
+        self.submit_form()
+        # "Thank you for your submission" and "Account Creation"
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].to[0], self.email)
+
+    def test_email_sent_to_user_on_submission_lab(self):
+        self.submit_form(page=self.lab_page)
+        # "Thank you for your submission" and "Account Creation"
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].to[0], self.email)

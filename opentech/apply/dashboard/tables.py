@@ -8,5 +8,8 @@ class DashboardTable(tables.Table):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('title', 'page', 'round', 'submit_time')
+        fields = ('title', 'page', 'round', 'submit_time', 'user')
         template = "dashboard/tables/table.html"
+
+    def render_user(self, value):
+        return value.get_full_name()

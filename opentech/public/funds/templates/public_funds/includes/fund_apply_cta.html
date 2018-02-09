@@ -1,19 +1,19 @@
-{% load wagtailcore_tags i18n %}
+{% load wagtailcore_tags i18n util_tags %}
 
 <div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--apply-bar{% if class %} {{class}} {% endif %}">
     <div class="wrapper wrapper--small apply-bar">
-        {% if fund_page.is_open %}
-            {% if fund_page.deadline %}
+        {% if page.is_open %}
+            {% if page.deadline %}
               <div>
                 <h5 class="apply-bar__subheading">{% trans "Next deadline" %}</h5>
                 <h3 class="apply-bar__heading">
                     <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
-                    <span>{{ fund_page.deadline|date:"M j, Y" }}</span>
+                    <span>{{ page.deadline|date:"M j, Y" }}</span>
                 </h3>
               </div>
             {% endif %}
-            <a href="{% pageurl fund_page.fund_type %}" class="link link--button-secondary">
-                {% trans "Apply for this fund" %}
+            <a href="{% pageurl apply_page %}" class="link link--button-secondary">
+                {% trans "Apply for this" %} {% verbose_name apply_page %}
             </a>
         {% else %}
             <h3 class="heading heading--no-margin">

@@ -3,58 +3,57 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
+<section class="wrapper wrapper--small wrapper--top-inner-space wrapper--sidebar">
+    <div>
+        {% for person_type in page.person_types.all %}
+            <h5 class="heading heading--no-margin">{{ person_type }}</h5>
+        {% endfor %}
 
-    <div class="intro">
-        <div class="container">
-            <h1>{{ page.first_name }} {{ page.last_name }}</h1>
-            {% if page.introduction %}
-                <p>{{ page.introduction }}</p>
-            {% endif %}
-            {% if page.photo %}
-                {% image page.photo original %}
-            {% endif %}
-            {% if page.job_title %}
-                <p>{{ page.job_title }}</p>
-            {% endif %}
-            {% if page.website %}
-                <p>{{ page.website }}</p>
-            {% endif %}
-            {% if page.email %}
-                <p>{{ page.email }}</p>
-            {% endif %}
+        {% if page.job_title %}
+            <h4 class="heading">{{ page.job_title }}</h4>
+        {% endif %}
 
-            {% with contact_details=page.contact_details.all %}
-                {% if contact_details %}
+        {% if page.photo %}
+            {% image page.photo fill-210x235 class="image image--headshot-mobile" %}
+        {% endif %}
 
-                    {% for contact in contact_details %}
-                        <p>{{ contact.method_display }}: {{ contact.contact_detail }}</p>
-                    {% endfor %}
+        {% if page.introduction %}
+            <h4 class="heading heading--person-introduction">{{ page.introduction }}</h4>
+        {% endif %}
 
-                {% endif %}
-            {% endwith %}
+        {% include_block page.biography %}
 
-        </div>
+        {% if page.website %}
+            <p class="list list--contact"><span>Website:</span> <a href="{{ page.website }}">{{ page.website }}</a></p>
+        {% endif %}
+
+        {% if page.email %}
+            <p class="list list--contact"><span>Email:</span> <a href="{{ page.email }}">{{ page.email }}</a></p>
+        {% endif %}
+
+        {% with contact_details=page.contact_details.all %}
+            {% if contact_details %}
+                {% for contact in contact_details %}
+                    <p class="list list--contact"><span>{{ contact.method_display }}:</span> {{ contact.contact_detail }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% include "utils/includes/funding.html" with class="wrapper--top-outer-space-small" %}
     </div>
 
-    <section class="main-body">
-        <div class="container">
-            {% include_block page.biography %}
-        </div>
+    <div>
+        {% if page.photo %}
+            {% image page.photo fill-210x235 class="image image--headshot-desktop" %}
+        {% endif %}
 
-        <div class="container">
-            <h2>Person types</h2>
-            {% for person_type in page.person_types.all %}
-                <p>{{ person_type }}</p>
-            {% endfor %}
-
-            <h2>Social Media Links</h2>
+        {% if page.social_media_profile.all %}
+            <h5>Follow {{ page.first_name }}</h5>
             {% for item in page.social_media_profile.all %}
-                <h3>{{ item.get_service_display }}</h3>
-                <p>{{ item.profile_url }}</p>
+                <a aria-label="Social media link" href="{{ item.profile_url }}">
+                    <svg class="icon icon--social-share icon--{{item.service}}-share"><use xlink:href="#{{item.service}}"></use></svg>
+                </a>
             {% endfor %}
-
-            {% include "utils/includes/funding.html" %}
-        </div>
-    </section>
-
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

@@ -1,0 +1,18 @@
+.image {
+    &--headshot-mobile {
+        display: block;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
+
+    &--headshot-desktop {
+        display: none;
+
+        @include media-query(tablet-portrait) {
+            display: block;
+            margin-bottom: 20px;
+        }
+    }
+}
