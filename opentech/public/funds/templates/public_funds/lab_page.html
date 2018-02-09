@@ -10,9 +10,8 @@
         <section class="section section--main section--top-bottom-space">
             <div class="media-box media-box--reverse media-box--bottom-space">
                 {% if page.icon %}
-                    <div class="media-box__images">
-                        {% image page.icon max-210x235 as page_icon %}
-                        <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+                    {% image page.icon max-210x235 as page_icon %}
+                    <div class="media-box__image-container" style="background-image:url('{{ page_icon.url }}')">
                         <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
                     </div>
                 {% else %}
