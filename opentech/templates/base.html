@@ -53,6 +53,8 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
         {% block extra_css %}{% endblock %}
+
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -232,7 +234,6 @@
 
         </footer>
 
-        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
         <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
         <script type="text/javascript">
             function googleTranslateElementInit() {
