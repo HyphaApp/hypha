@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block page_title %}People{% endblock %}
+
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
@@ -8,8 +8,6 @@
         {% for person_type in page.person_types.all %}
             <h5 class="heading heading--no-margin">{{ person_type }}</h5>
         {% endfor %}
-
-        <h2 class="heading heading--person">{{ page.first_name }} {{ page.last_name }}</h2>
 
         {% if page.job_title %}
             <h4 class="heading">{{ page.job_title }}</h4>

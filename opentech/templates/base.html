@@ -123,9 +123,9 @@
                 </section>
 
                 <div class="header__button-container">
-                    <a href="#" class="button button--transparent button--contains-icons">
+                    <a href="{% url 'users:login' %}" class="button button--transparent button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                        Log in
+                        My OTF
                     </a>
                     <div class="button button--google-translate" id="google_translate_element"></div>
                 </div>
@@ -140,7 +140,10 @@
                 </form>
             </div>
 
-            <div class="wrapper wrapper--small">
+            <div class="wrapper wrapper--small wrapper--page-title">
+                {% block breadcrumbs %}
+                    {% include "navigation/breadcrumbs.html" %}
+                {% endblock %}
                 <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
             </div>
             <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>

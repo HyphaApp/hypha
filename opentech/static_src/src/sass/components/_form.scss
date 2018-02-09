@@ -4,6 +4,23 @@
         border-bottom: 1px solid $color--white;
     }
 
+    &--with-p-tags {
+        p {
+            margin: 0 0 10px;
+
+            label {
+                @extend %h4;
+                display: block;
+                margin-bottom: 10px;
+                font-weight: $weight--bold;
+            }
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    }
+
     &__group {
         position: relative;
         margin: 1rem 0;
@@ -96,6 +113,10 @@
                 background-color: white;
             }
         }
+
+        &--narrow {
+            max-width: 280px;
+        }
     }
 
     select,
@@ -105,6 +126,7 @@
     input[type='time'],
     input[type='email'],
     input[type='number'],
+    input[type='password'],
     input[type='datetime-local'] {
         width: 100%;
         max-width: 385px;
@@ -121,6 +143,7 @@
         input[type='time'],
         input[type='email'],
         input[type='number'],
+        input[type='password'],
         input[type='datetime-local'] {
             border: 2px solid $color--error;
         }
@@ -251,5 +274,12 @@
             background-size: 12px;
             border: 1px solid $color--dark-blue;
         }
+    }
+
+    .errorlist {
+        padding: 5px;
+        margin-bottom: 5px;
+        background: $color--light-pink;
+        border: 1px solid $color--tomato;
     }
 }

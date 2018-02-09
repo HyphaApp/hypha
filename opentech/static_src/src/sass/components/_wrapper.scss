@@ -90,6 +90,14 @@
         }
     }
 
+    &--top-bottom-space {
+        padding: 1rem 0;
+
+        @include media-query(tablet-portrait) {
+            padding: 3rem 0;
+        }
+    }
+
     &--top-bottom-inner-space {
         padding: 20px 0;
 
@@ -209,5 +217,18 @@
 
     &--project {
         padding-top: 2rem;
+    }
+  
+    &--listings {
+        display: flex;
+        flex-direction: column;
+        margin-top: 2rem;
+    }
+
+    &--page-title {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
     }
 }

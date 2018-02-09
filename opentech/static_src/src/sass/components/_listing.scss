@@ -1,0 +1,80 @@
+.listing {
+    $root: &;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: $color--white;
+    transition: box-shadow $transition;
+
+    @include media-query(tablet-portrait) {
+        position: relative;
+        height: 180px;
+        padding: 30px 210px 30px 30px;
+    }
+
+    &:hover {
+        box-shadow: 0 2px 15px 0 $color--black-10;
+    }
+
+    &__title {
+        margin-bottom: 5px;
+        line-height: 1;
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--dark-blue;
+        }
+    }
+
+    &__teaser {
+        font-weight: $weight--normal;
+        color: $color--default;
+    }
+
+    &__meta {
+        font-size: 15px;
+        color: darken($color--mid-grey, 20%);
+    }
+
+    &__image {
+        margin-bottom: 10px;
+
+        @include media-query(tablet-portrait) {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        &--default {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            height: 180px;
+            background-color: $color--light-blue;
+
+            > svg {
+                width: 80px;
+                height: 70px;
+                fill: $color--white;
+            }
+        }
+    }
+
+    &__category {
+        margin-bottom: 5px;
+        color: $color--default;
+    }
+
+    &__deadline {
+        @extend %h6;
+        display: flex;
+        align-items: center;
+        margin: 0 0 10px;
+        font-weight: $weight--semibold;
+        color: $color--pink;
+
+        span {
+            margin-left: 5px;
+        }
+    }
+}

@@ -19,11 +19,6 @@
         font-weight: $weight--normal;
     }
 
-    &--person {
-        margin: 10px 0;
-        line-height: 1;
-    }
-
     &--person-introduction {
         margin: 1rem 0;
         font-weight: $weight--light;
@@ -41,5 +36,10 @@
 
     &--center {
         text-align: center;
+    }
+
+    &--listings-introduction {
+        margin: 1rem 0;
+        font-weight: $weight--normal;
     }
 }
