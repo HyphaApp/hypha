@@ -282,7 +282,7 @@ class Round(SubmittableStreamForm):
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
-        return self.get_parent().specific.forms.all()[0].fields
+        return self.forms.all()[0].fields
 
     def clean(self):
         super().clean()
