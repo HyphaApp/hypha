@@ -1,0 +1,14 @@
+<div {% include "django/forms/widgets/attrs.html" %}>{% spaceless %}
+    {% for widget in widget.subwidgets %}
+        {% if not widget.subwidgets %}
+        <div class="form__group">
+            <label class="form__question" for="{{ widget.attrs.id }}">{{ widget.attrs.display }}</label>
+        {% endif %}
+
+        {% include widget.template_name %}
+
+        {% if not widget.subwidgets %}
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endspaceless %}</div>

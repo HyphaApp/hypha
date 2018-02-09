@@ -10,8 +10,13 @@ from wagtail.wagtailcore.blocks import StaticBlock
 
 from tinymce.widgets import TinyMCE
 
-from opentech.apply.stream_forms.blocks import FormFieldsBlock, FormFieldBlock, TextFieldBlock
+from opentech.apply.stream_forms.blocks import (
+    FormFieldsBlock,
+    FormFieldBlock,
+    TextFieldBlock,
+)
 from opentech.apply.categories.blocks import CategoryQuestionBlock
+from addressfield.fields import AddressField
 
 
 def find_duplicates(items):
@@ -155,6 +160,17 @@ class EmailBlock(MustIncludeFieldBlock):
 
     class Meta:
         icon = 'mail'
+
+
+class AddressFieldBlock(MustIncludeFieldBlock):
+    name = 'address'
+    description = 'The postal address of the user'
+
+    field_class = AddressField
+
+    class Meta:
+        label = _('Address')
+        icon = 'home'
 
 
 class FullNameBlock(MustIncludeFieldBlock):
