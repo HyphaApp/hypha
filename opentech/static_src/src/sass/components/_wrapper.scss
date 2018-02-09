@@ -210,10 +210,17 @@
     &--project {
         padding-top: 2rem;
     }
-
+  
     &--listings {
         display: flex;
         flex-direction: column;
         margin-top: 2rem;
+    }
+
+    &--page-title {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: flex-end;
     }
 }
