@@ -1,11 +1,9 @@
 {% extends "base.html" %}
-{% block page_title %}Projects{% endblock %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
 <div class="wrapper wrapper--small wrapper--top-inner-space">
     <div class="media-box media-box--reverse">
-        <h4 class="media-box__title media-box__title--mobile">{{ page.title }}</h4>
         {% if page.icon %}
             <div class="media-box__images">
                 {% image page.icon max-210x235 as page_icon %}
@@ -19,7 +17,6 @@
         {% endif %}
 
         <div class="media-box__content">
-            <h4 class="media-box__title media-box__title--desktop">{{ page.title }}</h4>
             {% if page.introduction %}
                 <h5 class="media-box__teaser">{{ page.introduction }}</h5>
             {% endif %}
