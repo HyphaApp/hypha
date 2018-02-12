@@ -26,6 +26,7 @@ class ReadonlyWidget(Widget):
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
         try:
+            # Hard coded accessing the related model (form) BEWARE if reusing
             edit_link = reverse_edit(self.value.form)
         except AttributeError:
             pass
