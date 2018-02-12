@@ -275,10 +275,16 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):
         ObjectList(SubmittableStreamForm.promote_panels, heading='Promote'),
     ])
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We attached the parent page as part of the before_create_hook
+        if hasattr(self, 'parent_page'):
+            self.workflow = self.parent_page.workflow
+
     def save(self, *args, **kwargs):
         is_new = not self.id
         if is_new and hasattr(self, 'parent_page'):
-            # We attached the parent page as part of the before_create_hook
+            # Ensure that the workflow hasn't changed
             self.workflow = self.parent_page.workflow
 
         super().save(*args, **kwargs)
