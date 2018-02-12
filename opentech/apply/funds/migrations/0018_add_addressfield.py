@@ -12,7 +12,7 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0015_link_user_to_application'),
+        ('funds', '0017_round_workflow'),
     ]
 
     operations = [
