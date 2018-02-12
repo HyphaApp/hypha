@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0015_link_user_to_application'),
+        ('funds', '0018_add_addressfield'),
     ]
 
     operations = [
