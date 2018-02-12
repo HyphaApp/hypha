@@ -1,4 +1,4 @@
-from django.forms import Field
+from django.forms import Field, Widget
 from django.forms.utils import pretty_name
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -8,9 +8,34 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailadmin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
 
 
+def reverse_edit(obj):
+    if isinstance(obj, Page):
+        return reverse('wagtailadmin_pages:edit', args=(obj.id,))
+
+    url_name = f'{obj._meta.app_label}_{obj._meta.model_name}_modeladmin_edit'
+    return reverse(url_name, args=(obj.id,))
+
+
+class ReadonlyWidget(Widget):
+    template_name = 'funds/admin/widgets/read_only.html'
+
+    def format_value(self, value):
+        self.value = value
+        return super().format_value(value)
+
+    def get_context(self, *args, **kwargs):
+        context = super().get_context(*args, **kwargs)
+        try:
+            edit_link = reverse_edit(self.value.form)
+        except AttributeError:
+            pass
+        else:
+            context['widget']['edit_link'] = edit_link
+        return context
+
+
 class DisplayField(Field):
-    pass
-    # widget =
+    widget = ReadonlyWidget
 
 
 class BaseReadOnlyPanel(EditHandler):
@@ -18,10 +43,12 @@ class BaseReadOnlyPanel(EditHandler):
     field_template = 'wagtailadmin/shared/field.html'
 
     def context(self):
+        context = {}
+
         try:
             value = getattr(self.instance, self.attr)
         except AttributeError:
-            self.attr = str(self.instance)
+            self.attr = '__'.join([self.instance._meta.model_name, str(self.instance.id)])
             value = self.instance
 
         if callable(value):
@@ -29,10 +56,12 @@ class BaseReadOnlyPanel(EditHandler):
 
         self.form.initial[self.attr] = value
         self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
-        return {
-            'self': self,
-            'field': self.bound_field,
-        }
+        context.update(
+            self=self,
+            field=self.bound_field,
+            show_label=False,
+        )
+        return context
 
     def render_as_object(self):
         return render_to_string(self.template, self.context())
@@ -54,14 +83,6 @@ class ReadOnlyPanel:
             'classname': self.classname,
         }
         return type(str(_('ReadOnlyPanel')), (BaseReadOnlyPanel,), kwargs)
-
-
-def reverse_edit(obj):
-    if isinstance(obj, Page):
-        return reverse('wagtailadmin_pages:edit', args=(obj.id,))
-
-    url_name = f'{obj._meta.app_label}_{obj._meta.model_name}_modeladmin_edit'
-    return reverse(url_name, args=(obj.id,))
 
 
 class BaseReadOnlyInlinePanel(BaseReadOnlyPanel):
