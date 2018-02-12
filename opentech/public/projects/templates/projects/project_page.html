@@ -1,21 +1,10 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags %}
 
 {% block content %}
 <div class="wrapper wrapper--small wrapper--top-inner-space">
     <div class="media-box media-box--reverse">
-        {% if page.icon %}
-            <div class="media-box__images">
-                {% image page.icon max-210x235 as page_icon %}
-                <img class="media-box__image media-box__image--large" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
-                <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
-            </div>
-        {% else %}
-            <div class="media-box__default-image">
-                <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
-            </div>
-        {% endif %}
-
+        {% include "utils/includes/media_box_icon.html" with page_icon=page.icon %}
         <div class="media-box__content">
             {% if page.introduction %}
                 <h5 class="media-box__teaser">{{ page.introduction }}</h5>

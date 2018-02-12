@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+{% image page.icon max-210x235 as page_icon %}
+
+{% if page_icon %}
+    <div class="media-box__image-container" style="background-image:url('{{ page_icon.url }}')">
+        <img class="media-box__image media-box__image--small" src="{{ page_icon.url }}" alt="{{ page_icon.alt }}">
+    </div>
+{% else %}
+    {% if listing %}
+        <div class="media-box__image-container">
+    {% endif %}
+    <div class="media-box__default-image {% if listing %}media-box__image media-box__image--small media-box__default-image--small{% endif %}">
+        <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+    </div>
+    {% if listing %}
+        </div>
+    {% endif %}
+{% endif %}
