@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='round',
             name='workflow',
-            field=models.CharField(default='single', max_length=100),
+            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100),
         ),
     ]
