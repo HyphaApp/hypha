@@ -15,11 +15,11 @@ from opentech.apply.funds.workflow import SingleStage
 from .factories import (
     ApplicationFormFactory,
     CustomFormFieldsFactory,
-    FundFormFactory,
     FundTypeFactory,
     LabFactory,
     LabFormFactory,
     RoundFactory,
+    RoundFormFactory,
 )
 
 
@@ -192,8 +192,8 @@ class TestFormSubmission(TestCase):
         self.site.root_page = fund
         self.site.save()
 
-        FundFormFactory(fund=fund, form=form)
         self.round_page = RoundFactory(parent=fund)
+        RoundFormFactory(round=self.round_page, form=form)
         self.lab_page = LabFactory()
         LabFormFactory(lab=self.lab_page, form=form)
 

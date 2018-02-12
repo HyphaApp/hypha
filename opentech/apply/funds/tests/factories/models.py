@@ -5,12 +5,14 @@ import factory
 import wagtail_factories
 
 from opentech.apply.funds.models import (
+    AbstractRelatedForm,
     ApplicationForm,
     FundType,
     FundForm,
     LabForm,
     LabType,
     Round,
+    RoundForm,
 )
 from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
@@ -26,6 +28,7 @@ __all__ = [
     'FundFormFactory',
     'ApplicationFormFactory',
     'RoundFactory',
+    'RoundFormFactory',
     'LabFactory',
     'LabFormFactory',
 ]
@@ -162,11 +165,17 @@ class FundTypeFactory(wagtail_factories.PageFactory):
                 )
 
 
-class FundFormFactory(factory.DjangoModelFactory):
+class AbstractRelatedFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = AbstractRelatedForm
+        abstract = True
+    form = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationFormFactory')
+
+
+class FundFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = FundForm
     fund = factory.SubFactory(FundTypeFactory, parent=None)
-    form = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationFormFactory')
 
 
 class ApplicationFormFactory(factory.DjangoModelFactory):
@@ -176,6 +185,7 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
     name = factory.Faker('word')
     form_fields = blocks.CustomFormFieldsFactory
 
+
 class RoundFactory(wagtail_factories.PageFactory):
     class Meta:
         model = Round
@@ -183,6 +193,12 @@ class RoundFactory(wagtail_factories.PageFactory):
     title = factory.Sequence('Round {}'.format)
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
+
+
+class RoundFormFactory(AbstractRelatedFormFactory):
+    class Meta:
+        model = RoundForm
+    round = factory.SubFactory(RoundFactory, parent=None)
 
 
 class LabFactory(wagtail_factories.PageFactory):
@@ -197,8 +213,7 @@ class LabFactory(wagtail_factories.PageFactory):
     workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
 
 
-class LabFormFactory(factory.DjangoModelFactory):
+class LabFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = LabForm
     lab = factory.SubFactory(LabFactory, parent=None)
-    form = factory.SubFactory('opentech.apply.tests.factories.ApplicationFormFactory')
