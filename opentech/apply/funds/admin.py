@@ -1,53 +1,15 @@
-from django import forms
-from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.html import mark_safe
 
-from wagtail.contrib.modeladmin.forms import ParentChooserForm
-from wagtail.contrib.modeladmin.helpers import PageButtonHelper
+from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
-from wagtail.contrib.modeladmin.views import ChooseParentView
-from wagtail.wagtailcore.models import Page
 
+from .admin_helpers import (
+    ButtonsWithPreview,
+    FormsFundRoundListFilter,
+    RoundFundChooserView,
+)
 from .models import ApplicationForm, FundType, LabType, Round
 from opentech.apply.categories.admin import CategoryAdmin
-
-
-class FundChooserForm(ParentChooserForm):
-    """Changes the default chooser to be fund orientated """
-    parent_page = forms.ModelChoiceField(
-        label=_('Fund'),
-        required=True,
-        empty_label=None,
-        queryset=Page.objects.none(),
-        widget=forms.RadioSelect(),
-    )
-
-
-class RoundFundChooserView(ChooseParentView):
-    def get_form(self, request):
-        parents = self.permission_helper.get_valid_parent_pages(request.user)
-        return FundChooserForm(parents, request.POST or None)
-
-
-class ButtonsWithPreview(PageButtonHelper):
-    def preview_button(self, obj, classnames_add, classnames_exclude):
-        classnames = self.copy_button_classnames + classnames_add
-        cn = self.finalise_classname(classnames, classnames_exclude)
-        return {
-            'url': reverse('wagtailadmin_pages:view_draft', args=(obj.id,)),
-            'label': 'Preview',
-            'classname': cn,
-            'title': 'Preview this %s' % self.verbose_name,
-        }
-
-    def get_buttons_for_obj(self, obj, exclude=list(), classnames_add=list(),
-                            classnames_exclude=list()):
-        btns = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
-
-        # Put preview before delete
-        btns.insert(-1, self.preview_button(obj, classnames_add, classnames_exclude))
-
-        return btns
 
 
 class RoundAdmin(ModelAdmin):
@@ -74,9 +36,35 @@ class LabAdmin(ModelAdmin):
     menu_label = 'Labs'
 
 
+class NoDeletePermission(PermissionHelper):
+    def user_can_delete_obj(self, user, obj):
+        return False
+
+
 class ApplicationFormAdmin(ModelAdmin):
     model = ApplicationForm
     menu_icon = 'form'
+    list_display = ('name', 'used_by')
+    list_filter = (FormsFundRoundListFilter,)
+    permission_helper_class = NoDeletePermission
+
+    related_models = ['fund', 'lab', 'round']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        related = [f'{field}form_set__{field}' for field in self.related_models]
+        return qs.prefetch_related(*related)
+
+    def _list_related(self, obj, field):
+        return ', '.join(getattr(obj, f'{field}form_set').values_list(f'{field}__title', flat=True))
+
+    def used_by(self, obj):
+        rows = list()
+        for model in self.related_models:
+            related = self._list_related(obj, model)
+            if related:
+                rows.append(model.title() + ': ' + related)
+        return mark_safe('<br>'.join(rows))
 
 
 class ApplyAdminGroup(ModelAdminGroup):

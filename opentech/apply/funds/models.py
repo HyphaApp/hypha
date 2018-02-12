@@ -27,12 +27,13 @@ from wagtail.wagtailadmin.edit_handlers import (
 
 from wagtail.wagtailadmin.utils import send_mail
 from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
+from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
@@ -48,6 +49,9 @@ def admin_url(page):
 
 
 class SubmittableStreamForm(AbstractStreamForm):
+    """
+    Controls how stream forms are submitted. Any Page allowing submissions should inherit from here.
+    """
     class Meta:
         abstract = True
 
@@ -67,9 +71,11 @@ class SubmittableStreamForm(AbstractStreamForm):
             cleaned_data['email'] = user.email
             cleaned_data['full_name'] = user.get_full_name()
         else:
-            User = get_user_model()
+            # Rely on the form having the following must include fields (see blocks.py)
             email = cleaned_data.get('email')
             full_name = cleaned_data.get('full_name')
+
+            User = get_user_model()
             user, _ = User.objects.get_or_create_and_notify(
                 email=email,
                 site=self.get_site(),
@@ -85,11 +91,12 @@ class SubmittableStreamForm(AbstractStreamForm):
         return kwargs
 
 
-class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
+class WorkflowStreamForm(AbstractStreamForm):
+    """
+    Defines the common methods and fields for working with Workflows
+    """
     class Meta:
         abstract = True
-
-    base_form_class = WorkflowFormAdminForm
 
     WORKFLOWS = {
         'single': SingleStage.name,
@@ -97,7 +104,6 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     }
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
-    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
@@ -106,6 +112,23 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
+
+    content_panels = AbstractStreamForm.content_panels + [
+        FieldPanel('workflow'),
+        InlinePanel('forms', label="Forms"),
+    ]
+
+
+class EmailForm(AbstractEmailForm):
+    """
+    Defines the behaviour for pages that hold information about emailing applicants
+
+    Email Confirmation Panel should be included to allow admins to make changes.
+    """
+    class Meta:
+        abstract = True
+
+    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
     def process_form_submission(self, form):
         submission = super().process_form_submission(form)
@@ -126,11 +149,6 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
         subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
         send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
 
-    content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow'),
-        InlinePanel('forms', label="Forms"),
-    ]
-
     email_confirmation_panels = [
         MultiFieldPanel(
             [
@@ -145,17 +163,15 @@ class DefinableWorkflowStreamForm(AbstractEmailForm, AbstractStreamForm):
         )
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(email_confirmation_panels, heading='Confirmation email'),
-        ObjectList(Page.promote_panels, heading='Promote'),
-        ObjectList(Page.settings_panels, heading='Settings', classname="settings"),
-    ])
+    email_tab = ObjectList(email_confirmation_panels, heading='Confirmation email')
 
 
-class FundType(DefinableWorkflowStreamForm):
+class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     class Meta:
         verbose_name = _("Fund")
+
+    # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
+    base_form_class = WorkflowFormAdminForm
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
@@ -179,14 +195,43 @@ class FundType(DefinableWorkflowStreamForm):
         request.show_round = True
         return self.open_round.serve(request)
 
+    edit_handler = TabbedInterface([
+        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
+        EmailForm.email_tab,
+        ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
+    ])
 
-class FundForm(Orderable):
+
+class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm')
-    fund = ParentalKey('FundType', related_name='forms')
+
+    panels = [
+        FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
+    ]
 
     @property
     def fields(self):
         return self.form.form_fields
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return self.form.name
+
+
+class FundForm(AbstractRelatedForm):
+    fund = ParentalKey('FundType', related_name='forms')
+
+
+class RoundForm(AbstractRelatedForm):
+    round = ParentalKey('Round', related_name='forms')
 
 
 class ApplicationForm(models.Model):
@@ -202,7 +247,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(SubmittableStreamForm):
+class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
@@ -220,8 +265,39 @@ class Round(SubmittableStreamForm):
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ]),
-        ], heading="Dates")
+        ], heading="Dates"),
+        ReadOnlyPanel('get_workflow_display', heading="Workflow"),
+        ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
     ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(content_panels, heading='Content'),
+        ObjectList(SubmittableStreamForm.promote_panels, heading='Promote'),
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We attached the parent page as part of the before_create_hook
+        if hasattr(self, 'parent_page'):
+            self.workflow = self.parent_page.workflow
+
+    def save(self, *args, **kwargs):
+        is_new = not self.id
+        if is_new and hasattr(self, 'parent_page'):
+            # Ensure that the workflow hasn't changed
+            self.workflow = self.parent_page.workflow
+
+        super().save(*args, **kwargs)
+
+        if is_new and hasattr(self, 'parent_page'):
+            # Would be nice to do this using model clusters as part of the __init__
+            for form in self.parent_page.forms.all():
+                # Create a copy of the existing form object
+                new_form = form.form
+                new_form.id = None
+                new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
+                new_form.save()
+                RoundForm.objects.create(round=self, form=new_form)
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
@@ -234,10 +310,6 @@ class Round(SubmittableStreamForm):
         submission = super().process_form_submission(form)
         self.get_parent().specific.send_mail(form)
         return submission
-
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.get_parent().specific.forms.all()[0].fields
 
     def clean(self):
         super().clean()
@@ -295,16 +367,18 @@ class Round(SubmittableStreamForm):
         raise Http404()
 
 
-class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: ignore
+class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     class Meta:
         verbose_name = _("Lab")
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.specific.forms.all()[0].fields
+    edit_handler = TabbedInterface([
+        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
+        EmailForm.email_tab,
+        ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
+    ])
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
@@ -317,13 +391,8 @@ class LabType(DefinableWorkflowStreamForm, SubmittableStreamForm):  # type: igno
         return self.live
 
 
-class LabForm(Orderable):
-    form = models.ForeignKey('ApplicationForm')
+class LabForm(AbstractRelatedForm):
     lab = ParentalKey('LabType', related_name='forms')
-
-    @property
-    def fields(self):
-        return self.form.form_fields
 
 
 class JSONOrderable(models.QuerySet):

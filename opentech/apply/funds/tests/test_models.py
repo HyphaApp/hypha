@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import itertools
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
@@ -13,11 +14,12 @@ from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
     ApplicationFormFactory,
-    FundFormFactory,
+    CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
     LabFormFactory,
     RoundFactory,
+    RoundFormFactory,
 )
 
 
@@ -68,7 +70,7 @@ class TestFundModel(TestCase):
         self.assertEqual(self.fund.open_round, None)
 
 
-class TestRoundModel(TestCase):
+class TestRoundModelDates(TestCase):
     def setUp(self):
         self.fund = FundTypeFactory(parent=None)
 
@@ -139,6 +141,37 @@ class TestRoundModel(TestCase):
             new_round.clean()
 
 
+class TestRoundModelWorkflowAndForms(TestCase):
+    def setUp(self):
+        self.fund = FundTypeFactory(parent=None)
+
+        self.round = RoundFactory.build()
+        self.round.parent_page = self.fund
+
+        self.fund.add_child(instance=self.round)
+
+    def test_workflow_is_copied_to_new_rounds(self):
+        self.round.save()
+        self.assertEqual(self.round.workflow, self.fund.workflow)
+
+    def test_forms_are_copied_to_new_rounds(self):
+        self.round.save()
+        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+            self.assertEqual(round_form, fund_form)
+
+    def test_can_change_round_form_not_fund(self):
+        self.round.save()
+        # We are no longer creating a round
+        del self.round.parent_page
+        form = self.round.forms.first().form
+        # Not ideal, would prefer better way to create the stream values
+        new_field = CustomFormFieldsFactory.generate(None, {'0__email__': ''})
+        form.form_fields = new_field
+        form.save()
+        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+            self.assertNotEqual(round_form, fund_form)
+
+
 class TestFormSubmission(TestCase):
     def setUp(self):
         self.site = Site.objects.first()
@@ -159,8 +192,8 @@ class TestFormSubmission(TestCase):
         self.site.root_page = fund
         self.site.save()
 
-        FundFormFactory(fund=fund, form=form)
         self.round_page = RoundFactory(parent=fund)
+        RoundFormFactory(round=self.round_page, form=form)
         self.lab_page = LabFactory()
         LabFormFactory(lab=self.lab_page, form=form)
 
