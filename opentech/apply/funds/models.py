@@ -267,7 +267,6 @@ class Round(SubmittableStreamForm):
                 new_form.save()
                 RoundForm.objects.create(round=self, form=new_form)
 
-
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self.get_parent(),
