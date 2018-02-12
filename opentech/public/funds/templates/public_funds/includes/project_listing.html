@@ -1,17 +1,7 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 <a class="media-box" href="{% pageurl project %}">
-    {% if project.icon %}
-        {% image project.icon max-210x235 as project_icon %}
-        <div class="media-box__image-container" style="background-image:url('{{ project_icon.url }}')">
-            <img class="media-box__image media-box__image--small" src="{{ project_icon.url }}" alt="{{project_icon.alt}}">
-        </div>
-    {% else %}
-        <div class="media-box__image-container">
-            <div class="media-box__image media-box__image--small media-box__default-image media-box__default-image--small">
-                    <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
-            </div>
-        </div>
-    {% endif %}
+    {% image project.icon max-210x235 as project_icon %}
+    {% include "utils/includes/media_box_icon.html" with page_icon=project_icon listing=True %}
 
     <div class="media-box__content">
         <h4>{{ project.title }}</h4>
