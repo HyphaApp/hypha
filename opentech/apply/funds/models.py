@@ -368,9 +368,9 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     subpage_types = []  # type: ignore
 
     edit_handler = TabbedInterface([
-        ObjectList(SubmittableStreamForm.content_panels, heading='Content'),
+        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
         EmailForm.email_tab,
-        ObjectList(SubmittableStreamForm.promote_panels, heading='Promote'),
+        ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
 
     def get_submit_meta_data(self, **kwargs):
