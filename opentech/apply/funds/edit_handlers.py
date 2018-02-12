@@ -44,8 +44,6 @@ class BaseReadOnlyPanel(EditHandler):
     field_template = 'wagtailadmin/shared/field.html'
 
     def context(self):
-        context = {}
-
         try:
             value = getattr(self.instance, self.attr)
         except AttributeError:
@@ -57,12 +55,11 @@ class BaseReadOnlyPanel(EditHandler):
 
         self.form.initial[self.attr] = value
         self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
-        context.update(
-            self=self,
-            field=self.bound_field,
-            show_label=False,
-        )
-        return context
+        return {
+            'self': self,
+            'field': self.bound_field,
+            'show_label': False,
+        }
 
     def render_as_object(self):
         return render_to_string(self.template, self.context())

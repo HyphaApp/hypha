@@ -166,7 +166,7 @@ class EmailForm(AbstractEmailForm):
     email_tab = ObjectList(email_confirmation_panels, heading='Confirmation email')
 
 
-class FundType(EmailForm, WorkflowStreamForm):
+class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     class Meta:
         verbose_name = _("Fund")
 
@@ -247,7 +247,7 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(WorkflowStreamForm, SubmittableStreamForm):
+class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
