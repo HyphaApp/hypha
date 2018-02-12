@@ -290,6 +290,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):
         super().save(*args, **kwargs)
 
         if is_new and hasattr(self, 'parent_page'):
+            # Would be nice to do this using model clusters as part of the __init__
             for form in self.parent_page.forms.all():
                 # Create a copy of the existing form object
                 new_form = form.form
