@@ -1,33 +1,44 @@
+from django.forms import Field
 from django.forms.utils import pretty_name
 from django.urls import reverse
-from django.utils.html import format_html, mark_safe
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailadmin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
 
 
+class DisplayField(Field):
+    pass
+    # widget =
+
+
 class BaseReadOnlyPanel(EditHandler):
-    def render(self):
-        value = getattr(self.instance, self.attr)
+    template = 'wagtailadmin/edit_handlers/single_field_panel.html'
+    field_template = 'wagtailadmin/shared/field.html'
+
+    def context(self):
+        try:
+            value = getattr(self.instance, self.attr)
+        except AttributeError:
+            self.attr = str(self.instance)
+            value = self.instance
+
         if callable(value):
             value = value()
-        return format_html('<div style="padding-top: 1.2em;">{}</div>', value)
+
+        self.form.initial[self.attr] = value
+        self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
+        return {
+            'self': self,
+            'field': self.bound_field,
+        }
 
     def render_as_object(self):
-        return format_html(
-            '<fieldset><legend>{}</legend>'
-            '<ul class="fields"><li><div class="field">{}</div></li></ul>'
-            '</fieldset>',
-            self.heading, self.render())
+        return render_to_string(self.template, self.context())
 
     def render_as_field(self):
-        return format_html(
-            '<div class="field">'
-            '<label>{}{}</label>'
-            '<div class="field-content">{}</div>'
-            '</div>',
-            self.heading, _(':'), self.render())
+        return render_to_string(self.field_template, self.context())
 
 
 class ReadOnlyPanel:
@@ -37,9 +48,12 @@ class ReadOnlyPanel:
         self.classname = classname
 
     def bind_to_model(self, model):
-        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyPanel,),
-                    {'attr': self.attr, 'heading': self.heading,
-                     'classname': self.classname})
+        kwargs = {
+            'attr': self.attr,
+            'heading': self.heading,
+            'classname': self.classname,
+        }
+        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyPanel,), kwargs)
 
 
 def reverse_edit(obj):
@@ -51,27 +65,29 @@ def reverse_edit(obj):
 
 
 class BaseReadOnlyInlinePanel(BaseReadOnlyPanel):
-    def render(self):
+    template = 'wagtailadmin/edit_handlers/multi_field_panel.html'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         values = getattr(self.instance, self.attr).all()
-        return mark_safe(
-            ''.join(
-                '<div style="padding-top: 1.2em;">'
-                f'{value}<br><a class="button button-small" href="{reverse_edit(value.form)}">Edit</a></div>'
-                for value in values
-            )
-        )
+        self.children = [BaseReadOnlyPanel(value, form=self.form) for value in values]
 
 
 class ReadOnlyInlinePanel:
-    def __init__(self, attr, heading=None, classname=''):
+    def __init__(self, attr, heading=None, classname='', help_text=''):
         self.attr = attr
         self.heading = pretty_name(self.attr) if heading is None else heading
         self.classname = classname
+        self.help_text = help_text
 
     def bind_to_model(self, model):
-        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyInlinePanel,),
-                    {'attr': self.attr, 'heading': self.heading,
-                     'classname': self.classname})
+        kwargs = {
+            'attr': self.attr,
+            'heading': self.heading,
+            'classname': self.classname,
+            'help_text': self.help_text
+        }
+        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyInlinePanel,), kwargs)
 
 
 class BaseFilteredFieldPanel(BaseFieldPanel):
