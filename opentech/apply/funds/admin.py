@@ -1,3 +1,5 @@
+from django.utils.html import mark_safe
+
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
@@ -42,26 +44,27 @@ class NoDeletePermission(PermissionHelper):
 class ApplicationFormAdmin(ModelAdmin):
     model = ApplicationForm
     menu_icon = 'form'
-    list_display = ('name', 'funds', 'rounds', 'labs')
+    list_display = ('name', 'used_by')
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = NoDeletePermission
 
+    related_models = ['fund', 'lab', 'round']
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        related = [f'{field}form_set__{field}' for field in ['fund', 'round', 'lab']]
+        related = [f'{field}form_set__{field}' for field in self.related_models]
         return qs.prefetch_related(*related)
 
     def _list_related(self, obj, field):
         return ', '.join(getattr(obj, f'{field}form_set').values_list(f'{field}__title', flat=True))
 
-    def funds(self, obj):
-        return self._list_related(obj, 'fund')
-
-    def labs(self, obj):
-        return self._list_related(obj, 'lab')
-
-    def rounds(self, obj):
-        return self._list_related(obj, 'round')
+    def used_by(self, obj):
+        rows = list()
+        for model in self.related_models:
+            related = self._list_related(obj, model)
+            if related:
+                rows.append(model.title() + ': ' + related)
+        return mark_safe('<br>'.join(rows))
 
 
 class ApplyAdminGroup(ModelAdminGroup):
