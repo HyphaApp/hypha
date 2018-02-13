@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_select2',
     'addressfield',
+    'django_bleach',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -318,3 +319,14 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+# Bleach Settings
+BLEACH_ALLOWED_TAGS = ['h2', 'h3', 'p', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li']
+
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'style']
+
+BLEACH_ALLOWED_STYLES = ['font-family', 'font-weight', 'text-decoration', 'font-variant']
+
+BLEACH_STRIP_TAGS = True
+
+BLEACH_STRIP_COMMENTS = True

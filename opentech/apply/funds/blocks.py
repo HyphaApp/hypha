@@ -39,6 +39,7 @@ class RichTextFieldBlock(TextFieldBlock):
     widget = TinyMCE(mce_attrs={
         'elementpath': False,
         'branding': False,
+        'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link'
     })
 
     class Meta:

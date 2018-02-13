@@ -477,7 +477,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
         return super().save(*args, **kwargs)
 
-    def render(self):
+    def render_answers(self):
         context = {'fields': []}
         for field in self.form_fields:
             try:
@@ -494,6 +494,8 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                         data = [choices[value] for value in data]
                     except KeyError:
                         data = [choices[int(value)] for value in data]
+                else:
+                    data = str(data)
 
                 context['fields'].append({
                     'field': form_field,
