@@ -424,7 +424,7 @@ class ApplicationSubmission(AbstractFormSubmission):
 
     objects = JSONOrderable.as_manager()
 
-    def render(self):
+    def render_answers(self):
         context = {'fields': []}
         for field in self.form_fields:
             try:
@@ -441,6 +441,8 @@ class ApplicationSubmission(AbstractFormSubmission):
                         data = [choices[value] for value in data]
                     except KeyError:
                         data = [choices[int(value)] for value in data]
+                else:
+                    data = str(data)
 
                 context['fields'].append({
                     'field': form_field,
