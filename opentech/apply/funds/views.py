@@ -1,7 +1,13 @@
 from django import forms
 from django.template.response import TemplateResponse
+from django.views.generic import DetailView
 
+from .models import ApplicationSubmission
 from .workflow import SingleStage, DoubleStage
+
+
+class SubmissionDetailView(DetailView):
+    model = ApplicationSubmission
 
 
 workflows = [SingleStage, DoubleStage]
