@@ -62,7 +62,7 @@
 
         &--one {
             grid-template-columns: 1fr;
-            grid-gap: 30px;
+            grid-gap: 30px; // sass-lint:disable-line no-misspelled-properties
         }
 
         &--two {
