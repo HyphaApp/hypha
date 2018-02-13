@@ -17,11 +17,13 @@
         {% endif %}
     </h6>
 
-{% if result.listing_image %}
-    <a href="{% pageurl result %}">
-        {% image result.listing_image fill-450x300 %}
-    </a>
-{% endif %}
+    {% if result.listing_image or result.icon %}
+        {% image result.listing_image|default:result.icon fill-180x180 class="listing__image" %}
+    {% else %}
+        <div class="listing__image listing__image--default">
+            <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+        </div>
+    {% endif %}
 
 <h4>
     <a href="{% pageurl result %}">
