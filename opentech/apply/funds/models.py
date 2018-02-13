@@ -84,6 +84,7 @@ class SubmittableStreamForm(AbstractStreamForm):
 
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
+            form_fields=self.get_defined_fields(),
             **self.get_submit_meta_data(user=user),
         )
 
@@ -413,12 +414,41 @@ class JSONOrderable(models.QuerySet):
 
 
 class ApplicationSubmission(AbstractFormSubmission):
+    field_template = 'funds/includes/submission_field.html'
+
     form_data = JSONField(encoder=DjangoJSONEncoder)
+    form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     objects = JSONOrderable.as_manager()
+
+    def render_answers(self):
+        context = {'fields': []}
+        for field in self.form_fields:
+            try:
+                data = self.form_data[field.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                form_field = field.block.get_field(field.value)
+                if hasattr(form_field, 'choices'):
+                    if isinstance(data, str):
+                        data = [data]
+                    choices = dict(form_field.choices)
+                    try:
+                        data = [choices[value] for value in data]
+                    except KeyError:
+                        data = [choices[int(value)] for value in data]
+                else:
+                    data = str(data)
+
+                context['fields'].append({
+                    'field': form_field,
+                    'value': data,
+                })
+        return render_to_string(self.field_template, context)
 
     def get_data(self):
         # Updated for JSONField

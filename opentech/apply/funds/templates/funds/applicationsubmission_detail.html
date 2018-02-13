@@ -1,0 +1,32 @@
+{% extends "base-admin.html" %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h3>{{ object.title }}</h3>
+        <h5>{{ object.stage }} | {{ object.page }} | {{ object.round }} | Lead:{{ object.round.lead }}</h5>
+    </div>
+</div>
+
+<div>Submission Details</div>
+
+<div class="wrapper wrapper--medium wrapper--top-bottom-inner-space">
+    Submitted: {{ object.submit_time.date }} by {{ object.user.get_full_name }}
+    <h2>Proposal Information</h2>
+    <div>
+        Requested Funding {{ object.value }}
+        Project Duration {{ object.value }}
+        Legal Name {{ object.full_name }}
+        Email {{ object.email }}
+    </div>
+    <div>
+        {{ object.render_answers }}
+    </div>
+</div>
+<div>
+    <h3>Other Submissions</h3>
+    {% for submission in other_submissions %}
+        <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

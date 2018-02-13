@@ -4,5 +4,5 @@ from .views import DashboardView
 
 
 urlpatterns = [
-    url(r'^$', DashboardView.as_view(), name="dashboard")
+    url(r'^$', DashboardView.as_view(), name="dashboard"),
 ]
