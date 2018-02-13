@@ -478,7 +478,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return super().save(*args, **kwargs)
 
     def render(self):
-        text = list()
+        context = {'fields': []}
         for field in self.form_fields:
             try:
                 data = self.form_data[field.id]
@@ -486,12 +486,20 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 pass  # It was a named field or a paragraph
             else:
                 form_field = field.block.get_field(field.value)
-                context = {
+                if hasattr(form_field, 'choices'):
+                    if isinstance(data, str):
+                        data = [data]
+                    choices = dict(form_field.choices)
+                    try:
+                        data = [choices[value] for value in data]
+                    except KeyError:
+                        data = [choices[int(value)] for value in data]
+
+                context['fields'].append({
                     'field': form_field,
-                    'value': mark_safe(data),
-                }
-                text.append(render_to_string(self.field_template, context))
-        return mark_safe(''.join(text))
+                    'value': data,
+                })
+        return render_to_string(self.field_template, context)
 
     def get_data(self):
         # Updated for JSONField

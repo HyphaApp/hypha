@@ -1,4 +1,16 @@
-<div>
-    <h5>{{ field.label }}</h5>
-    <div>{{ value }}</div>
-</div>
+{% for field in fields %}
+    <div>
+        <h5>{{ field.field.label }}</h5>
+        {% if field.field.choices %}
+        <div>
+            {% for value in field.value %}
+                {% if forloop.first %}<ul>{% endif %}
+                <li>{{ value }}</li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div>{{ field.value }}</div>
+        {% endif %}
+    </div>
+{% endfor %}
