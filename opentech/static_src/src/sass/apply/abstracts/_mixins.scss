@@ -1,0 +1,128 @@
+// Media queries
+@mixin media-query($queries...) {
+    @each $query in $queries {
+        @each $breakpoint in $breakpoints {
+            $name:        nth($breakpoint, 1);
+            $declaration: nth($breakpoint, 2);
+
+            @if $query == $name and $declaration {
+                @media only screen and #{$declaration} {
+                    @content;
+                }
+            }
+        }
+    }
+}
+
+//   Placeholder text
+@mixin placeholder-text {
+    // sass-lint:disable no-vendor-prefixes
+    &.placeholder { @content; }
+    &:-moz-placeholder { @content; }
+    &::-moz-placeholder { @content; }
+    &:-ms-input-placeholder { @content; }
+    &::-webkit-input-placeholder { @content; }
+    // sass-lint:enddisable
+}
+
+// Hide text
+@mixin hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+}
+
+// iOS Native vertical scroll
+@mixin native-vertical-scroll {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-misspelled-properties
+}
+
+// Output a rem and px fallback value for the given property
+@mixin rem($property, $values) {
+
+    $px:  ();
+    $rem: ();
+
+    @each $value in $values {
+        @if $value == 0 or $value == auto or $value == inherit {
+            $px:  append($px, $value);
+            $rem: append($rem, $value);
+        } @else {
+            $px:  append($px, $value);
+            $rem: append($rem, rem(strip-unit($value)));
+        }
+    }
+    // sass-lint:disable no-duplicate-properties
+    #{$property}: $px;
+    #{$property}: $rem;
+    // sass-lint:enddisable
+}
+
+// Output a `font-size: [x]rem;` declaration for the given px value
+@mixin rem-font-size($font-size) {
+    @include rem(font-size, $font-size);
+}
+
+// Font sizes
+@mixin font-size($keyword) {
+    $size: map-get($font-sizes, $keyword);
+
+    @if $size == null {
+        @warn 'Font size ‘#{$keyword}’ does not exist';
+    } @else {
+        @include rem-font-size($size);
+    }
+}
+
+// Button mixin
+@mixin button($bg, $hover-bg) {
+    padding: 10px 60px;
+    font-weight: $weight--bold;
+    color: $color--white;
+    background: $bg;
+    border: 1px solid $color--white;
+    transition: color, background, border, $transition;
+
+    &:hover,
+    &:active {
+        cursor: pointer;
+        background: $hover-bg;
+    }
+}
+
+// Narrow button mixin
+@mixin button--narrow {
+    padding: 5px;
+    font-size: 15px;
+
+    @include media-query(tablet-landscape) {
+        padding: 5px 15px;
+    }
+}
+
+// Viewport sized typography mixin that takes a min and max pixel-based value
+@mixin responsive-font-sizes($min, $max) {
+
+    $vw-context: (1260 * 0.1) * 1px;
+    $responsive: ($max / $vw-context) * 10vw;
+
+    $responsive-unitless: $responsive / ($responsive - $responsive + 1);
+    $dimension: if(unit($responsive) == 'vh', 'height', 'width');
+    $min-breakpoint: $min / $responsive-unitless * 100;
+
+    @media (max-#{$dimension}: #{$min-breakpoint}) {
+        font-size: $min;
+    }
+
+    $max-breakpoint: $max / $responsive-unitless * 100;
+
+    @media (min-#{$dimension}: #{$max-breakpoint}) {
+        font-size: $max;
+    }
+
+    font-size: $responsive;
+}

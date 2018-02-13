@@ -1,0 +1,72 @@
+// Default
+$color--white: #fff;
+$color--black: #141414;
+$color--dark-grey: #404041;
+$color--light-grey: #f7f7f7;
+$color--mid-grey: #cfcfcf;
+
+// Brand
+$color--light-blue: #43bbf1;
+$color--dark-blue: #25aae1;
+$color--darkest-blue: #3d6bdb;
+$color--mustard: #e6ab32;
+$color--purple: #8c0bbf;
+$color--pink: #e35ca6;
+$color--light-pink: #ffe1df;
+$color--tomato: #f05e54;
+$color--mint: #40c2ad;
+
+// Social
+$color--twitter: #1da6f6;
+$color--linkedin: #137ab8;
+$color--facebook: #396ab5;
+
+// Transparent
+$color--black-10: rgba(0, 0, 0, 0.1);
+
+// Assignment
+$color--default: $color--dark-grey;
+$color--primary: $color--light-blue;
+$color--error: $color--tomato;
+$color--correct: $color--mint;
+
+// Fonts
+$font--primary: 'proxima-nova';
+
+// Font weights
+$weight--black: 800;
+$weight--bold: 700;
+$weight--semibold: 600;
+$weight--normal: 400;
+$weight--light: 200;
+
+// Font sizes
+$base-font-size: 19px;
+$base-line-height: 29px;
+$font-sizes: (
+    alpha:   72px,
+    beta:    42px,
+    gamma:   36px,
+    delta:   24px,
+    epsilon: 17px,
+    zeta:    15px,
+    milli:   13px
+);
+
+// Wrappers
+$site-width: 1280px;
+$wrapper--medium: 1020px;
+$wrapper--small: 790px;
+
+// Breakpoints
+$breakpoints: (
+    'mob-portrait'      '(min-width: 320px)',
+    'mob-landscape'     '(min-width: 480px)',
+    'tablet-portrait'   '(min-width: 768px)',
+    'tablet-landscape'  '(min-width: 1024px)',
+    'desktop'           '(min-width: 1280px)',
+    'deskop-wide'       '(min-width: 2556px)'
+);
+
+// Transition
+$transition: 0.25s ease-out;

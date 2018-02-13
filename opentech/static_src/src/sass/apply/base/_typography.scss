@@ -1,0 +1,111 @@
+// $TYPOGRAPHY
+// Base font
+html {
+    font-size: ($base-font-size / 16px) * 100%;
+    line-height: $base-line-height / $base-font-size;
+    color: $color--default;
+}
+
+/* ============================================
+    Families – one mixin per typeface
+    :: For each font mixin defined here, make sure each property is negated (set
+    :: to its default value, usually `inherit`) in all other font mixins.
+*/
+@mixin heading-text {
+    margin: 0 0 1rem;
+    font-family: $font--primary;
+    font-style: inherit;
+    font-weight: $weight--bold;
+}
+
+@mixin body-text {
+    font-family: $font--primary;
+    font-style: inherit;
+    font-weight: inherit;
+    text-transform: inherit;
+}
+
+// sass-lint:disable single-line-per-selector
+h1, h2, h3, h4, h5, h6,
+.heading-text {
+    @include heading-text;
+}
+// sass-lint:enddisable
+
+html,
+.body-text {
+    @include responsive-font-sizes(16px, 19px);
+}
+
+// Default sizes
+h1, %h1, .alpha   {
+    @include responsive-font-sizes(40px, map-get($font-sizes, alpha));
+    font-weight: $weight--black;
+}
+
+h2, %h2, .beta    {
+    @include responsive-font-sizes(30px, map-get($font-sizes, beta));
+}
+
+h3, %h3, .gamma   {
+    @include responsive-font-sizes(20px, map-get($font-sizes, gamma));
+}
+
+h4, %h4, .delta   {
+    @include responsive-font-sizes(18px, map-get($font-sizes, delta));
+}
+
+h5, %h5, .epsilon {
+    @include responsive-font-sizes(15px, map-get($font-sizes, epsilon));
+}
+
+h6, %h6, .zeta    {
+    font-size: 15px;
+}
+
+small, .milli { @include font-size(milli); }
+
+// thin
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 200;
+    src: url('./../../fonts/proxima-nova/proxima-nova-thin.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// regular
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 400;
+    src: url('./../../fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// semibold
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 600;
+    src: url('./../../fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// bold
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 700;
+    src: url('./../../fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// black
+@font-face {
+    font-family: 'proxima-nova';
+    font-style: normal;
+    font-weight: 800;
+    src: url('./../../fonts/proxima-nova/proxima-nova-black.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
