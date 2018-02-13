@@ -1,15 +1,14 @@
+// Default
 $color--white: #fff;
 $color--black: #141414;
+$color--dark-grey: #404041;
+$color--light-grey: #f7f7f7;
+$color--mid-grey: #cfcfcf;
+
+// Brand
 $color--light-blue: #43bbf1;
 $color--dark-blue: #25aae1;
-$color--dark-grey: #404041;
-$color--purple: #8b1fbc;
 $color--darkest-blue: #3d6bdb;
-$color--twitter: #1da6f6;
-$color--linkedin: #137ab8;
-$color--facebook: #396ab5;
-$color--mid-grey: #cfcfcf;
-$color--light-grey: #f7f7f7;
 $color--mustard: #e6ab32;
 $color--purple: #8c0bbf;
 $color--pink: #e35ca6;
@@ -17,25 +16,22 @@ $color--light-pink: #ffe1df;
 $color--tomato: #f05e54;
 $color--mint: #40c2ad;
 
+// Social
+$color--twitter: #1da6f6;
+$color--linkedin: #137ab8;
+$color--facebook: #396ab5;
+
+// Transparent
 $color--black-10: rgba(0, 0, 0, 0.1);
 
+// Assignment
 $color--default: $color--dark-grey;
 $color--primary: $color--light-blue;
-$color--secondary: #eaeaea;
-$color--tertiary: #f9f9f9;
 $color--error: $color--tomato;
 $color--correct: $color--mint;
 
-// Button colours
-$button-colours: (
-    primary:    (bg: $color--primary, color: #fff),
-    secondary:  (bg: $color--secondary, color: #000),
-    tertiary:   (bg: $color--tertiary, color: #000),
-);
-
 // Fonts
 $font--primary: 'proxima-nova';
-$font--secondary: Sans-Serif;
 
 // Font weights
 $weight--black: 800;
@@ -48,15 +44,12 @@ $weight--light: 200;
 $base-font-size: 19px;
 $base-line-height: 29px;
 $font-sizes: (
-    // standard sizes
     alpha:   72px,
     beta:    42px,
     gamma:   36px,
     delta:   24px,
     epsilon: 17px,
     zeta:    15px,
-
-    // non-standard small sizes
     milli:   13px
 );
 
@@ -75,5 +68,5 @@ $breakpoints: (
     'deskop-wide'       '(min-width: 2556px)'
 );
 
-// Transition speeds
+// Transition
 $transition: 0.25s ease-out;
