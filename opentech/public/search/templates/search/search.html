@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailsearchpromotions_tags %}
 {% block body_class %}template-searchresults light-grey-bg{% endblock %}
+{% block page_title %}Search results{% endblock %}
 {% block title %}{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}{% endblock %}
 
 {% block content %}
