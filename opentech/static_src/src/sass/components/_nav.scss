@@ -170,8 +170,8 @@
             padding: 0;
 
             &:hover {
-                color: lighten($color--secondary, 20%);
-                border-bottom: 1px solid $color--secondary;
+                color: lighten($color--light-grey, 20%);
+                border-bottom: 1px solid $color--light-grey;
 
                 .header--light-bg & {
                     color: $color--default;
