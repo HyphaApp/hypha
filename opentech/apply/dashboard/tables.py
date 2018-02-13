@@ -1,5 +1,6 @@
 import django_filters as filters
 import django_tables2 as tables
+from django_tables2.utils import A
 
 from wagtail.wagtailcore.models import Page
 
@@ -9,6 +10,7 @@ from .widgets import Select2MultiCheckboxesWidget
 
 
 class DashboardTable(tables.Table):
+    title = tables.LinkColumn('dashboard:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type")
