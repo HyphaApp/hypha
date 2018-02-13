@@ -8,6 +8,7 @@
                 {{ ancestor.title }}
                 {% if ancestor.depth|add:1 < result.depth %}
                     &nbsp;/&nbsp;
+<a class="listing" href="{% pageurl result %}">
                 {% endif %}
             {% else %}/{% endif %} {# the first one #}
         {% endif %}
@@ -31,3 +32,4 @@
 {% endif %}
 
 
+</a>
