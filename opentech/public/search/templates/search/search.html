@@ -3,10 +3,7 @@
 {% block body_class %}template-searchresults light-grey-bg{% endblock %}
 {% block page_title %}Search results{% endblock %}
 {% block title %}{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}{% endblock %}
-
 {% block content %}
-
-    <h1>{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h1>
 
     <form action="{% url 'search' %}" method="get" role="search">
         <input type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
@@ -19,6 +16,7 @@
             {% for pick in search_picks %}
                 <li>
     <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
+        <h2 class="heading heading--no-margin">{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h2>
                     {% include "search/includes/search_result.html" with result=pick.page.specific %}
                 </li>
              {% endfor %}
