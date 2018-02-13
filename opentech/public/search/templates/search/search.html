@@ -18,6 +18,7 @@
          <ul>
             {% for pick in search_picks %}
                 <li>
+    <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
                     {% include "search/includes/search_result.html" with result=pick.page.specific %}
                 </li>
              {% endfor %}
@@ -44,4 +45,5 @@
         No results found.
     {% endif %}
 
+    </div>
 {% endblock %}
