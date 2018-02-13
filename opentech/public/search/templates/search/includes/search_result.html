@@ -27,9 +27,7 @@
 
     <h4 class="listing__title">{{ result.listing_title|default:result.title }}</h4>
 
-{% if pick.description or result.listing_summary or result.search_description %}
-    <p>{{ pick.description|default:result.listing_summary|default:result.search_description }}</p>
-{% endif %}
-
-
+    {% if pick.description or result.listing_summary or result.search_description or result.listing_summary or result.introduction  %}
+        <h6 class="listing__teaser">{{ pick.description|default:result.listing_summary|default:result.search_description|default:result.listing_summary|default:result.introduction|truncatechars_html:155 }}</h6>
+    {% endif %}
 </a>
