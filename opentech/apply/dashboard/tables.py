@@ -10,7 +10,7 @@ from .widgets import Select2MultiCheckboxesWidget
 
 
 class DashboardTable(tables.Table):
-    title = tables.LinkColumn('dashboard:submission', args=[A('pk')], orderable=True)
+    title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type")
