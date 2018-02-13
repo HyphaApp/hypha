@@ -25,7 +25,7 @@
         {% endcomment %}
 
         {% block extra_css %}{% endblock %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/apply/main.css' %}">
     </head>
 
     <body class="light-grey-bg {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -41,7 +41,7 @@
 
         {% wagtailuserbar %}
 
-        <header class="header header--narrow header--white-bg header--light-bg">
+        <header class="header">
 
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}" aria-label="Home link">
