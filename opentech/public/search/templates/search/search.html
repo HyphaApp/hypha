@@ -1,48 +1,41 @@
 {% extends "base.html" %}
 {% load static wagtailcore_tags wagtailsearchpromotions_tags %}
-
-{% block body_class %}template-searchresults{% endblock %}
-
+{% block body_class %}template-searchresults light-grey-bg{% endblock %}
+{% block page_title %}Search results{% endblock %}
 {% block title %}{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}{% endblock %}
-
 {% block content %}
+    <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
+        <h2 class="heading heading--no-margin">{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h2>
 
-    <h1>{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h1>
+        {% if search_results %}
+            {% with count=search_results.paginator.count %}
+                <p>{{ count }} result{{ count|pluralize }} found.</p>
+            {% endwith %}
+        {% elif search_query and not search_picks %}
+            <p>No results found.</p>
+        {% endif %}
 
-    <form action="{% url 'search' %}" method="get" role="search">
-        <input type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
-        <input type="submit" value="Search">
-    </form>
+        <form class="form" action="{% url 'search' %}" method="get" role="search">
+            <input class="input input--bottom-space" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
+            <input class="link link--button" type="submit" value="Search">
+        </form>
 
-    {% get_search_promotions search_query as search_picks %}
-    {% if search_picks %}
-         <ul>
-            {% for pick in search_picks %}
-                <li>
+        {% get_search_promotions search_query as search_picks %}
+        {% if search_picks %}
+            <div class="wrapper wrapper--listings">
+                {% for pick in search_picks %}
                     {% include "search/includes/search_result.html" with result=pick.page.specific %}
-                </li>
-             {% endfor %}
-         </ul>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    {% if search_results %}
-
-        {% with count=search_results.paginator.count %}
-            {{ count }} result{{ count|pluralize }} found.
-        {% endwith %}
-
-        <ul>
-            {% for result in search_results %}
-                <li>
+        {% if search_results %}
+            <div class="wrapper wrapper--listings">
+                {% for result in search_results %}
                     {% include "search/includes/search_result.html" with result=result.specific %}
-                </li>
-            {% endfor %}
-        </ul>
-
-        {% include "includes/pagination.html" with paginator_page=search_results %}
-
-    {% elif search_query and not search_picks %}
-        No results found.
-    {% endif %}
-
+                {% endfor %}
+            </div>
+            {% include "includes/pagination.html" with paginator_page=search_results %}
+        {% endif %}
+    </div>
 {% endblock %}
