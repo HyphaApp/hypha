@@ -112,6 +112,10 @@
             font-weight: $weight--normal;
             border-bottom: 0;
 
+            .listing & {
+                margin-left: 10px;
+            }
+
             &::after {
                 width: 0;
                 height: 0;
@@ -120,9 +124,18 @@
                 border-bottom: 5px solid transparent;
                 border-left: 5px solid $color--white;
                 content: '';
+
+                .listing & {
+                    margin-left: 0;
+                    border-left: 5px solid $color--default;
+                }
             }
 
             &:first-child {
+                .listing & {
+                    margin-left: 0;
+                }
+
                 a {
                     margin-left: 0;
                 }
