@@ -1,19 +1,21 @@
 {% load static wagtailcore_tags wagtailsearchpromotions_tags wagtailimages_tags %}
 
-{# breadcrumbs #}
-{% if result.get_ancestors|length > 2 %}
-    {% for ancestor in result.get_ancestors %}
-        {% if not ancestor.is_root %}
-            {% if ancestor.depth > 2 %}
-                {{ ancestor.title }}
-                {% if ancestor.depth|add:1 < result.depth %}
-                    &nbsp;/&nbsp;
 <a class="listing" href="{% pageurl result %}">
+    {# breadcrumbs #}
+    <h6 class="listing__path">
+        {% if result.get_ancestors|length > 2 %}
+            {% for ancestor in result.get_ancestors %}
+                {% if not ancestor.is_root %}
+                    {% if ancestor.depth > 2 %}
+                        <span>{{ ancestor.title }}</span>
+                        {% if ancestor.depth|add:1 < result.depth %}
+                            <span class="nav__item--breadcrumb"></span>
+                        {% endif %}
+                    {% else %}<span class="nav__item--breadcrumb"></span>{% endif %} {# the first one #}
                 {% endif %}
-            {% else %}/{% endif %} {# the first one #}
+            {% endfor %}
         {% endif %}
-    {% endfor %}
-{% endif %}
+    </h6>
 
 {% if result.listing_image %}
     <a href="{% pageurl result %}">
