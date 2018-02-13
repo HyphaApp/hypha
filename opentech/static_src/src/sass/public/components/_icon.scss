@@ -8,7 +8,7 @@
         fill: $color--dark-grey;
     }
 
-    .header__menus--mobile.is-visible & {
+    .header__menus--mobile.is-visible & { // sass-lint:disable-line force-element-nesting
         fill: $color--white;
     }
 
@@ -52,7 +52,7 @@
             fill: $color--white;
         }
 
-        .header--light-bg.search-open & {
+        .header--light-bg.search-open & { // sass-lint:disable-line force-element-nesting
             fill: $color--dark-grey;
         }
     }
@@ -104,7 +104,7 @@
     }
 
     &--search {
-        .header--light-bg.search-open & {
+        .header--light-bg.search-open & { // sass-lint:disable-line force-element-nesting
             fill: $color--white;
         }
     }
