@@ -4,12 +4,6 @@
 {% block page_title %}Search results{% endblock %}
 {% block title %}{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}{% endblock %}
 {% block content %}
-
-    <form action="{% url 'search' %}" method="get" role="search">
-        <input type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
-        <input type="submit" value="Search">
-    </form>
-
     {% get_search_promotions search_query as search_picks %}
     {% if search_picks %}
          <ul>
@@ -23,11 +17,14 @@
          </ul>
     {% endif %}
 
-    {% if search_results %}
 
-        {% with count=search_results.paginator.count %}
-            {{ count }} result{{ count|pluralize }} found.
-        {% endwith %}
+        {% if search_results %}
+            {% with count=search_results.paginator.count %}
+                <p>{{ count }} result{{ count|pluralize }} found.</p>
+            {% endwith %}
+        {% elif search_query and not search_picks %}
+            <p>No results found.</p>
+        {% endif %}
 
         <ul>
             {% for result in search_results %}
@@ -38,10 +35,11 @@
         </ul>
 
         {% include "includes/pagination.html" with paginator_page=search_results %}
+        <form class="form" action="{% url 'search' %}" method="get" role="search">
+            <input class="input input--bottom-space" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
+            <input class="link link--button" type="submit" value="Search">
+        </form>
 
-    {% elif search_query and not search_picks %}
-        No results found.
-    {% endif %}
 
     </div>
 {% endblock %}
