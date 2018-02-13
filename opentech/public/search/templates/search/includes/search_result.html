@@ -25,11 +25,7 @@
         </div>
     {% endif %}
 
-<h4>
-    <a href="{% pageurl result %}">
-        {{ result.listing_title|default:result.title }}
-    </a>
-</h4>
+    <h4 class="listing__title">{{ result.listing_title|default:result.title }}</h4>
 
 {% if pick.description or result.listing_summary or result.search_description %}
     <p>{{ pick.description|default:result.listing_summary|default:result.search_description }}</p>
