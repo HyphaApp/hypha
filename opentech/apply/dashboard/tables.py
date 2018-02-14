@@ -15,10 +15,12 @@ class DashboardTable(tables.Table):
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type")
     page = tables.Column(verbose_name="Fund")
+    lead = tables.Column(accessor='round.specific.lead')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'user')
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
+        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
         template = "dashboard/tables/table.html"
 
     def render_user(self, value):
