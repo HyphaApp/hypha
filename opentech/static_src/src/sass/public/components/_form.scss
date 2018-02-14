@@ -57,7 +57,7 @@
             @include button($color--light-blue, $color--dark-blue);
             max-width: 290px;
             text-align: center;
-            background: url('./../images/upload.svg') $color--light-blue no-repeat 50px center;
+            background: url('./../../images/upload.svg') $color--light-blue no-repeat 50px center;
             border: 0;
 
             .no-js & {
@@ -65,7 +65,7 @@
             }
 
             &:hover {
-                background: url('./../images/upload.svg') $color--dark-blue no-repeat 50px center;
+                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 50px center;
 
                 .no-js & {
                     background: none;
@@ -95,7 +95,7 @@
 
     &__select {
         max-width: 385px;
-        background: url('./../images/dropdown.svg') $color--white no-repeat 95% center;
+        background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
         background-size: 8px;
 
         select[multiple='multiple'] {
@@ -270,7 +270,7 @@
         }
 
         &:checked + label::before {
-            background: url('./../images/tick.svg') $color--dark-blue center no-repeat;
+            background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
             background-size: 12px;
             border: 1px solid $color--dark-blue;
         }

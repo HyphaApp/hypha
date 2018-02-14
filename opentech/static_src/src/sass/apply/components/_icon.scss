@@ -1,0 +1,54 @@
+.icon {
+    width: 20px;
+    height: 20px;
+    transition: fill $transition;
+    fill: $color--dark-grey;
+
+    .header__menus--mobile.is-visible & { // sass-lint:disable-line force-element-nesting
+        fill: $color--white;
+    }
+
+    &--person {
+        width: 15px;
+        height: 15px;
+        margin-right: 5px;
+        transition: fill $transition;
+
+        .button:hover & {
+            fill: $color--white;
+        }
+    }
+
+    &--social-share {
+        width: 40px;
+        height: 40px;
+        padding: 10px;
+        margin-right: 5px;
+    }
+
+    &--calendar {
+        fill: $color--pink;
+    }
+
+    &--error {
+        width: 25px;
+        height: 25px;
+        margin-right: 10px;
+    }
+
+    &--status {
+        width: 65px;
+        height: 100%;
+        stroke: $color--mid-grey;
+        fill: transparent;
+
+        .is-active & {
+            stroke: $color--correct;
+        }
+    }
+
+    &--small {
+        width: 14px;
+        height: 14px;
+    }
+}

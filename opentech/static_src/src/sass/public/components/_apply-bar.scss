@@ -17,8 +17,8 @@
     &__heading {
         display: flex;
         align-items: center;
-        font-size: 36px;
         margin-bottom: 5px;
+        font-size: 36px;
 
         @include media-query(tablet-portrait) {
             margin: inherit;
