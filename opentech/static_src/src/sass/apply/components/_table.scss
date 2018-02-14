@@ -18,13 +18,17 @@ table {
     }
 
     tr {
-        background-color: #fff;
-        border: 1px solid #e8e8e8;
+        background-color: $color--white;
+        border: 1px solid $color--light-mid-grey;
+
+        &:last-child {
+            border-bottom: 0;
+        }
 
         @include media-query($table-breakpoint) {
             border-top: 0;
             border-right: 0;
-            border-bottom: 1px solid #e8e8e8;
+            border-bottom: 1px solid $color--light-mid-grey;
             border-left: 0;
         }
 
@@ -121,22 +125,6 @@ table {
             &::after {
                 @include triangle(bottom, $color--default, 5px);
             }
-        }
-    }
-
-    tr {
-        background-color: #fff;
-        border: 1px solid #e8e8e8;
-
-        @include media-query($table-breakpoint) {
-            border-top: 0;
-            border-right: 0;
-            border-bottom: 1px solid #e8e8e8;
-            border-left: 0;
-        }
-
-        &:last-child {
-            border-bottom: 0;
         }
     }
 }
