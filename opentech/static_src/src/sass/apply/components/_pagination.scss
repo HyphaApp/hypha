@@ -9,13 +9,14 @@
         margin: 0 10px;
     }
 
-    .prev,
+    .previous,
     .next {
         a {
             position: relative;
             display: block;
             width: 55px;
             height: 55px;
+            font-size: 0;
             color: $color--white;
             background: $color--white;
             border: 1px solid $color--mid-grey;
@@ -28,7 +29,7 @@
         }
     }
 
-    .prev {
+    .previous {
         a {
             &::after {
                 @include triangle(left, $color--primary, 7px);
