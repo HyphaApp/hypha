@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('public_funds', '005_link_text_optional'),
+        ('public_funds', '0005_link_text_optional'),
     ]
 
     operations = [
