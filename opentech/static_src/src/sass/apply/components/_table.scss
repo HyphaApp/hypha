@@ -67,10 +67,13 @@ table {
 
             &.title {
                 font-weight: $weight--bold;
-                color: $color--primary;
 
-                @include media-query($table-breakpoint) {
-                    color: $color--dark-grey;
+                a {
+                    color: $color--primary;
+
+                    @include media-query($table-breakpoint) {
+                        color: $color--dark-grey;
+                    }
                 }
             }
 
