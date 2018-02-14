@@ -29,8 +29,10 @@ table {
         border: 1px solid $color--light-mid-grey;
         transition: box-shadow 0.15s ease;
 
-        &:hover {
-            box-shadow: 0 6px 35px -13px $color--black-50;
+        @include media-query($table-breakpoint) {
+            &:hover {
+                box-shadow: 0 6px 35px -13px $color--black-50;
+            }
         }
 
         &:last-child {
