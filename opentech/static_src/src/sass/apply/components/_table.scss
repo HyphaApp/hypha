@@ -60,10 +60,10 @@ table {
 
             &.title {
                 font-weight: $weight--bold;
-                color: #43bbf1;
+                color: $color--primary;
 
                 @include media-query($table-breakpoint) {
-                    color: #404041;
+                    color: $color--dark-grey;
                 }
             }
 
@@ -71,8 +71,8 @@ table {
                 span {
                     padding: 10px;
                     font-size: 12px;
-                    color: #177da8;
-                    background-color: #e7f2f6;
+                    color: $color--marine;
+                    background-color: $color--sky-blue;
                 }
             }
         }
@@ -95,14 +95,14 @@ table {
         background-color: transparent;
 
         a {
-            color: #919191;
+            color: $color--mid-dark-grey;
             transition: color 0.25s ease-out;
         }
 
         &.desc,
         &.asc {
             position: relative;
-            color: #404041;
+            color: $color--dark-grey;
 
             &::after {
                 position: absolute;
