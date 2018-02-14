@@ -216,6 +216,14 @@ class TestFormSubmission(TestCase):
         except AttributeError:
             return page.serve(request)
 
+    def test_workflow_and_status_assigned(self):
+        self.submit_form()
+        submission = ApplicationSubmission.objects.first()
+        first_phase = self.round_page.workflow.first()
+        self.assertEqual(submission.workflow_name, self.round_page.workflow_name)
+        self.assertEqual(submission.status, str(first_phase))
+        self.assertEqual(submission.status_name, first_phase.name)
+
     def test_can_submit_if_new(self):
         self.submit_form()
 
