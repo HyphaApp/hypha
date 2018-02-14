@@ -224,6 +224,14 @@ class TestFormSubmission(TestCase):
         self.assertEqual(submission.status, str(first_phase))
         self.assertEqual(submission.status_name, first_phase.name)
 
+    def test_workflow_and_status_assigned_lab(self):
+        self.submit_form(page=self.lab_page)
+        submission = ApplicationSubmission.objects.first()
+        first_phase = self.lab_page.workflow.first()
+        self.assertEqual(submission.workflow_name, self.lab_page.workflow_name)
+        self.assertEqual(submission.status, str(first_phase))
+        self.assertEqual(submission.status_name, first_phase.name)
+
     def test_can_submit_if_new(self):
         self.submit_form()
 
