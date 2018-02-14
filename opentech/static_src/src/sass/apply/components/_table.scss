@@ -54,7 +54,7 @@ table {
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
-                height: 110px;
+                height: 90px;
             }
 
             &:first-child {
