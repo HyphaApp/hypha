@@ -91,9 +91,9 @@ class SubmittableStreamForm(AbstractStreamForm):
         return kwargs
 
 
-class WorkflowStreamForm(AbstractStreamForm):
+class WorkflowHelpers(models.Model):
     """
-    Defines the common methods and fields for working with Workflows
+    Defines the common methods and fields for working with Workflows within Django models
     """
     class Meta:
         abstract = True
@@ -105,13 +105,21 @@ class WorkflowStreamForm(AbstractStreamForm):
 
     workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
 
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.forms.all()[0].fields
-
     @property
     def workflow_class(self):
         return WORKFLOW_CLASS[self.get_workflow_display()]
+
+
+class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):
+    """
+    Defines the common methods and fields for working with Workflows within Wagtail pages
+    """
+    class Meta:
+        abstract = True
+
+    def get_defined_fields(self):
+        # Only return the first form, will need updating for when working with 2 stage WF
+        return self.forms.all()[0].fields
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow'),
@@ -412,11 +420,14 @@ class JSONOrderable(models.QuerySet):
         return super().order_by(*field_ordering)
 
 
-class ApplicationSubmission(AbstractFormSubmission):
+class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+
+    # Workflow inherited from WorkflowHelpers
+    status = models.CharField(max_length=254)
 
     objects = JSONOrderable.as_manager()
 
