@@ -90,6 +90,7 @@ table {
 
             &.status_name {
                 span {
+                    display: inline-block;
                     padding: 10px;
                     font-size: 12px;
                     color: $color--marine;
