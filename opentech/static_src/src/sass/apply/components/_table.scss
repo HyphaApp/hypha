@@ -59,7 +59,11 @@ table {
                 padding-top: 20px;
 
                 @include media-query($table-breakpoint) {
-                    padding-top: 32px;
+                    padding: 20px;
+                }
+
+                @include media-query(tablet-portrait) {
+                    padding: 30px;
                 }
             }
 
@@ -67,7 +71,11 @@ table {
                 padding-bottom: 20px;
 
                 @include media-query($table-breakpoint) {
-                    padding-bottom: 32px;
+                    padding: 20px;
+                }
+
+                @include media-query(tablet-portrait) {
+                    padding: 30px;
                 }
             }
 
@@ -96,12 +104,16 @@ table {
         padding: 5px 20px;
 
         @include media-query($table-breakpoint) {
+            padding: 20px;
+        }
+
+        @include media-query(tablet-portrait) {
             padding: 30px;
         }
     }
 
     th {
-        padding: 20px;
+        padding: 20px 30px;
         font-size: 15px;
         font-weight: 600;
         text-align: left;
