@@ -14,12 +14,24 @@ table {
 
         tr {
             background-color: transparent;
+
+            &:hover {
+                box-shadow: none;
+            }
         }
     }
 
-    tr {
+    tbody {
         background-color: $color--white;
+    }
+
+    tr {
         border: 1px solid $color--light-mid-grey;
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 6px 35px -13px $color--black-50;
+        }
 
         &:last-child {
             border-bottom: 0;
@@ -35,6 +47,7 @@ table {
         > td {
             display: block;
             width: 100%;
+
 
             @include media-query($table-breakpoint) {
                 display: table-cell;
