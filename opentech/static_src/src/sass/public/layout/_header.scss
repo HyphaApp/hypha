@@ -141,7 +141,7 @@
                 fill: $color--dark-grey;
             }
 
-            .header__menus--mobile.is-visible & {
+            .header__menus--mobile.is-visible & { // sass-lint:disable-line force-element-nesting
                 fill: $color--white;
             }
         }

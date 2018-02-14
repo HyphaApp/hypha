@@ -1,0 +1,32 @@
+.button {
+    padding: 0;
+    background-color: transparent;
+    background-image: none;
+    border: 0;
+    box-shadow: none;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &--contains-icons {
+        display: flex;
+        align-items: center;
+
+        .header & {
+            margin-right: 20px;
+        }
+    }
+
+    &--transparent {
+        @include button(transparent, $color--black);
+        @include button--narrow;
+        color: $color--black;
+        border: 1px solid $color--black;
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+}
+
