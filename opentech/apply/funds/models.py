@@ -176,6 +176,10 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
+    def detail(self):
+        # The location to find out more information
+        return self.fund_public.first()
+
     @property
     def open_round(self):
         rounds = Round.objects.child_of(self).live().public().specific()
@@ -379,6 +383,10 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         EmailForm.email_tab,
         ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
+
+    def detail(self):
+        # The location to find out more information
+        return self.lab_public.first()
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
