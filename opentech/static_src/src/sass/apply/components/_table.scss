@@ -1,0 +1,156 @@
+$table-breakpoint: 'small-tablet';
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+
+        tr {
+            background-color: transparent;
+
+            &:hover {
+                box-shadow: none;
+            }
+        }
+    }
+
+    tbody {
+        background-color: $color--white;
+    }
+
+    tr {
+        border: 1px solid $color--light-mid-grey;
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 6px 35px -13px $color--black-50;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        @include media-query($table-breakpoint) {
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid $color--light-mid-grey;
+            border-left: 0;
+        }
+
+        > td {
+            display: block;
+            width: 100%;
+
+
+            @include media-query($table-breakpoint) {
+                display: table-cell;
+                width: initial;
+                height: 110px;
+            }
+
+            &:first-child {
+                padding-top: 20px;
+
+                @include media-query($table-breakpoint) {
+                    padding: 20px;
+                }
+
+                @include media-query(tablet-portrait) {
+                    padding: 30px;
+                }
+            }
+
+            &:last-child {
+                padding-bottom: 20px;
+
+                @include media-query($table-breakpoint) {
+                    padding: 20px;
+                }
+
+                @include media-query(tablet-portrait) {
+                    padding: 30px;
+                }
+            }
+
+            &.title {
+                font-weight: $weight--bold;
+                color: $color--primary;
+
+                @include media-query($table-breakpoint) {
+                    color: $color--dark-grey;
+                }
+            }
+
+            &.status_name {
+                span {
+                    display: inline-block;
+                    padding: 10px;
+                    font-size: 12px;
+                    color: $color--marine;
+                    background-color: $color--sky-blue;
+                }
+            }
+        }
+    }
+
+    td,
+    th {
+        padding: 5px 20px;
+
+        @include media-query($table-breakpoint) {
+            padding: 20px;
+        }
+
+        @include media-query(tablet-portrait) {
+            padding: 30px;
+        }
+    }
+
+    th {
+        padding: 20px 30px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: left;
+        background-color: transparent;
+
+        a {
+            color: $color--mid-dark-grey;
+            transition: color 0.25s ease-out;
+        }
+
+        &.desc,
+        &.asc {
+            position: relative;
+            color: $color--dark-grey;
+
+            &::after {
+                position: absolute;
+                top: 25px;
+                margin-left: 10px;
+            }
+
+            a {
+                color: inherit;
+            }
+        }
+
+        &.desc {
+            &::after {
+                @include triangle(top, $color--default, 5px);
+            }
+        }
+
+        &.asc {
+            &::after {
+                @include triangle(bottom, $color--default, 5px);
+            }
+        }
+    }
+}

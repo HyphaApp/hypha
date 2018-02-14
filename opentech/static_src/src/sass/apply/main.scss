@@ -2,6 +2,7 @@
 @import 'vendor/normalize';
 
 // Abstracts
+@import 'abstracts/functions';
 @import 'abstracts/mixins';
 @import 'abstracts/variables';
 
@@ -12,6 +13,8 @@
 // Components
 @import 'components/button';
 @import 'components/icon';
+@import 'components/pagination';
+@import 'components/table';
 @import 'components/wrapper';
 
 // Layout
