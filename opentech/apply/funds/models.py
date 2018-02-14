@@ -120,7 +120,7 @@ class WorkflowHelpers(models.Model):
         return WORKFLOW_CLASS[cls.WORKFLOWS[name]]
 
 
-class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):
+class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     """
     Defines the common methods and fields for working with Workflows within Wagtail pages
     """
