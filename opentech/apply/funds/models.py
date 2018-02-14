@@ -478,7 +478,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return super().save(*args, **kwargs)
 
     def render_answers(self):
-        context = {'fields': []}
+        context = {'fields': list()}  # type: ignore
         for field in self.form_fields:
             try:
                 data = self.form_data[field.id]
