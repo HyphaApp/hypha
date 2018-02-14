@@ -59,26 +59,10 @@ table {
 
             &:first-child {
                 padding-top: 20px;
-
-                @include media-query($table-breakpoint) {
-                    padding: 20px;
-                }
-
-                @include media-query(tablet-portrait) {
-                    padding: 30px;
-                }
             }
 
             &:last-child {
                 padding-bottom: 20px;
-
-                @include media-query($table-breakpoint) {
-                    padding: 20px;
-                }
-
-                @include media-query(tablet-portrait) {
-                    padding: 30px;
-                }
             }
 
             &.title {
@@ -109,14 +93,10 @@ table {
         @include media-query($table-breakpoint) {
             padding: 20px;
         }
-
-        @include media-query(tablet-portrait) {
-            padding: 30px;
-        }
     }
 
     th {
-        padding: 20px 30px;
+        padding: 20px;
         font-size: 15px;
         font-weight: 600;
         text-align: left;
