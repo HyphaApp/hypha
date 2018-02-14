@@ -438,8 +438,23 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
+    status_name = models.CharField(max_length=50)
 
     objects = JSONOrderable.as_manager()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # We are creating the object default to first stage
+            try:
+                self.workflow_name = self.round.workflow_name
+            except AttributeError:
+                # We are a lab submission
+                self.workflow_name = self.page.workflow_name
+            self.status = str(self.workflow.first())
+
+        # Ensure the display value is up to date
+        self.status_name = self.workflow.current(self.status).name
+        return super().save(*args, **kwargs)
 
     def get_data(self):
         # Updated for JSONField
@@ -454,7 +469,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
             return self.get_data()[item]
-        return super().__getattr__(item)
+        raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):
         return str(super().__str__())
