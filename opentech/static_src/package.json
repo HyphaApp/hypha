@@ -44,7 +44,7 @@
     "compile:css:watch": "npm run compile:css -- --output-style expanded --source-map true --watch",
     "compile:css:prod": "npm run compile:css -- --output-style compressed && npm run autoprefixer",
     "compile:css:debug": "npm run compile:css -- --output-style compressed --watch",
-    "autoprefixer": "postcss -u autoprefixer -b 'last 2 versions, iOS 8, > 3%' -r $npm_package_config_dest_css/*.css",
+    "autoprefixer": "postcss -u autoprefixer -b 'last 2 versions, iOS 8, > 3%' -r $npm_package_config_dest_css/**/*.css",
 
     "//[ Javascript ]//": "",
     "compile:js": "rollup -c",
