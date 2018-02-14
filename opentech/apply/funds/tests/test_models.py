@@ -32,7 +32,7 @@ class TestFundModel(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
     def test_can_access_workflow_class(self):
-        self.assertEqual(self.fund.workflow, 'single')
+        self.assertEqual(self.fund.workflow_name, 'single')
         self.assertEqual(self.fund.workflow_class, SingleStage)
 
     def test_no_open_rounds(self):
@@ -152,7 +152,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
     def test_workflow_is_copied_to_new_rounds(self):
         self.round.save()
-        self.assertEqual(self.round.workflow, self.fund.workflow)
+        self.assertEqual(self.round.workflow_name, self.fund.workflow_name)
 
     def test_forms_are_copied_to_new_rounds(self):
         self.round.save()

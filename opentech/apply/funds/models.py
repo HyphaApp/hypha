@@ -103,11 +103,21 @@ class WorkflowHelpers(models.Model):
         'double': DoubleStage.name,
     }
 
-    workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+    workflow_name = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single', verbose_name="Workflow")
+
+    @property
+    def workflow(self):
+        # Pretend we have forms associated with the workflow.
+        # TODDO Confirm if we need forms on the workflow.
+        return self.workflow_class([None] * len(self.workflow_class.stage_classes))
 
     @property
     def workflow_class(self):
-        return WORKFLOW_CLASS[self.get_workflow_display()]
+        return WORKFLOW_CLASS[self.get_workflow_name_display()]
+
+    @classmethod
+    def workflow_class_from_name(cls, name):
+        return WORKFLOW_CLASS[cls.WORKFLOWS[name]]
 
 
 class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):
@@ -122,7 +132,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):
         return self.forms.all()[0].fields
 
     content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow'),
+        FieldPanel('workflow_name'),
         InlinePanel('forms', label="Forms"),
     ]
 
@@ -274,7 +284,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
-        ReadOnlyPanel('get_workflow_display', heading="Workflow"),
+        ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
         ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
     ]
 
@@ -287,13 +297,13 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         super().__init__(*args, **kwargs)
         # We attached the parent page as part of the before_create_hook
         if hasattr(self, 'parent_page'):
-            self.workflow = self.parent_page.workflow
+            self.workflow_name = self.parent_page.workflow_name
 
     def save(self, *args, **kwargs):
         is_new = not self.id
         if is_new and hasattr(self, 'parent_page'):
             # Ensure that the workflow hasn't changed
-            self.workflow = self.parent_page.workflow
+            self.workflow_name = self.parent_page.workflow_name
 
         super().save(*args, **kwargs)
 
