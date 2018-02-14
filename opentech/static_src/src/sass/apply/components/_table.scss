@@ -1,0 +1,142 @@
+$table-breakpoint: 'mob-landscape';
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+
+        tr {
+            background-color: transparent;
+        }
+    }
+
+    tr {
+        background-color: #fff;
+        border: 1px solid #e8e8e8;
+
+        @include media-query($table-breakpoint) {
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #e8e8e8;
+            border-left: 0;
+        }
+
+        > td {
+            display: block;
+            width: 100%;
+
+            @include media-query($table-breakpoint) {
+                display: table-cell;
+                width: initial;
+                height: 110px;
+            }
+
+            &:first-child {
+                padding-top: 20px;
+
+                @include media-query($table-breakpoint) {
+                    padding-top: 32px;
+                }
+            }
+
+            &:last-child {
+                padding-bottom: 20px;
+
+                @include media-query($table-breakpoint) {
+                    padding-bottom: 32px;
+                }
+            }
+
+            &.title {
+                font-weight: $weight--bold;
+                color: #43bbf1;
+
+                @include media-query($table-breakpoint) {
+                    color: #404041;
+                }
+            }
+
+            &.status_name {
+                span {
+                    padding: 10px;
+                    font-size: 12px;
+                    color: #177da8;
+                    background-color: #e7f2f6;
+                }
+            }
+        }
+    }
+
+    td,
+    th {
+        padding: 5px 20px;
+
+        @include media-query($table-breakpoint) {
+            padding: 30px;
+        }
+    }
+
+    th {
+        padding: 20px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: left;
+        background-color: transparent;
+
+        a {
+            color: #919191;
+            transition: color 0.25s ease-out;
+        }
+
+        &.desc,
+        &.asc {
+            position: relative;
+            color: #404041;
+
+            &::after {
+                position: absolute;
+                top: 25px;
+                margin-left: 10px;
+            }
+
+            a {
+                color: inherit;
+            }
+        }
+
+        &.desc {
+            &::after {
+                @include triangle(top, $color--default, 5px);
+            }
+        }
+
+        &.asc {
+            &::after {
+                @include triangle(bottom, $color--default, 5px);
+            }
+        }
+    }
+
+    tr {
+        background-color: #fff;
+        border: 1px solid #e8e8e8;
+
+        @include media-query($table-breakpoint) {
+            border-top: 0;
+            border-right: 0;
+            border-bottom: 1px solid #e8e8e8;
+            border-left: 0;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
