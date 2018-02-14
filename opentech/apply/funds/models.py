@@ -274,6 +274,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'is_staff': True})
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -283,6 +284,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
 
     content_panels = SubmittableStreamForm.content_panels + [
+        FieldPanel('lead'),
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
