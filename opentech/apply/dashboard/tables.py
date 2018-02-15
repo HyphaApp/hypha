@@ -1,7 +1,7 @@
 import django_filters as filters
 import django_tables2 as tables
 
-from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.models import ApplicationSubmission, Round
 
 
 class DashboardTable(tables.Table):
@@ -19,7 +19,13 @@ class DashboardTable(tables.Table):
         return value.get_full_name()
 
 
+def get_used_rounds(request):
+    return Round.objects.filter(submissions__isnull=False).distinct()
+
+
 class SubmissionFilter(filters.FilterSet):
+    round = filters.ModelMultipleChoiceFilter(queryset=get_used_rounds)
+
     class Meta:
         model = ApplicationSubmission
         fields = ('round',)
