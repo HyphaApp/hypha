@@ -230,5 +230,11 @@
         flex-direction: column;
         flex-grow: 1;
         justify-content: flex-end;
+
+        .header--homepage & {
+            align-items: flex-start;
+            justify-content: center;
+            height: 100%;
+        }
     }
 }
