@@ -1,4 +1,6 @@
+import django_filters as filters
 import django_tables2 as tables
+
 from opentech.apply.funds.models import ApplicationSubmission
 
 
@@ -13,3 +15,9 @@ class DashboardTable(tables.Table):
 
     def render_user(self, value):
         return value.get_full_name()
+
+
+class SubmissionFilter(filters.FilterSet):
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('round',)
