@@ -81,8 +81,10 @@ table {
                 span {
                     display: inline-block;
                     padding: 10px;
-                    font-size: 12px;
+                    font-size: 13px;
+                    font-weight: $weight--bold;
                     color: $color--marine;
+                    text-align: center;
                     background-color: $color--sky-blue;
                 }
             }
