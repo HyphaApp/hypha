@@ -19,6 +19,8 @@ flake8
 
 social_auth_app_django==2.1.0
 django-tables2==1.17.1
+django-filter==1.1.0
+django_select2==6.0.1
 
 # Production dependencies
 dj-database-url==0.4.1
