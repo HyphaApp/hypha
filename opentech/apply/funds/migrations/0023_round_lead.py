@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0020_applicationsubmission_form_fields'),
+        ('funds', '0022_applicationsubmission_form_fields'),
     ]
 
     operations = [

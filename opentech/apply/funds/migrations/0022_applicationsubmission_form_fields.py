@@ -12,7 +12,7 @@ import wagtail.wagtailcore.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0019_protect_submission'),
+        ('funds', '0021_rename_workflow_field'),
     ]
 
     operations = [
