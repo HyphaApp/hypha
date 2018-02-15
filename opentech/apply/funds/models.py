@@ -438,9 +438,20 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
-    status_name = models.CharField(max_length=50)
 
     objects = JSONOrderable.as_manager()
+
+    @property
+    def status_name(self):
+        return self.phase.name
+
+    @property
+    def stage(self):
+        return self.phase.stage
+
+    @property
+    def phase(self):
+        return self.workflow.current(self.status)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -452,8 +463,6 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 self.workflow_name = self.page.workflow_name
             self.status = str(self.workflow.first())
 
-        # Ensure the display value is up to date
-        self.status_name = self.workflow.current(self.status).name
         return super().save(*args, **kwargs)
 
     def get_data(self):
