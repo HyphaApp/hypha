@@ -12,7 +12,6 @@
                 <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
             </a>
 
-    {% include "includes/call_to_action.html" with call_to_action=page.call_to_action %}
             <div class="header__inner header__inner--mobile-buttons">
                 <button class="button js-search-toggle" aria-haspopup="true">
                     <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
@@ -78,4 +77,5 @@
 {% endblock %}
 
 {% block content %}
+    {% include "includes/call_to_action.html" with call_to_action=page.call_to_action %}
 {% endblock %}
