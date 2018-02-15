@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'wagtailcaptcha',
     'django_tables2',
     'django_filters',
+    'django_select2',
     'addressfield',
 
     'django.contrib.admin',
