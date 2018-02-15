@@ -30,14 +30,10 @@ table {
             }
         }
 
-        &:last-child {
-            border-bottom: 0;
-        }
-
         @include media-query($table-breakpoint) {
             border-top: 0;
             border-right: 0;
-            border-bottom: 1px solid $color--light-mid-grey;
+            border-bottom: 2px solid $color--light-grey;
             border-left: 0;
         }
 
