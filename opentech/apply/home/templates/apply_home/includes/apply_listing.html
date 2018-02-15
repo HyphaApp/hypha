@@ -28,10 +28,10 @@
             {% endif %}
         </h4>
 
-    <a class="" href="{% pageurl page %}">Apply</a>
         {% if details.listing_summary or details.introduction %}
             <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
         {% endif %}
     </div>
+    <a class="listing__button" href="{% pageurl page %}">Apply</a>
 </div>
 {% endwith %}

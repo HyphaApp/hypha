@@ -131,4 +131,20 @@
             margin-left: 5px;
         }
     }
+
+    &__button {
+        @include button(transparent, $color--purple);
+        color: $color--purple;
+        text-align: center;
+        border-color: $color--purple;
+
+        &:hover {
+            color: $color--white;
+        }
+
+        @include media-query(mob-landscape) {
+            margin-right: 30px;
+            text-align: left;
+        }
+    }
 }
