@@ -10,9 +10,6 @@
                     <a href="{% pageurl details %}">
                 {% endif %}
 
-    {% if details.listing_summary or details.introduction %}
-        <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:155 }}</h6>
-    {% endif %}
                 {{ page.title }}
 
                 {% if details %}
@@ -32,6 +29,9 @@
         </h4>
 
     <a class="" href="{% pageurl page %}">Apply</a>
+        {% if details.listing_summary or details.introduction %}
+            <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
+        {% endif %}
     </div>
 </div>
 {% endwith %}
