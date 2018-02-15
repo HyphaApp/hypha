@@ -4,6 +4,12 @@ from django_select2.forms import Select2MultipleWidget
 
 
 class Select2MultiCheckboxesWidget(Select2MultipleWidget):
+    def __init__(self, *args, **kwargs):
+        attrs = kwargs.get('attrs', {})
+        attrs.setdefault('data-placeholder', 'items')
+        kwargs['attrs'] = attrs
+        super().__init__(*args, **kwargs)
+
     def build_attrs(self, *args, **kwargs):
         attrs = super().build_attrs(*args, **kwargs)
         attrs['class'] = attrs['class'].replace('django-select2', 'django-select2-checkboxes')
