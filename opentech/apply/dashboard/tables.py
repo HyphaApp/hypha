@@ -31,12 +31,13 @@ def get_used_funds(request):
 
 class Select2ModelMultipleChoiceFilter(filters.ModelMultipleChoiceFilter):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', Select2MultiCheckboxesWidget)
+        label = kwargs.get('label')
+        kwargs.setdefault('widget', Select2MultiCheckboxesWidget(attrs={'data-placeholder': label}))
         super().__init__(*args, **kwargs)
 
 
 class SubmissionFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds)
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label="Rounds")
     page = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
 
     class Meta:
