@@ -15,6 +15,12 @@
 </div>
 
 <div class="wrapper wrapper--medium wrapper--top-bottom-inner-space">
-    {% render_table object_list %}
+    {% if filter %}
+        <form action="" method="get" class="form form-inline">
+            {{ filter.form.as_p }}
+            <button>Filter</button>
+        </form>
+    {% endif %}
+    {% render_table table %}
 </div>
 {% endblock %}
