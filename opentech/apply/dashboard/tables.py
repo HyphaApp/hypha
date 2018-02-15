@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 import django_filters as filters
 import django_tables2 as tables
 from django_tables2.utils import A
@@ -15,7 +17,7 @@ class DashboardTable(tables.Table):
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type")
     page = tables.Column(verbose_name="Fund")
-    lead = tables.Column(accessor='round.specific.lead')
+    lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
 
     class Meta:
         model = ApplicationSubmission
@@ -34,6 +36,11 @@ def get_used_rounds(request):
 def get_used_funds(request):
     # Use page to pick up on both Labs and Funds
     return Page.objects.filter(applicationsubmission__isnull=False).distinct()
+
+
+def get_round_leads(request):
+    User = get_user_model()
+    return User.objects.filter(round__isnull=False).distinct()
 
 
 class Select2CheckboxWidgetMixin:
@@ -55,6 +62,7 @@ class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
+    lead = Select2ModelMultipleChoiceFilter(name='round__lead', queryset=get_round_leads, label='Lead')
 
     class Meta:
         model = ApplicationSubmission
