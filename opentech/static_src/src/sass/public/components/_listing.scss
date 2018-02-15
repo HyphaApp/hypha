@@ -15,6 +15,43 @@
         box-shadow: 0 2px 15px 0 $color--black-10;
     }
 
+    &--not-a-link {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0 0 20px;
+        margin: 0 0 20px;
+        border-bottom: 1px solid $color--mid-grey;
+
+        @include media-query(mob-landscape) {
+            align-items: center;
+            flex-direction: row;
+            height: 150px;
+        }
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:first-child {
+            padding-top: 20px;
+            border-top: 1px solid $color--mid-grey;
+
+            @include media-query(mob-landscape) {
+                padding-top: 0;
+                border-top: 0;
+            }
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        > div {
+            flex-basis: 55%;
+        }
+    }
+
     &__title {
         margin-bottom: 5px;
         line-height: 1;

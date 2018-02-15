@@ -1,7 +1,6 @@
 {% load wagtailcore_tags %}
 
 {% with details=page.specific.detail.specific %}
-<div class="listing">
     <h4 class="listing__title">
         {# details may be None, so be more verbose in the handling of the title #}
         {% if page.title %}
@@ -10,6 +9,8 @@
             {{ details.listing_title|default:details.title }}
         {% endif %}
     </h4>
+<div class="listing listing--not-a-link">
+    <div>
 
     {% if details.listing_summary or details.introduction %}
         <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:155 }}</h6>
@@ -20,5 +21,6 @@
     {% endif %}
 
     <a class="" href="{% pageurl page %}">Apply</a>
+    </div>
 </div>
 {% endwith %}
