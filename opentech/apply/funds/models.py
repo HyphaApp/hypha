@@ -488,22 +488,25 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 pass  # It was a named field or a paragraph
             else:
                 form_field = field.block.get_field(field.value)
-                if hasattr(form_field, 'choices'):
-                    if isinstance(data, str):
-                        data = [data]
-                    choices = dict(form_field.choices)
-                    try:
-                        data = [choices[value] for value in data]
-                    except KeyError:
-                        data = [choices[int(value)] for value in data]
-                else:
-                    data = str(data)
-
+                data = self.prepare_value(form_field, data)
                 context['fields'].append({
                     'field': form_field,
                     'value': data,
                 })
         return render_to_string(self.field_template, context)
+
+    def prepare_value(self, field, data):
+        if hasattr(field, 'choices'):
+            if isinstance(data, str):
+                data = [data]
+            choices = dict(field.choices)
+            try:
+                data = [choices[value] for value in data]
+            except KeyError:
+                data = [choices[int(value)] for value in data]
+        else:
+            data = str(data)
+        return data
 
     def get_data(self):
         # Updated for JSONField
