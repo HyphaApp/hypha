@@ -18,7 +18,7 @@
     {% if filter %}
         <form action="" method="get" class="form form-inline">
             {{ filter.form.as_p }}
-            <button>Filter</button>
+            <button type="submit" value="Filter">Filter</button>
         </form>
     {% endif %}
     {% render_table table %}
