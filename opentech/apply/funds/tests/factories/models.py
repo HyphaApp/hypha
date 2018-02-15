@@ -36,7 +36,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
         workflow_stages = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
@@ -99,7 +99,7 @@ class LabFactory(wagtail_factories.PageFactory):
         number_forms = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
 
 
 class LabFormFactory(AbstractRelatedFormFactory):

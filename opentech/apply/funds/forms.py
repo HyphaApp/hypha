@@ -6,8 +6,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         cleaned_data = super().clean()
         model = self._meta.model
 
-        from .models import WORKFLOW_CLASS
-        workflow = WORKFLOW_CLASS[model.WORKFLOWS[cleaned_data['workflow']]]
+        workflow = model.workflow_class_from_name(cleaned_data['workflow_name'])
         application_forms = self.formsets['forms']
 
         self.validate_stages_equal_forms(workflow, application_forms)
