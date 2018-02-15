@@ -48,10 +48,10 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
 
 
 class SubmissionFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label="Rounds")
-    page = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
+    funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('page', 'round', 'status')
+        fields = ('funds', 'round', 'status')
