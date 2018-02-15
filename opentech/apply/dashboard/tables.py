@@ -1,6 +1,8 @@
 import django_filters as filters
 import django_tables2 as tables
 
+from wagtail.wagtailcore.models import Page
+
 from opentech.apply.funds.models import ApplicationSubmission, Round
 
 
@@ -21,9 +23,15 @@ def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 
 
+def get_used_funds(request):
+    # Use page to pick up on both Labs and Funds
+    return Page.objects.filter(applicationsubmission__isnull=False).distinct()
+
+
 class SubmissionFilter(filters.FilterSet):
     round = filters.ModelMultipleChoiceFilter(queryset=get_used_rounds)
+    page = filters.ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('round',)
+        fields = ('page', 'round',)
