@@ -98,5 +98,17 @@
         &--no-margin {
             margin: 0;
         }
+
+        &--focus-areas {
+            margin: 20px 0;
+            grid-gap: 20px;
+
+            @include media-query(tablet-portrait) {
+                justify-content: center;
+                grid-gap: 35px;
+                margin: 3rem 0;
+                grid-template-columns: repeat(4, 280px);
+            }
+        }
     }
 }

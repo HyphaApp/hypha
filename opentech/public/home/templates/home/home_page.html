@@ -77,5 +77,15 @@
 {% endblock %}
 
 {% block content %}
+    <div class="wrapper wrapper--top-bottom-outer-space">
+        <h2 class="heading heading--center">Focus areas that guide our work</h2>
+        <div class="grid grid--focus-areas">
+            <div class="focus-area">
+                <svg class="focus-area__icon"><use xlink:href="#wifi"></use></svg>
+                <p class="focus-area__teaser"><span>Access</span> to the internet, including tools to circumvent website blocks, connection blackouts, and widespread censorship.</p>
+            </div>
+        </div>
+        <a class="link link--underlined" href="#">Learn more about our work</a>
+    </div>
     {% include "includes/call_to_action.html" with call_to_action=page.call_to_action %}
 {% endblock %}
