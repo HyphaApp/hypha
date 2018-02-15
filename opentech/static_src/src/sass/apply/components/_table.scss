@@ -2,6 +2,7 @@ $table-breakpoint: 'small-tablet';
 
 table {
     width: 100%;
+    background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
 
@@ -13,16 +14,10 @@ table {
         }
 
         tr {
-            background-color: transparent;
-
             &:hover {
                 box-shadow: none;
             }
         }
-    }
-
-    tbody {
-        background-color: $color--white;
     }
 
     tr {
@@ -35,14 +30,10 @@ table {
             }
         }
 
-        &:last-child {
-            border-bottom: 0;
-        }
-
         @include media-query($table-breakpoint) {
             border-top: 0;
             border-right: 0;
-            border-bottom: 1px solid $color--light-mid-grey;
+            border-bottom: 2px solid $color--light-grey;
             border-left: 0;
         }
 
@@ -105,7 +96,6 @@ table {
         font-size: 15px;
         font-weight: 600;
         text-align: left;
-        background-color: transparent;
 
         a {
             color: $color--mid-dark-grey;
