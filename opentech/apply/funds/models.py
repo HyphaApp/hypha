@@ -207,7 +207,11 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         ).first()
 
     def next_deadline(self):
-        return self.open_round.end_date
+        try:
+            return self.open_round.end_date
+        except AttributeError:
+            # There isn't an open round
+            return None
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or not self.open_round:
