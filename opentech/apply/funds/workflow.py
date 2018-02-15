@@ -302,3 +302,7 @@ class SingleStage(Workflow):
 class DoubleStage(Workflow):
     name = 'Two Stage'
     stage_classes = [ConceptStage, ProposalStage]
+
+
+statuses = set(phase.name for phase in Phase.__subclasses__())
+status_options = [(slugify(opt), opt) for opt in statuses]
