@@ -60,6 +60,23 @@
         #{$root}:hover & {
             color: $color--dark-blue;
         }
+
+        &--link {
+            margin-bottom: 10px;
+
+            #{$root}:hover & {
+                color: $color--default;
+            }
+
+            a {
+                color: $color--default;
+                transition: color $transition;
+
+                &:hover {
+                    color: $color--primary;
+                }
+            }
+        }
     }
 
     &__teaser {
