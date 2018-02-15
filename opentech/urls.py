@@ -24,6 +24,7 @@ urlpatterns = [
     url('^', include(apply_urls)),
     url('^', include('social_django.urls', namespace='social')),
     url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^select2/', include('django_select2.urls')),
 ]
 
 

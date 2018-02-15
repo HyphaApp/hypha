@@ -1,5 +1,6 @@
 import django_filters as filters
 import django_tables2 as tables
+from django_select2.forms import Select2MultipleWidget
 
 from wagtail.wagtailcore.models import Page
 
@@ -30,9 +31,15 @@ def get_used_funds(request):
     return Page.objects.filter(applicationsubmission__isnull=False).distinct()
 
 
+class Select2ModelMultipleChoiceFilter(filters.ModelMultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('widget', Select2MultipleWidget)
+        super().__init__(*args, **kwargs)
+
+
 class SubmissionFilter(filters.FilterSet):
-    round = filters.ModelMultipleChoiceFilter(queryset=get_used_rounds)
-    page = filters.ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds)
+    page = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
 
     class Meta:
         model = ApplicationSubmission
