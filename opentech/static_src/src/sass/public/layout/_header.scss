@@ -51,6 +51,14 @@
         background-color: $color--white;
     }
 
+    &--homepage {
+        height: 555px;
+
+        @include media-query(tablet-portrait) {
+            height: 660px;
+        }
+    }
+
     &__title {
         margin: 0 0 20px;
         line-height: 1;
