@@ -24,3 +24,7 @@
     {% render_table table %}
 </div>
 {% endblock %}
+
+{% block extra_js %}
+    {{ filter.form.media }}
+{% endblock %}
