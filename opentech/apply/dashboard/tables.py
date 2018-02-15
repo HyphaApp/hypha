@@ -1,10 +1,10 @@
 import django_filters as filters
 import django_tables2 as tables
-from django_select2.forms import Select2MultipleWidget
 
 from wagtail.wagtailcore.models import Page
 
 from opentech.apply.funds.models import ApplicationSubmission, Round
+from .widgets import Select2MultiCheckboxesWidget
 
 
 class DashboardTable(tables.Table):
@@ -31,7 +31,7 @@ def get_used_funds(request):
 
 class Select2ModelMultipleChoiceFilter(filters.ModelMultipleChoiceFilter):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('widget', Select2MultipleWidget)
+        kwargs.setdefault('widget', Select2MultiCheckboxesWidget)
         super().__init__(*args, **kwargs)
 
 
