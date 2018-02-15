@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags static navigation_tags %}
 
-{% block content %}
 {% block header %}
     {% image page.header_image fill-1440x740 as header_image %}
     <header class="header header--homepage {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if page.header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
@@ -78,4 +77,6 @@
         <svg class="header__icon header__icon--pixels header__icon--pixels-right-home"><use xlink:href="#hero-home-right-pixels"></use></svg>
     </header>
 {% endblock %}
+
+{% block content %}
 {% endblock %}
