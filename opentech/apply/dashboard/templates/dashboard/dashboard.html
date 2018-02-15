@@ -9,7 +9,17 @@
         </div>
     </div>
 
-    <div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
-        {% render_table object_list %}
-    </div>
+<div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
+    {% if filter %}
+        <form action="" method="get" class="form form-inline">
+            {{ filter.form.as_p }}
+            <button type="submit" value="Filter">Filter</button>
+        </form>
+    {% endif %}
+    {% render_table table %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ filter.form.media }}
 {% endblock %}

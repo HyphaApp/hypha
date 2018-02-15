@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'tinymce',
     'wagtailcaptcha',
     'django_tables2',
+    'django_filters',
+    'django_select2',
     'addressfield',
     'django_bleach',
 
