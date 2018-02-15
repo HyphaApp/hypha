@@ -15,6 +15,43 @@
         box-shadow: 0 2px 15px 0 $color--black-10;
     }
 
+    &--not-a-link {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0 0 20px;
+        margin: 0 0 20px;
+        border-bottom: 1px solid $color--light-mid-grey;
+
+        @include media-query(mob-landscape) {
+            align-items: center;
+            flex-direction: row;
+            height: 130px;
+        }
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:first-child {
+            padding-top: 20px;
+            border-top: 1px solid $color--light-mid-grey;
+
+            @include media-query(mob-landscape) {
+                padding-top: 0;
+                border-top: 0;
+            }
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        > div {
+            flex-basis: 55%;
+        }
+    }
+
     &__title {
         margin-bottom: 5px;
         line-height: 1;
@@ -22,6 +59,23 @@
 
         #{$root}:hover & {
             color: $color--dark-blue;
+        }
+
+        &--link {
+            margin-bottom: 10px;
+
+            #{$root}:hover & {
+                color: $color--default;
+            }
+
+            a {
+                color: $color--default;
+                transition: color $transition;
+
+                &:hover {
+                    color: $color--primary;
+                }
+            }
         }
     }
 
@@ -81,5 +135,21 @@
 
     &__path {
         display: flex;
+    }
+
+    &__button {
+        @include button(transparent, $color--purple);
+        color: $color--purple;
+        text-align: center;
+        border-color: $color--purple;
+
+        &:hover {
+            color: $color--white;
+        }
+
+        @include media-query(mob-landscape) {
+            margin-right: 30px;
+            text-align: left;
+        }
     }
 }
