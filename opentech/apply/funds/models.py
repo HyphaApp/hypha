@@ -503,7 +503,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             try:
                 data = [choices[value] for value in data]
             except KeyError:
-                data = [choices[int(value)] for value in data]
+                data = [choices[int(value)] for value in data if value]
         else:
             data = str(data)
         return data
