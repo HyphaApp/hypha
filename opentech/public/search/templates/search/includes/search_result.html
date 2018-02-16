@@ -1,33 +1,33 @@
 {% load static wagtailcore_tags wagtailsearchpromotions_tags wagtailimages_tags %}
 
-{# breadcrumbs #}
-{% if result.get_ancestors|length > 2 %}
-    {% for ancestor in result.get_ancestors %}
-        {% if not ancestor.is_root %}
-            {% if ancestor.depth > 2 %}
-                {{ ancestor.title }}
-                {% if ancestor.depth|add:1 < result.depth %}
-                    &nbsp;/&nbsp;
+<a class="listing" href="{% pageurl result %}">
+    {# breadcrumbs #}
+    {% if result.get_ancestors|length > 2 %}
+        <h6 class="listing__path">
+            {% for ancestor in result.get_ancestors %}
+                {% if not ancestor.is_root %}
+                    {% if ancestor.depth > 2 %}
+                        <span>{{ ancestor.title }}</span>
+                        {% if ancestor.depth|add:1 < result.depth %}
+                            <span class="nav__item--breadcrumb"></span>
+                        {% endif %}
+                    {% else %}<span class="nav__item--breadcrumb"></span>{% endif %} {# the first one #}
                 {% endif %}
-            {% else %}/{% endif %} {# the first one #}
-        {% endif %}
-    {% endfor %}
-{% endif %}
+            {% endfor %}
+        </h6>
+    {% endif %}
 
-{% if result.listing_image %}
-    <a href="{% pageurl result %}">
-        {% image result.listing_image fill-450x300 %}
-    </a>
-{% endif %}
+    {% if result.listing_image or result.icon %}
+        {% image result.listing_image|default:result.icon fill-180x180 class="listing__image" %}
+    {% else %}
+        <div class="listing__image listing__image--default">
+            <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+        </div>
+    {% endif %}
 
-<h4>
-    <a href="{% pageurl result %}">
-        {{ result.listing_title|default:result.title }}
-    </a>
-</h4>
+    <h4 class="listing__title">{{ result.listing_title|default:result.title }}</h4>
 
-{% if pick.description or result.listing_summary or result.search_description %}
-    <p>{{ pick.description|default:result.listing_summary|default:result.search_description }}</p>
-{% endif %}
-
-
+    {% if pick.description or result.listing_summary or result.search_description or result.listing_summary or result.introduction  %}
+        <h6 class="listing__teaser">{{ pick.description|default:result.listing_summary|default:result.search_description|default:result.listing_summary|default:result.introduction|truncatechars_html:155 }}</h6>
+    {% endif %}
+</a>
