@@ -26,7 +26,7 @@
         @include media-query(mob-landscape) {
             align-items: center;
             flex-direction: row;
-            height: 130px;
+            height: 160px;
         }
 
         &:hover {
@@ -82,6 +82,12 @@
     &__teaser {
         font-weight: $weight--normal;
         color: $color--default;
+
+        @include media-query(mob-landscape) {
+            .listing--not-a-link & {
+                margin: 0;
+            }
+        }
     }
 
     &__meta {
