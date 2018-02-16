@@ -120,6 +120,7 @@
         }
     }
 
+    &__path,
     &__category {
         margin-bottom: 5px;
         color: $color--default;
@@ -152,5 +153,8 @@
             margin-right: 30px;
             text-align: left;
         }
+
+    &__path {
+        display: flex;
     }
 }

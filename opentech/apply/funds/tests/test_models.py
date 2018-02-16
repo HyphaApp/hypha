@@ -32,7 +32,7 @@ class TestFundModel(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
     def test_can_access_workflow_class(self):
-        self.assertEqual(self.fund.workflow, 'single')
+        self.assertEqual(self.fund.workflow_name, 'single')
         self.assertEqual(self.fund.workflow_class, SingleStage)
 
     def test_no_open_rounds(self):
@@ -68,6 +68,9 @@ class TestFundModel(TestCase):
         new_round.live = False
         new_round.save()
         self.assertEqual(self.fund.open_round, None)
+
+    def test_no_round_exists(self):
+        self.assertIsNone(self.fund.next_deadline())
 
 
 class TestRoundModelDates(TestCase):
@@ -152,7 +155,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
     def test_workflow_is_copied_to_new_rounds(self):
         self.round.save()
-        self.assertEqual(self.round.workflow, self.fund.workflow)
+        self.assertEqual(self.round.workflow_name, self.fund.workflow_name)
 
     def test_forms_are_copied_to_new_rounds(self):
         self.round.save()
@@ -215,6 +218,22 @@ class TestFormSubmission(TestCase):
             return page.get_parent().serve(request)
         except AttributeError:
             return page.serve(request)
+
+    def test_workflow_and_status_assigned(self):
+        self.submit_form()
+        submission = ApplicationSubmission.objects.first()
+        first_phase = self.round_page.workflow.first()
+        self.assertEqual(submission.workflow_name, self.round_page.workflow_name)
+        self.assertEqual(submission.status, str(first_phase))
+        self.assertEqual(submission.status_name, first_phase.name)
+
+    def test_workflow_and_status_assigned_lab(self):
+        self.submit_form(page=self.lab_page)
+        submission = ApplicationSubmission.objects.first()
+        first_phase = self.lab_page.workflow.first()
+        self.assertEqual(submission.workflow_name, self.lab_page.workflow_name)
+        self.assertEqual(submission.status, str(first_phase))
+        self.assertEqual(submission.status_name, first_phase.name)
 
     def test_can_submit_if_new(self):
         self.submit_form()
