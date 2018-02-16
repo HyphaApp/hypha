@@ -6,7 +6,7 @@ from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import mark_safe
 
-from wagtail.wagtailcore.blocks import StaticBlock
+from wagtail.wagtailcore.blocks import StaticBlock, StreamValue
 
 from tinymce.widgets import TinyMCE
 
@@ -99,6 +99,14 @@ class CustomFormFieldsBlock(FormFieldsBlock):
             errors[child_number] = ErrorList(
                 [ValidationError('Error', params={field: new_error})]
             )
+
+    def to_python(self, value):
+        # If the data type is missing, fallback to a CharField
+        for child_data in value:
+            if child_data['type'] not in self.child_blocks:
+                child_data['type'] = 'char'
+
+        return StreamValue(self, value, is_lazy=True)
 
 
 class MustIncludeStatic(StaticBlock):
