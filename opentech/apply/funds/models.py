@@ -497,7 +497,11 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return render_to_string(self.field_template, context)
 
     def prepare_value(self, field, data):
+        NO_RESPONSE = 'No response'
         if hasattr(field, 'choices'):
+            if not data:
+                return [NO_RESPONSE]
+
             if isinstance(data, str):
                 data = [data]
             choices = dict(field.choices)
@@ -506,7 +510,11 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             except KeyError:
                 data = [choices[int(value)] for value in data if value]
         else:
+            if not data and not isinstance(data, bool):
+                return NO_RESPONSE
+
             data = str(data)
+
         return data
 
     def get_data(self):
