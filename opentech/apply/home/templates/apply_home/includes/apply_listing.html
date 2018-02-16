@@ -1,6 +1,7 @@
 {% load wagtailcore_tags %}
 
 {% with details=page.specific.detail.specific %}
+{% if page.specific.open_round %}
 <div class="listing listing--not-a-link">
     <div>
         <h4 class="listing__title listing__title--link">
@@ -40,4 +41,5 @@
     </div>
     <a class="listing__button" href="{% pageurl page %}">Apply</a>
 </div>
+{% endif %}
 {% endwith %}
