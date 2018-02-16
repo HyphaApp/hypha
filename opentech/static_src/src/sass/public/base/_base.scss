@@ -111,3 +111,21 @@ ol {
 .light-grey-bg {
     background-color: $color--light-grey;
 }
+
+%show-mobile,
+.show-mobile {
+    display: block;
+
+    @include media-query(tablet-portrait) {
+        display: none;
+    }
+}
+
+%show-tablet,
+.show-tablet {
+    display: none;
+
+    @include media-query(tablet-portrait) {
+        display: block;
+    }
+}
