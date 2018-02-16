@@ -48,7 +48,8 @@
             fill: $color--dark-blue;
         }
 
-        .search-open & {
+        .search-open &,
+        .header--homepage & {
             fill: $color--white;
         }
 
