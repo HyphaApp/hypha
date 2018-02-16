@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
 
 {% block content %}
-<div class="wrapper wrapper--breakout wrapper--admin">
+<div class="wrapper wrapper--breakout wrapper--admin wrapper--bottom-space">
     <div class="wrapper wrapper--medium">
         <h2 class="heading heading--no-margin">{{ object.title }}</h2>
         <h5 class="heading heading--meta">
@@ -10,10 +10,8 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.round.specific.lead }}</span>
         </h5>
+        {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
     </div>
-
-    {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
-
 </div>
 
 <div>Submission Details</div>

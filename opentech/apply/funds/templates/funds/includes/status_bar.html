@@ -1,5 +1,11 @@
-{% for phase in workflow %}
-<div class="{% if phase == status %}current{% endif %}" style="{% if phase == status %}font-weight:bold;{% endif %}">
-    {{ phase.name }}
+<div class="status-bar">
+    {# '.status-bar__item--is-complete' needs to be added to each 'complete' step in order for bar to be styled correctly #}
+    {% for phase in workflow %}
+        <div class="status-bar__item {% if phase == status %}status-bar__item--is-complete{% endif %}">
+                {% if phase == status %}
+                    <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
+                {% endif %}
+            <p>{{ phase.name }}</p>
+        </div>
+    {% endfor %}
 </div>
-{% endfor %}

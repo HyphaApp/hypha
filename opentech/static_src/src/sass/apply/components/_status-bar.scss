@@ -1,0 +1,86 @@
+.status-bar {
+    $root: &;
+    display: flex;
+    padding: 30px 10px;
+
+    &__icon {
+        position: absolute;
+        top: -10px;
+        left: 0;
+        z-index: 30;
+        width: 20px;
+        height: 20px;
+
+        .status-bar__item:first-of-type & {
+            left: -10px;
+        }
+    }
+
+    &__item {
+        position: relative;
+        flex: 1;
+        height: 3px;
+        background: $color--mid-grey;
+
+        // every items dot
+        &::before {
+            position: absolute;
+            top: -10px;
+            width: 20px;
+            height: 20px;
+            background: $color--dark-grey;
+            border: 5px solid $color--mid-grey;
+            border-radius: 50%;
+            content: '';
+        }
+
+        // last items dont have a dot
+        &:last-of-type {
+            flex: 0;
+            height: 0;
+
+            &.status-bar__item--is-complete {
+                &::after {
+                    display: none;
+                }
+            }
+        }
+
+        &:first-of-type {
+            &::before {
+                left: -10px;
+            }
+        }
+
+        &--is-complete {
+            background: $color--primary;
+
+            // when a step is complete, overlay the next step dot
+            &::after {
+                position: absolute;
+                top: -10px;
+                right: -20px;
+                z-index: 10;
+                width: 20px;
+                height: 20px;
+                background: $color--white;
+                border: 5px solid $color--error;
+                border-radius: 50%;
+                content: '';
+            }
+
+            &:last-of-type {
+                &::after {
+                    background: $color--primary;
+                }
+            }
+
+            &::before {
+                z-index: 20;
+                background: $color--primary;
+                border-color: $color--primary;
+            }
+        }
+    }
+}
+
