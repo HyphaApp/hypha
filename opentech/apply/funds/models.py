@@ -31,6 +31,7 @@ from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
@@ -274,6 +275,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -283,6 +285,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
 
     content_panels = SubmittableStreamForm.content_panels + [
+        FieldPanel('lead'),
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
@@ -502,6 +505,35 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             self.status = str(self.workflow.first())
 
         return super().save(*args, **kwargs)
+
+    def render_answers(self):
+        context = {'fields': list()}  # type: ignore
+        for field in self.form_fields:
+            try:
+                data = self.form_data[field.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                form_field = field.block.get_field(field.value)
+                data = self.prepare_value(form_field, data)
+                context['fields'].append({
+                    'field': form_field,
+                    'value': data,
+                })
+        return render_to_string(self.field_template, context)
+
+    def prepare_value(self, field, data):
+        if hasattr(field, 'choices'):
+            if isinstance(data, str):
+                data = [data]
+            choices = dict(field.choices)
+            try:
+                data = [choices[value] for value in data]
+            except KeyError:
+                data = [choices[int(value)] for value in data if value]
+        else:
+            data = str(data)
+        return data
 
     def get_data(self):
         # Updated for JSONField

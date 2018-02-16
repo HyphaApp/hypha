@@ -13,6 +13,8 @@ from opentech.apply.funds.models import (
     Round,
     RoundForm,
 )
+from opentech.apply.users.tests.factories import UserFactory
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from . import blocks
 
@@ -82,6 +84,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     title = factory.Sequence('Round {}'.format)
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
+    lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
 
 class RoundFormFactory(AbstractRelatedFormFactory):
