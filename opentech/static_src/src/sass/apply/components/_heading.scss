@@ -1,0 +1,23 @@
+.heading {
+    &--no-margin {
+        margin: 0;
+    }
+
+    &--meta {
+        display: flex;
+        flex-wrap: wrap;
+
+        span {
+            &::after {
+                padding: 0 15px;
+                content: '|';
+            }
+
+            &:last-child {
+                &::after {
+                    content: '';
+                }
+            }
+        }
+    }
+}
