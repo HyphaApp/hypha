@@ -126,3 +126,29 @@
 
     font-size: $responsive;
 }
+
+// Generates a link with a pixel svg arrow
+@mixin pixel-link($color) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: $weight--semibold;
+    color: $color;
+
+    &::after {
+        position: absolute;
+        bottom: -5px;
+        width: 100%;
+        height: 1px;
+        background-color: $color;
+        content: '';
+    }
+
+    svg {
+        width: 10px;
+        height: 14px;
+        margin-left: 10px;
+        fill: $color;
+    }
+}
