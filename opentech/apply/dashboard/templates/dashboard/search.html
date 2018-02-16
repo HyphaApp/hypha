@@ -1,0 +1,6 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block page_header %}
+    <h3>Search Results</h3>
+    <h5>There are {{ object_list|length }} results for: {{ search_term }}</h5>
+{% endblock %}

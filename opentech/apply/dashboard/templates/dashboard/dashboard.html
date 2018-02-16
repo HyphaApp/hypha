@@ -9,9 +9,12 @@
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
-        <h3>Received Content</h3>
-        <h5>Track and explore recent submissions</h5>
+        {% block page_header %}
+            <h3>Received Content</h3>
+            <h5>Track and explore recent submissions</h5>
+        {% endblock %}
     </div>
+    {% include "dashboard/includes/search.html" %}
 </div>
 
 <div class="wrapper wrapper--medium wrapper--top-bottom-inner-space">
