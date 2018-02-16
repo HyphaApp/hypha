@@ -82,8 +82,16 @@
         <div class="grid grid--focus-areas">
             {% include "utils/includes/focus_area.html" %}
         </div>
+        <div class="wrapper wrapper--center">
+            <h5 class="heading heading--contains-link">
+                <a class="link link--arrow-pixels" href="#">
+                    Learn more about our work
+                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                </a>
+            </h5>
         </div>
-        <a class="link link--underlined" href="#">Learn more about our work</a>
+    </div>
+        </div>
     </div>
     {% include "includes/call_to_action.html" with call_to_action=page.call_to_action %}
 {% endblock %}
