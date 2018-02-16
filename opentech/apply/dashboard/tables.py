@@ -61,8 +61,8 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
 class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
-    status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
-    lead = Select2ModelMultipleChoiceFilter(name='round__round__lead', queryset=get_round_leads, label='Lead')
+    status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Statuses')
+    lead = Select2ModelMultipleChoiceFilter(name='round__round__lead', queryset=get_round_leads, label='Leads')
 
     class Meta:
         model = ApplicationSubmission
