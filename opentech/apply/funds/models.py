@@ -31,6 +31,7 @@ from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
@@ -274,7 +275,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': 'Staff'})
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
