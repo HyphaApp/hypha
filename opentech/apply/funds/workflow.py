@@ -1,6 +1,6 @@
 import copy
 
-from typing import List, Sequence, Type, Union
+from typing import Iterable, Iterator, List, Sequence, Type, Union
 
 from django.forms import Form
 from django.utils.text import slugify
@@ -22,7 +22,7 @@ def phase_name(stage: 'Stage', phase: Union['Phase', str], occurrence: int) -> s
     return '__'.join([stage.name, phase_name, str(occurrence)])
 
 
-class Workflow:
+class Workflow(Iterable):
     """
     A Workflow is a collection of Stages an application goes through. When a Stage is complete,
     it will return the next Stage in the list or `None` if no such Stage exists.
@@ -35,6 +35,10 @@ class Workflow:
             raise ValueError('Number of forms does not equal the number of stages')
 
         self.stages = [stage(form) for stage, form in zip(self.stage_classes, forms)]
+
+    def __iter__(self) -> Iterator['Phase']:
+        for stage in self.stages:
+            yield from stage
 
     def current(self, current_phase: Union[str, 'Phase']) -> Union['Phase', None]:
         if isinstance(current_phase, Phase):
@@ -94,7 +98,7 @@ class Workflow:
         return self.name
 
 
-class Stage:
+class Stage(Iterable):
     """
     Holds the Phases that are progressed through as part of the workflow process
     """
@@ -119,6 +123,9 @@ class Stage:
             existing_phases.add(str(phase))
             new_phases.append(copy.copy(phase))
         self.phases = new_phases
+
+    def __iter__(self) -> Iterator['Phase']:
+        yield from self.phases
 
     def __str__(self) -> str:
         return self.name
@@ -168,7 +175,9 @@ class Phase:
         self._actions = {action.name: action for action in self.actions}
         self.occurrence: int = 0
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Union[object, str]) -> bool:
+        if isinstance(other, str):
+            return str(self) == other
         to_match = ['name', 'occurrence']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 

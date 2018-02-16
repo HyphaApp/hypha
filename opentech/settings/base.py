@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_select2',
     'addressfield',
+    'django_bleach',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -297,7 +298,8 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = ['opentechfund.org']
+STAFF_EMAIL_DOMAINS = ['opentechfund.org']
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
@@ -317,4 +319,16 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
+    'opentech.apply.users.pipeline.make_otf_staff',
 )
+
+# Bleach Settings
+BLEACH_ALLOWED_TAGS = ['h2', 'h3', 'p', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li']
+
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'style']
+
+BLEACH_ALLOWED_STYLES = ['font-family', 'font-weight', 'text-decoration', 'font-variant']
+
+BLEACH_STRIP_TAGS = True
+
+BLEACH_STRIP_COMMENTS = True

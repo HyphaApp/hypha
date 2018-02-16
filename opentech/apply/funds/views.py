@@ -1,7 +1,19 @@
 from django import forms
 from django.template.response import TemplateResponse
+from django.views.generic import DetailView
 
+from .models import ApplicationSubmission
 from .workflow import SingleStage, DoubleStage
+
+
+class SubmissionDetailView(DetailView):
+    model = ApplicationSubmission
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            other_submissions=self.model.objects.filter(user=self.object.user).exclude(id=self.object.id),
+            **kwargs
+        )
 
 
 workflows = [SingleStage, DoubleStage]

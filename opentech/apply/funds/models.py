@@ -31,6 +31,7 @@ from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
@@ -84,6 +85,7 @@ class SubmittableStreamForm(AbstractStreamForm):
 
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
+            form_fields=self.get_defined_fields(),
             **self.get_submit_meta_data(user=user),
         )
 
@@ -277,6 +279,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -286,6 +289,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
 
     content_panels = SubmittableStreamForm.content_panels + [
+        FieldPanel('lead'),
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
@@ -443,7 +447,10 @@ class JSONOrderable(models.QuerySet):
 
 
 class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
+    field_template = 'funds/includes/submission_field.html'
+
     form_data = JSONField(encoder=DjangoJSONEncoder)
+    form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
@@ -476,6 +483,43 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             self.status = str(self.workflow.first())
 
         return super().save(*args, **kwargs)
+
+    def render_answers(self):
+        context = {'fields': list()}  # type: ignore
+        for field in self.form_fields:
+            try:
+                data = self.form_data[field.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                form_field = field.block.get_field(field.value)
+                data = self.prepare_value(form_field, data)
+                context['fields'].append({
+                    'field': form_field,
+                    'value': data,
+                })
+        return render_to_string(self.field_template, context)
+
+    def prepare_value(self, field, data):
+        NO_RESPONSE = 'No response'
+        if hasattr(field, 'choices'):
+            if not data:
+                return [NO_RESPONSE]
+
+            if isinstance(data, str):
+                data = [data]
+            choices = dict(field.choices)
+            try:
+                data = [choices[value] for value in data]
+            except KeyError:
+                data = [choices[int(value)] for value in data if value]
+        else:
+            if not data and not isinstance(data, bool):
+                return NO_RESPONSE
+
+            data = str(data)
+
+        return data
 
     def get_data(self):
         # Updated for JSONField

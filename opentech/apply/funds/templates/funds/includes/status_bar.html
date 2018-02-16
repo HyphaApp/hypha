@@ -1,0 +1,5 @@
+{% for phase in workflow %}
+<div class="{% if phase == status %}current{% endif %}" style="{% if phase == status %}font-weight:bold;{% endif %}">
+    {{ phase.name }}
+</div>
+{% endfor %}

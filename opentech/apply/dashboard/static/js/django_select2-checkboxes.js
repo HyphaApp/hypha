@@ -9,7 +9,7 @@
                 } else if ( selected.length===total ) {
                     return 'All ' + filterType + ' selected';
                 }
-                return selected.length + ' of ' + total + ' selected';
+                return selected.length + ' of ' + total + ' ' + filterType + ' selected';
             }
         };
         $element.select2MultiCheckboxes(options);

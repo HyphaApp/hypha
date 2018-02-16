@@ -150,6 +150,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
         self.round = RoundFactory.build()
         self.round.parent_page = self.fund
+        self.round.lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
 
         self.fund.add_child(instance=self.round)
 
@@ -238,7 +239,8 @@ class TestFormSubmission(TestCase):
     def test_can_submit_if_new(self):
         self.submit_form()
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
         new_user = self.User.objects.get(email=self.email)
         self.assertEqual(new_user.get_full_name(), self.name)
 
@@ -249,7 +251,8 @@ class TestFormSubmission(TestCase):
         self.submit_form()
         self.submit_form()
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         user = self.User.objects.get(email=self.email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
@@ -260,9 +263,10 @@ class TestFormSubmission(TestCase):
         # Someone else submits a form
         self.submit_form(email='another@email.com')
 
-        self.assertEqual(self.User.objects.count(), 2)
+        # Lead + 2 x applicant
+        self.assertEqual(self.User.objects.count(), 3)
 
-        first_user, second_user = self.User.objects.all()
+        _, first_user, second_user = self.User.objects.all()
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
         self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
@@ -270,11 +274,13 @@ class TestFormSubmission(TestCase):
     def test_associated_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + Applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.submit_form(email=self.email, name=self.name, user=user)
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + Applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
@@ -283,12 +289,14 @@ class TestFormSubmission(TestCase):
     def test_errors_if_blank_user_data_even_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         response = self.submit_form(email='', name='', user=user)
         self.assertContains(response, 'This field is required')
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
 
