@@ -69,6 +69,9 @@ class TestFundModel(TestCase):
         new_round.save()
         self.assertEqual(self.fund.open_round, None)
 
+    def test_no_round_exists(self):
+        self.assertIsNone(self.fund.next_deadline())
+
 
 class TestRoundModelDates(TestCase):
     def setUp(self):
