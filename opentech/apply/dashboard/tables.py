@@ -96,7 +96,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
-    query = JSONSearchFilter(name='form_data')
+    query = filters.CharFilter(name='search_data', lookup_expr="search")
 
     class Meta:
         model = ApplicationSubmission
