@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
@@ -30,6 +31,7 @@ from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
+from opentech.apply.stream_forms.blocks import FileFieldBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -474,6 +476,14 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 response = self.form_data.pop(field.id, None)
                 if response:
                     self.form_data[field.block.name] = response
+
+            if isinstance(field.block, FileFieldBlock):
+                file = self.form_data[field.id]
+                # File is potentially optional
+                if file:
+                    filename = default_storage.generate_filename(file.name)
+                    saved_name = default_storage.save(filename, file)
+                    self.form_data[field.id] = saved_name
 
         self.ensure_user_has_account()
 

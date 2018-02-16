@@ -26,7 +26,7 @@
         {# the fund has no open rounds and we arent on a round page #}
         <h3>{% trans "Sorry this fund is not accepting applications at the moment" %}</h3>
     {% else%}
-        <form class="form" action="" method="POST">
+        <form class="form" action="" method="POST" enctype="multipart/form-data">
             {{ form.media }}
             {% csrf_token %}
 
