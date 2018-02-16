@@ -83,7 +83,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     title = factory.Sequence('Round {}'.format)
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
-    lead = factory.SubFactory(UserFactory, is_staff=True)
+    lead = factory.SubFactory(UserFactory, groups__name='Staff')
 
 
 class RoundFormFactory(AbstractRelatedFormFactory):
