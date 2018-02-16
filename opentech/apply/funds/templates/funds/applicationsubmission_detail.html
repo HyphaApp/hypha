@@ -3,8 +3,8 @@
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
-        <h3>{{ object.title }}</h3>
         <h5>{{ object.stage }} | {{ object.page }} | {{ object.round }} | Lead: {{ object.round.specific.lead }}</h5>
+        <h2 class="heading heading--no-margin">{{ object.title }}</h2>
     </div>
 
     {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
