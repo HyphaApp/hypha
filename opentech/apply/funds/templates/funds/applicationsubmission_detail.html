@@ -6,6 +6,9 @@
         <h3>{{ object.title }}</h3>
         <h5>{{ object.stage }} | {{ object.page }} | {{ object.round }} | Lead: {{ object.round.specific.lead }}</h5>
     </div>
+
+    {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
+
 </div>
 
 <div>Submission Details</div>
