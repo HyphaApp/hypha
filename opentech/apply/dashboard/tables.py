@@ -58,35 +58,11 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
     pass
 
 
-class WagtailMultiChoiceFilter(Select2ModelMultipleChoiceFilter):
-    @property
-    def wagtail_query(self):
-        # Queries on related pages will first attempt to query through the Page object
-        def is_page(relation):
-            return relation.field.related_model == Page
-
-        wagtail_path = list()
-        steps = self.field_name.split('__')
-        related_item = self.model
-        for step in steps:
-            related_item = getattr(related_item, step)
-            wagtail_path.append(step)
-            if is_page(related_item):
-                # Traverse over the page object to get the model at the other end
-                related_item = getattr(related_item.field.related_model, step).related.remote_field.model
-                wagtail_path.append(step)
-
-        return '__'.join(wagtail_path)
-
-    def get_filter_predicate(self, v):
-        return {self.wagtail_query: v}
-
-
 class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
-    lead = WagtailMultiChoiceFilter(name='round__lead', queryset=get_round_leads, label='Lead')
+    lead = Select2ModelMultipleChoiceFilter(name='round__round__lead', queryset=get_round_leads, label='Lead')
 
     class Meta:
         model = ApplicationSubmission
