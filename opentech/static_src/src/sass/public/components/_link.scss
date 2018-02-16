@@ -72,4 +72,8 @@
     &--arrow-pixels {
         @include pixel-link($color--dark-blue);
     }
+
+    &--arrow-pixels-white {
+        @include pixel-link($color--white);
+    }
 }

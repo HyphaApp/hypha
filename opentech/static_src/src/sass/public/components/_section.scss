@@ -20,4 +20,15 @@
             padding: 3rem 0;
         }
     }
+
+    &--introduction {
+        display: flex;
+        justify-content: space-between;
+
+        div {
+            &:first-child {
+                flex-basis: 65%;
+            }
+        }
+    }
 }
