@@ -58,7 +58,7 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
     pass
 
 
-class WagtailMulitChoiceFilter(Select2ModelMultipleChoiceFilter):
+class WagtailMultiChoiceFilter(Select2ModelMultipleChoiceFilter):
     @property
     def wagtail_query(self):
         # Queries on related pages will first attempt to query through the Page object
@@ -86,7 +86,7 @@ class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
-    lead = WagtailMulitChoiceFilter(name='round__lead', queryset=get_round_leads, label='Lead')
+    lead = WagtailMultiChoiceFilter(name='round__lead', queryset=get_round_leads, label='Lead')
 
     class Meta:
         model = ApplicationSubmission
