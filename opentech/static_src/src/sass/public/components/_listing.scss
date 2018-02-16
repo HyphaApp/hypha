@@ -82,6 +82,12 @@
     &__teaser {
         font-weight: $weight--normal;
         color: $color--default;
+
+        @include media-query(mob-landscape) {
+            .listing--not-a-link & {
+                margin: 0;
+            }
+        }
     }
 
     &__meta {
