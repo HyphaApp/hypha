@@ -53,6 +53,7 @@
 
     &--homepage {
         height: 555px;
+        padding: 20px;
 
         @include media-query(tablet-portrait) {
             height: 660px;
