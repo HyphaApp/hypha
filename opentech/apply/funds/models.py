@@ -454,6 +454,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
@@ -482,10 +483,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 self.workflow_name = self.page.workflow_name
             self.status = str(self.workflow.first())
 
+        # add a denormed version of the answer for searching
+        self.search_data = ' '.join(self.prepare_search_values())
+
         return super().save(*args, **kwargs)
 
-    def render_answers(self):
-        context = {'fields': list()}  # type: ignore
+    def data_and_fields(self):
         for field in self.form_fields:
             try:
                 data = self.form_data[field.id]
@@ -493,12 +496,22 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 pass  # It was a named field or a paragraph
             else:
                 form_field = field.block.get_field(field.value)
-                data = self.prepare_value(form_field, data)
-                context['fields'].append({
-                    'field': form_field,
-                    'value': data,
-                })
+                yield data, form_field
+
+    def render_answers(self):
+        context = {'fields': list()}  # type: ignore
+        for data, field in self.data_and_fields():
+            data = self.prepare_value(field, data)
+            context['fields'].append({
+                'field': field,
+                'value': data,
+            })
         return render_to_string(self.field_template, context)
+
+    def prepare_search_values(self):
+        for data, field in self.data_and_fields():
+            if data:
+                yield str(self.prepare_value(field, data))
 
     def prepare_value(self, field, data):
         NO_RESPONSE = 'No response'
