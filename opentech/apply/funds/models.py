@@ -543,10 +543,17 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
         return form_data
 
+    @property
+    def _key_mapping(self):
+        return {
+            field.block_type: field.id
+            for field in self.form_fields
+        }
+
     def __getattr__(self, item):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
-            return self.get_data()[item]
+            return self.get_data()[self._key_mapping[item]]
         raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):
