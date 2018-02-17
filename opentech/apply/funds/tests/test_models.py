@@ -14,6 +14,7 @@ from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
     ApplicationFormFactory,
+    ApplicationSubmissionFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
@@ -311,3 +312,10 @@ class TestFormSubmission(TestCase):
         # "Thank you for your submission" and "Account Creation"
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to[0], self.email)
+
+
+class TestApplicationSubmission(TestCase):
+    def test_can_get_required_block_names(self):
+        email = 'test@test.com'
+        submission = ApplicationSubmissionFactory(form_data__email=email)
+        self.assertEqual(submission.email, email)
