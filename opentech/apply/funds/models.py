@@ -152,22 +152,21 @@ class EmailForm(AbstractEmailForm):
 
     def process_form_submission(self, form):
         submission = super().process_form_submission(form)
-        self.send_mail(form)
+        self.send_mail(submission)
         return submission
 
-    def send_mail(self, form):
-        data = form.cleaned_data
-        email = data.get('email')
+    def send_mail(self, submission):
+        user = submission.user
         context = {
-            'name': data.get('full_name'),
-            'email': email,
-            'project_name': data.get('title'),
+            'name': user.get_full_name(),
+            'email': user.email,
+            'project_name': submission.form_data.get('title'),
             'extra_text': self.confirmation_text_extra,
             'fund_type': self.title,
         }
 
         subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
-        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
+        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (user.email,), self.from_address, )
 
     email_confirmation_panels = [
         MultiFieldPanel(
@@ -338,7 +337,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def process_form_submission(self, form):
         submission = super().process_form_submission(form)
-        self.get_parent().specific.send_mail(form)
+        self.get_parent().specific.send_mail(submission)
         return submission
 
     def clean(self):
