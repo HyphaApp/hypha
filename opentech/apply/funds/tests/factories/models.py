@@ -126,6 +126,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_fields = blocks.CustomFormFieldsFactory
     page = factory.SubFactory(FundTypeFactory)
     round = factory.SubFactory(RoundFactory)
+    user = factory.SubFactory(UserFactory)
 
     @classmethod
     def _generate(cls, strat, params):

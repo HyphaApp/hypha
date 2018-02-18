@@ -320,12 +320,13 @@ class TestApplicationSubmission(TestCase):
 
     def test_can_get_required_block_names(self):
         email = 'test@test.com'
-        submission = self.make_submission(form_data__email=email)
+        submission = self.make_submission(user__email=email)
         self.assertEqual(submission.email, email)
 
     def test_can_get_ordered_qs(self):
-        submission_a = self.make_submission(form_data__email='a@a.com')
-        submission_b = self.make_submission(form_data__email='b@b.com', round=submission_a.round)
+        # Emails are created sequentially
+        submission_a = self.make_submission()
+        submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_a, submission_b]
         self.assertEqual(
             list(ApplicationSubmission.objects.order_by('email')),
@@ -333,8 +334,8 @@ class TestApplicationSubmission(TestCase):
         )
 
     def test_can_get_reverse_ordered_qs(self):
-        submission_a = self.make_submission(form_data__email='a@a.com')
-        submission_b = self.make_submission(form_data__email='b@b.com', round=submission_a.round)
+        submission_a = self.make_submission()
+        submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_b, submission_a]
         self.assertEqual(
             list(ApplicationSubmission.objects.order_by('-email')),
