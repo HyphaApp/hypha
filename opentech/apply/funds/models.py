@@ -474,6 +474,13 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return self.workflow.current(self.status)
 
     def save(self, *args, **kwargs):
+        for field in self.form_fields:
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = self.form_data.pop(field.id, None)
+                if response:
+                    self.form_data[field.block.name] = response
+
         if not self.id:
             # We are creating the object default to first stage
             try:
@@ -543,17 +550,10 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
         return form_data
 
-    @property
-    def _key_mapping(self):
-        return {
-            field.block_type: field.id
-            for field in self.form_fields
-        }
-
     def __getattr__(self, item):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
-            return self.get_data()[self._key_mapping[item]]
+            return self.get_data()[item]
         raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):

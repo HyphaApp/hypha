@@ -90,8 +90,8 @@ class RoundFactory(wagtail_factories.PageFactory):
         model = Round
 
     title = factory.Sequence('Round {}'.format)
-    start_date = factory.LazyFunction(datetime.date.today)
-    end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
+    start_date = factory.Sequence(lambda s: datetime.date.today() + datetime.timedelta(days=s))
+    end_date = factory.LazyAttribute(lambda o: o.start_date + datetime.timedelta(days=1))
     lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
 
