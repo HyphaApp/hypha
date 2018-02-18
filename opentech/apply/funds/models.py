@@ -60,33 +60,12 @@ class SubmittableStreamForm(AbstractStreamForm):
         return ApplicationSubmission
 
     def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        if form.user.is_authenticated():
-            user = form.user
-            cleaned_data['email'] = user.email
-            cleaned_data['full_name'] = user.get_full_name()
-        else:
-            # Rely on the form having the following must include fields (see blocks.py)
-            email = cleaned_data.get('email')
-            full_name = cleaned_data.get('full_name')
-
-            User = get_user_model()
-            user, _ = User.objects.get_or_create_and_notify(
-                email=email,
-                site=self.get_site(),
-                defaults={'full_name': full_name}
-            )
-
+        if not form.user.is_authenticated():
+            form.user= None
         return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
+            form_data=form.cleaned_data,
             form_fields=self.get_defined_fields(),
-            **self.get_submit_meta_data(user=user),
+            **self.get_submit_meta_data(user=form.user),
         )
 
     def get_submit_meta_data(self, **kwargs):
@@ -472,6 +451,22 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def phase(self):
         return self.workflow.current(self.status)
 
+    def ensure_user_has_account(self):
+        if self.user and self.user.is_authenticated():
+            self.form_data['email'] = self.user.email
+            self.form_data['full_name'] = self.user.get_full_name()
+        else:
+            # Rely on the form having the following must include fields (see blocks.py)
+            email = self.form_data.get('email')
+            full_name = self.form_data.get('full_name')
+
+            User = get_user_model()
+            self.user, _ = User.objects.get_or_create_and_notify(
+                email=email,
+                site=self.page.get_site(),
+                defaults={'full_name': full_name}
+            )
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -479,6 +474,8 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 response = self.form_data.pop(field.id, None)
                 if response:
                     self.form_data[field.block.name] = response
+
+        self.ensure_user_has_account()
 
         if not self.id:
             # We are creating the object default to first stage
