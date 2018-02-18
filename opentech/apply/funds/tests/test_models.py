@@ -315,7 +315,28 @@ class TestFormSubmission(TestCase):
 
 
 class TestApplicationSubmission(TestCase):
+    def make_submission(self, **kwargs):
+        return ApplicationSubmissionFactory(**kwargs)
+
     def test_can_get_required_block_names(self):
         email = 'test@test.com'
-        submission = ApplicationSubmissionFactory(form_data__email=email)
+        submission = self.make_submission(form_data__email=email)
         self.assertEqual(submission.email, email)
+
+    def test_can_get_ordered_qs(self):
+        submission_a = self.make_submission(form_data__email='a@a.com')
+        submission_b = self.make_submission(form_data__email='b@b.com')
+        submissions = [submission_a, submission_b]
+        self.assertEqual(
+            list(ApplicationSubmission.objects.order_by('email')),
+            submissions,
+        )
+
+    def test_can_get_reverse_ordered_qs(self):
+        submission_a = self.make_submission(form_data__email='a@a.com')
+        submission_b = self.make_submission(form_data__email='b@b.com')
+        submissions = [submission_b, submission_a]
+        self.assertEqual(
+            list(ApplicationSubmission.objects.order_by('-email')),
+            submissions,
+        )
