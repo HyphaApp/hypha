@@ -1,0 +1,68 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+
+    > * {
+        flex-basis: calc(100% - 20px);
+        margin: 10px;
+
+        @media all and (min-width: 480px) {
+            flex-basis: calc(50% - 20px);
+        }
+
+        @media all and (min-width: 1024px) {
+            flex-basis: calc(30% - 20px);
+        }
+    }
+
+    &--two {
+        > * {
+            // fix for IE11 not rendering calc flex-basis correctly
+            flex-basis: auto;
+            width: calc(50% - 20px);
+        }
+    }
+
+    &--narrow {
+        text-align: center;
+
+        @include media-query(tablet-portrait) {
+            text-align: left;
+        }
+    }
+}
+
+@supports (display: grid) {
+    .grid {
+        display: grid;
+        margin: 30px 0;
+        grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+        > * {
+            flex-basis: initial;
+            width: auto;
+            margin: 0;
+        }
+
+        &--proposal-info {
+            margin: 0;
+            grid-template-columns: 100%;
+            grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
+
+            @include media-query(mob-landscape) {
+                margin: 0 0 30px;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            @include media-query(tablet-portrait) {
+                padding-bottom: 30px;
+                border-bottom: 1px solid $color--mid-grey;
+            }
+
+            * {
+                margin: 0;
+            }
+        }
+    }
+}
