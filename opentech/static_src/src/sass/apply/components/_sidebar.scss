@@ -1,9 +1,8 @@
 .sidebar {
-    flex-basis: 345px;
     margin-top: 20px;
 
-
     @include media-query(tablet-portrait) {
+        flex-basis: 345px;
         margin: 0 20px 0 0;
     }
 
