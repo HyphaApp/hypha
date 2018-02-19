@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+import bleach
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
@@ -492,13 +493,13 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return super().save(*args, **kwargs)
 
     def data_and_fields(self):
-        for field in self.form_fields:
+        for stream_value in self.form_fields:
             try:
-                data = self.form_data[field.id]
+                data = self.form_data[stream_value.id]
             except KeyError:
                 pass  # It was a named field or a paragraph
             else:
-                form_field = field.block.get_field(field.value)
+                form_field = stream_value.block.get_field(stream_value.value)
                 yield data, form_field
 
     def render_answers(self):
@@ -512,9 +513,11 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return render_to_string(self.field_template, context)
 
     def prepare_search_values(self):
+        searchable_fields = ['char', 'text', 'radio', 'dropdown', 'checkboxes']
         for data, field in self.data_and_fields():
             if data:
-                yield str(self.prepare_value(field, data))
+                prepared_data = self.prepare_value(field, data)
+                yield bleach.clean(prepared_data, tags=[], strip=True)
 
     def prepare_value(self, field, data):
         NO_RESPONSE = 'No response'
