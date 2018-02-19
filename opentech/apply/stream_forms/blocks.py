@@ -46,7 +46,7 @@ class FormFieldBlock(StructBlock):
             **self.get_field_kwargs(struct_value))
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data, tags=[], strip=True)
+        return str(data)
 
 
 class OptionalFormFieldBlock(FormFieldBlock):
@@ -74,6 +74,9 @@ class CharFieldBlock(OptionalFormFieldBlock):
             return forms.EmailField
         return super().get_field_class(struct_value)
 
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
+
 
 class TextFieldBlock(OptionalFormFieldBlock):
     default_value = TextBlock(required=False, label=_('Default value'))
@@ -82,6 +85,9 @@ class TextFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (multi line)')
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):
@@ -102,9 +108,6 @@ class CheckboxFieldBlock(FormFieldBlock):
         label = _('Checkbox field')
         icon = 'tick-inverse'
 
-    def get_searchable_content(self, value, data):
-        return data
-
 
 class RadioButtonsFieldBlock(OptionalFormFieldBlock):
     choices = ListBlock(CharBlock(label=_('Choice')))
@@ -122,9 +125,6 @@ class RadioButtonsFieldBlock(OptionalFormFieldBlock):
         kwargs['choices'] = [(choice, choice)
                              for choice in struct_value['choices']]
         return kwargs
-
-    def get_searchable_content(self, value, data):
-        return data
 
 
 class DropdownFieldBlock(RadioButtonsFieldBlock):
@@ -157,6 +157,9 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         kwargs['choices'] = [(choice, choice)
                              for choice in struct_value['checkboxes']]
         return kwargs
+
+    def get_searchable_content(self, value, data):
+        return data
 
 
 class DatePickerInput(forms.DateInput):
