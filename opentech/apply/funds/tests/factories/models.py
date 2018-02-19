@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 
 import factory
@@ -5,6 +6,7 @@ import wagtail_factories
 
 from opentech.apply.funds.models import (
     AbstractRelatedForm,
+    ApplicationSubmission,
     ApplicationForm,
     FundType,
     FundForm,
@@ -23,11 +25,31 @@ __all__ = [
     'FundTypeFactory',
     'FundFormFactory',
     'ApplicationFormFactory',
+    'ApplicationSubmissionFactory',
     'RoundFactory',
     'RoundFormFactory',
     'LabFactory',
     'LabFormFactory',
 ]
+
+
+def build_form(data, prefix=''):
+    if prefix:
+        prefix += '__'
+
+    extras = defaultdict(dict)
+    for key, value in data.items():
+        if 'form_fields' in key:
+            _, field, attr = key.split('__')
+            extras[field][attr] = value
+
+    form_fields = {}
+    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys()):
+        form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
+        for attr, value in extras[field].items():
+            form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
+
+    return form_fields
 
 
 class FundTypeFactory(wagtail_factories.PageFactory):
@@ -43,11 +65,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            fields = {
-                f'form__form_fields__{i}__{field}__': ''
-                for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys())
-            }
-            fields.update(**kwargs)
+            fields = build_form(kwargs, prefix='form')
             for _ in range(len(self.workflow_class.stage_classes)):
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
@@ -109,3 +127,40 @@ class LabFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = LabForm
     lab = factory.SubFactory(LabFactory, parent=None)
+
+
+class ApplicationSubmissionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ApplicationSubmission
+
+    form_fields = blocks.CustomFormFieldsFactory
+    page = factory.SubFactory(FundTypeFactory)
+    round = factory.SubFactory(RoundFactory)
+    user = factory.SubFactory(UserFactory)
+
+    @classmethod
+    def _generate(cls, strat, params):
+        params.update(**build_form(params))
+        return super()._generate(strat, params)
+
+    @classmethod
+    def _create(cls, model, *args, **kwargs):
+        # Make sure we have form_data so no error
+        kwargs['form_data'] = {}
+        return super()._create(model, *args, **kwargs)
+
+    @factory.post_generation
+    def form_data(self, create, extracted, **kwargs):
+        if not extracted:
+            # Ids are added but are not available in the cached version
+            self.refresh_from_db()
+            form_data = {}
+            for field in self.form_fields:
+                try:
+                    answer = kwargs[field.block_type]
+                except KeyError:
+                    answer = ''
+                form_data[field.id] = answer
+
+            self.form_data = form_data
+            self.save()

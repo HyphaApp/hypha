@@ -2,12 +2,16 @@
 {% load render_table from django_tables2 %}
 {% block title %}OTF Dashboard{% endblock %}
 {% block content %}
-    <div class="wrapper wrapper--breakout wrapper--admin">
+
+<div class="wrapper wrapper--breakout wrapper--admin">
+    {% block page_header %}
         <div class="wrapper wrapper--large">
-            <h3>Received submissions</h3>
+            <h3>Received Content</h3>
             <h5>Track and explore recent submissions</h5>
         </div>
-    </div>
+        {% include "dashboard/includes/search.html" %}
+    {% endblock %}
+</div>
 
 <div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
     {% if filter %}

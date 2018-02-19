@@ -1,4 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
+import bleach
+
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
 from django.utils.dateparse import parse_datetime
@@ -18,6 +20,9 @@ class FormFieldBlock(StructBlock):
 
     field_class = forms.CharField
     widget = None
+
+    class Meta:
+        template = 'stream_forms/render_field.html'
 
     def get_slug(self, struct_value):
         return force_text(slugify(unidecode(struct_value['field_label'])))
@@ -43,6 +48,9 @@ class FormFieldBlock(StructBlock):
         return self.get_field_class(struct_value)(
             **self.get_field_kwargs(struct_value))
 
+    def get_searchable_content(self, value, data):
+        return str(data)
+
 
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_('Required'), required=False)
@@ -60,6 +68,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (single line)')
+        template = 'stream_forms/render_unsafe_field.html'
 
     def get_field_class(self, struct_value):
         text_format = struct_value['format']
@@ -69,6 +78,9 @@ class CharFieldBlock(OptionalFormFieldBlock):
             return forms.EmailField
         return super().get_field_class(struct_value)
 
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
+
 
 class TextFieldBlock(OptionalFormFieldBlock):
     default_value = TextBlock(required=False, label=_('Default value'))
@@ -77,6 +89,10 @@ class TextFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (multi line)')
+        template = 'stream_forms/render_unsafe_field.html'
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):
@@ -139,6 +155,7 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Multiple checkboxes field')
         icon = 'list-ul'
+        template = 'stream_forms/render_list_field.html'
 
     def get_field_kwargs(self, struct_value):
         kwargs = super(CheckboxesFieldBlock,
@@ -146,6 +163,9 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         kwargs['choices'] = [(choice, choice)
                              for choice in struct_value['checkboxes']]
         return kwargs
+
+    def get_searchable_content(self, value, data):
+        return data
 
 
 class DatePickerInput(forms.DateInput):

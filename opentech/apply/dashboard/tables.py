@@ -1,4 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.search import SearchVector
+from django.db.models import TextField
+from django.db.models.functions import Cast
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -68,6 +71,37 @@ class SubmissionFilter(filters.FilterSet):
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Statuses')
     lead = Select2ModelMultipleChoiceFilter(name='round__round__lead', queryset=get_round_leads, label='Leads')
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('funds', 'round', 'status')
+
+
+class JSONSearchFilter(filters.CharFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('lookup_expr', 'search')
+        super().__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        # Postgres <10 doesn't support search on JSON
+        # Cast to text to make searchable
+        qs = qs.annotate(
+            search=SearchVector(Cast(self.field_name, TextField())),
+        )
+        if self.distinct:
+            qs = qs.distinct()
+
+        return self.get_method(qs)(**{self.lookup_expr: value})
+
+
+class SubmissionFilterAndSearch(SubmissionFilter):
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
+    funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
+    status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
+    query = filters.CharFilter(name='search_data', lookup_expr="search")
 
     class Meta:
         model = ApplicationSubmission

@@ -1,0 +1,9 @@
+{% extends "stream_forms/render_field.html" %}
+{% load bleach_tags %}
+{% block data_display %}
+    {% if data %}
+        {{ data|bleach }}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
