@@ -512,13 +512,14 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return render_to_string(self.field_template, context)
 
     def prepare_search_values(self):
-        searchable_fields = ['char', 'text', 'radio', 'dropdown', 'checkboxes']
+        excluded_fields = ['data', 'time', 'datetime', 'value', 'category', 'number']
         for data, stream in self.data_and_fields():
-            value = stream.block.get_searchable_content(stream.value, data)
-            if isinstance(value, list):
-                yield ', '.join(value)
-            else:
-                yield value
+            if stream.block_type not in excluded_fields:
+                value = stream.block.get_searchable_content(stream.value, data)
+                if isinstance(value, list):
+                    yield ', '.join(value)
+                else:
+                    yield value
 
     def prepare_value(self, stream, data):
         NO_RESPONSE = 'No response'
