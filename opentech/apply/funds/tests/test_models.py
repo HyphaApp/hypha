@@ -360,3 +360,8 @@ class TestApplicationSubmission(TestCase):
         choices = ['blah', 'foo']
         submission = self.make_submission(form_fields__radios__choices=choices, form_data__radios=['blah'])
         self.assertIn('blah', submission.search_data)
+
+    def test_number_not_in_search(self):
+        value = 12345
+        submission = self.make_submission(form_data__number=value)
+        self.assertNotIn(str(value), submission.search_data)
