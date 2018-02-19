@@ -61,7 +61,7 @@ class SubmittableStreamForm(AbstractStreamForm):
 
     def process_form_submission(self, form):
         if not form.user.is_authenticated():
-            form.user= None
+            form.user = None
         return self.get_submission_class().objects.create(
             form_data=form.cleaned_data,
             form_fields=self.get_defined_fields(),
@@ -498,14 +498,13 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             except KeyError:
                 pass  # It was a named field or a paragraph
             else:
-                form_field = stream_value.block.get_field(stream_value.value)
                 yield data, stream_value
 
     def render_answers(self):
-        context = {'fields': list()}  # type: ignore
-        fields = []
-        for data, field in self.data_and_fields():
-            fields.append(field.render(context={'data': data}))
+        fields = [
+            field.render(context={'data': data})
+            for data, field in self.data_and_fields()
+        ]
         return mark_safe(''.join(fields))
 
     def prepare_search_values(self):
