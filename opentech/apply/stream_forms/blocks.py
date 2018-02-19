@@ -21,6 +21,9 @@ class FormFieldBlock(StructBlock):
     field_class = forms.CharField
     widget = None
 
+    class Meta:
+        template = 'stream_forms/render_field.html'
+
     def get_slug(self, struct_value):
         return force_text(slugify(unidecode(struct_value['field_label'])))
 
@@ -65,6 +68,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (single line)')
+        template ='stream_forms/render_unsafe_field.html'
 
     def get_field_class(self, struct_value):
         text_format = struct_value['format']
@@ -85,6 +89,7 @@ class TextFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (multi line)')
+        template ='stream_forms/render_unsafe_field.html'
 
     def get_searchable_content(self, value, data):
         return bleach.clean(data, tags=[], strip=True)
@@ -150,6 +155,7 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Multiple checkboxes field')
         icon = 'list-ul'
+        template ='stream_forms/render_list_field.html'
 
     def get_field_kwargs(self, struct_value):
         kwargs = super(CheckboxesFieldBlock,

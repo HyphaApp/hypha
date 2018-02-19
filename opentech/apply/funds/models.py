@@ -503,13 +503,10 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     def render_answers(self):
         context = {'fields': list()}  # type: ignore
+        fields = []
         for data, field in self.data_and_fields():
-            data = self.prepare_value(field, data)
-            context['fields'].append({
-                'field': field,
-                'value': data,
-            })
-        return render_to_string(self.field_template, context)
+            fields.append(field.render(context={'data': data}))
+        return mark_safe(''.join(fields))
 
     def prepare_search_values(self):
         excluded_fields = ['data', 'time', 'datetime', 'value', 'category', 'number']
@@ -520,20 +517,6 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                     yield ', '.join(value)
                 else:
                     yield value
-
-    def prepare_value(self, stream, data):
-        NO_RESPONSE = 'No response'
-        value = stream.block.get_searchable_content(stream.value, data)
-        if isinstance(value, list):
-            if not value:
-                return [NO_RESPONSE]
-        else:
-            if not value and not isinstance(value, bool):
-                return NO_RESPONSE
-
-            data = str(data)
-
-        return data
 
     def get_data(self):
         # Updated for JSONField
