@@ -2,10 +2,10 @@
     {# '.status-bar__item--is-complete' needs to be added to each 'complete' step in order for bar to be styled correctly #}
     {% for phase in workflow %}
         <div class="status-bar__item {% if phase == status %}status-bar__item--is-complete{% endif %}">
-                {% if phase == status %}
-                    <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
-                {% endif %}
-            <p>{{ phase.name }}</p>
+            <span class="status-bar__tooltip" data-title="{{ phase.name }}" aria-label="{{ phase.name }}"></span>
+            {% if phase == status %}
+                <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
