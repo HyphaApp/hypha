@@ -1,3 +1,4 @@
+from django.utils.text import mark_safe
 from django.contrib.auth import get_user_model
 
 import django_filters as filters
@@ -27,6 +28,9 @@ class DashboardTable(tables.Table):
 
     def render_user(self, value):
         return value.get_full_name()
+
+    def render_status_name(self, value):
+        return mark_safe(f'<span>{ value }</span>')
 
 
 def get_used_rounds(request):

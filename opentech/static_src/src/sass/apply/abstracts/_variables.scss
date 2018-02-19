@@ -1,9 +1,11 @@
 // Default
 $color--white: #fff;
 $color--black: #141414;
-$color--dark-grey: #404041;
 $color--light-grey: #f7f7f7;
+$color--light-mid-grey: #e8e8e8;
 $color--mid-grey: #cfcfcf;
+$color--mid-dark-grey: #919191;
+$color--dark-grey: #404041;
 
 // Brand
 $color--light-blue: #43bbf1;
@@ -16,12 +18,16 @@ $color--light-pink: #ffe1df;
 $color--tomato: #f05e54;
 $color--mint: #40c2ad;
 
+$color--sky-blue: #e7f2f6;
+$color--marine: #177da8;
+
 // Social
 $color--twitter: #1da6f6;
 $color--linkedin: #137ab8;
 $color--facebook: #396ab5;
 
 // Transparent
+$color--black-50: rgba(0, 0, 0, 0.5);
 $color--black-10: rgba(0, 0, 0, 0.1);
 
 // Assignment
@@ -62,6 +68,7 @@ $wrapper--small: 790px;
 $breakpoints: (
     'mob-portrait'      '(min-width: 320px)',
     'mob-landscape'     '(min-width: 480px)',
+    'small-tablet'      '(min-width: 600px)',
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
     'desktop'           '(min-width: 1280px)',
