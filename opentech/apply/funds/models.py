@@ -31,6 +31,7 @@ from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
@@ -84,6 +85,7 @@ class SubmittableStreamForm(AbstractStreamForm):
 
         return self.get_submission_class().objects.create(
             form_data=cleaned_data,
+            form_fields=self.get_defined_fields(),
             **self.get_submit_meta_data(user=user),
         )
 
@@ -91,9 +93,9 @@ class SubmittableStreamForm(AbstractStreamForm):
         return kwargs
 
 
-class WorkflowStreamForm(AbstractStreamForm):
+class WorkflowHelpers(models.Model):
     """
-    Defines the common methods and fields for working with Workflows
+    Defines the common methods and fields for working with Workflows within Django models
     """
     class Meta:
         abstract = True
@@ -103,18 +105,36 @@ class WorkflowStreamForm(AbstractStreamForm):
         'double': DoubleStage.name,
     }
 
-    workflow = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single')
+    workflow_name = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single', verbose_name="Workflow")
+
+    @property
+    def workflow(self):
+        # Pretend we have forms associated with the workflow.
+        # TODDO Confirm if we need forms on the workflow.
+        return self.workflow_class([None] * len(self.workflow_class.stage_classes))
+
+    @property
+    def workflow_class(self):
+        return WORKFLOW_CLASS[self.get_workflow_name_display()]
+
+    @classmethod
+    def workflow_class_from_name(cls, name):
+        return WORKFLOW_CLASS[cls.WORKFLOWS[name]]
+
+
+class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
+    """
+    Defines the common methods and fields for working with Workflows within Wagtail pages
+    """
+    class Meta:
+        abstract = True
 
     def get_defined_fields(self):
         # Only return the first form, will need updating for when working with 2 stage WF
         return self.forms.all()[0].fields
 
-    @property
-    def workflow_class(self):
-        return WORKFLOW_CLASS[self.get_workflow_display()]
-
     content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow'),
+        FieldPanel('workflow_name'),
         InlinePanel('forms', label="Forms"),
     ]
 
@@ -176,6 +196,10 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
+    def detail(self):
+        # The location to find out more information
+        return self.fund_public.first()
+
     @property
     def open_round(self):
         rounds = Round.objects.child_of(self).live().public().specific()
@@ -185,7 +209,11 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         ).first()
 
     def next_deadline(self):
-        return self.open_round.end_date
+        try:
+            return self.open_round.end_date
+        except AttributeError:
+            # There isn't an open round
+            return None
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or not self.open_round:
@@ -251,6 +279,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -260,13 +289,14 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
 
     content_panels = SubmittableStreamForm.content_panels + [
+        FieldPanel('lead'),
         MultiFieldPanel([
             FieldRowPanel([
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
-        ReadOnlyPanel('get_workflow_display', heading="Workflow"),
+        ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
         ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
     ]
 
@@ -279,13 +309,13 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         super().__init__(*args, **kwargs)
         # We attached the parent page as part of the before_create_hook
         if hasattr(self, 'parent_page'):
-            self.workflow = self.parent_page.workflow
+            self.workflow_name = self.parent_page.workflow_name
 
     def save(self, *args, **kwargs):
         is_new = not self.id
         if is_new and hasattr(self, 'parent_page'):
             # Ensure that the workflow hasn't changed
-            self.workflow = self.parent_page.workflow
+            self.workflow_name = self.parent_page.workflow_name
 
         super().save(*args, **kwargs)
 
@@ -380,6 +410,10 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
 
+    def detail(self):
+        # The location to find out more information
+        return self.lab_public.first()
+
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self,
@@ -412,13 +446,80 @@ class JSONOrderable(models.QuerySet):
         return super().order_by(*field_ordering)
 
 
-class ApplicationSubmission(AbstractFormSubmission):
+class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
+    field_template = 'funds/includes/submission_field.html'
+
     form_data = JSONField(encoder=DjangoJSONEncoder)
+    form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
+    # Workflow inherited from WorkflowHelpers
+    status = models.CharField(max_length=254)
+
     objects = JSONOrderable.as_manager()
+
+    @property
+    def status_name(self):
+        return self.phase.name
+
+    @property
+    def stage(self):
+        return self.phase.stage
+
+    @property
+    def phase(self):
+        return self.workflow.current(self.status)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # We are creating the object default to first stage
+            try:
+                self.workflow_name = self.round.workflow_name
+            except AttributeError:
+                # We are a lab submission
+                self.workflow_name = self.page.workflow_name
+            self.status = str(self.workflow.first())
+
+        return super().save(*args, **kwargs)
+
+    def render_answers(self):
+        context = {'fields': list()}  # type: ignore
+        for field in self.form_fields:
+            try:
+                data = self.form_data[field.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                form_field = field.block.get_field(field.value)
+                data = self.prepare_value(form_field, data)
+                context['fields'].append({
+                    'field': form_field,
+                    'value': data,
+                })
+        return render_to_string(self.field_template, context)
+
+    def prepare_value(self, field, data):
+        NO_RESPONSE = 'No response'
+        if hasattr(field, 'choices'):
+            if not data:
+                return [NO_RESPONSE]
+
+            if isinstance(data, str):
+                data = [data]
+            choices = dict(field.choices)
+            try:
+                data = [choices[value] for value in data]
+            except KeyError:
+                data = [choices[int(value)] for value in data if value]
+        else:
+            if not data and not isinstance(data, bool):
+                return NO_RESPONSE
+
+            data = str(data)
+
+        return data
 
     def get_data(self):
         # Updated for JSONField
@@ -433,7 +534,7 @@ class ApplicationSubmission(AbstractFormSubmission):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
             return self.get_data()[item]
-        return super().__getattr__(item)
+        raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):
         return str(super().__str__())

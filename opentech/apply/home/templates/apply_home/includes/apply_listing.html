@@ -1,0 +1,45 @@
+{% load wagtailcore_tags %}
+
+{% with details=page.specific.detail.specific %}
+{% if page.specific.open_round %}
+  <div class="listing listing--not-a-link">
+      <div>
+          <h4 class="listing__title listing__title--link">
+              {% if details.deadline %}
+                  <p class="listing__deadline">
+                      <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                      <span>Next deadline: {{ details.deadline|date:"M j, Y" }}</span>
+                  </p>
+              {% endif %}
+              {# details may be None, so be more verbose in the handling of the title #}
+              {% if page.title %}
+                  {% if details %}
+                      <a href="{% pageurl details %}">
+                  {% endif %}
+
+                  {{ page.title }}
+
+                  {% if details %}
+                      </a>
+                  {% endif %}
+              {% else %}
+                  {% if details %}
+                      <a href="{% pageurl details %}">
+                  {% endif %}
+
+                  {{ details.listing_title|default:details.title }}
+
+                  {% if details %}
+                      </a>
+                  {% endif %}
+              {% endif %}
+          </h4>
+
+          {% if details.listing_summary or details.introduction %}
+              <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
+          {% endif %}
+      </div>
+      <a class="listing__button" href="{% pageurl page %}">Apply</a>
+  </div>   
+{% endif %}
+{% endwith %}

@@ -1,3 +1,5 @@
+STAFF_GROUP_NAME = 'Staff'
+
 GROUPS = [
     {
         'name': 'Applicant',
@@ -12,7 +14,7 @@ GROUPS = [
         'permissions': [],
     },
     {
-        'name': 'Staff',
+        'name': STAFF_GROUP_NAME,
         'permissions': [],
     },
     {

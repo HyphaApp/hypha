@@ -37,7 +37,7 @@ class FundPage(BasePage):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name='fund_public',
     )
     body = StreamField(FundBlock())
 
@@ -106,7 +106,7 @@ class LabPage(BasePage):
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='+',
+        related_name='lab_public',
     )
     lab_link = models.URLField(blank=True, verbose_name='External link')
     link_text = models.CharField(max_length=255, help_text='Text to display on the button for external links', blank=True)

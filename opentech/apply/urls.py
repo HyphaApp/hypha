@@ -6,7 +6,7 @@ from .dashboard import urls as dashboard_urls
 
 
 urlpatterns = [
-    url(r'^apply/', include(funds_urls)),
+    url(r'^apply/', include(funds_urls, namespace='funds')),
     url(r'^account/', include(users_urls, namespace='users')),
     url(r'^dashboard/', include(dashboard_urls, namespace='dashboard')),
 ]
