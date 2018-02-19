@@ -17,22 +17,32 @@
 <div>Submission Details</div>
 
 <div class="wrapper wrapper--medium wrapper--top-bottom-inner-space">
-    Submitted: {{ object.submit_time.date }} by {{ object.user.get_full_name }}
-    <h2>Proposal Information</h2>
-    <div>
-        Requested Funding {{ object.value }}
-        Project Duration {{ object.value }}
-        Legal Name {{ object.full_name }}
-        Email {{ object.email }}
+    <div class="wrapper wrapper--sidebar">
+        <div>
+            <h6 class="heading heading--submission-meta">
+                <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
+            </h6>
+
+            <h3>Proposal Information</h3>
+            <div>
+                Requested Funding {{ object.value }}
+                Project Duration {{ object.value }}
+                Legal Name {{ object.full_name }}
+                Email {{ object.email }}
+            </div>
+            <div>
+                {{ object.render_answers }}
+            </div>
+        </div>
+        <aside class="sidebar">
+            <div class="sidebar__inner">
+                <h3>Other Submissions</h3>
+                {% for submission in other_submissions %}
+                    <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
+                {% endfor %}
+            </div>
+        </aside>
     </div>
-    <div>
-        {{ object.render_answers }}
-    </div>
-</div>
-<div>
-    <h3>Other Submissions</h3>
-    {% for submission in other_submissions %}
-        <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
-    {% endfor %}
+
 </div>
 {% endblock %}

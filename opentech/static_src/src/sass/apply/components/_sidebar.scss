@@ -1,0 +1,14 @@
+.sidebar {
+    flex-basis: 345px;
+    margin-top: 20px;
+
+
+    @include media-query(tablet-portrait) {
+        margin: 0 20px 0 0;
+    }
+
+    &__inner {
+        padding: 20px;
+        border: 1px solid $color--mid-grey;
+    }
+}

@@ -20,4 +20,12 @@
             }
         }
     }
+
+    &--submission-meta {
+        color: transparentize($color--dark-grey, 0.5);
+
+        span {
+            font-weight: $weight--normal;
+        }
+    }
 }
