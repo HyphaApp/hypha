@@ -270,6 +270,7 @@ class FileFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('File field')
         icon = 'download'
+        template = 'stream_forms/render_file_field.html'
 
     def get_searchable_content(self, value, data):
         return None

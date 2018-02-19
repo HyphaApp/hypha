@@ -1,4 +1,5 @@
 from datetime import date
+import os
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -477,15 +478,22 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 if response:
                     self.form_data[field.block.name] = response
 
+        self.ensure_user_has_account()
+
+        for field in self.form_fields:
             if isinstance(field.block, FileFieldBlock):
                 file = self.form_data[field.id]
                 # File is potentially optional
                 if file:
-                    filename = default_storage.generate_filename(file.name)
+                    file_path = os.path.join('submissions', 'user', str(self.user.id), file.name)
+                    filename = default_storage.generate_filename(file_path)
                     saved_name = default_storage.save(filename, file)
-                    self.form_data[field.id] = saved_name
-
-        self.ensure_user_has_account()
+                    saved_file = {
+                        'name': file.name,
+                        'path': saved_name,
+                        'url': default_storage.url(saved_name)
+                    }
+                    self.form_data[field.id] = saved_file
 
         if not self.id:
             # We are creating the object default to first stage
