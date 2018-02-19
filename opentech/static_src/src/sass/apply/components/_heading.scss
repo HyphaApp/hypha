@@ -6,6 +6,11 @@
     &--meta {
         display: flex;
         flex-wrap: wrap;
+        margin: 0;
+
+        @include media-query(tablet-portrait) {
+            margin-bottom: 1rem;
+        }
 
         span {
             &::after {
@@ -27,5 +32,17 @@
         span {
             font-weight: $weight--normal;
         }
+    }
+
+    &--small {
+        font-size: 12px;
+    }
+
+    &--light-grey {
+        color: transparentize($color--dark-grey, 0.5);
+    }
+
+    &--uppercase {
+        text-transform: uppercase;
     }
 }

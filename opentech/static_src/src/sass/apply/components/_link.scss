@@ -1,4 +1,12 @@
 .link {
+    &--underlined {
+        text-decoration: underline;
+    }
+
+    &--bold {
+        font-weight: $weight--bold;
+    }
+
     &--download {
         display: flex;
         align-items: center;

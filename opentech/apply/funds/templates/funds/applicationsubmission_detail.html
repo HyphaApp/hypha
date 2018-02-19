@@ -62,9 +62,9 @@
 
         <aside class="sidebar">
             <div class="sidebar__inner">
-                <h3>Other Submissions</h3>
+                <h6 class="heading heading--light-grey heading--small heading--uppercase heading--no-margin">Past Submissions</h6>
                 {% for submission in other_submissions %}
-                    <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
+                    <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
                 {% endfor %}
             </div>
         </aside>
