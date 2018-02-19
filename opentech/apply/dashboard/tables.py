@@ -32,6 +32,7 @@ class DashboardTable(tables.Table):
     def render_status_name(self, value):
         return mark_safe(f'<span>{ value }</span>')
 
+
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 
