@@ -1,0 +1,12 @@
+{% extends "stream_forms/render_field.html" %}
+{% block data_display %}
+    {% if data %}
+        {% for value in data %}
+            {% if forloop.first %}<ul>{% endif %}
+            <li>{{ value }}</li>
+            {% if forloop.last %}</ul>{% endif %}
+        {% endfor %}
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
