@@ -1,4 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
+import bleach
+
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
 from django.utils.dateparse import parse_datetime
@@ -42,6 +44,9 @@ class FormFieldBlock(StructBlock):
     def get_field(self, struct_value):
         return self.get_field_class(struct_value)(
             **self.get_field_kwargs(struct_value))
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 class OptionalFormFieldBlock(FormFieldBlock):
@@ -97,6 +102,9 @@ class CheckboxFieldBlock(FormFieldBlock):
         label = _('Checkbox field')
         icon = 'tick-inverse'
 
+    def get_searchable_content(self, value, data):
+        return data
+
 
 class RadioButtonsFieldBlock(OptionalFormFieldBlock):
     choices = ListBlock(CharBlock(label=_('Choice')))
@@ -114,6 +122,9 @@ class RadioButtonsFieldBlock(OptionalFormFieldBlock):
         kwargs['choices'] = [(choice, choice)
                              for choice in struct_value['choices']]
         return kwargs
+
+    def get_searchable_content(self, value, data):
+        return data
 
 
 class DropdownFieldBlock(RadioButtonsFieldBlock):

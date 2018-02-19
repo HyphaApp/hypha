@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-import bleach
 from modelcluster.fields import ParentalKey
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel,
@@ -500,11 +499,11 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 pass  # It was a named field or a paragraph
             else:
                 form_field = stream_value.block.get_field(stream_value.value)
-                yield data, form_field
+                yield data, stream_value
 
     def render_answers(self):
         context = {'fields': list()}  # type: ignore
-        for data, field in self.data_and_fields():
+        for data, field, block in self.data_and_fields():
             data = self.prepare_value(field, data)
             context['fields'].append({
                 'field': field,
@@ -514,26 +513,21 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     def prepare_search_values(self):
         searchable_fields = ['char', 'text', 'radio', 'dropdown', 'checkboxes']
-        for data, field in self.data_and_fields():
-            if data:
-                prepared_data = self.prepare_value(field, data)
-                yield bleach.clean(prepared_data, tags=[], strip=True)
+        for data, stream in self.data_and_fields():
+            value = stream.block.get_searchable_content(stream.value, data)
+            if isinstance(value, list):
+                yield ', '.join(value)
+            else:
+                yield value
 
-    def prepare_value(self, field, data):
+    def prepare_value(self, stream, data):
         NO_RESPONSE = 'No response'
-        if hasattr(field, 'choices'):
-            if not data:
+        value = stream.block.get_searchable_content(stream.value, data)
+        if isinstance(value, list):
+            if not value:
                 return [NO_RESPONSE]
-
-            if isinstance(data, str):
-                data = [data]
-            choices = dict(field.choices)
-            try:
-                data = [choices[value] for value in data]
-            except KeyError:
-                data = [choices[int(value)] for value in data if value]
         else:
-            if not data and not isinstance(data, bool):
+            if not value and not isinstance(value, bool):
                 return NO_RESPONSE
 
             data = str(data)

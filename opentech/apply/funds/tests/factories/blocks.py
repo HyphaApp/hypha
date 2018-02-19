@@ -1,10 +1,16 @@
+from wagtail.wagtailcore.blocks import CharBlock
 import wagtail_factories
 
-from opentech.apply.stream_forms.blocks import FormFieldBlock, CharFieldBlock
+from opentech.apply.stream_forms.blocks import FormFieldBlock, CharFieldBlock, RadioButtonsFieldBlock
 from opentech.apply.funds import blocks
 
 
 __all__ = ['CustomFormFieldsFactory', 'FormFieldBlock', 'FullNameBlockFactory', 'EmailBlockFactory']
+
+
+class CharBlockFactory(wagtail_factories.blocks.BlockFactory):
+    class Meta:
+        model = CharBlock
 
 
 class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
@@ -12,9 +18,16 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
         model = FormFieldBlock
 
 
-class CharBlockFactory(FormFieldBlockFactory):
+class CharFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = CharFieldBlock
+
+
+class RadioFieldBlockFactory(FormFieldBlockFactory):
+    choices = wagtail_factories.ListBlockFactory(CharBlockFactory)
+
+    class Meta:
+        model = RadioButtonsFieldBlock
 
 
 class EmailBlockFactory(FormFieldBlockFactory):
@@ -30,5 +43,6 @@ class FullNameBlockFactory(FormFieldBlockFactory):
 CustomFormFieldsFactory = wagtail_factories.StreamFieldFactory({
     'email': EmailBlockFactory,
     'full_name': FullNameBlockFactory,
-    'char': CharBlockFactory,
+    'char': CharFieldBlockFactory,
+    'radios': RadioFieldBlockFactory,
 })
