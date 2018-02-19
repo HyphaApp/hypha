@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 
 import factory
@@ -32,13 +33,23 @@ __all__ = [
 ]
 
 
-def build_form(prefix=''):
+def build_form(data, prefix=''):
     if prefix:
         prefix += '__'
-    return {
-        f'{prefix}form_fields__{i}__{field}__': ''
-        for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys())
-    }
+
+    extras = defaultdict(dict)
+    for key, value in data.items():
+        if 'form_fields' in key:
+            _, field, attr = key.split('__')
+            extras[field][attr] = value
+
+    form_fields = {}
+    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys()):
+        form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
+        for attr, value in extras[field].items():
+            form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
+
+    return form_fields
 
 
 class FundTypeFactory(wagtail_factories.PageFactory):
@@ -54,8 +65,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            fields = build_form(prefix='form')
-            fields.update(**kwargs)
+            fields = build_form(kwargs, prefix='form')
             for _ in range(len(self.workflow_class.stage_classes)):
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
@@ -130,7 +140,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
 
     @classmethod
     def _generate(cls, strat, params):
-        params.update(**build_form())
+        params.update(**build_form(params))
         return super()._generate(strat, params)
 
     @classmethod

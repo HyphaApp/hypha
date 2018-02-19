@@ -348,3 +348,8 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(form_data__char=rich_text)
         self.assertNotIn(rich_text, submission.search_data)
         self.assertIn(text, submission.search_data)
+
+    def test_choices_added_for_search(self):
+        choices = ['blah', 'foo']
+        submission = self.make_submission(form_fields__radios__choices=choices, form_data__radios=['blah'])
+        self.assertIn('blah', submission.search_data)
