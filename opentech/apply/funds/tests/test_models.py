@@ -342,10 +342,17 @@ class TestApplicationSubmission(TestCase):
             submissions,
         )
 
-    def test_richtext_is_removed_for_search(self):
+    def test_richtext_in_char_is_removed_for_search(self):
         text = 'I am text'
         rich_text = f'<b>{text}</b>'
         submission = self.make_submission(form_data__char=rich_text)
+        self.assertNotIn(rich_text, submission.search_data)
+        self.assertIn(text, submission.search_data)
+
+    def test_richtext_is_removed_for_search(self):
+        text = 'I am text'
+        rich_text = f'<b>{text}</b>'
+        submission = self.make_submission(form_data__rich_text=rich_text)
         self.assertNotIn(rich_text, submission.search_data)
         self.assertIn(text, submission.search_data)
 

@@ -503,7 +503,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     def render_answers(self):
         context = {'fields': list()}  # type: ignore
-        for data, field, block in self.data_and_fields():
+        for data, field in self.data_and_fields():
             data = self.prepare_value(field, data)
             context['fields'].append({
                 'field': field,
