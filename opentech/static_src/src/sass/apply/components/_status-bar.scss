@@ -1,7 +1,7 @@
 .status-bar {
     $root: &;
     display: none;
-    padding: 30px 10px 50px;
+    padding: 30px 10px 80px;
 
     @include media-query(tablet-portrait) {
         display: flex;
