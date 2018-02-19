@@ -470,6 +470,24 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 defaults={'full_name': full_name}
             )
 
+    def handle_file(self, file):
+        # File is potentially optional
+        if file:
+            file_path = os.path.join('submissions', 'user', str(self.user.id), file.name)
+            filename = default_storage.generate_filename(file_path)
+            saved_name = default_storage.save(filename, file)
+            return {
+                'name': file.name,
+                'path': saved_name,
+                'url': default_storage.url(saved_name)
+            }
+
+    def handle_files(self, files):
+        if isinstance(files, list):
+            return [self.handle_file(file) for file in files]
+
+        return self.handle_file(files)
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -483,17 +501,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         for field in self.form_fields:
             if isinstance(field.block, FileFieldBlock):
                 file = self.form_data[field.id]
-                # File is potentially optional
-                if file:
-                    file_path = os.path.join('submissions', 'user', str(self.user.id), file.name)
-                    filename = default_storage.generate_filename(file_path)
-                    saved_name = default_storage.save(filename, file)
-                    saved_file = {
-                        'name': file.name,
-                        'path': saved_name,
-                        'url': default_storage.url(saved_name)
-                    }
-                    self.form_data[field.id] = saved_file
+                self.form_data[field.id] = self.handle_files(file)
 
         if not self.id:
             # We are creating the object default to first stage

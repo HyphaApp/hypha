@@ -13,6 +13,8 @@ from wagtail.wagtailcore.blocks import (
     DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock
 )
 
+from .fields import MultiFileField
+
 
 class FormFieldBlock(StructBlock):
     field_label = CharBlock(label=_('Label'))
@@ -276,6 +278,14 @@ class FileFieldBlock(OptionalFormFieldBlock):
         return None
 
 
+class MultiFileFieldBlock(FileFieldBlock):
+    field_class = MultiFileField
+
+    class Meta:
+        label = _('Multiple File field')
+        template = 'stream_forms/render_multi_file_field.html'
+
+
 class FormFieldsBlock(StreamBlock):
     text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
     char = CharFieldBlock(group=_('Fields'))
@@ -290,6 +300,7 @@ class FormFieldsBlock(StreamBlock):
     datetime = DateTimeFieldBlock(group=_('Fields'))
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
+    multi_file = MultiFileFieldBlock(group=_('Fields'))
 
     class Meta:
         label = _('Form fields')

@@ -2,13 +2,7 @@
 {% block data_display %}
     {% if data %}
         <div class="wrapper wrapper--top-bottom-space">
-            <a class="link link--download" href="{{ data.url }}">
-                <div>
-                    <svg><use xlink:href="#file"></use></svg>
-                    <span>{{ data.name }}</span>
-                </div>
-                <svg><use xlink:href="#download"></use></svg>
-            </a>
+            {% include "stream_forms/includes/file_field.html" with file=data %}
         </div>
     {% else %}
         {{ block.super }}
