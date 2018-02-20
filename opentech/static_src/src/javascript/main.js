@@ -57,6 +57,12 @@ $(function () {
         $('.js-filter-list').addClass('form__filters--mobile');
     });
 
+    // close mobile filters
+    $('.js-close-filters').on('click', (e) => {
+        e.target.parentElement.parentElement.classList.remove('is-open');
+        $('.js-filter-list').removeClass('form__filters--mobile');
+    });
+
     // clear all filters
     $('.js-clear-filters').on('click', () =>{
         const dropdowns = document.querySelectorAll('.form__filters--mobile select');
