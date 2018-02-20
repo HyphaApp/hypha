@@ -44,4 +44,10 @@ $(function () {
             match[0].classList.remove('is-active');
         }
     });
+
+    // remove active class on clearing select2
+    $('.select2').on('select2:unselecting', (e) => {
+        const dropdown = e.target.nextElementSibling.firstChild.firstChild;
+        (dropdown.classList.contains('is-active')) ? dropdown.classList.remove('is-active') : null;
+    });
 });
