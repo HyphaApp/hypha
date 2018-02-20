@@ -1,0 +1,33 @@
+.rich-text {
+    margin-bottom: 2rem;
+
+    &--answers {
+        > div {
+            margin: 0 0 1rem;
+        }
+
+        p,
+        h5 {
+            margin: 0;
+        }
+    }
+
+    a {
+        font-weight: $weight--bold;
+        border-bottom: 1px solid transparent;
+        transition: border, color, 0.15s ease-in-out;
+
+        &:hover {
+            border-bottom: 1px solid $color--primary;
+      }
+    }
+
+    ul {
+        padding-left: 20px;
+        list-style: outside disc;
+    }
+
+    ol {
+        list-style: inside decimal;
+    }
+}

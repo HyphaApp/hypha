@@ -44,7 +44,7 @@
                     <p>{{ object.email }}</p>
                 </div>
             </div>
-            <div>
+            <div class="rich-text rich-text--answers">
                 {{ object.render_answers }}
             </div>
 
@@ -60,14 +60,16 @@
         </div>
 
         <aside class="sidebar">
-            <div class="sidebar__inner">
-                <h6 class="heading heading--light-grey heading--small heading--uppercase heading--no-margin">Past Submissions</h6>
+            {% if other_submissions %}
+                <div class="sidebar__inner">
+                <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+
                 {% for submission in other_submissions %}
                     <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
                 {% endfor %}
-            </div>
+                </div>
+            {% endif %}
         </aside>
     </div>
-
 </div>
 {% endblock %}
