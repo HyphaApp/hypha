@@ -204,4 +204,22 @@
         }
     }
 
+    &--filters-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+
+        > div[class^='js-'] {
+            color: $color--primary;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
 }
