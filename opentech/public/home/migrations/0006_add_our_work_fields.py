@@ -26,12 +26,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='our_work_link_text',
-            field=models.CharField(blank=True, max_length=255),
+            field=models.CharField(max_length=255),
         ),
         migrations.AddField(
             model_name='homepage',
             name='our_work_title',
-            field=models.CharField(blank=True, max_length=255),
+            field=models.CharField(max_length=255),
         ),
         migrations.AlterField(
             model_name='homepage',

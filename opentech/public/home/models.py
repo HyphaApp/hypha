@@ -50,24 +50,24 @@ class HomePage(BasePage):
 
     strapline = models.CharField(blank=True, max_length=255)
     strapline_link = models.ForeignKey('wagtailcore.Page', related_name='+')
-    strapline_link_text = models.CharField(blank=True, max_length=255)
+    strapline_link_text = models.CharField(max_length=255)
 
-    our_work_title = models.CharField(blank=True, max_length=255)
+    our_work_title = models.CharField(max_length=255)
     our_work = StreamField([
         ('work', OurWorkBlock()),
     ])
     our_work_link = models.ForeignKey('wagtailcore.Page', related_name='+')
-    our_work_link_text = models.CharField(blank=True, max_length=255)
+    our_work_link_text = models.CharField(max_length=255)
 
-    funds_title = models.CharField(blank=True, max_length=255)
+    funds_title = models.CharField(max_length=255)
     funds_intro = models.TextField(blank=True)
     funds_link = models.ForeignKey('wagtailcore.Page', related_name='+')
-    funds_link_text = models.CharField(blank=True, max_length=255)
+    funds_link_text = models.CharField(max_length=255)
 
-    labs_title = models.CharField(blank=True, max_length=255)
+    labs_title = models.CharField(max_length=255)
     labs_intro = models.TextField(blank=True)
     labs_link = models.ForeignKey('wagtailcore.Page', related_name='+')
-    labs_link_text = models.CharField(blank=True, max_length=255)
+    labs_link_text = models.CharField(max_length=255)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('strapline'),

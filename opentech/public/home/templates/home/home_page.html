@@ -93,66 +93,8 @@
         </div>
     </div>
 
-    <div class="wrapper wrapper--breakout wrapper--dark-bg wrapper--inner-space-xl">
-        <div class="wrapper wrapper--medium">
-            <section class="section section--introduction">
-                <div>
-                    <h2>{{ page.funds_title }}</h2>
-                    <p>{{ page.funds_intro }}</p>
-                </div>
-                <div class="show-tablet">
-                    <a class="link link--arrow-pixels-white" href="{% pageurl page.funds_link %}">
-                        {{ page.funds_link_text }}
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </div>
-            </section>
+    {% include "home/includes/list_block.html" with bg_color="dark" arrow_color="white" title=page.funds_title intro=page.funds_intro link=page.funds_link link_text=page.funds_link_text listing=fund_list %}
 
-            {% for fund in fund_list %}
-                <div>
-                    {{ fund }}
-                </div>
-            {% endfor %}
-            <div class="wrapper wrapper--center show-mobile">
-                <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-white" href="{% pageurl page.funds_link %}">
-                        {{ page.funds_link_text }}
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </h5>
-            </div>
-        </div>
-    </div>
+    {% include "home/includes/list_block.html" with color="light-grey" arrow_color="blue" title=page.labs_title intro=page.labs_intro link=page.labs_link link_text=page.labs_link_text listing=lab_list %}
 
-    <div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--inner-space-xl">
-        <div class="wrapper wrapper--medium">
-            <section class="section section--introduction">
-                <div>
-                    <h2>{{ page.labs_title }}</h2>
-                    <p>{{ page.labs_intro }}</p>
-                </div>
-                <div class="show-tablet">
-                    <a class="link link--arrow-pixels-blue" href="{% pageurl page.labs_link %}">
-                        {{ page.labs_link_text }}
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </div>
-            </section>
-
-            {% for lab in lab_list %}
-                <div>
-                    {{ lab }}
-                </div>
-            {% endfor %}
-            <div class="wrapper wrapper--center show-mobile">
-                <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-blue" href={% pageurl page.labs_link %}"">
-                        {{ page.labs_link_text }}
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </h5>
-            </div>
-
-        </div>
-    </div>
 {% endblock %}
