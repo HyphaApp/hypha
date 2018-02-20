@@ -71,6 +71,14 @@ $(function () {
             $('.select2-selection.is-active').removeClass('is-active');
         });
     });
+
+    // reset mobile filters if they're open past the tablet breakpoint
+    $(window).resize(function resize(){
+        if ($(window).width() > 768) {
+            $('.js-filter-wrapper').removeClass('is-open');
+            $('.js-filter-list').removeClass('form__filters--mobile');
+        }
+    }).trigger('resize');
 });
 
 // wait for DOM content to load before checking for select2
