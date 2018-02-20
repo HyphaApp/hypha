@@ -534,14 +534,18 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return mark_safe(''.join(fields))
 
     def prepare_search_values(self):
-        excluded_fields = ['data', 'time', 'datetime', 'value', 'category', 'number']
+        excluded_fields = ['data', 'time', 'datetime', 'value', 'category', 'number', 'file', 'multifile']
         for data, stream in self.data_and_fields():
-            if stream.block_type not in excluded_fields:
+            if stream.block_type not in excluded_fields and data:
                 value = stream.block.get_searchable_content(stream.value, data)
                 if isinstance(value, list):
                     yield ', '.join(value)
                 else:
                     yield value
+
+        # Add named fields into the search index
+        for field in ['email', 'title']:
+            yield getattr(self, field)
 
     def get_data(self):
         # Updated for JSONField
