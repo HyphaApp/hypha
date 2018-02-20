@@ -20,6 +20,10 @@
                 <button class="button button--primary" type="submit" value="Filter">Filter</button>
             </ul>
         </form>
+        <div class="button button--filters button--contains-icons js-open-filters">
+            Filter By
+            <svg class="icon icon--filters icon--small"><use xlink:href="#filters"></use></svg>
+        </div>
     {% endif %}
     {% render_table table %}
 </div>

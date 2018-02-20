@@ -50,6 +50,12 @@ $(function () {
         const dropdown = e.target.nextElementSibling.firstChild.firstChild;
         (dropdown.classList.contains('is-active')) ? dropdown.classList.remove('is-active') : null;
     });
+
+    // open mobile filters
+    $('.js-open-filters').on('click', (e) => {
+        e.target.nextElementSibling.classList.add('is-open');
+        $('.js-filter-list').addClass('form__filters--mobile');
+    });
 });
 
 // wait for DOM content to load before checking for select2

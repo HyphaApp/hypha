@@ -38,5 +38,21 @@
             color: $color--white;
         }
     }
+
+    &--filters {
+        @include button($color--white, $color--white);
+        display: flex;
+        justify-content: space-between;
+        max-width: 300px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        font-weight: $weight--normal;
+        color: $color--default;
+        border-color: $color--light-mid-grey;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
 }
 
