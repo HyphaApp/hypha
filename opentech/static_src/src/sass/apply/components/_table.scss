@@ -25,16 +25,14 @@ table {
         transition: box-shadow 0.15s ease;
 
         @include media-query($table-breakpoint) {
-            &:hover {
-                box-shadow: 0 6px 35px -13px $color--black-50;
-            }
-        }
-
-        @include media-query($table-breakpoint) {
             border-top: 0;
             border-right: 0;
             border-bottom: 2px solid $color--light-grey;
             border-left: 0;
+
+            &:hover {
+                box-shadow: 0 6px 35px -13px $color--black-50;
+            }
         }
 
         > td {
