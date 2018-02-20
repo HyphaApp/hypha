@@ -77,14 +77,16 @@
 
 {% block content %}
     <div class="wrapper wrapper--top-bottom-space">
-        <h2 class="heading heading--center">Focus areas that guide our work</h2>
+        <h2 class="heading heading--center">{{ page.our_work_title }}</h2>
         <div class="grid grid--focus-areas">
-            {% include "utils/includes/focus_area.html" %}
+            {% for block in page.our_work %}
+                {% include_block block %}
+            {% endfor %}
         </div>
         <div class="wrapper wrapper--center">
             <h5 class="heading heading--contains-link">
-                <a class="link link--arrow-pixels-blue" href="#">
-                    Learn more about our work
+                <a class="link link--arrow-pixels-blue" href="{% pageurl page.our_work_link %}">
+                    {{ page.our_work_link_text }}
                     <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                 </a>
             </h5>
@@ -95,12 +97,12 @@
         <div class="wrapper wrapper--medium">
             <section class="section section--introduction">
                 <div>
-                    <h2>Project Funds</h2>
-                    <p>The Open Technology Fund supports projects and people that develop open and accessible technologies promoting human rights and open societies, and help advance inclusive and safe access to global communications networks.</p>
+                    <h2>{{ page.funds_title }}</h2>
+                    <p>{{ page.funds_intro }}</p>
                 </div>
                 <div class="show-tablet">
-                    <a class="link link--arrow-pixels-white" href="#">
-                        All requests
+                    <a class="link link--arrow-pixels-white" href="{% pageurl page.funds_link %}">
+                        {{ page.funds_link_text }}
                         <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                 </div>
@@ -113,8 +115,8 @@
             {% endfor %}
             <div class="wrapper wrapper--center show-mobile">
                 <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-white" href="#">
-                            All requests
+                    <a class="link link--arrow-pixels-white" href="{% pageurl page.funds_link %}">
+                        {{ page.funds_link_text }}
                         <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                 </h5>
@@ -126,12 +128,12 @@
         <div class="wrapper wrapper--medium">
             <section class="section section--introduction">
                 <div>
-                    <h2>Labs</h2>
-                    <p>OTF Resource Labs are a general set of mechanisms utilized by the program to offset its current inability to provide long-term funding support. The Labs are recognition that the community of Internet freedom and digital human-rights defenders require continuous sustenance rather than limited projects and constant re-application processes.</p>
+                    <h2>{{ page.labs_title }}</h2>
+                    <p>{{ page.labs_intro }}</p>
                 </div>
                 <div class="show-tablet">
-                    <a class="link link--arrow-pixels-blue" href="#">
-                        All labs
+                    <a class="link link--arrow-pixels-blue" href="{% pageurl page.labs_link %}">
+                        {{ page.labs_link_text }}
                         <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                 </div>
@@ -144,8 +146,8 @@
             {% endfor %}
             <div class="wrapper wrapper--center show-mobile">
                 <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-blue" href="#">
-                            All labs
+                    <a class="link link--arrow-pixels-blue" href={% pageurl page.labs_link %}"">
+                        {{ page.labs_link_text }}
                         <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                 </h5>
