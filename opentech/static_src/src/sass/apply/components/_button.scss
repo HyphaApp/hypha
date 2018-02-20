@@ -10,12 +10,11 @@
         display: inline-block;
 
         .form--filters & {
-            flex-basis: 125px;
             margin-right: 0;
-        }
 
-        .form__filters--mobile & {
-            flex-basis: auto;
+            @include media-query(tablet-portrait) {
+                flex-basis: 125px;
+            }
         }
     }
 
