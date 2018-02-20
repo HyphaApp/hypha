@@ -66,3 +66,9 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
             return forms.CheckboxSelectMultiple
         else:
             return forms.RadioSelect
+
+    def render(self, value, context):
+        data = context['data']
+        category = value['category']
+        context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
+        return super().render(value, context)
