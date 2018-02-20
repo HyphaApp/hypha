@@ -21,6 +21,9 @@ class ModelChooserBlock(ChooserBlock):
 
 
 class CategoryQuestionBlock(OptionalFormFieldBlock):
+    class Meta:
+        template = 'stream_forms/render_list_field.html'
+
     # Overwrite field label and help text so we can defer to the category
     # as required
     field_label = CharBlock(
