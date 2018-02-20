@@ -56,6 +56,15 @@ $(function () {
         e.target.nextElementSibling.classList.add('is-open');
         $('.js-filter-list').addClass('form__filters--mobile');
     });
+
+    // clear all filters
+    $('.js-clear-filters').on('click', () =>{
+        const dropdowns = document.querySelectorAll('.form__filters--mobile select');
+        dropdowns.forEach(dropdown => {
+            $(dropdown).val(null).trigger('change');
+            $('.select2-selection.is-active').removeClass('is-active');
+        });
+    });
 });
 
 // wait for DOM content to load before checking for select2
