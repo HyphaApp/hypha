@@ -44,7 +44,8 @@
 .select2-container {
     &--default {
         .select2-results__option--highlighted[aria-selected] {
-            background-color: $color--dark-blue !important;
+            color: $color--default !important;
+            background-color: transparentize($color--primary, 0.9) !important;
         }
     }
 
@@ -56,8 +57,30 @@
     .select2-results__option {
         padding: 0;
 
+        &[aria-selected='true'] {
+            .wrap {
+                &::before {
+                    background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
+                    background-size: 12px;
+                    border: 1px solid $color--dark-blue;
+                    content: '';
+                }
+            }
+        }
+
         .wrap {
+            display: flex;
+            align-items: center;
             padding: 6px;
+
+            &::before {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                background: $color--white;
+                border: 1px solid $color--mid-grey;
+                content: '';
+            }
         }
     }
 }
