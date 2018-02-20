@@ -1,0 +1,31 @@
+{% load wagtailcore_tags %}
+<div class="wrapper wrapper--breakout wrapper--{{ bg_color }}-bg wrapper--inner-space-xl">
+    <div class="wrapper wrapper--medium">
+        <section class="section section--introduction">
+            <div>
+                <h2>{{ title }}</h2>
+                <p>{{ intro }}</p>
+            </div>
+            <div class="show-tablet">
+                <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
+                    {{ link_text }}
+                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                </a>
+            </div>
+        </section>
+
+        {% for item in listing %}
+            <div>
+                {{ item }}
+            </div>
+        {% endfor %}
+        <div class="wrapper wrapper--center show-mobile">
+            <h5 class="heading heading--contains-link">
+                <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
+                    {{ link_text }}
+                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                </a>
+            </h5>
+        </div>
+    </div>
+</div>

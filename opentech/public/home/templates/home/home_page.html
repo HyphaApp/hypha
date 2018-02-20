@@ -77,73 +77,24 @@
 
 {% block content %}
     <div class="wrapper wrapper--top-bottom-space">
-        <h2 class="heading heading--center">Focus areas that guide our work</h2>
+        <h2 class="heading heading--center">{{ page.our_work_title }}</h2>
         <div class="grid grid--focus-areas">
-            {% include "utils/includes/focus_area.html" %}
+            {% for block in page.our_work %}
+                {% include_block block %}
+            {% endfor %}
         </div>
         <div class="wrapper wrapper--center">
             <h5 class="heading heading--contains-link">
-                <a class="link link--arrow-pixels-blue" href="#">
-                    Learn more about our work
+                <a class="link link--arrow-pixels-blue" href="{% pageurl page.our_work_link %}">
+                    {{ page.our_work_link_text }}
                     <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                 </a>
             </h5>
         </div>
     </div>
 
-    <div class="wrapper wrapper--breakout wrapper--dark-bg wrapper--inner-space-xl">
-        <div class="wrapper wrapper--medium">
-            <section class="section section--introduction">
-                <div>
-                    <h2>Project Funds</h2>
-                    <p>The Open Technology Fund supports projects and people that develop open and accessible technologies promoting human rights and open societies, and help advance inclusive and safe access to global communications networks.</p>
-                </div>
-                <div class="show-tablet">
-                    <a class="link link--arrow-pixels-white" href="#">
-                        All requests
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </div>
-            </section>
+    {% include "home/includes/list_block.html" with bg_color="dark" arrow_color="white" title=page.funds_title intro=page.funds_intro link=page.funds_link link_text=page.funds_link_text listing=fund_list %}
 
-            {# Funds here #}
+    {% include "home/includes/list_block.html" with color="light-grey" arrow_color="blue" title=page.labs_title intro=page.labs_intro link=page.labs_link link_text=page.labs_link_text listing=lab_list %}
 
-            <div class="wrapper wrapper--center show-mobile">
-                <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-white" href="#">
-                            All requests
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </h5>
-            </div>
-        </div>
-    </div>
-
-    <div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--inner-space-xl">
-        <div class="wrapper wrapper--medium">
-            <section class="section section--introduction">
-                <div>
-                    <h2>Labs</h2>
-                    <p>OTF Resource Labs are a general set of mechanisms utilized by the program to offset its current inability to provide long-term funding support. The Labs are recognition that the community of Internet freedom and digital human-rights defenders require continuous sustenance rather than limited projects and constant re-application processes.</p>
-                </div>
-                <div class="show-tablet">
-                    <a class="link link--arrow-pixels-blue" href="#">
-                        All labs
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </div>
-            </section>
-
-            {# Labs here #}
-            <div class="wrapper wrapper--center show-mobile">
-                <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-blue" href="#">
-                            All labs
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </h5>
-            </div>
-
-        </div>
-    </div>
 {% endblock %}
