@@ -1,8 +1,9 @@
-from django.utils.text import mark_safe
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.db.models import TextField
 from django.db.models.functions import Cast
+from django.utils.text import mark_safe
 
 import django_filters as filters
 import django_tables2 as tables
@@ -100,7 +101,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Status')
-    query = filters.CharFilter(name='search_data', lookup_expr="search")
+    query = filters.CharFilter(name='search_data', lookup_expr="search", widget=forms.HiddenInput)
 
     class Meta:
         model = ApplicationSubmission
