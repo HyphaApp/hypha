@@ -63,15 +63,13 @@
             {% if other_submissions %}
                 <div class="sidebar__inner">
                 <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
-            {% endif %}
-            {% for submission in other_submissions %}
-                <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
-            {% endfor %}
-            {% if other_submissions %}
+
+                {% for submission in other_submissions %}
+                    <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
+                {% endfor %}
                 </div>
             {% endif %}
         </aside>
     </div>
-
 </div>
 {% endblock %}
