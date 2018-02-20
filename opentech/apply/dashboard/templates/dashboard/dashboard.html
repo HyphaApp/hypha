@@ -14,9 +14,11 @@
 
 <div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
     {% if filter %}
-        <form action="" method="get" class="form form-inline">
-            {{ filter.form.as_p }}
-            <button type="submit" value="Filter">Filter</button>
+        <form action="" method="get" class="form form--filters">
+            <ul class="form__filters select2">
+                {{ filter.form.as_ul }}
+                <button class="button button--primary" type="submit" value="Filter">Filter</button>
+            </ul>
         </form>
     {% endif %}
     {% render_table table %}

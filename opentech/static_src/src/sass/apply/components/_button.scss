@@ -5,6 +5,16 @@
     border: 0;
     box-shadow: none;
 
+    &--primary {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+
+        .form--filters & {
+            flex-basis: 125px;
+            margin-right: 0;
+        }
+    }
+
     &:hover {
         cursor: pointer;
     }

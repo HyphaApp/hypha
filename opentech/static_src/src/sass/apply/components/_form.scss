@@ -1,0 +1,18 @@
+.form {
+    &__filters {
+        @extend %h6;
+        display: flex;
+        padding: 10px 0 30px;
+
+        label {
+            display: none;
+        }
+
+        // so the form can be output in any tag
+        > * {
+            flex-basis: 215px;
+            margin-right: 10px;
+        }
+    }
+}
+
