@@ -35,5 +35,14 @@
             }
         }
     }
+
+    &--header-search-desktop {
+        position: relative;
+        width: 280px;
+
+        @include media-query(small-tablet) {
+            margin-top: 15px;
+        }
+    }
 }
 

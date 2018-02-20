@@ -61,5 +61,15 @@
     &--filters-header {
         display: flex;
     }
+
+    &--search {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+
+        svg {
+            fill: $color--primary;
+        }
+    }
 }
 

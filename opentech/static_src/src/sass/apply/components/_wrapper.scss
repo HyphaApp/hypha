@@ -222,4 +222,14 @@
             }
         }
     }
+
+    &--search {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        @include media-query(small-tablet) {
+            flex-direction: row;
+        }
+    }
 }
