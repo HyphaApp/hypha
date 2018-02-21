@@ -55,6 +55,9 @@ class FormFieldBlock(StructBlock):
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_('Required'), required=False)
 
+    def get_searchable_content(self, value, data):
+        return data
+
 
 CHARFIELD_FORMATS = [
     ('email', _('Email')),
@@ -79,6 +82,8 @@ class CharFieldBlock(OptionalFormFieldBlock):
         return super().get_field_class(struct_value)
 
     def get_searchable_content(self, value, data):
+        # CharField acts as a fallback. Force data to string
+        data = str(data)
         return bleach.clean(data, tags=[], strip=True)
 
 
@@ -103,6 +108,9 @@ class NumberFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Number field')
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class CheckboxFieldBlock(FormFieldBlock):
     default_value = BooleanBlock(required=False)
@@ -112,6 +120,9 @@ class CheckboxFieldBlock(FormFieldBlock):
     class Meta:
         label = _('Checkbox field')
         icon = 'tick-inverse'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class RadioButtonsFieldBlock(OptionalFormFieldBlock):
@@ -191,6 +202,9 @@ class DateFieldBlock(OptionalFormFieldBlock):
         label = _('Date field')
         icon = 'date'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class HTML5TimeInput(forms.TimeInput):
     input_type = 'time'
@@ -205,6 +219,9 @@ class TimeFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Time field')
         icon = 'time'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class DateTimePickerInput(forms.SplitDateTimeWidget):
@@ -232,6 +249,9 @@ class DateTimeFieldBlock(OptionalFormFieldBlock):
         label = _('Date+time field')
         icon = 'date'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class ImageFieldBlock(OptionalFormFieldBlock):
     field_class = forms.ImageField
@@ -240,6 +260,9 @@ class ImageFieldBlock(OptionalFormFieldBlock):
         label = _('Image field')
         icon = 'image'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class FileFieldBlock(OptionalFormFieldBlock):
     field_class = forms.FileField
@@ -247,6 +270,9 @@ class FileFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('File field')
         icon = 'download'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class FormFieldsBlock(StreamBlock):

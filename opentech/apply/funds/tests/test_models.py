@@ -190,6 +190,7 @@ class TestFormSubmission(TestCase):
         application_form = {
             'form_fields__0__email__': '',
             'form_fields__1__full_name__': '',
+            'form_fields__2__title__': '',
         }
         form = ApplicationFormFactory(**application_form)
         fund = FundTypeFactory()
@@ -210,7 +211,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, [email, name])}
+        data = {k: v for k, v in zip(fields, [email, name, 'project'])}
 
         request = self.request_factory.post('', data)
         request.user = user

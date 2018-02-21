@@ -5,6 +5,19 @@
     border: 0;
     box-shadow: none;
 
+    &--primary {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+
+        .form--filters & {
+            margin-right: 0;
+
+            @include media-query(tablet-portrait) {
+                flex-basis: 125px;
+            }
+        }
+    }
+
     &:hover {
         cursor: pointer;
     }
@@ -26,6 +39,36 @@
 
         &:hover {
             color: $color--white;
+        }
+    }
+
+    &--filters {
+        @include button($color--white, $color--white);
+        display: flex;
+        justify-content: space-between;
+        max-width: 300px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        font-weight: $weight--normal;
+        color: $color--default;
+        border-color: $color--light-mid-grey;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
+
+    &--filters-header {
+        display: flex;
+    }
+
+    &--search {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+
+        svg {
+            fill: $color--primary;
         }
     }
 }

@@ -72,3 +72,6 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         category = value['category']
         context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
         return super().render(value, context)
+
+    def get_searchable_content(self, value, data):
+        return None

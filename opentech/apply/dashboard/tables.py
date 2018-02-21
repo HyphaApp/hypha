@@ -1,8 +1,5 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.postgres.search import SearchVector
-from django.db.models import TextField
-from django.db.models.functions import Cast
 from django.utils.text import mark_safe
 
 import django_filters as filters
