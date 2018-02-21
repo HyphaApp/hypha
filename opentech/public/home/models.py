@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 from modelcluster.fields import ParentalKey
@@ -105,7 +106,17 @@ class HomePage(BasePage):
         yield from self.pages_from_related(base_list)
         selected = list(base_list.values_list('page', flat=True))
         extra_needed = self.NUM_RELATED - len(selected)
-        yield from page_type.objects.exclude(id__in=selected)[:extra_needed]
+        extra_qs = page_type.objects.exclude(id__in=selected)[:extra_needed]
+        yield from self.sorted_by_deadline(extra_qs)
+
+    def sorted_by_deadline(self, qs):
+        def sort_by_deadline(value):
+            try:
+                return value.deadline or datetime.date.max
+            except AttributeError:
+                return datetime.date.max
+
+        yield from sorted(qs, key=sort_by_deadline)
 
     def pages_from_related(self, related):
         for related in related.all():
