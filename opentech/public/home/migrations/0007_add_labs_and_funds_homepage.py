@@ -23,12 +23,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='funds_link_text',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=''),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='homepage',
             name='funds_title',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=''),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='homepage',
@@ -39,12 +41,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='labs_link_text',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=''),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='homepage',
             name='labs_title',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=''),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='homepage',
@@ -55,6 +59,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='strapline_link_text',
-            field=models.CharField(max_length=255),
+            field=models.CharField(max_length=255, default=''),
+            preserve_default=False,
         ),
     ]
