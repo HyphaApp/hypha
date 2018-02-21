@@ -267,6 +267,10 @@ class ImageFieldBlock(OptionalFormFieldBlock):
 
 
 class FileFieldBlock(OptionalFormFieldBlock):
+    """This doesn't know how to save the uploaded files
+
+    You must implement this if you want to reuse it.
+    """
     field_class = forms.FileField
 
     class Meta:
