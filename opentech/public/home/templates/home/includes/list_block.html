@@ -1,4 +1,4 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 <div class="wrapper wrapper--breakout wrapper--{{ bg_color }}-bg wrapper--inner-space-xl">
     <div class="wrapper wrapper--medium">
         <section class="section section--introduction">
@@ -14,11 +14,28 @@
             </div>
         </section>
 
-        {% for item in listing %}
-            <div>
-                {{ item }}
-            </div>
-        {% endfor %}
+        <section class="grid grid--max-three">
+            {% for item in listing %}
+                <a class="card {{ card_modifier }}" href="{{ item.url }}">
+                    {% if item.icon %}
+                        {% image item.icon max-50x50 as icon %}
+                        <img class="card__icon" src="{{ icon.url }}" alt="{{ icon.alt }}">
+                    {% endif %}
+                    {% if item.deadline %}
+                        <h6 class="card__subheading">
+                            <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
+                            Next deadline:
+                            <span>{{ item.deadline|date:"M j, Y" }}</span>
+                        </h6>
+                    {% endif %}
+                    <h4 class="card__heading">{{ item }}</h4>
+                    {% if item.listing_summary or item.introduction %}
+                        <p class="card__teaser">{{ item.listing_summary|default:item.introduction|truncatechars_html:130  }}</p>
+                    {% endif %}
+                    <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
+                </a>
+            {% endfor %}
+        </section>
         <div class="wrapper wrapper--center show-mobile">
             <h5 class="heading heading--contains-link">
                 <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
