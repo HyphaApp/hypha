@@ -285,6 +285,9 @@ class MultiFileFieldBlock(FileFieldBlock):
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class FormFieldsBlock(StreamBlock):
     text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
