@@ -95,7 +95,12 @@
     }
 
     &--calendar {
+        transition: fill $transition;
         fill: $color--pink;
+
+        .card:hover & {
+            fill: $color--white;
+        }
     }
 
     &--error {
