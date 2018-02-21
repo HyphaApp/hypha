@@ -532,7 +532,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def __getattr__(self, item):
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
-            return self.get_data()[item]
+            return self.get_data().get(item, '')
         raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):
