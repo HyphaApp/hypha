@@ -15,7 +15,12 @@
             .select2-selection__clear {
                 position: absolute;
                 right: 35px;
+                display: none;
                 float: none;
+
+                @include media-query(small-tablet) {
+                    display: block;
+                }
             }
 
             .select2-selection__rendered {
