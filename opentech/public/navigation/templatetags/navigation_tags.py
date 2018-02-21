@@ -13,8 +13,9 @@ esi_inclusion_tag = register_inclusion_tag(register)
 @esi_inclusion_tag('navigation/primarynav.html')
 def primarynav(context):
     request = context['request']
+    site = context['PUBLIC_SITE']
     return {
-        'primarynav': NavigationSettings.for_site(request.site).primary_navigation,
+        'primarynav': NavigationSettings.for_site(site).primary_navigation,
         'request': request,
     }
 
@@ -23,8 +24,9 @@ def primarynav(context):
 @esi_inclusion_tag('navigation/secondarynav.html')
 def secondarynav(context):
     request = context['request']
+    site = context['PUBLIC_SITE']
     return {
-        'secondarynav': NavigationSettings.for_site(request.site).secondary_navigation,
+        'secondarynav': NavigationSettings.for_site(site).secondary_navigation,
         'request': request,
     }
 
@@ -33,8 +35,9 @@ def secondarynav(context):
 @esi_inclusion_tag('navigation/footernav.html')
 def footernav(context):
     request = context['request']
+    site = context['PUBLIC_SITE']
     return {
-        'footernav': NavigationSettings.for_site(request.site).footer_navigation,
+        'footernav': NavigationSettings.for_site(site).footer_navigation,
         'request': request,
     }
 
@@ -52,7 +55,8 @@ def sidebar(context):
 @esi_inclusion_tag('navigation/footerlinks.html')
 def footerlinks(context):
     request = context['request']
+    site = context['PUBLIC_SITE']
     return {
-        'footerlinks': NavigationSettings.for_site(request.site).footer_links,
+        'footerlinks': NavigationSettings.for_site(site).footer_links,
         'request': request,
     }
