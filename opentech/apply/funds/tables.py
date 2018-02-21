@@ -13,7 +13,7 @@ from opentech.apply.funds.workflow import status_options
 from .widgets import Select2MultiCheckboxesWidget
 
 
-class DashboardTable(tables.Table):
+class SubmissionsTable(tables.Table):
     title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
     status_name = tables.Column(verbose_name="Status")
@@ -25,7 +25,7 @@ class DashboardTable(tables.Table):
         model = ApplicationSubmission
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
-        template = "dashboard/tables/table.html"
+        template = 'funds/tables/table.html'
 
     def render_user(self, value):
         return value.get_full_name()

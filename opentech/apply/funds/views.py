@@ -2,8 +2,42 @@ from django import forms
 from django.template.response import TemplateResponse
 from django.views.generic import DetailView
 
-from .models import ApplicationSubmission
 from .workflow import SingleStage, DoubleStage
+
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+
+from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
+
+
+class SubmissionListView(SingleTableMixin, FilterView):
+    template_name = 'funds/submissions.html'
+    table_class = SubmissionsTable
+
+    filterset_class = SubmissionFilter
+
+    def get_context_data(self, **kwargs):
+        active_filters = self.filterset.data
+        return super().get_context_data(active_filters=active_filters, **kwargs)
+
+
+class SubmissionSearchView(SingleTableMixin, FilterView):
+    template_name = 'funds/submissions_search.html'
+    table_class = SubmissionsTable
+
+    filterset_class = SubmissionFilterAndSearch
+
+    def get_context_data(self, **kwargs):
+        search_term = self.request.GET.get('query')
+
+        # We have more data than just 'query'
+        active_filters = len(self.filterset.data) > 1
+
+        return super().get_context_data(
+            search_term=search_term,
+            active_filters=active_filters,
+            **kwargs,
+        )
 
 
 class SubmissionDetailView(DetailView):
@@ -18,6 +52,8 @@ class SubmissionDetailView(DetailView):
 
 workflows = [SingleStage, DoubleStage]
 
+
+# Workflow Demo Views
 
 class BasicSubmissionForm(forms.Form):
     who_are_you = forms.CharField()

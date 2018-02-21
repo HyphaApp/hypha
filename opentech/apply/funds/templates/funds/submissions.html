@@ -1,0 +1,46 @@
+{% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
+{% block title %}Submissions{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large wrapper--search">
+        {% block page_header %}
+            <div>
+                <h3 class="heading heading--no-margin">Received Submissions</h3>
+                <h5>Track and explore recent submissions</h5>
+            </div>
+        {% endblock %}
+        {% include "funds/includes/search.html" %}
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
+
+    {% if object_list|length > 0 or active_filters %}
+        <div class="button button--filters button--contains-icons js-open-filters">Filter By</div>
+
+        <div class="wrapper wrapper--filters js-filter-wrapper">
+            <div class="wrapper wrapper--filters-header">
+                <div class="js-clear-filters">Clear</div>
+                <div>Filter by</div>
+                <div class="js-close-filters">Close</div>
+            </div>
+
+            <form action="" method="get" class="form form--filters">
+                <ul class="form__filters select2 js-filter-list">
+                    {{ filter.form.as_ul }}
+                    <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                </ul>
+            </form>
+        </div>
+    {% endif %}
+
+    {% render_table table %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+    {{ filter.form.media }}
+{% endblock %}
