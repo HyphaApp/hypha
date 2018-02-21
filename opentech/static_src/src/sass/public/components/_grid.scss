@@ -102,13 +102,17 @@
         &--focus-areas {
             margin: 20px 0;
             grid-gap: 20px;  // sass-lint:disable-line no-misspelled-properties
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            grid-template-columns: 1fr;
 
-            @include media-query(tablet-portrait) {
+            @include media-query(small-tablet) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @include media-query(tablet-landscape) {
                 justify-content: space-between;
                 margin: 3rem 0;
                 grid-gap: 35px;  // sass-lint:disable-line no-misspelled-properties
-                grid-template-columns: repeat(auto-fit, minmax(270px, 270px));
+                grid-template-columns: repeat(4, 1fr);
                 text-align: center;
             }
         }
