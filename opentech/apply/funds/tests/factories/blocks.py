@@ -1,3 +1,6 @@
+import json
+import uuid
+
 from wagtail.wagtailcore.blocks import CharBlock
 import wagtail_factories
 
@@ -55,7 +58,19 @@ class RichTextFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.RichTextFieldBlock
 
 
-CustomFormFieldsFactory = wagtail_factories.StreamFieldFactory({
+class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
+    def generate(self, *args, **kwargs):
+        blocks = super().generate(*args, **kwargs)
+        ret_val = list()
+        # Convert to JSON so we can add id before create
+        for block_name, value in blocks:
+            block = self.factories[block_name]._meta.model()
+            value = block.get_prep_value(value)
+            ret_val.append({'type': block_name, 'value': value, 'id': str(uuid.uuid4())})
+        return json.dumps(ret_val)
+
+
+CustomFormFieldsFactory = StreamFieldUUIDFactory({
     'title': TitleBlockFactory,
     'email': EmailBlockFactory,
     'full_name': FullNameBlockFactory,

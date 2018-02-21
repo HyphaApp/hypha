@@ -1,5 +1,6 @@
 from collections import defaultdict
 import datetime
+import json
 
 import factory
 import wagtail_factories
@@ -129,11 +130,26 @@ class LabFormFactory(AbstractRelatedFormFactory):
     lab = factory.SubFactory(LabFactory, parent=None)
 
 
+class FormDataFactory(factory.Factory):
+    def _create(self, *args, form_fields='{}', **kwargs):
+        form_fields = json.loads(form_fields)
+        form_data = {}
+        for field in form_fields:
+            try:
+                answer = kwargs[field['type']]
+            except KeyError:
+                answer = 'the answer'
+            form_data[field['id']] = answer
+
+        return form_data
+
+
 class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     class Meta:
         model = ApplicationSubmission
 
     form_fields = blocks.CustomFormFieldsFactory
+    form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
     round = factory.SubFactory(RoundFactory)
     user = factory.SubFactory(UserFactory)
@@ -142,25 +158,3 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     def _generate(cls, strat, params):
         params.update(**build_form(params))
         return super()._generate(strat, params)
-
-    @classmethod
-    def _create(cls, model, *args, **kwargs):
-        # Make sure we have form_data so no error
-        kwargs['form_data'] = {}
-        return super()._create(model, *args, **kwargs)
-
-    @factory.post_generation
-    def form_data(self, create, extracted, **kwargs):
-        if not extracted:
-            # Ids are added but are not available in the cached version
-            self.refresh_from_db()
-            form_data = {}
-            for field in self.form_fields:
-                try:
-                    answer = kwargs[field.block_type]
-                except KeyError:
-                    answer = ''
-                form_data[field.id] = answer
-
-            self.form_data = form_data
-            self.save()
