@@ -35,6 +35,11 @@ class RadioFieldBlockFactory(FormFieldBlockFactory):
         model = stream_blocks.RadioButtonsFieldBlock
 
 
+class TitleBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.TitleBlock
+
+
 class EmailBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = blocks.EmailBlock
@@ -51,6 +56,7 @@ class RichTextFieldBlockFactory(FormFieldBlockFactory):
 
 
 CustomFormFieldsFactory = wagtail_factories.StreamFieldFactory({
+    'title': TitleBlockFactory,
     'email': EmailBlockFactory,
     'full_name': FullNameBlockFactory,
     'char': CharFieldBlockFactory,
