@@ -1,5 +1,6 @@
-from django.utils.text import mark_safe
+from django import forms
 from django.contrib.auth import get_user_model
+from django.utils.text import mark_safe
 
 import django_filters as filters
 import django_tables2 as tables
@@ -71,3 +72,7 @@ class SubmissionFilter(filters.FilterSet):
     class Meta:
         model = ApplicationSubmission
         fields = ('funds', 'round', 'status')
+
+
+class SubmissionFilterAndSearch(SubmissionFilter):
+    query = filters.CharFilter(name='search_data', lookup_expr="search", widget=forms.HiddenInput)

@@ -60,33 +60,12 @@ class SubmittableStreamForm(AbstractStreamForm):
         return ApplicationSubmission
 
     def process_form_submission(self, form):
-        cleaned_data = form.cleaned_data
-        for field in self.get_defined_fields():
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = cleaned_data.pop(field.id)
-                cleaned_data[field.block.name] = response
-
-        if form.user.is_authenticated():
-            user = form.user
-            cleaned_data['email'] = user.email
-            cleaned_data['full_name'] = user.get_full_name()
-        else:
-            # Rely on the form having the following must include fields (see blocks.py)
-            email = cleaned_data.get('email')
-            full_name = cleaned_data.get('full_name')
-
-            User = get_user_model()
-            user, _ = User.objects.get_or_create_and_notify(
-                email=email,
-                site=self.get_site(),
-                defaults={'full_name': full_name}
-            )
-
+        if not form.user.is_authenticated():
+            form.user = None
         return self.get_submission_class().objects.create(
-            form_data=cleaned_data,
+            form_data=form.cleaned_data,
             form_fields=self.get_defined_fields(),
-            **self.get_submit_meta_data(user=user),
+            **self.get_submit_meta_data(user=form.user),
         )
 
     def get_submit_meta_data(self, **kwargs):
@@ -152,22 +131,21 @@ class EmailForm(AbstractEmailForm):
 
     def process_form_submission(self, form):
         submission = super().process_form_submission(form)
-        self.send_mail(form)
+        self.send_mail(submission)
         return submission
 
-    def send_mail(self, form):
-        data = form.cleaned_data
-        email = data.get('email')
+    def send_mail(self, submission):
+        user = submission.user
         context = {
-            'name': data.get('full_name'),
-            'email': email,
-            'project_name': data.get('title'),
+            'name': user.get_full_name(),
+            'email': user.email,
+            'project_name': submission.form_data.get('title'),
             'extra_text': self.confirmation_text_extra,
             'fund_type': self.title,
         }
 
         subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
-        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (email,), self.from_address, )
+        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (user.email,), self.from_address, )
 
     email_confirmation_panels = [
         MultiFieldPanel(
@@ -338,7 +316,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def process_form_submission(self, form):
         submission = super().process_form_submission(form)
-        self.get_parent().specific.send_mail(form)
+        self.get_parent().specific.send_mail(submission)
         return submission
 
     def clean(self):
@@ -454,6 +432,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
@@ -472,7 +451,32 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def phase(self):
         return self.workflow.current(self.status)
 
+    def ensure_user_has_account(self):
+        if self.user and self.user.is_authenticated():
+            self.form_data['email'] = self.user.email
+            self.form_data['full_name'] = self.user.get_full_name()
+        else:
+            # Rely on the form having the following must include fields (see blocks.py)
+            email = self.form_data.get('email')
+            full_name = self.form_data.get('full_name')
+
+            User = get_user_model()
+            self.user, _ = User.objects.get_or_create_and_notify(
+                email=email,
+                site=self.page.get_site(),
+                defaults={'full_name': full_name}
+            )
+
     def save(self, *args, **kwargs):
+        for field in self.form_fields:
+            # Update the ids which are unique to use the unique name
+            if isinstance(field.block, MustIncludeFieldBlock):
+                response = self.form_data.pop(field.id, None)
+                if response:
+                    self.form_data[field.block.name] = response
+
+        self.ensure_user_has_account()
+
         if not self.id:
             # We are creating the object default to first stage
             try:
@@ -482,44 +486,39 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 self.workflow_name = self.page.workflow_name
             self.status = str(self.workflow.first())
 
+        # add a denormed version of the answer for searching
+        self.search_data = ' '.join(self.prepare_search_values())
+
         return super().save(*args, **kwargs)
 
-    def render_answers(self):
-        context = {'fields': list()}  # type: ignore
-        for field in self.form_fields:
+    def data_and_fields(self):
+        for stream_value in self.form_fields:
             try:
-                data = self.form_data[field.id]
+                data = self.form_data[stream_value.id]
             except KeyError:
                 pass  # It was a named field or a paragraph
             else:
-                form_field = field.block.get_field(field.value)
-                data = self.prepare_value(form_field, data)
-                context['fields'].append({
-                    'field': form_field,
-                    'value': data,
-                })
-        return render_to_string(self.field_template, context)
+                yield data, stream_value
 
-    def prepare_value(self, field, data):
-        NO_RESPONSE = 'No response'
-        if hasattr(field, 'choices'):
-            if not data:
-                return [NO_RESPONSE]
+    def render_answers(self):
+        fields = [
+            field.render(context={'data': data})
+            for data, field in self.data_and_fields()
+        ]
+        return mark_safe(''.join(fields))
 
-            if isinstance(data, str):
-                data = [data]
-            choices = dict(field.choices)
-            try:
-                data = [choices[value] for value in data]
-            except KeyError:
-                data = [choices[int(value)] for value in data if value]
-        else:
-            if not data and not isinstance(data, bool):
-                return NO_RESPONSE
+    def prepare_search_values(self):
+        for data, stream in self.data_and_fields():
+            value = stream.block.get_searchable_content(stream.value, data)
+            if value:
+                if isinstance(value, list):
+                    yield ', '.join(value)
+                else:
+                    yield value
 
-            data = str(data)
-
-        return data
+        # Add named fields into the search index
+        for field in ['email', 'title']:
+            yield getattr(self, field)
 
     def get_data(self):
         # Updated for JSONField

@@ -1,0 +1,10 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block page_header %}
+    <div class="wrapper wrapper--medium">
+        <h3>Search Results</h3>
+        {% if search_term %}
+            <h5>There are {{ object_list|length }} results for: {{ search_term }}</h5>
+        {% endif %}
+    </div>
+{% endblock %}
