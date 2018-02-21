@@ -114,6 +114,9 @@ import MobileSearch from './components/mobile-search';
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
             });
+        } else {
+            $('.js-filter-wrapper').removeClass('is-open');
+            $('.js-filter-list').removeClass('form__filters--mobile');
         }
     }).trigger('resize');
 })(jQuery);
