@@ -8,3 +8,10 @@
         </div>
     {% endfor %}
 </div>
+<div class="status-bar--mobile">
+    {% for phase in workflow %}
+        {% if phase == status %}
+            <h6 class="status-bar__subheading">{{ phase.name }}</h6>
+        {% endif %}
+    {% endfor %}
+</div>
