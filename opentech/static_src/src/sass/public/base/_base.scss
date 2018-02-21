@@ -69,7 +69,7 @@ ol {
 
 .is-visible,
 %is-visible {
-    z-index: 5;
+    z-index: 9;
     opacity: 1;
     transition: opacity, z-index, $transition;
 }
