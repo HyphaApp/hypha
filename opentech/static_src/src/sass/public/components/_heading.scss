@@ -46,4 +46,8 @@
     &--contains-link {
         display: inline-block;
     }
+
+    &--focus-areas {
+        @include responsive-font-sizes(24px, 42px);
+    }
 }

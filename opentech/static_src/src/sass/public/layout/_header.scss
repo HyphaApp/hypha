@@ -73,9 +73,10 @@
         }
 
         &--homepage {
+            @include responsive-font-sizes(36px, 72px);
             max-width: 750px;
             line-height: 1.1;
-            text-shadow: 0 2px 15px rgba(0,0,0,0.25);
+            text-shadow: 0 2px 15px $color--black-25;
 
             &::after {
                 display: inline-block;

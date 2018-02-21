@@ -5,6 +5,10 @@
     {% image page.header_image fill-1440x740 as header_image %}
     <header class="header header--homepage {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if page.header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
 
+        {% block apply_button %}
+            {% include "includes/apply_button.html" %}
+        {% endblock %}
+
         <div class="header__inner wrapper wrapper--large">
             <a href="{% slugurl 'home' %}" aria-label="Home link">
                 <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop--dark-alt"></use></svg>
@@ -77,7 +81,7 @@
 
 {% block content %}
     <div class="wrapper wrapper--top-bottom-space">
-        <h2 class="heading heading--center">{{ page.our_work_title }}</h2>
+        <h2 class="heading heading--center heading--focus-areas">{{ page.our_work_title }}</h2>
         <div class="grid grid--focus-areas">
             {% for block in page.our_work %}
                 {% include_block block %}
