@@ -1,9 +1,9 @@
-import $ from './globals';
+import jQuery from './globals';
 import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 
-$(function () {
+(function ($) {
     // remove no-js class if js is enabled
     document.querySelector('html').classList.remove('no-js');
 
@@ -74,12 +74,31 @@ $(function () {
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
-        if ($(window).width() > 768) {
-            $('.js-filter-wrapper').removeClass('is-open');
-            $('.js-filter-list').removeClass('form__filters--mobile');
+        if ($(window).width() < 768) {
+            $('.select2').on('click', (e) => {
+                const dropdown = $(e.target).closest('.select2');
+                const openDropdown = $('.select2 .expanded');
+                let dropdownMargin = 0;
+                if(openDropdown.length > 0 && !openDropdown.hasClass('select2-container--open')){
+                    openDropdown.removeClass('expanded');
+                    if (dropdown.position().top > openDropdown.position().top ){
+                        dropdownMargin = parseInt(openDropdown.css('marginBottom'));
+                    }
+                    openDropdown.css('margin-bottom', '0px');
+                }
+                if(dropdown.hasClass('select2-container--open')){
+                    dropdown.addClass('expanded');
+                    const id = $(e.target).closest('.select2-selection').attr('aria-owns');
+                    const match = $(`ul#${id}`);
+                    const positionalMatch = match.closest('.select2-container');
+                    const margin = match.outerHeight(true);
+                    dropdown.css('margin-bottom', `${margin}px`);
+                    positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
+                }
+            });
         }
     }).trigger('resize');
-});
+})(jQuery);
 
 // wait for DOM content to load before checking for select2
 document.addEventListener('DOMContentLoaded', () => {
