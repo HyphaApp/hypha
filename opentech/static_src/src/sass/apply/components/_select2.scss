@@ -51,6 +51,7 @@
 
     .select2-dropdown {
         border: 0;
+        border-bottom: 1px solid $color--mid-grey;
         border-radius: 0;
 
         @include media-query(small-tablet) {
