@@ -1,6 +1,6 @@
 .form {
     &--header-search-desktop {
-        width: 300px;
+        max-width: 300px;
         border-bottom: 1px solid $color--white;
     }
 
