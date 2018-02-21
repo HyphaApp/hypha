@@ -68,6 +68,7 @@
         text-transform: uppercase;
 
         &--homepage {
+            @include responsive-font-sizes(36px, 72px);
             max-width: 750px;
             line-height: 1.1;
             text-shadow: 0 2px 15px $color--black-25;
