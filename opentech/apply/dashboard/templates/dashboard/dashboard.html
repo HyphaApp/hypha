@@ -3,13 +3,15 @@
 {% block title %}OTF Dashboard{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
-    <div class="wrapper wrapper--large">
+    <div class="wrapper wrapper--large wrapper--search">
         {% block page_header %}
-            <h3>Received Submissions</h3>
-            <h5>Track and explore recent submissions</h5>
+            <div>
+                <h3 class="heading heading--no-margin">Received Submissions</h3>
+                <h5>Track and explore recent submissions</h5>
+            </div>
         {% endblock %}
+        {% include "dashboard/includes/search.html" %}
     </div>
-    {% include "dashboard/includes/search.html" %}
 </div>
 
 <div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
