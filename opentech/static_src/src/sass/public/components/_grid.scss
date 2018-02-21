@@ -105,10 +105,11 @@
             grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
 
             @include media-query(tablet-portrait) {
-                justify-content: center;
+                justify-content: space-between;
                 margin: 3rem 0;
                 grid-gap: 35px;  // sass-lint:disable-line no-misspelled-properties
-                grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(270px, 270px));
+                text-align: center;
             }
         }
     }
