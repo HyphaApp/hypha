@@ -13,6 +13,8 @@ from wagtail.wagtailcore.blocks import (
     DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock
 )
 
+from .fields import MultiFileField
+
 
 class FormFieldBlock(StructBlock):
     field_label = CharBlock(label=_('Label'))
@@ -265,11 +267,27 @@ class ImageFieldBlock(OptionalFormFieldBlock):
 
 
 class FileFieldBlock(OptionalFormFieldBlock):
+    """This doesn't know how to save the uploaded files
+
+    You must implement this if you want to reuse it.
+    """
     field_class = forms.FileField
 
     class Meta:
         label = _('File field')
         icon = 'download'
+        template = 'stream_forms/render_file_field.html'
+
+    def get_searchable_content(self, value, data):
+        return None
+
+
+class MultiFileFieldBlock(FileFieldBlock):
+    field_class = MultiFileField
+
+    class Meta:
+        label = _('Multiple File field')
+        template = 'stream_forms/render_multi_file_field.html'
 
     def get_searchable_content(self, value, data):
         return None
@@ -289,6 +307,7 @@ class FormFieldsBlock(StreamBlock):
     datetime = DateTimeFieldBlock(group=_('Fields'))
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
+    multi_file = MultiFileFieldBlock(group=_('Fields'))
 
     class Meta:
         label = _('Form fields')

@@ -1,9 +1,11 @@
 from datetime import date
+import os
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
@@ -30,6 +32,7 @@ from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
+from opentech.apply.stream_forms.blocks import FileFieldBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -493,6 +496,24 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 defaults={'full_name': full_name}
             )
 
+    def handle_file(self, file):
+        # File is potentially optional
+        if file:
+            file_path = os.path.join('submissions', 'user', str(self.user.id), file.name)
+            filename = default_storage.generate_filename(file_path)
+            saved_name = default_storage.save(filename, file)
+            return {
+                'name': file.name,
+                'path': saved_name,
+                'url': default_storage.url(saved_name)
+            }
+
+    def handle_files(self, files):
+        if isinstance(files, list):
+            return [self.handle_file(file) for file in files]
+
+        return self.handle_file(files)
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -502,6 +523,11 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                     self.form_data[field.block.name] = response
 
         self.ensure_user_has_account()
+
+        for field in self.form_fields:
+            if isinstance(field.block, FileFieldBlock):
+                file = self.form_data[field.id]
+                self.form_data[field.id] = self.handle_files(file)
 
         if not self.id:
             # We are creating the object default to first stage
