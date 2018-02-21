@@ -42,4 +42,8 @@
         margin: 1rem 0;
         font-weight: $weight--normal;
     }
+
+    &--contains-link {
+        display: inline-block;
+    }
 }

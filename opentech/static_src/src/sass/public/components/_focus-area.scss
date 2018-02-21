@@ -1,0 +1,20 @@
+.focus-area {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 380px;
+    padding: 40px 30px;
+    border: 1px solid $color--mid-grey;
+
+    &__icon {
+        height: 50px;
+        margin-bottom: 30px;
+        stroke: $color--mint;
+    }
+
+    &__teaser {
+        span {
+            font-weight: $weight--bold;
+        }
+    }
+}

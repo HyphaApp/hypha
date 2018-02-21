@@ -68,4 +68,12 @@
     &--small {
         font-size: 17px;
     }
+
+    &--arrow-pixels-blue {
+        @include pixel-link($color--dark-blue);
+    }
+
+    &--arrow-pixels-white {
+        @include pixel-link($color--white);
+    }
 }
