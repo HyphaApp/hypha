@@ -27,7 +27,9 @@
 
         div {
             &:first-child {
-                flex-basis: 65%;
+                @include media-query(tablet-portrait) {
+                    flex-basis: 65%;
+                }
             }
         }
     }
