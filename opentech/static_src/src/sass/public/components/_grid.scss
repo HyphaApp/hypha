@@ -78,7 +78,7 @@
             grid-template-columns: 1fr;
             grid-gap: 30px; // sass-lint:disable-line no-misspelled-properties
 
-            @include media-query(mob-landscape) {
+            @include media-query(small-tablet) {
                 grid-template-columns: repeat(2, 1fr);
             }
 
