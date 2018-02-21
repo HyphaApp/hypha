@@ -51,7 +51,9 @@
         margin-bottom: 20px;
         font-weight: $weight--normal;
         color: $color--default;
+        background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
         border-color: $color--light-mid-grey;
+        transition: none;
 
         @include media-query(tablet-portrait) {
             display: none;
