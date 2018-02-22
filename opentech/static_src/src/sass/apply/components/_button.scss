@@ -43,7 +43,6 @@
     }
 
     &--filters {
-        @include button($color--white, $color--white);
         display: flex;
         justify-content: space-between;
         max-width: 300px;
@@ -52,8 +51,13 @@
         font-weight: $weight--normal;
         color: $color--default;
         background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
-        border-color: $color--light-mid-grey;
+        border: 1px solid $color--light-mid-grey;
         transition: none;
+
+        &:active,
+        &:hover {
+            background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        }
 
         @include media-query(tablet-portrait) {
             display: none;
