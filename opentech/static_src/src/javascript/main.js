@@ -4,19 +4,21 @@ import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 
 (function ($) {
-    // remove no-js class if js is enabled
-    document.querySelector('html').classList.remove('no-js');
+    $(document).ready(function(){
+        // remove no-js class if js is enabled
+        document.querySelector('html').classList.remove('no-js');
 
-    $(MobileMenu.selector()).each((index, el) => {
-        new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
-    });
+        $(MobileMenu.selector()).each((index, el) => {
+            new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
+        });
 
-    $(Search.selector()).each((index, el) => {
-        new Search($(el), $('.header__search'));
-    });
+        $(Search.selector()).each((index, el) => {
+            new Search($(el), $('.header__search'));
+        });
 
-    $(MobileSearch.selector()).each((index, el) => {
-        new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
+        $(MobileSearch.selector()).each((index, el) => {
+            new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
+        });
     });
 
     // Show list of selected files for upload on input[type=file]
@@ -105,7 +107,6 @@ import MobileSearch from './components/mobile-search';
             // bump up the dropdown options by height of closed elements
             positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
         }
-
     }
 
     // reset mobile filters if they're open past the tablet breakpoint
