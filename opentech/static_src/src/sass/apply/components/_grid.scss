@@ -46,18 +46,15 @@
         }
 
         &--proposal-info {
+            padding-bottom: 30px;
             margin: 0;
+            border-bottom: 1px solid $color--mid-grey;
             grid-template-columns: 100%;
             grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
 
             @include media-query(mob-landscape) {
                 margin: 0 0 30px;
                 grid-template-columns: 1fr 1fr;
-            }
-
-            @include media-query(tablet-portrait) {
-                padding-bottom: 30px;
-                border-bottom: 1px solid $color--mid-grey;
             }
 
             * {
