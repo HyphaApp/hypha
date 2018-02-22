@@ -30,6 +30,38 @@
             text-align: left;
         }
     }
+
+    &--focus-areas {
+        @include media-query(mob-landscape) {
+            justify-content: center;
+        }
+
+        > * {
+            flex-basis: 100%;
+
+            @include media-query(mob-landscape) {
+                flex-basis: calc(35% - 20px);
+            }
+
+            @include media-query(desktop) {
+                flex-basis: calc(20% - 20px);
+            }
+        }
+    }
+
+    &--max-three {
+        > * {
+            flex-basis: 100%;
+
+            @include media-query(small-tablet) {
+                flex-basis: calc(30% - 20px);
+            }
+
+            @include media-query(desktop) {
+                flex-basis: calc(280px - 20px);
+            }
+        }
+    }
 }
 
 @supports (display: grid) {
