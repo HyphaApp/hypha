@@ -15,28 +15,28 @@
 </div>
 
 <div class="wrapper wrapper--large wrapper--top-bottom-inner-space">
-    {% if filter %}
-        <div class="button button--filters button--contains-icons js-open-filters">
-            Filter By
-            <svg class="icon icon--filters icon--small"><use xlink:href="#filters"></use></svg>
-        </div>
 
-        <div class="wrapper wrapper--filters js-filter-wrapper">
+    {% if object_list|length > 0 %}
+        {% if filter %}
+            <div class="button button--filters button--contains-icons js-open-filters">Filter By</div>
 
-            <div class="wrapper wrapper--filters-header">
-                <div class="js-clear-filters">Clear</div>
-                <div>Filter by</div>
-                <div class="js-close-filters">Close</div>
+            <div class="wrapper wrapper--filters js-filter-wrapper">
+                <div class="wrapper wrapper--filters-header">
+                    <div class="js-clear-filters">Clear</div>
+                    <div>Filter by</div>
+                    <div class="js-close-filters">Close</div>
+                </div>
+
+                <form action="" method="get" class="form form--filters">
+                    <ul class="form__filters select2 js-filter-list">
+                        {{ filter.form.as_ul }}
+                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                    </ul>
+                </form>
             </div>
-
-            <form action="" method="get" class="form form--filters">
-                <ul class="form__filters select2 js-filter-list">
-                    {{ filter.form.as_ul }}
-                    <button class="button button--primary" type="submit" value="Filter">Filter</button>
-                </ul>
-            </form>
-        </div>
+        {% endif %}
     {% endif %}
+
     {% render_table table %}
 </div>
 {% endblock %}
