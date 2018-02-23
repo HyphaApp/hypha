@@ -58,6 +58,7 @@ import MobileSearch from './components/mobile-search';
         $('body').addClass('no-scroll');
         e.target.nextElementSibling.classList.add('is-open');
         $('.js-filter-list').addClass('form__filters--mobile');
+        preventTouchScroll();
     });
 
     // close mobile filters
@@ -109,6 +110,15 @@ import MobileSearch from './components/mobile-search';
             // bump up the dropdown options by height of closed elements
             positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
         }
+    }
+
+    // prevent scrolling on body when a popup is open on touch devices
+    function preventTouchScroll() {
+        $(document).on('touchmove', (e) => {
+            if ($(e.target).parents().hasClass('no-scroll')) {
+                e.preventDefault();
+            }
+        });
     }
 
     // reset mobile filters if they're open past the tablet breakpoint
