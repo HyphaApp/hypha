@@ -5,6 +5,8 @@ import json
 import factory
 import wagtail_factories
 
+from wagtail.wagtailcore.blocks import StreamBlock
+
 from opentech.apply.funds.models import (
     AbstractRelatedForm,
     ApplicationSubmission,
@@ -132,14 +134,16 @@ class LabFormFactory(AbstractRelatedFormFactory):
 
 class FormDataFactory(factory.Factory):
     def _create(self, *args, form_fields='{}', **kwargs):
-        form_fields = json.loads(form_fields)
+        form_fields = ApplicationSubmission.form_fields.field.to_python(form_fields)
         form_data = {}
         for field in form_fields:
             try:
-                answer = kwargs[field['type']]
+                answer = kwargs[field.block_type]
             except KeyError:
-                answer = 'the answer'
-            form_data[field['id']] = answer
+                # Get the factory and delegate to the block to make an answer
+                factory = blocks.CustomFormFieldsFactory.factories[field.block_type]
+                answer = factory.make_answer()
+            form_data[field.id] = answer
 
         return form_data
 
