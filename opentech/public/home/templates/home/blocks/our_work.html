@@ -1,0 +1,6 @@
+{% load wagtailimages_tags home_tags %}
+<div class="focus-area">
+    {% image value.icon max-80x80 as icon %}
+    <img class="focus-area__icon" {{ icon.attrs }}></img>
+    <p class="focus-area__teaser">{{ value.description|spanify:1 }}</p>
+</div>

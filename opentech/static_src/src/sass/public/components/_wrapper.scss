@@ -73,13 +73,8 @@
     }
 
     &--dark-bg {
-        padding: 2rem 20px;
         color: $color--white;
         background-color: $color--dark-grey;
-
-        @include media-query(tablet-portrait) {
-            padding: 4rem 20px;
-        }
     }
 
     &--streamfield {
@@ -222,7 +217,11 @@
     &--listings {
         display: flex;
         flex-direction: column;
-        margin-top: 2rem;
+        margin-top: 20px;
+
+        @include media-query(tablet-portrait) {
+            margin-top: 2rem;
+        }
     }
 
     &--page-title {
@@ -230,5 +229,25 @@
         flex-direction: column;
         flex-grow: 1;
         justify-content: flex-end;
+
+        .header--homepage & {
+            position: relative;
+            z-index: 9;
+            align-items: flex-start;
+            justify-content: center;
+            height: 100%;
+        }
+    }
+
+    &--center {
+        text-align: center;
+    }
+
+    &--inner-space-xl {
+        padding: 2rem 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 20px;
+        }
     }
 }

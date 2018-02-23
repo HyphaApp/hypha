@@ -1,5 +1,6 @@
 from collections import Counter
 
+import bleach
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
@@ -57,6 +58,9 @@ class RichTextFieldBlock(TextFieldBlock):
     class Meta:
         label = _('Rich text field')
         icon = 'form'
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 class CustomFormFieldsBlock(FormFieldsBlock):

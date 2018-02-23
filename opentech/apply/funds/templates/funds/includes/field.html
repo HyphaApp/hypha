@@ -3,7 +3,7 @@
 {% with widget_type=field|widget_type field_type=field|field_type %}
 
 <div class="form__group {% if field.errors %}form__error{% endif %}">
-    {% if widget_type == 'clearable_file_input' %}
+    {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
         <span class="form__question">{{ field.label }}</span>
         <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
             <span>Upload</span>

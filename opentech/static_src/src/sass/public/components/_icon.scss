@@ -48,7 +48,8 @@
             fill: $color--dark-blue;
         }
 
-        .search-open & {
+        .search-open &,
+        .header--homepage & {
             fill: $color--white;
         }
 
@@ -94,7 +95,12 @@
     }
 
     &--calendar {
+        transition: fill $transition;
         fill: $color--pink;
+
+        .card:hover & {
+            fill: $color--white;
+        }
     }
 
     &--error {
@@ -123,5 +129,33 @@
     &--small {
         width: 14px;
         height: 14px;
+    }
+
+    &--body-pixels-right {
+        position: absolute;
+        right: 0;
+        z-index: -1;
+        display: none;
+        width: 218px;
+        height: 457px;
+        fill: $color--dark-blue;
+
+        @include media-query(desktop) {
+            display: block;
+        }
+    }
+
+    &--body-pixels-left {
+        position: absolute;
+        top: -355px;
+        left: 0;
+        display: none;
+        width: 109px;
+        height: 275px;
+        fill: $color--dark-blue;
+
+        @include media-query(desktop) {
+            display: block;
+        }
     }
 }

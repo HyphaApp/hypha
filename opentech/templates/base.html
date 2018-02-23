@@ -70,83 +70,85 @@
 
         {% wagtailuserbar %}
 
+        {% block header %}
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if page.header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
 
-            {% block apply_button %}
-                {% include "includes/apply_button.html" %}
-            {% endblock %}
-
-            <div class="header__inner wrapper wrapper--large">
-                <a href="{% slugurl 'home' %}" aria-label="Home link">
-                    <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
-                    <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
-                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
-                </a>
-
-                <div class="header__inner header__inner--mobile-buttons">
-                    <button class="button js-search-toggle" aria-haspopup="true">
-                        <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                        <svg class="header__icon header__icon--close-search header__icon--close-search-menu-closed icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                    </button>
-                    <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                        <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
-                    </button>
-                </div>
-
-                <section class="header__menus header__menus--desktop">
-                    {% primarynav %}
-
-                    <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
-                        <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
-                        <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
-                    </button>
-                </section>
-
-                <section class="header__menus header__menus--mobile">
-                    <div class="header__inner header__inner--menu-open">
-                        <a href="{% slugurl 'home' %}" aria-label="Home link">
-                            <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
-                        </a>
-                        <div class="header__inner header__inner--mobile-buttons">
-                            <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
-                                <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                            </button>
-                            <button class="button button--left-space js-mobile-menu-close">
-                                <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                            </button>
-                        </div>
-                    </div>
-                    {% primarynav %}
-                </section>
-
-                <div class="header__button-container">
-                    <a href="{% url 'users:login' %}" class="button button--transparent button--contains-icons">
-                        <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                        My OTF
-                    </a>
-                    <div class="button button--google-translate" id="google_translate_element"></div>
-                </div>
-            </div>
-
-            <div class="header__search">
-                <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
-                    <button class="button" type="submit" aria-label="Search">
-                        <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-                    </button>
-                    <input class="input input--transparent input--secondary" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
-                </form>
-            </div>
-
-            <div class="wrapper wrapper--small wrapper--page-title">
-                {% block breadcrumbs %}
-                    {% include "navigation/breadcrumbs.html" %}
+                {% block apply_button %}
+                    {% include "includes/apply_button.html" %}
                 {% endblock %}
-                <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
-            </div>
-            <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
-            <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
-        </header>
+
+                <div class="header__inner wrapper wrapper--large">
+                    <a href="{% slugurl 'home' %}" aria-label="Home link">
+                        <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
+                        <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
+                        <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                    </a>
+
+                    <div class="header__inner header__inner--mobile-buttons">
+                        <button class="button js-search-toggle" aria-haspopup="true">
+                            <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                            <svg class="header__icon header__icon--close-search header__icon--close-search-menu-closed icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                        </button>
+                        <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
+                            <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
+                        </button>
+                    </div>
+
+                    <section class="header__menus header__menus--desktop">
+                        {% primarynav %}
+
+                        <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
+                            <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
+                            <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
+                        </button>
+                    </section>
+
+                    <section class="header__menus header__menus--mobile">
+                        <div class="header__inner header__inner--menu-open">
+                            <a href="{% slugurl 'home' %}" aria-label="Home link">
+                                <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                            </a>
+                            <div class="header__inner header__inner--mobile-buttons">
+                                <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
+                                    <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
+                                </button>
+                                <button class="button button--left-space js-mobile-menu-close">
+                                    <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                                </button>
+                            </div>
+                        </div>
+                        {% primarynav %}
+                    </section>
+
+                    <div class="header__button-container">
+                        <a href="{% url 'users:login' %}" class="button button--transparent button--contains-icons">
+                            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+                            My OTF
+                        </a>
+                        <div class="button button--google-translate" id="google_translate_element"></div>
+                    </div>
+                </div>
+
+                <div class="header__search">
+                    <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
+                        <button class="button" type="submit" aria-label="Search">
+                            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
+                        </button>
+                        <input class="input input--transparent input--secondary" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
+                    </form>
+                </div>
+
+                <div class="wrapper wrapper--small wrapper--page-title">
+                    {% block breadcrumbs %}
+                        {% include "navigation/breadcrumbs.html" %}
+                    {% endblock %}
+                    <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
+                </div>
+                <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
+                <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
+            </header>
+        {% endblock %}
 
         <main class="wrapper wrapper--large wrapper--main {% block main_class %}{% endblock %}">
             {% block content %}{% endblock %}

@@ -1,0 +1,47 @@
+.pagination {
+    @extend %h6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+
+    .cardinality {
+        margin: 0 10px;
+    }
+
+    .previous,
+    .next {
+        a {
+            position: relative;
+            display: block;
+            width: 55px;
+            height: 55px;
+            font-size: 0;
+            color: $color--white;
+            background: $color--white;
+            border: 1px solid $color--mid-grey;
+
+            &::after {
+                position: absolute;;
+                top: 18.5px;
+                left: 22.5px;
+            }
+        }
+    }
+
+    .previous {
+        a {
+            &::after {
+                @include triangle(left, $color--primary, 7px);
+            }
+        }
+    }
+
+    .next {
+        a {
+            &::after {
+                @include triangle(right, $color--primary, 7px);
+            }
+        }
+    }
+}
