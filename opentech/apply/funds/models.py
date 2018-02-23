@@ -470,11 +470,14 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 defaults={'full_name': full_name}
             )
 
+    def save_path(self, file_name):
+        file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
+        return default_storage.generate_filename(file_path)
+
     def handle_file(self, file):
         # File is potentially optional
         if file:
-            file_path = os.path.join('submissions', 'user', str(self.user.id), file.name)
-            filename = default_storage.generate_filename(file_path)
+            filename = self.save_path(file.name)
             saved_name = default_storage.save(filename, file)
             return {
                 'name': file.name,
