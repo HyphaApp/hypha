@@ -67,7 +67,7 @@
         color: $color--white;
         text-shadow: 0 2px 15px $color--black-10;
         text-transform: uppercase;
-      
+
         @include media-query(tablet-portrait) {
             padding: 0;
         }
@@ -88,10 +88,11 @@
                 content: '';
                 transition: height, width, 10s ease;
             }
-        
-        .header--light-bg & {
-            color: $color--dark-grey;
-            text-shadow: none;
+
+            .header--light-bg & {
+                color: $color--dark-grey;
+                text-shadow: none;
+            }
         }
     }
 
