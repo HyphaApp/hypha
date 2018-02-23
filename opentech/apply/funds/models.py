@@ -32,7 +32,7 @@ from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailcore.models import Orderable
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
 
-from opentech.apply.stream_forms.blocks import FileFieldBlock
+from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -525,7 +525,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         self.ensure_user_has_account()
 
         for field in self.form_fields:
-            if isinstance(field.block, FileFieldBlock):
+            if isinstance(field.block, UploadableMediaBlock):
                 file = self.form_data[field.id]
                 self.form_data[field.id] = self.handle_files(file)
 
