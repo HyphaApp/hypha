@@ -24,6 +24,7 @@ $color--facebook: #396ab5;
 
 // Transparent
 $color--black-10: rgba(0, 0, 0, 0.1);
+$color--black-25: rgba(0, 0, 0, 0.25);
 
 // Assignment
 $color--default: $color--dark-grey;
@@ -63,6 +64,7 @@ $wrapper--small: 790px;
 $breakpoints: (
     'mob-portrait'      '(min-width: 320px)',
     'mob-landscape'     '(min-width: 480px)',
+    'small-tablet'      '(min-width: 600px)',
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
     'desktop'           '(min-width: 1280px)',

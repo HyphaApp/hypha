@@ -20,4 +20,17 @@
             padding: 3rem 0;
         }
     }
+
+    &--introduction {
+        display: flex;
+        justify-content: space-between;
+
+        div {
+            &:first-child {
+                @include media-query(tablet-portrait) {
+                    flex-basis: 65%;
+                }
+            }
+        }
+    }
 }
