@@ -217,7 +217,11 @@
     &--listings {
         display: flex;
         flex-direction: column;
-        margin-top: 2rem;
+        margin-top: 20px;
+
+        @include media-query(tablet-portrait) {
+            margin-top: 2rem;
+        }
     }
 
     &--page-title {

@@ -14,6 +14,7 @@ from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
     ApplicationFormFactory,
+    ApplicationSubmissionFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
@@ -68,6 +69,9 @@ class TestFundModel(TestCase):
         new_round.live = False
         new_round.save()
         self.assertEqual(self.fund.open_round, None)
+
+    def test_no_round_exists(self):
+        self.assertIsNone(self.fund.next_deadline())
 
 
 class TestRoundModelDates(TestCase):
@@ -147,6 +151,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
         self.round = RoundFactory.build()
         self.round.parent_page = self.fund
+        self.round.lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
 
         self.fund.add_child(instance=self.round)
 
@@ -185,6 +190,7 @@ class TestFormSubmission(TestCase):
         application_form = {
             'form_fields__0__email__': '',
             'form_fields__1__full_name__': '',
+            'form_fields__2__title__': '',
         }
         form = ApplicationFormFactory(**application_form)
         fund = FundTypeFactory()
@@ -205,7 +211,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, [email, name])}
+        data = {k: v for k, v in zip(fields, [email, name, 'project'])}
 
         request = self.request_factory.post('', data)
         request.user = user
@@ -235,7 +241,8 @@ class TestFormSubmission(TestCase):
     def test_can_submit_if_new(self):
         self.submit_form()
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
         new_user = self.User.objects.get(email=self.email)
         self.assertEqual(new_user.get_full_name(), self.name)
 
@@ -246,7 +253,8 @@ class TestFormSubmission(TestCase):
         self.submit_form()
         self.submit_form()
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         user = self.User.objects.get(email=self.email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
@@ -257,9 +265,10 @@ class TestFormSubmission(TestCase):
         # Someone else submits a form
         self.submit_form(email='another@email.com')
 
-        self.assertEqual(self.User.objects.count(), 2)
+        # Lead + 2 x applicant
+        self.assertEqual(self.User.objects.count(), 3)
 
-        first_user, second_user = self.User.objects.all()
+        _, first_user, second_user = self.User.objects.all()
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
         self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
@@ -267,11 +276,13 @@ class TestFormSubmission(TestCase):
     def test_associated_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + Applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.submit_form(email=self.email, name=self.name, user=user)
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + Applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
@@ -280,12 +291,14 @@ class TestFormSubmission(TestCase):
     def test_errors_if_blank_user_data_even_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         response = self.submit_form(email='', name='', user=user)
         self.assertContains(response, 'This field is required')
 
-        self.assertEqual(self.User.objects.count(), 1)
+        # Lead + applicant
+        self.assertEqual(self.User.objects.count(), 2)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
 
@@ -300,3 +313,56 @@ class TestFormSubmission(TestCase):
         # "Thank you for your submission" and "Account Creation"
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to[0], self.email)
+
+
+class TestApplicationSubmission(TestCase):
+    def make_submission(self, **kwargs):
+        return ApplicationSubmissionFactory(**kwargs)
+
+    def test_can_get_required_block_names(self):
+        email = 'test@test.com'
+        submission = self.make_submission(user__email=email)
+        self.assertEqual(submission.email, email)
+
+    def test_can_get_ordered_qs(self):
+        # Emails are created sequentially
+        submission_a = self.make_submission()
+        submission_b = self.make_submission(round=submission_a.round)
+        submissions = [submission_a, submission_b]
+        self.assertEqual(
+            list(ApplicationSubmission.objects.order_by('email')),
+            submissions,
+        )
+
+    def test_can_get_reverse_ordered_qs(self):
+        submission_a = self.make_submission()
+        submission_b = self.make_submission(round=submission_a.round)
+        submissions = [submission_b, submission_a]
+        self.assertEqual(
+            list(ApplicationSubmission.objects.order_by('-email')),
+            submissions,
+        )
+
+    def test_richtext_in_char_is_removed_for_search(self):
+        text = 'I am text'
+        rich_text = f'<b>{text}</b>'
+        submission = self.make_submission(form_data__char=rich_text)
+        self.assertNotIn(rich_text, submission.search_data)
+        self.assertIn(text, submission.search_data)
+
+    def test_richtext_is_removed_for_search(self):
+        text = 'I am text'
+        rich_text = f'<b>{text}</b>'
+        submission = self.make_submission(form_data__rich_text=rich_text)
+        self.assertNotIn(rich_text, submission.search_data)
+        self.assertIn(text, submission.search_data)
+
+    def test_choices_added_for_search(self):
+        choices = ['blah', 'foo']
+        submission = self.make_submission(form_fields__radios__choices=choices, form_data__radios=['blah'])
+        self.assertIn('blah', submission.search_data)
+
+    def test_number_not_in_search(self):
+        value = 12345
+        submission = self.make_submission(form_data__number=value)
+        self.assertNotIn(str(value), submission.search_data)

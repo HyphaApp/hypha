@@ -61,11 +61,16 @@
     }
 
     &__title {
+        padding: 0 10px;
         margin: 0 0 20px;
         line-height: 1;
         color: $color--white;
         text-shadow: 0 2px 15px $color--black-10;
         text-transform: uppercase;
+      
+        @include media-query(tablet-portrait) {
+            padding: 0;
+        }
 
         &--homepage {
             @include responsive-font-sizes(36px, 72px);
@@ -83,8 +88,7 @@
                 content: '';
                 transition: height, width, 10s ease;
             }
-        }
-
+        
         .header--light-bg & {
             color: $color--dark-grey;
             text-shadow: none;

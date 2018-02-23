@@ -1,4 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
+import bleach
+
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
 from django.utils.dateparse import parse_datetime
@@ -11,6 +13,8 @@ from wagtail.wagtailcore.blocks import (
     DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock
 )
 
+from .fields import MultiFileField
+
 
 class FormFieldBlock(StructBlock):
     field_label = CharBlock(label=_('Label'))
@@ -18,6 +22,9 @@ class FormFieldBlock(StructBlock):
 
     field_class = forms.CharField
     widget = None
+
+    class Meta:
+        template = 'stream_forms/render_field.html'
 
     def get_slug(self, struct_value):
         return force_text(slugify(unidecode(struct_value['field_label'])))
@@ -43,9 +50,15 @@ class FormFieldBlock(StructBlock):
         return self.get_field_class(struct_value)(
             **self.get_field_kwargs(struct_value))
 
+    def get_searchable_content(self, value, data):
+        return str(data)
+
 
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_('Required'), required=False)
+
+    def get_searchable_content(self, value, data):
+        return data
 
 
 CHARFIELD_FORMATS = [
@@ -60,6 +73,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (single line)')
+        template = 'stream_forms/render_unsafe_field.html'
 
     def get_field_class(self, struct_value):
         text_format = struct_value['format']
@@ -69,6 +83,11 @@ class CharFieldBlock(OptionalFormFieldBlock):
             return forms.EmailField
         return super().get_field_class(struct_value)
 
+    def get_searchable_content(self, value, data):
+        # CharField acts as a fallback. Force data to string
+        data = str(data)
+        return bleach.clean(data, tags=[], strip=True)
+
 
 class TextFieldBlock(OptionalFormFieldBlock):
     default_value = TextBlock(required=False, label=_('Default value'))
@@ -77,6 +96,10 @@ class TextFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _('Text field (multi line)')
+        template = 'stream_forms/render_unsafe_field.html'
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):
@@ -87,6 +110,9 @@ class NumberFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Number field')
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class CheckboxFieldBlock(FormFieldBlock):
     default_value = BooleanBlock(required=False)
@@ -96,6 +122,9 @@ class CheckboxFieldBlock(FormFieldBlock):
     class Meta:
         label = _('Checkbox field')
         icon = 'tick-inverse'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class RadioButtonsFieldBlock(OptionalFormFieldBlock):
@@ -139,6 +168,7 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Multiple checkboxes field')
         icon = 'list-ul'
+        template = 'stream_forms/render_list_field.html'
 
     def get_field_kwargs(self, struct_value):
         kwargs = super(CheckboxesFieldBlock,
@@ -146,6 +176,9 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         kwargs['choices'] = [(choice, choice)
                              for choice in struct_value['checkboxes']]
         return kwargs
+
+    def get_searchable_content(self, value, data):
+        return data
 
 
 class DatePickerInput(forms.DateInput):
@@ -171,6 +204,9 @@ class DateFieldBlock(OptionalFormFieldBlock):
         label = _('Date field')
         icon = 'date'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class HTML5TimeInput(forms.TimeInput):
     input_type = 'time'
@@ -185,6 +221,9 @@ class TimeFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Time field')
         icon = 'time'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class DateTimePickerInput(forms.SplitDateTimeWidget):
@@ -212,6 +251,9 @@ class DateTimeFieldBlock(OptionalFormFieldBlock):
         label = _('Date+time field')
         icon = 'date'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class ImageFieldBlock(OptionalFormFieldBlock):
     field_class = forms.ImageField
@@ -220,13 +262,35 @@ class ImageFieldBlock(OptionalFormFieldBlock):
         label = _('Image field')
         icon = 'image'
 
+    def get_searchable_content(self, value, data):
+        return None
+
 
 class FileFieldBlock(OptionalFormFieldBlock):
+    """This doesn't know how to save the uploaded files
+
+    You must implement this if you want to reuse it.
+    """
     field_class = forms.FileField
 
     class Meta:
         label = _('File field')
         icon = 'download'
+        template = 'stream_forms/render_file_field.html'
+
+    def get_searchable_content(self, value, data):
+        return None
+
+
+class MultiFileFieldBlock(FileFieldBlock):
+    field_class = MultiFileField
+
+    class Meta:
+        label = _('Multiple File field')
+        template = 'stream_forms/render_multi_file_field.html'
+
+    def get_searchable_content(self, value, data):
+        return None
 
 
 class FormFieldsBlock(StreamBlock):
@@ -243,6 +307,7 @@ class FormFieldsBlock(StreamBlock):
     datetime = DateTimeFieldBlock(group=_('Fields'))
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
+    multi_file = MultiFileFieldBlock(group=_('Fields'))
 
     class Meta:
         label = _('Form fields')

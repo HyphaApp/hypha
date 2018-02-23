@@ -1,0 +1,8 @@
+{% extends "stream_forms/render_field.html" %}
+{% block data_display %}
+    <div class="wrapper wrapper--top-bottom-space">
+    {% for file in data %}
+            {% include "stream_forms/includes/file_field.html" with file=file %}
+    {% endfor %}
+    </div>
+{% endblock %}

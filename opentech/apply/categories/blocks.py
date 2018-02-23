@@ -21,6 +21,9 @@ class ModelChooserBlock(ChooserBlock):
 
 
 class CategoryQuestionBlock(OptionalFormFieldBlock):
+    class Meta:
+        template = 'stream_forms/render_list_field.html'
+
     # Overwrite field label and help text so we can defer to the category
     # as required
     field_label = CharBlock(
@@ -63,3 +66,12 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
             return forms.CheckboxSelectMultiple
         else:
             return forms.RadioSelect
+
+    def render(self, value, context):
+        data = context['data']
+        category = value['category']
+        context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
+        return super().render(value, context)
+
+    def get_searchable_content(self, value, data):
+        return None

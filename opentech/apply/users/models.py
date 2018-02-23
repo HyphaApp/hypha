@@ -7,6 +7,9 @@ from .utils import send_activation_email
 
 def convert_full_name_to_parts(defaults):
     full_name = defaults.pop('full_name', ' ')
+    if not full_name:
+        # full_name was None
+        full_name = ' '
     first_name, *last_name = full_name.split(' ')
     if first_name:
         defaults.update(first_name=first_name)
@@ -69,3 +72,6 @@ class User(AbstractUser):
     username = None
 
     objects = UserManager()
+
+    def __str__(self):
+        return self.get_full_name()
