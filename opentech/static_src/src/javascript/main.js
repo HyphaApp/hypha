@@ -55,12 +55,14 @@ import MobileSearch from './components/mobile-search';
 
     // open mobile filters
     $('.js-open-filters').on('click', (e) => {
+        $('body').addClass('no-scroll');
         e.target.nextElementSibling.classList.add('is-open');
         $('.js-filter-list').addClass('form__filters--mobile');
     });
 
     // close mobile filters
     $('.js-close-filters').on('click', (e) => {
+        $('body').removeClass('no-scroll');
         e.target.parentElement.parentElement.classList.remove('is-open');
         $('.js-filter-list').removeClass('form__filters--mobile');
     });
@@ -116,6 +118,7 @@ import MobileSearch from './components/mobile-search';
                 mobileFilterPadding(e.target);
             });
         } else {
+            $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
         }
