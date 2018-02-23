@@ -1,3 +1,17 @@
 {% extends "base-apply.html" %}
 
 {% block title %}OTF Dashboard{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large wrapper--search">
+        {% block page_header %}
+            <div>
+                <h3 class="heading heading--no-margin">Dashboard</h3>
+                <h5>There is nothing here yet.</h5>
+                <a class="link--underlined" href="{% url "funds:submissions" %}">View all submissions</a>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
