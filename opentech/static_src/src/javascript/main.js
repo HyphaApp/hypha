@@ -55,12 +55,15 @@ import MobileSearch from './components/mobile-search';
 
     // open mobile filters
     $('.js-open-filters').on('click', (e) => {
+        $('body').addClass('no-scroll');
         e.target.nextElementSibling.classList.add('is-open');
         $('.js-filter-list').addClass('form__filters--mobile');
+        preventTouchScroll();
     });
 
     // close mobile filters
     $('.js-close-filters').on('click', (e) => {
+        $('body').removeClass('no-scroll');
         e.target.parentElement.parentElement.classList.remove('is-open');
         $('.js-filter-list').removeClass('form__filters--mobile');
     });
@@ -109,6 +112,15 @@ import MobileSearch from './components/mobile-search';
         }
     }
 
+    // prevent scrolling on body when a popup is open on touch devices
+    function preventTouchScroll() {
+        $(document).on('touchmove', (e) => {
+            if ($(e.target).parents().hasClass('no-scroll')) {
+                e.preventDefault();
+            }
+        });
+    }
+
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
         if ($(window).width() < 768) {
@@ -116,6 +128,7 @@ import MobileSearch from './components/mobile-search';
                 mobileFilterPadding(e.target);
             });
         } else {
+            $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
         }
