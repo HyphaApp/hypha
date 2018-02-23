@@ -48,7 +48,7 @@ def get_round_leads(request):
     return User.objects.filter(round__isnull=False).distinct()
 
 
-class Select2CheckboxWidgetMixin:
+class Select2CheckboxWidgetMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get('label')
         kwargs.setdefault('widget', Select2MultiCheckboxesWidget(attrs={'data-placeholder': label}))
