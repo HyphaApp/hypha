@@ -27,6 +27,13 @@
                         {% if related.page.live %}
                             {% with specific_related_page=related.page.specific %}
                                 <a class="card" href="{% pageurl specific_related_page %}">
+                                    {% if specific_related_page.deadline %}
+                                        <h6 class="card__subheading">
+                                            <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
+                                            Next deadline:
+                                            <span>{{ specific_related_page.deadline|date:"M j, Y" }}</span>
+                                        </h6>
+                                    {% endif %}
                                     {% if specific_related_page.listing_image %}
                                         {% image specific_related_page.listing_image fill-450x300 %}
                                     {% endif %}
