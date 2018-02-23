@@ -5,6 +5,19 @@
     border: 0;
     box-shadow: none;
 
+    &--primary {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+
+        .form--filters & {
+            margin-right: 0;
+
+            @include media-query(tablet-portrait) {
+                flex-basis: 125px;
+            }
+        }
+    }
+
     &:hover {
         cursor: pointer;
     }
@@ -26,6 +39,42 @@
 
         &:hover {
             color: $color--white;
+        }
+    }
+
+    &--filters {
+        display: flex;
+        justify-content: space-between;
+        max-width: 300px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        font-weight: $weight--normal;
+        color: $color--default;
+        background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        border: 1px solid $color--light-mid-grey;
+        transition: none;
+
+        &:active,
+        &:hover {
+            background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        }
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
+
+    &--filters-header {
+        display: flex;
+    }
+
+    &--search {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+
+        svg {
+            fill: $color--primary;
         }
     }
 }
