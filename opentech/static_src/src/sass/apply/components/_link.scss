@@ -1,0 +1,50 @@
+.link {
+    &--underlined {
+        text-decoration: underline;
+    }
+
+    &--bold {
+        font-weight: $weight--bold;
+    }
+
+    &--download {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        color: $color--default;
+        border-top: 1px solid $color--mid-grey;
+        border-right: 1px solid $color--mid-grey;
+        border-left: 1px solid $color--mid-grey;
+        transition: background-color, $transition;
+
+        &:only-child,
+        &:last-child {
+            border-bottom: 1px solid $color--mid-grey;
+        }
+
+        &:hover {
+            background-color: transparentize($color--light-blue, 0.9);
+        }
+
+        span {
+            @extend %h5;
+            margin-left: 10px;
+            font-weight: $weight--bold;
+        }
+
+        svg {
+            &:first-child {
+                width: 26px;
+                height: 32px;
+                stroke: $color--dark-grey;
+            }
+
+            &:last-child {
+                width: 12px;
+                height: 18px;
+                stroke: $color--primary;
+            }
+        }
+    }
+}

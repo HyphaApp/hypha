@@ -1,35 +1,65 @@
 {% extends "base-apply.html" %}
-
+{% block title %}{{ object.title }}{% endblock %}
+{% block body_class %}{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
-        <h3>{{ object.title }}</h3>
-        <h5>{{ object.stage }} | {{ object.page }} | {{ object.round }} | Lead: {{ object.round.specific.lead }}</h5>
+        <h2 class="heading heading--no-margin">{{ object.title }}</h2>
+        <h5 class="heading heading--meta">
+            <span>{{ object.stage }}</span>
+            <span>{{ object.page }}</span>
+            <span>{{ object.round }}</span>
+            <span>Lead: {{ object.round.specific.lead }}</span>
+        </h5>
+        {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
     </div>
-
-    {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
-
 </div>
-
-<div>Submission Details</div>
 
 <div class="wrapper wrapper--medium wrapper--top-bottom-inner-space">
-    Submitted: {{ object.submit_time.date }} by {{ object.user.get_full_name }}
-    <h2>Proposal Information</h2>
-    <div>
-        Requested Funding {{ object.value }}
-        Project Duration {{ object.value }}
-        Legal Name {{ object.full_name }}
-        Email {{ object.email }}
+    <div class="wrapper wrapper--sidebar">
+        <div>
+            <h6 class="heading heading--submission-meta">
+                <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
+            </h6>
+
+            <h3>Proposal Information</h3>
+            <div class="grid grid--proposal-info">
+                <div>
+                    <h5>Requested Funding</h5>
+                    <p>{{ object.value }}</p>
+                </div>
+
+                <div>
+                    <h5>Project Duration</h5>
+                    <p>{{ object.value }}</p>
+                </div>
+
+                <div>
+                    <h5>Legal Name</h5>
+                    <p>{{ object.full_name }}</p>
+                </div>
+
+                <div>
+                    <h5>Email</h5>
+                    <p>{{ object.email }}</p>
+                </div>
+            </div>
+            <div class="rich-text rich-text--answers">
+                {{ object.render_answers }}
+            </div>
+        </div>
+
+        <aside class="sidebar">
+            {% if other_submissions %}
+                <div class="sidebar__inner">
+                <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+
+                {% for submission in other_submissions %}
+                    <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
+                {% endfor %}
+                </div>
+            {% endif %}
+        </aside>
     </div>
-    <div>
-        {{ object.render_answers }}
-    </div>
-</div>
-<div>
-    <h3>Other Submissions</h3>
-    {% for submission in other_submissions %}
-        <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
-    {% endfor %}
 </div>
 {% endblock %}

@@ -28,7 +28,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/apply/main.css' %}">
     </head>
 
-    <body class="light-grey-bg {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
+    <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
         {% if GOOGLE_TAG_MANAGER_ID %}
             {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
             <!-- Google Tag Manager (noscript) -->
