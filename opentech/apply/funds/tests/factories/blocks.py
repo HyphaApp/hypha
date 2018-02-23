@@ -78,6 +78,10 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
     class Meta:
         model = stream_blocks.MultiFileFieldBlock
 
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return [UploadableMediaFactory.make_answer() for _ in range(2)]
+
 
 class TitleBlockFactory(FormFieldBlockFactory):
     class Meta:
