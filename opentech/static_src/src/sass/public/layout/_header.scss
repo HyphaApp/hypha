@@ -88,11 +88,11 @@
                 content: '';
                 transition: height, width, 10s ease;
             }
-        }
 
-        .header--light-bg & {
-            color: $color--dark-grey;
-            text-shadow: none;
+            .header--light-bg & {
+                color: $color--dark-grey;
+                text-shadow: none;
+            }
         }
     }
 

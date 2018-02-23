@@ -4,7 +4,6 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtailcore import blocks
 from wagtail.wagtailcore.fields import StreamField
 from wagtail.wagtailsearch import index
 
