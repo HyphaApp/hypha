@@ -72,6 +72,11 @@
             padding: 0;
         }
 
+        .header--light-bg & {
+            color: $color--dark-grey;
+            text-shadow: none;
+        }
+
         &--homepage {
             @include responsive-font-sizes(36px, 72px);
             max-width: 750px;
@@ -87,11 +92,6 @@
                 border-radius: 50%;
                 content: '';
                 transition: height, width, 10s ease;
-            }
-
-            .header--light-bg & {
-                color: $color--dark-grey;
-                text-shadow: none;
             }
         }
     }
