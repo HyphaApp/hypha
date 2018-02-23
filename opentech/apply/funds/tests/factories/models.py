@@ -1,6 +1,5 @@
 from collections import defaultdict
 import datetime
-import json
 
 import factory
 import wagtail_factories
@@ -130,16 +129,31 @@ class LabFormFactory(AbstractRelatedFormFactory):
     lab = factory.SubFactory(LabFactory, parent=None)
 
 
-class FormDataFactory(factory.Factory):
+class AnswerFactory(factory.Factory):
+    def _create(self, *args, sub_factory=None, **kwargs):
+        return sub_factory.make_answer(kwargs)
+
+
+class Metaclass(factory.base.FactoryMetaClass):
+    def __new__(mcs, class_name, bases, attrs):
+        # Add the form field definitions to allow nested calls
+        wrapped_factories = {
+            k: factory.SubFactory(AnswerFactory, sub_factory=v)
+            for k, v in blocks.CustomFormFieldsFactory.factories.items()
+        }
+        attrs.update(wrapped_factories)
+        return super().__new__(mcs, class_name, bases, attrs)
+
+
+class FormDataFactory(factory.Factory, metaclass=Metaclass):
     def _create(self, *args, form_fields='{}', **kwargs):
-        form_fields = json.loads(form_fields)
+        form_fields = {
+            f.block_type: f.id
+            for f in ApplicationSubmission.form_fields.field.to_python(form_fields)
+        }
         form_data = {}
-        for field in form_fields:
-            try:
-                answer = kwargs[field['type']]
-            except KeyError:
-                answer = 'the answer'
-            form_data[field['id']] = answer
+        for name, answer in kwargs.items():
+            form_data[form_fields[name]] = answer
 
         return form_data
 

@@ -1,8 +1,10 @@
 from datetime import date, timedelta
 import itertools
+import os
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import RequestFactory, TestCase
@@ -366,3 +368,9 @@ class TestApplicationSubmission(TestCase):
         value = 12345
         submission = self.make_submission(form_data__number=value)
         self.assertNotIn(str(value), submission.search_data)
+
+    def test_file_gets_uploaded(self):
+        filename = 'file_name.png'
+        submission = self.make_submission(form_data__image__filename=filename)
+        save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
+        self.assertTrue(os.path.isfile(save_path))

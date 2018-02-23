@@ -255,18 +255,23 @@ class DateTimeFieldBlock(OptionalFormFieldBlock):
         return None
 
 
-class ImageFieldBlock(OptionalFormFieldBlock):
+class UploadableMediaBlock(OptionalFormFieldBlock):
+    class Meta:
+        template = 'stream_forms/render_file_field.html'
+
+    def get_searchable_content(self, value, data):
+        return None
+
+
+class ImageFieldBlock(UploadableMediaBlock):
     field_class = forms.ImageField
 
     class Meta:
         label = _('Image field')
         icon = 'image'
 
-    def get_searchable_content(self, value, data):
-        return None
 
-
-class FileFieldBlock(OptionalFormFieldBlock):
+class FileFieldBlock(UploadableMediaBlock):
     """This doesn't know how to save the uploaded files
 
     You must implement this if you want to reuse it.
@@ -276,21 +281,14 @@ class FileFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('File field')
         icon = 'download'
-        template = 'stream_forms/render_file_field.html'
-
-    def get_searchable_content(self, value, data):
-        return None
 
 
-class MultiFileFieldBlock(FileFieldBlock):
+class MultiFileFieldBlock(UploadableMediaBlock):
     field_class = MultiFileField
 
     class Meta:
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
-
-    def get_searchable_content(self, value, data):
-        return None
 
 
 class FormFieldsBlock(StreamBlock):

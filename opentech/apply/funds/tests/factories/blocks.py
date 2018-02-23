@@ -1,6 +1,9 @@
 import json
 import uuid
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+import factory
 from wagtail.wagtailcore.blocks import CharBlock
 import wagtail_factories
 
@@ -17,18 +20,32 @@ class CharBlockFactory(wagtail_factories.blocks.BlockFactory):
 
 
 class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
+    default_value = factory.Faker('word')
+
     class Meta:
         model = stream_blocks.FormFieldBlock
 
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return cls.default_value.generate(params)
+
 
 class CharFieldBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('sentence')
+
     class Meta:
         model = stream_blocks.CharFieldBlock
 
 
 class NumberFieldBlockFactory(FormFieldBlockFactory):
+    default_value = 100
+
     class Meta:
         model = stream_blocks.NumberFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return cls.default_value
 
 
 class RadioFieldBlockFactory(FormFieldBlockFactory):
@@ -36,6 +53,34 @@ class RadioFieldBlockFactory(FormFieldBlockFactory):
 
     class Meta:
         model = stream_blocks.RadioButtonsFieldBlock
+
+
+class UploadableMediaFactory(FormFieldBlockFactory):
+    default_value = factory.django.FileField
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        file_name, file = cls.default_value()._make_content(params)
+        return InMemoryUploadedFile(file, 'file', file_name, None, file.tell(), None)
+
+
+class ImageFieldBlockFactory(UploadableMediaFactory):
+    class Meta:
+        model = stream_blocks.ImageFieldBlock
+
+
+class FileFieldBlockFactory(UploadableMediaFactory):
+    class Meta:
+        model = stream_blocks.FileFieldBlock
+
+
+class MultiFileFieldBlockFactory(UploadableMediaFactory):
+    class Meta:
+        model = stream_blocks.MultiFileFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return [UploadableMediaFactory.make_answer() for _ in range(2)]
 
 
 class TitleBlockFactory(FormFieldBlockFactory):
@@ -78,4 +123,7 @@ CustomFormFieldsFactory = StreamFieldUUIDFactory({
     'number': NumberFieldBlockFactory,
     'radios': RadioFieldBlockFactory,
     'rich_text': RichTextFieldBlockFactory,
+    'image': ImageFieldBlockFactory,
+    'file': FileFieldBlockFactory,
+    'multi_file': MultiFileFieldBlockFactory,
 })
