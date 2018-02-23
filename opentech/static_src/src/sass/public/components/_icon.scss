@@ -48,7 +48,8 @@
             fill: $color--dark-blue;
         }
 
-        .search-open & {
+        .search-open &,
+        .header--homepage & {
             fill: $color--white;
         }
 
@@ -94,7 +95,12 @@
     }
 
     &--calendar {
+        transition: fill $transition;
         fill: $color--pink;
+
+        .card:hover & {
+            fill: $color--white;
+        }
     }
 
     &--error {

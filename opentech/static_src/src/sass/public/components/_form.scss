@@ -53,6 +53,7 @@
 
         // sass-lint:disable class-name-format
         &--image_field,
+        &--multi_file_field,
         &--file_field {
             @include button($color--light-blue, $color--dark-blue);
             max-width: 290px;

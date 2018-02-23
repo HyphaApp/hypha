@@ -30,6 +30,38 @@
             text-align: left;
         }
     }
+
+    &--focus-areas {
+        @include media-query(mob-landscape) {
+            justify-content: center;
+        }
+
+        > * {
+            flex-basis: 100%;
+
+            @include media-query(mob-landscape) {
+                flex-basis: calc(35% - 20px);
+            }
+
+            @include media-query(desktop) {
+                flex-basis: calc(20% - 20px);
+            }
+        }
+    }
+
+    &--max-three {
+        > * {
+            flex-basis: 100%;
+
+            @include media-query(small-tablet) {
+                flex-basis: calc(30% - 20px);
+            }
+
+            @include media-query(desktop) {
+                flex-basis: calc(280px - 20px);
+            }
+        }
+    }
 }
 
 @supports (display: grid) {
@@ -78,7 +110,7 @@
             grid-template-columns: 1fr;
             grid-gap: 30px; // sass-lint:disable-line no-misspelled-properties
 
-            @include media-query(mob-landscape) {
+            @include media-query(small-tablet) {
                 grid-template-columns: repeat(2, 1fr);
             }
 
@@ -97,6 +129,24 @@
 
         &--no-margin {
             margin: 0;
+        }
+
+        &--focus-areas {
+            margin: 20px 0;
+            grid-gap: 20px;  // sass-lint:disable-line no-misspelled-properties
+            grid-template-columns: 1fr;
+
+            @include media-query(small-tablet) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @include media-query(tablet-landscape) {
+                justify-content: space-between;
+                margin: 3rem 0;
+                grid-gap: 35px;  // sass-lint:disable-line no-misspelled-properties
+                grid-template-columns: repeat(4, 1fr);
+                text-align: center;
+            }
         }
     }
 }

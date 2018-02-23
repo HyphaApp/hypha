@@ -1,0 +1,10 @@
+{% extends "stream_forms/render_field.html" %}
+{% block data_display %}
+    {% if data %}
+        <div class="wrapper wrapper--top-bottom-space">
+            {% include "stream_forms/includes/file_field.html" with file=data %}
+        </div>
+    {% else %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}
