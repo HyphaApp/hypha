@@ -27,13 +27,13 @@
     </div>
 </div>
 
-
-
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
     {# Tab 1 #}
     <div class="tabs__content tabs__content--current" id="tab-1">
         <div class="wrapper wrapper--sidebar">
-            <div>
+            {% include "funds/includes/actions.html" with mobile="true" %}
+            <section class="section section--has-sidebar">
+
                 <h6 class="heading heading--submission-meta">
                     <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
                 </h6>
@@ -63,17 +63,19 @@
                 <div class="rich-text rich-text--answers">
                     {{ object.render_answers }}
                 </div>
-            </div>
+            </section>
 
             <aside class="sidebar">
+                {% include "funds/includes/actions.html" %}
+
                 {% if other_submissions %}
                     <div class="sidebar__inner">
                     <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
 
-                    {% for submission in other_submissions %}
-                        <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
-                    {% endfor %}
-                    </div>
+                        {% for submission in other_submissions %}
+                            <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
+                        {% endfor %}
+                        </div>
                 {% endif %}
             </aside>
         </div>

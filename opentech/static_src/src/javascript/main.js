@@ -35,6 +35,13 @@ import Tabs from './components/tabs';
                 `);
             }
         });
+
+        // Show actions sidebar on mobile
+        $('.js-actions-toggle').click(function(e) {
+            e.preventDefault();
+            this.classList.toggle('is-active');
+            this.nextElementSibling.classList.toggle('is-visible');
+        });
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
@@ -128,6 +135,8 @@ import Tabs from './components/tabs';
             $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
+            $('.js-actions-toggle').removeClass('is-active');
+            $('.js-actions-sidebar').removeClass('is-visible');
         }
     }).trigger('resize');
 })(jQuery);

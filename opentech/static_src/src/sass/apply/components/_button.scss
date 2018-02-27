@@ -42,6 +42,17 @@
         }
     }
 
+    &--white {
+        @include button($color--white, $color--light-blue);
+        display: inline-block;
+        color: $color--light-blue;
+        border: 1px solid $color--mid-grey;
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
     &--filters {
         display: flex;
         justify-content: space-between;
@@ -75,6 +86,61 @@
 
         svg {
             fill: $color--primary;
+        }
+    }
+
+    &--full-width {
+        width: 100%;
+        text-align: center;
+    }
+
+    &--half-width {
+        width: 50%;
+        padding: 10px 0;
+        text-align: center;
+
+        &:first-child {
+            margin-right: 20px;
+        }
+    }
+
+    &--bottom-space {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &--actions {
+        position: relative;
+        display: block;
+        background-color: $color--white;
+
+        &:active {
+            background: $color--light-blue-90;
+        }
+
+        &::after {
+            position: absolute;
+            top: 0;
+            right: 15px;
+            font-size: 30px;
+            content: '+';
+        }
+
+        &.is-active {
+            color: $color--dark-blue;
+            background: $color--light-blue-90;
+
+            &::after {
+                top: -12px;
+                content: '_';
+            }
+        }
+
+        @include media-query(tablet-portrait) {
+            display: none;
         }
     }
 }

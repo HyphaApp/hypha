@@ -1,0 +1,11 @@
+.section {
+    &--has-sidebar {
+        flex-grow: 1;
+        margin: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            padding-right: 20px;
+            margin-bottom: 0;
+        }
+    }
+}

@@ -1,13 +1,51 @@
 .sidebar {
-    margin-top: 20px;
-
     @include media-query(tablet-portrait) {
-        flex-basis: 345px;
-        margin: 0 20px 0 0;
+        width: 345px;
+        margin: 20px 0 0;
     }
 
     &__inner {
         padding: 20px;
+        margin-bottom: 20px;
         border: 1px solid $color--mid-grey;
+
+        &--light-blue {
+            background-color: $color--light-blue-90;
+        }
+
+        &--actions {
+            display: none;
+
+            @include media-query(tablet-portrait) {
+                display: block;
+            }
+        }
+
+        &--mobile {
+            display: none;
+
+            &.is-visible {
+                display: block;
+                border-top: 0;
+            }
+        }
+    }
+
+    &__separator {
+        position: relative;
+        font-size: 12px;
+        font-weight: $weight--bold;
+        color: $color--black-40;
+        text-transform: uppercase;
+
+        &::after {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: calc(100% - 60px);
+            height: 1px;
+            background-color: $color--black-20;
+            content: '';
+        }
     }
 }
