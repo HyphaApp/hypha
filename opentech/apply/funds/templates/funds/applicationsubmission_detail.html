@@ -17,7 +17,7 @@
 
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
     <div class="wrapper wrapper--sidebar">
-        <div>
+        <section class="section section--has-sidebar">
             <h6 class="heading heading--submission-meta">
                 <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
             </h6>
@@ -47,7 +47,7 @@
             <div class="rich-text rich-text--answers">
                 {{ object.render_answers }}
             </div>
-        </div>
+        </section>
 
         <aside class="sidebar">
             {% include "funds/includes/progress_form.html" %}
