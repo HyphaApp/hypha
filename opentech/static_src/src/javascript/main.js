@@ -2,6 +2,7 @@ import jQuery from './globals';
 import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
+import Tabs from './components/tabs';
 
 (function ($) {
     $(document).ready(function(){
@@ -18,6 +19,10 @@ import MobileSearch from './components/mobile-search';
 
         $(MobileSearch.selector()).each((index, el) => {
             new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
+        });
+
+        $(Tabs.selector()).each((index, el) => {
+            new Tabs($(el));
         });
 
         // Show list of selected files for upload on input[type=file]
