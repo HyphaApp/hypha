@@ -14,7 +14,10 @@ def search(request):
     # Search
     if search_query:
         public_site = HomePage.objects.first()
-        search_results = Page.objects.live().descendant_of(public_site).search(search_query, operator='and')
+        search_results = Page.objects.live().descendant_of(
+            public_site,
+            inclusive=True,
+        ).search(search_query, operator='and')
         query = Query.get(search_query)
 
         # Record hit
