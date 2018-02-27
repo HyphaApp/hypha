@@ -4,7 +4,7 @@
 {% block page_title %}Search results{% endblock %}
 {% block title %}{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}{% endblock %}
 {% block content %}
-    <div class="wrapper wrapper--small wrapper--top-bottom-inner-space">
+    <div class="wrapper wrapper--small wrapper--inner-space-medium">
         <h2 class="heading heading--no-margin">{% if search_query %}Search results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h2>
 
         {% if search_results %}
