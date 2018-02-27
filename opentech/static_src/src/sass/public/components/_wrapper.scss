@@ -85,30 +85,6 @@
         }
     }
 
-    &--top-bottom-space {
-        padding: 1rem 0;
-
-        @include media-query(tablet-portrait) {
-            padding: 3rem 0;
-        }
-    }
-
-    &--top-bottom-inner-space {
-        padding: 20px 0;
-
-        @include media-query(mob-landscape) {
-            padding: 2rem 0;
-        }
-    }
-
-    &--top-bottom-outer-space {
-        margin: 20px 0;
-
-        @include media-query(mob-landscape) {
-            margin: 2rem 0;
-        }
-    }
-
     &--light-grey-bg {
         background-color: $color--light-grey;
     }
@@ -117,16 +93,6 @@
         max-width: 1220px;
         padding: 0 20px;
         margin: 0 auto;
-    }
-
-    &--bottom-space {
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-
-        @include media-query(tablet-portrait) {
-            padding-bottom: 3rem;
-            margin-bottom: 3rem;
-        }
     }
 
     &--apply-bar {
@@ -153,7 +119,30 @@
         border: 1px solid $color--tomato;
     }
 
-    &--top-inner-space {
+    &--bottom-space {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+
+        @include media-query(tablet-portrait) {
+            padding-bottom: 3rem;
+            margin-bottom: 3rem;
+        }
+    }
+
+    // Inner spacing
+    &--inner-space-small {
+        padding: 20px 0;
+    }
+
+    &--inner-space-medium {
+        padding: 20px 0;
+
+        @include media-query(mob-landscape) {
+            padding: 2rem 0;
+        }
+    }
+
+    &--inner-space-large {
         padding: 20px 0;
 
         @include media-query(tablet-portrait) {
@@ -161,20 +150,33 @@
         }
     }
 
-    &--top-inner-space-small {
-        padding: 20px 0;
+    &--inner-space-xl {
+        padding: 2rem 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 20px;
+        }
     }
 
-    &--top-outer-space {
+    // Outer spacing
+    &--top-outer-space-small {
+        margin: 20px 0 0;
+    }
+
+    &--outer-space-medium {
+        margin: 20px 0;
+
+        @include media-query(mob-landscape) {
+            margin: 2rem 0;
+        }
+    }
+
+    &--outer-space-large {
         margin: 20px 0;
 
         @include media-query(tablet-portrait) {
             margin: 3rem 0;
         }
-    }
-
-    &--top-outer-space-small {
-        margin: 20px 0 0;
     }
 
     &--sidebar {
@@ -241,13 +243,5 @@
 
     &--center {
         text-align: center;
-    }
-
-    &--inner-space-xl {
-        padding: 2rem 20px;
-
-        @include media-query(tablet-portrait) {
-            padding: 4rem 20px;
-        }
     }
 }
