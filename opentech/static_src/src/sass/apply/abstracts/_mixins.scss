@@ -84,7 +84,6 @@
     font-weight: $weight--bold;
     color: $color--white;
     background: $bg;
-    border: 1px solid $color--white;
     transition: color, background, border, $transition;
 
     &:hover,
