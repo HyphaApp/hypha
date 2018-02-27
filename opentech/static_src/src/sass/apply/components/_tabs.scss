@@ -1,0 +1,44 @@
+.tabs {
+    margin: 20px 0 -20px;
+
+    &__container {
+        display: flex;
+    }
+
+    &__content {
+        display: none;
+
+        &--current {
+            display: inherit;
+        }
+
+    }
+}
+
+.tab__item {
+    @include responsive-font-sizes(12px, 15px);
+    position: relative;
+    padding: 10px;
+    font-weight: $weight--bold;
+    color: $color--mid-grey;
+    text-transform: uppercase;
+    transition: color, background-color, 0.1s ease-out;
+
+    @include media-query(small-tablet) {
+        padding: 20px;
+    }
+
+    &:hover {
+        color: $color--light-blue;
+    }
+
+    &--active {
+        color: $color--default;
+        cursor: default;
+        background-color: $color--white;
+
+        &:hover {
+            background-color: $color--white;
+        }
+    }
+}
