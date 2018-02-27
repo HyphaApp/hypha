@@ -17,6 +17,7 @@
 
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
     <div class="wrapper wrapper--sidebar">
+        {% include "funds/includes/actions.html" with mobile="true" %}
         <section class="section section--has-sidebar">
             <h6 class="heading heading--submission-meta">
                 <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
@@ -52,6 +53,8 @@
         <aside class="sidebar">
             {% include "funds/includes/progress_form.html" %}
             {% include "funds/includes/update_lead_form.html" %}
+            {% include "funds/includes/actions.html" %}
+
             {% if other_submissions %}
                 <div class="sidebar__inner">
                 <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
