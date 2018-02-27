@@ -88,5 +88,28 @@
             fill: $color--primary;
         }
     }
+
+    &--full-width {
+        width: 100%;
+        text-align: center;
+    }
+
+    &--half-width {
+        width: 50%;
+        padding: 10px 0;
+        text-align: center;
+
+        &:first-child {
+            margin-right: 20px;
+        }
+    }
+
+    &--bottom-space {
+        margin-bottom: 10px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
