@@ -42,6 +42,17 @@
         }
     }
 
+    &--white {
+        @include button($color--white, $color--light-blue);
+        display: inline-block;
+        color: $color--light-blue;
+        border: 1px solid $color--mid-grey;
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
     &--filters {
         display: flex;
         justify-content: space-between;
