@@ -1,22 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .utils import send_activation_email
-
-
-def convert_full_name_to_parts(defaults):
-    full_name = defaults.pop('full_name', ' ')
-    if not full_name:
-        # full_name was None
-        full_name = ' '
-    first_name, *last_name = full_name.split(' ')
-    if first_name:
-        defaults.update(first_name=first_name)
-    if last_name:
-        defaults.update(last_name=' '.join(last_name))
-    return defaults
-
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -28,7 +15,6 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
-        extra_fields = convert_full_name_to_parts(extra_fields)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -50,11 +36,6 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-    def get_or_create(self, defaults, **kwargs):
-        # Allow passing of 'full_name' but replace it with actual database fields
-        defaults = convert_full_name_to_parts(defaults)
-        return super().get_or_create(defaults=defaults, **kwargs)
-
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
         defaults.update(is_active=False)
         user, created = self.get_or_create(defaults=defaults, **kwargs)
@@ -63,9 +44,23 @@ class UserManager(BaseUserManager):
         return user, created
 
 
-class User(AbstractUser):
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(_('email address'), max_length=255, unique=True)
+    full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
+    is_staff = models.BooleanField(
+        verbose_name='staff status',
+        default=False,
+        help_text='Designates whether the user can log into this admin site.',
+    )
+    is_active = models.BooleanField(
+        verbose_name='active',
+        default=True,
+        help_text='Designates whether this user should be treated as active. '
+                  'Unselect this instead of deleting accounts.',
+    )
+    date_joined = models.DateTimeField(verbose_name='date joined', default=timezone.now)
+
     USERNAME_FIELD = 'email'
-    email = models.EmailField(_('email address'), unique=True)
     REQUIRED_FIELDS = []
 
     # Remove the username field which is no longer used
@@ -73,5 +68,14 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return self.get_full_name()
+
+    def get_full_name(self):
+        return self.full_name.strip()
+
+    def get_short_name(self):
+        return self.email
