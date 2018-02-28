@@ -3,6 +3,7 @@ import json
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 
 class Command(BaseCommand):
@@ -17,6 +18,7 @@ class Command(BaseCommand):
             help='Perform a run dry-run',
         )
 
+    @transaction.atomic
     def handle(self, *args, **options):
         with options['source'] as json_data:
             User = get_user_model()
