@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='user',
-            options={'ordering': ['id']},
-        ),
         migrations.RemoveField(
             model_name='user',
             name='first_name',
@@ -28,10 +24,5 @@ class Migration(migrations.Migration):
             model_name='user',
             name='full_name',
             field=models.CharField(blank=True, max_length=255, verbose_name='Full name'),
-        ),
-        migrations.AlterField(
-            model_name='user',
-            name='email',
-            field=models.EmailField(max_length=255, unique=True, verbose_name='email address'),
         ),
     ]

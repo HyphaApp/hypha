@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.core.mail import send_mail
-from django.utils import timezone
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
 from .utils import send_activation_email
@@ -46,32 +44,20 @@ class UserManager(BaseUserManager):
         return user, created
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), max_length=255, unique=True)
+class User(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
     full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
-    is_staff = models.BooleanField(
-        verbose_name='staff status',
-        default=False,
-        help_text='Designates whether the user can log into this admin site.',
-    )
-    is_active = models.BooleanField(
-        verbose_name='active',
-        default=True,
-        help_text='Designates whether this user should be treated as active. '
-                  'Unselect this instead of deleting accounts.',
-    )
-    date_joined = models.DateTimeField(verbose_name='date joined', default=timezone.now)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    # Remove the username field which is no longer used
+    # Remove the username/first/last name field which is no longer used.
     username = None
+    first_name = None
+    last_name = None
 
     objects = UserManager()
 
-    class Meta:
-        ordering = ['id']
 
     def __str__(self):
         return self.get_full_name()
@@ -81,7 +67,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.email
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
