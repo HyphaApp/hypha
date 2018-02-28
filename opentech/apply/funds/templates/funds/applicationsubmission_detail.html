@@ -103,12 +103,16 @@
 
     {# Tab 2 #}
     <div class="tabs__content" id="tab-2">
-        Communications content here
-======= end
+        <div class="feed">
+            {% include "funds/includes/feed-item.html" with type="determination" %}
+        </div>
     </div>
 
     {# Tab 3 #}
     <div class="tabs__content" id="tab-3">
+        <div class="feed">
+            {% include "funds/includes/feed-item.html" with type="action" %}
+        </div>
     </div>
 </div>
 {% endblock %}
