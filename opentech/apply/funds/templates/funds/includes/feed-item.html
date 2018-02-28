@@ -1,7 +1,7 @@
 {# feed__label can be feed__label--note, feed__label--determination, feed__label--message or feed__label--action #}
 {# feed__item will have feed__item--opened once the item is opened/read #}
 
-<div class="feed__item">
+<div class="feed__item feed__item--{{type}}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{type}}">{{type|capfirst}}</p>
     </div>
