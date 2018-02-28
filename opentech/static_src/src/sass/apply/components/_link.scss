@@ -49,35 +49,42 @@
     }
 
     &--open-feed {
-        @include button($color--light-blue, $color--dark-blue);
         position: fixed;
         right: 20px;
-        bottom: 0;
+        bottom: 20px;
         z-index: 10;
         display: flex;
         align-items: center;
-        padding: 8px 20px;
+        width: 60px;
+        height: 60px;
         color: $color--white;
-        border: 0;
+        background: url('./../../images/speech-bubble-blue.svg') no-repeat center;
 
         @include media-query(tablet-portrait) {
+            @include button($color--light-blue, $color--dark-blue);
             right: 5%;
+            bottom: 0;
+            width: auto;
+            height: auto;
+            padding: 8px 20px;
+            background: $color--light-blue;
+            border: 0;
+
+            &::after {
+                width: 30px;
+                height: 30px;
+                margin-left: 30px;
+                font-size: 30px;
+                line-height: 0.9;
+                text-align: center;
+                border: 2px solid white;
+                border-radius: 50%;
+                content: '+';
+            }
         }
 
         @include media-query(tablet-landscape) {
             right: 10%;
-        }
-
-        &::after {
-            width: 30px;
-            height: 30px;
-            margin-left: 30px;
-            font-size: 30px;
-            line-height: 0.9;
-            text-align: center;
-            border: 2px solid white;
-            border-radius: 50%;
-            content: '+';
         }
     }
 
