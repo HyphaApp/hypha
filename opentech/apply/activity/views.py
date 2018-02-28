@@ -33,7 +33,7 @@ class CommentFormView(DelegatedCreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.application = self.kwargs['application']
+        form.instance.submission = self.kwargs['submission']
         return super().form_valid(form)
 
     def get_success_url(self):

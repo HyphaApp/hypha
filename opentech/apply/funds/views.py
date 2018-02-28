@@ -54,7 +54,7 @@ class SubmissionDetailView(CommentContextMixin, DetailView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        kwargs['application'] = self.object
+        kwargs['submission'] = self.object
 
         # Information to pretend we originate from this view
         kwargs['template_names'] = self.get_template_names()
