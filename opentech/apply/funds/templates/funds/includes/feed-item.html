@@ -1,0 +1,34 @@
+{# feed__label can be feed__label--note, feed__label--determination, feed__label--message or feed__label--action #}
+{# feed__item will have feed__item--opened once the item is opened/read #}
+
+<div class="feed__item feed__item--{{type}}">
+    <div class="feed__pre-content">
+        <p class="feed__label feed__label--{{type}}">{{type|capfirst}}</p>
+    </div>
+
+    <div class="feed__content">
+        <div class="feed__meta">
+            <p class="feed__label feed__label--{{type}} feed__label--mobile">{{type|capfirst}}</p>
+            <p class="feed__meta-item">mm.dd.yy</p>
+            <p class="feed__meta-item">4:47pm cet</p>
+            <p class="feed__meta-item feed__meta-item--progress"><span>(In discussion</span> <span>Proposal requested)</span></p>
+        </div>
+
+        <div class="feed__heading">
+            <h4 class="feed__name">Sandra Ordonez <span class="feed__company">(OTF)</span></h4>
+
+            {% if type == 'note' or type == 'determination' or type == 'message' %}
+                <p class="feed__heading-status">Posted</p>
+                <h6>for</h6>
+                <h6><a href="#">Submission Title</a></h6>
+            {% endif %}
+        </div>
+
+        {% if type == 'note' or type == 'determination' or type == 'message' %}
+            <p class="feed__teaser">Team review call:  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit</p>
+        {% endif %}
+    </div>
+</div>
+
+
+
