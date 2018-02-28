@@ -47,4 +47,62 @@
             }
         }
     }
+
+    &--open-feed {
+        @include button($color--light-blue, $color--dark-blue);
+        position: fixed;
+        right: 20px;
+        bottom: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        padding: 8px 20px;
+        color: $color--white;
+        border: 0;
+
+        @include media-query(tablet-portrait) {
+            right: 5%;
+        }
+
+        @include media-query(tablet-landscape) {
+            right: 10%;
+        }
+
+        &::after {
+            width: 30px;
+            height: 30px;
+            margin-left: 30px;
+            font-size: 30px;
+            line-height: 0.9;
+            text-align: center;
+            border: 2px solid white;
+            border-radius: 50%;
+            content: '+';
+        }
+    }
+
+    &--close-feed {
+        position: absolute;
+        top: 30px;
+        right: 0;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: $color--white;
+        text-transform: uppercase;
+        top: 25px;
+
+        &::after {
+            width: 30px;
+            height: 30px;
+            margin-left: 20px;
+            font-size: 30px;
+            line-height: 0.1;
+            text-align: center;
+            border: 2px solid white;
+            border-radius: 50%;
+            content: '_';
+        }
+    }
 }
