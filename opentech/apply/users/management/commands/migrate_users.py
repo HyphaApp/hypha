@@ -29,15 +29,22 @@ class Command(BaseCommand):
                 full_name = self.get_full_name(user)
                 user_object, created = User.objects.get_or_create(
                     email=user.get('mail'),
-                    defaults={'full_name': full_name}
+                    defaults={
+                        'full_name': full_name,
+                        'drupal_id': uid,
+                    }
                 )
 
-                if created:
-                    print("Imported user %s (%s)" % (uid, full_name))
+                operation = "Imported" if created else "Processed"
 
                 for group in self.get_user_groups(user):
                     user_object.groups.add(group)
+
+                # Ensure uid is set
+                user_object.drupal_id = uid
                 user_object.save()
+
+                print(f"{operation} user {uid} ({full_name})")
 
     def get_full_name(self, user):
         full_name = user.get('field_otf_real_name', None)
@@ -47,7 +54,6 @@ class Command(BaseCommand):
             full_name = user.get('name')
 
         return full_name
-
 
     def get_user_groups(self, user):
         groups = []
