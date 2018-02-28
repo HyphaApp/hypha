@@ -16,12 +16,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('source', nargs='?', type=argparse.FileType('r'), help='Migration source JSON file')
-        parser.add_argument(
-            '--dry-run',
-            action='store_true',
-            dest='dry_run',
-            help='Perform a run dry-run',
-        )
 
     @transaction.atomic
     def handle(self, *args, **options):
