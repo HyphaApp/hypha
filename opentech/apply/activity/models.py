@@ -7,3 +7,6 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     application = models.ForeignKey('funds.ApplicationSubmission')
     message = models.TextField()
+
+    class Meta:
+        ordering = ['-timestamp']
