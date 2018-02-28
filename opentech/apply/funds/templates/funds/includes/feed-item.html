@@ -16,9 +16,12 @@
 
         <div class="feed__heading">
             <h4 class="feed__name">Sandra Ordonez <span class="feed__company">(OTF)</span></h4>
-            <p class="feed__heading-status">Posted</p>
-            <h6>for</h6>
-            <h6><a href="#">Submission Title</a></h6>
+
+            {% if type == 'note' or type == 'determination' or type == 'message' %}
+                <p class="feed__heading-status">Posted</p>
+                <h6>for</h6>
+                <h6><a href="#">Submission Title</a></h6>
+            {% endif %}
         </div>
 
         {% if type == 'note' or type == 'determination' or type == 'message' %}
