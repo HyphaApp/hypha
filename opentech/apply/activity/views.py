@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.views.generic.edit import ModelFormMixin
 
-# Create your views here.
+from .forms import CommentForm
+
+
+class CommentFormViewMixin(ModelFormMixin):
+    form_class = CommentForm
