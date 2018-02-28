@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = "User migration script. Requires a source JSON file."
 
     def add_arguments(self, parser):
-        parser.add_argument('source', nargs='?', type=argparse.FileType('r'))
+        parser.add_argument('source', nargs='?', type=argparse.FileType('r'), help='Migration source JSON file')
         parser.add_argument(
             '--dry-run',
             action='store_true',
@@ -22,8 +22,14 @@ class Command(BaseCommand):
             User = get_user_model()
             users = json.load(json_data)
 
-            for user in users:
+            from pprint import pprint
+            for uid in users:
+                user = users[uid]
+
                 full_name = user.get('field_otf_real_name', None)
+                if isinstance(name, dict) and 'und' in name:
+                    full_name = name['und'][0]['safe_value']
+
                 if not full_name:
                     full_name = user.get('name')
 
@@ -33,4 +39,4 @@ class Command(BaseCommand):
                 )
 
                 if created:
-                    print("Imported user %s (%s)" % (user['uid'], full_name))
+                    print("Imported user %s (%s)" % (uid, full_name))
