@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.mail import send_mail
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .utils import send_activation_email
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -74,8 +76,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.get_full_name()
 
+    def clean(self):
+        super().clean()
+        self.email = self.__class__.objects.normalize_email(self.email)
+
     def get_full_name(self):
         return self.full_name.strip()
 
     def get_short_name(self):
         return self.email
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """Send an email to this user."""
+        send_mail(subject, message, from_email, [self.email], **kwargs)
