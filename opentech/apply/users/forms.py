@@ -1,7 +1,7 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
 
 from wagtail.wagtailusers.forms import UserEditForm, UserCreationForm
+
 
 class CustomUserAdminFormBase():
     def __init__(self, *args, **kwargs):
@@ -11,8 +11,10 @@ class CustomUserAdminFormBase():
         self.fields['first_name'].widget = forms.HiddenInput(attrs={'value': f"Not used - see full_name"})
         self.fields['last_name'].widget = forms.HiddenInput(attrs={'value': f"Not used - see full_name"})
 
+
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
     pass
+
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
     pass
