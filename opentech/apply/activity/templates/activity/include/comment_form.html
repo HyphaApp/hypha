@@ -1,0 +1,5 @@
+<form method="post">
+    {% csrf_token %}
+    {{ comment_form }}
+    <input type="submit" value="Comment">
+</form>
