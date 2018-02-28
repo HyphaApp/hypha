@@ -51,4 +51,12 @@
         width: 14px;
         height: 14px;
     }
+
+    &--speech-bubble {
+        fill: $color--white;
+
+        .activity-feed__header & {
+            margin-left: 10px;
+        }
+    }
 }
