@@ -18,13 +18,20 @@
 .tab__item {
     @include responsive-font-sizes(12px, 15px);
     position: relative;
-    padding: 10px;
+    width: 33%;
+    padding: 7px;
     font-weight: $weight--bold;
+    hyphens: auto;
     color: $color--mid-grey;
     text-transform: uppercase;
     transition: color, background-color, 0.1s ease-out;
 
+    @include media-query(mob-landscape) {
+        padding: 15px;
+    }
+
     @include media-query(small-tablet) {
+        width: auto;
         padding: 20px;
     }
 
