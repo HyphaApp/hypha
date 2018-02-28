@@ -90,7 +90,7 @@
 
     &--close-feed {
         position: absolute;
-        top: 30px;
+        top: 20px;
         right: 0;
         display: flex;
         align-items: center;
@@ -98,18 +98,25 @@
         font-weight: 700;
         color: $color--white;
         text-transform: uppercase;
-        top: 25px;
+
+        @include media-query(tablet-portrait) {
+            top: 25px;
+        }
 
         &::after {
             width: 30px;
             height: 30px;
-            margin-left: 20px;
+            margin-left: 10px;
             font-size: 30px;
             line-height: 0.1;
             text-align: center;
             border: 2px solid white;
             border-radius: 50%;
             content: '_';
+
+            @include media-query(tablet-portrait) {
+                margin-left: 20px;
+            }
         }
     }
 }
