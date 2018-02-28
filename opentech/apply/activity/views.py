@@ -5,7 +5,6 @@ from .models import Activity
 
 
 class CommentContextMixin:
-    # Adds the comment form to the context
     def get_context_data(self, **kwargs):
         extra = {
             'comments': Activity.objects.filter(application=self.object),
