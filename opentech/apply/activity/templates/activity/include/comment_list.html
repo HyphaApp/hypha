@@ -1,0 +1,7 @@
+{% for comment in comments %}
+<div>
+    <p>{{ comment.timestamp }}</p>
+    <p>{{ comment.user }}</p>
+    <p>{{ comment.message }}</p>
+</div>
+{% endfor %}
