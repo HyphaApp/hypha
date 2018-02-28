@@ -24,15 +24,13 @@ class Command(BaseCommand):
             User = get_user_model()
             users = json.load(json_data)
 
-            from pprint import pprint
             for uid in users:
                 user = users[uid]
 
                 full_name = user.get('field_otf_real_name', None)
-                if isinstance(name, dict) and 'und' in name:
-                    full_name = name['und'][0]['safe_value']
-
-                if not full_name:
+                try:
+                    full_name = full_name['und'][0]['safe_value']
+                except (KeyError, TypeError):
                     full_name = user.get('name')
 
                 _, created = User.objects.get_or_create(
