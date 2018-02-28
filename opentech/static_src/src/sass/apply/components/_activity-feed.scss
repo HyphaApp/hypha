@@ -19,15 +19,22 @@
     }
 
     &__header {
-        text-align: center;
+        padding: 0 20px;
         background-color: $color--default;
+
+        @include media-query(tablet-portrait) {
+            padding: 0;
+        }
     }
 
     &__heading {
         display: flex;
         align-items: center;
-        justify-content: center;
         padding: 20px 0;
         color: $color--white;
+
+        @include media-query(tablet-portrait) {
+            justify-content: center;
+        }
     }
 }
