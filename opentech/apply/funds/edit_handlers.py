@@ -46,7 +46,15 @@ class ReadOnlyPanel(EditHandler):
     def __init__(self, attr, **kwargs):
         self.attr = attr
         super().__init__(**kwargs)
-        self.heading = pretty_name(self.attr) if self.heading is None else self.heading
+        self.heading = pretty_name(self.attr) if not self.heading else self.heading
+
+    def clone(self):
+        return self.__class__(
+            attr=self.attr,
+            heading=self.heading,
+            classname=self.classname,
+            help_text=self.help_text,
+        )
 
     def context(self):
         try:
@@ -76,9 +84,14 @@ class ReadOnlyPanel(EditHandler):
 class ReadOnlyInlinePanel(ReadOnlyPanel):
     template = 'wagtailadmin/edit_handlers/multi_field_panel.html'
 
-    def on_model_bound(self, model):
+    def get_child_edit_handler(self):
+        child_edit_handler = ReadOnlyPanel(self.attr)
+        return child_edit_handler.bind_to_model(getattr(self.instance, self.attr))
+
+    def on_instance_bound(self):
         values = getattr(self.instance, self.attr).all()
-        self.children = [ReadOnlyPanel(value, form=self.form) for value in values]
+        child_panel = self.get_child_edit_handler()
+        self.children = [child_panel.bind_to_instance(value, form=self.form) for value in values]
 
 
 class FilteredFieldPanel(FieldPanel):
