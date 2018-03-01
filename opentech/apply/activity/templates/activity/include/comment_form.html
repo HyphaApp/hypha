@@ -1,5 +1,5 @@
-<form method="post">
+<form method="post" id="comment-form">
     {% csrf_token %}
     {{ comment_form }}
-    <input type="submit" value="Comment">
+    <input id="comment-form-submit" name="form-submitted" type="submit" form="comment-form" value="Comment">
 </form>
