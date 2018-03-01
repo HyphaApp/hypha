@@ -1,7 +1,7 @@
 from collections import defaultdict
 import copy
 
-from typing import Iterable, Iterator, List, Sequence, Type, Union
+from typing import Dict, Iterable, Iterator, List, Sequence, Type, Union
 
 from django.forms import Form
 from django.utils.text import slugify
@@ -118,7 +118,7 @@ class Stage(Iterable):
         # Make the phases new instances to prevent errors with mutability
         self.phases = self.copy_phases(self.phases)
 
-    def copy_phases(self, phases):
+    def copy_phases(self, phases: List['Phase']) -> List['Phase']:
         new_phases = list()
         for step, phase in enumerate(self.phases):
             try:
@@ -129,12 +129,12 @@ class Stage(Iterable):
                     new_phases.append(self.copy_phase(sub_phase, step))
         return new_phases
 
-    def copy_phase(self, phase, step: int):
+    def copy_phase(self, phase: 'Phase', step: int) -> 'Phase':
         phase.stage = self
         phase.step = step
         return copy.copy(phase)
 
-    def __iter__(self) -> Iterator['Phase']:
+    def __iter__(self) -> 'PhaseIterator':
         return PhaseIterator(self.phases, self.steps)
 
     def __str__(self) -> str:
@@ -169,35 +169,35 @@ class Stage(Iterable):
         return None
 
 
-class PhaseIterator:
+class PhaseIterator(Iterator):
     class Step:
-        def __init__(self, phases):
+        def __init__(self, phases: List['Phase']) -> None:
             self.phases = phases
 
         @property
-        def step(self):
+        def step(self) -> int:
             return self.phases[0].step
 
         @property
-        def name(self):
+        def name(self) -> str:
             if len(self.phases) > 1:
                 return 'Outcome'
             return self.phases[0].name
 
-        def __eq__(self, other):
+        def __eq__(self, other: object) -> bool:
             return any(phase == other for phase in self.phases)
 
-    def __init__(self, phases, steps):
+    def __init__(self, phases: List['Phase'], steps: int) -> None:
         self.current = 0
-        self.phases = defaultdict(list)
+        self.phases: Dict[int, List['Phase']] = defaultdict(list)
         for phase in phases:
             self.phases[phase.step].append(phase)
         self.steps = steps
 
-    def __iter__(self):
+    def __iter__(self) -> 'PhaseIterator':
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'Step':
         self.current += 1
         if self.current > self.steps:
             raise StopIteration
@@ -225,7 +225,7 @@ class Phase:
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
-        self.step : int = 0
+        self.step: int = 0
 
     def __eq__(self, other: Union[object, str]) -> bool:
         if isinstance(other, str):
@@ -270,7 +270,7 @@ class ChangePhaseAction(Action):
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            return phase.stage.get_phase(self.target_phase )
+            return phase.stage.get_phase(self.target_phase)
         return self.target_phase
 
 
@@ -348,7 +348,7 @@ class ProposalStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase('AC Review', public_name='In AC review'),
         DiscussionPhase(public_name='In AC review'),
-        [accepted, rejected,]
+        [accepted, rejected]
     ]
 
 
