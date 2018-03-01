@@ -60,7 +60,8 @@ class PersonPagePersonType(models.Model):
     page = ParentalKey('PersonPage', related_name='person_types')
     person_type = models.ForeignKey(
         'PersonType',
-        related_name='+'
+        related_name='+',
+        on_delete=models.PROTECT,
     )
 
     panels = [

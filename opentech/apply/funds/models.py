@@ -212,7 +212,7 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
 
 
 class AbstractRelatedForm(Orderable):
-    form = models.ForeignKey('ApplicationForm')
+    form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
 
     panels = [
         FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
@@ -260,7 +260,11 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        on_delete=models.PROTECT,
+    )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
