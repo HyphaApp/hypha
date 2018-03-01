@@ -568,4 +568,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
 
     def __str__(self):
-        return str(super().__str__())
+        return f'{self.title} from {self.full_name} for {self.page.title}'
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: {str(self.form_data)}>'

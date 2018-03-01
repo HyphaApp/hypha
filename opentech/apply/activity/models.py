@@ -41,3 +41,6 @@ class Activity(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    def __str__(self):
+        return '{}: for "{}"'.format(self.get_type_display(), self.submission)
