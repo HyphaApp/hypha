@@ -4,9 +4,10 @@ from .forms import CommentForm
 from .models import Activity, COMMENT
 
 
-class CommentContextMixin:
+class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
+            'activity': Activity.activities.filter(submission=self.object),
             'comments': Activity.comments.filter(submission=self.object),
             CommentFormView.context_name: CommentFormView.form_class(),
         }
@@ -38,4 +39,4 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return self.object.application.get_absolute_url()
+        return self.object.submission.get_absolute_url()

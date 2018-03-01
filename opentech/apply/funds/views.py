@@ -5,7 +5,7 @@ from django.views.generic import DetailView, UpdateView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from opentech.apply.activity.views import CommentContextMixin, CommentFormView, DelegatedViewMixin
+from opentech.apply.activity.views import ActivityContextMixin, CommentFormView, DelegatedViewMixin
 from opentech.apply.activity.models import Activity
 
 from .forms import ProgressSubmissionForm
@@ -70,7 +70,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
         return response
 
 
-class SubmissionDetailView(CommentContextMixin, ProgressContextMixin, DetailView):
+class SubmissionDetailView(ActivityContextMixin, ProgressContextMixin, DetailView):
     model = ApplicationSubmission
     form_views = {
         'progress': ProgressSubmissionView,
