@@ -12,14 +12,14 @@ Workflow -> Stage -> Phase -> Action
 """
 
 
-def phase_name(stage: 'Stage', phase: Union['Phase', str], occurrence: int) -> str:
+def phase_name(stage: 'Stage', phase: Union['Phase', str], step: int) -> str:
     # Build the identifiable name for a phase
     if not isinstance(phase, str):
         phase_name = phase._internal
     else:
         phase_name = phase
 
-    return '__'.join([stage.name, phase_name, str(occurrence)])
+    return '__'.join([stage.name, phase_name, str(step)])
 
 
 class Workflow(Iterable):
@@ -113,16 +113,25 @@ class Stage(Iterable):
         # TODO: consider removing form from stage as the stage is generic and
         # shouldn't care about forms.
         self.form = form
+        self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
-        existing_phases: set = set()
-        new_phases: list = list()
-        for phase in self.phases:
-            phase.stage = self
-            while str(phase) in existing_phases:
-                phase.occurrence += 1
-            existing_phases.add(str(phase))
-            new_phases.append(copy.copy(phase))
-        self.phases = new_phases
+        self.phases = self.copy_phases(self.phases)
+
+    def copy_phases(self, phases):
+        new_phases = list()
+        for step, phase in enumerate(self.phases):
+            try:
+                new_phases.append(self.copy_phase(phase, step))
+            except AttributeError:
+                # We have a step with multiple equivalent phases
+                for sub_phase in phase:
+                    new_phases.append(self.copy_phase(sub_phase, step))
+        return new_phases
+
+    def copy_phase(self, phase, step: int):
+        phase.stage = self
+        phase.step = step
+        return copy.copy(phase)
 
     def __iter__(self) -> Iterator['Phase']:
         yield from self.phases
@@ -173,12 +182,12 @@ class Phase:
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
-        self.occurrence: int = 0
+        self.step : int = 0
 
     def __eq__(self, other: Union[object, str]) -> bool:
         if isinstance(other, str):
             return str(self) == other
-        to_match = ['name', 'occurrence']
+        to_match = ['name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
@@ -186,7 +195,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return phase_name(self.stage, self, self.occurrence)
+        return phase_name(self.stage, self, self.step)
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
@@ -275,8 +284,7 @@ class RequestStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionPhase(),
-        accepted,
-        rejected,
+        [accepted, rejected]
     ]
 
 
@@ -285,8 +293,7 @@ class ConceptStage(Stage):
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
-        DiscussionWithProgressionPhase(),
-        rejected,
+        [DiscussionWithProgressionPhase(), rejected]
     ]
 
 
@@ -298,8 +305,7 @@ class ProposalStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase('AC Review', public_name='In AC review'),
         DiscussionPhase(public_name='In AC review'),
-        accepted,
-        rejected,
+        [accepted, rejected,]
     ]
 
 
