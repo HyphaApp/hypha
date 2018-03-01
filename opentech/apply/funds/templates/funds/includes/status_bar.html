@@ -1,17 +1,26 @@
 <div class="status-bar">
-    {# '.status-bar__item--is-complete' needs to be added to each 'complete' step #}
-    {# '.status-bar__item--is-current' needs to be added to the current step #}
-    {% for phase in workflow %}
-        <div class="status-bar__item status-bar__item--{% if phase == status %}is-current{% elif phase.step < status.step %}is-complete{% endif %}">
-            <span class="status-bar__tooltip" data-title="{{ phase.name }}" aria-label="{{ phase.name }}"></span>
+    {% for phase in status.stage %}
+        <div class="status-bar__item
+                    {% if phase == status %}
+                        status-bar__item--is-current
+                    {% elif phase.step < status.step %}
+                        status-bar__item--is-complete
+                    {% endif %}">
+            <span class="status-bar__tooltip"
+                {% if phase == status %}
+                    data-title="{{ status.name }}" aria-label="{{ status.name }}"
+                {% else %}
+                    data-title="{{ phase.name }}" aria-label="{{ phase.name }}"
+                {% endif %}
+            ></span>
             <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
         </div>
     {% endfor %}
 </div>
 <div class="status-bar--mobile">
-    {% for phase in workflow %}
+    {% for phase in status.stage %}
         {% if phase == status %}
-            <h6 class="status-bar__subheading">{{ phase.name }}</h6>
+            <h6 class="status-bar__subheading">{{ status.name }}</h6>
         {% endif %}
     {% endfor %}
 </div>
