@@ -1,3 +1,4 @@
+from collections import defaultdict
 import copy
 
 from typing import Iterable, Iterator, List, Sequence, Type, Union
@@ -134,7 +135,7 @@ class Stage(Iterable):
         return copy.copy(phase)
 
     def __iter__(self) -> Iterator['Phase']:
-        yield from self.phases
+        return PhaseIterator(self.phases, self.steps)
 
     def __str__(self) -> str:
         return self.name
@@ -159,6 +160,41 @@ class Stage(Iterable):
                 except IndexError:
                     pass
         return None
+
+
+class PhaseIterator:
+    class Step:
+        def __init__(self, phases):
+            self.phases = phases
+
+        @property
+        def step(self):
+            return self.phases[0].step
+
+        @property
+        def name(self):
+            if len(self.phases) > 1:
+                return 'Outcome'
+            return self.phases[0].name
+
+        def __eq__(self, other):
+            return any(phase == other for phase in self.phases)
+
+    def __init__(self, phases, steps):
+        self.current = 0
+        self.phases = defaultdict(list)
+        for phase in phases:
+            self.phases[phase.step].append(phase)
+        self.steps = steps
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.current += 1
+        if self.current > self.steps:
+            raise StopIteration
+        return self.Step(self.phases[self.current - 1])
 
 
 class Phase:
