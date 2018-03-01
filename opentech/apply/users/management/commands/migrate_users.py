@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
                 full_name = self.get_full_name(user)
                 user_object, created = User.objects.get_or_create(
-                    email=user.get('mail'),
+                    email=user['mail'],
                     defaults={
                         'full_name': full_name,
                         'drupal_id': uid,
@@ -49,18 +49,11 @@ class Command(BaseCommand):
     def get_full_name(self, user):
         full_name = user.get('field_otf_real_name', None)
         try:
-            """
-            Drupal is i18n-ready out of the box. As such, the data
-            structure includes a language reference, defaulting to 'und' (undefined)
-            In addition to that, most fields are arrays indexed by language, and
-            the value delta. Different field types will have a different value.
-            Native entity fields are loaded directly (as string or int). They are
-            things like entity id, owner, created/updated timestamp.
-            And name/mail on users.
-            """
+            # The Drupal data structure includes a language reference.
+            # The default is 'und' (undefined).
             full_name = full_name['und'][0]['safe_value']
         except (KeyError, TypeError):
-            full_name = user.get('name')
+            full_name = user['name']
 
         return full_name
 
