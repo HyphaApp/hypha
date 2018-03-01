@@ -15,7 +15,7 @@ class Command(BaseCommand):
     groups = Group.objects.all()
 
     def add_arguments(self, parser):
-        parser.add_argument('source', nargs='?', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -37,18 +37,27 @@ class Command(BaseCommand):
 
                 operation = "Imported" if created else "Processed"
 
-                for group in self.get_user_groups(user):
-                    user_object.groups.add(group)
+                groups = self.get_user_groups(user)
+                user_object.groups.set(groups)
 
                 # Ensure uid is set
                 user_object.drupal_id = uid
                 user_object.save()
 
-                print(f"{operation} user {uid} ({full_name})")
+                self.stdout.write(f"{operation} user {uid} ({full_name})")
 
     def get_full_name(self, user):
         full_name = user.get('field_otf_real_name', None)
         try:
+            """
+            Drupal is i18n-ready out of the box. As such, the data
+            structure includes a language reference, defaulting to 'und' (undefined)
+            In addition to that, most fields are arrays indexed by language, and
+            the value delta. Different field types will have a different value.
+            Native entity fields are loaded directly (as string or int). They are
+            things like entity id, owner, created/updated timestamp.
+            And name/mail on users.
+            """
             full_name = full_name['und'][0]['safe_value']
         except (KeyError, TypeError):
             full_name = user.get('name')
