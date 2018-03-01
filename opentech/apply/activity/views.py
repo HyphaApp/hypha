@@ -7,7 +7,7 @@ from .models import Activity
 class CommentContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
-            'comments': Activity.objects.filter(application=self.object),
+            'comments': Activity.objects.filter(submission=self.object),
             CommentFormView.context_name: CommentFormView.form_class(),
         }
 
