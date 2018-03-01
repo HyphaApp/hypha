@@ -86,6 +86,17 @@ class FilteredFieldPanel(FieldPanel):
         self.filter_query = filter_query
         super().__init__(*args, **kwargs)
 
-    def on_model_bound(self, model):
+    def clone(self):
+        return self.__class__(
+            field_name=self.field_name,
+            widget=self.widget if hasattr(self, 'widget') else None,
+            heading=self.heading,
+            classname=self.classname,
+            help_text=self.help_text,
+            filter_query=self.filter_query,
+        )
+
+    def on_instance_bound(self):
+        super().on_instance_bound()
         target_model = self.bound_field.field.queryset.model
         self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)
