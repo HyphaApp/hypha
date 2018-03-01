@@ -1,6 +1,6 @@
 from django import forms
 from django.template.response import TemplateResponse
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, View
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -44,7 +44,7 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
-class ProgressContextMixin:
+class ProgressContextMixin(View):
     def get_context_data(self, **kwargs):
         extra = {
             ProgressSubmissionView.context_name: ProgressSubmissionView.form_class(instance=self.object),

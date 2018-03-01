@@ -8,7 +8,7 @@ class ProgressSubmissionForm(forms.ModelForm):
 
     class Meta:
         model = ApplicationSubmission
-        fields = []
+        fields: list = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
