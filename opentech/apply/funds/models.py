@@ -38,7 +38,7 @@ from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .forms import WorkflowFormAdminForm
+from .admin_forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage
 
 
