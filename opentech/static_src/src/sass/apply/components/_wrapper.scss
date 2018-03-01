@@ -232,4 +232,12 @@
             flex-direction: row;
         }
     }
+
+    &--comments {
+        padding: 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 30px;
+        }
+    }
 }

@@ -44,5 +44,22 @@
             margin-top: 15px;
         }
     }
+
+    textarea,
+    &__textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid lightgrey;
+
+        &--comments {
+            display: block;
+            height: 100px;
+            margin-bottom: 20px;
+
+            @include media-query(tablet-portrait) {
+                max-width: 60%;
+            };
+        }
+    }
 }
 

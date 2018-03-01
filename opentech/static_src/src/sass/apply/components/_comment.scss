@@ -1,0 +1,33 @@
+.comment {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid $color--light-mid-grey;
+
+    @include media-query(tablet-portrait) {
+        max-width: 60%;
+    }
+
+    &:first-of-type {
+        margin-top: 20px;
+    }
+
+    &:last-of-type {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+    }
+
+    &__time,
+    &__user,
+    &__copy {
+        margin: 0;
+    }
+
+    &__time {
+        font-size: map-get($font-sizes, milli);
+    }
+
+    &__user {
+        font-weight: $weight--semibold;
+    }
+}
