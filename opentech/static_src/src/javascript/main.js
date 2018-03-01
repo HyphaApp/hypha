@@ -42,6 +42,18 @@ import Tabs from './components/tabs';
             this.classList.toggle('is-active');
             this.nextElementSibling.classList.toggle('is-visible');
         });
+
+        // Open the activity feed
+        $('.js-open-feed').click(function(e) {
+            e.preventDefault();
+            $('.js-activity-feed').addClass('is-open');
+        });
+
+        // Close the activity feed
+        $('.js-close-feed').click(function(e) {
+            e.preventDefault();
+            $('.js-activity-feed').removeClass('is-open');
+        });
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,

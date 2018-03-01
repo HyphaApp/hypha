@@ -1,0 +1,40 @@
+.activity-feed {
+    position: fixed;
+    top: 140px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: top, opacity, $transition;
+
+    &.is-open {
+        top: 0;
+        z-index: 20;
+        width: 100%;
+        height: 100vh;
+        background: $color--white;
+        opacity: 1;
+        transition: opacity, top, $transition;
+    }
+
+    &__header {
+        padding: 0 20px;
+        background-color: $color--default;
+
+        @include media-query(tablet-portrait) {
+            padding: 0;
+        }
+    }
+
+    &__heading {
+        display: flex;
+        align-items: center;
+        padding: 20px 0;
+        color: $color--white;
+
+        @include media-query(tablet-portrait) {
+            justify-content: center;
+        }
+    }
+}

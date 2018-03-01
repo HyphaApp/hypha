@@ -47,4 +47,76 @@
             }
         }
     }
+
+    &--open-feed {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        color: $color--white;
+        background: url('./../../images/speech-bubble-blue.svg') no-repeat center;
+
+        @include media-query(tablet-portrait) {
+            @include button($color--light-blue, $color--dark-blue);
+            right: 5%;
+            bottom: 0;
+            width: auto;
+            height: auto;
+            padding: 8px 20px;
+            background: $color--light-blue;
+            border: 0;
+
+            &::after {
+                width: 30px;
+                height: 30px;
+                margin-left: 30px;
+                font-size: 30px;
+                line-height: 0.9;
+                text-align: center;
+                border: 2px solid white;
+                border-radius: 50%;
+                content: '+';
+            }
+        }
+
+        @include media-query(tablet-landscape) {
+            right: 10%;
+        }
+    }
+
+    &--close-feed {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: $color--white;
+        text-transform: uppercase;
+
+        @include media-query(tablet-portrait) {
+            top: 25px;
+        }
+
+        &::after {
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            font-size: 30px;
+            line-height: 0.1;
+            text-align: center;
+            border: 2px solid white;
+            border-radius: 50%;
+            content: '_';
+
+            @include media-query(tablet-portrait) {
+                margin-left: 20px;
+            }
+        }
+    }
 }
