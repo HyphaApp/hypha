@@ -1,13 +1,13 @@
 from django.views.generic import CreateView, View
 
 from .forms import CommentForm
-from .models import Activity
+from .models import Activity, COMMENT
 
 
 class CommentContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
-            'comments': Activity.objects.filter(submission=self.object),
+            'comments': Activity.comments.filter(submission=self.object),
             CommentFormView.context_name: CommentFormView.form_class(),
         }
 
@@ -34,6 +34,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.submission = self.kwargs['submission']
+        form.instance.type = COMMENT
         return super().form_valid(form)
 
     def get_success_url(self):
