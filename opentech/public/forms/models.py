@@ -7,10 +7,8 @@ from wagtail.admin.edit_handlers import (
     FieldPanel, FieldRowPanel,
     MultiFieldPanel, InlinePanel
 )
-from wagtail.contrib.forms.models import AbstractFormField
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField
 from wagtail.search import index
-
-from wagtailcaptcha.models import WagtailCaptchaEmailForm
 
 from opentech.public.utils.models import BasePage
 
@@ -19,7 +17,7 @@ class FormField(AbstractFormField):
     page = ParentalKey('FormPage', related_name='form_fields')
 
 
-class FormPage(WagtailCaptchaEmailForm, BasePage):
+class FormPage(AbstractEmailForm, BasePage):
     subpage_types = []
 
     introduction = models.TextField(blank=True)
