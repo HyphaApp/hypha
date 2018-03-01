@@ -142,8 +142,15 @@ class Stage(Iterable):
 
     def get_phase(self, phase_name: str) -> 'Phase':
         for phase in self.phases:
-            if str(phase) == phase_name:
+            if phase == phase_name:
                 return phase
+
+        # We don't have the exact name
+        for phase in self.phases:
+            if phase._internal == phase_name:
+                # Grab the first phase to match the name
+                return phase
+
         return None
 
     def first(self) -> 'Phase':
@@ -263,7 +270,7 @@ class ChangePhaseAction(Action):
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            return phase.stage.get_phase(phase_name(phase.stage, self.target_phase, 0))
+            return phase.stage.get_phase(self.target_phase )
         return self.target_phase
 
 
