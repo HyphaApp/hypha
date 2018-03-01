@@ -6,6 +6,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 from opentech.apply.activity.views import CommentContextMixin, CommentFormView, DelegatedViewMixin
+from opentech.apply.activity.models import Activity
 
 from .forms import ProgressSubmissionForm
 from .models import ApplicationSubmission
@@ -58,7 +59,15 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'progress_form'
 
     def form_valid(self, form):
-        return super().form_valid(form)
+        old_phase = form.instance.phase.name
+        response = super().form_valid(form)
+        new_phase = form.instance.phase.name
+        Activity.objects.create(
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            message=f'Progressed from {old_phase} to {new_phase}'
+        )
+        return response
 
 
 class SubmissionDetailView(CommentContextMixin, ProgressContextMixin, DetailView):
