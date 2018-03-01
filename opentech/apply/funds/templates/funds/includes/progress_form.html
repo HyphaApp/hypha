@@ -1,5 +1,7 @@
+{% if progress_form.should_show %}
 <form method="post" id="progress-form">
     {% csrf_token %}
     {{ progress_form }}
     <input id="progress-form-submit" name="form-submitted" type="submit" form="progress-form" value="Progress">
 </form>
+{% endif %}
