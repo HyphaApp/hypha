@@ -1,12 +1,13 @@
 from django import forms
 from django.template.response import TemplateResponse
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from opentech.apply.activity.views import CommentContextMixin, CommentFormView
+from opentech.apply.activity.views import CommentContextMixin, CommentFormView, DelegatedViewMixin
 
+from .forms import ProgressSubmissionForm
 from .models import ApplicationSubmission
 from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
@@ -42,7 +43,21 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
-class SubmissionDetailView(CommentContextMixin, DetailView):
+class ProgressContextMixin:
+    def get_context_data(self, **kwargs):
+        extra = {
+            ProgressSubmissionView.context_name: ProgressSubmissionView.form_class(instance=self.object),
+        }
+
+        return super().get_context_data(**extra, **kwargs)
+
+
+class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
+     form_class = ProgressSubmissionForm
+     context_name = 'progress_form'
+
+
+class SubmissionDetailView(CommentContextMixin, ProgressContextMixin, DetailView):
     model = ApplicationSubmission
 
     def get_context_data(self, **kwargs):
@@ -60,6 +75,7 @@ class SubmissionDetailView(CommentContextMixin, DetailView):
         kwargs['template_names'] = self.get_template_names()
         kwargs['context'] = self.get_context_data()
 
+        import pudb; pudb.set_trace()
         view = CommentFormView.as_view()
 
         return view(request, *args, **kwargs)

@@ -1,4 +1,4 @@
-from django.views.generic import CreateView
+from django.views.generic import CreateView, View
 
 from .forms import CommentForm
 from .models import Activity
@@ -14,7 +14,7 @@ class CommentContextMixin:
         return super().get_context_data(**extra, **kwargs)
 
 
-class DelegatedCreateView(CreateView):
+class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
     def get_template_names(self):
         return self.kwargs['template_names']
@@ -27,7 +27,7 @@ class DelegatedCreateView(CreateView):
         return super().get_context_data(**kwargs)
 
 
-class CommentFormView(DelegatedCreateView):
+class CommentFormView(DelegatedViewMixin, CreateView):
     form_class = CommentForm
     context_name = 'comment_form'
 
