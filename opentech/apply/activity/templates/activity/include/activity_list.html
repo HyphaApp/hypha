@@ -1,0 +1,7 @@
+{% for event in activity %}
+<div>
+    <p>{{ event.timestamp }}</p>
+    <p>{{ event.user }}</p>
+    <p>{{ event.message }}</p>
+</div>
+{% endfor %}
