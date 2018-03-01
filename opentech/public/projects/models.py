@@ -7,7 +7,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.validators import URLValidator
 
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
     MultiFieldPanel,
@@ -15,9 +15,9 @@ from wagtail.wagtailadmin.edit_handlers import (
     StreamFieldPanel,
 )
 
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsearch import index
+from wagtail.core.fields import StreamField
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 
 from opentech.apply.categories.models import Option
 from opentech.public.utils.blocks import StoryBlock

@@ -6,12 +6,12 @@ import opentech.public.utils.models
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-import wagtail.wagtailcore.blocks
-import wagtail.wagtailcore.fields
-import wagtail.wagtaildocs.blocks
-import wagtail.wagtailembeds.blocks
-import wagtail.wagtailimages.blocks
-import wagtail.wagtailsnippets.blocks
+import wagtail.core.blocks
+import wagtail.core.fields
+import wagtail.documents.blocks
+import wagtail.embeds.blocks
+import wagtail.images.blocks
+import wagtail.snippets.blocks
 
 
 class Migration(migrations.Migration):
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('job_title', models.CharField(max_length=255)),
                 ('introduction', models.TextField(blank=True)),
                 ('website', models.URLField(blank=True, max_length=255)),
-                ('biography', wagtail.wagtailcore.fields.StreamField((('heading', wagtail.wagtailcore.blocks.CharBlock(classname='full title', icon='title')), ('paragraph', wagtail.wagtailcore.blocks.RichTextBlock()), ('image', wagtail.wagtailcore.blocks.StructBlock((('image', wagtail.wagtailimages.blocks.ImageChooserBlock()), ('caption', wagtail.wagtailcore.blocks.CharBlock(required=False))))), ('quote', wagtail.wagtailcore.blocks.StructBlock((('quote', wagtail.wagtailcore.blocks.CharBlock(classname='title')), ('attribution', wagtail.wagtailcore.blocks.CharBlock(required=False)), ('job_title', wagtail.wagtailcore.blocks.CharBlock(required=False))))), ('embed', wagtail.wagtailembeds.blocks.EmbedBlock()), ('call_to_action', wagtail.wagtailsnippets.blocks.SnippetChooserBlock('utils.CallToActionSnippet', template='blocks/call_to_action_block.html')), ('document', wagtail.wagtailcore.blocks.StructBlock((('document', wagtail.wagtaildocs.blocks.DocumentChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(required=False)))))), blank=True)),
+                ('biography', wagtail.core.fields.StreamField((('heading', wagtail.core.blocks.CharBlock(classname='full title', icon='title')), ('paragraph', wagtail.core.blocks.RichTextBlock()), ('image', wagtail.core.blocks.StructBlock((('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', wagtail.core.blocks.CharBlock(required=False))))), ('quote', wagtail.core.blocks.StructBlock((('quote', wagtail.core.blocks.CharBlock(classname='title')), ('attribution', wagtail.core.blocks.CharBlock(required=False)), ('job_title', wagtail.core.blocks.CharBlock(required=False))))), ('embed', wagtail.embeds.blocks.EmbedBlock()), ('call_to_action', wagtail.snippets.blocks.SnippetChooserBlock('utils.CallToActionSnippet', template='blocks/call_to_action_block.html')), ('document', wagtail.core.blocks.StructBlock((('document', wagtail.documents.blocks.DocumentChooserBlock()), ('title', wagtail.core.blocks.CharBlock(required=False)))))), blank=True)),
                 ('email', models.EmailField(blank=True, max_length=254)),
                 ('mobile_phone', models.CharField(blank=True, max_length=255)),
                 ('landline_phone', models.CharField(blank=True, max_length=255)),

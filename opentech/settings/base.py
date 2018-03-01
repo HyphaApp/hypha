@@ -38,18 +38,18 @@ INSTALLED_APPS = [
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
-    'wagtail.contrib.wagtailsearchpromotions',
-    'wagtail.wagtailforms',
-    'wagtail.wagtailredirects',
-    'wagtail.wagtailembeds',
-    'wagtail.wagtailsites',
-    'wagtail.wagtailusers',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtaildocs',
-    'wagtail.wagtailimages',
-    'wagtail.wagtailsearch',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtailcore',
+    'wagtail.contrib.search_promotions',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
 
     'modelcluster',
     'taggit',
@@ -85,8 +85,8 @@ MIDDLEWARE = [
 
     'opentech.apply.users.middleware.SocialAuthExceptionMiddleware',
 
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'opentech.public.esi.middleware.ESIMiddleware',
 ]
 
@@ -275,7 +275,7 @@ WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
-        'WIDGET': 'wagtail.wagtailadmin.rich_text.HalloRichTextArea',
+        'WIDGET': 'wagtail.admin.rich_text.HalloRichTextArea',
         'OPTIONS': {
             'features': [
                 'bold', 'italic',

@@ -4,7 +4,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
@@ -12,8 +12,8 @@ from wagtail.wagtailadmin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.core.fields import StreamField
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 from opentech.public.utils.models import (
     BasePage,

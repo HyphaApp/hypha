@@ -3,9 +3,9 @@ from django.db import models
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailsearch import index
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.core.fields import StreamField
+from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage
 

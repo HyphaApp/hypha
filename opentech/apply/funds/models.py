@@ -17,7 +17,7 @@ from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
@@ -27,10 +27,10 @@ from wagtail.wagtailadmin.edit_handlers import (
     TabbedInterface
 )
 
-from wagtail.wagtailadmin.utils import send_mail
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormSubmission
+from wagtail.admin.utils import send_mail
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Orderable
+from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm

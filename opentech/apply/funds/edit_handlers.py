@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
+from wagtail.core.models import Page
+from wagtail.admin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
 
 
 def reverse_edit(obj):

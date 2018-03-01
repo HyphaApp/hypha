@@ -1,4 +1,4 @@
-from wagtail.wagtailcore import hooks
+from wagtail.core import hooks
 from wagtail.contrib.modeladmin.options import ModelAdminGroup, ModelAdmin, modeladmin_register
 
 

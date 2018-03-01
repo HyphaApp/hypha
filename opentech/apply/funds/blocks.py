@@ -7,7 +7,7 @@ from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import mark_safe
 
-from wagtail.wagtailcore.blocks import StaticBlock, StreamValue
+from wagtail.core.blocks import StaticBlock, StreamValue
 
 from tinymce.widgets import TinyMCE
 
@@ -149,7 +149,7 @@ class MustIncludeStatic(StaticBlock):
         return mark_safe(form)
 
     def deconstruct(self):
-        return ('wagtail.wagtailcore.blocks.static_block.StaticBlock', (), {})
+        return ('wagtail.core.blocks.static_block.StaticBlock', (), {})
 
 
 class MustIncludeFieldBlock(FormFieldBlock):

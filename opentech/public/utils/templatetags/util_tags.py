@@ -1,6 +1,6 @@
 from django import template
 
-from wagtail.wagtailcore.utils import camelcase_to_underscore
+from wagtail.core.utils import camelcase_to_underscore
 
 from opentech.public.utils.models import SocialMediaSettings
 

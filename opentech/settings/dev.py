@@ -17,7 +17,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 AUTH_PASSWORD_VALIDATORS = []
 
 INSTALLED_APPS = INSTALLED_APPS + [
-    'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.styleguide',
 ]
 
 try:

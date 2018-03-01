@@ -1,6 +1,6 @@
 from django.conf import settings
-from wagtail.contrib.wagtailfrontendcache.utils import purge_url_from_cache
-from wagtail.wagtailcore.models import Site
+from wagtail.contrib.frontend_cache.utils import purge_url_from_cache
+from wagtail.core.models import Site
 
 
 def purge_cache_on_all_sites(path):

@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
@@ -9,11 +9,11 @@ from wagtail.wagtailadmin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
-from wagtail.wagtailcore import blocks
-from wagtail.wagtailcore.fields import StreamField, RichTextField
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
-from wagtail.wagtailsnippets.models import register_snippet
+from wagtail.core import blocks
+from wagtail.core.fields import StreamField, RichTextField
+from wagtail.core.models import Orderable, Page
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.snippets.models import register_snippet
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 
 
