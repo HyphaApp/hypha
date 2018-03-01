@@ -1,5 +1,5 @@
-<form method="post">
+<form method="post" id="progress-form">
     {% csrf_token %}
     {{ progress_form }}
-    <input type="submit" value="Progress">
+    <input id="progress-form-submit" name="form-submitted" type="submit" form="progress-form" value="Progress">
 </form>

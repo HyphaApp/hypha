@@ -53,12 +53,20 @@ class ProgressContextMixin:
 
 
 class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
-     form_class = ProgressSubmissionForm
-     context_name = 'progress_form'
+    model = ApplicationSubmission
+    form_class = ProgressSubmissionForm
+    context_name = 'progress_form'
+
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 class SubmissionDetailView(CommentContextMixin, ProgressContextMixin, DetailView):
     model = ApplicationSubmission
+    form_views = {
+        'progress': ProgressSubmissionView,
+        'comment': CommentFormView,
+    }
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
@@ -75,8 +83,8 @@ class SubmissionDetailView(CommentContextMixin, ProgressContextMixin, DetailView
         kwargs['template_names'] = self.get_template_names()
         kwargs['context'] = self.get_context_data()
 
-        import pudb; pudb.set_trace()
-        view = CommentFormView.as_view()
+        form_submitted = request.POST['form-submitted'].lower()
+        view = self.form_views[form_submitted].as_view()
 
         return view(request, *args, **kwargs)
 
