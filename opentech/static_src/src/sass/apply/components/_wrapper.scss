@@ -252,4 +252,12 @@
             margin-top: 50px;
         }
     }
+
+    &--comments {
+        padding: 20px;
+
+        @include media-query(tablet-portrait) {
+            padding: 30px;
+        }
+    }
 }
