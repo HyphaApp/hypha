@@ -1,7 +1,7 @@
 {% for comment in comments %}
-<div>
-    <p>{{ comment.timestamp }}</p>
-    <p>{{ comment.user }}</p>
-    <p>{{ comment.message }}</p>
+<div class="comment">
+    <p class="comment__time">{{ comment.timestamp }}</p>
+    <p class="comment__user">{{ comment.user }}</p>
+    <p class="comment__copy">{{ comment.message }}</p>
 </div>
 {% endfor %}
