@@ -2,30 +2,29 @@ from django.conf import settings
 from django.db import models
 
 COMMENT = 'comment'
-ACTIVITY = 'activity'
+ACTION = 'action'
 
 ACTIVITY_TYPES = {
     COMMENT: 'Comment',
-    ACTIVITY: 'Activity',
+    ACTION: 'Action',
 }
 
 
-class CommentManger(models.Manager):
+class ActivityBaseManager(models.Manager):
     def create(self, **kwargs):
-        kwargs.update(type=COMMENT)
+        kwargs.update(type=self.type)
         return super().create(**kwargs)
 
     def get_queryset(self):
-        return super().get_queryset().filter(type=COMMENT)
+        return super().get_queryset().filter(type=self.type)
 
 
-class ActivityManager(models.Manager):
-    def create(self, **kwargs):
-        kwargs.update(type=ACTIVITY)
-        return super().create(**kwargs)
+class CommentManger(ActivityBaseManager):
+    type = COMMENT
 
-    def get_queryset(self):
-        return super().get_queryset().filter(type=ACTIVITY)
+
+class ActionManager(ActivityBaseManager):
+    type = ACTION
 
 
 class Activity(models.Model):
@@ -37,7 +36,7 @@ class Activity(models.Model):
 
     objects = models.Manager()
     comments = CommentManger()
-    activities = ActivityManager()
+    actions = ActionManager()
 
     class Meta:
         ordering = ['-timestamp']
