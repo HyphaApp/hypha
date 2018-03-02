@@ -4,6 +4,16 @@ from .forms import CommentForm
 from .models import Activity, COMMENT
 
 
+class AllActivityContextMixin:
+    def get_context_data(self, **kwargs):
+        extra = {
+            'actions': Activity.actions.filter(submission__in=self.object_list),
+            'comments': Activity.comments.filter(submission__in=self.object_list),
+            'all_activity': Activity.objects.filter(submission__in=self.object_list),
+        }
+        return super().get_context_data(**extra, **kwargs)
+
+
 class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {

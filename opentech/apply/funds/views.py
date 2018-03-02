@@ -5,7 +5,12 @@ from django.views.generic import DetailView, UpdateView, View
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from opentech.apply.activity.views import ActivityContextMixin, CommentFormView, DelegatedViewMixin
+from opentech.apply.activity.views import (
+    AllActivityContextMixin,
+    ActivityContextMixin,
+    CommentFormView,
+    DelegatedViewMixin,
+)
 from opentech.apply.activity.models import Activity
 
 from .forms import ProgressSubmissionForm
@@ -14,7 +19,7 @@ from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearc
 from .workflow import SingleStage, DoubleStage
 
 
-class SubmissionListView(SingleTableMixin, FilterView):
+class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     template_name = 'funds/submissions.html'
     table_class = SubmissionsTable
 
