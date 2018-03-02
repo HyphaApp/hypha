@@ -273,7 +273,7 @@ WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
-        'WIDGET': 'wagtail.admin.rich_text.HalloRichTextArea',
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
         'OPTIONS': {
             'features': [
                 'bold', 'italic',
