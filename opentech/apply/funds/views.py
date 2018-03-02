@@ -5,6 +5,8 @@ from django.views.generic import DetailView
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
+from opentech.apply.activity.views import CommentContextMixin, CommentFormView
+
 from .models import ApplicationSubmission
 from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
@@ -40,7 +42,7 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
-class SubmissionDetailView(DetailView):
+class SubmissionDetailView(CommentContextMixin, DetailView):
     model = ApplicationSubmission
 
     def get_context_data(self, **kwargs):
@@ -48,6 +50,19 @@ class SubmissionDetailView(DetailView):
             other_submissions=self.model.objects.filter(user=self.object.user).exclude(id=self.object.id),
             **kwargs
         )
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        kwargs['submission'] = self.object
+
+        # Information to pretend we originate from this view
+        kwargs['template_names'] = self.get_template_names()
+        kwargs['context'] = self.get_context_data()
+
+        view = CommentFormView.as_view()
+
+        return view(request, *args, **kwargs)
 
 
 workflows = [SingleStage, DoubleStage]
