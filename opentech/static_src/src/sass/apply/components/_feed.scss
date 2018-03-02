@@ -134,6 +134,10 @@
         > * {
             margin: 0 10px 0 0;
         }
+
+        .feed__item--action & {
+            margin: 5px 0 0;
+        }
     }
 
     &__heading-status {
