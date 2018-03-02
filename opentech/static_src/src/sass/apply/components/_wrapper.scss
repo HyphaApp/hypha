@@ -255,9 +255,11 @@
 
     &--comments {
         padding: 20px;
+        margin-bottom: 30px;
 
         @include media-query(tablet-portrait) {
             padding: 30px;
+            margin-bottom: 70px;
         }
     }
 }
