@@ -2,6 +2,7 @@ import jQuery from './globals';
 import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
+import '@fancyapps/fancybox';
 
 (function ($) {
     $(document).ready(function(){
@@ -36,6 +37,12 @@ import MobileSearch from './components/mobile-search';
             e.preventDefault();
             this.classList.toggle('is-active');
             this.nextElementSibling.classList.toggle('is-visible');
+        });
+
+        // Fancybox global options
+        $('[data-fancybox]').fancybox({
+            animationDuration : 350,
+            animationEffect : 'fade'
         });
     });
 
