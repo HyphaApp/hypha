@@ -1,7 +1,12 @@
 {% if progress_form.should_show %}
-<form method="post" id="progress-form">
-    {% csrf_token %}
-    {{ progress_form }}
-    <input id="progress-form-submit" name="form-submitted" type="submit" form="progress-form" value="Progress">
-</form>
+<div class="modal" id="update-status">
+    <h4>Update status</h4>
+    <form class="form" method="post" id="progress-form">
+        {% csrf_token %}
+        <div class="form__item">
+            {{ progress_form }}
+        </div>
+        <input class="button button--primary" id="progress-form-submit" name="form-submitted" type="submit" form="progress-form" value="Progress">
+    </form>
+</div>
 {% endif %}
