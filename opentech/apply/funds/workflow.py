@@ -171,6 +171,9 @@ class Stage(Iterable):
 
 class PhaseIterator(Iterator):
     class Step:
+        """Allow handling phases which are equivalent e.g. outcomes (accepted/rejected)
+        Delegates to the underlying phases except where naming is concerned
+        """
         def __init__(self, phases: List['Phase']) -> None:
             self.phases = phases
 
@@ -180,6 +183,7 @@ class PhaseIterator(Iterator):
 
         @property
         def name(self) -> str:
+            # Hardcode a name for multi-phased step - always outcome at the moment
             if len(self.phases) > 1:
                 return 'Outcome'
             return self.phases[0].name
