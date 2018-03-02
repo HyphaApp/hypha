@@ -87,7 +87,9 @@
 
     {# Tab 2 #}
     <div class="tabs__content" id="tab-2">
-        {% include "activity/include/comment_form.html" %}
+        <div class="wrapper wrapper--light-grey-bg wrapper--comments">
+            {% include "activity/include/comment_form.html" %}
+        </div>
         <div class="feed">
             {% include "funds/includes/feed-item.html" with type="determination" %}
             {% include "activity/include/comment_list.html" %}
