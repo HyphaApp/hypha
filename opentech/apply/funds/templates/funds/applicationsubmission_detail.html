@@ -59,30 +59,11 @@
                 {% endfor %}
                 </div>
             {% endif %}
-            {% include "activity/include/comment_form.html" %}
-            {% include "activity/include/comment_list.html" %}
         </aside>
     </div>
-
     <div class="wrapper wrapper--light-grey-bg wrapper--comments">
-
-        <form class="form" method="post">
-            <textarea class="form__textarea form__textarea--comments"></textarea>
-            <input class="button button--primary" type="submit" value="Comment">
-        </form>
-
-        <div class="comment">
-            <p class="comment__time">2:15pm</p>
-            <p class="comment__user">Maya Gibbs</p>
-            <p class="comment__copy">Ex deserunt laborum consequat quis id. Est et irure amet qui nostrud sunt veniam sint.</p>
-        </div>
-
-        <div class="comment">
-            <p class="comment__time">12:00pm</p>
-            <p class="comment__user">Chris Lawton</p>
-            <p class="comment__copy">Aliquip exercitation excepteur enim reprehenderit culpa laborum. Ex deserunt laborum consequat quis id. Est et irure amet qui nostrud sunt veniam sint.</p>
-        </div>
+        {% include "activity/include/comment_form.html" %}
+        {% include "activity/include/comment_list.html" %}
     </div>
-
 </div>
 {% endblock %}
