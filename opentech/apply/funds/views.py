@@ -1,12 +1,14 @@
 from django import forms
 from django.template.response import TemplateResponse
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView, View
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from opentech.apply.activity.views import CommentContextMixin, CommentFormView
+from opentech.apply.activity.views import ActivityContextMixin, CommentFormView, DelegatedViewMixin
+from opentech.apply.activity.models import Activity
 
+from .forms import ProgressSubmissionForm
 from .models import ApplicationSubmission
 from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
@@ -42,8 +44,38 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
-class SubmissionDetailView(CommentContextMixin, DetailView):
+class ProgressContextMixin(View):
+    def get_context_data(self, **kwargs):
+        extra = {
+            ProgressSubmissionView.context_name: ProgressSubmissionView.form_class(instance=self.object),
+        }
+
+        return super().get_context_data(**extra, **kwargs)
+
+
+class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
+    form_class = ProgressSubmissionForm
+    context_name = 'progress_form'
+
+    def form_valid(self, form):
+        old_phase = form.instance.phase.name
+        response = super().form_valid(form)
+        new_phase = form.instance.phase.name
+        Activity.activities.create(
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            message=f'Progressed from {old_phase} to {new_phase}'
+        )
+        return response
+
+
+class SubmissionDetailView(ActivityContextMixin, ProgressContextMixin, DetailView):
+    model = ApplicationSubmission
+    form_views = {
+        'progress': ProgressSubmissionView,
+        'comment': CommentFormView,
+    }
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
@@ -60,7 +92,8 @@ class SubmissionDetailView(CommentContextMixin, DetailView):
         kwargs['template_names'] = self.get_template_names()
         kwargs['context'] = self.get_context_data()
 
-        view = CommentFormView.as_view()
+        form_submitted = request.POST['form-submitted'].lower()
+        view = self.form_views[form_submitted].as_view()
 
         return view(request, *args, **kwargs)
 

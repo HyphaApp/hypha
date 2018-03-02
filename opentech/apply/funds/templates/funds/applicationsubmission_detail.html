@@ -11,7 +11,7 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.round.specific.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
+        {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.phase %}
 
         <div class="tabs js-tabs">
             <div class="tabs__container">
@@ -35,7 +35,7 @@
 {# Tab 1 #}
     <div class="tabs__content tabs__content--current" id="tab-1">
         <div class="wrapper wrapper--sidebar">
-            {% include "funds/includes/actions.html" with mobile="true" %}
+            {% include "funds/includes/actions.html" with mobile=True %}
             <section class="section section--has-sidebar">
 
                 <h6 class="heading heading--submission-meta">
@@ -71,7 +71,7 @@
 
             <aside class="sidebar">
                 {% include "funds/includes/actions.html" %}
-
+                {% include "funds/includes/progress_form.html" %}
                 {% if other_submissions %}
                     <div class="sidebar__inner">
                     <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
@@ -97,6 +97,7 @@
     {# Tab 3 #}
     <div class="tabs__content" id="tab-3">
         <div class="feed">
+            {% include "activity/include/activity_list.html" %}
             {% include "funds/includes/feed-item.html" with type="action" %}
         </div>
     </div>

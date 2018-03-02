@@ -1,6 +1,7 @@
+from collections import defaultdict
 import copy
 
-from typing import Iterable, Iterator, List, Sequence, Type, Union
+from typing import Dict, Iterable, Iterator, List, Sequence, Type, Union
 
 from django.forms import Form
 from django.utils.text import slugify
@@ -12,14 +13,14 @@ Workflow -> Stage -> Phase -> Action
 """
 
 
-def phase_name(stage: 'Stage', phase: Union['Phase', str], occurrence: int) -> str:
+def phase_name(stage: 'Stage', phase: Union['Phase', str], step: int) -> str:
     # Build the identifiable name for a phase
     if not isinstance(phase, str):
         phase_name = phase._internal
     else:
         phase_name = phase
 
-    return '__'.join([stage.name, phase_name, str(occurrence)])
+    return '__'.join([stage.name, phase_name, str(step)])
 
 
 class Workflow(Iterable):
@@ -113,27 +114,43 @@ class Stage(Iterable):
         # TODO: consider removing form from stage as the stage is generic and
         # shouldn't care about forms.
         self.form = form
+        self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
-        existing_phases: set = set()
-        new_phases: list = list()
-        for phase in self.phases:
-            phase.stage = self
-            while str(phase) in existing_phases:
-                phase.occurrence += 1
-            existing_phases.add(str(phase))
-            new_phases.append(copy.copy(phase))
-        self.phases = new_phases
+        self.phases = self.copy_phases(self.phases)
 
-    def __iter__(self) -> Iterator['Phase']:
-        yield from self.phases
+    def copy_phases(self, phases: List['Phase']) -> List['Phase']:
+        new_phases = list()
+        for step, phase in enumerate(self.phases):
+            try:
+                new_phases.append(self.copy_phase(phase, step))
+            except AttributeError:
+                # We have a step with multiple equivalent phases
+                for sub_phase in phase:
+                    new_phases.append(self.copy_phase(sub_phase, step))
+        return new_phases
+
+    def copy_phase(self, phase: 'Phase', step: int) -> 'Phase':
+        phase.stage = self
+        phase.step = step
+        return copy.copy(phase)
+
+    def __iter__(self) -> 'PhaseIterator':
+        return PhaseIterator(self.phases, self.steps)
 
     def __str__(self) -> str:
         return self.name
 
     def get_phase(self, phase_name: str) -> 'Phase':
         for phase in self.phases:
-            if str(phase) == phase_name:
+            if phase == phase_name:
                 return phase
+
+        # We don't have the exact name
+        for phase in self.phases:
+            if phase._internal == phase_name:
+                # Grab the first phase to match the name
+                return phase
+
         return None
 
     def first(self) -> 'Phase':
@@ -150,6 +167,41 @@ class Stage(Iterable):
                 except IndexError:
                     pass
         return None
+
+
+class PhaseIterator(Iterator):
+    class Step:
+        def __init__(self, phases: List['Phase']) -> None:
+            self.phases = phases
+
+        @property
+        def step(self) -> int:
+            return self.phases[0].step
+
+        @property
+        def name(self) -> str:
+            if len(self.phases) > 1:
+                return 'Outcome'
+            return self.phases[0].name
+
+        def __eq__(self, other: object) -> bool:
+            return any(phase == other for phase in self.phases)
+
+    def __init__(self, phases: List['Phase'], steps: int) -> None:
+        self.current = 0
+        self.phases: Dict[int, List['Phase']] = defaultdict(list)
+        for phase in phases:
+            self.phases[phase.step].append(phase)
+        self.steps = steps
+
+    def __iter__(self) -> 'PhaseIterator':
+        return self
+
+    def __next__(self) -> 'Step':
+        self.current += 1
+        if self.current > self.steps:
+            raise StopIteration
+        return self.Step(self.phases[self.current - 1])
 
 
 class Phase:
@@ -173,12 +225,12 @@ class Phase:
         self._internal = slugify(self.name)
         self.stage: Union['Stage', None] = None
         self._actions = {action.name: action for action in self.actions}
-        self.occurrence: int = 0
+        self.step: int = 0
 
     def __eq__(self, other: Union[object, str]) -> bool:
         if isinstance(other, str):
             return str(self) == other
-        to_match = ['name', 'occurrence']
+        to_match = ['name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
@@ -186,7 +238,7 @@ class Phase:
         return list(self._actions.keys())
 
     def __str__(self) -> str:
-        return phase_name(self.stage, self, self.occurrence)
+        return phase_name(self.stage, self, self.step)
 
     def __getitem__(self, value: str) -> 'Action':
         return self._actions[value]
@@ -218,7 +270,7 @@ class ChangePhaseAction(Action):
 
     def process(self, phase: 'Phase') -> Union['Phase', None]:
         if isinstance(self.target_phase, str):
-            return phase.stage.get_phase(phase_name(phase.stage, self.target_phase, 0))
+            return phase.stage.get_phase(self.target_phase)
         return self.target_phase
 
 
@@ -275,8 +327,7 @@ class RequestStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionPhase(),
-        accepted,
-        rejected,
+        [accepted, rejected]
     ]
 
 
@@ -285,8 +336,7 @@ class ConceptStage(Stage):
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
-        DiscussionWithProgressionPhase(),
-        rejected,
+        [DiscussionWithProgressionPhase(), rejected]
     ]
 
 
@@ -298,8 +348,7 @@ class ProposalStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase('AC Review', public_name='In AC review'),
         DiscussionPhase(public_name='In AC review'),
-        accepted,
-        rejected,
+        [accepted, rejected]
     ]
 
 
