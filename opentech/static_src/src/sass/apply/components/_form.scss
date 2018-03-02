@@ -47,18 +47,15 @@
 
     textarea,
     &__textarea {
+        display: block;
         width: 100%;
+        height: 100px;
         padding: 10px;
-        border: 1px solid lightgrey;
+        margin-bottom: 20px;
+        border: 1px solid $color--mid-grey;
 
-        &--comments {
-            display: block;
-            height: 100px;
-            margin-bottom: 20px;
-
-            @include media-query(tablet-portrait) {
-                max-width: 60%;
-            };
+        @include media-query(tablet-portrait) {
+            max-width: 60%;
         }
     }
 }
