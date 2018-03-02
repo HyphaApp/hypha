@@ -47,4 +47,26 @@
             }
         }
     }
+
+    &--mobile-standout {
+        display: block;
+        width: 100%;
+        max-width: 250px;
+        margin: 1rem auto 0;
+        font-weight: $weight--bold;
+        text-align: center;
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
+
+    &--button-transparent {
+        @include button(transparent, $color--darkest-blue);
+        color: $color--white;
+
+        &:hover {
+            border: 1px solid transparent;
+        }
+    }
 }
