@@ -55,7 +55,7 @@
         border: 1px solid $color--mid-grey;
 
         @include media-query(tablet-portrait) {
-            max-width: 60%;
+            max-width: 70%;
         }
     }
 }
