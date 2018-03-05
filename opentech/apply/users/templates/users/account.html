@@ -3,18 +3,25 @@
 
 {% block title %}Account{% endblock %}
 
+
 {% block content %}
-<h2>Welcome {{ user }}</h2>
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large wrapper--search">
+        <h3>Welcome {{ user }}</h3>
+    </div>
+</div>
 
-{% if show_change_password and user.has_usable_password and not backends.associated %}
-    <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
-{% endif %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% if show_change_password and user.has_usable_password and not backends.associated %}
+        <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
+    {% endif %}
 
-{# Remove the comment block tags below when such need arises. e.g. adding new providers #}
-{% comment %}
-{% can_use_oauth as show_oauth_link %}
-{% if show_oauth_link %}
-    <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
-{% endif %}
-{% endcomment %}
+    {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
+    {% comment %}
+    {% can_use_oauth as show_oauth_link %}
+    {% if show_oauth_link %}
+        <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
+    {% endif %}
+    {% endcomment %}
+</div>
 {% endblock %}
