@@ -372,6 +372,23 @@ class DoubleStage(Workflow):
 statuses = set(phase.name for phase in Phase.__subclasses__())
 status_options = [(slugify(opt), opt) for opt in statuses]
 
-active_statuses = set(
-    str(phase) for phase in itertools.chain(SingleStage([None]), DoubleStage([None, None])) if phase.active
-)
+
+def get_active_statuses():
+    active = set()
+
+    def add_if_active(phase):
+        if phase.active:
+            active.add(str(phase))
+
+    for phase in itertools.chain(SingleStage([None]), DoubleStage([None, None])):
+        try:
+            add_if_active(phase)
+        except AttributeError:
+            # it is actually a step
+            step = phase
+            for phase in step.phases:
+                add_if_active(phase)
+    return active
+
+
+active_statuses = get_active_statuses()
