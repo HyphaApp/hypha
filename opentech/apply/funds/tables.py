@@ -30,8 +30,9 @@ class SubmissionsTable(tables.Table):
     def render_user(self, value):
         return value.get_full_name()
 
-    def render_status_name(self, value):
-        return mark_safe(f'<span>{ value }</span>')
+    def render_status_name(self, value, record):
+        state = 'class="not-active"' if not record.active else ''
+        return mark_safe(f'<span { state }>{ value }</span>')
 
 
 def get_used_rounds(request):
