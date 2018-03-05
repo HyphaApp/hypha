@@ -21,3 +21,14 @@ class ProgressSubmissionForm(forms.ModelForm):
         new_phase = self.instance.workflow.process(self.instance.phase, self.cleaned_data['action'])
         self.instance.status = str(new_phase)
         return super().save(*args, **kwargs)
+
+
+class UpdateSubmissionLeadForm(forms.ModelForm):
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('lead',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        qs = self.fields['lead'].queryset
+        self.fields['lead'].queryset = qs.exclude(id=self.instance.lead.id)

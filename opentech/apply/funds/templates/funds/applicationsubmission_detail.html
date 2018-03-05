@@ -9,7 +9,7 @@
             <span>{{ object.stage }}</span>
             <span>{{ object.page }}</span>
             <span>{{ object.round }}</span>
-            <span>Lead: {{ object.round.specific.lead }}</span>
+            <span>Lead: {{ object.lead }}</span>
         </h5>
         {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.status %}
 
