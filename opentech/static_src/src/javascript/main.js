@@ -47,6 +47,9 @@ import Tabs from './components/tabs';
             e.preventDefault();
             $('.js-activity-feed').removeClass('is-open');
         });
+
+        // Scroll to the top of the activity feed
+        $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,

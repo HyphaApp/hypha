@@ -59,4 +59,17 @@
             margin-left: 10px;
         }
     }
+
+    &--to-top {
+        display: flex;
+        align-items: center;
+        width: 65px;
+        height: 65px;
+        padding: 20px;
+        margin: 0 0 5px;
+        background-color: $color--white;
+        border: 2px solid $color--black-50;
+        border-radius: 50%;
+        fill: $color--black-50;
+    }
 }
