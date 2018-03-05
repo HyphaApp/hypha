@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from django_tables2.views import SingleTableView
@@ -10,6 +12,7 @@ class DashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
 
+@method_decorator(login_required, name='dispatch')
 class ApplicantDashboardView(SingleTableView):
     template_name = 'dashboard/applicant_dashboard.html'
     model = ApplicationSubmission
