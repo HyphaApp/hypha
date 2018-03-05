@@ -1,5 +1,6 @@
 from django import forms
 from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, UpdateView
 
 from django_filters.views import FilterView
@@ -12,6 +13,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.models import Activity
+from opentech.apply.users.decorators import staff_required
 
 from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
@@ -19,6 +21,7 @@ from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAnd
 from .workflow import SingleStage, DoubleStage
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     template_name = 'funds/submissions.html'
     table_class = AdminSubmissionsTable
@@ -30,6 +33,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
         return super().get_context_data(active_filters=active_filters, **kwargs)
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionSearchView(SingleTableMixin, FilterView):
     template_name = 'funds/submissions_search.html'
     table_class = AdminSubmissionsTable
@@ -49,6 +53,7 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
+@method_decorator(staff_required, name='dispatch')
 class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = ProgressSubmissionForm
@@ -66,6 +71,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
@@ -84,6 +90,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
     form_views = {

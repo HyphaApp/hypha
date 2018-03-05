@@ -1,4 +1,7 @@
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, View
+
+from opentech.apply.users.decorators import staff_required
 
 from .forms import CommentForm
 from .models import Activity, COMMENT
@@ -27,6 +30,7 @@ class ActivityContextMixin:
         return super().get_context_data(**extra, **kwargs)
 
 
+@method_decorator(staff_required, name='dispatch')
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
     def get_template_names(self):
