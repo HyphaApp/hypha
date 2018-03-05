@@ -3,6 +3,7 @@ import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
+import '@fancyapps/fancybox';
 
 (function ($) {
     $(document).ready(function(){
@@ -53,6 +54,12 @@ import Tabs from './components/tabs';
         $('.js-close-feed').click(function(e) {
             e.preventDefault();
             $('.js-activity-feed').removeClass('is-open');
+        });
+
+        // Fancybox global options
+        $('[data-fancybox]').fancybox({
+            animationDuration : 350,
+            animationEffect : 'fade'
         });
     });
 

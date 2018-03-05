@@ -1,7 +1,3 @@
 {% for comment in comments %}
-<div class="comment">
-    <p class="comment__time">{{ comment.timestamp }}</p>
-    <p class="comment__user">{{ comment.user }}</p>
-    <p class="comment__copy">{{ comment.message }}</p>
-</div>
+    {% include "activity/include/listing_base.html" with activity=comment %}
 {% endfor %}

@@ -37,7 +37,6 @@
     "clean:dist": "rm -rf $npm_package_config_dist/{js/**,css/**,images/**}",
     "clean": "npm-run-all -p clean:*",
     "git:init": "rm -rf .git && git init && git add . && git commit -m 'Project start'",
-
     "//[ SASS ]//": "",
     "compile:css": "node-sass -o $npm_package_config_dest_css $npm_package_config_src_css",
     "compile:css:dev": "npm run compile:css -- --output-style expanded --source-map true",
@@ -45,19 +44,16 @@
     "compile:css:prod": "npm run compile:css -- --output-style compressed && npm run autoprefixer",
     "compile:css:debug": "npm run compile:css -- --output-style compressed --watch",
     "autoprefixer": "postcss -u autoprefixer -b 'last 2 versions, iOS 8, > 3%' -r $npm_package_config_dest_css/**/*.css",
-
     "//[ Javascript ]//": "",
     "compile:js": "rollup -c",
     "compile:js:dev": "npm run compile:js -- --environment entry:main.js",
     "compile:js:watch": "npm run compile:js -- --environment entry:main.js --watch",
     "compile:js:prod": "npm run compile:js -- --environment entry:main.js,production",
     "compile:js:debug": "npm run compile:js -- --environment entry:main.js,production --watch",
-
     "//[ Linting ]//": "",
     "lint:css": "sass-lint $npm_package_config_src_css'/**/**' -v -q || true",
     "lint:js": "eslint $npm_package_config_src_js --ignore-pattern **/vendor/**/*.js || true",
     "lint": "npm-run-all -p lint:js lint:css",
-
     "//[ Watches ]//": "",
     "watch:font": "onchange $npm_package_config_src_font'/**/**' -- npm-run-all sync:font reload",
     "watch:font:debug": "onchange $npm_package_config_src_font'/**/**' -- npm-run-all sync:font",
@@ -67,12 +63,10 @@
     "watch:css": "onchange $npm_package_config_dest_css -- npm-run-all -p reload:css lint:css",
     "watch:css:debug": "onchange $npm_package_config_dest_css -- npm-run-all -p autoprefixer",
     "watch": "npm-run-all -p watch:*",
-
     "//[ Syncs ]//": "",
     "sync:font": "rsync -rtvu --delete $npm_package_config_src_font/ $npm_package_config_dest_font/",
     "sync:img": "rsync -rtvu --delete $npm_package_config_src_img/ $npm_package_config_dest_img/",
     "sync": "npm-run-all -p sync:*",
-
     "//[ Tasks ]//": "",
     "build": "npm-run-all clean create_dirs sync compile:*:dev",
     "build:prod": "npm-run-all clean create_dirs sync compile:*:prod",
@@ -107,5 +101,8 @@
   },
   "engines": {
     "node": ">=4"
+  },
+  "dependencies": {
+    "@fancyapps/fancybox": "^3.2.5"
   }
 }

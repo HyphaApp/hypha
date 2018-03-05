@@ -1,5 +1,6 @@
 // Vendor
 @import 'vendor/normalize';
+@import 'vendor/fancybox';
 
 // Abstracts
 @import 'abstracts/functions';
@@ -19,6 +20,7 @@
 @import 'components/heading';
 @import 'components/icon';
 @import 'components/link';
+@import 'components/modal';
 @import 'components/rich-text';
 @import 'components/section';
 @import 'components/sidebar';

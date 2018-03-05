@@ -1,0 +1,10 @@
+.modal {
+    display: none;
+    width: calc(100% - 40px);
+    padding: 20px;
+
+    @include media-query(small-tablet) {
+        width: 580px;
+        padding: 30px;
+    }
+}

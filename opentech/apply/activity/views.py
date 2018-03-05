@@ -4,12 +4,24 @@ from .forms import CommentForm
 from .models import Activity, COMMENT
 
 
+ACTIVITY_LIMIT = 50
+
+
+class AllActivityContextMixin:
+    def get_context_data(self, **kwargs):
+        extra = {
+            'actions': Activity.actions.filter(submission__in=self.object_list)[:ACTIVITY_LIMIT],
+            'comments': Activity.comments.filter(submission__in=self.object_list[:ACTIVITY_LIMIT]),
+            'all_activity': Activity.objects.filter(submission__in=self.object_list)[:ACTIVITY_LIMIT],
+        }
+        return super().get_context_data(**extra, **kwargs)
+
+
 class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
-            'activity': Activity.activities.filter(submission=self.object),
+            'actions': Activity.actions.filter(submission=self.object),
             'comments': Activity.comments.filter(submission=self.object),
-            CommentFormView.context_name: CommentFormView.form_class(),
         }
 
         return super().get_context_data(**extra, **kwargs)
@@ -27,6 +39,10 @@ class DelegatedViewMixin(View):
         kwargs.update(**{self.context_name: form})
         return super().get_context_data(**kwargs)
 
+    @classmethod
+    def contribute_form(cls, submission):
+        return cls.context_name, cls.form_class(instance=submission)
+
 
 class CommentFormView(DelegatedViewMixin, CreateView):
     form_class = CommentForm
@@ -40,3 +56,8 @@ class CommentFormView(DelegatedViewMixin, CreateView):
 
     def get_success_url(self):
         return self.object.submission.get_absolute_url()
+
+    @classmethod
+    def contribute_form(cls, submission):
+        # We dont want to pass the submission as the instance
+        return super().contribute_form(None)

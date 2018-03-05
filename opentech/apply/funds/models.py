@@ -382,11 +382,17 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     class Meta:
         verbose_name = _("Lab")
 
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='lab_lead')
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
+    content_panels = WorkflowStreamForm.content_panels + [
+        FieldPanel('lead')
+    ]
+
     edit_handler = TabbedInterface([
-        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
+        ObjectList(content_panels, heading='Content'),
         EmailForm.email_tab,
         ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
@@ -434,6 +440,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='submission_lead')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -514,6 +521,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 # We are a lab submission
                 self.workflow_name = self.page.workflow_name
             self.status = str(self.workflow.first())
+
+            try:
+                self.lead = self.round.specific.lead
+            except AttributeError:
+                # Its a lab
+                self.lead = self.page.specific.lead
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
