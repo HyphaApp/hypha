@@ -1,7 +1,3 @@
 {% for action in actions %}
-<div>
-    <p>{{ action.timestamp }}</p>
-    <p>{{ action.user }}</p>
-    <p>{{ action.message }}</p>
-</div>
+    {% include "activity/include/listing_base.html" with activity=action %}
 {% endfor %}

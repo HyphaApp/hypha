@@ -5,16 +5,21 @@ from django.views.generic import DetailView, UpdateView, View
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
-from opentech.apply.activity.views import ActivityContextMixin, CommentFormView, DelegatedViewMixin
+from opentech.apply.activity.views import (
+    AllActivityContextMixin,
+    ActivityContextMixin,
+    CommentFormView,
+    DelegatedViewMixin,
+)
 from opentech.apply.activity.models import Activity
 
-from .forms import ProgressSubmissionForm
+from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
 from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
 
 
-class SubmissionListView(SingleTableMixin, FilterView):
+class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     template_name = 'funds/submissions.html'
     table_class = SubmissionsTable
 
@@ -44,15 +49,6 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
         )
 
 
-class ProgressContextMixin(View):
-    def get_context_data(self, **kwargs):
-        extra = {
-            ProgressSubmissionView.context_name: ProgressSubmissionView.form_class(instance=self.object),
-        }
-
-        return super().get_context_data(**extra, **kwargs)
-
-
 class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = ProgressSubmissionForm
@@ -70,17 +66,37 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
         return response
 
 
-class SubmissionDetailView(ActivityContextMixin, ProgressContextMixin, DetailView):
+class UpdateLeadView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UpdateSubmissionLeadForm
+    context_name = 'lead_form'
+
+    def form_valid(self, form):
+        old_lead = form.instance.lead
+        response = super().form_valid(form)
+        new_lead = form.instance.lead
+        Activity.actions.create(
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            message=f'Lead changed from {old_lead} to {new_lead}'
+        )
+        return response
+
+
+class SubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
     form_views = {
         'progress': ProgressSubmissionView,
         'comment': CommentFormView,
+        'update': UpdateLeadView,
     }
 
     def get_context_data(self, **kwargs):
+        forms = dict(form_view.contribute_form(self.object) for form_view in self.form_views.values())
         return super().get_context_data(
             other_submissions=self.model.objects.filter(user=self.object.user).exclude(id=self.object.id),
-            **kwargs
+            **forms,
+            **kwargs,
         )
 
     def post(self, request, *args, **kwargs):
