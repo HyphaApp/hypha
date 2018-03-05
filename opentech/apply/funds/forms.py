@@ -1,34 +1,34 @@
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
+from django import forms
+
+from .models import ApplicationSubmission
 
 
-class WorkflowFormAdminForm(WagtailAdminPageForm):
-    def clean(self):
-        cleaned_data = super().clean()
-        model = self._meta.model
+class ProgressSubmissionForm(forms.ModelForm):
+    action = forms.ChoiceField()
 
-        workflow = model.workflow_class_from_name(cleaned_data['workflow_name'])
-        application_forms = self.formsets['forms']
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
 
-        self.validate_stages_equal_forms(workflow, application_forms)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = [(action, action) for action in self.instance.phase.action_names]
+        self.fields['action'].choices = choices
+        self.fields['action'].label = self.instance.phase.name
+        self.should_show = bool(choices)
 
-        return cleaned_data
+    def save(self, *args, **kwargs):
+        new_phase = self.instance.workflow.process(self.instance.phase, self.cleaned_data['action'])
+        self.instance.status = str(new_phase)
+        return super().save(*args, **kwargs)
 
-    def validate_stages_equal_forms(self, workflow, application_forms):
-        if application_forms.is_valid():
-            valid_forms = [form for form in application_forms if not form.cleaned_data['DELETE']]
-            number_of_forms = len(valid_forms)
-            plural_form = 's' if number_of_forms > 1 else ''
 
-            number_of_stages = len(workflow.stage_classes)
-            plural_stage = 's' if number_of_stages > 1 else ''
+class UpdateSubmissionLeadForm(forms.ModelForm):
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('lead',)
 
-            if number_of_forms != number_of_stages:
-                self.add_error(
-                    None,
-                    'Number of forms does not match number of stages: '
-                    f'{number_of_stages} stage{plural_stage} and {number_of_forms} '
-                    f'form{plural_form} provided',
-                )
-
-                for form in valid_forms[number_of_stages:]:
-                    form.add_error('form', 'Exceeds required number of forms for stage, please remove.')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        qs = self.fields['lead'].queryset
+        self.fields['lead'].queryset = qs.exclude(id=self.instance.lead.id)

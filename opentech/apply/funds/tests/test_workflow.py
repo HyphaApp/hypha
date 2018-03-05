@@ -58,6 +58,28 @@ class TestStageCreation(SimpleTestCase):
         self.assertEqual(stage.name, name)
         self.assertEqual(stage.form, form)
 
+    def test_can_create_with_multi_phase_step(self):
+        first_phase, second_phase = Phase(name='first'), Phase(name='second')
+        change_first = ChangePhaseAction(first_phase, 'first')
+        change_second = ChangePhaseAction(second_phase, 'second')
+
+        class PhaseSwitch(Phase):
+            actions = [change_first, change_second]
+
+        class MultiPhaseStep(Stage):
+            name = 'stage'
+            phases = [
+                PhaseSwitch(),
+                [first_phase, second_phase],
+            ]
+
+        stage = MultiPhaseStep(None)
+        self.assertEqual(stage.steps, 2)
+
+        current_phase = stage.phases[0]
+        self.assertEqual(current_phase.process(change_first.name), stage.phases[1])  # type: ignore
+        self.assertEqual(current_phase.process(change_second.name), stage.phases[2])  # type: ignore
+
     def test_can_get_next_phase(self):
         stage = StageFactory.build(num_phases=2)
         self.assertEqual(stage.next(stage.phases[0]), stage.phases[1])
