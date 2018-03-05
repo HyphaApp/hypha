@@ -4,12 +4,15 @@ from .forms import CommentForm
 from .models import Activity, COMMENT
 
 
+ACTIVITY_LIMIT = 50
+
+
 class AllActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
-            'actions': Activity.actions.filter(submission__in=self.object_list),
-            'comments': Activity.comments.filter(submission__in=self.object_list),
-            'all_activity': Activity.objects.filter(submission__in=self.object_list),
+            'actions': Activity.actions.filter(submission__in=self.object_list)[:ACTIVITY_LIMIT],
+            'comments': Activity.comments.filter(submission__in=self.object_list[:ACTIVITY_LIMIT]),
+            'all_activity': Activity.objects.filter(submission__in=self.object_list)[:ACTIVITY_LIMIT],
         }
         return super().get_context_data(**extra, **kwargs)
 
