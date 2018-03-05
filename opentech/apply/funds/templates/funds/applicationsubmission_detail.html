@@ -41,7 +41,6 @@
                 <h6 class="heading heading--submission-meta">
                     <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
                 </h6>
-
                 <h3>Proposal Information</h3>
                 <div class="grid grid--proposal-info">
                     <div>
@@ -58,16 +57,6 @@
                         <h5>Legal Name</h5>
                         <p>{{ object.full_name }}</p>
                     </div>
-
-                    <div>
-                        <h5>Email</h5>
-                        <p>{{ object.email }}</p>
-                    </div>
-                </div>
-                <div class="rich-text rich-text--answers">
-                    {{ object.render_answers }}
-                </div>
-            </section>
 
             <aside class="sidebar">
                 {% include "funds/includes/actions.html" %}
@@ -88,21 +77,16 @@
 
     {# Tab 2 #}
     <div class="tabs__content" id="tab-2">
-        <div class="wrapper wrapper--comments">
-            {% include "activity/include/comment_form.html" %}
-        </div>
         <div class="feed">
-            {% include "funds/includes/feed-item.html" with type="determination" %}
+            {% include "activity/include/comment_form.html" %}
             {% include "activity/include/comment_list.html" %}
-            {% include "activity/include/action_list.html" %}
         </div>
     </div>
 
     {# Tab 3 #}
     <div class="tabs__content" id="tab-3">
         <div class="feed">
-            {% include "activity/include/all_activity_list.html" %}
-            {% include "funds/includes/feed-item.html" with type="action" %}
+            {% include "activity/include/action_list.html" %}
         </div>
     </div>
 </div>

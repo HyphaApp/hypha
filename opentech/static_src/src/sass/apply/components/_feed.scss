@@ -34,10 +34,12 @@
             background-color: $color--ocean;
         }
 
+        &--comment,
         &--message {
             background-color: $color--grass;
         }
 
+        &--activity,
         &--action {
             background-color: $color--mint;
         }

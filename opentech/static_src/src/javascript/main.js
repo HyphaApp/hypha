@@ -45,16 +45,21 @@ import '@fancyapps/fancybox';
         });
 
         // Open the activity feed
-        $('.js-open-feed').click(function(e) {
+        $('.js-open-feed').click((e) => {
             e.preventDefault();
+            $('body').addClass('no-scroll');
             $('.js-activity-feed').addClass('is-open');
         });
 
         // Close the activity feed
-        $('.js-close-feed').click(function(e) {
+        $('.js-close-feed').click((e) => {
             e.preventDefault();
+            $('body').removeClass('no-scroll');
             $('.js-activity-feed').removeClass('is-open');
         });
+
+        // Scroll to the top of the activity feed
+        $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
 
         // Fancybox global options
         $('[data-fancybox]').fancybox({

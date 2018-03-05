@@ -15,15 +15,20 @@
 
     <div class="wrapper wrapper--medium wrapper--activity-feed">
         <div class="tabs__content tabs__content--current" id="tab-1">
-            Communications content
+            {% include "activity/include/comment_list.html" with submission_title=True %}
         </div>
 
         <div class="tabs__content" id="tab-2">
-            Activity content
+            {% include "activity/include/action_list.html" with submission_title=True %}
         </div>
 
         <div class="tabs__content" id="tab-3">
-            All content
+            {% include "activity/include/all_activity_list.html" with submission_title=True %}
         </div>
     </div>
+
+    <a href="#" class="js-to-top link link--to-top">
+        <svg class="icon icon--to-top"><use xlink:href="#chevron"></use></svg>
+        <h6>Back to top</h6>
+    </a>
 </div>
