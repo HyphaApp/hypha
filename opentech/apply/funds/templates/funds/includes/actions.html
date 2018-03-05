@@ -4,7 +4,7 @@
 
 <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
     <h5>Actions to take</h5>
-    <a data-fancybox data-src="#update-status" class="button button--primary button--full-width" href="#">Update status</a>
+    <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Update status</a>
     <p class="sidebar__separator">Assign</p>
 
     <div class="wrapper wrapper--button-container">
