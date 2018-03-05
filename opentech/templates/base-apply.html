@@ -74,9 +74,9 @@
                 </section>
 
                 <div class="header__button-container">
-                    <a href="#" class="button button--transparent button--narrow button--contains-icons">
+                    <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                        Joe Bloggs
+                        {{ request.user }}
                     </a>
                     <a href="{% url 'users:logout' %}" class="button button--transparent button--narrow">
                         Log Out
