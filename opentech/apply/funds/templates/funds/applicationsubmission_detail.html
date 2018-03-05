@@ -9,7 +9,7 @@
             <span>{{ object.stage }}</span>
             <span>{{ object.page }}</span>
             <span>{{ object.round }}</span>
-            <span>Lead: {{ object.round.specific.lead }}</span>
+            <span>Lead: {{ object.lead }}</span>
         </h5>
         {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.phase %}
     </div>
@@ -51,6 +51,7 @@
 
         <aside class="sidebar">
             {% include "funds/includes/progress_form.html" %}
+            {% include "funds/includes/update_lead_form.html" %}
             {% if other_submissions %}
                 <div class="sidebar__inner">
                 <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
