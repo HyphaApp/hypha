@@ -12,6 +12,8 @@
         z-index: 20;
         width: 100%;
         height: 100vh;
+        max-height: 100%;
+        overflow: scroll;
         background: $color--white;
         opacity: 1;
     }
