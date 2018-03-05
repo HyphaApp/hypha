@@ -119,4 +119,14 @@
             }
         }
     }
+
+    &--to-top {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        color: $color--black-50;
+    }
 }
