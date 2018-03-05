@@ -1,0 +1,32 @@
+{% extends "base-apply.html" %}
+{% load wagtailcore_tags %}
+
+{% block title %}Submission Dashboard{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large wrapper--search">
+        <div>
+            <h3 class="heading heading--no-margin">Dashboard</h3>
+            <h5>An overview of active and past submissions</h5>
+        </div>
+        <div>
+            <h3>Submit a new application</h3>
+            <h4>Apply now for our open rounds</h4>
+            <a href="{% pageurl APPLY_SITE.root_page %}" class="button">Apply</a>
+        </div>
+    </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Your Active Submissions</h3>
+    {% for submission in my_active_submissions %}
+        <div>
+            <a href="">{{ submission.title }}</a>
+            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status %}
+        </div>
+    {% endfor %}
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Submission History</h3>
+</div>
+{% endblock %}
