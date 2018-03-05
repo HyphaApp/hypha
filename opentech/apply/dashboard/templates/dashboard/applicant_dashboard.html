@@ -25,6 +25,8 @@
             <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
             {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status %}
         </div>
+    {% empty %}
+        No active submissions
     {% endfor %}
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">

@@ -1,4 +1,5 @@
 import copy
+import itertools
 
 from typing import Iterable, Iterator, List, Sequence, Type, Union
 
@@ -161,9 +162,11 @@ class Phase:
     name: str = ''
     public_name: str = ''
 
-    def __init__(self, name: str='', public_name: str ='') -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True) -> None:
         if name:
             self.name = name
+
+        self.active = active
 
         if public_name:
             self.public_name = public_name
@@ -264,9 +267,9 @@ class DiscussionWithNextPhase(Phase):
     actions = [NextPhaseAction('Open Review'), reject_action]
 
 
-rejected = Phase(name='Rejected')
+rejected = Phase(name='Rejected', active=False)
 
-accepted = Phase(name='Accepted')
+accepted = Phase(name='Accepted', active=False)
 
 
 class RequestStage(Stage):
@@ -315,3 +318,7 @@ class DoubleStage(Workflow):
 
 statuses = set(phase.name for phase in Phase.__subclasses__())
 status_options = [(slugify(opt), opt) for opt in statuses]
+
+active_statuses = set(
+    str(phase) for phase in itertools.chain(SingleStage([None]), DoubleStage([None, None])) if phase.active
+)
