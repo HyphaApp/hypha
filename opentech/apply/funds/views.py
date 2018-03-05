@@ -72,7 +72,8 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
     context_name = 'lead_form'
 
     def form_valid(self, form):
-        old_lead = form.instance.lead
+        # Fetch the old lead from the database
+        old_lead = self.get_object().lead
         response = super().form_valid(form)
         new_lead = form.instance.lead
         Activity.actions.create(
