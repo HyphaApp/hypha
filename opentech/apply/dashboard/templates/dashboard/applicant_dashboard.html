@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
 {% load wagtailcore_tags %}
 
 {% block title %}Submission Dashboard{% endblock %}
@@ -21,12 +22,13 @@
     <h3>Your Active Submissions</h3>
     {% for submission in my_active_submissions %}
         <div>
-            <a href="">{{ submission.title }}</a>
+            <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
             {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status %}
         </div>
     {% endfor %}
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>Submission History</h3>
+    {% render_table table %}
 </div>
 {% endblock %}
