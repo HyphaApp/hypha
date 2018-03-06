@@ -30,5 +30,6 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        qs = self.fields['lead'].queryset
-        self.fields['lead'].queryset = qs.exclude(id=self.instance.lead.id)
+        lead_field = self.fields['lead']
+        lead_field.label = f'Update lead from { self.instance.lead } to'
+        lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
