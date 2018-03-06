@@ -247,19 +247,25 @@
     }
 
     &--comments {
-        padding: 20px;
         padding-bottom: 15px;
         margin-bottom: 15px;
         border-bottom: 1px solid $color--mid-grey;
 
         @include media-query(tablet-portrait) {
-            padding: 0;
             padding-bottom: 35px;
             margin-bottom: 35px;
         }
 
         label {
             display: none;
+        }
+    }
+
+    &--tabs {
+        padding: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 0;
         }
     }
 }
