@@ -4,11 +4,12 @@ from .models import Activity
 
 
 class CommentForm(forms.ModelForm):
-    internal = forms.BooleanField()
-
     class Meta:
         model = Activity
-        fields = ('message',)
-
-    def save(self):
-        self.instance.visibility
+        fields = ('message', 'visibility')
+        labels = {
+            'visibility': '',
+        }
+        widgets = {
+            'visibility': forms.RadioSelect(),
+        }
