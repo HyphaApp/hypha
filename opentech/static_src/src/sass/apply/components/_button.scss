@@ -37,7 +37,10 @@
         color: $color--black;
         border: 1px solid $color--black;
 
-        &:focus,
+        &:focus {
+            color: $color--black;
+        }
+
         &:hover {
             color: $color--white;
         }
@@ -49,7 +52,10 @@
         color: $color--light-blue;
         border: 1px solid $color--mid-grey;
 
-        &:focus,
+        &:focus {
+            color: $color--light-blue;
+        }
+
         &:hover {
             color: $color--white;
         }
