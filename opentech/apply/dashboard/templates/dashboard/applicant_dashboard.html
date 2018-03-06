@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Your Active Submissions</h3>
+    <h3>Your active submissions</h3>
     {% for submission in my_active_submissions %}
         <div>
             <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
@@ -30,7 +30,7 @@
     {% endfor %}
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Submission History</h3>
+    <h3>Submission history</h3>
     {% render_table table %}
 </div>
 {% endblock %}
