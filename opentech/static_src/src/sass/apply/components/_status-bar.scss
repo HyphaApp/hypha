@@ -13,11 +13,19 @@
         }
     }
 
+    &--small {
+        width: 100%;
+        max-width: 800px;
+        margin-right: 40px;
+        color: $color--white;
+    }
+
     &__subheading {
         display: inline-block;
         padding: 5px 10px;
         margin: 10px 0 0;
-        background: $color--tomato;
+        color: $color--white;
+        background-color: $color--tomato;
     }
 
     &__icon {
@@ -29,8 +37,15 @@
         width: 20px;
         height: 20px;
 
+        .status-bar__item--is-current &,
         .status-bar__item--is-complete & {
             display: block;
+
+            .status-bar--small & {
+                display: block;
+                border-radius: 50%;
+                box-shadow: 0 1px 9px 0 $color--black-50;
+            }
         }
 
         .status-bar__item:first-of-type & {
@@ -55,6 +70,10 @@
             border: 5px solid $color--mid-grey;
             border-radius: 50%;
             content: '';
+
+            .status-bar--small & {
+                background: $color--white;
+            }
         }
 
         // last items dont have a dot
@@ -102,6 +121,10 @@
             &::before {
                 background: $color--primary;
                 border-color: $color--primary;
+
+                .status-bar--small & {
+                    background: $color--primary;
+                }
             }
         }
     }
@@ -113,6 +136,7 @@
         z-index: 100;
         width: 20px;
         height: 20px;
+        border-radius: 50%;
         opacity: 0;
         transition: opacity $transition;
 
@@ -144,7 +168,7 @@
             display: block;
             padding: 5px 10px;
             font-size: 12px;
-            font-weight: $weight--semibold;
+            font-weight: $weight--bold;
             background-color: $color--error;
             content: attr(data-title);
 
