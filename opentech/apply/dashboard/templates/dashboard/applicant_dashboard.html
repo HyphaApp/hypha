@@ -23,7 +23,7 @@
     {% for submission in my_active_submissions %}
         <div>
             <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
-            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.phase %}
+            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.phase class="status-bar--small" %}
         </div>
     {% empty %}
         No active submissions
