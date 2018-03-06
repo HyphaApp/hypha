@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='activity',
             name='type',
-            field=models.CharField(choices=[('comment', 'Comment'), ('activity', 'Activity')], default='comment', max_length=30),
+            field=models.CharField(choices=[('comment', 'Comment'), ('action', 'Action')], default='comment', max_length=30),
             preserve_default=False,
         ),
     ]
