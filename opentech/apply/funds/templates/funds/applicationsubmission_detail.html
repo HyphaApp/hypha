@@ -67,25 +67,10 @@
                 </div>
             </div>
 
-<<<<<<< variant A
-        <aside class="sidebar">
-            {% include "funds/includes/progress_form.html" %}
-            {% include "funds/includes/update_lead_form.html" %}
-            {% if other_submissions %}
-                <div class="sidebar__inner">
-                <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
-
-                {% for submission in other_submissions %}
-                    <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
-                {% endfor %}
-                </div>
-            {% endif %}
-            {% include "activity/include/comment_form.html" %}
-            {% include "activity/include/comment_list.html" %}
-            {% include "activity/include/action_list.html" %}
-        </aside>
->>>>>>> variant B
             <aside class="sidebar">
+                {% include "funds/includes/progress_form.html" %}
+                {% include "funds/includes/update_lead_form.html" %}
+
                 {% if other_submissions %}
                     <div class="sidebar__inner">
                     <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
