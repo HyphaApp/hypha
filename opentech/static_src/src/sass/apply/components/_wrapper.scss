@@ -249,4 +249,17 @@
             padding: 20px;
         }
     }
+
+    &--status-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: $color--white;
+        border-bottom: 3px solid $color--light-grey;
+
+        div:first-child {
+            padding-right: 20px;
+        }
+    }
 }
