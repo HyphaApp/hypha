@@ -4,10 +4,11 @@ from .models import Activity
 
 
 class CommentForm(forms.ModelForm):
-    visibility = forms.BooleanField(label='Internal')
+    internal = forms.BooleanField()
 
     class Meta:
         model = Activity
-        fields = ('message', 'visibility')
+        fields = ('message',)
 
-    # def clean(self):
+    def save(self):
+        self.instance.visibility
