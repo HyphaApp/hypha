@@ -123,6 +123,10 @@
         @include media-query(mob-landscape) {
             padding: 2rem 0;
         }
+
+        + .wrapper--inner-space-medium {
+            padding: 0;
+        }
     }
 
     &--inner-space-large {
