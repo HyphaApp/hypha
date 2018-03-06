@@ -123,6 +123,10 @@
         @include media-query(mob-landscape) {
             padding: 2rem 0;
         }
+
+        + .wrapper--inner-space-medium {
+            padding: 0;
+        }
     }
 
     &--inner-space-large {
@@ -230,6 +234,36 @@
 
         @include media-query(small-tablet) {
             flex-direction: row;
+        }
+    }
+
+    &--apply-box {
+        width: 385px;
+        padding: 20px;
+        color: $color--default;
+        background-color: $color--white;
+    }
+
+    &--applicant-dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        @include media-query(tablet-portrait) {
+            padding: 20px;
+        }
+    }
+
+    &--status-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: $color--white;
+        border-bottom: 3px solid $color--light-grey;
+
+        div:first-child {
+            padding-right: 20px;
         }
     }
 }
