@@ -241,8 +241,8 @@
         padding: 0 20px;
         margin-top: 50px;
 
-        @include media-query(tablet-landscape   ) {
-            padding: 0;
+        @include media-query(tablet-landscape) {
+            margin-top: 70px;
         }
     }
 
