@@ -274,14 +274,15 @@ WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
-        'OPTIONS': {
-            'features': [
-                'bold', 'italic',
-                'h3', 'h4', 'h5',
-                'ol', 'ul',
-                'link'
-            ]
-        }
+        # fixed in wagtail 2.1: https://github.com/wagtail/wagtail/commit/09f8a4f38a95f2760f38ab2f142443df93b5d8c6
+        # 'OPTIONS': {
+        #     'features': [
+        #         'bold', 'italic',
+        #         'h3', 'h4', 'h5',
+        #         'ol', 'ul',
+        #         'link'
+        #     ]
+        # }
     },
 }
 
