@@ -13,8 +13,9 @@ class ProgressSubmissionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         choices = [(action, action) for action in self.instance.phase.action_names]
-        self.fields['action'].choices = choices
-        self.fields['action'].label = self.instance.phase.name
+        action_field = self.fields['action']
+        action_field.choices = choices
+        action_field.label = f'Current status: {self.instance.phase.name}'
         self.should_show = bool(choices)
 
     def save(self, *args, **kwargs):
