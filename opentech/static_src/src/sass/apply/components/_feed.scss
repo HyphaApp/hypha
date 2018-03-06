@@ -8,14 +8,6 @@
         &:last-child {
             border-bottom: 0;
         }
-
-        &--action {
-            padding-bottom: 10px;
-
-            @include media-query(small-tablet) {
-                padding-bottom: 25px;
-            }
-        }
     }
 
     &__label {
@@ -80,10 +72,6 @@
         @include media-query(small-tablet) {
             margin-bottom: 10px;
         }
-
-        .feed__item--action & {
-            margin: 0;
-        }
     }
 
     &__meta-item {
@@ -91,10 +79,6 @@
 
         @include media-query(small-tablet) {
             margin: 0 15px 0 0;
-        }
-
-        .feed__item--action & {
-            font-size: map-get($font-sizes, zeta);
         }
 
         &--progress {
@@ -106,14 +90,6 @@
             @include media-query(small-tablet) {
                 width: auto;
                 margin: 0 20px 0 0;
-            }
-
-            .feed__item--action & {
-                width: 100%;
-                margin: 5px 0;
-                font-size: 16px;
-                font-weight: $weight--bold;
-                color: $color--default;
             }
 
             span {
@@ -135,10 +111,6 @@
 
         > * {
             margin: 0 10px 0 0;
-        }
-
-        .feed__item--action & {
-            margin: 5px 0 0;
         }
     }
 
@@ -167,12 +139,6 @@
         margin: 5px 0 10px;
 
         .feed__item--opened & {
-            color: $color--black-50;
-        }
-
-        .feed__item--action & {
-            font-size: map-get($font-sizes, epsilon);
-            font-weight: $weight--normal;
             color: $color--black-50;
         }
 
