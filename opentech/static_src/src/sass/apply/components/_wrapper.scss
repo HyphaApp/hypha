@@ -232,6 +232,14 @@
             flex-direction: row;
         }
     }
+
+    &--apply-box {
+        width: 385px;
+        padding: 20px;
+        color: $color--default;
+        background-color: $color--white;
+    }
+
     &--applicant-dashboard {
         display: flex;
         flex-wrap: wrap;

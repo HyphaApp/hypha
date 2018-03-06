@@ -45,4 +45,8 @@
     &--uppercase {
         text-transform: uppercase;
     }
+
+    &--normal {
+        font-weight: $weight--normal;
+    }
 }
