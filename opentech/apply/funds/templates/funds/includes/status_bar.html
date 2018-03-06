@@ -8,6 +8,7 @@
                     {% endif %}">
             <span class="status-bar__tooltip"
                 {% if phase == status %}
+                    {# We want to display the status explicitly in case phase is a MultiStep (displays "Outcome" for name) #}
                     data-title="{{ status.name }}" aria-label="{{ status.name }}"
                 {% else %}
                     data-title="{{ phase.name }}" aria-label="{{ phase.name }}"
