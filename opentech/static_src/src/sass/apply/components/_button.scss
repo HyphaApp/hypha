@@ -37,6 +37,7 @@
         color: $color--black;
         border: 1px solid $color--black;
 
+        &:focus,
         &:hover {
             color: $color--white;
         }
@@ -48,6 +49,7 @@
         color: $color--light-blue;
         border: 1px solid $color--mid-grey;
 
+        &:focus,
         &:hover {
             color: $color--white;
         }
@@ -65,6 +67,7 @@
         border: 1px solid $color--light-mid-grey;
         transition: none;
 
+        &:focus,
         &:active,
         &:hover {
             background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
