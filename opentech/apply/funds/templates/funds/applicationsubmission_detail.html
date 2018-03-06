@@ -34,6 +34,7 @@
 <div class="wrapper wrapper--medium wrapper--tabs">
 {# Tab 1 #}
     <div class="tabs__content tabs__content--current" id="tab-1">
+        {% include "funds/includes/actions.html" with mobile=True %}
         <div class="wrapper wrapper--sidebar">
             <div>
                 <h6 class="heading heading--submission-meta">
@@ -68,6 +69,7 @@
             </div>
 
             <aside class="sidebar">
+                {% include "funds/includes/actions.html" %}
                 {% include "funds/includes/progress_form.html" %}
                 {% include "funds/includes/update_lead_form.html" %}
 
