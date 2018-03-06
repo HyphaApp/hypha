@@ -12,59 +12,91 @@
             <span>Lead: {{ object.lead }}</span>
         </h5>
         {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.phase %}
+
+        <div class="tabs js-tabs">
+            <div class="tabs__container">
+                <a class="tab__item tab__item--active" href="#" data-tab="tab-1">
+                    Submission Details
+                </a>
+
+                <a class="tab__item" href="#" data-tab="tab-2">
+                    Communications
+                </a>
+
+                <a class="tab__item" href="#" data-tab="tab-3">
+                    Activity Feed
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="wrapper wrapper--medium wrapper--inner-space-medium">
-    <div class="wrapper wrapper--sidebar">
-        <div>
-            <h6 class="heading heading--submission-meta">
-                <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
-            </h6>
+<div class="wrapper wrapper--medium wrapper--tabs">
+{# Tab 1 #}
+    <div class="tabs__content tabs__content--current" id="tab-1">
+        <div class="wrapper wrapper--sidebar">
+            <div>
+                <h6 class="heading heading--submission-meta">
+                    <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
+                </h6>
 
-            <h3>Proposal Information</h3>
-            <div class="grid grid--proposal-info">
-                <div>
-                    <h5>Requested Funding</h5>
-                    <p>{{ object.value }}</p>
+                <h3>Proposal Information</h3>
+                <div class="grid grid--proposal-info">
+                    <div>
+                        <h5>Requested Funding</h5>
+                        <p>{{ object.value }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Project Duration</h5>
+                        <p>{{ object.value }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Legal Name</h5>
+                        <p>{{ object.full_name }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Email</h5>
+                        <p>{{ object.email }}</p>
+                    </div>
                 </div>
-
-                <div>
-                    <h5>Project Duration</h5>
-                    <p>{{ object.value }}</p>
-                </div>
-
-                <div>
-                    <h5>Legal Name</h5>
-                    <p>{{ object.full_name }}</p>
-                </div>
-
-                <div>
-                    <h5>Email</h5>
-                    <p>{{ object.email }}</p>
+                <div class="rich-text rich-text--answers">
+                    {{ object.render_answers }}
                 </div>
             </div>
-            <div class="rich-text rich-text--answers">
-                {{ object.render_answers }}
-            </div>
+
+            <aside class="sidebar">
+                {% include "funds/includes/progress_form.html" %}
+                {% include "funds/includes/update_lead_form.html" %}
+
+                {% if other_submissions %}
+                    <div class="sidebar__inner">
+                    <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+
+                    {% for submission in other_submissions %}
+                        <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </aside>
         </div>
+    </div>
 
-        <aside class="sidebar">
-            {% include "funds/includes/progress_form.html" %}
-            {% include "funds/includes/update_lead_form.html" %}
-            {% if other_submissions %}
-                <div class="sidebar__inner">
-                <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
-
-                {% for submission in other_submissions %}
-                    <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
-                {% endfor %}
-                </div>
-            {% endif %}
+    {# Tab 2 #}
+    <div class="tabs__content" id="tab-2">
+        <div class="feed">
             {% include "activity/include/comment_form.html" %}
             {% include "activity/include/comment_list.html" %}
+        </div>
+    </div>
+
+    {# Tab 3 #}
+    <div class="tabs__content" id="tab-3">
+        <div class="feed">
             {% include "activity/include/action_list.html" %}
-        </aside>
+        </div>
     </div>
 </div>
 {% endblock %}
