@@ -123,10 +123,21 @@
     &--to-top {
         position: fixed;
         right: 20px;
-        bottom: 20px;
+        bottom: 0px;
         display: flex;
         align-items: center;
         flex-direction: column;
         color: $color--black-50;
+        opacity: 0;
+        transition: opacity $transition;
+
+        @include media-query(tablet-portrait) {
+            right: 30px;
+            bottom: 20px;
+        }
+
+        &.is-visible {
+            opacity: 1;
+        }
     }
 }
