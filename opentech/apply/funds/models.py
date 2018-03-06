@@ -417,7 +417,7 @@ class LabForm(AbstractRelatedForm):
 
 
 class JSONOrderable(models.QuerySet):
-    json_field = None
+    json_field = ''
 
     def order_by(self, *field_names):
         def build_json_order_by(field):
