@@ -10,8 +10,7 @@
         <div class="feed__heading">
             <h4 class="feed__name">{{ activity.user }}</h4>
             {% if submission_title %}
-                <h6>for</h6>
-                <h6><a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a></h6>
+                <h6>updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a></h6>
             {% endif %}
         </div>
         <p class="feed__teaser">{{ activity.message }}</p>

@@ -13,8 +13,9 @@ class ProgressSubmissionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         choices = [(action, action) for action in self.instance.phase.action_names]
-        self.fields['action'].choices = choices
-        self.fields['action'].label = self.instance.phase.name
+        action_field = self.fields['action']
+        action_field.choices = choices
+        action_field.label = f'Current status: {self.instance.phase.name}'
         self.should_show = bool(choices)
 
     def save(self, *args, **kwargs):
@@ -30,5 +31,6 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        qs = self.fields['lead'].queryset
-        self.fields['lead'].queryset = qs.exclude(id=self.instance.lead.id)
+        lead_field = self.fields['lead']
+        lead_field.label = f'Update lead from { self.instance.lead } to'
+        lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)

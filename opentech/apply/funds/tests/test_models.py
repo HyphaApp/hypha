@@ -202,7 +202,7 @@ class TestFormSubmission(TestCase):
 
         self.round_page = RoundFactory(parent=fund)
         RoundFormFactory(round=self.round_page, form=form)
-        self.lab_page = LabFactory()
+        self.lab_page = LabFactory(lead=self.round_page.lead)
         LabFormFactory(lab=self.lab_page, form=form)
 
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
