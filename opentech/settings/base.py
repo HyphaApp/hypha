@@ -207,6 +207,10 @@ MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'users.User'
 
+WAGTAIL_USER_EDIT_FORM = 'opentech.apply.users.forms.CustomUserEditForm'
+WAGTAIL_USER_CREATION_FORM = 'opentech.apply.users.forms.CustomUserCreationForm'
+WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
+
 LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 
