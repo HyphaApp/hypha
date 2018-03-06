@@ -232,4 +232,13 @@
             flex-direction: row;
         }
     }
+    &--applicant-dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        @include media-query(tablet-portrait) {
+            padding: 20px;
+        }
+    }
 }
