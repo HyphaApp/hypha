@@ -24,6 +24,7 @@
         <div class="wrapper wrapper--status-bar">
             <div>
                 <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h5>
+                <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
             </div>
             {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status class="status-bar--small" %}
         </div>
