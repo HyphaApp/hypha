@@ -232,4 +232,18 @@
             flex-direction: row;
         }
     }
+
+    &--comments {
+        padding: 20px;
+        margin-bottom: 30px;
+
+        @include media-query(tablet-portrait) {
+            padding: 0;
+            margin-bottom: 70px;
+        }
+
+        label {
+            display: none;
+        }
+    }
 }

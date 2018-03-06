@@ -1,0 +1,6 @@
+<h4>Add communication</h4>
+<form class="form form--comments" method="post" id="comment-form">
+    {% csrf_token %}
+    {{ comment_form }}
+    <input id="comment-form-submit" name="form-submitted" form="comment-form" class="button button--primary" type="submit" value="Add message">
+</form>
