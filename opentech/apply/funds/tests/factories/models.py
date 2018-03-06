@@ -121,6 +121,7 @@ class LabFactory(wagtail_factories.PageFactory):
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
 
 class LabFormFactory(AbstractRelatedFormFactory):

@@ -14,6 +14,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 INSTALLED_APPS = [
     'opentech.images',
 
+    'opentech.apply.activity',
     'opentech.apply.categories',
     'opentech.apply.funds',
     'opentech.apply.dashboard',
