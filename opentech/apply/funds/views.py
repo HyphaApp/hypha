@@ -1,6 +1,6 @@
 from django import forms
 from django.template.response import TemplateResponse
-from django.views.generic import DetailView, UpdateView, View
+from django.views.generic import DetailView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
