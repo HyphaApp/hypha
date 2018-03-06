@@ -36,10 +36,9 @@ from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
+from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .admin_forms import WorkflowFormAdminForm
-from .forms import WorkflowFormAdminForm
 from .workflow import SingleStage, DoubleStage, active_statuses
 
 
