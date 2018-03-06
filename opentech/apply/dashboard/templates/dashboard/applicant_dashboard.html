@@ -22,8 +22,10 @@
     <h3>Your active submissions</h3>
     {% for submission in my_active_submissions %}
         <div class="wrapper wrapper--status-bar">
-            <a href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a>
-            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.phase class="status-bar--small" %}
+            <div>
+                <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h5>
+            </div>
+            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status class="status-bar--small" %}
         </div>
     {% empty %}
         No active submissions
