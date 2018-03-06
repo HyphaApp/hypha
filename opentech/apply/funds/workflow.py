@@ -10,6 +10,15 @@ from django.utils.text import slugify
 This file defines classes which allow you to compose workflows based on the following structure:
 
 Workflow -> Stage -> Phase -> Action
+
+These classes are designed such that they can be mapped to a wagtail streamfield to allow admins
+to build/adjust workflows as required.
+
+Current limitations:
+* Changing the name of a phase will mean that any object which references it cannot progress. [will
+be fixed when streamfield, may require intermediate fix prior to launch]
+* Outcomes are a special case of phase and perhaps should be handled separately. [will look at when
+progressing stages]
 """
 
 
