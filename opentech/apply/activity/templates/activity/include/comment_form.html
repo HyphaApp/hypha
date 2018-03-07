@@ -1,5 +1,8 @@
-<form method="post" id="comment-form">
-    {% csrf_token %}
-    {{ comment_form }}
-    <input id="comment-form-submit" name="form-submitted" type="submit" form="comment-form" value="Comment">
-</form>
+<h4>Add communication</h4>
+<div class="wrapper wrapper--comments">
+    <form class="form form--comments" method="post" id="comment-form">
+        {% csrf_token %}
+        {{ comment_form }}
+        <button id="comment-form-submit" name="form-submitted" form="comment-form" class="button button--primary" type="submit" value="comment">Add message</button>
+    </form>
+</div>

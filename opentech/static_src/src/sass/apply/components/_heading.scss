@@ -46,7 +46,19 @@
         text-transform: uppercase;
     }
 
+
     &--normal {
         font-weight: $weight--normal;
+    }
+
+    &--activity-feed {
+        @include responsive-font-sizes(12px, 18px);
+        line-height: 1.1;
+        text-align: center;
+
+        @include media-query(tablet-portrait) {
+            line-height: auto;
+            text-align: left;
+        }
     }
 }

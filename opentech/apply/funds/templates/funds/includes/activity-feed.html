@@ -1,0 +1,34 @@
+<div class="js-activity-feed activity-feed">
+    <div class="activity-feed__header">
+        <div class="wrapper wrapper--medium wrapper--relative">
+            <h4 class="activity-feed__heading">Activity Feed <svg class="icon icon--speech-bubble"><use xlink:href="#speech-bubble"></use></svg></h4>
+            <a href="#" class="js-close-feed link link--close-feed">Close</a>
+            <div class="tabs js-tabs">
+                <div class="tabs__container">
+                    <a class="tab__item tab__item--active" href="#" data-tab="tab-1">Communications</a>
+                    <a class="tab__item" href="#" data-tab="tab-2">Activity</a>
+                    <a class="tab__item" href="#" data-tab="tab-3">All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper--medium wrapper--activity-feed">
+        <div class="tabs__content tabs__content--current" id="tab-1">
+            {% include "activity/include/comment_list.html" with submission_title=True %}
+        </div>
+
+        <div class="tabs__content" id="tab-2">
+            {% include "activity/include/action_list.html" with submission_title=True %}
+        </div>
+
+        <div class="tabs__content" id="tab-3">
+            {% include "activity/include/all_activity_list.html" with submission_title=True %}
+        </div>
+    </div>
+
+    <a href="#" class="js-to-top link link--to-top">
+        <svg class="icon icon--to-top"><use xlink:href="#chevron"></use></svg>
+        <h6>Back to top</h6>
+    </a>
+</div>

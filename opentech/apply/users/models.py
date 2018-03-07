@@ -48,6 +48,9 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
 
+    # Meta: used for migration purposes only
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
