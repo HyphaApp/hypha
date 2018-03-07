@@ -84,7 +84,8 @@ class Command(BaseCommand):
         if not anonymize or self.is_staff(email):
             return email
 
-        return "aeon+%s@torchbox.com" % user['uid']
+        uid = user['uid']
+        return f"aeon+{uid}@torchbox.com"
 
     def is_staff(self, email):
         _, email_domain = email.split('@')
