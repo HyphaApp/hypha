@@ -41,8 +41,8 @@ class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
 
-    class Meta:
-        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
+    class Meta(SubmissionsTable.Meta):
+        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
 
 
 def get_used_rounds(request):
