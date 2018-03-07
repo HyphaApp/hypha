@@ -27,6 +27,11 @@ class ActivityBaseManager(models.Manager):
         return super().get_queryset().filter(type=self.type)
 
 
+class CommentQueryset(models.QuerySet):
+    def visibile_to(self, user):
+        return self.filter(visibility__in=self.model.visibility_for(user))
+
+
 class CommentManger(ActivityBaseManager):
     type = COMMENT
 
@@ -44,7 +49,7 @@ class Activity(models.Model):
     visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
 
     objects = models.Manager()
-    comments = CommentManger()
+    comments = CommentManger.from_queryset(CommentQueryset)()
     actions = ActionManager()
 
     class Meta:

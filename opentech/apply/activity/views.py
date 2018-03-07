@@ -23,7 +23,7 @@ class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
             'actions': Activity.actions.filter(submission=self.object),
-            'comments': Activity.comments.filter(submission=self.object),
+            'comments': Activity.comments.filter(submission=self.object).visibile_to(self.request.user),
         }
 
         return super().get_context_data(**extra, **kwargs)
