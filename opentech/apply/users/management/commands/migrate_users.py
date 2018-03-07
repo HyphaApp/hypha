@@ -15,7 +15,8 @@ class Command(BaseCommand):
     groups = Group.objects.all()
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument('source', type=argparse.FileType('r'), help="Migration source JSON file")
+        parser.add_argument('--anonymize', action='store_true', help="Anonymizes non-OTF emails")
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -28,7 +29,7 @@ class Command(BaseCommand):
 
                 full_name = self.get_full_name(user)
                 user_object, created = User.objects.get_or_create(
-                    email=user['mail'],
+                    email=self.get_email(user, options['anonymize']),
                     defaults={
                         'full_name': full_name,
                         'drupal_id': uid,
@@ -78,3 +79,13 @@ class Command(BaseCommand):
                 groups.append(self.groups.filter(name=group_name).first())
 
         return groups
+
+    def get_email(self, user, anonymize=False):
+        if not anonymize:
+            return user['mail']
+
+        _, email_domain = user['mail'].split('@')
+        if email_domain in settings.STAFF_EMAIL_DOMAINS:
+            return user['mail']
+
+        return "aeon+%s@torchbox.com" % user['uid']
