@@ -472,7 +472,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     @property
     def active(self):
-        return self.status in active_statuses
+        return self.phase.active
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated():
