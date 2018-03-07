@@ -446,6 +446,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def active(self):
         return self.filter(status__in=active_statuses)
 
+    def inactive(self):
+        return self.exclude(status__in=active_statuses)
+
 
 class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     field_template = 'funds/includes/submission_field.html'
