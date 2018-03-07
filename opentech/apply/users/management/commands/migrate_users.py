@@ -15,7 +15,8 @@ class Command(BaseCommand):
     groups = Group.objects.all()
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument('source', type=argparse.FileType('r'), help="Migration source JSON file")
+        parser.add_argument('--anonymize', action='store_true', help="Anonymizes non-OTF emails")
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -28,7 +29,7 @@ class Command(BaseCommand):
 
                 full_name = self.get_full_name(user)
                 user_object, created = User.objects.get_or_create(
-                    email=user['mail'],
+                    email=self.get_email(user, options['anonymize']),
                     defaults={
                         'full_name': full_name,
                         'drupal_id': uid,
@@ -66,8 +67,7 @@ class Command(BaseCommand):
             'dev': 'Administrator',
         }
 
-        _, email_domain = user.get('mail').split('@')
-        if email_domain in settings.STAFF_EMAIL_DOMAINS:
+        if self.is_staff(user['mail']):
             groups.append(self.groups.filter(name=STAFF_GROUP_NAME).first())
 
         roles = [role for role in user.get('roles').values() if role != "authenticated user"]
@@ -78,3 +78,14 @@ class Command(BaseCommand):
                 groups.append(self.groups.filter(name=group_name).first())
 
         return groups
+
+    def get_email(self, user, anonymize=False):
+        email = user['mail']
+        if not anonymize or self.is_staff(email):
+            return email
+
+        return f"aeon+{user['uid']}@torchbox.com"
+
+    def is_staff(self, email):
+        _, email_domain = email.split('@')
+        return email_domain in settings.STAFF_EMAIL_DOMAINS
