@@ -9,12 +9,12 @@ ACTIVITY_TYPES = {
     ACTION: 'Action',
 }
 
-ALL = 'all'
-PRIVATE = 'private'
+PUBLIC = 'public'
+INTERNAL = 'internal'
 
 VISIBILITY = {
-    ALL: 'All',
-    PRIVATE: 'Internal',
+    PUBLIC: 'Public',
+    INTERNAL: 'Internal',
 }
 
 
@@ -41,7 +41,7 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities')
     message = models.TextField()
-    visibility = models.CharField(choices=VISIBILITY.items(), default=ALL, max_length=10)
+    visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
 
     objects = models.Manager()
     comments = CommentManger()
@@ -52,7 +52,7 @@ class Activity(models.Model):
 
     @property
     def private(self):
-        return self.visibility != ALL
+        return self.visibility != PUBLIC
 
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)
