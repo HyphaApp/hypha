@@ -4,14 +4,28 @@ class Tabs {
     }
 
     constructor() {
+        // The tabs
+        this.tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item'));
+
+        // The tabs content
+        this.tabsContents = Array.prototype.slice.call(document.querySelectorAll('.tabs__content'));
+
+        // Active classes
+        this.tabActiveClass = 'tab__item--active';
+        this.tabContentActiveClass = 'tabs__content--current';
         this.bindEvents();
     }
 
     bindEvents() {
-        // Create an array first, so forEach will work in IE11
-        const tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item'));
+        // Get the current url
+        const url = document.location.toString();
 
-        tabItems.forEach((el) => {
+        // If the url contains a hash, activate the relevant tab
+        if (url.match('#')) {
+            this.updateTab(url);
+        }
+
+        this.tabItems.forEach((el) => {
             el.addEventListener('click', (e) => {
                 // prevent the page jumping
                 e.preventDefault();
@@ -20,26 +34,38 @@ class Tabs {
         });
     }
 
+    updateTab(url) {
+        this.stripTabClasses();
+
+        // Find tab with matching hash and activate
+        const match = document.querySelector(`a[href="#${url.split('#')[1]}"]`);
+        const tabId = match.getAttribute('data-tab');
+
+        this.addTabClasses(match, tabId);
+    }
+
     tabs(e) {
-        // Find current target
-        const toggle = e.currentTarget;
+        this.stripTabClasses();
+
+        // Find current tab
+        const tab = e.currentTarget;
 
         // Tab id is set in data-tab in html
-        const tabid = toggle.getAttribute('data-tab');
+        const tabId = tab.getAttribute('data-tab');
 
-        // Class to apply to active items
-        const activeClassItem = 'tab__item--active';
-        const activeClassContent = 'tabs__content--current';
+        this.addTabClasses(tab, tabId);
+    }
 
-        // Remove all existing .current
-        const tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item'));
-        tabItems.forEach(el => el.classList.remove(activeClassItem));
-        const tabsContent = Array.prototype.slice.call(document.querySelectorAll('.tabs__content'));
-        tabsContent.forEach(el => el.classList.remove(activeClassContent));
+    stripTabClasses(){
+        // remove active classes from all tabs and tab contents
+        this.tabItems.forEach(tabItem => tabItem.classList.remove(this.tabActiveClass));
+        this.tabsContents.forEach(tabsContent => tabsContent.classList.remove(this.tabContentActiveClass));
+    }
 
-        // Add current class
-        toggle.classList.add(activeClassItem);
-        document.querySelector(`#${tabid}`).classList.add(activeClassContent);
+    addTabClasses(tab, tabId){
+        // add active classes to tabs and their respecitve content
+        tab.classList.add(this.tabActiveClass);
+        document.querySelector(`#${tabId}`).classList.add(this.tabContentActiveClass);
     }
 }
 
