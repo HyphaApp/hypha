@@ -4,6 +4,7 @@ from django.db import transaction
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 
+
 class Command(BaseCommand):
     help = "Pre-seeds the global application categories."
 
