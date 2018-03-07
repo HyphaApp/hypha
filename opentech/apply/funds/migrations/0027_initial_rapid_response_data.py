@@ -3,7 +3,12 @@ from __future__ import unicode_literals
 
 import json
 
+from datetime import date
+
+from django.contrib.auth import get_user_model
 from django.db import migrations
+
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 
 def create_rapid_response(apps, schema_editor):
@@ -61,17 +66,17 @@ def create_rapid_response(apps, schema_editor):
   {"type": "checkbox", "value": {"field_label": "Sign up for OTF\'s daily newsletter (collection of news related to global internet freedom).", "help_text": "", "default_value": "false"}}
 ])})
 
-    FundType = apps.get_model('funds.FundType')
-
     ContentType = apps.get_model('contenttypes.ContentType')
-    fund_content_type, created = ContentType.objects.get_or_create(
-        model='fundtype', app_label='funds')
+    FundType = apps.get_model('funds.FundType')
 
     try:
         rr_fund = FundType.objects.get(title='Rapid response')
         rr_fund.workflow_name = 'single'
         rr_fund.forms = af
     except FundType.DoesNotExist:
+        fund_content_type, _ = ContentType.objects.get_or_create(
+            model='fundtype', app_label='funds')
+
         next_funds_count = FundType.objects.count() + 1
         counter = f'0{next_funds_count}' if next_funds_count >= 10 else next_funds_count
 
@@ -81,7 +86,7 @@ def create_rapid_response(apps, schema_editor):
             content_type=fund_content_type,
             path=f'00010002000{counter}',
             depth=3,
-            numchild=0,
+            numchild=1,
             slug='rapid-response',
             url_path='/apply/rapid-response',
         )
@@ -90,6 +95,28 @@ def create_rapid_response(apps, schema_editor):
 
     rr_fund.save()
 
+    # Set up a Round
+    Round = apps.get_model('funds.Round')
+    round_content_type, _ = ContentType.objects.get_or_create(
+        model='round', app_label='funds')
+
+    User = get_user_model()
+    lead_qs = User.objects.filter(full_name="Lindsay Beck")
+    lead = lead_qs.first() if lead_qs.count() else User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
+
+    rr_round = Round.objects.create(
+        title="Rapid Response open round",
+        draft_title="Rapid Response open round",
+        content_type=round_content_type,
+        path=f"{rr_fund.path}0001",
+        depth=4,
+        numchild=0,
+        slug='open-round',
+        url_path='/apply/rapid-response/open-round',
+        lead_id=lead.id,
+        start_date=date(2015, 8, 28),
+        end_date=None,
+    )
 
 def clean_rapid_response(apps, schema_editor):
     ApplicationForm = apps.get_model('funds.ApplicationForm')
@@ -97,6 +124,9 @@ def clean_rapid_response(apps, schema_editor):
 
     FundType = apps.get_model('funds.FundType')
     FundType.objects.filter(title='Rapid response').delete()
+
+    Round = apps.get_model('funds.Round')
+    Round.objects.filter(title='Rapid Response open round').delete()
 
 
 class Migration(migrations.Migration):
