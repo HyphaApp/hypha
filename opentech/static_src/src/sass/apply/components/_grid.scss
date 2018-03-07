@@ -45,6 +45,20 @@
             margin: 0;
         }
 
+        &--two {
+            grid-template-columns: 100%;
+            grid-gap: 0; // sass-lint:disable-line no-misspelled-properties
+
+            @include media-query(tablet-portrait) {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form--comments & {
+                grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
+                grid-template-columns: 1fr;
+            }
+        }
+
         &--proposal-info {
             padding-bottom: 30px;
             margin: 0 0 30px;
