@@ -67,8 +67,7 @@ class Command(BaseCommand):
             'dev': 'Administrator',
         }
 
-        _, email_domain = user.get('mail').split('@')
-        if email_domain in settings.STAFF_EMAIL_DOMAINS:
+        if self.is_staff(user['mail']):
             groups.append(self.groups.filter(name=STAFF_GROUP_NAME).first())
 
         roles = [role for role in user.get('roles').values() if role != "authenticated user"]
@@ -81,11 +80,12 @@ class Command(BaseCommand):
         return groups
 
     def get_email(self, user, anonymize=False):
-        if not anonymize:
-            return user['mail']
-
-        _, email_domain = user['mail'].split('@')
-        if email_domain in settings.STAFF_EMAIL_DOMAINS:
-            return user['mail']
+        email = user['mail']
+        if not anonymize or self.is_staff(email):
+            return email
 
         return "aeon+%s@torchbox.com" % user['uid']
+
+    def is_staff(self, email):
+        _, email_domain = email.split('@')
+        return email_domain in settings.STAFF_EMAIL_DOMAINS
