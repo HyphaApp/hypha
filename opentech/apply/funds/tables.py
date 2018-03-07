@@ -26,13 +26,15 @@ class SubmissionsTable(tables.Table):
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
         template = 'funds/tables/table.html'
+        row_attrs = {
+            'class': lambda record: '' if record.active else 'is-inactive'
+        }
 
     def render_user(self, value):
         return value.get_full_name()
 
     def render_status_name(self, value, record):
-        state = 'class="not-active"' if not record.active else ''
-        return mark_safe(f'<span { state }>{ value }</span>')
+        return mark_safe(f'<span>{ value }</span>')
 
 
 def get_used_rounds(request):
