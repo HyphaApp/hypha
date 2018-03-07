@@ -41,7 +41,7 @@ class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
 
-    class Meta:
+    class Meta(SubmissionsTable.Meta):
         sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
 
 
