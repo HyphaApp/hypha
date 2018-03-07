@@ -104,7 +104,7 @@ def create_rapid_response(apps, schema_editor):
     lead_qs = User.objects.filter(full_name="Lindsay Beck")
     lead = lead_qs.first() if lead_qs.count() else User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
-    rr_round = Round.objects.create(
+    Round.objects.create(
         title="Rapid Response open round",
         draft_title="Rapid Response open round",
         content_type=round_content_type,
