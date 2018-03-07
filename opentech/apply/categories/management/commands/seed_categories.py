@@ -6,7 +6,7 @@ from opentech.apply.categories.categories_seed import CATEGORIES
 
 
 class Command(BaseCommand):
-    help = "Pre-seeds the global application categories."
+    help = "Pre-seeds the global application categories. Application Forms and Fund Types seeding depend on this."
 
     @transaction.atomic
     def handle(self, *args, **options):

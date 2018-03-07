@@ -13,12 +13,12 @@ from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 
 class Command(BaseCommand):
-    help = "Pre-seeds the RR application form and fund type."
+    help = "Pre-seeds the RR application form and fund type. Depends on the categories seed being run first."
 
     @transaction.atomic
     def handle(self, *args, **options):
+        # There's an RR open round, so bail out. Avoids duplicate command runs.
         if Round.objects.filter(title='Rapid Response open round').count():
-            # There's an RR open round, so bail out
             return
 
         application_form = self.create_rapid_response_form()
@@ -97,12 +97,16 @@ class Command(BaseCommand):
 
     def create_rapid_response_round(self, fund):
         User = get_user_model()
-        lead_qs = User.objects.filter(full_name="Lindsay Beck")
-        lead = lead_qs.first() if lead_qs.count() else User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
+
+        try:
+            lead = User.objects.get(full_name="Lindsay Beck")
+        except User.DoesNotExist:
+            lead = User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
         round = Round(
             title="Rapid Response open round",
             lead=lead,
+            # The date of the original RR request type
             start_date=date(2015, 8, 28),
             end_date=None
         )
