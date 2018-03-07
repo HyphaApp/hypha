@@ -123,6 +123,10 @@
         @include media-query(mob-landscape) {
             padding: 2rem 0;
         }
+
+        + .wrapper--inner-space-medium {
+            padding: 0;
+        }
     }
 
     &--inner-space-large {
@@ -237,5 +241,67 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
+    }
+  
+    &--apply-box {
+        width: 385px;
+        padding: 20px;
+        color: $color--default;
+        background-color: $color--white;
+    }
+
+    &--applicant-dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        @include media-query(tablet-portrait) {
+            padding: 20px;
+        }
+    }
+
+    &--status-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: $color--white;
+        border-bottom: 3px solid $color--light-grey;
+
+        div:first-child {
+            padding-right: 20px;
+        }
+    }
+
+    &--relative {
+        position: relative;
+    }
+
+    &--activity-feed {
+        padding: 0 20px;
+        margin-top: 50px;
+
+        @include media-query(tablet-landscape) {
+            margin-top: 70px;
+        }
+    }
+
+    &--comments {
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid $color--mid-grey;
+
+        @include media-query(tablet-portrait) {
+            padding-bottom: 35px;
+            margin-bottom: 35px;
+        }
+    }
+
+    &--tabs {
+        padding: 20px 0;
+
+        @include media-query(tablet-portrait) {
+            padding: 4rem 0;
+        }
     }
 }

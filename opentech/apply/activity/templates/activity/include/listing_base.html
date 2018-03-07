@@ -1,5 +1,21 @@
-<div>
-    <p>{{ activity.timestamp }}</p>
-    <p>{{ activity.user }}</p>
-    <p>{{ activity.message }}</p>
+<div class="feed__item feed__item--{{ activity.type }}">
+    {% if activity.private %}
+        <svg class="icon icon--private-eye"><use xlink:href="#private-eye"></use></svg>
+    {% endif %}
+    <div class="feed__pre-content">
+        <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
+    </div>
+    <div class="feed__content">
+        <div class="feed__meta">
+            <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
+            <p class="feed__meta-item">{{ activity.timestamp|date:"m.d.y h:iA e" }}</p>
+        </div>
+        <div class="feed__heading">
+            <h4 class="feed__name">{{ activity.user }}</h4>
+            {% if submission_title %}
+                <h6>updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a></h6>
+            {% endif %}
+        </div>
+        <p class="feed__teaser">{{ activity.message }}</p>
+    </div>
 </div>

@@ -51,4 +51,39 @@
         width: 14px;
         height: 14px;
     }
+
+    &--speech-bubble {
+        fill: $color--white;
+
+        .activity-feed__header & {
+            margin-left: 10px;
+        }
+    }
+
+    &--to-top {
+        display: flex;
+        align-items: center;
+        width: 45px;
+        height: 45px;
+        padding: 12px;
+        margin: 0 0 5px;
+        background-color: $color--white;
+        border: 2px solid $color--black-50;
+        border-radius: 50%;
+        fill: $color--black-50;
+
+        @include media-query(small-tablet) {
+            width: 65px;
+            height: 65px;
+            padding: 20px;
+        }
+    }
+
+    &--private-eye {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 35px;
+        height: 25px;
+    }
 }

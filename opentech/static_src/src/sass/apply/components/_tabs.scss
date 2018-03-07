@@ -1,0 +1,51 @@
+.tabs {
+    margin: 20px 0 -20px;
+
+    &__container {
+        display: flex;
+    }
+
+    &__content {
+        display: none;
+
+        &--current {
+            display: inherit;
+        }
+
+    }
+}
+
+.tab__item {
+    @include responsive-font-sizes(12px, 15px);
+    position: relative;
+    width: 33%;
+    padding: 7px;
+    font-weight: $weight--bold;
+    hyphens: auto;
+    color: $color--mid-grey;
+    text-transform: uppercase;
+    transition: color, background-color, 0.1s ease-out;
+
+    @include media-query(mob-landscape) {
+        padding: 15px;
+    }
+
+    @include media-query(small-tablet) {
+        width: auto;
+        padding: 20px;
+    }
+
+    &:hover {
+        color: $color--light-blue;
+    }
+
+    &--active {
+        color: $color--default;
+        cursor: default;
+        background-color: $color--white;
+
+        &:hover {
+            background-color: $color--white;
+        }
+    }
+}

@@ -1,0 +1,19 @@
+<nav role="navigation" aria-label="Primary">
+    <ul class="nav nav--primary" role="menubar">
+        <li class="nav__item" role="presentation">
+            <a class="nav__link" href="{% url "dashboard:dashboard" %}" role="menuitem">
+                Dashboard
+            </a>
+        </li>
+        <li class="nav__item" role="presentation">
+            <a class="nav__link" href="{% url "funds:submissions" %}" role="menuitem">
+                Submissions
+            </a>
+        </li>
+    </ul>
+</nav>
+<a href="#" class="link link--button-transparent link--mobile-standout">
+    <svg class="icon"><use xlink:href="#person-icon"></use></svg>
+    My OTF
+</a>
+<a href="{% url 'users:logout' %}" class="link link--button-transparent link--mobile-standout">Logout</a>

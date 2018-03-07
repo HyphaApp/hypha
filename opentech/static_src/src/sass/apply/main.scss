@@ -12,7 +12,10 @@
 @import 'base/typography';
 
 // Components
+@import 'components/activity-feed';
+@import 'components/comment';
 @import 'components/button';
+@import 'components/feed';
 @import 'components/grid';
 @import 'components/heading';
 @import 'components/icon';
@@ -21,11 +24,13 @@
 @import 'components/rich-text';
 @import 'components/section';
 @import 'components/sidebar';
+@import 'components/tabs';
 @import 'components/status-bar';
 @import 'components/form';
 @import 'components/heading';
 @import 'components/icon';
 @import 'components/input';
+@import 'components/nav';
 @import 'components/pagination';
 @import 'components/select2';
 @import 'components/table';

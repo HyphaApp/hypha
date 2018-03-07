@@ -9,6 +9,14 @@ ACTIVITY_TYPES = {
     ACTION: 'Action',
 }
 
+PUBLIC = 'public'
+INTERNAL = 'internal'
+
+VISIBILITY = {
+    PUBLIC: 'Public',
+    INTERNAL: 'Internal',
+}
+
 
 class ActivityBaseManager(models.Manager):
     def create(self, **kwargs):
@@ -33,6 +41,7 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities')
     message = models.TextField()
+    visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
 
     objects = models.Manager()
     comments = CommentManger()
@@ -40,6 +49,10 @@ class Activity(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    @property
+    def private(self):
+        return self.visibility != PUBLIC
 
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)

@@ -15,13 +15,13 @@ from opentech.apply.activity.models import Activity
 
 from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
-from .tables import SubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
+from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
 
 
 class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     template_name = 'funds/submissions.html'
-    table_class = SubmissionsTable
+    table_class = AdminSubmissionsTable
 
     filterset_class = SubmissionFilter
 
@@ -32,7 +32,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
 
 class SubmissionSearchView(SingleTableMixin, FilterView):
     template_name = 'funds/submissions_search.html'
-    table_class = SubmissionsTable
+    table_class = AdminSubmissionsTable
 
     filterset_class = SubmissionFilterAndSearch
 
