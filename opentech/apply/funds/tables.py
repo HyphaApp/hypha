@@ -14,17 +14,17 @@ from .widgets import Select2MultiCheckboxesWidget
 
 
 class SubmissionsTable(tables.Table):
+    """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type")
     page = tables.Column(verbose_name="Fund")
-    lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
 
     class Meta:
         model = ApplicationSubmission
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
-        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
+        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         template = 'funds/tables/table.html'
         row_attrs = {
             'class': lambda record: '' if record.active else 'is-inactive'
@@ -35,6 +35,14 @@ class SubmissionsTable(tables.Table):
 
     def render_status_name(self, value, record):
         return mark_safe(f'<span>{ value }</span>')
+
+
+class AdminSubmissionsTable(SubmissionsTable):
+    """Adds admin only columns to the submissions table"""
+    lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
+
+    class Meta:
+        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
 
 
 def get_used_rounds(request):
