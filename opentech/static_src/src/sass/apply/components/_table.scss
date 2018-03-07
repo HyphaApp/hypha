@@ -25,9 +25,9 @@ table {
         transition: box-shadow 0.15s ease;
 
         @include media-query($table-breakpoint) {
-            border-top: 0;
+            border-bottom: 0;
             border-right: 0;
-            border-bottom: 2px solid $color--light-grey;
+            border-top: 2px solid $color--light-grey;
             border-left: 0;
 
             &:hover {
@@ -35,10 +35,42 @@ table {
             }
         }
 
+        &.is-inactive {
+            color: $color--black-50;
+            background-color: $color--grey-07;
+
+            &:hover {
+                box-shadow: none;
+            }
+
+            @include media-query($table-breakpoint) {
+                border-top: 2px solid $color--light-mid-grey;
+                border-bottom: 2px solid $color--light-mid-grey;
+            }
+
+            > td {
+                &.title {
+                    a {
+                        color: $color--black-50;
+                    }
+                }
+
+                &.status_name {
+                    span {
+                        color: $color--black-50;
+                        background-color: $color--mid-grey;
+                    }
+                }
+            }
+
+            >td {
+                height: 88px;
+            }
+        }
+
         > td {
             display: block;
             width: 100%;
-
 
             @include media-query($table-breakpoint) {
                 display: table-cell;
