@@ -42,7 +42,7 @@ class AdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
 
     class Meta(SubmissionsTable.Meta):
-        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')
+        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
 
 
 def get_used_rounds(request):
