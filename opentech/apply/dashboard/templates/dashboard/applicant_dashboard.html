@@ -1,0 +1,42 @@
+{% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
+{% load wagtailcore_tags %}
+
+{% block title %}Submission Dashboard{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large wrapper--applicant-dashboard">
+        <div>
+            <h3 class="heading heading--no-margin">Dashboard</h3>
+            <h5>An overview of active and past submissions</h5>
+        </div>
+        <div class="wrapper wrapper--apply-box">
+            <h4 class="heading heading--no-margin">Submit a new application</h4>
+            <h5 class="heading heading--normal">Apply now for our open rounds</h5>
+            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">Apply</a>
+        </div>
+    </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Your active submissions</h3>
+    {% for submission in my_active_submissions %}
+        <div class="wrapper wrapper--status-bar">
+            <div>
+                <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h5>
+                <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+            </div>
+            {% include "funds/includes/status_bar.html" with workflow=submission.workflow status=submission.status class="status-bar--small" %}
+        </div>
+    {% empty %}
+        No active submissions
+    {% endfor %}
+</div>
+
+{% if table.data %}
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <h3>Submission history</h3>
+        {% render_table table %}
+    </div>
+{% endif %}
+{% endblock %}

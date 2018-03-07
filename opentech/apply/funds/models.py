@@ -36,10 +36,10 @@ from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
+from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .admin_forms import WorkflowFormAdminForm
-from .workflow import SingleStage, DoubleStage
+from .workflow import SingleStage, DoubleStage, active_statuses
 
 
 WORKFLOW_CLASS = {
@@ -417,7 +417,14 @@ class LabForm(AbstractRelatedForm):
 
 
 class JSONOrderable(models.QuerySet):
+    json_field = ''
+
     def order_by(self, *field_names):
+        if not self.json_field:
+            raise ValueError(
+                'json_field cannot be blank, please provide a field on which to perform the ordering'
+            )
+
         def build_json_order_by(field):
             if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
                 return field
@@ -427,10 +434,20 @@ class JSONOrderable(models.QuerySet):
                 field = field[1:]
             else:
                 descending = False
-            return OrderBy(RawSQL("LOWER(form_data->>%s)", (field,)), descending=descending)
+            return OrderBy(RawSQL(f'LOWER({self.json_field}->>%s)', (field,)), descending=descending)
 
         field_ordering = [build_json_order_by(field) for field in field_names]
         return super().order_by(*field_ordering)
+
+
+class ApplicationSubmissionQueryset(JSONOrderable):
+    json_field = 'form_data'
+
+    def active(self):
+        return self.filter(status__in=active_statuses)
+
+    def inactive(self):
+        return self.exclude(status__in=active_statuses)
 
 
 class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
@@ -447,7 +464,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
 
-    objects = JSONOrderable.as_manager()
+    objects = ApplicationSubmissionQueryset.as_manager()
 
     @property
     def status_name(self):
@@ -460,6 +477,10 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     @property
     def phase(self):
         return self.workflow.current(self.status)
+
+    @property
+    def active(self):
+        return self.phase.active
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated():
