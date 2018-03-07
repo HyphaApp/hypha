@@ -420,6 +420,11 @@ class JSONOrderable(models.QuerySet):
     json_field = ''
 
     def order_by(self, *field_names):
+        if not self.json_field:
+            raise ValueError(
+                'json_field cannot be blank, please provide a field on which to perform the ordering'
+            )
+
         def build_json_order_by(field):
             if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
                 return field
