@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -15,7 +15,7 @@ from opentech.apply.activity.views import (
 )
 from opentech.apply.activity.models import Activity
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import ViewDispatcher
+from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
@@ -92,8 +92,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
-class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
+class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView):
     model = ApplicationSubmission
     form_views = {
         'progress': ProgressSubmissionView,
@@ -102,30 +101,17 @@ class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
     }
 
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(self.object) for form_view in self.form_views.values())
         return super().get_context_data(
             other_submissions=self.model.objects.filter(user=self.object.user).exclude(id=self.object.id),
-            **forms,
             **kwargs,
         )
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
 
-        kwargs['submission'] = self.object
-
-        # Information to pretend we originate from this view
-        kwargs['template_names'] = self.get_template_names()
-        kwargs['context'] = self.get_context_data()
-
-        form_submitted = request.POST['form-submitted'].lower()
-        view = self.form_views[form_submitted].as_view()
-
-        return view(request, *args, **kwargs)
-
-
-class ApplicantSubmissionDetailView(DetailView):
+class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
     model = ApplicationSubmission
+    form_views = {
+        'comment': CommentFormView,
+    }
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().user != request.user:
