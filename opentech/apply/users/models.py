@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
+from .groups import STAFF_GROUP_NAME
 from .utils import send_activation_email
 
 
@@ -69,3 +70,7 @@ class User(AbstractUser):
 
     def get_short_name(self):
         return self.email
+
+    @property
+    def is_apply_staff(self):
+        return self.groups.filter(name=STAFF_GROUP_NAME).exists()
