@@ -72,14 +72,17 @@ def create_rapid_response(apps, schema_editor):
         rr_fund.workflow_name = 'single'
         rr_fund.forms = af
     except FundType.DoesNotExist:
+        next_funds_count = FundType.objects.count() + 1
+        counter = f'0{next_funds_count}' if next_funds_count >= 10 else next_funds_count
+
         rr_fund = FundType.objects.create(
-            title="Rapid response",
+            title="Rapid response2",
             draft_title="Rapid response",
-            slug='apply',
             content_type=fund_content_type,
-            path='000100020001',
+            path=f'00010002000{counter}',
             depth=3,
             numchild=0,
+            slug='rapid-response',
             url_path='/apply/rapid-response',
         )
         rr_fund.workflow_name = 'single'
@@ -93,7 +96,7 @@ def clean_rapid_response(apps, schema_editor):
     ApplicationForm.objects.filter(name='Rapid response').delete()
 
     FundType = apps.get_model('funds.FundType')
-    FundType.object.filter(name='Rapid response').delete()
+    FundType.objects.filter(title='Rapid response').delete()
 
 
 class Migration(migrations.Migration):
