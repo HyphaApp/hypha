@@ -3,6 +3,7 @@ import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
+import '@fancyapps/fancybox';
 
 (function ($) {
     $(document).ready(function(){
@@ -34,6 +35,19 @@ import Tabs from './components/tabs';
                     <p class="form__file">${$(this)[0].files[i].name}</p>
                 `);
             }
+        });
+
+        // Show actions sidebar on mobile
+        $('.js-actions-toggle').click(function(e) {
+            e.preventDefault();
+            this.classList.toggle('is-active');
+            this.nextElementSibling.classList.toggle('is-visible');
+        });
+
+        // Fancybox global options
+        $('[data-fancybox]').fancybox({
+            animationDuration : 350,
+            animationEffect : 'fade'
         });
 
         // Open the activity feed
@@ -150,6 +164,8 @@ import Tabs from './components/tabs';
             $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
+            $('.js-actions-toggle').removeClass('is-active');
+            $('.js-actions-sidebar').removeClass('is-visible');
         }
     }).trigger('resize');
 })(jQuery);

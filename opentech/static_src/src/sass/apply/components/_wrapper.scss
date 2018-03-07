@@ -237,6 +237,12 @@
         }
     }
 
+    &--button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+  
     &--apply-box {
         width: 385px;
         padding: 20px;

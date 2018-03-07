@@ -1,0 +1,16 @@
+{% if mobile %}
+    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+{% endif %}
+
+<div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+    <h5>Actions to take</h5>
+    <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Update status</a>
+    <p class="sidebar__separator">Assign</p>
+
+    <div class="wrapper wrapper--button-container">
+        <a class="button button--half-width button--white" href="#">Placeholder</a>
+        <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">Lead</a>
+    </div>
+
+    <a class="button button--white button--full-width button--bottom-space" href="#">Placeholder</a>
+</div>

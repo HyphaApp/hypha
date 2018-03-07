@@ -1,5 +1,10 @@
-<form method="post" id="update-lead-form">
-    {% csrf_token %}
-    {{ lead_form }}
-    <input id="update-form-submit" name="form-submitted" type="submit" form="update-lead-form" value="Update">
-</form>
+<div class="modal" id="assign-lead">
+    <h4>Assign Lead</h4>
+    <form class="form" method="post" id="update-lead-form">
+        {% csrf_token %}
+        <div class="form__item">
+            {{ lead_form }}
+        </div>
+        <input class="button button--primary button--top-space" id="update-form-submit" name="form-submitted" type="submit" form="update-lead-form" value="Update">
+    </form>
+</div>
