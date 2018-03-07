@@ -11,6 +11,7 @@ class ProgressSubmissionForm(forms.ModelForm):
         fields: list = []
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
         super().__init__(*args, **kwargs)
         choices = [(action, action) for action in self.instance.phase.action_names]
         action_field = self.fields['action']
@@ -30,6 +31,7 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
         fields = ('lead',)
 
     def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
         super().__init__(*args, **kwargs)
         lead_field = self.fields['lead']
         lead_field.label = f'Update lead from { self.instance.lead } to'

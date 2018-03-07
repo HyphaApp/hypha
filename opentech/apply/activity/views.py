@@ -43,6 +43,6 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return self.object.submission.get_absolute_url()
 
     @classmethod
-    def contribute_form(cls, submission):
+    def contribute_form(cls, submission, user):
         # We dont want to pass the submission as the instance
-        return super().contribute_form(None)
+        return super().contribute_form(None, user=user)
