@@ -132,7 +132,8 @@ def clean_rapid_response(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0026_add_leads_to_submission_and_lab')
+        ('funds', '0026_add_leads_to_submission_and_lab'),
+        ('users', '0004_drop_first_last_names')
     ]
 
     operations = [
