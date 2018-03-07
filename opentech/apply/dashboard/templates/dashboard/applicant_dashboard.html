@@ -32,8 +32,11 @@
         No active submissions
     {% endfor %}
 </div>
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Submission history</h3>
-    {% render_table table %}
-</div>
+
+{% if table.data %}
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <h3>Submission history</h3>
+        {% render_table table %}
+    </div>
+{% endif %}
 {% endblock %}
