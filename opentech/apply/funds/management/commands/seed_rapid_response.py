@@ -21,6 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # There's an RR open round, so bail out. Avoids duplicate command runs.
         if Round.objects.filter(title=RR_ROUND_TITLE).count():
+            self.stdout.write(self.style.WARNING('Skipping. The target Round/Fund Type and Application Form exist'))
             return
 
         application_form = self.create_rapid_response_form()
@@ -35,7 +36,7 @@ class Command(BaseCommand):
         regions_id = Category.objects.get(name='Region(s)').id
         addressed_id = Category.objects.get(name='Addressed problems').id
 
-        application_form, _ = ApplicationForm.objects.get_or_create(name='Rapid response', defaults={'form_fields': json.dumps([
+        data = [
             {"type": "text_markup", "value": "<h3>Basic information</h3>"},
             {"type": "title", "value": {"field_label": "What is your project name?", "help_text": "", "info": None}},
             {"type": "full_name", "value": {"field_label": "Your name", "help_text": "", "info": None}},
@@ -78,7 +79,9 @@ class Command(BaseCommand):
             {"type": "text_markup", "value": "<h3>I would like to</h3>"},
             {"type": "checkbox", "value": {"field_label": "Sign up to the OTF-Announce list, low traffic (funding opportunities, major alerts, etc)", "help_text": "", "default_value": "false"}},
             {"type": "checkbox", "value": {"field_label": "Sign up for OTF\'s daily newsletter (collection of news related to global internet freedom).", "help_text": "", "default_value": "false"}}
-        ])})
+        ]
+
+        application_form, _ = ApplicationForm.objects.get_or_create(name='Rapid response', defaults={'form_fields': json.dumps(data)})
 
         return application_form
 
@@ -112,4 +115,5 @@ class Command(BaseCommand):
             start_date=date(2015, 8, 28),
             end_date=None
         )
+        round.parent_page = fund
         fund.add_child(instance=round)
