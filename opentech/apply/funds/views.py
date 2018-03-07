@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import PermissionDenied
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, UpdateView
@@ -14,6 +15,7 @@ from opentech.apply.activity.views import (
 )
 from opentech.apply.activity.models import Activity
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.views import ViewDispatcher
 
 from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
@@ -91,7 +93,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionDetailView(ActivityContextMixin, DetailView):
+class AdminSubmissionDetailView(ActivityContextMixin, DetailView):
     model = ApplicationSubmission
     form_views = {
         'progress': ProgressSubmissionView,
@@ -120,6 +122,20 @@ class SubmissionDetailView(ActivityContextMixin, DetailView):
         view = self.form_views[form_submitted].as_view()
 
         return view(request, *args, **kwargs)
+
+
+class ApplicantSubmissionDetailView(DetailView):
+    model = ApplicationSubmission
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().user != request.user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SubmissionDetailView(ViewDispatcher):
+    admin_view = AdminSubmissionDetailView
+    applicant_view = ApplicantSubmissionDetailView
 
 
 workflows = [SingleStage, DoubleStage]
