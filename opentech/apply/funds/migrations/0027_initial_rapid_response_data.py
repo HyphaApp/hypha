@@ -76,7 +76,7 @@ def create_rapid_response(apps, schema_editor):
         counter = f'0{next_funds_count}' if next_funds_count >= 10 else next_funds_count
 
         rr_fund = FundType.objects.create(
-            title="Rapid response2",
+            title="Rapid response",
             draft_title="Rapid response",
             content_type=fund_content_type,
             path=f'00010002000{counter}',
