@@ -2,7 +2,7 @@ from collections import defaultdict
 import copy
 import itertools
 
-from typing import Dict, Iterable, Iterator, List, Sequence, Type, Union
+from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
 
 from django.forms import Form
 from django.utils.text import slugify
@@ -382,10 +382,10 @@ statuses = set(phase.name for phase in Phase.__subclasses__())
 status_options = [(slugify(opt), opt) for opt in statuses]
 
 
-def get_active_statuses():
+def get_active_statuses() -> Set[str]:
     active = set()
 
-    def add_if_active(phase):
+    def add_if_active(phase: 'Phase') -> None:
         if phase.active:
             active.add(str(phase))
 
