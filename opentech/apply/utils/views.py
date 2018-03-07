@@ -22,7 +22,7 @@ class ViewDispatcher(View):
 class DelegateableView(DetailView):
     """A view which passes its context to child form views to allow them to post to the same URL """
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(self.object) for form_view in self.form_views.values())
+        forms = dict(form_view.contribute_form(self.object, self.request.user) for form_view in self.form_views.values())
         return super().get_context_data(
             **forms,
             **kwargs,
@@ -48,6 +48,11 @@ class DelegatedViewMixin(View):
     def get_template_names(self):
         return self.kwargs['template_names']
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
         # Use the previous context but override the validated form
         form = kwargs.pop('form')
@@ -56,5 +61,5 @@ class DelegatedViewMixin(View):
         return super().get_context_data(**kwargs)
 
     @classmethod
-    def contribute_form(cls, submission):
-        return cls.context_name, cls.form_class(instance=submission)
+    def contribute_form(cls, submission, user):
+        return cls.context_name, cls.form_class(instance=submission, user=user)
