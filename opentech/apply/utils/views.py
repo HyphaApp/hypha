@@ -5,8 +5,8 @@ from django.views.generic import DetailView, View
 
 @method_decorator(login_required, name='dispatch')
 class ViewDispatcher(View):
-    admin_view = None
-    applicant_view = None
+    admin_view: View = None
+    applicant_view: View = None
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_apply_staff:
