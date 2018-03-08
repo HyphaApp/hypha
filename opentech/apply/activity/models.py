@@ -18,6 +18,11 @@ VISIBILITY = {
 }
 
 
+class ActivityQuerySet(models.QuerySet):
+    def comments(self):
+        return self.filter(type=COMMENT)
+
+
 class ActivityBaseManager(models.Manager):
     def create(self, **kwargs):
         kwargs.update(type=self.type)
@@ -48,12 +53,13 @@ class Activity(models.Model):
     message = models.TextField()
     visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
 
-    objects = models.Manager()
+    objects = models.Manager.from_queryset(ActivityQuerySet)()
     comments = CommentManger.from_queryset(CommentQueryset)()
     actions = ActionManager()
 
     class Meta:
         ordering = ['-timestamp']
+        base_manager_name = 'objects'
 
     @property
     def private(self):

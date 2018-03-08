@@ -20,11 +20,12 @@ class SubmissionsTable(tables.Table):
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
+    comments = tables.Column(accessor=A('activities.comments.count'), verbose_name="Comments")
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'comments')
         template = 'funds/tables/table.html'
         row_attrs = {
             'class': lambda record: '' if record.active else 'is-inactive'
@@ -33,7 +34,7 @@ class SubmissionsTable(tables.Table):
     def render_user(self, value):
         return value.get_full_name()
 
-    def render_status_name(self, value, record):
+    def render_status_name(self, value):
         return mark_safe(f'<span>{ value }</span>')
 
     def order_status_name(self, qs, desc):
@@ -45,7 +46,7 @@ class AdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'comments')  # type: ignore
 
 
 def get_used_rounds(request):
