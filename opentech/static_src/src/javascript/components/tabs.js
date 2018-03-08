@@ -13,7 +13,7 @@ class Tabs {
         // Active classes
         this.tabActiveClass = 'tab__item--active';
         this.tabContentActiveClass = 'tabs__content--current';
-        this.defaultSelectedTab = 'submission-details';
+        this.defaultSelectedTab = 'tab-1';
         this.bindEvents();
     }
 
@@ -58,9 +58,11 @@ class Tabs {
 
     addTabClasses(tab){
         if( tab === null) {
-            tab = this.findTab(this.defaultSelectedTab);
+            tab = document.querySelector(`[data-tab=${this.defaultSelectedTab}]`);;
         }
+
         const tabId = tab.getAttribute('data-tab');
+
         // add active classes to tabs and their respecitve content
         tab.classList.add(this.tabActiveClass);
         document.querySelector(`#${tabId}`).classList.add(this.tabContentActiveClass);
