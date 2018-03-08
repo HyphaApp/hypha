@@ -306,7 +306,7 @@ class Command(BaseCommand):
         if mapping_type == "direct":
             value = source_value
         elif mapping_type == 'value':
-            value = source_value[key] if source_value else ''
+            value = self.nl2br(source_value[key]) if source_value else ''
         elif mapping_type == 'map' and 'map' in 'mapping':
             value = mapping['map'].get(source_value[key])
         elif mapping_type == 'address' and 'map' in mapping:
@@ -353,3 +353,6 @@ class Command(BaseCommand):
         workbench_moderation: {'current': {'state': STATE, 'timestamp': TS}}
         """
         pass
+
+    def nl2br(self, value):
+        return value.replace('\r\n', '<br>\n')
