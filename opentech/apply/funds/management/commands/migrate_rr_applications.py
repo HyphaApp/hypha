@@ -10,7 +10,7 @@ from django.db.utils import IntegrityError
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round
+from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm
 
 User = get_user_model()
 
@@ -218,7 +218,7 @@ STREAMFIELD_MAP = {
 
 FUND = FundType.objects.get(title='Rapid Response')
 ROUND = Round.objects.get(title='Rapid Response open round')
-
+FORM = RoundForm.objects.get(round=ROUND)
 
 class Command(BaseCommand):
     help = "Rapid response migration script. Requires a source JSON file."
@@ -258,6 +258,7 @@ class Command(BaseCommand):
         submission.page = FUND
         submission.round = ROUND
         form_data = {}
+        submission.form_fields = FORM.form.form_fields
 
         for field in node:
             if field in STREAMFIELD_MAP:
