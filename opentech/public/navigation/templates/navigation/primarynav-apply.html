@@ -1,15 +1,7 @@
 <nav role="navigation" aria-label="Primary">
     <ul class="nav nav--primary" role="menubar">
-        <li class="nav__item" role="presentation">
-            <a class="nav__link" href="{% url "dashboard:dashboard" %}" role="menuitem">
-                Dashboard
-            </a>
-        </li>
-        <li class="nav__item" role="presentation">
-            <a class="nav__link" href="{% url "funds:submissions" %}" role="menuitem">
-                Submissions
-            </a>
-        </li>
+        {% include "navigation/primarynav-apply-item.html" with name="Dashboard" url="dashboard:dashboard" %}
+        {% include "navigation/primarynav-apply-item.html" with name="Submissions" url="funds:submissions" %}
     </ul>
 </nav>
 <a href="#" class="link link--button-transparent link--mobile-standout">
