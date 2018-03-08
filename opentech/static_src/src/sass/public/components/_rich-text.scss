@@ -1,6 +1,10 @@
 .rich-text {
     margin-bottom: 2rem;
 
+    .form & {
+        margin-bottom: 0;
+    }
+
     a {
         font-weight: $weight--bold;
         border-bottom: 1px solid transparent;
