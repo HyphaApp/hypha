@@ -595,7 +595,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     def get_data(self):
         # Updated for JSONField
-        form_data = self.form_data
+        form_data = self.form_data.copy()
         form_data.update({
             'submit_time': self.submit_time,
         })
