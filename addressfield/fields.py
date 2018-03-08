@@ -28,6 +28,10 @@ def flatten_data(data):
 
 
 class AddressField(forms.CharField):
+    """
+    The field stores the address in a flattened form,
+    so the locality components are on the same level as country or premise
+    """
     widget = AddressWidget
     data = VALIDATION_DATA
 
