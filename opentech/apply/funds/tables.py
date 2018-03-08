@@ -35,6 +35,9 @@ class SubmissionsTable(tables.Table):
     def render_status_name(self, value, record):
         return mark_safe(f'<span>{ value }</span>')
 
+    def order_status_name(self, qs, desc):
+        return qs.step_order(desc), True
+
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
