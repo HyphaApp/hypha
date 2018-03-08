@@ -1,4 +1,6 @@
-from django.views.generic import CreateView, View
+from django.views.generic import CreateView
+
+from opentech.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
 from .models import Activity, COMMENT
@@ -21,27 +23,10 @@ class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
             'actions': Activity.actions.filter(submission=self.object),
-            'comments': Activity.comments.filter(submission=self.object),
+            'comments': Activity.comments.filter(submission=self.object).visibile_to(self.request.user),
         }
 
         return super().get_context_data(**extra, **kwargs)
-
-
-class DelegatedViewMixin(View):
-    """For use on create views accepting forms from another view"""
-    def get_template_names(self):
-        return self.kwargs['template_names']
-
-    def get_context_data(self, **kwargs):
-        # Use the previous context but override the validated form
-        form = kwargs.pop('form')
-        kwargs.update(self.kwargs['context'])
-        kwargs.update(**{self.context_name: form})
-        return super().get_context_data(**kwargs)
-
-    @classmethod
-    def contribute_form(cls, submission):
-        return cls.context_name, cls.form_class(instance=submission)
 
 
 class CommentFormView(DelegatedViewMixin, CreateView):
@@ -58,6 +43,6 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return self.object.submission.get_absolute_url() + '#communications'
 
     @classmethod
-    def contribute_form(cls, submission):
+    def contribute_form(cls, submission, user):
         # We dont want to pass the submission as the instance
-        return super().contribute_form(None)
+        return super().contribute_form(None, user=user)
