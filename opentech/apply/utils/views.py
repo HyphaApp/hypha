@@ -2,8 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, View
 
-from opentech.apply.users.groups import STAFF_GROUP_NAME
-
 
 @method_decorator(login_required, name='dispatch')
 class ViewDispatcher(View):
@@ -11,7 +9,7 @@ class ViewDispatcher(View):
     applicant_view = None
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.groups.filter(name=STAFF_GROUP_NAME).exists():
+        if request.user.is_apply_staff:
             view = self.admin_view
         else:
             view = self.applicant_view
