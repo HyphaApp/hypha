@@ -464,6 +464,9 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
 
+    # Meta: used for migration purposes only
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     objects = ApplicationSubmissionQueryset.as_manager()
 
     @property
