@@ -209,11 +209,11 @@ STREAMFIELD_MAP = {
         "id": "83ecc69a-f47c-495e-bc8f-326e55aed67a",
         "type": "boolean",
     },
-    # TODO
-    # "field_concept_upload": {
-    #     "id": "607daeba-1f33-4ad0-b135-eda743ba8e3a",
-    #     "type": "file",
-    # },
+    "field_concept_upload": {
+        "id": "607daeba-1f33-4ad0-b135-eda743ba8e3a",
+        "type": "file",
+        # TODO: finish mapping
+    },
 }
 
 FUND = FundType.objects.get(title='Rapid Response')
@@ -241,7 +241,6 @@ class Command(BaseCommand):
 
             for id in self.data:
                 self.process(id)
-                return
 
     def process(self, id):
         node = self.data[id]
@@ -262,6 +261,11 @@ class Command(BaseCommand):
         form_data = {
             'skip_account_creation_notification': True,
         }
+
+        # Only allow one of application amount or application amount text
+        if not node['field_application_amount']:
+            node.pop('field_application_amount', None)
+
         for field in node:
             if field in STREAMFIELD_MAP:
                 try:
@@ -310,7 +314,7 @@ class Command(BaseCommand):
                 value_map = mapping['map']
                 value = {}
                 for item in value_map:
-                    value[value_map['item']] = source_value[item]
+                    value[value_map[item]] = source_value[item]
             except TypeError:
                 value = {}
         elif mapping_type == 'boolean':
@@ -323,7 +327,14 @@ class Command(BaseCommand):
                     option = self.get_referenced_term(source_value[key])
                     value = [option] if option else []
                 else:
-                    value = [self.get_referenced_term(item[key]) for item in source_value]
+                    value = []
+                    for item in source_value:
+                        option = self.get_referenced_term(item[key])
+                        if option:
+                            value.append(option)
+        elif mapping_type == 'file':
+            # TODO finish mapping. Requires access to the files.
+            value = {}
 
         return value
 
@@ -331,7 +342,7 @@ class Command(BaseCommand):
         try:
             term = self.terms[tid]
             return term.id
-        finally:
+        except KeyError:
             return None
 
     def get_referenced_node(self, nid):
