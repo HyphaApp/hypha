@@ -257,9 +257,11 @@ class Command(BaseCommand):
 
         submission.page = FUND
         submission.round = ROUND
-        form_data = {}
         submission.form_fields = FORM.form.form_fields
 
+        form_data = {
+            'skip_account_creation_notification': True,
+        }
         for field in node:
             if field in STREAMFIELD_MAP:
                 try:

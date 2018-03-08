@@ -495,11 +495,18 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             full_name = self.form_data.get('full_name')
 
             User = get_user_model()
-            self.user, _ = User.objects.get_or_create_and_notify(
-                email=email,
-                site=self.page.get_site(),
-                defaults={'full_name': full_name}
-            )
+            if 'skip_account_creation_notification' in self.form_data:
+                self.form_data.pop('skip_account_creation_notification', None)
+                self.user, _ = User.objects.get_or_create(
+                    email=email,
+                    defaults={'full_name': full_name}
+                )
+            else:
+                self.user, _ = User.objects.get_or_create_and_notify(
+                    email=email,
+                    site=self.page.get_site(),
+                    defaults={'full_name': full_name}
+                )
 
     def save_path(self, file_name):
         file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
