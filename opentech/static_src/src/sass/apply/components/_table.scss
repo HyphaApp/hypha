@@ -37,11 +37,7 @@ table {
 
         &.is-inactive {
             color: $color--black-50;
-            background-color: $color--grey-07;
-
-            &:hover {
-                box-shadow: none;
-            }
+            background-color: $color--black-07;
 
             @include media-query($table-breakpoint) {
                 border-top: 2px solid $color--light-mid-grey;
