@@ -258,6 +258,8 @@ class Command(BaseCommand):
         submission.round = ROUND
         submission.form_fields = FORM.form.form_fields
 
+        submission.status = self.get_workflow_state(node)
+
         form_data = {
             'skip_account_creation_notification': True,
         }
@@ -348,11 +350,22 @@ class Command(BaseCommand):
     def get_referenced_node(self, nid):
         pass
 
-    def get_workflow_state(self):
+    def get_workflow_state(self, node):
         """
         workbench_moderation: {'current': {'state': STATE, 'timestamp': TS}}
         """
-        pass
+        states = {
+            "draft": "Request__internal-review__0",
+            "in_discussion": "Request__under-discussion__2",
+            "dropped": "Request__rejected__3",
+            "dropped_concept_note": "Request__rejected__3",
+            "dropped_without_review": "Request__rejected__3",
+            "published": "Request__accepted__3",
+            "invited_for_proposal": "Request__accepted__3",
+            "in_contract": "Request__accepted__3"
+        }
+
+        return states.get(node['workbench_moderation']['current']['state'], "Internal Review")
 
     def nl2br(self, value):
         return value.replace('\r\n', '<br>\n')
