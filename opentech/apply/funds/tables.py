@@ -24,7 +24,6 @@ class SubmissionsTable(tables.Table):
     class Meta:
         model = ApplicationSubmission
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
-        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         template = 'funds/tables/table.html'
         row_attrs = {
             'class': lambda record: '' if record.active else 'is-inactive'
@@ -39,10 +38,8 @@ class SubmissionsTable(tables.Table):
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
-    lead = tables.Column(accessor='round.specific.lead', verbose_name='Lead')
-
     class Meta(SubmissionsTable.Meta):
-        sequence = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
 
 
 def get_used_rounds(request):
@@ -78,7 +75,7 @@ class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Statuses')
-    lead = Select2ModelMultipleChoiceFilter(name='round__round__lead', queryset=get_round_leads, label='Leads')
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
 
     class Meta:
         model = ApplicationSubmission
