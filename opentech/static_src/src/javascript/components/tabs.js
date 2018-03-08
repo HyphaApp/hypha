@@ -13,17 +13,12 @@ class Tabs {
         // Active classes
         this.tabActiveClass = 'tab__item--active';
         this.tabContentActiveClass = 'tabs__content--current';
+        this.defaultSelectedTab = 'tab-1';
         this.bindEvents();
     }
 
     bindEvents() {
-        // Get the current url
-        const url = document.location.toString();
-
-        // If the url contains a hash, activate the relevant tab
-        if (url.match('#')) {
-            this.updateTab(url);
-        }
+        this.updateTabOnLoad();
 
         this.tabItems.forEach((el) => {
             el.addEventListener('click', (e) => {
@@ -34,26 +29,25 @@ class Tabs {
         });
     }
 
-    updateTab(url) {
-        this.stripTabClasses();
+    findTab(href) {
+        return document.querySelector(`a[href="#${href}"]`);
+    }
 
+    updateTabOnLoad() {
         // Find tab with matching hash and activate
-        const match = document.querySelector(`a[href="#${url.split('#')[1]}"]`);
-        const tabId = match.getAttribute('data-tab');
+        const url = document.location.toString();
+        const match = this.findTab(url.split('#')[1]);
 
-        this.addTabClasses(match, tabId);
+        this.addTabClasses(match);
     }
 
     tabs(e) {
+        // Find current tab
         this.stripTabClasses();
 
-        // Find current tab
         const tab = e.currentTarget;
 
-        // Tab id is set in data-tab in html
-        const tabId = tab.getAttribute('data-tab');
-
-        this.addTabClasses(tab, tabId);
+        this.addTabClasses(tab);
     }
 
     stripTabClasses(){
@@ -62,7 +56,13 @@ class Tabs {
         this.tabsContents.forEach(tabsContent => tabsContent.classList.remove(this.tabContentActiveClass));
     }
 
-    addTabClasses(tab, tabId){
+    addTabClasses(tab){
+        if( tab === null) {
+            tab = document.querySelector(`[data-tab=${this.defaultSelectedTab}]`);;
+        }
+
+        const tabId = tab.getAttribute('data-tab');
+
         // add active classes to tabs and their respecitve content
         tab.classList.add(this.tabActiveClass);
         document.querySelector(`#${tabId}`).classList.add(this.tabContentActiveClass);

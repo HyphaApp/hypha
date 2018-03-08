@@ -1,6 +1,7 @@
 {% if progress_form.should_show %}
 <div class="modal" id="update-status">
     <h4>Update status</h4>
+    <p>Current status: {{ object.phase.name }}</p>
     <form class="form" method="post" id="progress-form">
         {% csrf_token %}
         <div class="form__item">
