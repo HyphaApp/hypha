@@ -220,6 +220,7 @@ FUND = FundType.objects.get(title='Rapid Response')
 ROUND = Round.objects.get(title='Rapid Response open round')
 FORM = RoundForm.objects.get(round=ROUND)
 
+
 class Command(BaseCommand):
     help = "Rapid response migration script. Requires a source JSON file."
     data = []
