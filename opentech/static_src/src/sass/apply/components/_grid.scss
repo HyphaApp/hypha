@@ -54,8 +54,9 @@
             }
 
             .form--comments & {
+                margin: 20px 0 0;
                 grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
-                grid-template-columns: 1fr;
+                grid-template-columns: 100px 100px;
             }
         }
 

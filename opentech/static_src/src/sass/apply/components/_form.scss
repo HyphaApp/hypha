@@ -45,20 +45,6 @@
         }
     }
 
-    textarea,
-    &__textarea {
-        display: block;
-        width: 100%;
-        height: 100px;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid $color--mid-grey;
-
-        @include media-query(tablet-portrait) {
-            max-width: 60%;
-        }
-    }
-
     &__label {
         @extend %h5;
         font-weight: $weight--bold;
@@ -270,6 +256,20 @@
         margin-bottom: 5px;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
+    }
+
+    textarea,
+    &__textarea {
+        display: block;
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid $color--mid-grey;
+
+        @include media-query(tablet-portrait) {
+            max-width: 70%;
+        }
     }
 }
 

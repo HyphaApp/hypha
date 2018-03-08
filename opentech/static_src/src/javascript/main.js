@@ -44,6 +44,12 @@ import '@fancyapps/fancybox';
             this.nextElementSibling.classList.toggle('is-visible');
         });
 
+        // Fancybox global options
+        $('[data-fancybox]').fancybox({
+            animationDuration : 350,
+            animationEffect : 'fade'
+        });
+
         // Open the activity feed
         $('.js-open-feed').click((e) => {
             e.preventDefault();
@@ -65,12 +71,6 @@ import '@fancyapps/fancybox';
 
         // Scroll to the top of the activity feed
         $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
-
-        // Fancybox global options
-        $('[data-fancybox]').fancybox({
-            animationDuration : 350,
-            animationEffect : 'fade'
-        });
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
