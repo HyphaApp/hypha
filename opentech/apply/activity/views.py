@@ -55,7 +55,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return self.object.submission.get_absolute_url()
+        return self.object.submission.get_absolute_url() + '#communications'
 
     @classmethod
     def contribute_form(cls, submission):
