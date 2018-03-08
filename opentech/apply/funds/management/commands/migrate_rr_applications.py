@@ -316,14 +316,19 @@ class Command(BaseCommand):
                 value = []
             else:
                 if isinstance(source_value, dict):
-                    value = self.get_referenced_term(source_value[key])
+                    option = self.get_referenced_term(source_value[key])
+                    value = [option] if option else []
                 else:
-                    value = [item[key] for item in source_value]
+                    value = [self.get_referenced_term(item[key]) for item in source_value]
 
         return value
 
     def get_referenced_term(self, tid):
-        return self.terms.get(tid, None)
+        try:
+            term = self.terms[tid]
+            return term.id
+        finally:
+            return None
 
     def get_referenced_node(self, nid):
         pass
