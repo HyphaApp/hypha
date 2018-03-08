@@ -62,13 +62,11 @@ class Activity(models.Model):
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)
 
-
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
             return [PUBLIC, INTERNAL]
         return [PUBLIC]
-
 
     @classmethod
     def visibility_choices_for(cls, user):

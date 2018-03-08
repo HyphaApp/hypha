@@ -69,9 +69,8 @@
             </div>
 
             <aside class="sidebar">
-                {% include "funds/includes/actions.html" %}
-                {% include "funds/includes/progress_form.html" %}
-                {% include "funds/includes/update_lead_form.html" %}
+                {% block sidebar_forms %}
+                {% endblock %}
 
                 {% if other_submissions %}
                     <div class="sidebar__inner">

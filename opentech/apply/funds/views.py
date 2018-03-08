@@ -93,6 +93,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView):
+    template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = {
         'progress': ProgressSubmissionView,
