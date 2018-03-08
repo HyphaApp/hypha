@@ -1,7 +1,7 @@
 import argparse
 import json
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
@@ -252,7 +252,7 @@ class Command(BaseCommand):
             submission = ApplicationSubmission(drupal_id=node['nid'])
 
         # TODO timezone?
-        submission.submit_time = datetime.utcfromtimestamp(int(node['created']))
+        submission.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
         submission.user = self.get_user(node['uid'])
 
         submission.page = FUND
@@ -271,6 +271,7 @@ class Command(BaseCommand):
 
         try:
             submission.save()
+            self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
             pass
 
