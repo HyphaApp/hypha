@@ -67,25 +67,21 @@
                     {{ object.render_answers }}
                 </div>
             </div>
-            <div class="rich-text rich-text--answers">
-                {{ object.render_answers }}
-            </div>
-        </div>
 
-        <aside class="sidebar">
-            {% include "funds/includes/actions.html" %}
-            {% include "funds/includes/progress_form.html" %}
-            {% include "funds/includes/update_lead_form.html" %}
+            <aside class="sidebar">
+                {% include "funds/includes/actions.html" %}
+                {% include "funds/includes/progress_form.html" %}
+                {% include "funds/includes/update_lead_form.html" %}
 
-            {% if other_submissions %}
-              <div class="sidebar__inner">
-              <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+                {% if other_submissions %}
+                    <div class="sidebar__inner">
+                        <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
 
-              {% for submission in other_submissions %}
-                <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
-              {% endfor %}
-              </div>
-              {% endif %}
+                        {% for submission in other_submissions %}
+                            <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </aside>
         </div>
     </div>
@@ -106,4 +102,3 @@
     </div>
 </div>
 {% endblock %}
-
