@@ -464,6 +464,9 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
 
+    # Meta: used for migration purposes only
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     objects = ApplicationSubmissionQueryset.as_manager()
 
     @property
@@ -492,11 +495,18 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             full_name = self.form_data.get('full_name')
 
             User = get_user_model()
-            self.user, _ = User.objects.get_or_create_and_notify(
-                email=email,
-                site=self.page.get_site(),
-                defaults={'full_name': full_name}
-            )
+            if 'skip_account_creation_notification' in self.form_data:
+                self.form_data.pop('skip_account_creation_notification', None)
+                self.user, _ = User.objects.get_or_create(
+                    email=email,
+                    defaults={'full_name': full_name}
+                )
+            else:
+                self.user, _ = User.objects.get_or_create_and_notify(
+                    email=email,
+                    site=self.page.get_site(),
+                    defaults={'full_name': full_name}
+                )
 
     def save_path(self, file_name):
         file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
@@ -585,7 +595,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
     def get_data(self):
         # Updated for JSONField
-        form_data = self.form_data
+        form_data = self.form_data.copy()
         form_data.update({
             'submit_time': self.submit_time,
         })
