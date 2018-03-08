@@ -4,7 +4,7 @@ from .models import ApplicationSubmission
 
 
 class ProgressSubmissionForm(forms.ModelForm):
-    action = forms.ChoiceField()
+    action = forms.ChoiceField(label='Take action')
 
     class Meta:
         model = ApplicationSubmission
@@ -16,7 +16,6 @@ class ProgressSubmissionForm(forms.ModelForm):
         choices = [(action, action) for action in self.instance.phase.action_names]
         action_field = self.fields['action']
         action_field.choices = choices
-        action_field.label = f'Current status: {self.instance.phase.name}'
         self.should_show = bool(choices)
 
     def save(self, *args, **kwargs):
