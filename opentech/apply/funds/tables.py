@@ -23,6 +23,7 @@ class SubmissionsTable(tables.Table):
 
     class Meta:
         model = ApplicationSubmission
+        order_by = ('-submit_time',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         template = 'funds/tables/table.html'
         row_attrs = {
@@ -41,6 +42,8 @@ class SubmissionsTable(tables.Table):
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
+    lead = tables.Column(order_by=('lead.full_name',))
+
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
 
