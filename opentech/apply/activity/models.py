@@ -18,7 +18,12 @@ VISIBILITY = {
 }
 
 
-class ActivityQuerySet(models.QuerySet):
+class BaseActivityQuerySet(models.QuerySet):
+    def visible_to(self, user):
+        return self.filter(visibility__in=self.model.visibility_for(user))
+
+
+class ActivityQuerySet(BaseActivityQuerySet):
     def comments(self):
         return self.filter(type=COMMENT)
 
@@ -32,9 +37,8 @@ class ActivityBaseManager(models.Manager):
         return super().get_queryset().filter(type=self.type)
 
 
-class CommentQueryset(models.QuerySet):
-    def visibile_to(self, user):
-        return self.filter(visibility__in=self.model.visibility_for(user))
+class CommentQueryset(BaseActivityQuerySet):
+    pass
 
 
 class CommentManger(ActivityBaseManager):

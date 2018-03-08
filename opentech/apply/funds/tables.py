@@ -20,12 +20,13 @@ class SubmissionsTable(tables.Table):
     status_name = tables.Column(verbose_name="Status")
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
-    comments = tables.Column(accessor=A('activities.comments.count'), verbose_name="Comments")
+    comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'comments')
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
+        sequence = fields + ('comments',)
         template = 'funds/tables/table.html'
         row_attrs = {
             'class': lambda record: '' if record.active else 'is-inactive'
@@ -37,6 +38,10 @@ class SubmissionsTable(tables.Table):
     def render_status_name(self, value):
         return mark_safe(f'<span>{ value }</span>')
 
+    def render_comments(self, value):
+        request = self.context['request']
+        return str(value.visible_to(request.user).count())
+
     def order_status_name(self, qs, desc):
         return qs.step_order(desc), True
 
@@ -46,7 +51,8 @@ class AdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'comments')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
+        sequence = fields + ('comments',)
 
 
 def get_used_rounds(request):
