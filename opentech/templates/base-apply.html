@@ -71,6 +71,11 @@
                         </div>
                     </div>
                     {% include "navigation/primarynav-apply.html" %}
+                    <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
+                        <svg class="icon"><use xlink:href="#person-icon"></use></svg>
+                        {{ request.user }}
+                    </a>
+                    <a href="{% url 'users:logout' %}" class="link link--button-transparent link--mobile-standout">Logout</a>
                 </section>
 
                 <div class="header__button-container">
