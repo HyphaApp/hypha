@@ -16,7 +16,7 @@ User = get_user_model()
 
 STREAMFIELD_MAP = {
     "title": {
-        "id": "name",
+        "id": "title",
         "type": "direct",
     },
     "field_application_name": {
