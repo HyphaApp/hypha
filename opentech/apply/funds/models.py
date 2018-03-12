@@ -443,6 +443,13 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmissionQueryset(JSONOrderable):
     json_field = 'form_data'
 
+    def step_order(self, desc=False):
+        # Use the last value of the status to order by status
+        qs = self.extra(select={'step': 'substr(reverse(status), 1)'})
+        order = '-' if desc else ''
+        order += 'step'
+        return qs.order_by(order, 'status')
+
     def active(self):
         return self.filter(status__in=active_statuses)
 

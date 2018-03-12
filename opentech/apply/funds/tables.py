@@ -18,11 +18,12 @@ class SubmissionsTable(tables.Table):
     title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
     status_name = tables.Column(verbose_name="Status")
-    stage = tables.Column(verbose_name="Type")
+    stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
 
     class Meta:
         model = ApplicationSubmission
+        order_by = ('-submit_time',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         template = 'funds/tables/table.html'
         row_attrs = {
@@ -35,9 +36,14 @@ class SubmissionsTable(tables.Table):
     def render_status_name(self, value, record):
         return mark_safe(f'<span>{ value }</span>')
 
+    def order_status_name(self, qs, desc):
+        return qs.step_order(desc), True
+
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
+    lead = tables.Column(order_by=('lead.full_name',))
+
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
 
