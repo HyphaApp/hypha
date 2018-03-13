@@ -216,8 +216,12 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         request.show_round = True
         return self.open_round.serve(request)
 
+    content_panels = WorkflowStreamForm.content_panels + [
+        FieldPanel('reviewers'),
+    ]
+
     edit_handler = TabbedInterface([
-        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
+        ObjectList(content_panels, heading='Content'),
         EmailForm.email_tab,
         ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
@@ -299,6 +303,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
+        FieldPanel('reviewers'),
         ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
         ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
     ]
@@ -420,7 +425,8 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('lead')
+        FieldPanel('lead'),
+        FieldPanel('reviewers'),
     ]
 
     edit_handler = TabbedInterface([
