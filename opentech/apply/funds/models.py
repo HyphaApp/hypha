@@ -386,7 +386,12 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     class Meta:
         verbose_name = _("Lab")
 
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='lab_lead')
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        related_name='lab_lead',
+        on_delete=models.PROTECT,
+    )
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
@@ -468,7 +473,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='submission_lead')
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        related_name='submission_lead',
+        on_delete=models.PROTECT,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 

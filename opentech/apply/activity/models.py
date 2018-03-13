@@ -52,8 +52,8 @@ class ActionManager(ActivityBaseManager):
 class Activity(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
     message = models.TextField()
     visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
 
