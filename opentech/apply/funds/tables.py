@@ -72,7 +72,7 @@ def get_used_funds(request):
 
 def get_round_leads(request):
     User = get_user_model()
-    return User.objects.filter(round__isnull=False).distinct()
+    return User.objects.filter(round_lead__isnull=False).distinct()
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):
