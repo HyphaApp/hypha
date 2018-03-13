@@ -621,12 +621,15 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
+            # Copy extra relevant information to the child
             self.lead = self.get_from_parent('lead')
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
 
         super().save(*args, **kwargs)
+
+        self.reviewers.set(self.get_from_parent('reviewers').all())
 
         # Check to see if we should progress to the next stage
         if self.phase.can_proceed and not self.next:
