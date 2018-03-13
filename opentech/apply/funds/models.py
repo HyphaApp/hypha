@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -179,7 +179,7 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
 
-    reviewers = models.ManyToManyField(
+    reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='fund_reviewers',
         limit_choices_to=LIMIT_TO_REVIEWERS,
@@ -281,7 +281,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         related_name='round_lead',
         on_delete=models.PROTECT,
     )
-    reviewers = models.ManyToManyField(
+    reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='rounds_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
@@ -317,6 +317,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # We attached the parent page as part of the before_create_hook
         if hasattr(self, 'parent_page'):
             self.workflow_name = self.parent_page.workflow_name
+            self.reviewers = self.parent_page.reviewers.all()
 
     def save(self, *args, **kwargs):
         is_new = not self.id
@@ -414,7 +415,7 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name='lab_lead',
         on_delete=models.PROTECT,
     )
-    reviewers = models.ManyToManyField(
+    reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='labs_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
