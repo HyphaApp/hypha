@@ -63,14 +63,14 @@ script:
   # Type check the project
   - mypy .
 
+  # Collect static
+  - python manage.py collectstatic --noinput --verbosity=0
+
   # Run system checks
   - python manage.py check
 
   # Check for missing migrations
   - python manage.py makemigrations --check --noinput --verbosity=0
-
-  # Collect static
-  - python manage.py collectstatic --noinput --verbosity=0
 
   # Run tests
   - coverage run --source='.' manage.py test .

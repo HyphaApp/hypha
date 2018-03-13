@@ -6,16 +6,16 @@ from django.conf import settings
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.core.models import Orderable
+from wagtail.core.fields import StreamField
+from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     StreamFieldPanel
 )
-from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 from opentech.public.utils.blocks import StoryBlock
 from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin
@@ -60,7 +60,8 @@ class PersonPagePersonType(models.Model):
     page = ParentalKey('PersonPage', related_name='person_types')
     person_type = models.ForeignKey(
         'PersonType',
-        related_name='+'
+        related_name='+',
+        on_delete=models.PROTECT,
     )
 
     panels = [

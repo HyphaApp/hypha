@@ -38,25 +38,23 @@ INSTALLED_APPS = [
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
-    'wagtail.contrib.wagtailsearchpromotions',
-    'wagtail.wagtailforms',
-    'wagtail.wagtailredirects',
-    'wagtail.wagtailembeds',
-    'wagtail.wagtailsites',
-    'wagtail.wagtailusers',
-    'wagtail.wagtailsnippets',
-    'wagtail.wagtaildocs',
-    'wagtail.wagtailimages',
-    'wagtail.wagtailsearch',
-    'wagtail.wagtailadmin',
-    'wagtail.wagtailcore',
+    'wagtail.contrib.search_promotions',
+    'wagtail.contrib.forms',
+    'wagtail.contrib.redirects',
+    'wagtail.embeds',
+    'wagtail.sites',
+    'wagtail.users',
+    'wagtail.snippets',
+    'wagtail.documents',
+    'wagtail.images',
+    'wagtail.search',
+    'wagtail.admin',
+    'wagtail.core',
 
     'modelcluster',
     'taggit',
     'django_extensions',
-    'captcha',
     'tinymce',
-    'wagtailcaptcha',
     'django_tables2',
     'django_filters',
     'django_select2',
@@ -85,8 +83,8 @@ MIDDLEWARE = [
 
     'opentech.apply.users.middleware.SocialAuthExceptionMiddleware',
 
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'opentech.public.esi.middleware.ESIMiddleware',
 ]
 
@@ -275,15 +273,16 @@ WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
-        'WIDGET': 'wagtail.wagtailadmin.rich_text.HalloRichTextArea',
-        'OPTIONS': {
-            'features': [
-                'bold', 'italic',
-                'h3', 'h4', 'h5',
-                'ol', 'ul',
-                'link'
-            ]
-        }
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        # fixed in wagtail 2.0.1: https://github.com/wagtail/wagtail/commit/09f8a4f38a95f2760f38ab2f142443df93b5d8c6
+        # 'OPTIONS': {
+        #     'features': [
+        #         'bold', 'italic',
+        #         'h3', 'h4', 'h5',
+        #         'ol', 'ul',
+        #         'link'
+        #     ]
+        # }
     },
 }
 

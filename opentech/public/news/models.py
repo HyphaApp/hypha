@@ -5,15 +5,15 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.wagtailcore.models import Orderable
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.core.models import Orderable
+from wagtail.core.fields import StreamField
+from wagtail.admin.edit_handlers import (
     InlinePanel,
     FieldPanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
-from wagtail.wagtailsearch import index
+from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage
 from opentech.public.utils.blocks import StoryBlock

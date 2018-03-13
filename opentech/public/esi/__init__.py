@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.loader import render_to_string
 
 
@@ -39,5 +39,5 @@ def purge_esi():
     from opentech.public.utils.cache import purge_cache_on_all_sites
 
     for name in ESI_REGISTRY:
-        # TODO: might need a separate domain for ESI and call wagtail.contrib.wagtailfrontendcache.utils.purge_url_from_cache
+        # TODO: might need a separate domain for ESI and call wagtail.contrib.frontend_cache.utils.purge_url_from_cache
         purge_cache_on_all_sites(reverse('esi', args=[name]))

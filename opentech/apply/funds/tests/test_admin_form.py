@@ -36,7 +36,7 @@ def form_data(number_forms=0, delete=0):
 class TestWorkflowFormAdminForm(TestCase):
 
     def submit_data(self, data):
-        form_class = FundType.get_edit_handler().get_form_class(FundType)
+        form_class = FundType.get_edit_handler().get_form_class()
         return form_class(data=data)
 
     def test_doesnt_validates_with_no_form(self):

@@ -9,7 +9,7 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import RequestFactory, TestCase
 
-from wagtail.wagtailcore.models import Site
+from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import SingleStage

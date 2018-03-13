@@ -1,30 +1,30 @@
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import include, path
 from django.contrib import admin
 from django.views.decorators.cache import cache_control
 from django.views.generic import TemplateView
 
 from wagtail.utils.urlpatterns import decorate_urlpatterns
-from wagtail.contrib.wagtailsitemaps.views import sitemap
-from wagtail.wagtailadmin import urls as wagtailadmin_urls
-from wagtail.wagtailcore import urls as wagtail_urls
-from wagtail.wagtaildocs import urls as wagtaildocs_urls
+from wagtail.contrib.sitemaps.views import sitemap
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.core import urls as wagtail_urls
+from wagtail.documents import urls as wagtaildocs_urls
 
 from opentech.public import urls as public_urls
 from opentech.apply import urls as apply_urls
 
 
 urlpatterns = [
-    url(r'^django-admin/', include(admin.site.urls)),
-    url(r'^admin/', include(wagtailadmin_urls)),
+    path('django-admin/', admin.site.urls),
+    path('admin/', include(wagtailadmin_urls)),
 
-    url(r'^documents/', include(wagtaildocs_urls)),
-    url('^sitemap\.xml$', sitemap),
-    url('^', include(public_urls)),
-    url('^', include(apply_urls)),
-    url('^', include('social_django.urls', namespace='social')),
-    url(r'^tinymce/', include('tinymce.urls')),
-    url(r'^select2/', include('django_select2.urls')),
+    path('documents/', include(wagtaildocs_urls)),
+    path('sitemap.xml', sitemap),
+    path('', include(public_urls)),
+    path('', include(apply_urls)),
+    path('', include('social_django.urls', namespace='social')),
+    path('tinymce/', include('tinymce.urls')),
+    path('select2/', include('django_select2.urls')),
 ]
 
 
@@ -38,18 +38,18 @@ if settings.DEBUG:
 
     urlpatterns += [
         # Add views for testing 404 and 500 templates
-        url(r'^test404/$', TemplateView.as_view(template_name='404.html')),
-        url(r'^test500/$', TemplateView.as_view(template_name='500.html')),
+        path('test404/', TemplateView.as_view(template_name='404.html')),
+        path('test500/', TemplateView.as_view(template_name='500.html')),
     ]
 
 if settings.DEBUG or settings.ENABLE_STYLEGUIDE:
     urlpatterns += [
         # Add styleguide
-        url(r'^styleguide/$', TemplateView.as_view(template_name='styleguide.html')),
+        path('styleguide/', TemplateView.as_view(template_name='styleguide.html')),
     ]
 
 urlpatterns += [
-    url(r'', include(wagtail_urls)),
+    path('', include(wagtail_urls)),
 ]
 
 

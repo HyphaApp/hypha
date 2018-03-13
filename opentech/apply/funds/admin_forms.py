@@ -1,4 +1,4 @@
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
+from wagtail.admin.forms import WagtailAdminPageForm
 
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):

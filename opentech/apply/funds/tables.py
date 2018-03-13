@@ -6,7 +6,7 @@ import django_filters as filters
 import django_tables2 as tables
 from django_tables2.utils import A
 
-from wagtail.wagtailcore.models import Page
+from wagtail.core.models import Page
 
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options

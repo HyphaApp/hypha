@@ -1,6 +1,6 @@
 from django.forms.forms import DeclarativeFieldsMetaclass
 
-from wagtail.wagtailforms.forms import BaseForm
+from wagtail.contrib.forms.forms import BaseForm
 
 
 class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
