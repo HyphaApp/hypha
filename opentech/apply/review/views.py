@@ -6,7 +6,7 @@ from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
 
 
-class ReviewCreateView(CreateView):
+class CreateReviewView(CreateView):
     model = Review
 
     def dispatch(self, request, *args, **kwargs):
