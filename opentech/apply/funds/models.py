@@ -34,7 +34,7 @@ from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmissi
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
@@ -46,6 +46,11 @@ WORKFLOW_CLASS = {
     SingleStage.name: SingleStage,
     DoubleStage.name: DoubleStage,
 }
+
+
+LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
+LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
+LIMIT_TO_STAFF_AND_REVIEWERS = {'groups__name__in': [STAFF_GROUP_NAME, REVIEWER_GROUP_NAME]}
 
 
 def admin_url(page):
@@ -175,6 +180,12 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
 
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='fund_reviewers',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
+    )
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
@@ -263,8 +274,14 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
+        related_name='round_lead',
         on_delete=models.PROTECT,
+    )
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='rounds_reviewer',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
     )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
@@ -389,7 +406,7 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
         related_name='lab_lead',
         on_delete=models.PROTECT,
     )
@@ -480,11 +497,16 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
         related_name='submission_lead',
         on_delete=models.PROTECT,
     )
     next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='submissions_reviewer',
+        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
