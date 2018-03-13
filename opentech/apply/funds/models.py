@@ -63,7 +63,7 @@ class SubmittableStreamForm(AbstractStreamForm):
         return ApplicationSubmission
 
     def process_form_submission(self, form):
-        if not form.user.is_authenticated():
+        if not form.user.is_authenticated:
             form.user = None
         return self.get_submission_class().objects.create(
             form_data=form.cleaned_data,
@@ -212,7 +212,7 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
 
 
 class AbstractRelatedForm(Orderable):
-    form = models.ForeignKey('ApplicationForm')
+    form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
 
     panels = [
         FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
@@ -260,7 +260,11 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     parent_page_types = ['funds.FundType']
     subpage_types = []  # type: ignore
 
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME})
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        on_delete=models.PROTECT,
+    )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
         blank=True,
@@ -382,7 +386,12 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     class Meta:
         verbose_name = _("Lab")
 
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='lab_lead')
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        related_name='lab_lead',
+        on_delete=models.PROTECT,
+    )
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
@@ -464,7 +473,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     form_fields = StreamField(CustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
-    lead = models.ForeignKey(settings.AUTH_USER_MODEL, limit_choices_to={'groups__name': STAFF_GROUP_NAME}, related_name='submission_lead')
+    lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        related_name='submission_lead',
+        on_delete=models.PROTECT,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -493,7 +507,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return self.phase.active
 
     def ensure_user_has_account(self):
-        if self.user and self.user.is_authenticated():
+        if self.user and self.user.is_authenticated:
             self.form_data['email'] = self.user.email
             self.form_data['full_name'] = self.user.get_full_name()
         else:
