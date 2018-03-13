@@ -16,7 +16,6 @@ class ReviewCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         has_submitted_review = Review.objects.filter(submission=self.submission, author=self.request.user).exists()
-
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
