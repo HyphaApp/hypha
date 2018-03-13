@@ -185,7 +185,6 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         related_name='fund_reviewers',
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
-
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
