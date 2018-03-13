@@ -13,7 +13,7 @@ uwsgidecorators==1.1.0
 mypy==0.550
 factory_boy==2.9.2
 # wagtail_factories - waiting on merge and release form master branch
-git+git://github.com/todd-dembrey/wagtail-factories.git@a3131766ac21f0d1df18e5f19bdf2dfadd073479#egg=wagtail_factories
+git+git://github.com/todd-dembrey/wagtail-factories.git#egg=wagtail_factories
 
 flake8
 
