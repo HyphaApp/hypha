@@ -410,6 +410,11 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name='lab_lead',
         on_delete=models.PROTECT,
     )
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='labs_reviewer',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
+    )
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
