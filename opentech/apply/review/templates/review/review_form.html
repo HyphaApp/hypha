@@ -1,0 +1,16 @@
+{% extends "base-apply.html" %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h2 class="heading heading--no-margin">Create Review</h2>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <form class="form form--with-p-tags" action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit Review" />
+    </form>
+</div>
+{% endblock %}
