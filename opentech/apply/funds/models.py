@@ -63,7 +63,7 @@ class SubmittableStreamForm(AbstractStreamForm):
         return ApplicationSubmission
 
     def process_form_submission(self, form):
-        if not form.user.is_authenticated():
+        if not form.user.is_authenticated:
             form.user = None
         return self.get_submission_class().objects.create(
             form_data=form.cleaned_data,
@@ -507,7 +507,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         return self.phase.active
 
     def ensure_user_has_account(self):
-        if self.user and self.user.is_authenticated():
+        if self.user and self.user.is_authenticated:
             self.form_data['email'] = self.user.email
             self.form_data['full_name'] = self.user.get_full_name()
         else:
