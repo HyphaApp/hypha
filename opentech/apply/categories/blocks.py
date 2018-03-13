@@ -2,8 +2,8 @@ from django import forms
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail.wagtailcore.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
-from wagtail.wagtailcore.utils import resolve_model_string
+from wagtail.core.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
+from wagtail.core.utils import resolve_model_string
 
 from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock
 

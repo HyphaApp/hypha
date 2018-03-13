@@ -1,4 +1,4 @@
-from wagtail.wagtailcore.blocks import StaticBlock
+from wagtail.core.blocks import StaticBlock
 
 from opentech.public.utils.blocks import StoryBlock
 

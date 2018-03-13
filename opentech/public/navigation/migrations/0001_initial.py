@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.wagtailcore.blocks
-import wagtail.wagtailcore.fields
+import wagtail.core.blocks
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -21,10 +21,10 @@ class Migration(migrations.Migration):
             name='NavigationSettings',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('primary_navigation', wagtail.wagtailcore.fields.StreamField((('link', wagtail.wagtailcore.blocks.StructBlock((('page', wagtail.wagtailcore.blocks.PageChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Main site navigation')),
-                ('secondary_navigation', wagtail.wagtailcore.fields.StreamField((('link', wagtail.wagtailcore.blocks.StructBlock((('page', wagtail.wagtailcore.blocks.PageChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Alternative navigation')),
-                ('footer_navigation', wagtail.wagtailcore.fields.StreamField((('column', wagtail.wagtailcore.blocks.StructBlock((('heading', wagtail.wagtailcore.blocks.CharBlock(required=False, help_text='Leave blank if no header required.')), ('links', wagtail.wagtailcore.blocks.ListBlock(wagtail.wagtailcore.blocks.StructBlock((('page', wagtail.wagtailcore.blocks.PageChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))))))),), blank=True, help_text='Multiple columns of footer links with optional header.')),
-                ('footer_links', wagtail.wagtailcore.fields.StreamField((('link', wagtail.wagtailcore.blocks.StructBlock((('page', wagtail.wagtailcore.blocks.PageChooserBlock()), ('title', wagtail.wagtailcore.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Single list of elements at the base of the page.')),
+                ('primary_navigation', wagtail.core.fields.StreamField((('link', wagtail.core.blocks.StructBlock((('page', wagtail.core.blocks.PageChooserBlock()), ('title', wagtail.core.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Main site navigation')),
+                ('secondary_navigation', wagtail.core.fields.StreamField((('link', wagtail.core.blocks.StructBlock((('page', wagtail.core.blocks.PageChooserBlock()), ('title', wagtail.core.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Alternative navigation')),
+                ('footer_navigation', wagtail.core.fields.StreamField((('column', wagtail.core.blocks.StructBlock((('heading', wagtail.core.blocks.CharBlock(required=False, help_text='Leave blank if no header required.')), ('links', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StructBlock((('page', wagtail.core.blocks.PageChooserBlock()), ('title', wagtail.core.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))))))),), blank=True, help_text='Multiple columns of footer links with optional header.')),
+                ('footer_links', wagtail.core.fields.StreamField((('link', wagtail.core.blocks.StructBlock((('page', wagtail.core.blocks.PageChooserBlock()), ('title', wagtail.core.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Single list of elements at the base of the page.')),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
             ],
             options={

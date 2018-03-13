@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import wagtail.wagtailcore.blocks
-import wagtail.wagtailcore.fields
+import wagtail.core.blocks
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='homepage',
             name='our_work',
-            field=wagtail.wagtailcore.fields.StreamField((('work', wagtail.wagtailcore.blocks.ListBlock(wagtail.wagtailcore.blocks.StreamBlock((('title', wagtail.wagtailcore.blocks.CharBlock()),)))),), default=[]),
+            field=wagtail.core.fields.StreamField((('work', wagtail.core.blocks.ListBlock(wagtail.core.blocks.StreamBlock((('title', wagtail.core.blocks.CharBlock()),)))),), default=[]),
             preserve_default=False,
         ),
     ]

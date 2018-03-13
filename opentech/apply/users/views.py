@@ -10,7 +10,7 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic.base import TemplateView
 
-from wagtail.wagtailadmin.views.account import password_management_enabled
+from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
 

@@ -4,7 +4,7 @@ import uuid
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 import factory
-from wagtail.wagtailcore.blocks import CharBlock
+from wagtail.core.blocks import CharBlock
 import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks

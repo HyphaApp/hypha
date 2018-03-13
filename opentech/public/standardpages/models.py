@@ -3,13 +3,13 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailadmin.edit_handlers import (
+from wagtail.admin.edit_handlers import (
     FieldPanel, StreamFieldPanel,
     InlinePanel
 )
 
-from wagtail.wagtailcore.fields import StreamField
-from wagtail.wagtailsearch import index
+from wagtail.core.fields import StreamField
+from wagtail.search import index
 
 from opentech.public.utils.blocks import StoryBlock
 from opentech.public.utils.models import (

@@ -2,10 +2,9 @@ from django.forms import Field, Widget
 from django.forms.utils import pretty_name
 from django.urls import reverse
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
 
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailadmin.edit_handlers import BaseFieldPanel, EditHandler, FieldPanel
+from wagtail.core.models import Page
+from wagtail.admin.edit_handlers import EditHandler, FieldPanel
 
 
 def reverse_edit(obj):
@@ -39,9 +38,22 @@ class DisplayField(Field):
     widget = ReadonlyWidget
 
 
-class BaseReadOnlyPanel(EditHandler):
+class ReadOnlyPanel(EditHandler):
     template = 'wagtailadmin/edit_handlers/single_field_panel.html'
     field_template = 'wagtailadmin/shared/field.html'
+
+    def __init__(self, attr, **kwargs):
+        self.attr = attr
+        super().__init__(**kwargs)
+        self.heading = pretty_name(self.attr) if not self.heading else self.heading
+
+    def clone(self):
+        return self.__class__(
+            attr=self.attr,
+            heading=self.heading,
+            classname=self.classname,
+            help_text=self.help_text,
+        )
 
     def context(self):
         try:
@@ -68,53 +80,17 @@ class BaseReadOnlyPanel(EditHandler):
         return render_to_string(self.field_template, self.context())
 
 
-class ReadOnlyPanel:
-    def __init__(self, attr, heading=None, classname=''):
-        self.attr = attr
-        self.heading = pretty_name(self.attr) if heading is None else heading
-        self.classname = classname
-
-    def bind_to_model(self, model):
-        kwargs = {
-            'attr': self.attr,
-            'heading': self.heading,
-            'classname': self.classname,
-        }
-        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyPanel,), kwargs)
-
-
-class BaseReadOnlyInlinePanel(BaseReadOnlyPanel):
+class ReadOnlyInlinePanel(ReadOnlyPanel):
     template = 'wagtailadmin/edit_handlers/multi_field_panel.html'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def get_child_edit_handler(self):
+        child_edit_handler = ReadOnlyPanel(self.attr)
+        return child_edit_handler.bind_to_model(getattr(self.instance, self.attr))
+
+    def on_instance_bound(self):
         values = getattr(self.instance, self.attr).all()
-        self.children = [BaseReadOnlyPanel(value, form=self.form) for value in values]
-
-
-class ReadOnlyInlinePanel:
-    def __init__(self, attr, heading=None, classname='', help_text=''):
-        self.attr = attr
-        self.heading = pretty_name(self.attr) if heading is None else heading
-        self.classname = classname
-        self.help_text = help_text
-
-    def bind_to_model(self, model):
-        kwargs = {
-            'attr': self.attr,
-            'heading': self.heading,
-            'classname': self.classname,
-            'help_text': self.help_text
-        }
-        return type(str(_('ReadOnlyPanel')), (BaseReadOnlyInlinePanel,), kwargs)
-
-
-class BaseFilteredFieldPanel(BaseFieldPanel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        target_model = self.bound_field.field.queryset.model
-
-        self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)
+        child_panel = self.get_child_edit_handler()
+        self.children = [child_panel.bind_to_instance(value, form=self.form) for value in values]
 
 
 class FilteredFieldPanel(FieldPanel):
@@ -122,15 +98,17 @@ class FilteredFieldPanel(FieldPanel):
         self.filter_query = filter_query
         super().__init__(*args, **kwargs)
 
-    def bind_to_model(self, model):
-        base = {
-            'model': model,
-            'field_name': self.field_name,
-            'classname': self.classname,
-            'filter_query': self.filter_query
-        }
+    def clone(self):
+        return self.__class__(
+            field_name=self.field_name,
+            widget=self.widget if hasattr(self, 'widget') else None,
+            heading=self.heading,
+            classname=self.classname,
+            help_text=self.help_text,
+            filter_query=self.filter_query,
+        )
 
-        if self.widget:
-            base['widget'] = self.widget
-
-        return type(str('_BaseFilteredFieldPanel'), (BaseFilteredFieldPanel,), base)
+    def on_instance_bound(self):
+        super().on_instance_bound()
+        target_model = self.bound_field.field.queryset.model
+        self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)

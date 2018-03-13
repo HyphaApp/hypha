@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-import wagtail.wagtailcore.fields
+import wagtail.core.fields
 
 
 class Migration(migrations.Migration):
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('from_address', models.CharField(blank=True, max_length=255, verbose_name='from address')),
                 ('subject', models.CharField(blank=True, max_length=255, verbose_name='subject')),
                 ('introduction', models.TextField(blank=True)),
-                ('thank_you_text', wagtail.wagtailcore.fields.RichTextField(blank=True, help_text='Text displayed to the user on successful submission of the form')),
+                ('thank_you_text', wagtail.core.fields.RichTextField(blank=True, help_text='Text displayed to the user on successful submission of the form')),
                 ('action_text', models.CharField(blank=True, help_text='Form action text. Defaults to "Submit"', max_length=32)),
                 ('listing_image', models.ForeignKey(blank=True, help_text='Choose the image you wish to be displayed when this page appears in listings', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
                 ('social_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),

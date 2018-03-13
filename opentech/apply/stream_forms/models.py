@@ -1,7 +1,7 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 from collections import OrderedDict
 
-from wagtail.wagtailforms.models import AbstractForm
+from wagtail.contrib.forms.models import AbstractForm
 
 from .blocks import FormFieldBlock
 from .forms import BlockFieldWrapper, StreamBaseForm
