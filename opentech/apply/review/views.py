@@ -8,3 +8,10 @@ from .models import Review
 class CreateReviewView(CreateView):
     model = Review
     fields = ['review']
+
+    def get_context_data(self, **kwargs):
+        submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return super().get_context_data(
+            submission=submission,
+            **kwargs,
+        )
