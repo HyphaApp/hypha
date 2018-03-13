@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import modelcluster.fields
 
 
 class Migration(migrations.Migration):
@@ -21,12 +22,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='fundtype',
             name='reviewers',
-            field=models.ManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='fund_reviewers', to=settings.AUTH_USER_MODEL),
+            field=modelcluster.fields.ParentalManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='fund_reviewers', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='round',
             name='reviewers',
-            field=models.ManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='rounds_reviewer', to=settings.AUTH_USER_MODEL),
+            field=modelcluster.fields.ParentalManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='rounds_reviewer', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name='round',
