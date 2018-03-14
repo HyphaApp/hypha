@@ -92,6 +92,11 @@ class BaseReviewForm(forms.ModelForm):
             except ZeroDivisionError:
                 pass
 
+        try:
+            self.instance.recommendation = self.cleaned_data['recommendation']
+        except KeyError:
+            pass
+
         super().save()
 
     def get_score_fields(self):
