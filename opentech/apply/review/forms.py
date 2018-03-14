@@ -41,6 +41,7 @@ RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
     ],
 })
 
+
 class BaseReviewForm(forms.ModelForm):
     class Meta:
         model = Review
@@ -68,6 +69,33 @@ class BaseReviewForm(forms.ModelForm):
             self.instance.validate_unique()
         except ValidationError as e:
             self._update_errors(e)
+
+    def save(self, commit=True):
+
+        score_fields = self.get_score_fields()
+
+        if score_fields:
+            items = 0
+            total = 0
+
+            for field in score_fields:
+                try:
+                    value = int(self.cleaned_data[field])
+                    if value < 90:
+                        items = items + 1
+                        total = total + value
+                except KeyError:
+                    pass
+
+            try:
+                self.instance.score = total / items
+            except ZeroDivisionError:
+                pass
+
+        super().save()
+
+    def get_score_fields(self):
+        return [field for field in self.fields if field.endswith('_rate')]
 
 
 class ConceptReviewForm(BaseReviewForm):
@@ -152,21 +180,6 @@ class ConceptReviewForm(BaseReviewForm):
         label='Request specific questions'
     )
 
-    def save(self, commit=True):
-        items = 0
-        total = 0
-
-        for field in self.cleaned_data:
-            if field in self.get_score_fields() and int(self.cleaned_data[field]) < 90:
-                items = items + 1
-                total = total + int(self.cleaned_data[field])
-
-        self.instance.score = total / items
-
-        super().save()
-
-    def get_score_fields(self):
-        return ['principles_rate', 'technical_rate', 'sustainable_rate']
 
 class ProposalReviewForm(BaseReviewForm):
 
