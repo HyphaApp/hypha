@@ -18,6 +18,11 @@ RATE_CHOICES = (
     (99, 'n/a - choose not to answer'),
 )
 
+YES_NO_CHOICES = (
+    (1, 'Yes'),
+    (0, 'No')
+)
+
 RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
     'elementpath': False,
     'branding': False,
@@ -159,4 +164,228 @@ class ConceptReviewForm(BaseReviewForm):
         return ['principles_rate', 'technical_rate', 'sustainable_rate']
 
 class ProposalReviewForm(BaseReviewForm):
-    pass
+
+    confidentiality = forms.BooleanField(
+        label='I understand about confidentiality',
+        initial=False,
+        help_text='I have reviewed and previously agreed to the RFA Council Confidentiality and Non-disclosure '
+        'Agreement and I understand that the received proposal contains “Confidential Information” that may not be '
+        'publicly known and shall not be disclosed to any third party.'
+    )
+
+    conflicts = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=YES_NO_CHOICES,
+        label='Do you have any conflicts of interest to report?'
+    )
+
+    conflicts_disclosure = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Conflict(s) of interest disclosure',
+        help_text='If you checked yes, please list your conflict(s) of interest or potential conflict(s) of interest.'
+    )
+
+    liked = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='1. Positive aspects',
+        help_text='Any general or specific aspects that got you really excited or that you like about this proposal.'
+    )
+
+    concerns = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        label='2. Concerns',
+        help_text='Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.'
+    )
+
+    red_flags = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        label='3. Items that must be addressed',
+        help_text='Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.'
+    )
+
+    overview_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='1. Project overview',
+        help_text='Are the project’s goals clear? Are the project\'s goals realistically achievable by the proposed '
+        'effort? Does the proposal identify and acknowledge what the challenges will be? Does the proposal state what '
+        'is currently being done and the known limitations? Are project beneficiaries clear and specific? '
+        'Is the project\'s sought after impact clear? Does the proposal cite an actual and compelling case study or '
+        'user problem? Does the proposal state how much the effort will cost and how long will it take?'
+    )
+    overview = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Project overview questions and comments'
+    )
+
+    objectives_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='2. Proposal objectives',
+        help_text='Does the proposal state a clear and concise set of objectives and tasks for the proposed effort? '
+        'Are the objectives S.M.A.R.T. (Specific, Measurable, Achievable, Relevant, Timely)? Is the project responding '
+        'to a potential need or function that is currently unfilled, or will it be duplicating previous efforts or '
+        'creating a solution in search of a problem?'
+    )
+    objectives = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Objectives questions and comments'
+    )
+
+    strategy_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='3. Appropriate activities and strategy',
+        help_text='Does the project propose activities that are appropriate for its goals and objectives? Does it '
+        'demonstrate effectively how it will accomplish its stated activities? Does the proposal suggest alternative '
+        'or modified activities in response to changing circumstances? Are the proposed activities viable in the real '
+        'world? Do the project activities disrupt the current internet freedom context? Directly or indirectly, do '
+        'they increase tactical breathing space for existing challenges? Are the activity\'s tactics clearly '
+        'identifiable as part of a wider strategy?'
+    )
+    strategy = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Methods and strategy questions and comments'
+    )
+
+    technical_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='4. Technical feasibility (where applicable)',
+        help_text='Does the proposal clearly state the effort\'s technical objectives? Are technical objectives '
+        'articulated succinctly and with appropriate language? Does the proposal explain what is novel about its '
+        'approach and why it will succeed? Does the project identify any hurdles to achieving technical objectives? '
+        'Does the proposal recognize potential technical byproducts, such as new or increased attack surfaces?'
+    )
+    technical = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Technical feasibility questions and comments'
+    )
+
+    alternative_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='5. Alternative analysis - "red teaming"',
+        help_text='Does the project identify potential unintended consequences? Does it identify how an adversary '
+        'might use the solution to further their own goals? Does the proposal consider potential illicit uses of the '
+        'project? Does the proposal identify appropriate tactics for a potentially asymmetric position in relation to '
+        'an adversary? Does the proposal consider sufficiently whether its approach is offensive or defensive in '
+        'relation to the problem it is addressing? Does it explain why it has selected this approach '
+        '(effort, cost, time, etc.)? Does the proposal explore short-, medium-, and long‐term strategies from the '
+        'adversary’s point of view? Does the project increase or decrease known attack surfaces? Does the proposal '
+        'discuss how the project could be undermined, identify its own deficiencies and limitation, or does it presume there are none?'
+    )
+    alternative = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Alternative analysis - "red teaming" questions and comments'
+    )
+
+    usability_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='6. Usability',
+        required=False,
+        help_text='Does the proposal demonstrate clear external demand for the proposed end product? '
+        'Does the project demonstrate a high degree of usability and/or accessibility? '
+        'Is the project targeting a small number of high value or at-risk users, or a broader population? '
+        'Is the proposed effort appropriate for the intended audience?'
+    )
+    usability = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        label='Usability questions and comments'
+    )
+
+    sustainability_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='7. Sustainability',
+        help_text='Is this proposal clearly located within a larger plan for future project support, development, and implementation? '
+        'Does the project have a diversified funding/support stream i.e., how dependent would the project be on OTF? '
+        'Is the proposing entity able to sustain itself with the requested OTF funding in addition to other sources of '
+        'direct or indirect support, such as community or other in-kind support that it already receives? '
+        'Does the proposal identify any cost sharing or matching support for the proposed effort? '
+        'Does the project currently receive any U.S. government or other public funding?'
+    )
+    sustainability = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Sustainability questions and comments'
+    )
+
+    collaboration_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='8. Collaboration',
+        help_text='Does the project support and further a collaborative and open community? '
+        'Does the proposal facilitate inter-project collaboration, such as talking with like projects and '
+        'identifying potential complementary aspects or points of overlap? '
+        'Does the project seek to share resources or enable others to reuse the resources they develop? '
+        'Do the objectives of this proposal contribute broadly to other Internet freedom projects?'
+    )
+    collaboration = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Collaboration questions and comments'
+    )
+
+    realism_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='9. Cost realism',
+        help_text='Is the budget realistic and commensurate with both the project objectives and time frame? '
+        'Is this project realistically implementable within a payment-on-delivery framework, i.e. no funds up-front?'
+    )
+    realism = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Cost realism questions and comments'
+    )
+
+    qualifications_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='10. Qualifications',
+        help_text='Is the project team uniquely qualified to complete the proposed scope of work? '
+        'Does the team have a history of successful work relevant to the proposed effort? '
+        'Have team members worked with at-risk communities in the past? Does the proposing entity have a sufficient '
+        'core team (leadership, developers, etc.) dedicated to this project? Are project team member(s) clearly '
+        'identified, along with work experience, in the proposal?'
+    )
+    qualifications = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Qualifications questions and comments'
+    )
+
+    evaluation_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        label='11. Evaluation',
+        help_text='Does the project articulate a clear set of evaluation criteria and milestone metrics against activities, objectives, and deliverables? '
+        'Are the criteria and metrics measurable quantitatively and/or qualitatively? '
+        'How difficult will an assessment of success or failure be? '
+        'Does the proposing entity have the capacity to self-evaluate and extract “lessons learned”? '
+        'Is the proposed effort able to be openly peer reviewed and/or include a peer review process?'
+    )
+    evaluation = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Evaluation questions and comments'
+    )
+
+    rationale_rate = forms.ChoiceField(
+        choices=RATE_CHOICES,
+        required=False,
+        label='Rationale and appropriateness rating'
+    )
+    rationale = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Rationale and appropriateness questions and comments'
+    )
+
+    recommendation = forms.ChoiceField(
+        choices=RECOMMENDATION_CHOICES,
+        label='Recommendation'
+    )
+    recommendation_comments = forms.CharField(
+        widget=RICH_TEXT_WIDGET,
+        required=False,
+        label='Recommendation comments'
+    )
