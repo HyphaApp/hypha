@@ -13,10 +13,12 @@ class ReviewCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        has_submitted_review = get_object_or_404(Review, submission=submission, author=self.request.user)
 
         return super().get_context_data(
             submission=submission,
-            **kwargs,
+            has_submitted_review=has_submitted_review,
+            **kwargs
         )
 
     def get_form_kwargs(self):
