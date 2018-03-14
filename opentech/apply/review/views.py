@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView
-from django.urls import reverse
+from django.urls import reverse_lazy
 
 from opentech.apply.funds.models import ApplicationSubmission
 from .forms import ConceptReviewForm
@@ -26,4 +26,4 @@ class ReviewCreateView(CreateView):
         return kwargs
 
     def get_success_url(self):
-        return reverse('apply:submission', args=(self.kwargs['submission_pk'],))
+        return reverse_lazy('apply:submission', args=(self.kwargs['submission_pk'],))
