@@ -13,7 +13,7 @@ class ReviewCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        has_submitted_review = get_object_or_404(Review, submission=submission, author=self.request.user)
+        has_submitted_review = Review.objects.filter(submission=submission, author=self.request.user).count() > 0
 
         return super().get_context_data(
             submission=submission,
