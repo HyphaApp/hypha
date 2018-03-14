@@ -141,6 +141,22 @@ class ConceptReviewForm(BaseReviewForm):
         label='Request specific questions'
     )
 
+    def save(self, commit=True):
+        items = 0
+        total = 0
+        from pprint import pprint
+        pprint(self.cleaned_data)
+        for field in self.cleaned_data:
+            if field in self.get_score_fields() and int(self.cleaned_data[field]) < 90:
+                items = items + 1
+                total = total + int(self.cleaned_data[field])
+
+        self.instance.score = total / items
+
+        super().save()
+
+    def get_score_fields(self):
+        return ['principles_rate', 'technical_rate', 'sustainable_rate']
 
 class ProposalReviewForm(BaseReviewForm):
     pass
