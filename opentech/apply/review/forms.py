@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
 from .models import Review, RECOMMENDATION_CHOICES
 
@@ -21,16 +22,28 @@ class BaseReviewForm(forms.ModelForm):
         model = Review
         fields: list = []
 
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': "You have already posted a review for this submission",
+            }
+        }
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         self.submission = kwargs.pop('submission')
         super().__init__(*args, **kwargs)
 
-    def save(self, *args, **kwargs):
+    def validate_unique(self):
+        super().validate_unique()
+
         self.instance.submission = self.submission
         self.instance.author = self.request.user
         self.instance.review = json.dumps(self.cleaned_data)
-        super().save(*args, **kwargs)
+
+        try:
+            self.instance.validate_unique()
+        except ValidationError as e:
+            self._update_errors(e)
 
 
 class ConceptReviewForm(BaseReviewForm):
