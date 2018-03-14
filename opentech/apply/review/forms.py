@@ -78,10 +78,13 @@ class ConceptReviewForm(BaseReviewForm):
     )
     recommendation_comments = forms.CharField(
         widget=RICH_TEXT_WIDGET,
+        required=False,
         label='Recommendation comments'
     )
+
     principles = forms.CharField(
         widget=RICH_TEXT_WIDGET,
+        required=False,
         label='Goals and principles',
         help_text='Does the project contribute and/or have relevance to OTF goals and principles? '
         'Are the goals and objectives of the project clear? Is it a technology research, development, or deployment project? '
@@ -99,7 +102,6 @@ class ConceptReviewForm(BaseReviewForm):
         'conflicts of interest with RFA, OTF, the Advisory Council, or other RFA-OTF projects? Is the project team '
         'an organization, community or an individual?'
     )
-
     principles_rate = forms.ChoiceField(
         choices=RATE_CHOICES,
         label='Rate goals and principles'
@@ -107,6 +109,7 @@ class ConceptReviewForm(BaseReviewForm):
 
     technical = forms.CharField(
         widget=RICH_TEXT_WIDGET,
+        required=False,
         label='Technical merit',
         help_text='Does the project clearly articulate the technical problem, solution, and approach? '
         'Is the problem clearly justifiable? Does the project clearly articulate the technological objectives? '
@@ -125,7 +128,8 @@ class ConceptReviewForm(BaseReviewForm):
     )
 
     sustainable = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
+        required=False,
         label='Reasonable and realistic',
         help_text='Is the requested amount reasonable, realistic, and justified? Does the project provide a detailed '
         'and realistic description of effort and schedule? I.e. is the project capable of creating a work plan '
@@ -137,20 +141,21 @@ class ConceptReviewForm(BaseReviewForm):
     )
 
     comments = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
+        required=False,
         label='General comments'
     )
 
     request_questions = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
+        required=False,
         label='Request specific questions'
     )
 
     def save(self, commit=True):
         items = 0
         total = 0
-        from pprint import pprint
-        pprint(self.cleaned_data)
+
         for field in self.cleaned_data:
             if field in self.get_score_fields() and int(self.cleaned_data[field]) < 90:
                 items = items + 1
