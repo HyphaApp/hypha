@@ -252,7 +252,7 @@ class Phase:
     def __eq__(self, other: Union[object, str]) -> bool:
         if isinstance(other, str):
             return str(self) == other
-        to_match = ['name', 'step']
+        to_match = ['stage', 'name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
     @property
