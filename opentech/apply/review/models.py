@@ -8,6 +8,7 @@ RECOMMENDATION_CHOICES = (
     (2, 'Maybe')
 )
 
+
 class Review(models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE)
     author = models.ForeignKey(
