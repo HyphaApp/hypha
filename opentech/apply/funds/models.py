@@ -465,6 +465,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def inactive(self):
         return self.exclude(status__in=active_statuses)
 
+    def current(self):
+        # Applications which have the current stage active (have not been progressed)
+        return self.exclude(next__isnull=False)
+
 
 class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     field_template = 'funds/includes/submission_field.html'
