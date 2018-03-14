@@ -3,6 +3,8 @@ import json
 from django import forms
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
+from tinymce.widgets import TinyMCE
+
 from .models import Review, RECOMMENDATION_CHOICES
 
 
@@ -16,6 +18,23 @@ RATE_CHOICES = (
     (99, 'n/a - choose not to answer'),
 )
 
+RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
+    'elementpath': False,
+    'branding': False,
+    'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
+    'style_formats': [
+        {'title': 'Headers', 'items': [
+            {'title': 'Header 1', 'format': 'h1'},
+            {'title': 'Header 2', 'format': 'h2'},
+            {'title': 'Header 3', 'format': 'h3'},
+        ]},
+        {'title': 'Inline', 'items': [
+            {'title': 'Bold', 'icon': 'bold', 'format': 'bold'},
+            {'title': 'Italic', 'icon': 'italic', 'format': 'italic'},
+            {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
+        ]},
+    ],
+})
 
 class BaseReviewForm(forms.ModelForm):
     class Meta:
@@ -53,11 +72,11 @@ class ConceptReviewForm(BaseReviewForm):
         help_text='Do you recommend requesting a proposal based on this concept note?'
     )
     recommendation_comments = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
         label='Recommendation comments'
     )
     principles = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
         label='Goals and principles',
         help_text='Does the project contribute and/or have relevance to OTF goals and principles? '
         'Are the goals and objectives of the project clear? Is it a technology research, development, or deployment project? '
@@ -82,7 +101,7 @@ class ConceptReviewForm(BaseReviewForm):
     )
 
     technical = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 5}),
+        widget=RICH_TEXT_WIDGET,
         label='Technical merit',
         help_text='Does the project clearly articulate the technical problem, solution, and approach? '
         'Is the problem clearly justifiable? Does the project clearly articulate the technological objectives? '
@@ -109,7 +128,7 @@ class ConceptReviewForm(BaseReviewForm):
     )
     sustainable_rate = forms.ChoiceField(
         choices=RATE_CHOICES,
-        label='Rate reasonable and realisti'
+        label='Rate reasonable and realistic'
     )
 
     comments = forms.CharField(
