@@ -45,7 +45,7 @@ class Workflow(Iterable):
         if len(self.stage_classes) != len(forms):
             raise ValueError('Number of forms does not equal the number of stages')
 
-        self.stages = [stage(form) for stage, form in zip(self.stage_classes, forms)]
+        self.stages = [stage(form, self) for stage, form in zip(self.stage_classes, forms)]
 
     def __iter__(self) -> Iterator['Phase']:
         for stage in self.stages:
@@ -122,9 +122,10 @@ class Stage(Iterable):
     name: str = 'Stage'
     phases: list = list()
 
-    def __init__(self, form: Form, name: str='') -> None:
+    def __init__(self, form: Form, workflow: 'Workflow', name: str='') -> None:
         if name:
             self.name = name
+        self.workflow = workflow
         # For OTF each stage is associated with a form submission
         # So each time they start a stage they should submit new information
         # TODO: consider removing form from stage as the stage is generic and
@@ -139,6 +140,9 @@ class Stage(Iterable):
             return self.name == other.name
 
         return super().__eq__(other)
+
+    def __lt__(self, other):
+        return self.workflow.stages.index(self) < self.workflow.stages.index(other)
 
     def copy_phases(self, phases: List['Phase']) -> List['Phase']:
         new_phases = list()
@@ -198,6 +202,9 @@ class PhaseIterator(Iterator):
         """
         def __init__(self, phases: List['Phase']) -> None:
             self.phases = phases
+
+        def __lt__(self, other):
+            return all(phase < other for phase in self.phases)
 
         @property
         def step(self) -> int:
@@ -261,6 +268,11 @@ class Phase:
         to_match = ['stage', 'name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
+    def __lt__(self, other):
+        if self.stage < other.stage:
+            return True
+        return self.step < other.step and self.stage == other.stage
+
     @property
     def action_names(self) -> List[str]:
         return list(self._actions.keys())
@@ -315,9 +327,15 @@ reject_action = ChangePhaseAction('rejected', 'Reject')
 
 accept_action = ChangePhaseAction('accepted', 'Accept')
 
-progress_stage = ChangePhaseAction(None, 'Invite to Proposal')
+progress_stage = ChangePhaseAction('progressed', 'Invite to Proposal')
 
 next_phase = NextPhaseAction('Progress')
+
+
+class InDraft(Phase):
+    name = 'Invited for Proposal'
+    public_name = 'In draft'
+    actions = [NextPhaseAction('Submit')]
 
 
 class ReviewPhase(Phase):
@@ -348,6 +366,8 @@ rejected = Phase(name='Rejected', active=False)
 
 accepted = Phase(name='Accepted', active=False)
 
+progressed = Phase(name='Invited to Proposal', active=False)
+
 
 class RequestStage(Stage):
     name = 'Request'
@@ -364,13 +384,15 @@ class ConceptStage(Stage):
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
-        [DiscussionWithProgressionPhase(), rejected]
+        DiscussionWithProgressionPhase(),
+        [progressed, rejected],
     ]
 
 
 class ProposalStage(Stage):
     name = 'Proposal'
     phases = [
+        InDraft(),
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionWithNextPhase(),
