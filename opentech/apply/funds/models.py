@@ -642,11 +642,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def get_absolute_url(self):
         return reverse('funds:submission', args=(self.id,))
 
-    def __getattr__(self, item):
+    def __getattribute__(self, item):
+        # __getattribute__ allows correct error handling from django compared to __getattr__
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
             return self.get_data()[item]
-        raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
+        return super().__getattribute__(item)
 
     def __str__(self):
         return f'{self.title} from {self.full_name} for {self.page.title}'
