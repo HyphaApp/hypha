@@ -63,7 +63,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.get_full_name()
+        return self.get_full_name() if self.get_full_name() else self.get_short_name()
 
     def get_full_name(self):
         return self.full_name.strip()
