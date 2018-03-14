@@ -63,6 +63,12 @@ class Workflow(Iterable):
             if phase:
                 return phase
 
+        stage_name, _, _ = current_phase.split('__')
+        for stage in self.stages:
+            if stage.name == stage_name:
+                # Fall back to the first phase of the stage
+                return stage.first()
+
         return None
 
     def first(self) -> 'Phase':
