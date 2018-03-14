@@ -77,6 +77,11 @@
                         {% if object.previous %}
                             <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' object.previous.id %}">View linked {{ object.previous.stage }}</a></h6>
                         {% endif %}
+
+                        {% if object.next %}
+                            <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' object.next.id %}">View linked {{ object.next.stage }}</a></h6>
+                        {% endif %}
+
                         {% for submission in other_submissions %}
                             {% if forloop.first %}
                                 <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
