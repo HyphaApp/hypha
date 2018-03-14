@@ -108,8 +108,12 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView):
     }
 
     def get_context_data(self, **kwargs):
+        other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
+        if self.object.next:
+            other_submissions = other_submissions.exclude(id=self.object.next.id)
+
         return super().get_context_data(
-            other_submissions=self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id),
+            other_submissions=other_submissions,
             **kwargs,
         )
 
