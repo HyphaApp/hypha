@@ -479,6 +479,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         related_name='submission_lead',
         on_delete=models.PROTECT,
     )
+    next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -536,7 +537,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def handle_file(self, file):
         # File is potentially optional
         if file:
-            filename = self.save_path(file.name)
+            try:
+                filename = self.save_path(file.name)
+            except AttributeError:
+                # file is not changed, it is still the dictionary
+                return file
+
             saved_name = default_storage.save(filename, file)
             return {
                 'name': file.name,
@@ -565,6 +571,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 file = self.form_data[field.id]
                 self.form_data[field.id] = self.handle_files(file)
 
+        progressing_stage = False
         if not self.id:
             # We are creating the object default to first stage
             try:
@@ -579,11 +586,20 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             except AttributeError:
                 # Its a lab
                 self.lead = self.page.specific.lead
+        else:
+            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+            if self.stage != submission_in_db.stage:
+                progressing_stage = True
+                self.id = None
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
 
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
+        if progressing_stage:
+            submission_in_db.next = self
+            submission_in_db.save()
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

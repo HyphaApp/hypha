@@ -374,3 +374,20 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(form_data__image__filename=filename)
         save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
         self.assertTrue(os.path.isfile(save_path))
+
+
+class TestApplicationProgression(TestCase):
+    def test_new_submission_created(self):
+        submission = ApplicationSubmissionFactory(round__workflow_name='double')
+        self.assertEqual(ApplicationSubmission.objects.count(), 1)
+        old_id = submission.id
+
+        # Update the status to the first phase of the new stage
+        submission.status = str(submission.workflow.stages[1].first())
+        submission.save()
+
+        old_submission = ApplicationSubmission.objects.get(id=old_id)
+
+        self.assertEqual(ApplicationSubmission.objects.count(), 2)
+        self.assertEqual(submission.previous, old_submission)
+        self.assertEqual(old_submission.next, submission)

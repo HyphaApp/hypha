@@ -128,6 +128,12 @@ class Stage(Iterable):
         # Make the phases new instances to prevent errors with mutability
         self.phases = self.copy_phases(self.phases)
 
+    def __eq__(self, other):
+        if isinstance(other, Stage):
+            return self.name == other.name
+
+        return super().__eq__(other)
+
     def copy_phases(self, phases: List['Phase']) -> List['Phase']:
         new_phases = list()
         for step, phase in enumerate(self.phases):
