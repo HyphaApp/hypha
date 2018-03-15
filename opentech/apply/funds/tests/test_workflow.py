@@ -54,7 +54,7 @@ class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
         name = 'the_stage'
         form = Form()
-        stage = Stage(form, name=name)
+        stage = Stage(form, None, name=name)
         self.assertEqual(stage.name, name)
         self.assertEqual(stage.form, form)
 
@@ -73,7 +73,7 @@ class TestStageCreation(SimpleTestCase):
                 [first_phase, second_phase],
             ]
 
-        stage = MultiPhaseStep(None)
+        stage = MultiPhaseStep(None, None)
         self.assertEqual(stage.steps, 2)
 
         current_phase = stage.phases[0]

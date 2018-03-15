@@ -111,9 +111,12 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     class Meta:
         abstract = True
 
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.forms.all()[0].fields
+    def get_defined_fields(self, stage=None):
+        if not stage:
+            form_index = 0
+        else:
+            form_index = self.workflow.stages.index(stage)
+        return self.forms.all()[form_index].fields
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
@@ -601,6 +604,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
             self.id = None
             self.status = str(self.workflow.next(self.status))
+            self.form_fields = self.round.get_defined_fields(self.stage)
 
             super().save(*args, **kwargs)
 

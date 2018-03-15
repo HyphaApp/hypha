@@ -90,6 +90,9 @@ class StageFactory(factory.Factory):
         phases = kwargs.pop('phases')
         name = kwargs.pop('name')
         new_class = type(model_class.__name__, (model_class,), {'phases': phases, 'name': name})
+
+        # Pretend we have a workflow object, only used for __le__
+        kwargs['workflow'] = None
         return new_class(*args, **kwargs)
 
 

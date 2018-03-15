@@ -201,9 +201,7 @@ class TestFormSubmission(TestCase):
         self.site.save()
 
         self.round_page = RoundFactory(parent=fund)
-        RoundFormFactory(round=self.round_page, form=form)
         self.lab_page = LabFactory(lead=self.round_page.lead)
-        LabFormFactory(lab=self.lab_page, form=form)
 
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
         if email is None:
@@ -213,7 +211,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, [email, name, 'project'])}
+        data = {k: v for k, v in zip(fields, ['project', email, name])}
 
         request = self.request_factory.post('', data)
         request.user = user
@@ -378,7 +376,7 @@ class TestApplicationSubmission(TestCase):
 
 class TestApplicationProgression(TestCase):
     def test_new_submission_created(self):
-        submission = ApplicationSubmissionFactory(round__workflow_name='double')
+        submission = ApplicationSubmissionFactory(workflow_name='double')
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         old_id = submission.id
 
@@ -391,3 +389,7 @@ class TestApplicationProgression(TestCase):
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(submission.previous, old_submission)
         self.assertEqual(old_submission.next, submission)
+
+        form_fields = submission.round.forms.all()[1].fields
+
+        self.assertEqual(submission.form_fields, form_fields)
