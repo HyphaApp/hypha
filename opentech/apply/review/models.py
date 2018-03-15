@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+from django.contrib.postgres.fields import JSONField
 
 RECOMMENDATION_CHOICES = (
     (0, 'No'),
@@ -15,7 +16,7 @@ class Review(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    review = models.TextField()
+    review = JSONField()
     recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
 
