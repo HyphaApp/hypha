@@ -50,8 +50,11 @@ class RequiredRichTextField(RichTextField):
 
 
 class RateChoiceField(forms.ChoiceField):
-    choices = RATE_CHOICES
     required = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(**kwargs)
+        self.choices = RATE_CHOICES
 
 
 class RequiredRateChoiceField(RateChoiceField):
