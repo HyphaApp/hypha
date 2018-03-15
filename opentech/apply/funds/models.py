@@ -575,7 +575,6 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
                 file = self.form_data[field.id]
                 self.form_data[field.id] = self.handle_files(file)
 
-        progressing_stage = False
         if not self.id:
             # We are creating the object default to first stage
             try:
@@ -590,18 +589,21 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
             except AttributeError:
                 # Its a lab
                 self.lead = self.page.specific.lead
-        else:
-            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
-            if self.stage != submission_in_db.stage:
-                progressing_stage = True
-                self.id = None
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
 
         super().save(*args, **kwargs)
 
-        if progressing_stage:
+        # Check to see if we should progress to the next stage
+        if self.phase.can_proceed and not self.next:
+            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+
+            self.id = None
+            self.status = str(self.workflow.next(self.status))
+
+            super().save(*args, **kwargs)
+
             submission_in_db.next = self
             submission_in_db.save()
 

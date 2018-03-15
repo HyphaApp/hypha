@@ -189,9 +189,12 @@ class Stage(Iterable):
         for i, phase in enumerate(self.phases):
             if phase == current_phase:
                 try:
-                    return self.phases[i + 1]
+                    next_phase = self.phases[i + 1]
                 except IndexError:
                     pass
+                else:
+                    if next_phase.step != phase.step:
+                        return next_phase
         return None
 
 
@@ -246,11 +249,12 @@ class Phase:
     name: str = ''
     public_name: str = ''
 
-    def __init__(self, name: str='', public_name: str ='', active: bool=True) -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False) -> None:
         if name:
             self.name = name
 
         self.active = active
+        self.can_proceed = can_proceed
 
         if public_name:
             self.public_name = public_name
@@ -327,7 +331,7 @@ reject_action = ChangePhaseAction('rejected', 'Reject')
 
 accept_action = ChangePhaseAction('accepted', 'Accept')
 
-progress_stage = ChangePhaseAction('progressed', 'Invite to Proposal')
+progress_stage = ChangePhaseAction('invited-to-proposal', 'Invite to Proposal')
 
 next_phase = NextPhaseAction('Progress')
 
@@ -366,7 +370,7 @@ rejected = Phase(name='Rejected', active=False)
 
 accepted = Phase(name='Accepted', active=False)
 
-progressed = Phase(name='Invited to Proposal', active=False)
+progressed = Phase(name='Invited to Proposal', active=False, can_proceed=True)
 
 
 class RequestStage(Stage):

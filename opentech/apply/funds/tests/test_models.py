@@ -382,8 +382,8 @@ class TestApplicationProgression(TestCase):
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         old_id = submission.id
 
-        # Update the status to the first phase of the new stage
-        submission.status = str(submission.workflow.stages[1].first())
+        # Update the status to the accepted phase of the current stage
+        submission.status = str(submission.workflow.stages[0].phases[-2])
         submission.save()
 
         old_submission = ApplicationSubmission.objects.get(id=old_id)
