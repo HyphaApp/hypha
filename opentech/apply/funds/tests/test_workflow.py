@@ -1,5 +1,4 @@
 from django.test import SimpleTestCase
-from django.forms import Form
 
 from opentech.apply.funds.workflow import (
     Action,
@@ -20,7 +19,7 @@ class TestWorkflowCreation(SimpleTestCase):
         class NewWorkflow(Workflow):
             name = 'single_stage'
             stage_classes = [stage]
-        workflow = NewWorkflow([Form()])
+        workflow = NewWorkflow()
         self.assertEqual(workflow.name, NewWorkflow.name)
         self.assertEqual(len(workflow.stages), 1)
 
@@ -53,10 +52,8 @@ class TestWorkflowCreation(SimpleTestCase):
 class TestStageCreation(SimpleTestCase):
     def test_can_create_stage(self):
         name = 'the_stage'
-        form = Form()
-        stage = Stage(form, None, name=name)
+        stage = Stage(None, name=name)
         self.assertEqual(stage.name, name)
-        self.assertEqual(stage.form, form)
 
     def test_can_create_with_multi_phase_step(self):
         first_phase, second_phase = Phase(name='first'), Phase(name='second')
@@ -73,7 +70,7 @@ class TestStageCreation(SimpleTestCase):
                 [first_phase, second_phase],
             ]
 
-        stage = MultiPhaseStep(None, None)
+        stage = MultiPhaseStep(None)
         self.assertEqual(stage.steps, 2)
 
         current_phase = stage.phases[0]

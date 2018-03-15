@@ -1,5 +1,4 @@
 import factory
-from django.forms import Form
 
 from opentech.apply.funds.workflow import Action, Phase, Stage, Workflow
 
@@ -68,13 +67,11 @@ class PhaseFactory(factory.Factory):
 class StageFactory(factory.Factory):
     class Meta:
         model = Stage
-        inline_args = ('form',)
 
     class Params:
         num_phases = factory.Faker('random_int', min=1, max=3)
 
     name = factory.Faker('word')
-    form = factory.LazyFunction(Form)
     phases = ListSubFactory(PhaseFactory, count=factory.SelfAttribute('num_phases'))
 
     @classmethod
@@ -106,10 +103,6 @@ class WorkflowFactory(factory.Factory):
 
     name = factory.Faker('word')
     stages = ListSubFactory(StageFactory, count=factory.SelfAttribute('num_stages'))
-
-    @factory.LazyAttribute
-    def forms(self):
-        return [Form() for _ in range(self.num_stages)]
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):

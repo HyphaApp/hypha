@@ -91,9 +91,7 @@ class WorkflowHelpers(models.Model):
 
     @property
     def workflow(self):
-        # Pretend we have forms associated with the workflow.
-        # TODDO Confirm if we need forms on the workflow.
-        return self.workflow_class([None] * len(self.workflow_class.stage_classes))
+        return self.workflow_class()
 
     @property
     def workflow_class(self):

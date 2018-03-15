@@ -4,7 +4,6 @@ import itertools
 
 from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
 
-from django.forms import Form
 from django.utils.text import slugify
 
 """
@@ -41,11 +40,8 @@ class Workflow(Iterable):
     name: str = ''
     stage_classes: Sequence[Type['Stage']] = list()
 
-    def __init__(self, forms: Sequence[Form]) -> None:
-        if len(self.stage_classes) != len(forms):
-            raise ValueError('Number of forms does not equal the number of stages')
-
-        self.stages = [stage(form, self) for stage, form in zip(self.stage_classes, forms)]
+    def __init__(self) -> None:
+        self.stages = [stage(self) for stage in self.stage_classes]
 
     def __iter__(self) -> Iterator['Phase']:
         for stage in self.stages:
@@ -122,15 +118,10 @@ class Stage(Iterable):
     name: str = 'Stage'
     phases: list = list()
 
-    def __init__(self, form: Form, workflow: 'Workflow', name: str='') -> None:
+    def __init__(self, workflow: 'Workflow', name: str='') -> None:
         if name:
             self.name = name
         self.workflow = workflow
-        # For OTF each stage is associated with a form submission
-        # So each time they start a stage they should submit new information
-        # TODO: consider removing form from stage as the stage is generic and
-        # shouldn't care about forms.
-        self.form = form
         self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
         self.phases = self.copy_phases(self.phases)
@@ -427,7 +418,7 @@ def get_active_statuses() -> Set[str]:
         if phase.active:
             active.add(str(phase))
 
-    for phase in itertools.chain(SingleStage([None]), DoubleStage([None, None])):
+    for phase in itertools.chain(SingleStage(), DoubleStage()):
         try:
             add_if_active(phase)
         except AttributeError:
