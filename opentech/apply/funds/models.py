@@ -33,7 +33,7 @@ from wagtail.core.models import Orderable
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .admin_forms import WorkflowFormAdminForm
@@ -471,7 +471,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
 
-class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
+class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission):
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
