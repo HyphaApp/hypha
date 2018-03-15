@@ -1,5 +1,3 @@
-import json
-
 from django import forms
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 
@@ -81,7 +79,7 @@ class BaseReviewForm(forms.ModelForm):
 
         self.instance.submission = self.submission
         self.instance.author = self.request.user
-        self.instance.review = json.dumps(self.cleaned_data)
+        self.instance.review = self.cleaned_data
 
         try:
             self.instance.validate_unique()
