@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
@@ -137,8 +138,14 @@ class SubmissionDetailView(ViewDispatcher):
     applicant_view = ApplicantSubmissionDetailView
 
 
+@method_decorator(login_required, name='dispatch')
 class SubmissionEditView(UpdateView):
     model = ApplicationSubmission
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user != self.get_object().user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
