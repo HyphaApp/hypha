@@ -1,10 +1,11 @@
 from django import forms
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+from django.core.exceptions import NON_FIELD_ERRORS
 
 from tinymce.widgets import TinyMCE
 
 from .models import Review, RECOMMENDATION_CHOICES
 
+NA = 99
 
 RATE_CHOICES = (
     (0, '0. Need more info'),
@@ -13,7 +14,7 @@ RATE_CHOICES = (
     (3, '3. Is o.k.'),
     (4, '4. Good'),
     (5, '5. Excellent'),
-    (99, 'n/a - choose not to answer'),
+    (NA, 'n/a - choose not to answer'),
 )
 
 YES_NO_CHOICES = (
@@ -78,45 +79,29 @@ class BaseReviewForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def validate_unique(self):
-        super().validate_unique()
-
+        # update the instance data prior to validating uniqueness
         self.instance.submission = self.submission
         self.instance.author = self.request.user
         self.instance.review = self.cleaned_data
 
-        try:
-            self.instance.validate_unique()
-        except ValidationError as e:
-            self._update_errors(e)
+        super().validate_unique()
 
     def save(self, commit=True):
+        self.instance.score = self.calculate_score()
 
-        score_fields = self.get_score_fields()
-
-        if score_fields:
-            items = 0
-            total = 0
-
-            for field in score_fields:
-                try:
-                    value = int(self.cleaned_data[field])
-                    if value < 90:
-                        items = items + 1
-                        total = total + value
-                except KeyError:
-                    pass
-
-            try:
-                self.instance.score = total / items
-            except ZeroDivisionError:
-                pass
-
-        try:
-            self.instance.recommendation = self.cleaned_data['recommendation']
-        except KeyError:
-            pass
+        self.instance.recommendation = self.cleaned_data['recommendation']
 
         super().save()
+
+    def caclulate_score(self):
+        scores = list()
+
+        for field in self.get_score_fields():
+            score = int(self.cleaned_data.get(field, NA))
+            if score != NA:
+                scores.append(score)
+
+        return sum(scores) / len(scores)
 
     def get_score_fields(self):
         return [field for field in self.fields if field.endswith('_rate')]
