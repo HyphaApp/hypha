@@ -140,6 +140,10 @@ class SubmissionDetailView(ViewDispatcher):
 
 @method_decorator(login_required, name='dispatch')
 class SubmissionEditView(UpdateView):
+    """
+    Converts the data held on the submission into an editable format and knows how to save
+    that back to the object. Shortcuts the normal update view save approach
+    """
     model = ApplicationSubmission
 
     def dispatch(self, request, *args, **kwargs):
