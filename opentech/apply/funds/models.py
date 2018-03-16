@@ -561,6 +561,13 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         return self.handle_file(files)
 
+    def get_from_parent(self, attribute):
+        try:
+            return getattr(self.round.specific, attribute)
+        except AttributeError:
+            # We are a lab submission
+            return getattr(self.page.specific, attribute)
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -578,18 +585,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         if not self.id:
             # We are creating the object default to first stage
-            try:
-                self.workflow_name = self.round.workflow_name
-            except AttributeError:
-                # We are a lab submission
-                self.workflow_name = self.page.workflow_name
+            self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
-
-            try:
-                self.lead = self.round.specific.lead
-            except AttributeError:
-                # Its a lab
-                self.lead = self.page.specific.lead
+            self.lead = self.get_from_parent('lead')
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
@@ -602,7 +600,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
             self.id = None
             self.status = str(self.workflow.next(self.status))
-            self.form_fields = self.round.get_defined_fields(self.stage)
+            self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
 
             super().save(*args, **kwargs)
 
