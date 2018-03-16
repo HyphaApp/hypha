@@ -231,6 +231,16 @@ class PhaseIterator(Iterator):
         return self.Step(self.phases[self.current - 1])
 
 
+class CanEditPermission:
+    def can_edit(self, user):
+        return True
+
+
+class NoEditPermission:
+    def can_edit(self, user):
+        return False
+
+
 class Phase:
     """
     Holds the Actions which a user can perform at each stage. A Phase with no actions is
@@ -239,6 +249,7 @@ class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
+    permissions: 'Permission' = NoEditPermission()
 
     def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False) -> None:
         if name:
@@ -280,6 +291,10 @@ class Phase:
 
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
+
+    def has_perm(self, user, perm):
+        perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
+        return perm_method(user)
 
 
 class Action:
@@ -331,6 +346,7 @@ class InDraft(Phase):
     name = 'Invited for Proposal'
     public_name = 'In draft'
     actions = [NextPhaseAction('Submit')]
+    permissions = CanEditPermission()
 
 
 class ReviewPhase(Phase):

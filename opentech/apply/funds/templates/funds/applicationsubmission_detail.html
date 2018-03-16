@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load workflow_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -39,7 +40,9 @@
             <div>
                 <h6 class="heading heading--submission-meta">
                     <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
-                    <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
+                    {% if request.user|can_edit:submission %}
+                        <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
+                    {% endif %}
                 </h6>
 
                 <h3>Proposal Information</h3>
