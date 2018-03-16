@@ -2,13 +2,12 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView
 
 from opentech.apply.funds.models import ApplicationSubmission
-from .forms import ConceptReviewForm
+from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
 
 
 class ReviewCreateView(CreateView):
     model = Review
-    form_class = ConceptReviewForm
 
     def get_context_data(self, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -19,6 +18,14 @@ class ReviewCreateView(CreateView):
             has_submitted_review=has_submitted_review,
             **kwargs
         )
+
+    def get_form_class(self):
+        forms = [ConceptReviewForm, ProposalReviewForm]
+        index = [
+            i for i, stage in enumerate(self.submission.workflow.stages)
+            if self.submission.stage.name == stage.name
+        ][0]
+        return forms[index]
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

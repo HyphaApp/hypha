@@ -163,6 +163,13 @@ class ConceptReviewForm(BaseReviewForm):
 
 
 class ProposalReviewForm(BaseReviewForm):
+    titles = {
+        1: 'A. Conflicts of Interest and Confidentiality',
+        2: 'B. General Thoughts',
+        3: 'C. Specific aspects',
+        4: 'D. Rationale and appropriateness consideration',
+        5: 'E. General recommendation',
+    }
 
     # A. Conflicts of Interest and Confidentiality
     confidentiality = forms.BooleanField(
@@ -172,33 +179,39 @@ class ProposalReviewForm(BaseReviewForm):
         'Agreement and I understand that the received proposal contains “Confidential Information” that may not be '
         'publicly known and shall not be disclosed to any third party.'
     )
+    confidentiality.group = 1
 
     conflicts = forms.ChoiceField(
         widget=forms.RadioSelect(),
         choices=YES_NO_CHOICES,
         label='Do you have any conflicts of interest to report?'
     )
+    conflicts.group = 1
 
     conflicts_disclosure = RichTextField(
         label='Conflict(s) of interest disclosure',
         help_text='If you checked yes, please list your conflict(s) of interest or potential conflict(s) of interest.'
     )
+    conflicts_disclosure.group = 1
 
     # B. General thoughts
     liked = RichTextField(
         label='1. Positive aspects',
         help_text='Any general or specific aspects that got you really excited or that you like about this proposal.'
     )
+    liked.group = 2
 
     concerns = RichTextField(
         label='2. Concerns',
         help_text='Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.'
     )
+    concerns.group = 2
 
     red_flags = RichTextField(
         label='3. Items that must be addressed',
         help_text='Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.'
     )
+    red_flags.group = 2
 
     # C. Specific aspects
     overview_rate = RequiredRateChoiceField(
@@ -209,7 +222,10 @@ class ProposalReviewForm(BaseReviewForm):
         'Is the project\'s sought after impact clear? Does the proposal cite an actual and compelling case study or '
         'user problem? Does the proposal state how much the effort will cost and how long will it take?'
     )
+    overview_rate.group = 3
+
     overview = RichTextField(label='Project overview questions and comments')
+    overview.group = 3
 
     objectives_rate = RequiredRateChoiceField(
         label='2. Proposal objectives',
@@ -218,7 +234,10 @@ class ProposalReviewForm(BaseReviewForm):
         'to a potential need or function that is currently unfilled, or will it be duplicating previous efforts or '
         'creating a solution in search of a problem?'
     )
+    objectives_rate.group = 3
+
     objectives = RichTextField(label='Objectives questions and comments')
+    objectives.group = 3
 
     strategy_rate = RequiredRateChoiceField(
         label='3. Appropriate activities and strategy',
@@ -229,7 +248,10 @@ class ProposalReviewForm(BaseReviewForm):
         'they increase tactical breathing space for existing challenges? Are the activity\'s tactics clearly '
         'identifiable as part of a wider strategy?'
     )
+    strategy_rate.group = 3
+
     strategy = RichTextField(label='Methods and strategy questions and comments')
+    strategy.group = 3
 
     technical_rate = RequiredRateChoiceField(
         label='4. Technical feasibility (where applicable)',
@@ -238,7 +260,10 @@ class ProposalReviewForm(BaseReviewForm):
         'approach and why it will succeed? Does the project identify any hurdles to achieving technical objectives? '
         'Does the proposal recognize potential technical byproducts, such as new or increased attack surfaces?'
     )
+    technical_rate.group = 3
+
     technical = RichTextField(label='Technical feasibility questions and comments')
+    technical.group = 3
 
     alternative_rate = RequiredRateChoiceField(
         label='5. Alternative analysis - "red teaming"',
@@ -251,7 +276,10 @@ class ProposalReviewForm(BaseReviewForm):
         'adversary’s point of view? Does the project increase or decrease known attack surfaces? Does the proposal '
         'discuss how the project could be undermined, identify its own deficiencies and limitation, or does it presume there are none?'
     )
+    alternative_rate.gorup = 3
+
     alternative = RichTextField(label='Alternative analysis - "red teaming" questions and comments')
+    alternative.group = 3
 
     usability_rate = RequiredRateChoiceField(
         label='6. Usability',
@@ -260,7 +288,10 @@ class ProposalReviewForm(BaseReviewForm):
         'Is the project targeting a small number of high value or at-risk users, or a broader population? '
         'Is the proposed effort appropriate for the intended audience?'
     )
+    usability_rate.group = 3
+
     usability = RichTextField(label='Usability questions and comments')
+    usability.group = 3
 
     sustainability_rate = RequiredRateChoiceField(
         label='7. Sustainability',
@@ -271,7 +302,10 @@ class ProposalReviewForm(BaseReviewForm):
         'Does the proposal identify any cost sharing or matching support for the proposed effort? '
         'Does the project currently receive any U.S. government or other public funding?'
     )
+    sustainability_rate.group = 3
+
     sustainability = RichTextField(label='Sustainability questions and comments')
+    sustainability.group = 3
 
     collaboration_rate = RequiredRateChoiceField(
         label='8. Collaboration',
@@ -281,14 +315,20 @@ class ProposalReviewForm(BaseReviewForm):
         'Does the project seek to share resources or enable others to reuse the resources they develop? '
         'Do the objectives of this proposal contribute broadly to other Internet freedom projects?'
     )
+    collaboration_rate.group = 3
+
     collaboration = RichTextField(label='Collaboration questions and comments')
+    collaboration.group = 3
 
     realism_rate = RequiredRateChoiceField(
         label='9. Cost realism',
         help_text='Is the budget realistic and commensurate with both the project objectives and time frame? '
         'Is this project realistically implementable within a payment-on-delivery framework, i.e. no funds up-front?'
     )
+    realism_rate.group = 3
+
     realism = RichTextField(label='Cost realism questions and comments')
+    realism.group = 3
 
     qualifications_rate = RequiredRateChoiceField(
         label='10. Qualifications',
@@ -298,7 +338,10 @@ class ProposalReviewForm(BaseReviewForm):
         'core team (leadership, developers, etc.) dedicated to this project? Are project team member(s) clearly '
         'identified, along with work experience, in the proposal?'
     )
+    qualifications_rate.group = 3
+
     qualifications = RichTextField(label='Qualifications questions and comments')
+    qualifications.group = 3
 
     evaluation_rate = RequiredRateChoiceField(
         label='11. Evaluation',
@@ -308,12 +351,21 @@ class ProposalReviewForm(BaseReviewForm):
         'Does the proposing entity have the capacity to self-evaluate and extract “lessons learned”? '
         'Is the proposed effort able to be openly peer reviewed and/or include a peer review process?'
     )
+    evaluation_rate.group = 3
+
     evaluation = RichTextField(label='Evaluation questions and comments')
+    evaluation.group = 3
 
     # D. Rationale and appropriateness consideration
     rationale_rate = RateChoiceField(label='Rationale and appropriateness rating')
+    rationale_rate.group = 4
+
     rationale = RichTextField(label='Rationale and appropriateness questions and comments')
+    rationale.group = 4
 
     # E. General recommendation
     recommendation = forms.ChoiceField(choices=RECOMMENDATION_CHOICES, label='Recommendation')
+    recommendation.group = 5
+
     recommendation_comments = RichTextField(label='Recommendation comments')
+    recommendation_comments.group = 5
