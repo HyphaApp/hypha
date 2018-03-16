@@ -104,7 +104,10 @@ class BaseReviewForm(forms.ModelForm):
             if score != NA:
                 scores.append(score)
 
-        return sum(scores) / len(scores)
+        try:
+            return sum(scores) / len(scores)
+        except ZeroDivisionError:
+            return 0
 
     def get_score_fields(self):
         return [field for field in self.fields if field.endswith('_rate')]
