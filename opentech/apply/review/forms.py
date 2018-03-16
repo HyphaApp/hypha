@@ -1,5 +1,5 @@
 from django import forms
-from django.core.exceptions import NON_FIELD_ERRORS
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 
 from tinymce.widgets import TinyMCE
 
@@ -84,7 +84,10 @@ class BaseReviewForm(forms.ModelForm):
         self.instance.author = self.request.user
         self.instance.review = self.cleaned_data
 
-        super().validate_unique()
+        try:
+            self.instance.validate_unique()
+        except ValidationError as e:
+            self._update_errors(e)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score()
@@ -93,7 +96,7 @@ class BaseReviewForm(forms.ModelForm):
 
         super().save()
 
-    def caclulate_score(self):
+    def calculate_score(self):
         scores = list()
 
         for field in self.get_score_fields():
@@ -276,7 +279,7 @@ class ProposalReviewForm(BaseReviewForm):
         'adversary’s point of view? Does the project increase or decrease known attack surfaces? Does the proposal '
         'discuss how the project could be undermined, identify its own deficiencies and limitation, or does it presume there are none?'
     )
-    alternative_rate.gorup = 3
+    alternative_rate.group = 3
 
     alternative = RichTextField(label='Alternative analysis - "red teaming" questions and comments')
     alternative.group = 3

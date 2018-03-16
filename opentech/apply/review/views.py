@@ -9,8 +9,11 @@ from .models import Review
 class ReviewCreateView(CreateView):
     model = Review
 
-    def get_context_data(self, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
         has_submitted_review = Review.objects.filter(submission=self.submission, author=self.request.user).exists()
 
         return super().get_context_data(
