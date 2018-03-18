@@ -1,4 +1,5 @@
 STAFF_GROUP_NAME = 'Staff'
+REVIEWER_GROUP_NAME = 'Reviewer'
 
 GROUPS = [
     {
@@ -6,7 +7,7 @@ GROUPS = [
         'permissions': [],
     },
     {
-        'name': 'Reviewer',
+        'name': REVIEWER_GROUP_NAME,
         'permissions': [],
     },
     {

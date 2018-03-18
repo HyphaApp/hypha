@@ -4,7 +4,6 @@ import itertools
 
 from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
 
-from django.forms import Form
 from django.utils.text import slugify
 
 """
@@ -41,11 +40,8 @@ class Workflow(Iterable):
     name: str = ''
     stage_classes: Sequence[Type['Stage']] = list()
 
-    def __init__(self, forms: Sequence[Form]) -> None:
-        if len(self.stage_classes) != len(forms):
-            raise ValueError('Number of forms does not equal the number of stages')
-
-        self.stages = [stage(form) for stage, form in zip(self.stage_classes, forms)]
+    def __init__(self) -> None:
+        self.stages = [stage(self) for stage in self.stage_classes]
 
     def __iter__(self) -> Iterator['Phase']:
         for stage in self.stages:
@@ -62,6 +58,12 @@ class Workflow(Iterable):
             phase = stage.get_phase(current_phase)
             if phase:
                 return phase
+
+        stage_name, _, _ = current_phase.split('__')
+        for stage in self.stages:
+            if stage.name == stage_name:
+                # Fall back to the first phase of the stage
+                return stage.first()
 
         return None
 
@@ -116,17 +118,22 @@ class Stage(Iterable):
     name: str = 'Stage'
     phases: list = list()
 
-    def __init__(self, form: Form, name: str='') -> None:
+    def __init__(self, workflow: 'Workflow', name: str='') -> None:
         if name:
             self.name = name
-        # For OTF each stage is associated with a form submission
-        # So each time they start a stage they should submit new information
-        # TODO: consider removing form from stage as the stage is generic and
-        # shouldn't care about forms.
-        self.form = form
+        self.workflow = workflow
         self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
         self.phases = self.copy_phases(self.phases)
+
+    def __eq__(self, other):
+        if isinstance(other, Stage):
+            return self.name == other.name
+
+        return super().__eq__(other)
+
+    def __lt__(self, other):
+        return self.workflow.stages.index(self) < self.workflow.stages.index(other)
 
     def copy_phases(self, phases: List['Phase']) -> List['Phase']:
         new_phases = list()
@@ -173,9 +180,12 @@ class Stage(Iterable):
         for i, phase in enumerate(self.phases):
             if phase == current_phase:
                 try:
-                    return self.phases[i + 1]
+                    next_phase = self.phases[i + 1]
                 except IndexError:
                     pass
+                else:
+                    if next_phase.step != phase.step:
+                        return next_phase
         return None
 
 
@@ -186,6 +196,9 @@ class PhaseIterator(Iterator):
         """
         def __init__(self, phases: List['Phase']) -> None:
             self.phases = phases
+
+        def __lt__(self, other):
+            return all(phase < other for phase in self.phases)
 
         @property
         def step(self) -> int:
@@ -218,6 +231,16 @@ class PhaseIterator(Iterator):
         return self.Step(self.phases[self.current - 1])
 
 
+class CanEditPermission:
+    def can_edit(self, user):
+        return True
+
+
+class NoEditPermission:
+    def can_edit(self, user):
+        return False
+
+
 class Phase:
     """
     Holds the Actions which a user can perform at each stage. A Phase with no actions is
@@ -226,12 +249,14 @@ class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
+    permissions: 'Permission' = NoEditPermission()
 
-    def __init__(self, name: str='', public_name: str ='', active: bool=True) -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False) -> None:
         if name:
             self.name = name
 
         self.active = active
+        self.can_proceed = can_proceed
 
         if public_name:
             self.public_name = public_name
@@ -246,8 +271,13 @@ class Phase:
     def __eq__(self, other: Union[object, str]) -> bool:
         if isinstance(other, str):
             return str(self) == other
-        to_match = ['name', 'step']
+        to_match = ['stage', 'name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
+
+    def __lt__(self, other):
+        if self.stage < other.stage:
+            return True
+        return self.step < other.step and self.stage == other.stage
 
     @property
     def action_names(self) -> List[str]:
@@ -261,6 +291,10 @@ class Phase:
 
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
+
+    def has_perm(self, user, perm):
+        perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
+        return perm_method(user)
 
 
 class Action:
@@ -303,9 +337,16 @@ reject_action = ChangePhaseAction('rejected', 'Reject')
 
 accept_action = ChangePhaseAction('accepted', 'Accept')
 
-progress_stage = ChangePhaseAction(None, 'Invite to Proposal')
+progress_stage = ChangePhaseAction('invited-to-proposal', 'Invite to Proposal')
 
 next_phase = NextPhaseAction('Progress')
+
+
+class InDraft(Phase):
+    name = 'Invited for Proposal'
+    public_name = 'In draft'
+    actions = [NextPhaseAction('Submit')]
+    permissions = CanEditPermission()
 
 
 class ReviewPhase(Phase):
@@ -336,6 +377,8 @@ rejected = Phase(name='Rejected', active=False)
 
 accepted = Phase(name='Accepted', active=False)
 
+progressed = Phase(name='Invited to Proposal', active=False, can_proceed=True)
+
 
 class RequestStage(Stage):
     name = 'Request'
@@ -352,13 +395,15 @@ class ConceptStage(Stage):
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
-        [DiscussionWithProgressionPhase(), rejected]
+        DiscussionWithProgressionPhase(),
+        [progressed, rejected],
     ]
 
 
 class ProposalStage(Stage):
     name = 'Proposal'
     phases = [
+        InDraft(),
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionWithNextPhase(),
@@ -389,7 +434,7 @@ def get_active_statuses() -> Set[str]:
         if phase.active:
             active.add(str(phase))
 
-    for phase in itertools.chain(SingleStage([None]), DoubleStage([None, None])):
+    for phase in itertools.chain(SingleStage(), DoubleStage()):
         try:
             add_if_active(phase)
         except AttributeError:

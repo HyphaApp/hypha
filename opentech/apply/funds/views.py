@@ -1,5 +1,7 @@
 from django import forms
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import UpdateView
@@ -17,6 +19,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
+from .blocks import MustIncludeFieldBlock
 from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
@@ -30,6 +33,9 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
 
     filterset_class = SubmissionFilter
 
+    def get_queryset(self):
+        return self.filterset_class._meta.model.objects.current()
+
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data
         return super().get_context_data(active_filters=active_filters, **kwargs)
@@ -41,6 +47,9 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
 
     filterset_class = SubmissionFilterAndSearch
+
+    def get_queryset(self):
+        return self.filterset_class._meta.model.objects.current()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
@@ -102,8 +111,12 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView):
     }
 
     def get_context_data(self, **kwargs):
+        other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
+        if self.object.next:
+            other_submissions = other_submissions.exclude(id=self.object.next.id)
+
         return super().get_context_data(
-            other_submissions=self.model.objects.filter(user=self.object.user).exclude(id=self.object.id),
+            other_submissions=other_submissions,
             **kwargs,
         )
 
@@ -123,6 +136,48 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
 class SubmissionDetailView(ViewDispatcher):
     admin_view = AdminSubmissionDetailView
     applicant_view = ApplicantSubmissionDetailView
+
+
+@method_decorator(login_required, name='dispatch')
+class SubmissionEditView(UpdateView):
+    """
+    Converts the data held on the submission into an editable format and knows how to save
+    that back to the object. Shortcuts the normal update view save approach
+    """
+    model = ApplicationSubmission
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user != self.get_object().user:
+            raise PermissionDenied
+        if not self.get_object().phase.has_perm(request.user, 'edit'):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        instance = kwargs.pop('instance')
+        form_data = instance.form_data
+
+        # convert certain data to the correct field id
+        for field in self.object.form_fields:
+            if isinstance(field.block, MustIncludeFieldBlock):
+                try:
+                    response = form_data[field.block.name]
+                except KeyError:
+                    pass
+                else:
+                    form_data[field.id] = response
+
+        kwargs['initial'] = form_data
+        return kwargs
+
+    def get_form_class(self):
+        return self.object.get_form_class()
+
+    def form_valid(self, form):
+        self.object.form_data = form.cleaned_data
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 workflows = [SingleStage, DoubleStage]
