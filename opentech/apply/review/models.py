@@ -18,11 +18,20 @@ class ReviewQuerySet(models.QuerySet):
     def by_staff(self):
         return self.filter()
 
+    def by_reviewers(self):
+        return self.filter()
+
     def staff_score(self):
         return self.by_staff().score()
 
     def staff_reccomendation(self):
         return self.by_staff().reccomendation()
+
+    def reviewers_score(self):
+        return self.by_reviewers().score()
+
+    def reviewers_reccomendation(self):
+        return self.by_reviewers().reccomendation()
 
     def score(self):
         return self.aggregate(models.Avg('score'))['score__avg']
