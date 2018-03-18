@@ -11,7 +11,7 @@ RECOMMENDATION_CHOICES = (
 
 
 class Review(models.Model):
-    submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE)
+    submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
