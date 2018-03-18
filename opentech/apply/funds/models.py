@@ -580,7 +580,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.form_data[field.id]
+                file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
 
         if not self.id:

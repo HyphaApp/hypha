@@ -158,9 +158,9 @@ class SubmissionEditView(UpdateView):
         instance = kwargs.pop('instance')
         form_data = instance.form_data
 
-        # convert certain data to the correct field id
         for field in self.object.form_fields:
             if isinstance(field.block, MustIncludeFieldBlock):
+                # convert certain data to the correct field id
                 try:
                     response = form_data[field.block.name]
                 except KeyError:
