@@ -21,7 +21,7 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .blocks import MustIncludeFieldBlock
-from .forms import ProgressSubmissionForm, UpdateSubmissionLeadForm
+from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import SingleStage, DoubleStage
@@ -102,6 +102,36 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
+class UpdateReviewersView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UpdateReviewersForm
+    context_name = 'reviewer_form'
+
+    def form_valid(self, form):
+        old_reviewers = self.get_object().reviewers.all()
+        response = super().form_valid(form)
+        new_reviewers = form.instance.reviewers.all()
+
+        message = ['Reviewers updated.']
+        added = set(new_reviewers) - set(old_reviewers)
+        if added:
+            message.append('Added:')
+            message.append(', '.join(added))
+
+        removed = set(old_reviewers) - set(new_reviewers)
+        if removed:
+            message.append('Removed:')
+            message.append(', '.join(removed))
+
+        Activity.actions.create(
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            message=' '.join(message),
+        )
+        return response
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
@@ -109,6 +139,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         ProgressSubmissionView,
         CommentFormView,
         UpdateLeadView,
+        UpdateReviewersView,
     ]
 
     def get_context_data(self, **kwargs):

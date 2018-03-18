@@ -1,5 +1,7 @@
 from django import forms
 
+from opentech.apply.users.models import User
+
 from .models import ApplicationSubmission
 
 
@@ -35,3 +37,21 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
         lead_field = self.fields['lead']
         lead_field.label = f'Update lead from { self.instance.lead } to'
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
+
+
+class UpdateReviewersForm(forms.ModelForm):
+    staff_reviewers = forms.ModelMultipleChoiceField(queryset=User.objects.staff())
+    reviewer_reviewers = forms.ModelmultipleChoiceField(queryset=User.objects.reviewers())
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        # lead_field = self.fields['lead']
+
+    def save(self, *args, **kwargs):
+        self.instance.reviewers = self.cleaned_data['staff_reviewers'] + self.cleaned_data['reviewer_reviewers']
+        return super().save(*args, **kwargs)
