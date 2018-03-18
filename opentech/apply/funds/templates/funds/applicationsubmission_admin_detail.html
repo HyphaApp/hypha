@@ -1,5 +1,7 @@
 {% extends "funds/applicationsubmission_detail.html" %}
 
+{% load review_tags %}
+
 {% block sidebar_forms %}
     {% include "funds/includes/actions.html" %}
     {% include "funds/includes/progress_form.html" %}
@@ -15,8 +17,8 @@
         <table>
             <tr>
                 <td>OTF</td>
-                <td>{{ object.review_reccomendation }}</td>
-                <td>{{ object.review_score }}</td>
+                <td>{{ object.reviews.staff_reccomendation|traffic_light }}</td>
+                <td>{{ object.reviews.staff_score }}</td>
             </tr>
             <tr>
                 {% for review in staff_reviews %}
