@@ -6,5 +6,31 @@
     {% include "funds/includes/update_lead_form.html" %}
 
     {# For convenience. Update me #}
-    <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+{% endblock %}
+
+{% block reviews %}
+    <div class="sidebar__inner">
+        <h6 class="heading heading--light-grey heading--small heading--uppercase">Reviews</h6>
+
+        <table>
+            <tr>
+                <td>OTF</td>
+                <td>{{ object.review_reccomendation }}</td>
+                <td>{{ object.review_score }}</td>
+            </tr>
+            <tr>
+                {% for review in staff_reviews %}
+                    <td>{{ review.author }}</td>
+                    <td>{{ review.get_recommendation_display }}</td>
+                    <td>{{ review.score }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+
+        {% for reviewer in object.reviewers %}
+            {{ reviewer }}
+        {% endfor %}
+
+        <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+    </div>
 {% endblock %}
