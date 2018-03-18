@@ -105,11 +105,11 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
-    form_views = {
-        'progress': ProgressSubmissionView,
-        'comment': CommentFormView,
-        'update': UpdateLeadView,
-    }
+    form_views = [
+        ProgressSubmissionView,
+        CommentFormView,
+        UpdateLeadView,
+    ]
 
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
