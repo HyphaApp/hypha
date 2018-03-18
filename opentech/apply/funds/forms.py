@@ -59,7 +59,9 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        # lead_field = self.fields['lead']
+        reviewers = self.instance.reviewers.all()
+        self.fields['staff_reviewers'].initial = reviewers
+        self.fields['reviewer_reviewers'].initial = reviewers
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
