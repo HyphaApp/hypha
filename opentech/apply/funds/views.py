@@ -16,6 +16,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.models import Activity
+from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
@@ -101,7 +102,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
-class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView):
+class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = {
