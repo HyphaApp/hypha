@@ -68,7 +68,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    objects = UserManager()
+    objects = UserManager.from_queryset(UserQuerySet)()
 
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
