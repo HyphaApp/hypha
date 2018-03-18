@@ -6,6 +6,11 @@ from .groups import STAFF_GROUP_NAME
 from .utils import send_activation_email
 
 
+class UserQuerySet(models.QuerySet):
+    def staff(self):
+        return self.filter(groups__name=STAFF_GROUP_NAME)
+
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
