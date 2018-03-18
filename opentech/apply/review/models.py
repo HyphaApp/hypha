@@ -3,11 +3,42 @@ from django.db import models
 
 from django.contrib.postgres.fields import JSONField
 
+NO = 0
+MAYBE = 1
+YES = 2
+
 RECOMMENDATION_CHOICES = (
-    (0, 'No'),
-    (1, 'Yes'),
-    (2, 'Maybe')
+    (NO, 'No'),
+    (MAYBE, 'Maybe'),
+    (YES, 'Yes'),
 )
+
+
+class ReviewQuerySet(models.QuerySet):
+    def by_staff(self):
+        return self.filter()
+
+    def staff_score(self):
+        return self.by_staff().score()
+
+    def staff_reccomendation(self):
+        return self.by_staff().reccomendation()
+
+    def score(self):
+        return self.aggregate(models.Avg('score'))['score__avg']
+
+    def reccomendation(self):
+        reccomendations = self.values_list('recommendation', flat=True)
+        try:
+            reccomendation = sum(reccomendations) / len(reccomendations)
+        except ZeroDivisionError:
+            return -1
+
+        if reccomendation == YES or reccomendation == NO:
+            # If everyone in agreement return Yes/No
+            return reccomendation
+        else:
+            return MAYBE
 
 
 class Review(models.Model):
@@ -19,6 +50,8 @@ class Review(models.Model):
     review = JSONField()
     recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+
+    objects = ReviewQuerySet.as_manager()
 
     class Meta:
         unique_together = ('author', 'submission')
