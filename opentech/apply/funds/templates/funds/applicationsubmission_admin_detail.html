@@ -16,9 +16,9 @@
 
         <table>
             <tr>
-                <td>OTF</td>
-                <td>{{ object.reviews.staff_reccomendation|traffic_light }}</td>
-                <td>{{ object.reviews.staff_score }}</td>
+                <th>OTF</th>
+                <th>{{ object.reviews.staff_reccomendation|traffic_light }}</th>
+                <th>{{ object.reviews.staff_score }}</th>
             </tr>
             <tr>
                 {% for review in staff_reviews %}
@@ -27,11 +27,14 @@
                     <td>{{ review.score }}</td>
                 {% endfor %}
             </tr>
+            <tr>
+                {% for reviewer in object.missing_staff_reviews %}
+                    <td>{{ reviewer }}</td>
+                    <td>-</td>
+                    <td>-</td>
+                {% endfor %}
+            </tr>
         </table>
-
-        {% for reviewer in object.reviewers %}
-            {{ reviewer }}
-        {% endfor %}
 
         <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
     </div>
