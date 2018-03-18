@@ -3,6 +3,8 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
+from opentech.apply.users.models import User
+
 NO = 0
 MAYBE = 1
 YES = 2
@@ -16,10 +18,10 @@ RECOMMENDATION_CHOICES = (
 
 class ReviewQuerySet(models.QuerySet):
     def by_staff(self):
-        return self.filter()
+        return self.filter(author__in=User.objects.staff())
 
     def by_reviewers(self):
-        return self.filter()
+        return self.filter(author__in=User.objects.reviewers())
 
     def staff_score(self):
         return self.by_staff().score()
