@@ -1,7 +1,13 @@
 {% for review in reviews %}
     <tr>
-        <td>{{ review.author|default:review }}</td>
-        <td>{{ review.get_recommendation_display|default:'-' }}</td>
-        <td>{{ review.score|default:'-' }}</td>
+        {% if missing %}
+            <td>{{ review }}</td>
+            <td>-</td>
+            <td>-</td>
+        {% else %}
+            <td>{{ review.author }}</td>
+            <td>{{ review.get_recommendation_display }}</td>
+            <td>{{ review.score }}</td>
+        {% endif %}
     </tr>
 {% endfor %}
