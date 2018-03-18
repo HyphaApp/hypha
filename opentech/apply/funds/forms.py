@@ -40,8 +40,17 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
 
 class UpdateReviewersForm(forms.ModelForm):
-    staff_reviewers = forms.ModelMultipleChoiceField(queryset=User.objects.staff())
-    reviewer_reviewers = forms.ModelmultipleChoiceField(queryset=User.objects.reviewers())
+    staff_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.staff(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+    reviewer_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.reviewers(),
+        widget=forms.CheckboxSelectMultiple,
+        label='Reviewers',
+        required=False,
+    )
 
     class Meta:
         model = ApplicationSubmission
@@ -53,5 +62,6 @@ class UpdateReviewersForm(forms.ModelForm):
         # lead_field = self.fields['lead']
 
     def save(self, *args, **kwargs):
-        self.instance.reviewers = self.cleaned_data['staff_reviewers'] + self.cleaned_data['reviewer_reviewers']
-        return super().save(*args, **kwargs)
+        instance = super().save(*args, **kwargs)
+        instance.reviewers.set(self.cleaned_data['staff_reviewers'] | self.cleaned_data['reviewer_reviewers'])
+        return instance
