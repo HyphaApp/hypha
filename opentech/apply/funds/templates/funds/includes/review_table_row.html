@@ -1,11 +1,11 @@
 {% for review in reviews %}
     <tr class="{% if missing %}no-response{% endif %}">
         {% if missing %}
-            <td>{{ review }}</td>
+            <td colspan="2">{{ review }}</td>
             <td>-</td>
             <td>-</td>
         {% else %}
-            <td>{{ review.author }}</td>
+            <td colspan="2">{{ review.author }}</td>
             <td>{{ review.get_recommendation_display }}</td>
             <td>{{ review.score }}</td>
         {% endif %}

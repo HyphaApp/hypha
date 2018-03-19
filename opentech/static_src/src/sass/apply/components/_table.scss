@@ -1,10 +1,47 @@
 $table-breakpoint: 'tablet-portrait';
 
-table {
+table,
+.table {
+    $root: &;
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
+
+    &--reviews {
+        margin-bottom: 20px;
+        font-weight: $weight--bold;
+
+        tbody {
+            tr {
+                border-bottom: 0;
+
+                &:hover {
+                    box-shadow: none;
+                }
+
+                > th {
+                    font-size: inherit;
+                    font-weight: $weight--bold;
+                }
+
+                > td {
+                    height: auto;
+                }
+
+                th,
+                td,
+                td:last-child,
+                td:first-child {
+                    padding: 10px;
+                }
+
+                &.no-response {
+                    color: $color--black-20;
+                }
+            }
+        }
+    }
 
     thead {
         display: none;
@@ -38,7 +75,6 @@ table {
         > td {
             display: block;
             width: 100%;
-
 
             @include media-query($table-breakpoint) {
                 display: table-cell;
