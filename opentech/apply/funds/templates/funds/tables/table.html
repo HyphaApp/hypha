@@ -1,6 +1,29 @@
 {% extends 'django_tables2/table.html' %}
+{% load table_tags %}
 
 {# example of how to extend the table template #}
 {% block table.tbody.row %}
     {{ block.super }}
+
+    {% with submission=row.record %}
+        {# placeholder for example data row #}
+        <tr class="child">
+            <td>Applicant: {{ submission.full_name }}</td>
+        </tr>
+    {% endwith %}
+
+    {% if row.record.previous %}
+        {# we have a linked application #}
+        {# re-render the header row #}
+        <tr class="child">
+            {% for column in row.table.columns %}
+                <th>{{ column.header }}</th>
+            {% endfor %}
+        </tr>
+        {# mutate the row to render the data for the child row #}
+        {% with row=row|row_from_record:row.record.previous %}
+            {{ block.super }}
+        {% endwith %}
+    {% endif %}
+
 {% endblock %}

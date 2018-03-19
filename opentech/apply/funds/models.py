@@ -33,7 +33,7 @@ from wagtail.core.models import Orderable
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.stream_forms.models import AbstractStreamForm
+from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .admin_forms import WorkflowFormAdminForm
@@ -91,9 +91,7 @@ class WorkflowHelpers(models.Model):
 
     @property
     def workflow(self):
-        # Pretend we have forms associated with the workflow.
-        # TODDO Confirm if we need forms on the workflow.
-        return self.workflow_class([None] * len(self.workflow_class.stage_classes))
+        return self.workflow_class()
 
     @property
     def workflow_class(self):
@@ -111,9 +109,12 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     class Meta:
         abstract = True
 
-    def get_defined_fields(self):
-        # Only return the first form, will need updating for when working with 2 stage WF
-        return self.forms.all()[0].fields
+    def get_defined_fields(self, stage=None):
+        if not stage:
+            form_index = 0
+        else:
+            form_index = self.workflow.stages.index(stage)
+        return self.forms.all()[form_index].fields
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
@@ -465,8 +466,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def inactive(self):
         return self.exclude(status__in=active_statuses)
 
+    def current(self):
+        # Applications which have the current stage active (have not been progressed)
+        return self.exclude(next__isnull=False)
 
-class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
+
+class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission):
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
@@ -479,6 +484,7 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
         related_name='submission_lead',
         on_delete=models.PROTECT,
     )
+    next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -536,7 +542,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def handle_file(self, file):
         # File is potentially optional
         if file:
-            filename = self.save_path(file.name)
+            try:
+                filename = self.save_path(file.name)
+            except AttributeError:
+                # file is not changed, it is still the dictionary
+                return file
+
             saved_name = default_storage.save(filename, file)
             return {
                 'name': file.name,
@@ -550,6 +561,13 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
         return self.handle_file(files)
 
+    def get_from_parent(self, attribute):
+        try:
+            return getattr(self.round.specific, attribute)
+        except AttributeError:
+            # We are a lab submission
+            return getattr(self.page.specific, attribute)
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -562,28 +580,32 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
 
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.form_data[field.id]
+                file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
 
         if not self.id:
             # We are creating the object default to first stage
-            try:
-                self.workflow_name = self.round.workflow_name
-            except AttributeError:
-                # We are a lab submission
-                self.workflow_name = self.page.workflow_name
+            self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
-
-            try:
-                self.lead = self.round.specific.lead
-            except AttributeError:
-                # Its a lab
-                self.lead = self.page.specific.lead
+            self.lead = self.get_from_parent('lead')
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
 
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
+        # Check to see if we should progress to the next stage
+        if self.phase.can_proceed and not self.next:
+            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+
+            self.id = None
+            self.status = str(self.workflow.next(self.status))
+            self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
+
+            super().save(*args, **kwargs)
+
+            submission_in_db.next = self
+            submission_in_db.save()
 
     def data_and_fields(self):
         for stream_value in self.form_fields:
@@ -626,11 +648,12 @@ class ApplicationSubmission(WorkflowHelpers, AbstractFormSubmission):
     def get_absolute_url(self):
         return reverse('funds:submission', args=(self.id,))
 
-    def __getattr__(self, item):
+    def __getattribute__(self, item):
+        # __getattribute__ allows correct error handling from django compared to __getattr__
         # fall back to values defined on the data
         if item in REQUIRED_BLOCK_NAMES:
             return self.get_data()[item]
-        raise AttributeError('{} has no attribute "{}"'.format(repr(self), item))
+        return super().__getattribute__(item)
 
     def __str__(self):
         return f'{self.title} from {self.full_name} for {self.page.title}'

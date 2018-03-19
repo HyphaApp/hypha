@@ -15,14 +15,11 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
-    ApplicationFormFactory,
     ApplicationSubmissionFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
-    LabFormFactory,
     RoundFactory,
-    RoundFormFactory,
 )
 
 
@@ -188,22 +185,13 @@ class TestFormSubmission(TestCase):
         self.name = 'My Name'
 
         self.request_factory = RequestFactory()
-        # set up application form with minimal requirement for creating user
-        application_form = {
-            'form_fields__0__email__': '',
-            'form_fields__1__full_name__': '',
-            'form_fields__2__title__': '',
-        }
-        form = ApplicationFormFactory(**application_form)
         fund = FundTypeFactory()
 
         self.site.root_page = fund
         self.site.save()
 
         self.round_page = RoundFactory(parent=fund)
-        RoundFormFactory(round=self.round_page, form=form)
         self.lab_page = LabFactory(lead=self.round_page.lead)
-        LabFormFactory(lab=self.lab_page, form=form)
 
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
         if email is None:
@@ -213,7 +201,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, [email, name, 'project'])}
+        data = {k: v for k, v in zip(fields, ['project', email, name])}
 
         request = self.request_factory.post('', data)
         request.user = user
@@ -374,3 +362,24 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(form_data__image__filename=filename)
         save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
         self.assertTrue(os.path.isfile(save_path))
+
+
+class TestApplicationProgression(TestCase):
+    def test_new_submission_created(self):
+        submission = ApplicationSubmissionFactory(workflow_name='double')
+        self.assertEqual(ApplicationSubmission.objects.count(), 1)
+        old_id = submission.id
+
+        # Update the status to the accepted phase of the current stage
+        submission.status = str(submission.workflow.stages[0].phases[-2])
+        submission.save()
+
+        old_submission = ApplicationSubmission.objects.get(id=old_id)
+
+        self.assertEqual(ApplicationSubmission.objects.count(), 2)
+        self.assertEqual(submission.previous, old_submission)
+        self.assertEqual(old_submission.next, submission)
+
+        form_fields = submission.round.forms.all()[1].fields
+
+        self.assertEqual(submission.form_fields, form_fields)

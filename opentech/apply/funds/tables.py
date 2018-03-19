@@ -13,6 +13,12 @@ from opentech.apply.funds.workflow import status_options
 from .widgets import Select2MultiCheckboxesWidget
 
 
+def make_row_class(record):
+    css_class = '' if record.active else 'is-inactive'
+    css_class += ' child' if record.next else ' parent'
+    return css_class
+
+
 class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
@@ -29,7 +35,7 @@ class SubmissionsTable(tables.Table):
         sequence = fields + ('comments',)
         template = 'funds/tables/table.html'
         row_attrs = {
-            'class': lambda record: '' if record.active else 'is-inactive'
+            'class': make_row_class
         }
 
     def render_user(self, value):
