@@ -1,0 +1,18 @@
+{% extends "base-apply.html" %}
+{% block content %}
+<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    <form class="form" action="" method="post" enctype="multipart/form-data">
+        {{ form.media }}
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.field %}
+            {% include "funds/includes/field.html" %}
+            {% else %}
+            {{ field }}
+            {% endif %}
+        {% endfor %}
+        <input class="link link--button-secondary" type="submit" value="Submit" />
+    </form>
+</div>
+{% endblock %}

@@ -2,8 +2,16 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
-from .groups import STAFF_GROUP_NAME
+from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .utils import send_activation_email
+
+
+class UserQuerySet(models.QuerySet):
+    def staff(self):
+        return self.filter(groups__name=STAFF_GROUP_NAME)
+
+    def reviewers(self):
+        return self.filter(groups__name=REVIEWER_GROUP_NAME)
 
 
 class UserManager(BaseUserManager):
@@ -60,10 +68,10 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    objects = UserManager()
+    objects = UserManager.from_queryset(UserQuerySet)()
 
     def __str__(self):
-        return self.get_full_name()
+        return self.get_full_name() if self.get_full_name() else self.get_short_name()
 
     def get_full_name(self):
         return self.full_name.strip()

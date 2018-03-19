@@ -20,7 +20,7 @@ class ApplicantDashboardView(SingleTableView):
         return self.model.objects.filter(user=self.request.user).inactive()
 
     def get_context_data(self, **kwargs):
-        my_active_submissions = self.model.objects.filter(user=self.request.user).active()
+        my_active_submissions = self.model.objects.filter(user=self.request.user).active().current()
 
         return super().get_context_data(
             my_active_submissions=my_active_submissions,

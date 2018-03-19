@@ -49,4 +49,13 @@ class AddressField(forms.CharField):
             missing_field_name = [fields[field]['label'] for field in missing_fields]
             raise ValidationError('Please provide data for: {}'.format(', '.join(missing_field_name)))
 
-        super().clean(value, **kwargs)
+        return super().clean(value, **kwargs)
+
+    def to_python(self, value):
+        return json.dumps(value)
+
+    def prepare_value(self, value):
+        try:
+            return json.loads(value)
+        except TypeError:
+            return value

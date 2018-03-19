@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load workflow_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -11,7 +12,7 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with workflow=object.workflow status=object.phase %}
+        {% include "funds/includes/status_bar.html" with phases=object.phase.stage status=object.phase %}
 
         <div class="tabs js-tabs">
             <div class="tabs__container">
@@ -39,6 +40,9 @@
             <div>
                 <h6 class="heading heading--submission-meta">
                     <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
+                    {% if request.user|can_edit:submission %}
+                        <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
+                    {% endif %}
                 </h6>
 
                 <h3>Proposal Information</h3>
@@ -72,11 +76,24 @@
                 {% block sidebar_forms %}
                 {% endblock %}
 
-                {% if other_submissions %}
+                {% block reviews %}
+                {% endblock %}
+
+                {% if other_submissions or object.previous %}
                     <div class="sidebar__inner">
-                        <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+                        {% if object.previous %}
+                            <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' object.previous.id %}">View linked {{ object.previous.stage }}</a></h6>
+                        {% endif %}
+
+                        {% if object.next %}
+                            <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' object.next.id %}">View linked {{ object.next.stage }}</a></h6>
+                        {% endif %}
 
                         {% for submission in other_submissions %}
+                            {% if forloop.first %}
+                                <h6 class="heading heading--light-grey heading--small heading--uppercase">Past Submissions</h6>
+                            {% endif %}
+
                             <h6><a class="link link--underlined link--bold" href="{% url 'funds:submission' submission.id %}">{{ submission.title }}</a></h6>
                         {% endfor %}
                     </div>

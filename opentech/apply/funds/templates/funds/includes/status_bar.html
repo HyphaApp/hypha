@@ -1,9 +1,9 @@
 <div class="status-bar {{ class }}">
-    {% for phase in status.stage %}
+    {% for phase in phases %}
         <div class="status-bar__item
                     {% if phase == status %}
                         status-bar__item--is-current
-                    {% elif phase.step < status.step %}
+                    {% elif phase < status %}
                         status-bar__item--is-complete
                     {% endif %}">
             <span class="status-bar__tooltip"

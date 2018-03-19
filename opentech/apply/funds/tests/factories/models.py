@@ -104,6 +104,17 @@ class RoundFactory(wagtail_factories.PageFactory):
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
     lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
+    @factory.post_generation
+    def forms(self, create, extracted, **kwargs):
+        if create:
+            fields = build_form(kwargs, prefix='form')
+            for _ in range(len(self.workflow_class.stage_classes)):
+                # Generate a form based on all defined fields on the model
+                RoundFormFactory(
+                    round=self,
+                    **fields,
+                )
+
 
 class RoundFormFactory(AbstractRelatedFormFactory):
     class Meta:
@@ -122,6 +133,17 @@ class LabFactory(wagtail_factories.PageFactory):
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
     lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
+
+    @factory.post_generation
+    def forms(self, create, extracted, **kwargs):
+        if create:
+            fields = build_form(kwargs, prefix='form')
+            for _ in range(len(self.workflow_class.stage_classes)):
+                # Generate a form based on all defined fields on the model
+                LabFormFactory(
+                    lab=self,
+                    **fields,
+                )
 
 
 class LabFormFactory(AbstractRelatedFormFactory):
@@ -163,10 +185,14 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     class Meta:
         model = ApplicationSubmission
 
+    class Params:
+        workflow_stages = 1
+
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
-    round = factory.SubFactory(RoundFactory)
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'))
     user = factory.SubFactory(UserFactory)
 
     @classmethod
