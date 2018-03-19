@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -34,7 +34,7 @@ from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmissi
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
@@ -46,6 +46,11 @@ WORKFLOW_CLASS = {
     SingleStage.name: SingleStage,
     DoubleStage.name: DoubleStage,
 }
+
+
+LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
+LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
+LIMIT_TO_STAFF_AND_REVIEWERS = {'groups__name__in': [STAFF_GROUP_NAME, REVIEWER_GROUP_NAME]}
 
 
 def admin_url(page):
@@ -175,6 +180,14 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
 
+    reviewers = ParentalManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='fund_reviewers',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
+
+    )
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = ['funds.Round']
 
@@ -205,8 +218,12 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         request.show_round = True
         return self.open_round.serve(request)
 
+    content_panels = WorkflowStreamForm.content_panels + [
+        FieldPanel('reviewers'),
+    ]
+
     edit_handler = TabbedInterface([
-        ObjectList(WorkflowStreamForm.content_panels, heading='Content'),
+        ObjectList(content_panels, heading='Content'),
         EmailForm.email_tab,
         ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
     ])
@@ -263,8 +280,15 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
+        related_name='round_lead',
         on_delete=models.PROTECT,
+    )
+    reviewers = ParentalManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='rounds_reviewer',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
@@ -282,6 +306,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
+        FieldPanel('reviewers'),
         ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
         ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
     ]
@@ -296,6 +321,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # We attached the parent page as part of the before_create_hook
         if hasattr(self, 'parent_page'):
             self.workflow_name = self.parent_page.workflow_name
+            self.reviewers = self.parent_page.reviewers.all()
 
     def save(self, *args, **kwargs):
         is_new = not self.id
@@ -389,16 +415,23 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
         related_name='lab_lead',
         on_delete=models.PROTECT,
+    )
+    reviewers = ParentalManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='labs_reviewer',
+        limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('lead')
+        FieldPanel('lead'),
+        FieldPanel('reviewers'),
     ]
 
     edit_handler = TabbedInterface([
@@ -480,11 +513,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        limit_choices_to={'groups__name': STAFF_GROUP_NAME},
+        limit_choices_to=LIMIT_TO_STAFF,
         related_name='submission_lead',
         on_delete=models.PROTECT,
     )
     next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='submissions_reviewer',
+        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        blank=True,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -587,12 +626,15 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
+            # Copy extra relevant information to the child
             self.lead = self.get_from_parent('lead')
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
 
         super().save(*args, **kwargs)
+
+        self.reviewers.set(self.get_from_parent('reviewers').all())
 
         # Check to see if we should progress to the next stage
         if self.phase.can_proceed and not self.next:
