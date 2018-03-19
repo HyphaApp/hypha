@@ -1,0 +1,21 @@
+{% extends "base-apply.html" %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h2 class="heading heading--no-margin">Reviews</h2>
+        <h5>For <em>{{ submission.title }}</em></h5>
+    </div>
+</div>
+
+<table>
+{% for question, answers in review_data.items %}
+    <tr>
+        <th>{{ question }}</th>
+        {% for answer in answers %}
+            <td>{{ answer|safe }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

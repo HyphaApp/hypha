@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from opentech.apply.funds.models import ApplicationSubmission
 
@@ -18,6 +18,15 @@ class ReviewContextMixin:
         )
 
 
+def get_form_for_stage(submission):
+    forms = [ConceptReviewForm, ProposalReviewForm]
+    index = [
+        i for i, stage in enumerate(submission.workflow.stages)
+        if submission.stage.name == stage.name
+    ][0]
+    return forms[index]
+
+
 class ReviewCreateView(CreateView):
     model = Review
 
@@ -34,12 +43,7 @@ class ReviewCreateView(CreateView):
         )
 
     def get_form_class(self):
-        forms = [ConceptReviewForm, ProposalReviewForm]
-        index = [
-            i for i, stage in enumerate(self.submission.workflow.stages)
-            if self.submission.stage.name == stage.name
-        ][0]
-        return forms[index]
+        return get_form_for_stage(self.submission)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -49,3 +53,35 @@ class ReviewCreateView(CreateView):
 
     def get_success_url(self):
         return self.submission.get_absolute_url()
+
+
+class ReviewListView(ListView):
+    model = Review
+
+    def get_queryset(self):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        self.queryset = self.model.objects.filter(submission=self.submission)
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        form_used = get_form_for_stage(self.submission)
+        review_data = {}
+
+        for review in self.object_list:
+            review_data.setdefault('', []).append(review.author)
+
+        for name, field in form_used.base_fields.items():
+            try:
+                title = form_used.titles[field.group]
+                review_data.setdefault(title, [])
+            except AttributeError:
+                pass
+
+            for review in self.object_list:
+                review_data.setdefault(field.label, []).append(review.review[name])
+
+        return super().get_context_data(
+            submission=self.submission,
+            review_data=review_data,
+            **kwargs
+        )

@@ -13,5 +13,6 @@
         {% include 'funds/includes/review_table.html' %}
 
         <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+        <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--primary">View all</a>
     </div>
 {% endblock %}
