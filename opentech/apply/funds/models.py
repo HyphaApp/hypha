@@ -184,6 +184,8 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         settings.AUTH_USER_MODEL,
         related_name='fund_reviewers',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
+
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -286,6 +288,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         settings.AUTH_USER_MODEL,
         related_name='rounds_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
@@ -420,6 +423,7 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         settings.AUTH_USER_MODEL,
         related_name='labs_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -518,6 +522,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         settings.AUTH_USER_MODEL,
         related_name='submissions_reviewer',
         limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        blank=True,
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
