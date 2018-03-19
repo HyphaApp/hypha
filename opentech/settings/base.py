@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'opentech.apply.dashboard',
     'opentech.apply.home',
     'opentech.apply.users',
+    'opentech.apply.review',
     'opentech.apply.stream_forms',
 
     'opentech.public.esi',
