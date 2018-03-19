@@ -14,7 +14,7 @@ class UserQuerySet(models.QuerySet):
         return self.filter(groups__name=REVIEWER_GROUP_NAME)
 
 
-class UserManager(BaseUserManager):
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -68,7 +68,7 @@ class User(AbstractUser):
     first_name = None
     last_name = None
 
-    objects = UserManager.from_queryset(UserQuerySet)()
+    objects = UserManager()
 
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
