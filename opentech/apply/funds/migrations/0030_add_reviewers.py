@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0028_update_on_delete_django2'),
+        ('funds', '0029_applicationsubmission_next'),
     ]
 
     operations = [
