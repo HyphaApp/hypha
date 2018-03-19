@@ -7,16 +7,50 @@ table,
     border-collapse: collapse;
     table-layout: fixed;
 
-
     &--transparent {
         background-color: transparent;
     }
-  
+
     &--reviews-summary {
         display: none;
 
         @include media-query($table-breakpoint) {
             display: table;
+        }
+    }
+
+    &--reviews {
+        margin-bottom: 20px;
+        font-weight: $weight--bold;
+
+        tbody {
+            tr {
+                border-bottom: 0;
+
+                &:hover {
+                    box-shadow: none;
+                }
+
+                > th {
+                    font-size: inherit;
+                    font-weight: $weight--bold;
+                }
+
+                > td {
+                    height: auto;
+                }
+
+                th,
+                td,
+                td:last-child,
+                td:first-child {
+                    padding: 10px;
+                }
+
+                &.no-response {
+                    color: $color--black-20;
+                }
+            }
         }
     }
 
