@@ -1,4 +1,115 @@
 .form {
+    &--with-p-tags {
+        p {
+            margin: 0 0 10px;
+
+            label {
+                @extend %h4;
+                display: block;
+                margin-bottom: 10px;
+                font-weight: $weight--bold;
+            }
+        }
+
+        button {
+            margin-top: 10px;
+        }
+    }
+
+    &--header-search-desktop {
+        position: relative;
+        width: 280px;
+
+        @include media-query(small-tablet) {
+            margin-top: 15px;
+        }
+    }
+
+    &__group {
+        position: relative;
+        margin: 1rem 0;
+
+        @include media-query(tablet-portrait) {
+            margin: 2rem 0;
+        }
+
+        &:nth-of-type(1) {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            .locality & {
+                // remove margin from last item in address field set
+                margin-bottom: 0;
+            }
+        }
+
+        &--wrap {
+            flex-wrap: wrap;
+        }
+
+        &--checkbox {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+
+            .form__question {
+                margin: 0;
+            }
+
+            .form__item {
+                position: relative;
+                top: -10px;
+                order: -1;
+                padding: 0;
+            }
+
+            .form__help {
+                order: -2;
+                width: 100%;
+            }
+        }
+
+        input[type='date']:last-child {
+            max-width: 385px;
+        }
+    }
+
+    &__question {
+        @extend %h4;
+        display: block;
+        margin-bottom: 10px;
+        font-weight: $weight--bold;
+
+        // sass-lint:disable class-name-format
+        &--image_field,
+        &--multi_file_field,
+        &--file_field {
+            @include button($color--light-blue, $color--dark-blue);
+            max-width: 290px;
+            text-align: center;
+            background: url('./../../images/upload.svg') $color--light-blue no-repeat 50px center;
+            border: 0;
+
+            .no-js & {
+                display: none;
+            }
+
+            &:hover {
+                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 50px center;
+
+                .no-js & {
+                    background: none;
+                }
+            }
+        }
+
+        &--boolean_field {
+            font-size: 17px;
+        }
+        // sass-lint:enddisable
+    }
+
     &__filters {
         @extend %h6;
         display: flex;
@@ -33,15 +144,6 @@
                 flex-basis: auto;
                 margin: 0;
             }
-        }
-    }
-
-    &--header-search-desktop {
-        position: relative;
-        width: 280px;
-
-        @include media-query(small-tablet) {
-            margin-top: 15px;
         }
     }
 
