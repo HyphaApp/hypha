@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.users.decorators import staff_required
 
 from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
@@ -55,6 +57,7 @@ class ReviewCreateView(CreateView):
         return self.submission.get_absolute_url()
 
 
+@method_decorator(staff_required, name='dispatch')
 class ReviewListView(ListView):
     model = Review
 
