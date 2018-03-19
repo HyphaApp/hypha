@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import ReviewCreateView
+from .views import CreateReviewView
 
 
 app_name = 'reviews'
 
 urlpatterns = [
-    path('', ReviewCreateView.as_view(), name='create'),
+    path('', CreateReviewView.as_view(), name='create'),
 ]

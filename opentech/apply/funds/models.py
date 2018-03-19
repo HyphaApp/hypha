@@ -519,6 +519,11 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
     )
     next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
+    reviewers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='submissions_reviewer',
+        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
