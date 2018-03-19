@@ -4,15 +4,7 @@
     {% include "funds/includes/actions.html" %}
     {% include "funds/includes/progress_form.html" %}
     {% include "funds/includes/update_lead_form.html" %}
-    {% include "funds/includes/update_reviewer_form.html" %}
-{% endblock %}
 
-{% block reviews %}
-    <div class="sidebar__inner">
-        <h6 class="heading heading--light-grey heading--small heading--uppercase">Reviews</h6>
-
-        {% include 'funds/includes/review_table.html' %}
-
-        <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
-    </div>
+    {# For convenience. Update me #}
+    <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
 {% endblock %}

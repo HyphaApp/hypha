@@ -6,17 +6,6 @@ from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
 
 
-class ReviewContextMixin:
-    def get_context_data(self, **kwargs):
-        staff_reviews = self.object.reviews.by_staff()
-        reviewer_reviews = self.object.reviews.by_reviewers()
-        return super().get_context_data(
-            staff_reviews=staff_reviews,
-            reviewer_reviews=reviewer_reviews,
-            **kwargs,
-        )
-
-
 class ReviewCreateView(CreateView):
     model = Review
 

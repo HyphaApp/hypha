@@ -6,6 +6,9 @@ from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
 
 from django.utils.text import slugify
 
+from opentech.apply.users.models import User
+
+
 """
 This file defines classes which allow you to compose workflows based on the following structure:
 
@@ -126,14 +129,16 @@ class Stage(Iterable):
         # Make the phases new instances to prevent errors with mutability
         self.phases = self.copy_phases(self.phases)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, Stage):
             return self.name == other.name
 
         return super().__eq__(other)
 
-    def __lt__(self, other):
-        return self.workflow.stages.index(self) < self.workflow.stages.index(other)
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, Stage):
+            return self.workflow.stages.index(self) < self.workflow.stages.index(other)
+        return False
 
     def copy_phases(self, phases: List['Phase']) -> List['Phase']:
         new_phases = list()
@@ -197,7 +202,7 @@ class PhaseIterator(Iterator):
         def __init__(self, phases: List['Phase']) -> None:
             self.phases = phases
 
-        def __lt__(self, other):
+        def __lt__(self, other: object) -> bool:
             return all(phase < other for phase in self.phases)
 
         @property
@@ -231,13 +236,17 @@ class PhaseIterator(Iterator):
         return self.Step(self.phases[self.current - 1])
 
 
-class CanEditPermission:
-    def can_edit(self, user):
+class Permission:
+    pass
+
+
+class CanEditPermission(Permission):
+    def can_edit(self, user: User) -> bool:
         return True
 
 
-class NoEditPermission:
-    def can_edit(self, user):
+class NoEditPermission(Permission):
+    def can_edit(self, user: User) -> bool:
         return False
 
 
@@ -274,10 +283,12 @@ class Phase:
         to_match = ['stage', 'name', 'step']
         return all(getattr(self, attr) == getattr(other, attr) for attr in to_match)
 
-    def __lt__(self, other):
-        if self.stage < other.stage:
-            return True
-        return self.step < other.step and self.stage == other.stage
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, Phase):
+            if self.stage < other.stage:
+                return True
+            return self.step < other.step and self.stage == other.stage
+        return False
 
     @property
     def action_names(self) -> List[str]:
@@ -292,7 +303,7 @@ class Phase:
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
 
-    def has_perm(self, user, perm):
+    def has_perm(self, user: User, perm: str) -> bool:
         perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
         return perm_method(user)
 

@@ -190,9 +190,9 @@ class SubmissionEditView(UpdateView):
         instance = kwargs.pop('instance')
         form_data = instance.form_data
 
-        # convert certain data to the correct field id
         for field in self.object.form_fields:
             if isinstance(field.block, MustIncludeFieldBlock):
+                # convert certain data to the correct field id
                 try:
                     response = form_data[field.block.name]
                 except KeyError:
@@ -227,14 +227,16 @@ def demo_workflow(request, wf_id):
 
     wf = int(wf_id)
     workflow_class = workflows[wf - 1]
-    workflow = workflow_class([BasicSubmissionForm] * wf)
+    workflow = workflow_class()
+    forms = [BasicSubmissionForm] * wf
 
     current_phase = request.POST.get('current')
     current = workflow.current(current_phase)
 
     if request.POST:
         if current.stage.name not in submission:
-            submitted_form = current.stage.form(request.POST)
+            form = forms[workflow.stages.index(current.stage)]
+            submitted_form = form(request.POST)
             if submitted_form.is_valid():
                 submission[current.stage.name] = submitted_form.cleaned_data
                 phase = current
@@ -255,7 +257,7 @@ def demo_workflow(request, wf_id):
         submission.clear()
 
     if phase.stage.name not in submission:
-        form = phase.stage.form
+        form = forms[workflow.stages.index(phase.stage)]
     else:
         form = None
 

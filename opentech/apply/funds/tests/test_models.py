@@ -15,14 +15,11 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import SingleStage
 
 from .factories import (
-    ApplicationFormFactory,
     ApplicationSubmissionFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
-    LabFormFactory,
     RoundFactory,
-    RoundFormFactory,
 )
 
 
@@ -188,13 +185,6 @@ class TestFormSubmission(TestCase):
         self.name = 'My Name'
 
         self.request_factory = RequestFactory()
-        # set up application form with minimal requirement for creating user
-        application_form = {
-            'form_fields__0__email__': '',
-            'form_fields__1__full_name__': '',
-            'form_fields__2__title__': '',
-        }
-        form = ApplicationFormFactory(**application_form)
         fund = FundTypeFactory()
 
         self.site.root_page = fund

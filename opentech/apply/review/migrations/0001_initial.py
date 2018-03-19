@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('review', models.TextField()),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='funds.ApplicationSubmission', related_name='reviews')),
+                ('submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='funds.ApplicationSubmission')),
             ],
         ),
         migrations.AlterUniqueTogether(
