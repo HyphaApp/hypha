@@ -71,6 +71,9 @@ import '@fancyapps/fancybox';
 
         // Scroll to the top of the activity feed
         $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
+
+        // Add <tr> toggle arrow
+        $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
