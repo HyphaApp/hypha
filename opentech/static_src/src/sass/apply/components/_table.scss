@@ -25,7 +25,9 @@ table,
 
         tbody {
             tr {
-                border-bottom: 0;
+                @include media-query($table-breakpoint) {
+                    border-bottom: 0;
+                }
 
                 &:hover {
                     box-shadow: none;
@@ -37,6 +39,7 @@ table,
                 }
 
                 > td {
+                    display: table-cell;
                     height: auto;
                 }
 
