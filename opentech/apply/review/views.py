@@ -92,7 +92,7 @@ class ReviewListView(ListView):
                     # Update the stored value to the display value
                     value = choices[int(value)]
 
-                review_data.setdefault(field.label, []).append(value)
+                review_data.setdefault(field.label, []).append(str(value))
 
         return super().get_context_data(
             submission=self.submission,
