@@ -1,5 +1,5 @@
 {% extends 'django_tables2/table.html' %}
-{% load table_tags %}
+{% load django_tables2 table_tags review_tags %}
 
 {# example of how to extend the table template #}
 {% block table.tbody.row %}
@@ -7,23 +7,65 @@
 
     {% with submission=row.record %}
         {# placeholder for example data row #}
-        <tr class="child">
-            <td>Applicant: {{ submission.full_name }}</td>
+        <tr class="child" data-parent-id="{{ row.record.id }}">
+            <td colspan="{{ table.columns|length }}">
+                <table>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Last updated</th>
+                        <th>Next deadline</th>
+                        <th>Reviewers / Outcomes</th>
+                    </tr>
+                    <tr>
+                        <td>{{ submission.full_name }}</td>
+                        <td>
+                            {% with row.record.activities.actions.last as last_update %}
+                                {% if last_update %}
+                                    <strong>by {{ last_update.user }}</strong><br/>
+                                    {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>&mdash;</td>
+                        <td>
+                            <dl>
+                            {% for review in row.cells.reviews %}
+                                <dt>{{ review.author }}</dt>
+                                <dd>{{ review.get_recommendation_display }}</dd>
+                            {% endfor %}
+                            </dl>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     {% endwith %}
 
     {% if row.record.previous %}
         {# we have a linked application #}
         {# re-render the header row #}
-        <tr class="child">
-            {% for column in row.table.columns %}
-                <th>{{ column.header }}</th>
-            {% endfor %}
+        <tr class="child" data-parent-id="{{ row.record.id }}">
+            <td colspan="{{ table.columns|length }}">
+                <table>
+                    <tr>
+                    {% for column in row.table.columns %}
+                        {% if forloop.first %}
+                            <th>Linked {{ row.record.previous.stage }}</th>
+                        {% else %}
+                            <th>{{ column.header }}</th>
+                        {% endif %}
+                    {% endfor %}
+                    </tr>
+
+                    {# mutate the row to render the data for the child row #}
+                    {% with row=row|row_from_record:row.record.previous %}
+                        {{ block.super }}
+                    {% endwith %}
+                </table>
+            </td>
         </tr>
-        {# mutate the row to render the data for the child row #}
-        {% with row=row|row_from_record:row.record.previous %}
-            {{ block.super }}
-        {% endwith %}
     {% endif %}
 
 {% endblock %}

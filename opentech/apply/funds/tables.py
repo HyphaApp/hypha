@@ -27,15 +27,17 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
+    reviews = tables.Column(accessor='reviews.all', verbose_name="Reviews", visible=False)
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         sequence = fields + ('comments',)
-        template = 'funds/tables/table.html'
+        template_name = 'funds/tables/table.html'
         row_attrs = {
-            'class': make_row_class
+            'class': make_row_class,
+            'data-record-id': lambda record: record.id,
         }
 
     def render_user(self, value):

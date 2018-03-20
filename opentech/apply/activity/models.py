@@ -27,6 +27,9 @@ class ActivityQuerySet(BaseActivityQuerySet):
     def comments(self):
         return self.filter(type=COMMENT)
 
+    def actions(self):
+        return self.filter(type=ACTION)
+
 
 class ActivityBaseManager(models.Manager):
     def create(self, **kwargs):
