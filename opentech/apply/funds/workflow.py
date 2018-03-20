@@ -242,31 +242,31 @@ class PhaseIterator(Iterator):
 
 
 class Permission:
-    def can_edit(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+    def can_edit(self, user: 'User') -> bool:
         return False
 
-    def can_staff_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+    def can_staff_review(self, user: 'User') -> bool:
         return False
 
-    def can_reviewer_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+    def can_reviewer_review(self, user: 'User') -> bool:
         return False
 
-    def can_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
-        return self.can_staff_review(user, submission) or self.can_reviewer_review(user, submission)
+    def can_review(self, user: 'User') -> bool:
+        return self.can_staff_review(user) or self.can_reviewer_review(user)
 
 
 class StaffReviewPermission(Permission):
-    def can_staff_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
-        return user.is_apply_staff and user.id not in submission.reviews.values_list('author', flat=True)
+    def can_staff_review(self, user: 'User') -> bool:
+        return user.is_apply_staff
 
 
 class ReviewerReviewPermission(Permission):
-    def can_reviewer_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
-        return user in submission.reviewers and user.id not in submission.reviews.values_list('author', flat=True)
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return user.is_reviewer
 
 
 class CanEditPermission(Permission):
-    def can_edit(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+    def can_edit(self, user: 'User') -> bool:
         return True
 
 
