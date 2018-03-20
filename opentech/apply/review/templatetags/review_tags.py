@@ -1,7 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 
-from ..models import MAYBE, NO, YES
+from ..models import MAYBE, NO, YES, Review
 
 register = template.Library()
 
@@ -21,3 +21,8 @@ def traffic_light(value):
         return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(color=TRAFFIC_LIGHT_COLORS[value]))
     except KeyError:
         return '-'
+
+
+@register.filter
+def has_reviewed(user, submission):
+    return Review.objects.filter(submission=submission, author=user).exists()

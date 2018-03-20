@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load workflow_tags %}
+{% load workflow_tags review_tags%}
 
 {% block sidebar_forms %}
     {% include "funds/includes/actions.html" %}
@@ -14,7 +14,7 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        {% if request.user|can_review:object %}
+        {% if request.user|can_review:object and not request.user|has_reviewed:object%}
             <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
         {% endif %}
 
