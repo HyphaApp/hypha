@@ -648,11 +648,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             submission_in_db.next = self
             submission_in_db.save()
 
+    @property
     def missing_staff_reviews(self):
         return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
 
+    @property
     def missing_reviewer_reviews(self):
-        return self.reviewers.reviewers().exclude(id__in=self.reviews.values('author'))
+        return self.reviewers.reviewers().exclude(
+            id__in=self.reviews.values('author')
+        ).exclude(
+            id__in=self.missing_staff_reviews,
+        )
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

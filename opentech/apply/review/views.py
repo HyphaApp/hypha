@@ -10,7 +10,7 @@ from .models import Review
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
         staff_reviews = self.object.reviews.by_staff()
-        reviewer_reviews = self.object.reviews.by_reviewers()
+        reviewer_reviews = self.object.reviews.by_reviewers().exclude(id__in=staff_reviews)
         return super().get_context_data(
             staff_reviews=staff_reviews,
             reviewer_reviews=reviewer_reviews,
