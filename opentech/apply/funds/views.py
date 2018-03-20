@@ -109,20 +109,21 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     context_name = 'reviewer_form'
 
     def form_valid(self, form):
-        old_reviewers = self.get_object().reviewers.all()
+        old_reviewers = set(self.get_object().reviewers.all())
         response = super().form_valid(form)
-        new_reviewers = form.instance.reviewers.all()
+        new_reviewers = set(form.instance.reviewers.all())
 
         message = ['Reviewers updated.']
-        added = set(new_reviewers) - set(old_reviewers)
+        added = new_reviewers - old_reviewers
+
         if added:
             message.append('Added:')
-            message.append(', '.join(added))
+            message.append(', '.join([str(user) for user in added]) + '.')
 
-        removed = set(old_reviewers) - set(new_reviewers)
+        removed = old_reviewers - new_reviewers
         if removed:
             message.append('Removed:')
-            message.append(', '.join(removed))
+            message.append(', '.join([str(user) for user in removed]) + '.')
 
         Activity.actions.create(
             user=self.request.user,
