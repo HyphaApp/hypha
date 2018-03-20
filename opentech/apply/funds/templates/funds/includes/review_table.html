@@ -1,6 +1,6 @@
 {% load review_tags %}
 
-<table class="table table--reviews">
+<table class="table table--reviews-sidebar">
     <tr class="light-grey-bg">
         <th colspan="2">OTF</th>
         <th>{{ object.reviews.staff_reccomendation|traffic_light }}</th>
@@ -10,7 +10,7 @@
     {% include 'funds/includes/review_table_row.html' with reviews=object.missing_staff_reviews missing=True %}
 </table>
 
-<table class="table table--reviews">
+<table class="table table--reviews-sidebar">
     <tr class="light-grey-bg">
         <th colspan="2">Reviewers</th>
         <th>{{ object.reviews.reviewers_reccomendation|traffic_light }}</th>
