@@ -19,7 +19,7 @@ git+git://github.com/todd-dembrey/wagtail-factories.git#egg=wagtail_factories
 flake8
 
 social_auth_app_django==2.1.0
-django-tables2==1.17.1
+django-tables2==1.21.1
 django-filter==1.1.0
 django_select2==6.0.1
 
