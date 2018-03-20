@@ -1,4 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
+{% load workflow_tags %}
 
 {% block sidebar_forms %}
     {% include "funds/includes/actions.html" %}
@@ -14,9 +15,12 @@
         {% include 'funds/includes/review_table.html' %}
 
         <div class="wrapper wrapper--button-container wrapper--top-outer-space-small">
-            <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--half-width button--primary">Create review</a>
+            {% if request.user|can_review:object %}
+                <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+            {% endif %}
+
             {% if request.user.is_apply_staff %}
-                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--half-width button--white">View all</a>
+                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--primary">View all</a>
             {% endif %}
         </div>
     </div>
