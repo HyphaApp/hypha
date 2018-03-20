@@ -28,6 +28,7 @@ class SubmissionsTable(tables.Table):
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
     last_update = tables.Column(accessor='activities.actions.last', verbose_name="Last update", visible=False)
+    reviews = tables.Column(accessor='reviews.all', verbose_name="Reviews", visible=False)
 
     class Meta:
         model = ApplicationSubmission

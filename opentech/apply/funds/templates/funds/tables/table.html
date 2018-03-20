@@ -1,5 +1,5 @@
 {% extends 'django_tables2/table.html' %}
-{% load table_tags django_tables2 %}
+{% load django_tables2 table_tags review_tags %}
 
 {# example of how to extend the table template #}
 {% block table.tbody.row %}
@@ -23,11 +23,22 @@
                     <tr>
                         <td>{{ submission.full_name }}</td>
                         <td>
-                            <strong>by {{ row.cells.last_update.user }}</strong><br/>
-                            {{ row.cells.last_update.timestamp|date:"m.d.y \a\t H:i" }}
+                            {% if row.cells.last_update != '—' %}
+                                <strong>by {{ row.cells.last_update.user }}</strong><br/>
+                                {{ row.cells.last_update.timestamp|date:"m.d.y \a\t H:i" }}
+                            {% else %}
+                                {{ row.cells.last_update }}
+                            {% endif %}
                         </td>
-                        <td></td>
-                        <td></td>
+                        <td>&mdash;</td>
+                        <td>
+                            <dl>
+                            {% for review in row.cells.reviews %}
+                                <dt>{{ review.author }}</dt>
+                                <dd>{{ review.get_recommendation_display }}</dd>
+                            {% endfor %}
+                            </dl>
+                        </td>
                     </tr>
                 </table>
             </td>
