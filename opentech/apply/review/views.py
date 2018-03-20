@@ -72,7 +72,7 @@ class ReviewListView(ListView):
 
         for review in self.object_list:
             # Add the name header row
-            review_data.setdefault('', []).append(review.author)
+            review_data.setdefault('', []).append(str(review.author))
 
         for name, field in form_used.base_fields.items():
             try:
