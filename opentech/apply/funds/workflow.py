@@ -237,17 +237,33 @@ class PhaseIterator(Iterator):
 
 
 class Permission:
-    pass
+    def can_edit(self, user: User, submission: 'ApplicationSubmission') -> bool:
+        return False
+
+    def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+        return False
+
+    def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+        return False
+
+
+class StaffReviewPermission(Permission):
+    def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+        return user.is_apply_staff
+
+
+class ReviewerReviewPermission(Permission):
+    def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+        return user in submission.reviewers
 
 
 class CanEditPermission(Permission):
-    def can_edit(self, user: User) -> bool:
+    def can_edit(self, user: User, submission: 'ApplicationSubmission') -> bool:
         return True
 
 
 class NoEditPermission(Permission):
-    def can_edit(self, user: User) -> bool:
-        return False
+    pass
 
 
 class Phase:
@@ -258,11 +274,14 @@ class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
-    permissions: 'Permission' = NoEditPermission()
+    permissions: 'Permission' = Permission
 
-    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False) -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False, permissions=None) -> None:
         if name:
             self.name = name
+
+        if permissions:
+            self.permissions = permissions
 
         self.active = active
         self.can_proceed = can_proceed
@@ -303,9 +322,9 @@ class Phase:
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
 
-    def has_perm(self, user: User, perm: str) -> bool:
-        perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
-        return perm_method(user)
+    def has_perm(self, user: User, perm: str, submission: 'ApplicationSubmission') -> bool:
+        perm_method = getattr(self.permissions, f'can_{perm}', lambda x, y: False)
+        return perm_method(user, submission)
 
 
 class Action:
@@ -364,6 +383,7 @@ class ReviewPhase(Phase):
     name = 'Internal Review'
     public_name = 'In review'
     actions = [NextPhaseAction('Close Review')]
+    permissions = StaffReviewPermission()
 
 
 class DiscussionWithProgressionPhase(Phase):
@@ -418,7 +438,7 @@ class ProposalStage(Stage):
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionWithNextPhase(),
-        ReviewPhase('AC Review', public_name='In AC review'),
+        ReviewPhase('AC Review', public_name='In AC review', permissions=ReviewerReviewPermission()),
         DiscussionPhase(public_name='In AC review'),
         [accepted, rejected]
     ]
