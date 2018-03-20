@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-
+{% block title %}Create a review{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
+<div class="wrapper wrapper--medium wrapper--inner-space-medium">
 {% if not has_submitted_review %}
     <form class="form form--with-p-tags" action="" method="post">
         {{ form.media }}
@@ -29,7 +29,7 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input type="submit" value="Submit Review" />
+        <input class="button button--primary" type="submit" value="Submit Review" />
     </form>
 {% else %}
     <p>You have already posted a review for this submission</p>
