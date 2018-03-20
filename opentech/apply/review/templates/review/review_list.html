@@ -1,0 +1,23 @@
+{% extends "base-apply.html" %}
+{% load bleach_tags %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h2 class="heading heading--no-margin">Reviews</h2>
+        <h5>For <em>{{ submission.title }}</em></h5>
+    </div>
+</div>
+<div class="wrapper wrapper--reviews-table js-reviews-table">
+    <table class="table table--reviews">
+    {% for question, answers in review_data.items %}
+        <tr>
+            <th>{{ question }}</th>
+            {% for answer in answers %}
+                <td>{{ answer|bleach }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+{% endblock %}

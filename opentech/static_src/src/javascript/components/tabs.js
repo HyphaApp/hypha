@@ -57,8 +57,8 @@ class Tabs {
     }
 
     addTabClasses(tab){
-        if( tab === null) {
-            tab = document.querySelector(`[data-tab=${this.defaultSelectedTab}]`);;
+        if(tab === null) {
+            tab = document.querySelector(`[data-tab=${this.defaultSelectedTab}]`);
         }
 
         const tabId = tab.getAttribute('data-tab');
