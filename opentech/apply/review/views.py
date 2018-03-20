@@ -71,17 +71,28 @@ class ReviewListView(ListView):
         review_data = {}
 
         for review in self.object_list:
+            # Add the name header row
             review_data.setdefault('', []).append(review.author)
 
         for name, field in form_used.base_fields.items():
             try:
+                # Add titles which exist
                 title = form_used.titles[field.group]
                 review_data.setdefault(title, [])
             except AttributeError:
                 pass
 
             for review in self.object_list:
-                review_data.setdefault(field.label, []).append(review.review[name])
+                value = review.review[name]
+                try:
+                    choices = dict(field.choices)
+                except AttributeError:
+                    pass
+                else:
+                    # Update the stored value to the display value
+                    value = choices[int(value)]
+
+                review_data.setdefault(field.label, []).append(value)
 
         return super().get_context_data(
             submission=self.submission,
