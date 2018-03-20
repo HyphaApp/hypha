@@ -184,6 +184,7 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
         settings.AUTH_USER_MODEL,
         related_name='fund_reviewers',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -286,6 +287,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         settings.AUTH_USER_MODEL,
         related_name='rounds_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(
@@ -420,6 +422,7 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         settings.AUTH_USER_MODEL,
         related_name='labs_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
+        blank=True,
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -523,6 +526,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         settings.AUTH_USER_MODEL,
         related_name='submissions_reviewer',
         limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        blank=True,
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
@@ -649,11 +653,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             submission_in_db.next = self
             submission_in_db.save()
 
+    @property
     def missing_staff_reviews(self):
         return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
 
+    @property
     def missing_reviewer_reviews(self):
-        return self.reviewers.reviewers().exclude(id__in=self.reviews.values('author'))
+        return self.reviewers.reviewers().exclude(
+            id__in=self.reviews.values('author')
+        ).exclude(
+            id__in=self.missing_staff_reviews,
+        )
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

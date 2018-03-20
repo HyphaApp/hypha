@@ -1,7 +1,13 @@
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
-from django.contrib.postgres.fields import JSONField
+
+from opentech.apply.users.models import User
+
+NO = 0
+MAYBE = 1
+YES = 2
 
 from opentech.apply.users.models import User
 
