@@ -249,12 +249,12 @@ class Permission:
 
 class StaffReviewPermission(Permission):
     def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
-        return user.is_apply_staff
+        return user.is_apply_staff and not user.id in submission.reviews.values_list('author', flat=True)
 
 
 class ReviewerReviewPermission(Permission):
     def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
-        return user in submission.reviewers
+        return user in submission.reviewers and not user.id in submission.reviews.values_list('author', flat=True)
 
 
 class CanEditPermission(Permission):
