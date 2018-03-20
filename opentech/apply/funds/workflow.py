@@ -2,11 +2,13 @@ from collections import defaultdict
 import copy
 import itertools
 
-from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
+from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union, TYPE_CHECKING
 
 from django.utils.text import slugify
 
-from opentech.apply.users.models import User
+if TYPE_CHECKING:
+    from opentech.apply.funds.models import ApplicationSubmission  # NOQA
+    from opentech.apply.users.models import User  # NOQA
 
 
 """
@@ -237,36 +239,32 @@ class PhaseIterator(Iterator):
 
 
 class Permission:
-    def can_edit(self, user: User, submission: 'ApplicationSubmission') -> bool:
+    def can_edit(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
         return False
 
-    def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+    def can_staff_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
         return False
 
-    def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
+    def can_reviewer_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
         return False
 
-    def can_review(self, *args) -> bool:
-        return self.can_staff_review(*args) or self.can_reviewer_review(*args)
+    def can_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+        return self.can_staff_review(user, submission) or self.can_reviewer_review(user, submission)
 
 
 class StaffReviewPermission(Permission):
-    def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
-        return user.is_apply_staff and not user.id in submission.reviews.values_list('author', flat=True)
+    def can_staff_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+        return user.is_apply_staff and user.id not in submission.reviews.values_list('author', flat=True)
 
 
 class ReviewerReviewPermission(Permission):
-    def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
-        return user in submission.reviewers and not user.id in submission.reviews.values_list('author', flat=True)
+    def can_reviewer_review(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
+        return user in submission.reviewers and user.id not in submission.reviews.values_list('author', flat=True)
 
 
 class CanEditPermission(Permission):
-    def can_edit(self, user: User, submission: 'ApplicationSubmission') -> bool:
+    def can_edit(self, user: 'User', submission: 'ApplicationSubmission') -> bool:
         return True
-
-
-class NoEditPermission(Permission):
-    pass
 
 
 class Phase:
@@ -277,9 +275,9 @@ class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
-    permissions: 'Permission' = Permission
+    permissions: 'Permission' = Permission()
 
-    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False, permissions=None) -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False, permissions: Permission=None) -> None:
         if name:
             self.name = name
 
@@ -325,7 +323,7 @@ class Phase:
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
 
-    def has_perm(self, user: User, perm: str, submission: 'ApplicationSubmission') -> bool:
+    def has_perm(self, user: 'User', perm: str, submission: 'ApplicationSubmission') -> bool:
         perm_method = getattr(self.permissions, f'can_{perm}', lambda x, y: False)
         return perm_method(user, submission)
 
