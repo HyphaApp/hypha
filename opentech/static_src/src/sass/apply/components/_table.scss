@@ -35,6 +35,14 @@ table {
             }
         }
 
+        &.child {
+            display: none;
+
+            @include media-query($table-breakpoint) {
+                display: table-row;
+            }
+        }
+
         > td {
             display: block;
             width: 100%;
