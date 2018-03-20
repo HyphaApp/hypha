@@ -36,7 +36,8 @@ class SubmissionsTable(tables.Table):
         sequence = fields + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
-            'class': make_row_class
+            'class': make_row_class,
+            'data-record-id': lambda record: record.id,
         }
 
     def render_user(self, value):
