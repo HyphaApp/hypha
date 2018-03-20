@@ -35,7 +35,6 @@ class SubmissionsTable(tables.Table):
         order_by = ('-submit_time',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
         sequence = fields + ('comments',)
-        extra_columns = ('last_update',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
             'class': make_row_class
