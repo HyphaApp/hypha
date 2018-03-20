@@ -1,3 +1,11 @@
-{% for person in page.reviewers %}
-    {% include "person/includes/person_listing.html" with person=person %}
-{% endfor %}
+{% if page.reviewers.exists %}
+    <div class="wrapper wrapper--breakout">
+        <div class="wrapper--media-boxes">
+            <div class="grid grid--two grid--medium-gap">
+                {% for person in page.reviewers.all %}
+                    {% include "people/includes/person_listing.html" with person=person.reviewer.specific %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
