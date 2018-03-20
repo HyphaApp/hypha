@@ -529,6 +529,10 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     # Workflow inherited from WorkflowHelpers
     status = models.CharField(max_length=254)
 
+    # While the last update details come from the Activity log, we need to denormalize the update time
+    # for list ordering purposes.
+    update_time = models.DateTimeField(verbose_name=_('update time'), auto_now=True, null=True)
+
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
