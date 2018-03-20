@@ -23,12 +23,14 @@
                     <tr>
                         <td>{{ submission.full_name }}</td>
                         <td>
-                            {% if row.cells.last_update != '—' %}
-                                <strong>by {{ row.cells.last_update.user }}</strong><br/>
-                                {{ row.cells.last_update.timestamp|date:"m.d.y \a\t H:i" }}
-                            {% else %}
-                                {{ row.cells.last_update }}
-                            {% endif %}
+                            {% with row.record.activities.actions.last as last_update %}
+                                {% if last_update %}
+                                    <strong>by {{ last_update.user }}</strong><br/>
+                                    {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
+                                {% else %}
+                                    &mdash;
+                                {% endif %}
+                            {% endwith %}
                         </td>
                         <td>&mdash;</td>
                         <td>
