@@ -46,7 +46,7 @@ class UpdateReviewersForm(forms.ModelForm):
         required=False,
     )
     reviewer_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.reviewers(),
+        queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
         widget=forms.CheckboxSelectMultiple,
         label='Reviewers',
         required=False,
