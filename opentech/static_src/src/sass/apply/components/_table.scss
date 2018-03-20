@@ -24,6 +24,8 @@ table,
                 > th:first-child,
                 > td:first-child {
                     width: 160px;
+                    max-width: 160px;
+                    min-width: 160px;
                     background-color: $color--light-mid-grey;
                 }
 
@@ -35,6 +37,7 @@ table,
                 }
 
                 td {
+                    max-width: 340px;
                     min-width: 340px;
                 }
             }
