@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='review',
             name='recommendation',
-            field=models.IntegerField(choices=[(0, 'No'), (1, 'Yes'), (2, 'Maybe')], default=0, verbose_name='Recommendation'),
+            field=models.IntegerField(choices=[(0, 'No'), (1, 'Maybe'), (2, 'Yes')], default=0, verbose_name='Recommendation'),
         ),
         migrations.AddField(
             model_name='review',

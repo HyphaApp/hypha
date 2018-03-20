@@ -2,8 +2,20 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView
 
 from opentech.apply.funds.models import ApplicationSubmission
+
 from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
+
+
+class ReviewContextMixin:
+    def get_context_data(self, **kwargs):
+        staff_reviews = self.object.reviews.by_staff()
+        reviewer_reviews = self.object.reviews.by_reviewers().exclude(id__in=staff_reviews)
+        return super().get_context_data(
+            staff_reviews=staff_reviews,
+            reviewer_reviews=reviewer_reviews,
+            **kwargs,
+        )
 
 
 class ReviewCreateView(CreateView):
@@ -15,7 +27,6 @@ class ReviewCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         has_submitted_review = Review.objects.filter(submission=self.submission, author=self.request.user).exists()
-
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
