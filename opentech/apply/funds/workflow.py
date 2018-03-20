@@ -246,6 +246,9 @@ class Permission:
     def can_reviewer_review(self, user: User, submission: 'ApplicationSubmission') -> bool:
         return False
 
+    def can_review(self, *args) -> bool:
+        return self.can_staff_review(*args) or self.can_reviewer_review(*args)
+
 
 class StaffReviewPermission(Permission):
     def can_staff_review(self, user: User, submission: 'ApplicationSubmission') -> bool:

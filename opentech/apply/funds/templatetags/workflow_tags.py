@@ -14,4 +14,4 @@ def can_edit(user, submission):
 
 @register.filter
 def can_review(user, submission):
-    return check_permission(user, 'staff_review', submission) or check_permission(user, 'reviewer_review', submission)
+    return check_permission(user, 'review', submission)
