@@ -82,15 +82,8 @@ def update_submission_reviewers_list(sender, **kwargs):
 
     if not review.submission.reviewers.filter(id=review.author.id).exists():
         review.submission.reviewers.add(review.author)
-        review.submission.save()
 
-        Activity.actions.create(
-            user=review.author,
-            submission=review.submission,
-            message=f'Added themselves to the Reviewers list.'
-        )
-
-    if not review.id:
+    if kwargs.get('created', False):
         Activity.actions.create(
             user=review.author,
             submission=review.submission,
