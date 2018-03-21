@@ -61,9 +61,14 @@ class UpdateReviewersForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
         self.fields['staff_reviewers'].initial = reviewers
-        self.fields['reviewer_reviewers'].initial = reviewers
+        if self.instance.stage.has_external_review:
+            self.fields['reviewer_reviewers'].initial = reviewers
+        else:
+            self.fields.pop('reviewer_reviewers')
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        instance.reviewers.set(self.cleaned_data['staff_reviewers'] | self.cleaned_data['reviewer_reviewers'])
+        instance.reviewers.set(
+            self.cleaned_data['staff_reviewers'] | self.cleaned_data.get('reviewer_reviewers', User.objects.none())
+        )
         return instance
