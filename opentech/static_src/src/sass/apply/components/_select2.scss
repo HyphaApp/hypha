@@ -1,5 +1,10 @@
 .select2 {
-    .select2-container--default {
+    &-container {
+        z-index: 99995; // to override any modals
+    }
+
+    .select2-container--default,
+    &.select2-container--default {
         width: 100% !important;
 
         .select2-selection--single {
