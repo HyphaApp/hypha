@@ -13,12 +13,13 @@ from wagtail.admin.edit_handlers import (
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
+    PageChooserPanel,
     StreamFieldPanel
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin
+from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin, RelatedPage
 
 
 class SocialMediaProfile(models.Model):
@@ -115,6 +116,15 @@ class PersonContactInfomation(Orderable):
             })
 
 
+class FundReviewers(RelatedPage):
+    page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewers')
+    reviewer = ParentalKey('PersonPage', related_name='funds_reviewed')
+
+    panels = [
+        PageChooserPanel('page', 'public_funds.FundPage'),
+    ]
+
+
 class PersonPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['PersonIndexPage']
@@ -150,6 +160,7 @@ class PersonPage(FundingMixin, BasePage):
         InlinePanel('person_types', label='Person types'),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),
+        InlinePanel('funds_reviewed', label='Funds Reviewed'),
     ] + FundingMixin.content_panels
 
 
