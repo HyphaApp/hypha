@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -78,9 +79,9 @@ def get_round_leads(request):
 
 
 def get_reviewers(request):
-    """ All users that have left a review """
+    """ All assigned reviewers, staff or admin """
     User = get_user_model()
-    return User.objects.filter(review__isnull=False).distinct()
+    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name='Staff') | Q(is_superuser=True)).distinct()
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):
