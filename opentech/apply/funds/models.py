@@ -655,6 +655,10 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             submission_in_db.save()
 
     @property
+    def phase_reviewers(self):
+        return self.reviewers.reviewers() if self.phase.name == 'AC Review' else self.reviewers.staff()
+
+    @property
     def missing_staff_reviews(self):
         return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
 

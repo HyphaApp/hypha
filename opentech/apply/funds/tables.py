@@ -31,8 +31,6 @@ class SubmissionsTable(tables.Table):
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
     update_time = tables.DateColumn(verbose_name="Last updated", order_by=('-update_time', '-submit_time'))
 
-    reviews = tables.Column(accessor='reviews.all', verbose_name="Reviews", visible=False)
-
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
@@ -61,9 +59,10 @@ class SubmissionsTable(tables.Table):
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
+    phase_reviews = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name="Reviews")
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'phase_reviews')  # type: ignore
         sequence = fields + ('comments',)
 
 

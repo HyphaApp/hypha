@@ -1,0 +1,14 @@
+{% load review_tags %}
+
+{{ record.phase_reviewers.count }} |
+{% if record.phase.name == 'AC Review' %}
+    {% with reviews=record.reviews.by_reviewers %}
+        {{ reviews.count }} |
+        {{ reviews.recommendation|traffic_light }}
+    {% endwith %}
+{% else %}
+    {% with reviews=record.reviews.by_staff %}
+        {{ reviews.count }} |
+        {{ reviews.recommendation|traffic_light }}
+    {% endwith %}
+{% endif %}
