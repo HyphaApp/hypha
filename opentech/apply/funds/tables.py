@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import OuterRef, Subquery, F, Q
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -9,6 +9,7 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -29,7 +30,7 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-    update_time = tables.DateColumn(verbose_name="Last updated", order_by=('-update_time', '-submit_time'))
+    update_time = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
@@ -54,6 +55,16 @@ class SubmissionsTable(tables.Table):
 
     def order_status_name(self, qs, desc):
         return qs.step_order(desc), True
+
+    def order_last_update(self, qs, desc):
+        update_order = getattr(F('last_update'), 'asc' if desc else 'desc')(nulls_last=True)
+
+        related_actions = Activity.objects.filter(submission=OuterRef('id'))
+        qs = qs.annotate(
+            last_update=Subquery(related_actions.values('timestamp')[:1])
+        ).order_by(update_order, 'submit_time')
+
+        return qs, True
 
 
 class AdminSubmissionsTable(SubmissionsTable):
