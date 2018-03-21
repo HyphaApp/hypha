@@ -168,7 +168,7 @@ class SubmissionDetailView(ViewDispatcher):
     applicant_view = ApplicantSubmissionDetailView
 
     def admin_check(self, request):
-        if request.user.is_reviewer and self.object.has_permission_to_review(request.user):
+        if request.user.is_reviewer:
             return True
         return super().admin_check(request)
 
