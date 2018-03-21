@@ -479,13 +479,14 @@ def get_active_statuses() -> Set[str]:
 active_statuses = get_active_statuses()
 
 
-def get_review_statuses() -> Set[str]:
+def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
     reviews = set()
 
     for step in itertools.chain(SingleStage(), DoubleStage()):
         for phase in step.phases:
             if isinstance(phase, ReviewPhase):
-                reviews.add(str(phase))
+                if phase.has_perm('review', user) or user is None:
+                    reviews.add(str(phase))
     return reviews
 
 
