@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
 
 {% block title %}OTF Dashboard{% endblock %}
 
@@ -8,10 +9,18 @@
         {% block page_header %}
             <div>
                 <h3 class="heading heading--no-margin">Dashboard</h3>
-                <h5>There is nothing here yet.</h5>
-                <a class="link--underlined" href="{% url "funds:submissions" %}">View all submissions</a>
             </div>
         {% endblock %}
     </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            <h3>Applications to review</h3>
+            {% if table.data %}
+                {% render_table table %}
+            {% else %}
+                No reviews to complete
+            {% endif %}
+        </div>
 </div>
 {% endblock %}
