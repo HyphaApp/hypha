@@ -11,7 +11,7 @@ class AdminDashboardView(SingleTableView):
     table_class = SubmissionsTable
 
     def get_queryset(self):
-        return self.model.objects.in_review().filter(reviewers=self.request.user).exclude(reviews__author=self.request.user)
+        return self.model.objects.in_review_for(self.request.user)
 
 
 class ApplicantDashboardView(SingleTableView):
