@@ -59,7 +59,7 @@ class SubmissionsTable(tables.Table):
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
-    phase_reviews = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name="Reviews")
+    phase_reviews = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name="Reviews\nAssgn.\tComp.", orderable=False)
 
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'phase_reviews')  # type: ignore

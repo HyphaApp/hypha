@@ -1,14 +1,19 @@
 {% load review_tags %}
 
-{{ record.phase_reviewers.count }} |
-{% if record.phase.name == 'AC Review' %}
-    {% with reviews=record.reviews.by_reviewers %}
-        {{ reviews.count }} |
-        {{ reviews.recommendation|traffic_light }}
-    {% endwith %}
-{% else %}
-    {% with reviews=record.reviews.by_staff %}
-        {{ reviews.count }} |
-        {{ reviews.recommendation|traffic_light }}
-    {% endwith %}
-{% endif %}
+<table class="reviews-summary">
+    <tr>
+        <td>{{ record.reviewers.staff.count }}</td>
+        {% with reviews=record.reviews.by_staff %}
+            <td>{{ reviews.count }}</td>
+            <td>{{ reviews.recommendation|traffic_light }}</td>
+        {% endwith %}
+    </tr>
+
+    <tr>
+        <td>{{ record.reviewers.reviewers.count }}</td>
+        {% with reviews=record.reviews.by_reviewers %}
+            <td>{{ reviews.count }}</td>
+            <td>{{ reviews.recommendation|traffic_light }}</td>
+        {% endwith %}
+    </tr>
+</table>
