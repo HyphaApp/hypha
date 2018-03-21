@@ -32,28 +32,28 @@ class ReviewQuerySet(models.QuerySet):
     def staff_score(self):
         return self.by_staff().score()
 
-    def staff_reccomendation(self):
-        return self.by_staff().reccomendation()
+    def staff_recommendation(self):
+        return self.by_staff().recommendation()
 
     def reviewers_score(self):
         return self.by_reviewers().score()
 
-    def reviewers_reccomendation(self):
-        return self.by_reviewers().reccomendation()
+    def reviewers_recommendation(self):
+        return self.by_reviewers().recommendation()
 
     def score(self):
         return self.aggregate(models.Avg('score'))['score__avg']
 
-    def reccomendation(self):
-        reccomendations = self.values_list('recommendation', flat=True)
+    def recommendation(self):
+        recommendations = self.values_list('recommendation', flat=True)
         try:
-            reccomendation = sum(reccomendations) / len(reccomendations)
+            recommendation = sum(recommendations) / len(recommendations)
         except ZeroDivisionError:
             return -1
 
-        if reccomendation == YES or reccomendation == NO:
+        if recommendation == YES or recommendation == NO:
             # If everyone in agreement return Yes/No
-            return reccomendation
+            return recommendation
         else:
             return MAYBE
 

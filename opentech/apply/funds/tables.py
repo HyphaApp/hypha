@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import OuterRef, Subquery, F
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -8,6 +9,7 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options
 from .widgets import Select2MultiCheckboxesWidget
@@ -27,12 +29,12 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-    reviews = tables.Column(accessor='reviews.all', verbose_name="Reviews", visible=False)
+    update_time = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time')
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'update_time')
         sequence = fields + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
@@ -53,13 +55,24 @@ class SubmissionsTable(tables.Table):
     def order_status_name(self, qs, desc):
         return qs.step_order(desc), True
 
+    def order_last_update(self, qs, desc):
+        update_order = getattr(F('last_update'), 'asc' if desc else 'desc')(nulls_last=True)
+
+        related_actions = Activity.objects.filter(submission=OuterRef('id'))
+        qs = qs.annotate(
+            last_update=Subquery(related_actions.values('timestamp')[:1])
+        ).order_by(update_order, 'submit_time')
+
+        return qs, True
+
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
+    phase_reviews = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name="Reviews\nAssgn.\tComp.", orderable=False)
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'phase_reviews')  # type: ignore
         sequence = fields + ('comments',)
 
 

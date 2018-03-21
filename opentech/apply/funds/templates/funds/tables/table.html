@@ -19,7 +19,7 @@
                     <tr class="tr tr--subchild tr--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
-                            {% with row.record.activities.actions.last as last_update %}
+                            {% with row.record.activities.last as last_update %}
                                 {% if last_update %}
                                     <strong>by {{ last_update.user }}</strong><br/>
                                     {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
@@ -31,7 +31,7 @@
                         <td>&mdash;</td>
                         <td>
                             <dl class="dl dl--no-margin">
-                            {% for review in row.cells.reviews %}
+                            {% for review in row.record.reviews.all %}
                                 <dt class="dt dt--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></dt>
                             {% endfor %}
                             </dl>
