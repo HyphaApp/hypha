@@ -660,6 +660,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             id__in=self.missing_staff_reviews,
         )
 
+    def reviewed_by(self, user):
+        return self.reviews.filter(author=user).exists()
+
     def data_and_fields(self):
         for stream_value in self.form_fields:
             try:
