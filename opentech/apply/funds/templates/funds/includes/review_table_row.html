@@ -5,7 +5,7 @@
             <td>-</td>
             <td>-</td>
         {% else %}
-            <td colspan="2">{{ review.author }}</td>
+            <td class="td td--author" colspan="2">{{ review.author }}</td>
             <td>{{ review.get_recommendation_display }}</td>
             <td>{{ review.score }}</td>
         {% endif %}
