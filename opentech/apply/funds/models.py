@@ -468,7 +468,10 @@ class JSONOrderable(models.QuerySet):
             )
 
         def build_json_order_by(field):
-            if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+            try:
+                if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                    return field
+            except AttributeError:
                 return field
 
             if field[0] == '-':
@@ -662,10 +665,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
             submission_in_db.next = self
             submission_in_db.save()
-
-    @property
-    def phase_reviewers(self):
-        return self.reviewers.reviewers() if self.phase.name == 'AC Review' else self.reviewers.staff()
 
     @property
     def staff_not_reviewed(self):

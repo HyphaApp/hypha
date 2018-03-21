@@ -1,12 +1,10 @@
 {% extends 'django_tables2/table.html' %}
 {% load django_tables2 table_tags review_tags %}
 
-{# example of how to extend the table template #}
 {% block table.tbody.row %}
     {{ block.super }}
 
     {% with submission=row.record %}
-        {# placeholder for example data row #}
         <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="table table--transparent">

@@ -29,12 +29,21 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
+<<<<<<< HEAD
     update_time = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-submit_time',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'update_time')
+=======
+    last_update = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
+
+    class Meta:
+        model = ApplicationSubmission
+        order_by = ('-last_update',)
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'last_update')
+>>>>>>> feature/209-full-submissions-overview
         sequence = fields + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
@@ -69,10 +78,10 @@ class SubmissionsTable(tables.Table):
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
-    phase_reviews = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name="Reviews\nAssgn.\tComp.", orderable=False)
+    reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'phase_reviews')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'reviews_stats')  # type: ignore
         sequence = fields + ('comments',)
 
 
