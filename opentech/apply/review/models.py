@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
+from opentech.apply.activity.models import Activity
 from opentech.apply.users.models import User
 
 NO = 0
@@ -72,3 +74,25 @@ class Review(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.review)}>'
+
+
+@receiver(post_save, sender=Review)
+def update_submission_reviewers_list(sender, **kwargs):
+    review = kwargs.get('instance')
+
+    if not review.submission.reviewers.filter(id=review.author.id).exists():
+        review.submission.reviewers.add(review.author)
+        review.submission.save()
+
+        Activity.actions.create(
+            user=review.author,
+            submission=review.submission,
+            message=f'Added themselves to the Reviewers list.'
+        )
+
+    if not review.id:
+        Activity.actions.create(
+            user=review.author,
+            submission=review.submission,
+            message=f'Created a review for {review.submission.title}'
+        )
