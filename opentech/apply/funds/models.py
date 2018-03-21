@@ -468,7 +468,10 @@ class JSONOrderable(models.QuerySet):
             )
 
         def build_json_order_by(field):
-            if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+            try:
+                if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                    return field
+            except AttributeError:
                 return field
 
             if field[0] == '-':
