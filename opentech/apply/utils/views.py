@@ -8,8 +8,11 @@ class ViewDispatcher(View):
     admin_view: View = None
     applicant_view: View = None
 
+    def admin_check(self, request):
+        return request.user.is_apply_staff
+
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_apply_staff:
+        if self.admin_check(request):
             view = self.admin_view
         else:
             view = self.applicant_view
