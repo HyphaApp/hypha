@@ -42,7 +42,7 @@ class ReviewCreateView(CreateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        has_submitted_review = Review.objects.filter(submission=self.submission, author=self.request.user).exists()
+        has_submitted_review = self.submission.reviewed_by(request.user)
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
