@@ -90,6 +90,12 @@ def get_round_leads(request):
     return User.objects.filter(round_lead__isnull=False).distinct()
 
 
+def get_reviewers(request):
+    """ All users that have left a review """
+    User = get_user_model()
+    return User.objects.filter(review__isnull=False).distinct()
+
+
 class Select2CheckboxWidgetMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get('label')
@@ -110,6 +116,7 @@ class SubmissionFilter(filters.FilterSet):
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Statuses')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
 
     class Meta:
         model = ApplicationSubmission
