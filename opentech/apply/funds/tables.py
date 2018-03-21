@@ -11,6 +11,7 @@ from wagtail.core.models import Page
 
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -81,7 +82,7 @@ def get_round_leads(request):
 def get_reviewers(request):
     """ All assigned reviewers, staff or admin """
     User = get_user_model()
-    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name='Staff') | Q(is_superuser=True)).distinct()
+    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):
