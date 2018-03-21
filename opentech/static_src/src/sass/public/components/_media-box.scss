@@ -181,4 +181,24 @@
             }
         }
     }
+
+    &__category {
+        margin-bottom: 5px;
+        color: $color--default;
+    }
+
+    &__job-title {
+        margin: 5px 0 0;
+        color: $color--default;
+    }
+
+    &__category,
+    &__job-title {
+        transition: color $transition;
+
+        #{$root}:hover & {
+            color: $color--white;
+        }
+    }
+
 }
