@@ -39,7 +39,7 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses
+from .workflow import SingleStage, DoubleStage, active_statuses, review_statuses
 
 
 WORKFLOW_CLASS = {
@@ -498,6 +498,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def inactive(self):
         return self.exclude(status__in=active_statuses)
 
+    def in_review(self):
+        return self.filter(status__in=review_statuses)
+
     def current(self):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
@@ -660,6 +663,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     def phase_reviewers(self):
         return self.reviewers.reviewers() if self.phase.name == 'AC Review' else self.reviewers.staff()
 
+    @property
     def staff_not_reviewed(self):
         return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
 
