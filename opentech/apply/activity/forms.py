@@ -28,7 +28,6 @@ class CommentForm(forms.ModelForm):
         else:
             self.fields['visibility'].widget = forms.HiddenInput()
 
-
     def clean_visibility(self):
         choice = self.cleaned_data['visibility']
         if choice not in self.allowed_visibility:
