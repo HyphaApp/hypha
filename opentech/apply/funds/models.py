@@ -621,7 +621,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
 
-        if not self.id:
+        creating = not self.id
+
+        if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
@@ -633,7 +635,8 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         super().save(*args, **kwargs)
 
-        self.reviewers.set(self.get_from_parent('reviewers').all())
+        if creating:
+            self.reviewers.set(self.get_from_parent('reviewers').all())
 
         # Check to see if we should progress to the next stage
         if self.phase.can_proceed and not self.next:
