@@ -40,7 +40,7 @@
             <div>
                 <h6 class="heading heading--submission-meta">
                     <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
-                    {% if request.user|can_edit:submission %}
+                    {% if request.user|has_edit_perm:submission %}
                         <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
                     {% endif %}
                 </h6>
