@@ -9,6 +9,7 @@
         {% endwith %}
     </tr>
 
+    {% if record.stage.has_external_review %}
     <tr>
         <td>{{ record.reviewers.reviewers.count }}</td>
         {% with reviews=record.reviews.by_reviewers %}
@@ -16,4 +17,5 @@
             <td>{{ reviews.recommendation|traffic_light }}</td>
         {% endwith %}
     </tr>
+    {% endif %}
 </table>
