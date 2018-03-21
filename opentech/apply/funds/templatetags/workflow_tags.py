@@ -8,10 +8,10 @@ def check_permission(user, perm, submission):
 
 
 @register.filter
-def can_edit(user, submission):
+def has_edit_perm(user, submission):
     return check_permission(user, 'edit', submission)
 
 
 @register.filter
-def can_review(user, submission):
+def has_review_perm(user, submission):
     return check_permission(user, 'review', submission)

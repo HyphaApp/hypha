@@ -27,7 +27,7 @@
                 <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
             </div>
             {% include "funds/includes/status_bar.html" with phases=submission.workflow status=submission.phase class="status-bar--small" %}
-            {% if request.user|can_edit:submission %}
+            {% if request.user|has_edit_perm:submission %}
                 <a href="{% url 'funds:edit_submission' submission.id %}">Edit your submission</a>
             {% endif %}
         </div>
