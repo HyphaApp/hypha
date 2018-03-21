@@ -57,7 +57,7 @@ class SubmissionsTable(tables.Table):
         return qs.step_order(desc), True
 
     def order_last_update(self, qs, desc):
-        update_order = getattr(F('last_update'), 'asc' if desc else 'desc')(nulls_last=True)
+        update_order = getattr(F('last_update'), 'desc' if desc else 'asc')(nulls_last=True)
 
         related_actions = Activity.objects.filter(submission=OuterRef('id'))
         qs = qs.annotate(
