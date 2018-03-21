@@ -27,9 +27,6 @@ TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light__{color}">{va
 @register.filter()
 def traffic_light(value):
     try:
-        return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(
-            color=TRAFFIC_LIGHT_COLORS[value]['color'],
-            value=TRAFFIC_LIGHT_COLORS[value]['value']
-        ))
+        return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(**TRAFFIC_LIGHT_COLORS[value]))
     except KeyError:
         return '-'
