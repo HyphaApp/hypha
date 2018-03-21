@@ -74,6 +74,18 @@ import '@fancyapps/fancybox';
 
         // Add <tr> toggle arrow
         $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
+
+        // Toggle show/hide for submissions overview table rows
+        const children = Array.prototype.slice.call(
+            document.querySelectorAll('.js-tr-toggle')
+        );
+
+        children.forEach(function (child) {
+            child.addEventListener('click', function (e) {
+                $(e.target).closest('.tr--parent').toggleClass('is-expanded');
+            });
+        });
+
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
