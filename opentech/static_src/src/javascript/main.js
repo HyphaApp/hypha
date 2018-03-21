@@ -181,6 +181,7 @@ import '@fancyapps/fancybox';
             $('.js-filter-list').removeClass('form__filters--mobile');
             $('.js-actions-toggle').removeClass('is-active');
             $('.js-actions-sidebar').removeClass('is-visible');
+            $('.tr--parent.is-expanded').removeClass('is-expanded');
         }
     }).trigger('resize');
 })(jQuery);
