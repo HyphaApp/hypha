@@ -323,7 +323,7 @@ class Phase:
         return self[action].process(self)
 
     def has_perm(self, user: 'User', perm: str) -> bool:
-        perm_method = getattr(self.permissions, f'can_{perm}', lambda x, y: False)
+        perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
         return perm_method(user)
 
 
