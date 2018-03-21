@@ -326,6 +326,10 @@ table,
     }
 
     td {
+        &--author {
+            word-break: break-all;
+        }
+
         &.comments {
             display: none;
             font-size: 13px;
@@ -339,5 +343,4 @@ table,
             }
         }
     }
-
 }
