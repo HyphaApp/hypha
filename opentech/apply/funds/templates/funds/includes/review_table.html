@@ -1,7 +1,7 @@
 {% load review_tags %}
 
 <table class="table table--reviews-sidebar">
-    <tr class="light-grey-bg">
+    <tr class="tr tr--subchild light-grey-bg">
         <th colspan="2">OTF</th>
         <th>{{ object.reviews.staff_recommendation|traffic_light }}</th>
         <th>{{ object.reviews.staff_score|floatformat|default_if_none:'-' }}</th>
@@ -12,7 +12,7 @@
 
 {% if record.stage.has_external_review %}
 <table class="table table--reviews-sidebar">
-    <tr class="light-grey-bg">
+    <tr class="tr tr--subchild light-grey-bg">
         <th colspan="2">Reviewers</th>
         <th>{{ object.reviews.reviewers_recommendation|traffic_light }}</th>
         <th>{{ object.reviews.reviewers_score|floatformat|default_if_none:'-' }}</th>
