@@ -7,7 +7,6 @@ from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union, T
 from django.utils.text import slugify
 
 if TYPE_CHECKING:
-    from opentech.apply.funds.models import ApplicationSubmission  # NOQA
     from opentech.apply.users.models import User  # NOQA
 
 
@@ -326,7 +325,7 @@ class Phase:
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
 
-    def has_perm(self, user: 'User', perm: str, submission: 'ApplicationSubmission') -> bool:
+    def has_perm(self, user: 'User', perm: str) -> bool:
         perm_method = getattr(self.permissions, f'can_{perm}', lambda x, y: False)
         return perm_method(user, submission)
 
