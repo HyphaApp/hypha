@@ -30,11 +30,11 @@
                         </td>
                         <td>&mdash;</td>
                         <td>
-                            <dl class="dl dl--no-margin">
+                            <ul class="list lsit--no-margin">
                             {% for review in row.cells.reviews %}
-                                <dt class="dt dt--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></dt>
+                                <li class="list__item list__item--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></li>
                             {% endfor %}
-                            </dl>
+                            </ul>
                         </td>
                     </tr>
                 </table>

@@ -259,23 +259,4 @@ table,
             }
         }
     }
-
-    .dl {
-        &--no-margin {
-            margin: 0;
-        }
-    }
-
-    .dt {
-        &--reviewer {
-            display: flex;
-            justify-content: space-between;
-            max-width: 160px;
-
-            span {
-                font-weight: $weight--normal;
-                color: $color--tomato;
-            }
-        }
-    }
 }

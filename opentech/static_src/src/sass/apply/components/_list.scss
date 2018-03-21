@@ -1,0 +1,18 @@
+.list {
+    &--no-margin {
+        margin: 0;
+    }
+
+    &__item {
+        &--reviewer {
+            display: flex;
+            justify-content: space-between;
+            max-width: 150px;
+
+            span {
+                font-weight: $weight--normal;
+                color: $color--tomato;
+            }
+        }
+    }
+}
