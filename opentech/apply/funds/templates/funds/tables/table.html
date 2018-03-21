@@ -28,7 +28,7 @@
                             {% endwith %}
                         </td>
                         <td>
-                            <ul class="list lsit--no-margin">
+                            <ul class="list list--no-margin">
                             {% for review in row.cells.reviews %}
                                 <li class="list__item list__item--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></li>
                             {% endfor %}
