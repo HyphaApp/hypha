@@ -34,4 +34,4 @@ def traffic_light(value):
 
 @register.filter
 def has_reviewed(user, submission):
-    return Review.objects.filter(submission=submission, author=user).exists()
+    return submission.reviewed_by(user)
