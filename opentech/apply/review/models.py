@@ -63,6 +63,7 @@ class Review(models.Model):
     review = JSONField()
     recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    is_draft = models.BooleanField(default=False, verbose_name="Draft")
 
     objects = ReviewQuerySet.as_manager()
 
