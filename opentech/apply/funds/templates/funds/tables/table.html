@@ -19,7 +19,7 @@
                     <tr>
                         <td>{{ submission.full_name }}</td>
                         <td>
-                            {% with row.record.activities.actions.last as last_update %}
+                            {% with row.record.activities.last as last_update %}
                                 {% if last_update %}
                                     <strong>by {{ last_update.user }}</strong><br/>
                                     {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
