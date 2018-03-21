@@ -49,11 +49,9 @@ table,
             display: block;
             width: 100%;
 
-
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
-                height: 90px;
             }
 
             &:first-child {
@@ -66,11 +64,6 @@ table,
 
             &.title {
                 font-weight: $weight--bold;
-
-                @include media-query($table-breakpoint) {
-                    display: flex;
-                    align-items: center;
-                }
 
                 a {
                     color: $color--primary;
@@ -100,6 +93,8 @@ table,
         @include media-query($table-breakpoint) {
             .arrow {
                 @include triangle(bottom, $color--primary, 6px);
+                position: relative;
+                display: inline-block;
                 transform: rotate(0);
                 transition: transform, border-color, $transition;
 
