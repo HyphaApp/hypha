@@ -13,7 +13,6 @@
                     <tr class="tr tr--subchild">
                         <th><h6 class="heading heading--normal heading--no-margin">Applicant</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">Last updated</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">Next deadline</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">Reviewers / Outcomes</h6></th>
                     </tr>
                     <tr class="tr tr--subchild tr--black">
@@ -28,7 +27,6 @@
                                 {% endif %}
                             {% endwith %}
                         </td>
-                        <td>&mdash;</td>
                         <td>
                             <ul class="list list--no-margin">
                             {% for review in row.record.reviews.all %}
