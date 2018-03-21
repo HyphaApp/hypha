@@ -13,6 +13,14 @@ PUBLIC = 'public'
 REVIEWER = 'reviewers'
 INTERNAL = 'internal'
 
+
+VISIBILILTY_HELP_TEXT = {
+    PUBLIC: 'Visible to all users of application system.',
+    REVIEWER: 'Visible to reviewers and staff.',
+    INTERNAL: 'Visible only to staff.',
+}
+
+
 VISIBILITY = {
     PUBLIC: 'Public',
     REVIEWER: 'Reviewers',

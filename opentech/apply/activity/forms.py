@@ -1,7 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 
-from .models import Activity
+from .models import Activity, VISIBILILTY_HELP_TEXT, VISIBILITY
 
 
 class CommentForm(forms.ModelForm):
@@ -21,8 +22,12 @@ class CommentForm(forms.ModelForm):
         self.visibility_choices = self._meta.model.visibility_choices_for(user)
         if len(self.visibility_choices) > 1:
             self.fields['visibility'].choices = self.visibility_choices
+            self.fields['visibility'].help_text = mark_safe('<br>'.join(
+                [VISIBILITY[choice] + ': ' + VISIBILILTY_HELP_TEXT[choice] for choice in self.allowed_visibility]
+            ))
         else:
             self.fields['visibility'].widget = forms.HiddenInput()
+
 
     def clean_visibility(self):
         choice = self.cleaned_data['visibility']
