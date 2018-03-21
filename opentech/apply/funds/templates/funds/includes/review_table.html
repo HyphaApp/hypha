@@ -1,7 +1,7 @@
 {% load review_tags %}
 
 <table class="table table--reviews-sidebar">
-    <tr class="light-grey-bg">
+    <tr class="tr tr--subchild light-grey-bg">
         <th colspan="2">OTF</th>
         <th>{{ object.reviews.staff_reccomendation|traffic_light }}</th>
         <th>{{ object.reviews.staff_score|default_if_none:'-' }}</th>
@@ -11,7 +11,7 @@
 </table>
 
 <table class="table table--reviews-sidebar">
-    <tr class="light-grey-bg">
+    <tr class="tr tr--subchild light-grey-bg">
         <th colspan="2">Reviewers</th>
         <th>{{ object.reviews.reviewers_reccomendation|traffic_light }}</th>
         <th>{{ object.reviews.reviewers_score|default_if_none:'-' }}</th>
