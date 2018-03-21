@@ -33,5 +33,5 @@ def traffic_light(value):
 
 
 @register.filter
-def has_reviewed(user, submission):
-    return submission.reviewed_by(user)
+def can_review(user, submission):
+    return submission.can_review(user)
