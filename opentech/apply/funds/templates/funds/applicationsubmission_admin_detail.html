@@ -14,13 +14,13 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        <div class="wrapper wrapper--button-container wrapper--top-outer-space-small">
+        <div class="wrapper wrapper--button-container">
             {% if request.user|has_review_perm:object and request.user|can_review:object%}
-                <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+                <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
             {% endif %}
 
             {% if request.user.is_apply_staff %}
-                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--primary">View all</a>
+                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
             {% endif %}
         </div>
     </div>
