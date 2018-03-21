@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import OuterRef, Subquery, F
+from django.db.models import OuterRef, Subquery, F, Q
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -12,6 +12,7 @@ from wagtail.core.models import Page
 from opentech.apply.activity.models import Activity
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -29,21 +30,12 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-<<<<<<< HEAD
-    update_time = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
-
-    class Meta:
-        model = ApplicationSubmission
-        order_by = ('-submit_time',)
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'update_time')
-=======
     last_update = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-last_update',)
         fields = ('title', 'status_name', 'stage', 'page', 'round', 'submit_time', 'last_update')
->>>>>>> feature/209-full-submissions-overview
         sequence = fields + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
@@ -100,9 +92,9 @@ def get_round_leads(request):
 
 
 def get_reviewers(request):
-    """ All users that have left a review """
+    """ All assigned reviewers, staff or admin """
     User = get_user_model()
-    return User.objects.filter(review__isnull=False).distinct()
+    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):

@@ -637,7 +637,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 self.form_data[field.id] = self.handle_files(file)
 
         creating = not self.id
-
         if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
