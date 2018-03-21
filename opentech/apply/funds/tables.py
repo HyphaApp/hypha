@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.utils.text import mark_safe
 
 import django_filters as filters
@@ -10,6 +11,7 @@ from wagtail.core.models import Page
 
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import status_options
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -77,6 +79,12 @@ def get_round_leads(request):
     return User.objects.filter(round_lead__isnull=False).distinct()
 
 
+def get_reviewers(request):
+    """ All assigned reviewers, staff or admin """
+    User = get_user_model()
+    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
+
+
 class Select2CheckboxWidgetMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get('label')
@@ -97,6 +105,7 @@ class SubmissionFilter(filters.FilterSet):
     funds = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
     status = Select2MultipleChoiceFilter(name='status__contains', choices=status_options, label='Statuses')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
 
     class Meta:
         model = ApplicationSubmission
