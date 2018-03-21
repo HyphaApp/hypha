@@ -19,14 +19,10 @@
         {% include 'funds/includes/review_table.html' %}
 
         <div class="wrapper wrapper--button-container">
-            <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
-        </div>
-
-        {% include 'review/includes/review_button.html' with submission=object %}
-      
-        {% if request.user.is_apply_staff %}
-            <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
-        {% endif %}
+            {% include 'review/includes/review_button.html' with submission=object %}
+            {% if request.user.is_apply_staff %}
+                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
+            {% endif %}
     </div>
 {% endblock %}
 
