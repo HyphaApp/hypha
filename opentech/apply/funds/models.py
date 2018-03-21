@@ -676,7 +676,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         if self.reviewed_by(user):
             return False
 
-       return self.has_permission_to_review(user)
+        return self.has_permission_to_review(user)
 
     def data_and_fields(self):
         for stream_value in self.form_fields:
