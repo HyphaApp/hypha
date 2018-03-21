@@ -36,7 +36,7 @@ class ReviewCreateView(CreateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        if not self.submission.phase.has_perm('review', request.user) or not self.submission.has_permission_to_review(request.user):
+        if not self.submission.phase.has_perm(request.user, 'review') or not self.submission.has_permission_to_review(request.user):
             raise PermissionDenied()
 
         if self.request.POST and self.submission.reviewed_by(request.user):
