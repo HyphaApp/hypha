@@ -3,7 +3,7 @@
 <table>
     <tr>
         <th>OTF</th>
-        <th>{{ object.reviews.staff_reccomendation|traffic_light }}</th>
+        <th>{{ object.reviews.staff_recommendation|traffic_light }}</th>
         <th>{{ object.reviews.staff_score|floatformat|default_if_none:'-' }}</th>
     </tr>
     {% include 'funds/includes/review_table_row.html' with reviews=staff_reviews %}
@@ -14,7 +14,7 @@
 <table>
     <tr>
         <th>Reviewers</th>
-        <th>{{ object.reviews.reviewers_reccomendation|traffic_light }}</th>
+        <th>{{ object.reviews.reviewers_recommendation|traffic_light }}</th>
         <th>{{ object.reviews.reviewers_score|floatformat|default_if_none:'-' }}</th>
     </tr>
     {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
