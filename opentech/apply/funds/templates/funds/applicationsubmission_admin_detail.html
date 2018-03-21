@@ -15,7 +15,7 @@
         {% include 'funds/includes/review_table.html' %}
 
         <div class="wrapper wrapper--button-container wrapper--top-outer-space-small">
-            {% if request.user|can_review:object and not request.user|has_reviewed:object%}
+            {% if request.user|has_review_perm:object and request.user|can_review:object%}
                 <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
             {% endif %}
 
