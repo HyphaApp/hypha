@@ -1,7 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 
-from ..models import MAYBE, NO, YES, Review
+from ..models import MAYBE, NO, YES
 
 register = template.Library()
 
