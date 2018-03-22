@@ -74,6 +74,21 @@ import '@fancyapps/fancybox';
 
         // Scroll to the top of the activity feed
         $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
+
+        // Add <tr> toggle arrow
+        $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
+
+        // Toggle show/hide for submissions overview table rows
+        const children = Array.prototype.slice.call(
+            document.querySelectorAll('.js-tr-toggle')
+        );
+
+        children.forEach(function (child) {
+            child.addEventListener('click', function (e) {
+                $(e.target).closest('.tr--parent').toggleClass('is-expanded');
+            });
+        });
+
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
@@ -169,6 +184,7 @@ import '@fancyapps/fancybox';
             $('.js-filter-list').removeClass('form__filters--mobile');
             $('.js-actions-toggle').removeClass('is-active');
             $('.js-actions-sidebar').removeClass('is-visible');
+            $('.tr--parent.is-expanded').removeClass('is-expanded');
         }
     }).trigger('resize');
 })(jQuery);
