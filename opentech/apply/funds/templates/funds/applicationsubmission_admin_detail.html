@@ -1,10 +1,15 @@
 {% extends "funds/applicationsubmission_detail.html" %}
+{% load workflow_tags review_tags%}
+
+{% block admin_actions %}
+    {% include "funds/includes/actions.html" with mobile=True %}
+{% endblock %}
 
 {% block sidebar_forms %}
-    {% include "funds/includes/actions.html" %}
-    {% include "funds/includes/progress_form.html" %}
-    {% include "funds/includes/update_lead_form.html" %}
-    {% include "funds/includes/update_reviewer_form.html" %}
+        {% include "funds/includes/actions.html" %}
+        {% include "funds/includes/progress_form.html" %}
+        {% include "funds/includes/update_lead_form.html" %}
+        {% include "funds/includes/update_reviewer_form.html" %}
 {% endblock %}
 
 {% block reviews %}
@@ -13,12 +18,15 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        <div class="wrapper wrapper--button-container wrapper--top-outer-space-small">
+        <div class="wrapper wrapper--button-container">
             <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
-            {% if request.user.is_apply_staff %}
-                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
-            {% endif %}
         </div>
+
+        {% include 'review/includes/review_button.html' with submission=object %}
+      
+        {% if request.user.is_apply_staff %}
+            <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
+        {% endif %}
     </div>
 {% endblock %}
 

@@ -38,16 +38,20 @@ RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
             {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
         ]},
     ],
+    'height': 180,
 })
 
 
 class RichTextField(forms.CharField):
     widget = RICH_TEXT_WIDGET
-    required = False
+
+    def __init__(self, *args, required=False, **kwargs):
+        kwargs.update(required=required)
+        super().__init__(*args, **kwargs)
 
 
-class RequiredRichTextField(RichTextField):
-    required = True
+class RequiredRichTextField(forms.CharField):
+    widget = RICH_TEXT_WIDGET
 
 
 class RateChoiceField(forms.ChoiceField):
@@ -63,6 +67,8 @@ class RequiredRateChoiceField(RateChoiceField):
 
 
 class BaseReviewForm(forms.ModelForm):
+    draft_button_name = "save_draft"
+
     class Meta:
         model = Review
         fields: list = []
@@ -77,6 +83,10 @@ class BaseReviewForm(forms.ModelForm):
         self.request = kwargs.pop('request')
         self.submission = kwargs.pop('submission')
         super().__init__(*args, **kwargs)
+
+        if self.draft_button_name in self.data:
+            for field in self.fields.values():
+                field.required = False
 
     def validate_unique(self):
         # update the instance data prior to validating uniqueness
@@ -93,6 +103,7 @@ class BaseReviewForm(forms.ModelForm):
         self.instance.score = self.calculate_score()
 
         self.instance.recommendation = self.cleaned_data['recommendation']
+        self.instance.is_draft = self.draft_button_name in self.data
 
         super().save()
 

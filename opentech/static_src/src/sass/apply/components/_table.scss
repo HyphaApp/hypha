@@ -1,10 +1,24 @@
 $table-breakpoint: 'tablet-portrait';
 
-table {
+table,
+.table {
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
+
+
+    &--transparent {
+        background-color: transparent;
+    }
+  
+    &--reviews-summary {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table;
+        }
+    }
 
     thead {
         display: none;
@@ -20,7 +34,8 @@ table {
         }
     }
 
-    tr {
+    tr:not(.tr--child):not(.tr--subchild),
+    .tr:not(.tr--child):not(.tr--subchild) {
         border: 1px solid $color--light-mid-grey;
         transition: box-shadow 0.15s ease;
 
@@ -30,16 +45,12 @@ table {
             border-bottom: 2px solid $color--light-grey;
             border-left: 0;
 
+            &.is-expanded {
+                border-bottom: 1px solid $color--light-mid-grey;
+            }
+
             &:hover {
                 box-shadow: 0 6px 35px -13px $color--black-50;
-            }
-        }
-
-        &.child {
-            display: none;
-
-            @include media-query($table-breakpoint) {
-                display: table-row;
             }
         }
 
@@ -47,11 +58,9 @@ table {
             display: block;
             width: 100%;
 
-
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
-                height: 90px;
             }
 
             &:first-child {
@@ -69,8 +78,16 @@ table {
                     color: $color--primary;
 
                     @include media-query($table-breakpoint) {
+                        margin-left: 10px;
                         color: $color--dark-grey;
                     }
+                }
+            }
+
+            .td {
+                &--traffic-light {
+                    padding: 5px;
+                    vertical-align: middle;
                 }
             }
 
@@ -83,8 +100,134 @@ table {
                     color: $color--marine;
                     text-align: center;
                     background-color: $color--sky-blue;
+
+                    @include media-query($table-breakpoint) {
+                        width: 100%;
+                    }
                 }
             }
+        }
+    }
+
+    .tr {
+        @include media-query($table-breakpoint) {
+            .arrow {
+                @include triangle(bottom, $color--primary, 6px);
+                position: relative;
+                display: inline-block;
+                transform: rotate(0);
+                transition: transform, border-color, $transition;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        &--parent {
+            &.is-expanded {
+                background-color: $color--mist;
+                border-bottom: 1px solid $color--light-mid-grey;
+
+                + .tr--child {
+                    border-bottom: 1px solid $color--light-mid-grey;
+                }
+
+                + .tr--child,
+                + .tr--child + .tr--child {
+                    display: table-row;
+                }
+
+                .arrow {
+                    border-top-color: darken($color--dark-blue, 10%);
+                    transform: rotate(180deg);
+                }
+            }
+        }
+
+        &--child {
+            display: none;
+            color: $color--mid-dark-grey;
+            vertical-align: top;
+            background-color: $color--mist;
+            border-bottom: 2px solid $color--light-grey;
+
+            td {
+                padding: 10px;
+            }
+
+            .tr--child {
+                display: table-row;
+            }
+
+            p {
+                margin: 0;
+                font-weight: $weight--bold;
+                color: $color--default;
+            }
+
+            .status_name {
+                span {
+                    display: inline-block;
+                    padding: 10px;
+                    font-size: 13px;
+                    font-weight: $weight--bold;
+                    color: $color--mid-dark-grey;
+                    text-align: center;
+                    background-color: transparent;
+                    border: 1px solid $color--mid-dark-grey;
+                }
+            }
+
+            .title {
+                a {
+                    visibility: hidden;
+                }
+            }
+        }
+
+        &--subchild {
+            vertical-align: top;
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+
+        &--black {
+            color: $color--default;
+        }
+
+        .td {
+            &__copy {
+                &--light {
+                    font-weight: $weight--normal;
+                }
+            }
+
+            &__deadline {
+                display: flex;
+                align-items: center;
+                font-size: 15px;
+
+                div {
+                    color: $color--tomato;
+
+                    &:first-child {
+                        padding: 10px;
+                        margin-right: 5px;
+                        background-color: $color--light-pink;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .th {
+        &--title {
+            display: none;
         }
     }
 
@@ -98,10 +241,18 @@ table {
     }
 
     th {
-        padding: 20px;
+        padding: 20px 15px;
         font-size: 15px;
         font-weight: 600;
         text-align: left;
+
+        &.reviews_stats {
+            color: $color--mid-dark-grey;
+
+            span {
+                font-size: 13px;
+            }
+        }
 
         a {
             color: $color--mid-dark-grey;
@@ -136,4 +287,20 @@ table {
             }
         }
     }
+
+    td {
+        &.comments {
+            display: none;
+            font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+            background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
+            background-size: 24px;
+
+            @include media-query($table-breakpoint) {
+                display: table-cell;
+            }
+        }
+    }
+
 }
