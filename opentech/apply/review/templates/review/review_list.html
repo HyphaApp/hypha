@@ -1,11 +1,26 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags %}
+{% load bleach_tags review_tags workflow_tags %}
 
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
-        <h2 class="heading heading--no-margin">Reviews</h2>
-        <h5>For <a href="{% url "funds:submission" submission.id %}">{{ submission.title }}</a></h5>
+        <div>
+            <h2 class="heading heading--no-margin">Reviews</h2>
+            <h5>For <a href="{% url "funds:submission" submission.id %}">{{ submission.title }}</a></h5>
+        </div>
+        {% if request.user|has_review_perm:submission %}
+            {% if request.user|has_draft:submission or request.user|can_review:submission %}
+                <div class="wrapper wrapper--cta-box">
+                    <a href="{% url 'apply:reviews:form' submission_pk=submission.id %}" class="button button--primary">
+                        {% if request.user|has_draft:submission %}
+                            Update draft
+                        {% elif request.user|can_review:submission %}
+                            Create review
+                        {% endif %}
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 
