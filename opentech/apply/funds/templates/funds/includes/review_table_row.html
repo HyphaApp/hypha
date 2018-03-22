@@ -1,11 +1,11 @@
 {% for review in reviews %}
-    <tr class="{% if missing %}no-response{% endif %}">
+    <tr class="tr--subchild {% if missing %}no-response{% endif %}">
         {% if missing %}
-            <td>{{ review }}</td>
+            <td class="td td--author" colspan="2">{{ review }}</td>
             <td>-</td>
             <td>-</td>
         {% else %}
-            <td>
+            <td class="td td--author" colspan="2">
                 {% if request.user.is_apply_staff %}
                     <a href="{% url 'apply:reviews:review' submission_pk=review.submission.id pk=review.id %}">{{ review.author }}</a></td>
                 {% else %}
