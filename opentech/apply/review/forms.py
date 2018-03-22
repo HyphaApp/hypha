@@ -38,6 +38,7 @@ RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
             {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
         ]},
     ],
+    'height': 180,
 })
 
 
