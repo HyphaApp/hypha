@@ -32,7 +32,7 @@ def phase_name(stage: 'Stage', phase: Union['Phase', str], step: int) -> str:
     else:
         phase_name = phase
 
-    return '__'.join([stage.name, phase_name, str(step)])
+    return '__'.join([stage._internal, phase_name, str(step)])
 
 
 class Workflow(Iterable):
@@ -124,6 +124,9 @@ class Stage(Iterable):
     def __init__(self, workflow: 'Workflow', name: str='') -> None:
         if name:
             self.name = name
+
+        self._internal = self.name.split()[0]
+
         self.workflow = workflow
         self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
@@ -402,7 +405,7 @@ class RequestStage(Stage):
 
 
 class ConceptStage(Stage):
-    name = 'Concept'
+    name = 'Concept Note'
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
