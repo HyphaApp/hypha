@@ -2,7 +2,13 @@
 
 <table class="table table--reviews-summary table--transparent">
     <tr class="tr tr--subchild">
-        <td>{{ record.reviewers.count }}</td>
+        <td>
+            {% if record.stage.has_external_review %}
+                {{ record.reviewers.count }}
+            {% else %}
+                {{ record.reviewers.staff.count }}
+            {% endif %}
+        </td>
         <td>{{ record.reviews.submitted.count }}</td>
         <td class="td td--traffic-light">{{ record.reviews.submitted.recommendation|traffic_light }}</td>
     </tr>
