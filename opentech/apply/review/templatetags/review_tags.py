@@ -22,7 +22,7 @@ TRAFFIC_LIGHT_COLORS = {
     }
 }
 
-TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light__{color}">{value}</span>'
+TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light--{color}">{value}</span>'
 
 
 @register.filter()
