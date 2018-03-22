@@ -18,7 +18,7 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        {% include 'reviews/includes/review_button.html' submission=object %}
+        {% include 'review/includes/review_button.html' with submission=object %}
 
         {% if request.user.is_apply_staff and object.reviews.exists %}
             <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--primary">View all</a>
