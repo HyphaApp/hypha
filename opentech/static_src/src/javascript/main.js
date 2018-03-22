@@ -53,6 +53,12 @@ import '@fancyapps/fancybox';
             }
         });
 
+        // Close any open select2 dropdowns when inside a modal
+        $('.modal').click((e) => {
+            if(e.target.classList.contains('select2-selection__rendered')) return;
+            $('.django-select2-checkboxes').select2('close');
+        });
+
         // Open the activity feed
         $('.js-open-feed').click((e) => {
             e.preventDefault();
