@@ -632,7 +632,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 self.form_data[field.id] = self.handle_files(file)
 
         creating = not self.id
-
         if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
@@ -663,18 +662,18 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def staff_not_reviewed(self):
-        return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
+        return self.reviewers.staff().exclude(id__in=self.reviews.submitted().values('author'))
 
     @property
     def reviewers_not_reviewed(self):
         return self.reviewers.reviewers().exclude(
-            id__in=self.reviews.values('author')
+            id__in=self.reviews.submitted().values('author')
         ).exclude(
             id__in=self.staff_not_reviewed,
         )
 
     def reviewed_by(self, user):
-        return self.reviews.filter(author=user).exists()
+        return self.reviews.submitted().filter(author=user).exists()
 
     def has_permission_to_review(self, user):
         if user.is_apply_staff:
