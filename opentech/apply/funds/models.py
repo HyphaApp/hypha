@@ -39,7 +39,7 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses
+from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses
 
 
 WORKFLOW_CLASS = {
@@ -468,7 +468,10 @@ class JSONOrderable(models.QuerySet):
             )
 
         def build_json_order_by(field):
-            if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+            try:
+                if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                    return field
+            except AttributeError:
                 return field
 
             if field[0] == '-':
@@ -497,6 +500,13 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def inactive(self):
         return self.exclude(status__in=active_statuses)
+
+    def in_review(self):
+        return self.filter(status__in=review_statuses)
+
+    def in_review_for(self, user):
+        user_review_statuses = get_review_statuses(user)
+        return self.filter(status__in=user_review_statuses).filter(reviewers=user).exclude(reviews__author=user)
 
     def current(self):
         # Applications which have the current stage active (have not been progressed)
@@ -621,7 +631,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
 
-        if not self.id:
+        creating = not self.id
+
+        if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             self.status = str(self.workflow.first())
@@ -633,7 +645,8 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         super().save(*args, **kwargs)
 
-        self.reviewers.set(self.get_from_parent('reviewers').all())
+        if creating:
+            self.reviewers.set(self.get_from_parent('reviewers').all())
 
         # Check to see if we should progress to the next stage
         if self.phase.can_proceed and not self.next:
@@ -649,16 +662,34 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             submission_in_db.save()
 
     @property
-    def missing_staff_reviews(self):
+    def staff_not_reviewed(self):
         return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
 
     @property
-    def missing_reviewer_reviews(self):
+    def reviewers_not_reviewed(self):
         return self.reviewers.reviewers().exclude(
             id__in=self.reviews.values('author')
         ).exclude(
-            id__in=self.missing_staff_reviews,
+            id__in=self.staff_not_reviewed,
         )
+
+    def reviewed_by(self, user):
+        return self.reviews.filter(author=user).exists()
+
+    def has_permission_to_review(self, user):
+        if user.is_apply_staff:
+            return True
+
+        if user in self.reviewers_not_reviewed:
+            return True
+
+        return False
+
+    def can_review(self, user):
+        if self.reviewed_by(user):
+            return False
+
+        return self.has_permission_to_review(user)
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

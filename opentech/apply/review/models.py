@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-
+from opentech.apply.activity.models import Activity
 from opentech.apply.users.models import User
 
 NO = 0
@@ -26,28 +28,28 @@ class ReviewQuerySet(models.QuerySet):
     def staff_score(self):
         return self.by_staff().score()
 
-    def staff_reccomendation(self):
-        return self.by_staff().reccomendation()
+    def staff_recommendation(self):
+        return self.by_staff().recommendation()
 
     def reviewers_score(self):
         return self.by_reviewers().score()
 
-    def reviewers_reccomendation(self):
-        return self.by_reviewers().reccomendation()
+    def reviewers_recommendation(self):
+        return self.by_reviewers().recommendation()
 
     def score(self):
         return self.aggregate(models.Avg('score'))['score__avg']
 
-    def reccomendation(self):
-        reccomendations = self.values_list('recommendation', flat=True)
+    def recommendation(self):
+        recommendations = self.values_list('recommendation', flat=True)
         try:
-            reccomendation = sum(reccomendations) / len(reccomendations)
+            recommendation = sum(recommendations) / len(recommendations)
         except ZeroDivisionError:
             return -1
 
-        if reccomendation == YES or reccomendation == NO:
+        if recommendation == YES or recommendation == NO:
             # If everyone in agreement return Yes/No
-            return reccomendation
+            return recommendation
         else:
             return MAYBE
 
@@ -72,3 +74,18 @@ class Review(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.review)}>'
+
+
+@receiver(post_save, sender=Review)
+def update_submission_reviewers_list(sender, **kwargs):
+    review = kwargs.get('instance')
+
+    if not review.submission.reviewers.filter(id=review.author.id).exists():
+        review.submission.reviewers.add(review.author)
+
+    if kwargs.get('created', False):
+        Activity.actions.create(
+            user=review.author,
+            submission=review.submission,
+            message=f'Created a review for {review.submission.title}'
+        )

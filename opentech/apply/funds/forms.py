@@ -3,6 +3,7 @@ from django import forms
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission
+from .widgets import Select2MultiCheckboxesWidget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -42,12 +43,12 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 class UpdateReviewersForm(forms.ModelForm):
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
         required=False,
     )
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
-        widget=forms.CheckboxSelectMultiple,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
         label='Reviewers',
         required=False,
     )
@@ -61,9 +62,14 @@ class UpdateReviewersForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
         self.fields['staff_reviewers'].initial = reviewers
-        self.fields['reviewer_reviewers'].initial = reviewers
+        if self.instance.stage.has_external_review:
+            self.fields['reviewer_reviewers'].initial = reviewers
+        else:
+            self.fields.pop('reviewer_reviewers')
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        instance.reviewers.set(self.cleaned_data['staff_reviewers'] | self.cleaned_data['reviewer_reviewers'])
+        instance.reviewers.set(
+            self.cleaned_data['staff_reviewers'] | self.cleaned_data.get('reviewer_reviewers', User.objects.none())
+        )
         return instance

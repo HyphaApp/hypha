@@ -35,46 +35,57 @@
 <div class="wrapper wrapper--medium wrapper--tabs">
 {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
-        {% include "funds/includes/actions.html" with mobile=True %}
+        {% block admin_actions %}
+        {% endblock %}
         <div class="wrapper wrapper--sidebar">
-            <div>
-                <h6 class="heading heading--submission-meta">
-                    <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
-                    {% if request.user|can_edit:submission %}
-                        <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
-                    {% endif %}
-                </h6>
+            {% if request.user|has_edit_perm:object or not request.user.is_apply_staff %}
+                <div>
+                    <h2>Congratulations!</h2>
+                    <h3>Your {{ object.previous.stage }} application has been accepted!</h3>
+                    <a class="button button--primary" href="{% url 'funds:edit_submission' object.id %}">Start your {{ object.stage }} application</a>
+                </div>
+            {% else %}
+                <div>
+                    <h6 class="heading heading--submission-meta">
+                        <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
+                        {% if request.user|has_edit_perm:object %}
+                            <a href="{% url 'funds:edit_submission' object.id %}">Edit</a>
+                        {% endif %}
+                    </h6>
 
-                <h3>Proposal Information</h3>
-                <div class="grid grid--proposal-info">
-                    <div>
-                        <h5>Requested Funding</h5>
-                        <p>{{ object.value }}</p>
+                    <h3>Proposal Information</h3>
+                    <div class="grid grid--proposal-info">
+                        <div>
+                            <h5>Requested Funding</h5>
+                            <p>{{ object.value }}</p>
+                        </div>
+
+                        <div>
+                            <h5>Project Duration</h5>
+                            <p>{{ object.value }}</p>
+                        </div>
+
+                        <div>
+                            <h5>Legal Name</h5>
+                            <p>{{ object.full_name }}</p>
+                        </div>
+
+                        <div>
+                            <h5>Email</h5>
+                            <p>{{ object.email }}</p>
+                        </div>
                     </div>
-
-                    <div>
-                        <h5>Project Duration</h5>
-                        <p>{{ object.value }}</p>
-                    </div>
-
-                    <div>
-                        <h5>Legal Name</h5>
-                        <p>{{ object.full_name }}</p>
-                    </div>
-
-                    <div>
-                        <h5>Email</h5>
-                        <p>{{ object.email }}</p>
+                    <div class="rich-text rich-text--answers">
+                        {{ object.render_answers }}
                     </div>
                 </div>
-                <div class="rich-text rich-text--answers">
-                    {{ object.render_answers }}
-                </div>
-            </div>
+            {% endif %}
 
             <aside class="sidebar">
-                {% block sidebar_forms %}
-                {% endblock %}
+                {% if request.user.is_apply_staff %}
+                    {% block sidebar_forms %}
+                    {% endblock %}
+                {% endif %}
 
                 {% block reviews %}
                 {% endblock %}

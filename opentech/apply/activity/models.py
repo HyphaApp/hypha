@@ -1,5 +1,9 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from opentech.apply.funds.models import ApplicationSubmission
 
 COMMENT = 'comment'
 ACTION = 'action'
@@ -10,10 +14,20 @@ ACTIVITY_TYPES = {
 }
 
 PUBLIC = 'public'
+REVIEWER = 'reviewers'
 INTERNAL = 'internal'
+
+
+VISIBILILTY_HELP_TEXT = {
+    PUBLIC: 'Visible to all users of application system.',
+    REVIEWER: 'Visible to reviewers and staff.',
+    INTERNAL: 'Visible only to staff.',
+}
+
 
 VISIBILITY = {
     PUBLIC: 'Public',
+    REVIEWER: 'Reviewers',
     INTERNAL: 'Internal',
 }
 
@@ -78,9 +92,23 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return [PUBLIC, INTERNAL]
+            return [PUBLIC, REVIEWER, INTERNAL]
+        if user.is_reviewer:
+            return [PUBLIC, REVIEWER]
         return [PUBLIC]
 
     @classmethod
     def visibility_choices_for(cls, user):
         return [(choice, VISIBILITY[choice]) for choice in cls.visibility_for(user)]
+
+
+@receiver(post_save, sender=ApplicationSubmission)
+def log_submission_activity(sender, **kwargs):
+    if kwargs.get('created', False):
+        submission = kwargs.get('instance')
+
+        Activity.actions.create(
+            user=submission.user,
+            submission=submission,
+            message=f'Submitted {submission.title} for {submission.page.title}'
+        )

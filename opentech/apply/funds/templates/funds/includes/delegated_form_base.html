@@ -1,4 +1,4 @@
-<form class="form" method="post" id="{{ form.name }}">
+<form class="form {{extra_classes}}" method="post" id="{{ form.name }}">
     {% csrf_token %}
     <div class="form__item">
         {{ form }}

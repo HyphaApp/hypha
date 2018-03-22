@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
@@ -34,10 +35,17 @@ class ReviewCreateView(CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+
+        if not self.submission.phase.has_perm(request.user, 'review') or not self.submission.has_permission_to_review(request.user):
+            raise PermissionDenied()
+
+        if self.request.POST and self.submission.reviewed_by(request.user):
+            return self.get(request, *args, **kwargs)
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        has_submitted_review = Review.objects.filter(submission=self.submission, author=self.request.user).exists()
+        has_submitted_review = self.submission.reviewed_by(self.request.user)
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,

@@ -1,0 +1,9 @@
+{% load review_tags %}
+
+<table class="reviews-summary">
+    <tr>
+        <td>{{ record.reviewers.count }}</td>
+        <td>{{ record.reviews.count }}</td>
+        <td>{{ record.reviews.recommendation|traffic_light }}</td>
+    </tr>
+</table>

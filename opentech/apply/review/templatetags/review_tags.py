@@ -7,17 +7,31 @@ register = template.Library()
 
 
 TRAFFIC_LIGHT_COLORS = {
-    YES: 'green',
-    MAYBE: 'amber',
-    NO: 'red',
+    YES: {
+        'color': 'green',
+        'value': 'Y',
+    },
+    MAYBE: {
+        'color': 'amber',
+        'value': 'M',
+    },
+    NO: {
+        'color': 'red',
+        'value': 'N'
+    }
 }
 
-TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light__{color}"></span>'
+TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light__{color}">{value}</span>'
 
 
 @register.filter()
 def traffic_light(value):
     try:
-        return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(color=TRAFFIC_LIGHT_COLORS[value]))
+        return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(**TRAFFIC_LIGHT_COLORS[value]))
     except KeyError:
         return '-'
+
+
+@register.filter
+def can_review(user, submission):
+    return submission.can_review(user)

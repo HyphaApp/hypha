@@ -1,11 +1,11 @@
 {% extends 'django_tables2/table.html' %}
 {% load django_tables2 table_tags review_tags %}
 
-{# example of how to extend the table template #}
 {% block table.tbody.row %}
     {{ block.super }}
 
     {% with submission=row.record %}
+
         {# placeholder for example data row #}
         <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
@@ -18,7 +18,7 @@
                     <tr class="tr tr--subchild tr--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
-                            {% with row.record.activities.actions.last as last_update %}
+                            {% with row.record.activities.last as last_update %}
                                 {% if last_update %}
                                     <strong>by {{ last_update.user }}</strong><br/>
                                     {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
@@ -29,7 +29,7 @@
                         </td>
                         <td>
                             <ul class="list list--no-margin">
-                            {% for review in row.cells.reviews %}
+                            {% for review in row.record.reviews.all %}
                                 <li class="list__item list__item--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></li>
                             {% endfor %}
                             </ul>

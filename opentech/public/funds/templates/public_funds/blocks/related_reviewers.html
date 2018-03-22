@@ -3,7 +3,7 @@
         <div class="wrapper--media-boxes">
             <div class="grid grid--two grid--medium-gap">
                 {% for person in page.reviewers.all %}
-                    {% include "people/includes/person_listing.html" with person=person.reviewer.specific %}
+                    {% include "public_funds/includes/reviewer_listing.html" with person=person.reviewer.specific %}
                 {% endfor %}
             </div>
         </div>

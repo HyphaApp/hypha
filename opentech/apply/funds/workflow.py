@@ -2,11 +2,12 @@ from collections import defaultdict
 import copy
 import itertools
 
-from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union
+from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union, TYPE_CHECKING
 
 from django.utils.text import slugify
 
-from opentech.apply.users.models import User
+if TYPE_CHECKING:
+    from opentech.apply.users.models import User  # NOQA
 
 
 """
@@ -32,7 +33,7 @@ def phase_name(stage: 'Stage', phase: Union['Phase', str], step: int) -> str:
     else:
         phase_name = phase
 
-    return '__'.join([stage.name, phase_name, str(step)])
+    return '__'.join([stage._internal, phase_name, str(step)])
 
 
 class Workflow(Iterable):
@@ -124,6 +125,9 @@ class Stage(Iterable):
     def __init__(self, workflow: 'Workflow', name: str='') -> None:
         if name:
             self.name = name
+
+        self._internal = self.name.split()[0]
+
         self.workflow = workflow
         self.steps = len(self.phases)
         # Make the phases new instances to prevent errors with mutability
@@ -237,17 +241,32 @@ class PhaseIterator(Iterator):
 
 
 class Permission:
-    pass
+    def can_edit(self, user: 'User') -> bool:
+        return False
+
+    def can_staff_review(self, user: 'User') -> bool:
+        return False
+
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return False
+
+    def can_review(self, user: 'User') -> bool:
+        return self.can_staff_review(user) or self.can_reviewer_review(user)
+
+
+class StaffReviewPermission(Permission):
+    def can_staff_review(self, user: 'User') -> bool:
+        return user.is_apply_staff
+
+
+class ReviewerReviewPermission(Permission):
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return user.is_reviewer
 
 
 class CanEditPermission(Permission):
-    def can_edit(self, user: User) -> bool:
+    def can_edit(self, user: 'User') -> bool:
         return True
-
-
-class NoEditPermission(Permission):
-    def can_edit(self, user: User) -> bool:
-        return False
 
 
 class Phase:
@@ -258,11 +277,14 @@ class Phase:
     actions: Sequence['Action'] = list()
     name: str = ''
     public_name: str = ''
-    permissions: 'Permission' = NoEditPermission()
+    permissions: 'Permission' = Permission()
 
-    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False) -> None:
+    def __init__(self, name: str='', public_name: str ='', active: bool=True, can_proceed: bool=False, permissions: Permission=None) -> None:
         if name:
             self.name = name
+
+        if permissions:
+            self.permissions = permissions
 
         self.active = active
         self.can_proceed = can_proceed
@@ -303,7 +325,7 @@ class Phase:
     def process(self, action: str) -> Union['Phase', None]:
         return self[action].process(self)
 
-    def has_perm(self, user: User, perm: str) -> bool:
+    def has_perm(self, user: 'User', perm: str) -> bool:
         perm_method = getattr(self.permissions, f'can_{perm}', lambda x: False)
         return perm_method(user)
 
@@ -364,6 +386,7 @@ class ReviewPhase(Phase):
     name = 'Internal Review'
     public_name = 'In review'
     actions = [NextPhaseAction('Close Review')]
+    permissions = StaffReviewPermission()
 
 
 class DiscussionWithProgressionPhase(Phase):
@@ -393,6 +416,7 @@ progressed = Phase(name='Invited to Proposal', active=False, can_proceed=True)
 
 class RequestStage(Stage):
     name = 'Request'
+    has_external_review = False
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
@@ -402,7 +426,8 @@ class RequestStage(Stage):
 
 
 class ConceptStage(Stage):
-    name = 'Concept'
+    name = 'Concept Note'
+    has_external_review = False
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
@@ -413,12 +438,13 @@ class ConceptStage(Stage):
 
 class ProposalStage(Stage):
     name = 'Proposal'
+    has_external_review = True
     phases = [
         InDraft(),
         DiscussionWithNextPhase(),
         ReviewPhase(),
         DiscussionWithNextPhase(),
-        ReviewPhase('AC Review', public_name='In AC review'),
+        ReviewPhase('AC Review', public_name='In AC review', permissions=ReviewerReviewPermission()),
         DiscussionPhase(public_name='In AC review'),
         [accepted, rejected]
     ]
@@ -457,3 +483,20 @@ def get_active_statuses() -> Set[str]:
 
 
 active_statuses = get_active_statuses()
+
+
+def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
+    reviews = set()
+
+    for step in itertools.chain(SingleStage(), DoubleStage()):
+        for phase in step.phases:
+            if isinstance(phase, ReviewPhase):
+                if user is None:
+                    reviews.add(str(phase))
+                elif phase.has_perm(user, 'review'):
+                    reviews.add(str(phase))
+
+    return reviews
+
+
+review_statuses = get_review_statuses()

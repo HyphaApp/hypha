@@ -1,0 +1,17 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<a class="media-box" href="{% pageurl person %}">
+    {% image person.photo max-210x235 as person_photo %}
+    {% include "utils/includes/media_box_icon.html" with page_icon=person_photo listing=True %}
+
+    <div class="media-box__content">
+        {% if person.person_types.exists %}
+            {% for type in person.person_types.all %}
+                <h6 class="media-box__category">{{ type }}</h6>
+            {% endfor %}
+        {% endif %}
+        <h3 class="heading heading--no-margin">{{ person.first_name }} {{ person.last_name }}</h3>
+        {% if person.job_title %}
+            <p class="media-box__job-title">{{ person.job_title }}</p>
+        {% endif %}
+    </div>
+</a>
