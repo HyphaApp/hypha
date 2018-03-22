@@ -10,10 +10,20 @@ ACTIVITY_TYPES = {
 }
 
 PUBLIC = 'public'
+REVIEWER = 'reviewers'
 INTERNAL = 'internal'
+
+
+VISIBILILTY_HELP_TEXT = {
+    PUBLIC: 'Visible to all users of application system.',
+    REVIEWER: 'Visible to reviewers and staff.',
+    INTERNAL: 'Visible only to staff.',
+}
+
 
 VISIBILITY = {
     PUBLIC: 'Public',
+    REVIEWER: 'Reviewers',
     INTERNAL: 'Internal',
 }
 
@@ -78,7 +88,9 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return [PUBLIC, INTERNAL]
+            return [PUBLIC, REVIEWER, INTERNAL]
+        if user.is_reviewer:
+            return [PUBLIC, REVIEWER]
         return [PUBLIC]
 
     @classmethod
