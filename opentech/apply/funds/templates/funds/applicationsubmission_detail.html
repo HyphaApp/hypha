@@ -40,8 +40,8 @@
         <div class="wrapper wrapper--sidebar">
             {% if request.user|has_edit_perm:object or not request.user.is_apply_staff %}
                 <div>
-                    <h2>Congratulations!</h2>
-                    <h3>Your {{ object.previous.stage }} application has been accepted!</h3>
+                    <h4>Congratulations!</h4>
+                    <h5>Your {{ object.previous.stage }} application has been accepted.</h5>
                     <a class="button button--primary" href="{% url 'funds:edit_submission' object.id %}">Start your {{ object.stage }} application</a>
                 </div>
             {% else %}
