@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ProcessFormView, ModelFormMixin
 
@@ -44,7 +44,6 @@ class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, Proc
 
         return super().get(request, *args, **kwargs)
 
-
     def post(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
@@ -71,7 +70,6 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
             return self.get(request, *args, **kwargs)
 
         return super().dispatch(request, *args, **kwargs)
-
 
     def get_context_data(self, **kwargs):
         has_submitted_review = self.submission.reviewed_by(self.request.user)
