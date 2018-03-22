@@ -43,12 +43,12 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 class UpdateReviewersForm(forms.ModelForm):
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
-        widget=Select2MultiCheckboxesWidget,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
         required=False,
     )
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
-        widget=Select2MultiCheckboxesWidget,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
         label='Reviewers',
         required=False,
     )
