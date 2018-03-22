@@ -1,14 +1,15 @@
 {% extends "funds/applicationsubmission_detail.html" %}
+{% load workflow_tags review_tags%}
 
 {% block admin_actions %}
     {% include "funds/includes/actions.html" with mobile=True %}
 {% endblock %}
 
 {% block sidebar_forms %}
-    {% include "funds/includes/actions.html" %}
-    {% include "funds/includes/progress_form.html" %}
-    {% include "funds/includes/update_lead_form.html" %}
-    {% include "funds/includes/update_reviewer_form.html" %}
+        {% include "funds/includes/actions.html" %}
+        {% include "funds/includes/progress_form.html" %}
+        {% include "funds/includes/update_lead_form.html" %}
+        {% include "funds/includes/update_reviewer_form.html" %}
 {% endblock %}
 
 {% block reviews %}
@@ -17,7 +18,10 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+        {% if request.user|has_review_perm:object and request.user|can_review:object%}
+            <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+        {% endif %}
+
         {% if request.user.is_apply_staff %}
             <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--primary">View all</a>
         {% endif %}

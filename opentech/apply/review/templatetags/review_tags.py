@@ -30,3 +30,8 @@ def traffic_light(value):
         return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(**TRAFFIC_LIGHT_COLORS[value]))
     except KeyError:
         return '-'
+
+
+@register.filter
+def can_review(user, submission):
+    return submission.can_review(user)

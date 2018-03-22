@@ -82,8 +82,10 @@
             {% endif %}
 
             <aside class="sidebar">
-                {% block sidebar_forms %}
-                {% endblock %}
+                {% if request.user.is_apply_staff %}
+                    {% block sidebar_forms %}
+                    {% endblock %}
+                {% endif %}
 
                 {% block reviews %}
                 {% endblock %}

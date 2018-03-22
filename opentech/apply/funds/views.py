@@ -167,6 +167,11 @@ class SubmissionDetailView(ViewDispatcher):
     admin_view = AdminSubmissionDetailView
     applicant_view = ApplicantSubmissionDetailView
 
+    def admin_check(self, request):
+        if request.user.is_reviewer:
+            return True
+        return super().admin_check(request)
+
 
 @method_decorator(login_required, name='dispatch')
 class SubmissionEditView(UpdateView):
