@@ -79,6 +79,10 @@ class BaseReviewForm(forms.ModelForm):
         self.submission = kwargs.pop('submission')
         super().__init__(*args, **kwargs)
 
+        if "save_draft" in self.data:
+            for field in self.fields.values():
+                field.required = False
+
     def validate_unique(self):
         # update the instance data prior to validating uniqueness
         self.instance.submission = self.submission
