@@ -396,6 +396,7 @@ progressed = Phase(name='Invited to Proposal', active=False, can_proceed=True)
 
 class RequestStage(Stage):
     name = 'Request'
+    has_external_review = False
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
@@ -406,6 +407,7 @@ class RequestStage(Stage):
 
 class ConceptStage(Stage):
     name = 'Concept Note'
+    has_external_review = False
     phases = [
         DiscussionWithNextPhase(),
         ReviewPhase(),
@@ -416,6 +418,7 @@ class ConceptStage(Stage):
 
 class ProposalStage(Stage):
     name = 'Proposal'
+    has_external_review = True
     phases = [
         InDraft(),
         DiscussionWithNextPhase(),
