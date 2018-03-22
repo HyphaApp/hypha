@@ -110,6 +110,14 @@ table {
         font-weight: 600;
         text-align: left;
 
+        &.reviews_stats {
+            color: $color--mid-dark-grey;
+
+            span {
+                font-size: 13px;
+            }
+        }
+
         a {
             color: $color--mid-dark-grey;
             transition: color 0.25s ease-out;
