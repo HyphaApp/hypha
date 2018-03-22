@@ -1,9 +1,11 @@
 {% if request.user|has_review_perm:submission %}
-    <a href="{% url 'apply:reviews:form' submission_pk=submission.id %}" class="button button--primary">
-        {% if request.user|has_draft:submission %}
-            Update draft
-        {% elif request.user|can_review:submission %}
-            Create review
-        {% endif %}
-    </a>
+    {% if request.user|has_draft:submission or request.user|can_review:submission %}
+        <a href="{% url 'apply:reviews:form' submission_pk=submission.id %}" class="button button--primary">
+            {% if request.user|has_draft:submission %}
+                Update draft
+            {% elif request.user|can_review:submission %}
+                Create review
+            {% endif %}
+        </a>
+    {% endif %}
 {% endif %}
