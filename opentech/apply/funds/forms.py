@@ -58,11 +58,13 @@ class UpdateReviewersForm(forms.ModelForm):
         fields: list = []
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop('user')
+        user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
+
         self.fields['staff_reviewers'].initial = reviewers
-        if self.instance.stage.has_external_review:
+
+        if self.instance.stage.has_external_review and user == self.instance.lead:
             self.fields['reviewer_reviewers'].initial = reviewers
         else:
             self.fields.pop('reviewer_reviewers')
