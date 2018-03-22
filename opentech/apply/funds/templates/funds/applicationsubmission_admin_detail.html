@@ -10,16 +10,16 @@
 
 {% block reviews %}
     <div class="sidebar__inner">
-        <h5>Reviews &amp; assignees</h5>
+        <h5>Reviews &amp;amp; assignees</h5>
 
         {% include 'funds/includes/review_table.html' %}
 
         <div class="wrapper wrapper--button-container">
             {% if request.user|has_review_perm:object %}
                 {% if request.user|has_draft:object %}
-                    <a href="{{ request.user|draft_url:object }}" class="button button--primary button--half-width">Update draft</a>
+                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary">Update draft</a>
                 {% elif request.user|can_review:object %}
-                    <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
+                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary">Create review</a>
                 {% endif %}
             {% endif %}
 
