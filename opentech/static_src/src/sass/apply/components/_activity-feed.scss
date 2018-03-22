@@ -9,7 +9,7 @@
     transition: opacity, z-index, $transition;
 
     &.is-open {
-        z-index: 20;
+        z-index: 99999;
         width: 100%;
         height: 100vh;
         max-height: 100%;
