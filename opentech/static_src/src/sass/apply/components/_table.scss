@@ -74,9 +74,17 @@ table {
                 }
             }
 
+            .td {
+                &--traffic-light {
+                    padding: 5px;
+                    vertical-align: middle;
+                }
+            }
+
             &.status_name {
                 span {
                     display: inline-block;
+                    width: 100%;
                     padding: 10px;
                     font-size: 13px;
                     font-weight: $weight--bold;

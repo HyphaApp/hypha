@@ -5,5 +5,7 @@
         <td>{{ record.reviewers.count }}</td>
         <td>{{ record.reviews.count }}</td>
         <td>{{ record.reviews.recommendation|traffic_light }}</td>
+            <td class="td td--traffic-light">{{ reviews.recommendation|traffic_light }}</td>
     </tr>
+            <td class="td td--traffic-light">{{ reviews.recommendation|traffic_light }}</td>
 </table>
