@@ -64,6 +64,8 @@ class RequiredRateChoiceField(RateChoiceField):
 
 
 class BaseReviewForm(forms.ModelForm):
+    draft_button_name = "save_draft"
+
     class Meta:
         model = Review
         fields: list = []
@@ -79,7 +81,7 @@ class BaseReviewForm(forms.ModelForm):
         self.submission = kwargs.pop('submission')
         super().__init__(*args, **kwargs)
 
-        if "save_draft" in self.data:
+        if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
 
@@ -98,7 +100,7 @@ class BaseReviewForm(forms.ModelForm):
         self.instance.score = self.calculate_score()
 
         self.instance.recommendation = self.cleaned_data['recommendation']
-        self.instance.is_draft = "save_draft" in self.data
+        self.instance.is_draft = self.draft_button_name in self.data
 
         super().save()
 
