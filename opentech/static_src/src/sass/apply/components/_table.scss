@@ -1,10 +1,19 @@
 $table-breakpoint: 'tablet-portrait';
 
-table {
+table,
+.table {
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
+
+    &--reviews-summary {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table;
+        }
+    }
 
     thead {
         display: none;
@@ -47,7 +56,6 @@ table {
             display: block;
             width: 100%;
 
-
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
@@ -74,6 +82,13 @@ table {
                 }
             }
 
+            .td {
+                &--traffic-light {
+                    padding: 5px;
+                    vertical-align: middle;
+                }
+            }
+
             &.status_name {
                 span {
                     display: inline-block;
@@ -83,6 +98,10 @@ table {
                     color: $color--marine;
                     text-align: center;
                     background-color: $color--sky-blue;
+
+                    @include media-query($table-breakpoint) {
+                        width: 100%;
+                    }
                 }
             }
         }
@@ -98,10 +117,18 @@ table {
     }
 
     th {
-        padding: 20px;
+        padding: 20px 15px;
         font-size: 15px;
         font-weight: 600;
         text-align: left;
+
+        &.reviews_stats {
+            color: $color--mid-dark-grey;
+
+            span {
+                font-size: 13px;
+            }
+        }
 
         a {
             color: $color--mid-dark-grey;
@@ -136,4 +163,20 @@ table {
             }
         }
     }
+
+    td {
+        &.comments {
+            display: none;
+            font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+            background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
+            background-size: 24px;
+
+            @include media-query($table-breakpoint) {
+                display: table-cell;
+            }
+        }
+    }
+
 }
