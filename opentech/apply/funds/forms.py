@@ -3,6 +3,7 @@ from django import forms
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission
+from .widgets import Select2MultiCheckboxesWidget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -42,12 +43,12 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 class UpdateReviewersForm(forms.ModelForm):
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
         required=False,
     )
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
-        widget=forms.CheckboxSelectMultiple,
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
         label='Reviewers',
         required=False,
     )
