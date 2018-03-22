@@ -9,7 +9,11 @@
     {% include 'funds/includes/review_table_row.html' with reviews=staff_reviews %}
     {% include 'funds/includes/review_table_row.html' with reviews=object.staff_not_reviewed missing=True %}
 
-    {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
-    {# Add logic for showing missing reviews #}
-    {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True %}
+    {% if object.stage.has_external_review %}
+        <td colspan="4"><hr></td>
+
+        {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
+        {# Add logic for showing missing reviews #}
+        {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True %}
+    {% endif %}
 </table>
