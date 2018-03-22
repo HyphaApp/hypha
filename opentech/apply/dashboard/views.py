@@ -17,7 +17,7 @@ class ApplicantDashboardView(SingleTableView):
     table_class = SubmissionsTable
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user).inactive()
+        return self.model.objects.filter(user=self.request.user).inactive().current()
 
     def get_context_data(self, **kwargs):
         my_active_submissions = self.model.objects.filter(user=self.request.user).active().current()
