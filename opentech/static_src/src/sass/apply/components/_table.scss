@@ -7,16 +7,16 @@ table,
     border-collapse: collapse;
     table-layout: fixed;
 
+    &--transparent {
+        background-color: transparent;
+    }
+  
     &--reviews-summary {
         display: none;
 
         @include media-query($table-breakpoint) {
             display: table;
         }
-    }
-
-    &--transparent {
-        background-color: transparent;
     }
 
     &--reviews {

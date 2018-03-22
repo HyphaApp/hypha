@@ -6,4 +6,15 @@
         <td>{{ record.reviews.count }}</td>
         <td class="td td--traffic-light">{{ record.reviews.recommendation|traffic_light }}</td>
     </tr>
+
+    {% if record.stage.has_external_review %}
+        <tr class="tr tr--subchild"><td colspan="4"><hr/></td>
+        <tr class="tr tr--subchild">
+            <td>{{ record.reviewers.reviewers.count }}</td>
+            {% with reviews=record.reviews.by_reviewers %}
+                <td>{{ reviews.count }}</td>
+                <td class="td td--traffic-light">{{ reviews.recommendation|traffic_light }}</td>
+            {% endwith %}
+        </tr>
+    {% endif %}
 </table>

@@ -28,7 +28,7 @@
             </div>
             {% include "funds/includes/status_bar.html" with phases=submission.workflow status=submission.phase class="status-bar--small" %}
             {% if request.user|has_edit_perm:submission %}
-                <a href="{% url 'funds:edit_submission' submission.id %}">Start your {{ submission.stage }} application</a>
+                <a class="button button--primary" href="{% url 'funds:edit_submission' submission.id %}">Start your {{ submission.stage }} application</a>
             {% endif %}
         </div>
     {% empty %}
