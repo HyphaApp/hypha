@@ -11,13 +11,7 @@
         {% if request.user|has_review_perm:submission %}
             {% if request.user|has_draft:submission or request.user|can_review:submission %}
                 <div class="wrapper wrapper--cta-box">
-                    <a href="{% url 'apply:reviews:form' submission_pk=submission.id %}" class="button button--primary">
-                        {% if request.user|has_draft:submission %}
-                            Update draft
-                        {% elif request.user|can_review:submission %}
-                            Create review
-                        {% endif %}
-                    </a>
+                    {% include 'reviews/includes/review_button.html' submission=submission %}
                 </div>
             {% endif %}
         {% endif %}
