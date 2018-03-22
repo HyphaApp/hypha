@@ -155,9 +155,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
 class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
     model = ApplicationSubmission
-    form_views = {
-        'comment': CommentFormView,
-    }
+    form_views = [CommentFormView]
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().user != request.user:
