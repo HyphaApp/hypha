@@ -1,0 +1,29 @@
+{% extends "base-apply.html" %}
+{% load bleach_tags %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large">
+        <h2 class="heading heading--no-margin">Review</h2>
+        <h5>For <a href="{% url "funds:submission" review.submission.id %}">{{ review.submission.title }}</a></h5>
+    </div>
+</div>
+
+<div class="grid">
+    <div>
+        <h5>Recommendation</h5>
+        <p>{{ review.recommendation }}</p>
+    </div>
+    <div>
+        <h5>Score</h5>
+        <p>{{ review.score }}</p>
+    </div>
+</div>
+
+<div class="rich-text rich-text--answers">
+    {% for question, answer in review_data.items %}
+        <h5>{{ question }}</h5>
+        {{ answer|bleach }}
+    {% endfor %}
+</div>
+{% endblock %}
