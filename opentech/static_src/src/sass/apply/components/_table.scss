@@ -1,10 +1,19 @@
 $table-breakpoint: 'tablet-portrait';
 
-table {
+table,
+.table {
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
+
+    &--reviews-summary {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table;
+        }
+    }
 
     thead {
         display: none;
@@ -83,13 +92,16 @@ table {
             &.status_name {
                 span {
                     display: inline-block;
-                    width: 100%;
                     padding: 10px;
                     font-size: 13px;
                     font-weight: $weight--bold;
                     color: $color--marine;
                     text-align: center;
                     background-color: $color--sky-blue;
+
+                    @include media-query($table-breakpoint) {
+                        width: 100%;
+                    }
                 }
             }
         }
@@ -154,10 +166,15 @@ table {
 
     td {
         &.comments {
+            display: none;
             font-size: 13px;
             text-align: center;
             background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
             background-size: 24px;
+
+            @include media-query($table-breakpoint) {
+                display: table-cell;
+            }
         }
     }
 
