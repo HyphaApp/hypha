@@ -18,8 +18,12 @@
 
         {% include 'funds/includes/review_table.html' %}
 
-        {% if request.user|has_review_perm:object and request.user|can_review:object%}
-            <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+        {% if request.user|has_review_perm:object %}
+            {% if request.user|has_draft:object %}
+                <a href="{{ request.user|draft_url:object }}" class="button button--primary">Update draft</a>
+            {% elif request.user|can_review:object %}
+                <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary">Create review</a>
+            {% endif %}
         {% endif %}
 
         {% if request.user.is_apply_staff %}
