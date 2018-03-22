@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.users.models import User
@@ -19,11 +20,14 @@ RECOMMENDATION_CHOICES = (
 
 
 class ReviewQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(is_draft=False)
+
     def by_staff(self):
-        return self.filter(author__in=User.objects.staff())
+        return self.published().filter(author__in=User.objects.staff())
 
     def by_reviewers(self):
-        return self.filter(author__in=User.objects.reviewers())
+        return self.published().filter(author__in=User.objects.reviewers())
 
     def staff_score(self):
         return self.by_staff().score()
@@ -69,6 +73,9 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ('author', 'submission')
+
+    def get_absolute_url(self):
+        return reverse('apply:reviews:review', args=(self.id,))
 
     def __str__(self):
         return f'Review for {self.submission.title} by {self.author!s}'
