@@ -5,8 +5,6 @@
     {{ block.super }}
 
     {% with submission=row.record %}
-
-        {# placeholder for example data row #}
         <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="table table--transparent">
@@ -41,8 +39,7 @@
     {% endwith %}
 
     {% if row.record.previous %}
-        {# we have a linked application #}
-        {# re-render the header row #}
+        {# we have a linked application, re-render the header row #}
         <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="table table--transparent">
