@@ -31,7 +31,7 @@
         {% endfor %}
         <input class="button button--primary" type="submit" value="Submit Review" name="submit" />
         {% if not object.id or object.is_draft %}
-            <input class="button button--secondary" type="submit" value="Save Draft" name="save_draft" />
+            <input class="button button--secondary button--white" type="submit" value="Save Draft" name="save_draft" />
         {% endif %}
     </form>
 {% else %}
