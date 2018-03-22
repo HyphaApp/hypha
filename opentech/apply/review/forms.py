@@ -44,11 +44,14 @@ RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
 
 class RichTextField(forms.CharField):
     widget = RICH_TEXT_WIDGET
-    required = False
+
+    def __init__(self, *args, required=False, **kwargs):
+        kwargs.update(required=required)
+        super().__init__(*args, **kwargs)
 
 
-class RequiredRichTextField(RichTextField):
-    required = True
+class RequiredRichTextField(forms.CharField):
+    widget = RICH_TEXT_WIDGET
 
 
 class RateChoiceField(forms.ChoiceField):
