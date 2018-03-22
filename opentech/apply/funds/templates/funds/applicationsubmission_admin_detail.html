@@ -5,10 +5,6 @@
     {% include "funds/includes/actions.html" with mobile=True %}
 {% endblock %}
 
-{% block admin_actions %}
-    {% include "funds/includes/actions.html" with mobile=True %}
-{% endblock %}
-
 {% block sidebar_forms %}
         {% include "funds/includes/actions.html" %}
         {% include "funds/includes/progress_form.html" %}
@@ -25,9 +21,9 @@
         <div class="wrapper wrapper--button-container">
             {% if request.user|has_review_perm:object %}
                 {% if request.user|has_draft:object %}
-                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary">Update draft</a>
+                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary button--half-width">Update draft</a>
                 {% elif request.user|can_review:object %}
-                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary">Create review</a>
+                    <a href="{% url 'apply:reviews:form' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
                 {% endif %}
             {% endif %}
 
