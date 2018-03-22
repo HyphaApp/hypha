@@ -13,7 +13,7 @@
         {% if request.user|has_review_perm:submission %}
             {% if request.user|has_draft:submission or request.user|can_review:submission %}
                 <div class="wrapper wrapper--cta-box">
-                    {% include 'reviews/includes/review_button.html' submission=submission %}
+                    {% include 'reviews/includes/review_button.html' with submission=submission %}
                 </div>
             {% endif %}
         {% endif %}
