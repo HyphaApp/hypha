@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
+from django.views.generic.edit import ProcessFormView, ModelFormMixin
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.decorators import staff_required
@@ -32,8 +34,32 @@ def get_form_for_stage(submission):
     return forms[index]
 
 
-class ReviewCreateView(CreateView):
+class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except self.model.DoesNotExist:
+            self.object = None
+
+        return super().get(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except self.model.DoesNotExist:
+            self.object = None
+
+        return super().post(request, *args, **kwargs)
+
+
+class ReviewCreateOrUpdateView(CreateOrUpdateView):
     model = Review
+    template_name = 'review/review_form.html'
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission, author=self.request.user)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -46,49 +72,13 @@ class ReviewCreateView(CreateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        has_submitted_review = self.submission.reviewed_by(self.request.user)
-        return super().get_context_data(
-            submission=self.submission,
-            has_submitted_review=has_submitted_review,
-            **kwargs
-        )
-
-    def get_form_class(self):
-        return get_form_for_stage(self.submission)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
-        kwargs['submission'] = self.submission
-        return kwargs
-
-    def get_success_url(self):
-        return self.submission.get_absolute_url()
-
-
-class ReviewDraftEditView(UpdateView):
-    model = Review
-
-    def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-
-        if not self.get_object().is_draft \
-                or not self.submission.phase.has_perm(request.user, 'review') \
-                or not self.submission.has_permission_to_review(request.user):
-            raise PermissionDenied()
-
-        if self.request.POST and self.submission.reviewed_by(request.user):
-            return self.get(request, *args, **kwargs)
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         has_submitted_review = self.submission.reviewed_by(self.request.user)
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
-            title="Update Review draft",
+            title="Update Review draft" if self.object else 'Create Review',
             **kwargs
         )
 
@@ -100,8 +90,9 @@ class ReviewDraftEditView(UpdateView):
         kwargs['request'] = self.request
         kwargs['submission'] = self.submission
 
-        kwargs['initial'] = self.object.review
-        kwargs['initial']['recommendation'] = self.object.recommendation
+        if self.object:
+            kwargs['initial'] = self.object.review
+            kwargs['initial']['recommendation'] = self.object.recommendation
 
         return kwargs
 
@@ -120,7 +111,7 @@ class ReviewDetailView(DetailView):
             raise PermissionDenied
 
         if review.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:reviews:draft', args=(review.submission.id, review.id)))
+            return HttpResponseRedirect(reverse_lazy('apply:reviews:form', args=(review.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
