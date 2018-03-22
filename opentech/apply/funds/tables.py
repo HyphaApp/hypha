@@ -73,7 +73,7 @@ class AdminSubmissionsTable(SubmissionsTable):
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'update_time', 'reviews_stats')  # type: ignore
+        fields = ('title', 'status_name', 'stage', 'page', 'round', 'lead', 'submit_time', 'last_update', 'reviews_stats')  # type: ignore
         sequence = fields + ('comments',)
 
 
