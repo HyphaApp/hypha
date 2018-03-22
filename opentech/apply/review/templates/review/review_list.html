@@ -5,7 +5,7 @@
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
         <h2 class="heading heading--no-margin">Reviews</h2>
-        <h5>For <em>{{ submission.title }}</em></h5>
+        <h5>For <a href="{% url "funds:submission" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
 <div class="wrapper wrapper--reviews-table js-reviews-table">

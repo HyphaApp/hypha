@@ -3,8 +3,8 @@
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
-        <h2 class="heading heading--no-margin">Create Review</h2>
-        <h5>For <em>{{ submission.title }}</em></h5>
+        <h2 class="heading heading--no-margin">{{ title|default:"Create Review" }}</h2>
+        <h5>For <a href="{% url "funds:submission" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
 
@@ -29,7 +29,10 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary" type="submit" value="Submit Review" />
+        <input class="button button--primary" type="submit" value="Submit Review" name="submit" />
+        {% if not object.id or object.is_draft %}
+            <input class="button button--secondary" type="submit" value="Save Draft" name="save_draft" />
+        {% endif %}
     </form>
 {% else %}
     <p>You have already posted a review for this submission</p>

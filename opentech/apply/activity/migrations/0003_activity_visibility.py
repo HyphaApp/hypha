@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='activity',
             name='visibility',
-            field=models.CharField(choices=[('public', 'Public'), ('internal', 'Internal')], default='public', max_length=10),
+            field=models.CharField(choices=[('public', 'Public'), ('reviewers', 'Reviewers'), ('internal', 'Internal')], default='public', max_length=10),
         ),
     ]

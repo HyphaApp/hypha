@@ -667,18 +667,18 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def staff_not_reviewed(self):
-        return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
+        return self.reviewers.staff().exclude(id__in=self.reviews.published().values('author'))
 
     @property
     def reviewers_not_reviewed(self):
         return self.reviewers.reviewers().exclude(
-            id__in=self.reviews.values('author')
+            id__in=self.reviews.published().values('author')
         ).exclude(
             id__in=self.staff_not_reviewed,
         )
 
     def reviewed_by(self, user):
-        return self.reviews.filter(author=user).exists()
+        return self.reviews.published().filter(author=user).exists()
 
     def has_permission_to_review(self, user):
         if user.is_apply_staff:

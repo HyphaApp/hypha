@@ -38,6 +38,7 @@ RICH_TEXT_WIDGET = TinyMCE(mce_attrs={
             {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
         ]},
     ],
+    'height': 180,
 })
 
 
@@ -93,6 +94,7 @@ class BaseReviewForm(forms.ModelForm):
         self.instance.score = self.calculate_score()
 
         self.instance.recommendation = self.cleaned_data['recommendation']
+        self.instance.is_draft = "save_draft" in self.data
 
         super().save()
 
