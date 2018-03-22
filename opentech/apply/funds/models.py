@@ -664,6 +664,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     def missing_reviewers(self):
         return self.reviewers.exclude(id__in=self.reviews.submitted().values('author'))
 
+    @property
     def staff_not_reviewed(self):
         return self.missing_reviewers.staff()
 
