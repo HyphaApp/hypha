@@ -38,7 +38,7 @@
         {% block admin_actions %}
         {% endblock %}
         <div class="wrapper wrapper--sidebar">
-            {% if request.user|has_edit_perm:object or not request.user.is_apply_staff %}
+            {% if request.user|has_edit_perm:object and not request.user.is_apply_staff %}
                 <div>
                     <h4>Congratulations!</h4>
                     <h5>Your {{ object.previous.stage }} application has been accepted.</h5>
