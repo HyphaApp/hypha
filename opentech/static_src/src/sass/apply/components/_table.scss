@@ -47,7 +47,6 @@ table {
             display: block;
             width: 100%;
 
-
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
