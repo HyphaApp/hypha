@@ -57,6 +57,18 @@ table,
         }
     }
 
+    &--transparent {
+        background-color: transparent;
+    }
+
+    &--reviews-summary {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table;
+        }
+    }
+
     thead {
         display: none;
 
@@ -256,7 +268,6 @@ table,
                         margin-right: 5px;
                         background-color: $color--light-pink;
                     }
-
                 }
             }
         }
