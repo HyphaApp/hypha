@@ -6,7 +6,6 @@
             <td>-</td>
         {% else %}
             <td>
-                {# TODO: leads can view the reviews too #}
                 {% if request.user.is_apply_staff %}
                     <a href="{% url 'apply:reviews:review' submission_pk=review.submission.id pk=review.id %}">{{ review.author }}</a></td>
                 {% else %}
