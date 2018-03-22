@@ -35,7 +35,8 @@
 <div class="wrapper wrapper--medium wrapper--tabs">
 {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
-        {% include "funds/includes/actions.html" with mobile=True %}
+        {% block admin_actions %}
+        {% endblock %}
         <div class="wrapper wrapper--sidebar">
             <div>
                 <h6 class="heading heading--submission-meta">

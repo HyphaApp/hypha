@@ -1,6 +1,10 @@
 {% extends "funds/applicationsubmission_detail.html" %}
 {% load workflow_tags review_tags%}
 
+{% block admin_actions %}
+    {% include "funds/includes/actions.html" with mobile=True %}
+{% endblock %}
+
 {% block sidebar_forms %}
         {% include "funds/includes/actions.html" %}
         {% include "funds/includes/progress_form.html" %}
