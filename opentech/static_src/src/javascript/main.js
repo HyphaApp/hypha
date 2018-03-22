@@ -47,7 +47,10 @@ import '@fancyapps/fancybox';
         // Fancybox global options
         $('[data-fancybox]').fancybox({
             animationDuration : 350,
-            animationEffect : 'fade'
+            animationEffect : 'fade',
+            afterClose: function(){
+                $('.django-select2-checkboxes').select2('close');
+            }
         });
 
         // Open the activity feed
