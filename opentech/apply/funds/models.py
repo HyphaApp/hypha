@@ -662,16 +662,15 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             submission_in_db.save()
 
     @property
+    def missing_reviewers(self):
+        return self.reviewers.exclude(id__in=self.reviews.values('author'))
+
     def staff_not_reviewed(self):
-        return self.reviewers.staff().exclude(id__in=self.reviews.values('author'))
+        return self.missing_reviewers.staff()
 
     @property
     def reviewers_not_reviewed(self):
-        return self.reviewers.reviewers().exclude(
-            id__in=self.reviews.values('author')
-        ).exclude(
-            id__in=self.staff_not_reviewed,
-        )
+        return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
 
     def reviewed_by(self, user):
         return self.reviews.filter(author=user).exists()
