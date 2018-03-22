@@ -10,7 +10,7 @@
     {% include 'funds/includes/review_table_row.html' with reviews=object.staff_not_reviewed missing=True %}
 </table>
 
-{% if record.stage.has_external_review %}
+{% if object.stage.has_external_review %}
 <table>
     <tr>
         <th>Reviewers</th>
