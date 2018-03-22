@@ -28,7 +28,7 @@
             </div>
             {% include "funds/includes/status_bar.html" with phases=submission.workflow status=submission.phase class="status-bar--small" %}
             {% if request.user|can_edit:submission %}
-                <a href="{% url 'funds:edit_submission' submission.id %}">Edit your submission</a>
+                <a href="{% url 'funds:edit_submission' submission.id %}">Start your {{ submission.stage }} application</a>
             {% endif %}
         </div>
     {% empty %}
