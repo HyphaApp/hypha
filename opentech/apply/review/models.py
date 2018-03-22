@@ -20,14 +20,14 @@ RECOMMENDATION_CHOICES = (
 
 
 class ReviewQuerySet(models.QuerySet):
-    def published(self):
+    def submitted(self):
         return self.filter(is_draft=False)
 
     def by_staff(self):
-        return self.published().filter(author__in=User.objects.staff())
+        return self.submitted().filter(author__in=User.objects.staff())
 
     def by_reviewers(self):
-        return self.published().filter(author__in=User.objects.reviewers())
+        return self.submitted().filter(author__in=User.objects.reviewers())
 
     def staff_score(self):
         return self.by_staff().score()
