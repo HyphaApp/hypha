@@ -5,17 +5,18 @@
     {{ block.super }}
 
     {% with submission=row.record %}
-        <tr class="child" data-parent-id="{{ row.record.id }}">
+
+        {# placeholder for example data row #}
+        <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
-                <table>
-                    <tr>
-                        <th>Applicant</th>
-                        <th>Last updated</th>
-                        <th>Next deadline</th>
-                        <th>Reviewers / Outcomes</th>
+                <table class="table table--transparent">
+                    <tr class="tr tr--subchild">
+                        <th><h6 class="heading heading--normal heading--no-margin">Applicant</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">Last updated</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">Reviewers / Outcomes</h6></th>
                     </tr>
-                    <tr>
-                        <td>{{ submission.full_name }}</td>
+                    <tr class="tr tr--subchild tr--black">
+                        <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
                             {% with row.record.activities.last as last_update %}
                                 {% if last_update %}
@@ -26,14 +27,12 @@
                                 {% endif %}
                             {% endwith %}
                         </td>
-                        <td>&mdash;</td>
                         <td>
-                            <dl>
+                            <ul class="list list--no-margin">
                             {% for review in row.record.reviews.all %}
-                                <dt>{{ review.author }}</dt>
-                                <dd>{{ review.get_recommendation_display }}</dd>
+                                <li class="list__item list__item--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></li>
                             {% endfor %}
-                            </dl>
+                            </ul>
                         </td>
                     </tr>
                 </table>
@@ -44,15 +43,15 @@
     {% if row.record.previous %}
         {# we have a linked application #}
         {# re-render the header row #}
-        <tr class="child" data-parent-id="{{ row.record.id }}">
+        <tr class="tr tr--child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
-                <table>
-                    <tr>
+                <table class="table table--transparent">
+                    <tr class="tr tr--subchild">
                     {% for column in row.table.columns %}
                         {% if forloop.first %}
                             <th>Linked {{ row.record.previous.stage }}</th>
                         {% else %}
-                            <th>{{ column.header }}</th>
+                            <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
                         {% endif %}
                     {% endfor %}
                     </tr>

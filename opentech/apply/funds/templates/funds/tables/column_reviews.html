@@ -1,9 +1,9 @@
 {% load review_tags %}
 
-<table class="reviews-summary">
-    <tr>
+<table class="table table--reviews-summary table--transparent">
+    <tr class="tr tr--subchild">
         <td>{{ record.reviewers.count }}</td>
-        <td>{{ record.reviews.count }}</td>
-        <td>{{ record.reviews.recommendation|traffic_light }}</td>
+        <td>{{ record.reviews.submitted.count }}</td>
+        <td class="td td--traffic-light">{{ record.reviews.submitted.recommendation|traffic_light }}</td>
     </tr>
 </table>

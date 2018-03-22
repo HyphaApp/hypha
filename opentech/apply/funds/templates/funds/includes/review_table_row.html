@@ -5,7 +5,12 @@
             <td>-</td>
             <td>-</td>
         {% else %}
-            <td>{{ review.author }}</td>
+            <td>
+                {% if request.user.is_apply_staff %}
+                    <a href="{% url 'apply:reviews:review' submission_pk=review.submission.id pk=review.id %}">{{ review.author }}</a></td>
+                {% else %}
+                    {{ review.author }}
+                {% endif %}
             <td>{{ review.get_recommendation_display }}</td>
             <td>{{ review.score }}</td>
         {% endif %}

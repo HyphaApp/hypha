@@ -11,7 +11,7 @@
             <h3 class="heading heading--no-margin">Dashboard</h3>
             <h5>An overview of active and past submissions</h5>
         </div>
-        <div class="wrapper wrapper--apply-box">
+        <div class="wrapper wrapper--cta-box">
             <h4 class="heading heading--no-margin">Submit a new application</h4>
             <h5 class="heading heading--normal">Apply now for our open rounds</h5>
             <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">Apply</a>
@@ -28,7 +28,7 @@
             </div>
             {% include "funds/includes/status_bar.html" with phases=submission.workflow status=submission.phase class="status-bar--small" %}
             {% if request.user|has_edit_perm:submission %}
-                <a href="{% url 'funds:edit_submission' submission.id %}">Start your {{ submission.stage }} application</a>
+                <a class="button button--primary" href="{% url 'funds:edit_submission' submission.id %}">Start your {{ submission.stage }} application</a>
             {% endif %}
         </div>
     {% empty %}
