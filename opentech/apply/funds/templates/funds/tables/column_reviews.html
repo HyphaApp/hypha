@@ -2,20 +2,8 @@
 
 <table class="reviews-summary">
     <tr>
-        <td>{{ record.reviewers.staff.count }}</td>
-        {% with reviews=record.reviews.by_staff %}
-            <td>{{ reviews.count }}</td>
-            <td>{{ reviews.recommendation|traffic_light }}</td>
-        {% endwith %}
+        <td>{{ record.reviewers.count }}</td>
+        <td>{{ record.reviews.count }}</td>
+        <td>{{ record.reviews.recommendation|traffic_light }}</td>
     </tr>
-
-    {% if record.stage.has_external_review %}
-    <tr>
-        <td>{{ record.reviewers.reviewers.count }}</td>
-        {% with reviews=record.reviews.by_reviewers %}
-            <td>{{ reviews.count }}</td>
-            <td>{{ reviews.recommendation|traffic_light }}</td>
-        {% endwith %}
-    </tr>
-    {% endif %}
 </table>
