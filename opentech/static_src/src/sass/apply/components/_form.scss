@@ -150,6 +150,10 @@
     &__label {
         @extend %h5;
         font-weight: $weight--bold;
+
+        .wrapper--comments & {
+            font-size: 15px;
+        }
     }
 
     &__required {

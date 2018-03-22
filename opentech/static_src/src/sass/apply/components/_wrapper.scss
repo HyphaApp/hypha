@@ -242,7 +242,7 @@
         justify-content: space-between;
         margin-bottom: 20px;
     }
-  
+
     &--apply-box {
         width: 385px;
         padding: 20px;
@@ -294,6 +294,10 @@
         @include media-query(tablet-portrait) {
             padding-bottom: 35px;
             margin-bottom: 35px;
+        }
+
+        .helptext {
+            font-size: 15px;
         }
     }
 
