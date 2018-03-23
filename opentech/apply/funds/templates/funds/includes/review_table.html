@@ -1,6 +1,6 @@
 {% load review_tags %}
 
-<table class="table table--reviews-sidebar">
+<table class="table table--reviews-sidebar js-reviewers-sidebar">
     <tr class="tr tr--subchild light-grey-bg">
         <th colspan="2"></th>
         <th>{{ object.reviews.submitted.recommendation|traffic_light }}</th>
@@ -12,8 +12,8 @@
     {% if object.stage.has_external_review %}
         <tr class="tr tr--subchild light-grey-bg"><td colspan="4"><hr></td></tr>
 
-        {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
+        {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews class="hidden" %}
         {# Add logic for showing missing reviews #}
-        {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True %}
+        {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True class="hidden" %}
     {% endif %}
 </table>

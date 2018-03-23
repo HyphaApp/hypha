@@ -1,5 +1,5 @@
 {% for review in reviews %}
-    <tr class="tr--subchild {% if missing %}no-response{% endif %}">
+    <tr class="tr--subchild {{ class }} {% if missing %}no-response{% endif %}">
         {% if missing %}
             <td class="td td--author" colspan="2">{{ review }}</td>
             <td>-</td>
