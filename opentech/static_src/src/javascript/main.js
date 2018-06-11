@@ -3,6 +3,7 @@ import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
+import listInputFiles from './components/list-input-files';
 import '@fancyapps/fancybox';
 
 (function ($) {
@@ -27,15 +28,7 @@ import '@fancyapps/fancybox';
         });
 
         // Show list of selected files for upload on input[type=file]
-        $('input[type=file]').change(function() {
-            // remove any existing files first
-            $(this).siblings('.form__file').remove();
-            for (let i = 0; i < $(this)[0].files.length; ++i) {
-                $(this).parents('.form__item').prepend(`
-                    <p class="form__file">${$(this)[0].files[i].name}</p>
-                `);
-            }
-        });
+        listInputFiles();
 
         // Show actions sidebar on mobile
         $('.js-actions-toggle').click(function(e) {
