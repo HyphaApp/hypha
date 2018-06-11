@@ -1,6 +1,8 @@
 {% extends "base-apply.html" %}
 {% load bleach_tags review_tags workflow_tags %}
 
+{% block title %}Reviews{% endblock %}
+
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
     <div class="wrapper wrapper--medium">
@@ -17,15 +19,16 @@
         {% endif %}
     </div>
 </div>
-
-<table>
-{% for question, answers in review_data.items %}
-    <tr>
-        <th>{{ question }}</th>
-        {% for answer in answers %}
-            <td>{{ answer|bleach }}</td>
-        {% endfor %}
-    </tr>
-{% endfor %}
-</table>
+<div class="wrapper wrapper--reviews-table js-reviews-table">
+    <table class="table table--reviews">
+    {% for question, answers in review_data.items %}
+        <tr>
+            <th>{{ question }}</th>
+            {% for answer in answers %}
+                <td>{{ answer|bleach }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 {% endblock %}

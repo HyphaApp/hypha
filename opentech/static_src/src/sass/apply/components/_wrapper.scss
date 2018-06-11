@@ -308,4 +308,13 @@
             padding: 4rem 0;
         }
     }
+
+    &--reviews-table {
+        overflow-x: scroll;
+        user-select: none;
+
+        &:hover {
+            cursor: all-scroll;
+        }
+    }
 }

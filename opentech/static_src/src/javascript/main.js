@@ -95,6 +95,33 @@ import '@fancyapps/fancybox';
             });
         });
 
+        // Allow click and drag scrolling within reviews table wrapper
+        $('.js-reviews-table').attachDragger();
+
+        // Add colspan and accordion classes to review table header table rows
+        const accordionTableHeaders = $('.table--reviews tr th:only-child');
+        accordionTableHeaders.each((val, accordionHeader) => {
+            $(accordionHeader).attr('colspan', 100);
+            $(accordionHeader).parent('tr').addClass('js-accordion__toggle');
+        });
+
+        // Cache accordion items
+        const $jsAccordionToggle = $('.js-accordion__toggle');
+
+        // Add hidden classes to js-accordion items
+        $jsAccordionToggle.nextUntil('.js-accordion__toggle').addClass('is-hidden');
+
+        // Toggle accordion items
+        $jsAccordionToggle.click(function() {
+            if($(this).hasClass('is-expanded')){
+                $(this).removeClass('is-expanded');
+                $(this).nextUntil('.js-accordion__toggle').addClass('is-hidden');
+                return;
+            }
+            $('.js-accordion__toggle.is-expanded').nextUntil('.js-accordion__toggle').addClass('is-hidden');
+            $(this).addClass('is-expanded');
+            $(this).nextUntil('.js-accordion__toggle').removeClass('is-hidden');
+        });
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
@@ -177,6 +204,23 @@ import '@fancyapps/fancybox';
             positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
         }
     }
+
+    // Enable click and drag scrolling within a div
+    $.fn.attachDragger = function(){
+        let attachment = false, lastPosition, position, difference;
+        $($(this).selector ).on('mousedown mouseup mousemove', (e) => {
+            if(e.type == 'mousedown') attachment = true, lastPosition = [e.clientX, e.clientY];
+            if(e.type == 'mouseup') attachment = false;
+            if(e.type == 'mousemove' && attachment == true ){
+                position = [e.clientX, e.clientY];
+                difference = [ (position[0]-lastPosition[0]), (position[1]-lastPosition[1])];
+                $(this).scrollLeft( $(this).scrollLeft() - difference[0]);
+                $(this).scrollTop( $(this).scrollTop() - difference[1]);
+                lastPosition = [e.clientX, e.clientY];
+            }
+        });
+        $(window).on('mouseup', () => attachment = false);
+    };
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
