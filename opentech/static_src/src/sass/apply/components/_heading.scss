@@ -46,9 +46,12 @@
         text-transform: uppercase;
     }
 
-
     &--normal {
         font-weight: $weight--normal;
+    }
+
+    &--bold {
+        font-weight: $weight--bold;
     }
 
     &--activity-feed {
