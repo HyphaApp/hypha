@@ -12,8 +12,9 @@ class SubmissionTestCase(TestCase):
         self.user = self.user_factory()
         self.client.force_login(self.user)
 
-    def get_submission_page(self, submission):
-        detail_url = reverse('funds:submission', kwargs={'pk': submission.id})
+    def get_submission_page(self, submission, view_name='detail'):
+        view_name = f'funds:submissions:{ view_name }'
+        detail_url = reverse(view_name, kwargs={'pk': submission.id})
         return self.client.get(detail_url)
 
 
@@ -37,4 +38,23 @@ class TestApplicantSubmissionView(SubmissionTestCase):
     def test_cant_view_others_submission(self):
         submission = ApplicationSubmissionFactory()
         response = self.get_submission_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+    def test_can_edit_own_submission(self):
+        submission = ApplicationSubmissionFactory(user=self.user)
+        submission.status='Proposal__invited-for-proposal__0'
+        submission.save()
+        response = self.get_submission_page(submission, 'edit')
+        self.assertContains(response, submission.title)
+
+    def test_cant_edit_submission_incorrect_state(self):
+        submission = ApplicationSubmissionFactory(user=self.user, workflow_stages=2)
+        response = self.get_submission_page(submission, 'edit')
+        self.assertEqual(response.status_code, 403)
+
+    def test_cant_edit_other_submission(self):
+        submission = ApplicationSubmissionFactory()
+        submission.status='Proposal__invited-for-proposal__0'
+        submission.save()
+        response = self.get_submission_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
