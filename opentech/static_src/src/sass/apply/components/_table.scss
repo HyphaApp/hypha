@@ -49,43 +49,6 @@ table,
         background-color: transparent;
     }
 
-    &--reviews {
-        margin-top: 40px;
-        table-layout: auto;
-
-        tbody {
-            tr {
-                &:hover {
-                    box-shadow: none;
-                }
-
-                &:first-child {
-                    font-weight: $weight--bold;
-                }
-
-                > th:first-child,
-                > td:first-child {
-                    width: 160px;
-                    max-width: 160px;
-                    min-width: 160px;
-                    background-color: $color--light-mid-grey;
-                }
-
-                th,
-                td {
-                    display: table-cell;
-                    height: auto;
-                    vertical-align: top;
-                }
-
-                td {
-                    max-width: 340px;
-                    min-width: 340px;
-                }
-            }
-        }
-    }
-
     thead {
         display: none;
 
@@ -167,8 +130,13 @@ table,
     }
 
     .tr {
+        &--child,
         &--subchild {
             border: 0;
+
+            &:hover {
+                box-shadow: none;
+            }
         }
 
         @include media-query($table-breakpoint) {

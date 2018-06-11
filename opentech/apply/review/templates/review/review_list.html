@@ -20,12 +20,12 @@
     </div>
 </div>
 <div class="wrapper wrapper--reviews-table js-reviews-table">
-    <table class="table table--reviews">
+    <table class="reviews-list">
     {% for question, answers in review_data.items %}
-        <tr>
-            <th>{{ question }}</th>
+        <tr class="reviews-list__tr">
+            <th class="reviews-list__th">{{ question }}</th>
             {% for answer in answers %}
-                <td>{{ answer|bleach }}</td>
+                <td class="reviews-list__td">{{ answer|bleach }}</td>
             {% endfor %}
         </tr>
     {% endfor %}
