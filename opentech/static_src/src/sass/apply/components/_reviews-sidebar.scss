@@ -37,7 +37,7 @@
     }
 
     &__author {
-        a {
+        span {
             position: relative;
             z-index: 1;
             display: block;
@@ -46,7 +46,7 @@
         }
 
         &:hover {
-            a {
+            span {
                 display: inline;
                 overflow: visible;
             }

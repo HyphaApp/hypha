@@ -8,10 +8,10 @@
             <td class="reviews-sidebar__author" colspan="2">
                 {% if request.user.is_apply_staff %}
                     <a href="{% url 'apply:reviews:review' submission_pk=review.submission.id pk=review.id %}">
-                        {{ review.author }}
+                        <span>{{ review.author }}</span>
                     </a>
                 {% else %}
-                    {{ review.author }}
+                    <span>{{ review.author }}</span>
                 {% endif %}
             </td>
             <td>{{ review.get_recommendation_display }}</td>
