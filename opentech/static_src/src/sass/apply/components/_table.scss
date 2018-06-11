@@ -92,7 +92,12 @@ table,
             }
 
             &.title {
+                padding-top: 15px;
                 font-weight: $weight--bold;
+
+                @include media-query($table-breakpoint) {
+                    padding-top: 20px;
+                }
 
                 a {
                     color: $color--primary;
