@@ -117,7 +117,7 @@ DoubleStage = {
     },
     'concept_review_discussion': {
         'transitions': {
-            'invite_to_proposal': 'Invite to Proposal',
+            'invited_to_proposal': 'Invite to Proposal',
             'concept_rejected': 'Reject',
         },
         'display': 'Under Discussion',
@@ -143,6 +143,7 @@ DoubleStage = {
     'proposal_discussion' : {
         'transitions': {
             'proposal_internal_review' : 'Open Review',
+            'proposal_rejected': 'Reject',
         },
         'display': 'Under Discussion',
         'stage': Proposal,

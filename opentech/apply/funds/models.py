@@ -13,7 +13,7 @@ from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.text import mark_safe
+from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import FSMField, transition
@@ -513,27 +513,29 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
 
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
-        transition_prefix = 'transition_'
+        transition_prefix = 'transition'
         for workflow in WORKFLOW_CLASS.values():
             for phase, data in workflow.items():
-                for transition_name in data.get('transitions', {}).keys():
+                for transition_name, action in data.get('transitions', {}).items():
                     def transition_state(self):
                         # TODO include state change methods
                         pass
-                    function_name = transition_prefix + transition_name
+                    function_name = '_'.join([transition_prefix, slugify(action)])
                     transition_state.__name__ = function_name
                     transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
 
-                    attrs[function_name] = transition_func
+                    method_name = '_'.join([transition_prefix, transition_name, str(data['step'])])
+                    attrs[method_name] = transition_func
 
         def get_transition(self, transition):
-            return getattr(self, transition_prefix + transition)
+            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase['step'])]))
 
         attrs['get_transition'] = get_transition
 
-        attrs['restart'] = transition(attrs['status'], source='*', target=INITAL_STATE)(lambda x: None)
+        # attrs['restart'] = transition(attrs['status'], source='*', target=INITAL_STATE)(lambda x: None)
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
