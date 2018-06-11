@@ -19,6 +19,45 @@ table,
         }
     }
 
+    &--reviews-sidebar {
+        margin-bottom: 20px;
+        font-weight: $weight--bold;
+
+        tbody {
+            tr {
+                @include media-query($table-breakpoint) {
+                    border-bottom: 0;
+                }
+
+                &:hover {
+                    box-shadow: none;
+                }
+
+                > th {
+                    font-size: inherit;
+                    font-weight: $weight--bold;
+                }
+
+                > td {
+                    display: table-cell;
+                    height: auto;
+                }
+
+                th,
+                td,
+                td:last-child,
+                td:first-child {
+                    padding: 10px;
+                }
+
+                &.no-response {
+                    color: $color--black-20;
+                }
+            }
+        }
+    }
+
+
     &--reviews {
         margin-top: 40px;
         table-layout: auto;
@@ -255,7 +294,6 @@ table,
                         margin-right: 5px;
                         background-color: $color--light-pink;
                     }
-
                 }
             }
         }
@@ -325,6 +363,10 @@ table,
     }
 
     td {
+        &--author {
+            word-break: break-all;
+        }
+
         &.comments {
             display: none;
             font-size: 13px;
@@ -338,5 +380,4 @@ table,
             }
         }
     }
-
 }

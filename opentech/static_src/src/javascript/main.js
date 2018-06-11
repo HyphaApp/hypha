@@ -122,6 +122,32 @@ import '@fancyapps/fancybox';
             $(this).addClass('is-expanded');
             $(this).nextUntil('.js-accordion__toggle').removeClass('is-hidden');
         });
+        // get all the reviewers
+        const reviewers = $('.js-reviewers-sidebar').find('tr.hidden');
+
+        // show the first 4
+        $(reviewers).slice(0,1).removeClass('hidden');
+
+        // hide the toggle button
+        $('.js-toggle-reviewers').hide();
+
+        // if there's more than 1 reviewers, show the toggle button
+        if (reviewers.length > 1) {
+            $('.js-toggle-reviewers').show();
+        }
+
+        // toggle the remaining reviewers
+        $('.js-toggle-reviewers').click(function(e) {
+            e.preventDefault();
+            $(this).toggleClass('is-open');
+            if ($(this).hasClass('is-open')) {
+                $(this).html('hide all assigned advisors');
+                $(reviewers).slice(1).toggleClass('hidden');
+            } else {
+                $(this).html('all assigned advisors');
+                $(reviewers).slice(1).toggleClass('hidden');
+            }
+        });
     });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,

@@ -14,19 +14,17 @@
 
 {% block reviews %}
     <div class="sidebar__inner">
-        <h6 class="heading heading--light-grey heading--small heading--uppercase">Reviews</h6>
+        <h5>Reviews &amp; assignees</h5>
 
         {% include 'funds/includes/review_table.html' %}
+        <a class="link link--bold link--underlined link--toggle-reviewers js-toggle-reviewers" href="#">all assigned advisors</a>
 
         <div class="wrapper wrapper--button-container">
-            <a href="{% url 'apply:reviews:create' submission_pk=object.id %}" class="button button--primary button--half-width">Create review</a>
+            {% include 'review/includes/review_button.html' with submission=object %}
+            {% if request.user.is_apply_staff and object.reviews.exists %}
+                <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
+            {% endif %}
         </div>
-
-        {% include 'review/includes/review_button.html' with submission=object %}
-      
-        {% if request.user.is_apply_staff %}
-            <a href="{% url 'apply:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
-        {% endif %}
     </div>
 {% endblock %}
 
