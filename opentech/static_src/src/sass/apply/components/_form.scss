@@ -175,9 +175,13 @@
     }
 
     &__select {
-        max-width: 385px;
+        max-width: 100%;
         background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
         background-size: 8px;
+
+        @include media-query(tablet-portrait) {
+            max-width: 385px;
+        }
 
         select[multiple='multiple'] {
             display: block;
