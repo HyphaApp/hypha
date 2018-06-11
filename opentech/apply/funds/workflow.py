@@ -44,10 +44,15 @@ Stage = namedtuple('Stage', ['name', 'has_external_review'])
 
 Request = Stage('Request', False)
 
+Concept = Stage('Concept', False)
+
+Proposal = Stage('Proposal', False)
+
+
 INITAL_STATE = 'in_discussion'
 
 SingleStage = {
-    'in_discussion' : {
+    INITAL_STATE : {
         'transitions': {
             'internal_review' : 'Open Review',
             'rejected' : 'Reject',
@@ -59,7 +64,7 @@ SingleStage = {
     },
     'internal_review' : {
         'transitions': {
-            'in_discussion_2' : 'Close Review',
+            'post_review_discussion' : 'Close Review',
         },
         'display': 'Internal Review',
         'stage': Request,
@@ -91,16 +96,110 @@ SingleStage = {
 }
 
 DoubleStage = {
-    'in_discussion' : {
+    INITAL_STATE : {
         'transitions': {
-            'internal_review' : 'Open Review',
-            'rejected' : 'Reject',
+            'concept_internal_review' : 'Open Review',
+            'concept_rejected' : 'Reject',
         },
         'display': 'Under Discussion',
-        'stage': Request,
+        'stage': Concept,
         'permissions': Permission(),
         'step': 0,
     },
+    'concept_internal_review' : {
+        'transitions': {
+            'concept_review_discussion' : 'Close Review',
+        },
+        'display': 'Internal Review',
+        'stage': Concept,
+        'permissions': StaffReviewPermission(),
+        'step': 1,
+    },
+    'concept_review_discussion': {
+        'transitions': {
+            'invite_to_proposal': 'Invite to Proposal',
+            'concept_rejected': 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Concept,
+        'permissions': Permission(),
+        'step': 2,
+    },
+    'concept_rejected': {
+        'display': 'Rejected',
+        'stage': Concept,
+        'permissions': Permission(),
+        'step': 3,
+    },
+    'invited_to_proposal': {
+        'transitions': {
+            'proposal_discussion' : 'Submit',
+        },
+        'display': 'Invited for Proposal',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 3,
+    },
+    'proposal_discussion' : {
+        'transitions': {
+            'proposal_internal_review' : 'Open Review',
+        },
+        'display': 'Under Discussion',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 4,
+    },
+    'proposal_internal_review' : {
+        'transitions': {
+            'post_proposal_review_discussion' : 'Close Review',
+        },
+        'display': 'Internal Review',
+        'stage': Proposal,
+        'permissions': StaffReviewPermission(),
+        'step': 5,
+    },
+    'post_proposal_review_discussion': {
+        'transitions': {
+            'external_review': 'Open AC review',
+            'proposal_rejected': 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Proposal,
+        'permissions': ReviewerReviewPermission(),
+        'step': 6,
+    },
+    'external_review': {
+        'transitions': {
+            'post_external_review_discussion': 'Close Review',
+        },
+        'display': 'Advisory Council Review',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 7,
+    },
+    'post_external_review_discussion': {
+        'transitions': {
+            'proposal_accepted': 'Accept',
+            'proposal_rejected': 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 8,
+    },
+    'proposal_accepted': {
+        'display': 'Accepted',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 9,
+    },
+    'proposal_rejected': {
+        'display': 'Rejected',
+        'stage': Proposal,
+        'permissions': Permission(),
+        'step': 9,
+    },
+
 }
 
 
