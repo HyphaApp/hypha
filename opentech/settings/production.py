@@ -52,6 +52,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if 'SECRET_KEY' in env:
     SECRET_KEY = env['SECRET_KEY']
+else:
+    SECRET_KEY = 'sd'
 
 if 'ALLOWED_HOSTS' in env:
     ALLOWED_HOSTS = env['ALLOWED_HOSTS'].split(',')

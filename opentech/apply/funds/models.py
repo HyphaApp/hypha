@@ -513,20 +513,32 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
 
+class AddTransitions(models.base.ModelBase):
+    def __new__(cls, name, bases, attrs, **kwargs):
+        transition_prefix = 'transition_'
+        for workflow in WORKFLOW_CLASS.values():
+            for phase, data in workflow.items():
+                for transition_name in data.get('transitions', {}).keys():
+                    def transition_state(self):
+                        # TODO include state change methods
+                        pass
+                    function_name = transition_prefix + transition_name
+                    transition_state.__name__ = function_name
+                    transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
 
-class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission):
+                    attrs[function_name] = transition_func
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        fsm_field = self._meta.get_field('status')
-        for transition_name in self.phase['transitions'].keys():
-            def transition_state(self):
-                # TODO include state change methods
-                pass
-            transition_func = transition(fsm_field, source=self.status, target=transition_name)(transition_state)
+        def get_transition(self, transition):
+            return getattr(self, transition_prefix + transition)
 
-            setattr(self, transition_name, transition_func)
+        attrs['get_transition'] = get_transition
 
+        attrs['restart'] = transition(attrs['status'], source='*', target=INITAL_STATE)(lambda x: None)
+
+        return super().__new__(cls, name, bases, attrs, **kwargs)
+
+
+class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission, metaclass=AddTransitions):
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)

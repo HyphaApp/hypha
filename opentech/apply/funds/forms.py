@@ -22,8 +22,8 @@ class ProgressSubmissionForm(forms.ModelForm):
         self.should_show = bool(choices)
 
     def save(self, *args, **kwargs):
-        transition = getattr(self.instance, self.cleaned_data['action'])
-        transition(self.instance)
+        transition = self.instance.get_transition(self.cleaned_data['action'])
+        transition()
         return super().save(*args, **kwargs)
 
 

@@ -26,7 +26,7 @@ class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submission', args=[A('pk')], orderable=True)
     submit_time = tables.DateColumn(verbose_name="Submitted")
-    status_name = tables.Column(verbose_name="Status")
+    status_name = tables.Column(verbose_name="Status", accessor='phase.display')
     stage = tables.Column(verbose_name="Type", accessor='stage.name', order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
