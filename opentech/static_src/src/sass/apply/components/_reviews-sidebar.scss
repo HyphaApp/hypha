@@ -42,6 +42,7 @@
             z-index: 1;
             display: block;
             overflow: hidden;
+            text-overflow: ellipsis;
             background: $color--white;
         }
 
