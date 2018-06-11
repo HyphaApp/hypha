@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 import copy
 import itertools
 
@@ -9,6 +9,102 @@ from django.utils.text import slugify
 if TYPE_CHECKING:
     from opentech.apply.users.models import User  # NOQA
 
+
+class Permission:
+    def can_edit(self, user: 'User') -> bool:
+        return False
+
+    def can_staff_review(self, user: 'User') -> bool:
+        return False
+
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return False
+
+    def can_review(self, user: 'User') -> bool:
+        return self.can_staff_review(user) or self.can_reviewer_review(user)
+
+
+class StaffReviewPermission(Permission):
+    def can_staff_review(self, user: 'User') -> bool:
+        return user.is_apply_staff
+
+
+class ReviewerReviewPermission(Permission):
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return user.is_reviewer
+
+
+class CanEditPermission(Permission):
+    def can_edit(self, user: 'User') -> bool:
+        return True
+
+
+
+Stage = namedtuple('Stage', ['name', 'has_external_review'])
+
+Request = Stage('Request', False)
+
+INITAL_STATE = 'in_discussion'
+
+SingleStage = {
+    'in_discussion' : {
+        'transitions': {
+            'internal_review' : 'Open Review',
+            'rejected' : 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Request,
+        'permissions': Permission(),
+        'step': 0,
+    },
+    'internal_review' : {
+        'transitions': {
+            'in_discussion_2' : 'Close Review',
+        },
+        'display': 'Internal Review',
+        'stage': Request,
+        'permissions': StaffReviewPermission(),
+        'step': 1,
+    },
+    'post_review_discussion': {
+        'transitions': {
+            'accepted': 'Accept',
+            'rejected': 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Request,
+        'permissions': Permission(),
+        'step': 2,
+    },
+    'accepted': {
+        'display': 'Accepted',
+        'stage': Request,
+        'permissions': Permission(),
+        'step': 3,
+    },
+    'rejected': {
+        'display': 'Rejected',
+        'stage': Request,
+        'permissions': Permission(),
+        'step': 3,
+    },
+}
+
+DoubleStage = {
+    'in_discussion' : {
+        'transitions': {
+            'internal_review' : 'Open Review',
+            'rejected' : 'Reject',
+        },
+        'display': 'Under Discussion',
+        'stage': Request,
+        'permissions': Permission(),
+        'step': 0,
+    },
+}
+
+
+status_options = [(key, value['display']) for key, value in SingleStage.items()]
 
 """
 This file defines classes which allow you to compose workflows based on the following structure:
@@ -240,35 +336,6 @@ class PhaseIterator(Iterator):
         return self.Step(self.phases[self.current - 1])
 
 
-class Permission:
-    def can_edit(self, user: 'User') -> bool:
-        return False
-
-    def can_staff_review(self, user: 'User') -> bool:
-        return False
-
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return False
-
-    def can_review(self, user: 'User') -> bool:
-        return self.can_staff_review(user) or self.can_reviewer_review(user)
-
-
-class StaffReviewPermission(Permission):
-    def can_staff_review(self, user: 'User') -> bool:
-        return user.is_apply_staff
-
-
-class ReviewerReviewPermission(Permission):
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return user.is_reviewer
-
-
-class CanEditPermission(Permission):
-    def can_edit(self, user: 'User') -> bool:
-        return True
-
-
 class Phase:
     """
     Holds the Actions which a user can perform at each stage. A Phase with no actions is
@@ -450,53 +517,54 @@ class ProposalStage(Stage):
     ]
 
 
-class SingleStage(Workflow):
-    name = 'Single Stage'
-    stage_classes = [RequestStage]
+# class SingleStage(Workflow):
+#     name = 'Single Stage'
+#     stage_classes = [RequestStage]
 
 
-class DoubleStage(Workflow):
-    name = 'Two Stage'
-    stage_classes = [ConceptStage, ProposalStage]
+# class DoubleStage(Workflow):
+#     name = 'Two Stage'
+#     stage_classes = [ConceptStage, ProposalStage]
 
 
-statuses = set(phase.name for phase in Phase.__subclasses__())
-status_options = [(slugify(opt), opt) for opt in statuses]
+# statuses = set(phase.name for phase in Phase.__subclasses__())
+# status_options = [(slugify(opt), opt) for opt in statuses]
 
 
-def get_active_statuses() -> Set[str]:
-    active = set()
+# def get_active_statuses() -> Set[str]:
+#     active = set()
 
-    def add_if_active(phase: 'Phase') -> None:
-        if phase.active:
-            active.add(str(phase))
+#     def add_if_active(phase: 'Phase') -> None:
+#         if phase.active:
+#             active.add(str(phase))
 
-    for phase in itertools.chain(SingleStage(), DoubleStage()):
-        try:
-            add_if_active(phase)
-        except AttributeError:
-            # it is actually a step
-            step = phase
-            for phase in step.phases:
-                add_if_active(phase)
-    return active
+#     for phase in itertools.chain(SingleStage(), DoubleStage()):
+#         try:
+#             add_if_active(phase)
+#         except AttributeError:
+#             # it is actually a step
+#             step = phase
+#             for phase in step.phases:
+#                 add_if_active(phase)
+#     return active
 
 
-active_statuses = get_active_statuses()
+active_statuses = [] #get_active_statuses()
 
 
 def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
-    reviews = set()
+    return []
+#     reviews = set()
 
-    for step in itertools.chain(SingleStage(), DoubleStage()):
-        for phase in step.phases:
-            if isinstance(phase, ReviewPhase):
-                if user is None:
-                    reviews.add(str(phase))
-                elif phase.has_perm(user, 'review'):
-                    reviews.add(str(phase))
+#     for step in itertools.chain(SingleStage(), DoubleStage()):
+#         for phase in step.phases:
+#             if isinstance(phase, ReviewPhase):
+#                 if user is None:
+#                     reviews.add(str(phase))
+#                 elif phase.has_perm(user, 'review'):
+#                     reviews.add(str(phase))
 
-    return reviews
+#     return reviews
 
 
-review_statuses = get_review_statuses()
+review_statuses = [] #get_review_statuses()

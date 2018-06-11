@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from django_fsm import FSMField, transition
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -39,12 +40,12 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses
+from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE
 
 
 WORKFLOW_CLASS = {
-    SingleStage.name: SingleStage,
-    DoubleStage.name: DoubleStage,
+    'Request': SingleStage,
+    'Concept & Proposal': DoubleStage,
 }
 
 
@@ -88,15 +89,15 @@ class WorkflowHelpers(models.Model):
         abstract = True
 
     WORKFLOWS = {
-        'single': SingleStage.name,
-        'double': DoubleStage.name,
+        'single': 'Request',
+        'double': 'Concept & Proposal',
     }
 
     workflow_name = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single', verbose_name="Workflow")
 
     @property
     def workflow(self):
-        return self.workflow_class()
+        return self.workflow_class
 
     @property
     def workflow_class(self):
@@ -514,6 +515,18 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
 
 class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        fsm_field = self._meta.get_field('status')
+        for transition_name in self.phase['transitions'].keys():
+            def transition_state(self):
+                # TODO include state change methods
+                pass
+            transition_func = transition(fsm_field, source=self.status, target=transition_name)(transition_state)
+
+            setattr(self, transition_name, transition_func)
+
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
@@ -537,7 +550,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
-    status = models.CharField(max_length=254)
+    status = FSMField(default=INITAL_STATE, protected=True)
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
@@ -546,19 +559,19 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def status_name(self):
-        return self.phase.name
+        return self.status
 
     @property
     def stage(self):
-        return self.phase.stage
+        return self.phase['stage']
 
     @property
     def phase(self):
-        return self.workflow.current(self.status)
+        return self.workflow.get(self.status) or self.workflow.get(list(self.workflow.keys())[0])
 
     @property
     def active(self):
-        return self.phase.active
+        return True
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
@@ -648,17 +661,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             self.reviewers.set(self.get_from_parent('reviewers').all())
 
         # Check to see if we should progress to the next stage
-        if self.phase.can_proceed and not self.next:
-            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+        # if self.phase.can_proceed and not self.next:
+        #     submission_in_db = ApplicationSubmission.objects.get(id=self.id)
 
-            self.id = None
-            self.status = str(self.workflow.next(self.status))
-            self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
+        #     self.id = None
+        #     self.status = str(self.workflow.next(self.status))
+        #     self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
 
-            super().save(*args, **kwargs)
+        #     super().save(*args, **kwargs)
 
-            submission_in_db.next = self
-            submission_in_db.save()
+        #     submission_in_db.next = self
+        #     submission_in_db.save()
 
     @property
     def missing_reviewers(self):
