@@ -7,18 +7,6 @@ table,
     border-collapse: collapse;
     table-layout: fixed;
 
-    &--transparent {
-        background-color: transparent;
-    }
-
-    &--reviews-summary {
-        display: none;
-
-        @include media-query($table-breakpoint) {
-            display: table;
-        }
-    }
-
     &--reviews-sidebar {
         margin-bottom: 20px;
         font-weight: $weight--bold;
@@ -66,6 +54,43 @@ table,
 
         @include media-query($table-breakpoint) {
             display: table;
+        }
+    }
+
+    &--reviews {
+        margin-top: 40px;
+        table-layout: auto;
+
+        tbody {
+            tr {
+                &:hover {
+                    box-shadow: none;
+                }
+
+                &:first-child {
+                    font-weight: $weight--bold;
+                }
+
+                > th:first-child,
+                > td:first-child {
+                    width: 160px;
+                    max-width: 160px;
+                    min-width: 160px;
+                    background-color: $color--light-mid-grey;
+                }
+
+                th,
+                td {
+                    display: table-cell;
+                    height: auto;
+                    vertical-align: top;
+                }
+
+                td {
+                    max-width: 340px;
+                    min-width: 340px;
+                }
+            }
         }
     }
 
