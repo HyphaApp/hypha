@@ -4,6 +4,7 @@ import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
 import listInputFiles from './components/list-input-files';
+import toggleActionsPanel from './components/toggle-actions-panel';
 import '@fancyapps/fancybox';
 
 (function ($) {
@@ -31,11 +32,7 @@ import '@fancyapps/fancybox';
         listInputFiles();
 
         // Show actions sidebar on mobile
-        $('.js-actions-toggle').click(function(e) {
-            e.preventDefault();
-            this.classList.toggle('is-active');
-            this.nextElementSibling.classList.toggle('is-visible');
-        });
+        toggleActionsPanel();
 
         // Fancybox global options
         $('[data-fancybox]').fancybox({
