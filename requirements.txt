@@ -1,5 +1,6 @@
 Django==2.0.2
 djangorestframework==3.7.4
+django-fsm==2.6.0
 wagtail==2.0
 psycopg2==2.7.3.1
 Pillow==4.3.0

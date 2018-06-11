@@ -7,12 +7,12 @@
     <div class="wrapper wrapper--medium">
         <h2 class="heading heading--no-margin">{{ object.title }}</h2>
         <h5 class="heading heading--meta">
-            <span>{{ object.stage }}</span>
+            <span>{{ object.stage.name }}</span>
             <span>{{ object.page }}</span>
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with phases=object.phase.stage status=object.phase %}
+        {% include "funds/includes/status_bar.html" with phases=object.workflow status=object.status current_phase=object.phase %}
 
         <div class="tabs js-tabs">
             <div class="tabs__container">
