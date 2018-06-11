@@ -1,15 +1,15 @@
 {% load review_tags %}
 
-<table class="table table--reviews-summary table--transparent">
-    <tr class="tr tr--subchild">
-        <td>
+<table class="reviews-summary">
+    <tr class="reviews-summary__tr">
+        <td class="reviews-summary__td">
             {% if record.stage.has_external_review %}
                 {{ record.reviewers.count }}
             {% else %}
                 {{ record.reviewers.staff.count }}
             {% endif %}
         </td>
-        <td>{{ record.reviews.submitted.count }}</td>
-        <td class="td td--traffic-light">{{ record.reviews.submitted.recommendation|traffic_light }}</td>
+        <td class="reviews-summary__td">{{ record.reviews.submitted.count }}</td>
+        <td class="reviews-summary__td reviews-summary__td--traffic-light">{{ record.reviews.submitted.recommendation|traffic_light }}</td>
     </tr>
 </table>
