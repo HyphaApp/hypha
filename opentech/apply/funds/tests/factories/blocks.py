@@ -103,6 +103,11 @@ class RichTextFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.RichTextFieldBlock
 
 
+class ValueFieldBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.ValueBlock
+
+
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
     def generate(self, *args, **kwargs):
         blocks = super().generate(*args, **kwargs)
@@ -117,6 +122,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
 CustomFormFieldsFactory = StreamFieldUUIDFactory({
     'title': TitleBlockFactory,
+    'value': ValueFieldBlockFactory,
     'email': EmailBlockFactory,
     'full_name': FullNameBlockFactory,
     'char': CharFieldBlockFactory,
