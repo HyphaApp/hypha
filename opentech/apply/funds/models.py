@@ -729,7 +729,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return form_data
 
     def get_absolute_url(self):
-        return reverse('funds:submission', args=(self.id,))
+        return reverse('funds:submissions:detail', args=(self.id,))
 
     def __getattribute__(self, item):
         # __getattribute__ allows correct error handling from django compared to __getattr__

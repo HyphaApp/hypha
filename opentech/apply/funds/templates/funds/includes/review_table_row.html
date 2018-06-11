@@ -7,7 +7,7 @@
         {% else %}
             <td class="td td--author" colspan="2">
                 {% if request.user.is_apply_staff %}
-                    <a href="{% url 'apply:reviews:review' submission_pk=review.submission.id pk=review.id %}">{{ review.author }}</a></td>
+                    <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">{{ review.author }}</a></td>
                 {% else %}
                     {{ review.author }}
                 {% endif %}
