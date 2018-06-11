@@ -5,10 +5,14 @@ from .views import SubmissionSearchView, SubmissionDetailView, SubmissionEditVie
 
 app_name = 'funds'
 
+submission_urls = ([
+    path('', SubmissionListView.as_view(), name="list"),
+    path('<int:pk>/', SubmissionDetailView.as_view(), name="detail"),
+    path('<int:pk>/edit/', SubmissionEditView.as_view(), name="edit"),
+    path('<int:submission_pk>/', include('opentech.apply.review.urls', namespace="reviews")),
+], 'submissions')
+
 urlpatterns = [
-    path('submissions/', SubmissionListView.as_view(), name="submissions"),
-    path('submissions/<int:pk>/', SubmissionDetailView.as_view(), name="submission"),
-    path('submissions/<int:pk>/edit', SubmissionEditView.as_view(), name="edit_submission"),
-    path('submissions/<int:submission_pk>/', include('opentech.apply.review.urls', namespace="reviews")),
+    path('submissions/', include(submission_urls)),
     path('search', SubmissionSearchView.as_view(), name="search"),
 ]
