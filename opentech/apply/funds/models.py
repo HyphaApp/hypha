@@ -40,7 +40,7 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE, Phase
+from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE, get_stages
 
 
 WORKFLOW_CLASS = {
@@ -97,11 +97,11 @@ class WorkflowHelpers(models.Model):
 
     @property
     def workflow(self):
-        return self.workflow_class
+        return WORKFLOW_CLASS[self.get_workflow_name_display()]
 
     @property
-    def workflow_class(self):
-        return WORKFLOW_CLASS[self.get_workflow_name_display()]
+    def stages(self):
+        return get_stages(self.workflow)
 
     @classmethod
     def workflow_class_from_name(cls, name):
@@ -119,7 +119,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         if not stage:
             form_index = 0
         else:
-            form_index = self.workflow.stages.index(stage)
+            form_index = self.stages.index(stage)
         return self.forms.all()[form_index].fields
 
     content_panels = AbstractStreamForm.content_panels + [
@@ -512,15 +512,14 @@ class AddTransitions(models.base.ModelBase):
         transition_prefix = 'transition'
         for workflow in WORKFLOW_CLASS.values():
             for phase, data in workflow.items():
-                for transition_name, action in data.get('transitions', {}).items():
-                    def transition_state(self):
-                        # TODO include state change methods
-                        pass
+                for transition_name, action in data.transitions.items():
+                    method = data.transition_methods.get(transition_name)
+                    transition_state = attrs.get(method, lambda self: None)
                     function_name = '_'.join([transition_prefix, slugify(action)])
                     transition_state.__name__ = function_name
                     transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
 
-                    method_name = '_'.join([transition_prefix, transition_name, str(data['step'])])
+                    method_name = '_'.join([transition_prefix, transition_name, str(data.step)])
                     attrs[method_name] = transition_func
 
         def get_transition(self, transition):
@@ -570,8 +569,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def phase(self):
-        phase_data = self.workflow.get(self.status)
-        return Phase(self.status, **phase_data)
+        return self.workflow.get(self.status)
 
     @property
     def active(self):
@@ -633,6 +631,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
+    def progress_application(self):
+        submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+
+        self.id = None
+        self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
+
+        self.save()
+
+        submission_in_db.next = self
+        submission_in_db.save()
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -652,7 +661,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
-            self.status = str(self.workflow.first())
             # Copy extra relevant information to the child
             self.lead = self.get_from_parent('lead')
 
@@ -663,19 +671,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         if creating:
             self.reviewers.set(self.get_from_parent('reviewers').all())
-
-        # Check to see if we should progress to the next stage
-        # if self.phase.can_proceed and not self.next:
-        #     submission_in_db = ApplicationSubmission.objects.get(id=self.id)
-
-        #     self.id = None
-        #     self.status = str(self.workflow.next(self.status))
-        #     self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
-
-        #     super().save(*args, **kwargs)
-
-        #     submission_in_db.next = self
-        #     submission_in_db.save()
 
     @property
     def missing_reviewers(self):

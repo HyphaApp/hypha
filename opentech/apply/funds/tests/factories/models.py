@@ -15,6 +15,7 @@ from opentech.apply.funds.models import (
     Round,
     RoundForm,
 )
+from opentech.apply.funds.workflow import get_stages
 from opentech.apply.users.tests.factories import UserFactory
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -66,7 +67,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in get_stages(self.workflow):
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
                     fund=self,
@@ -108,7 +109,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in get_stages(self.workflow):
                 # Generate a form based on all defined fields on the model
                 RoundFormFactory(
                     round=self,
