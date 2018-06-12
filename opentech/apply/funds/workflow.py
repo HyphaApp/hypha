@@ -1,12 +1,5 @@
-from collections import defaultdict, namedtuple
-import copy
+from collections import defaultdict
 import itertools
-
-from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union, TYPE_CHECKING
-
-
-if TYPE_CHECKING:
-    from opentech.apply.users.models import User  # NOQA
 
 
 class Phase:
@@ -89,19 +82,19 @@ Proposal = Stage('Proposal', False)
 INITAL_STATE = 'in_discussion'
 
 SingleStageDefinition = {
-    INITAL_STATE : {
+    INITAL_STATE: {
         'transitions': {
-            'internal_review' : 'Open Review',
-            'rejected' : 'Reject',
+            'internal_review': 'Open Review',
+            'rejected': 'Reject',
         },
         'display': 'Under Discussion',
         'stage': Request,
         'permissions': Permission(),
         'step': 0,
     },
-    'internal_review' : {
+    'internal_review': {
         'transitions': {
-            'post_review_discussion' : 'Close Review',
+            'post_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
         'stage': Request,
@@ -134,19 +127,19 @@ SingleStageDefinition = {
 
 
 DoubleStageDefinition = {
-    INITAL_STATE : {
+    INITAL_STATE: {
         'transitions': {
-            'concept_internal_review' : 'Open Review',
-            'concept_rejected' : 'Reject',
+            'concept_internal_review': 'Open Review',
+            'concept_rejected': 'Reject',
         },
         'display': 'Under Discussion',
         'stage': Concept,
         'permissions': Permission(),
         'step': 0,
     },
-    'concept_internal_review' : {
+    'concept_internal_review': {
         'transitions': {
-            'concept_review_discussion' : 'Close Review',
+            'concept_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
         'stage': Concept,
@@ -180,16 +173,16 @@ DoubleStageDefinition = {
     },
     'draft_proposal': {
         'transitions': {
-            'proposal_discussion' : 'Submit',
+            'proposal_discussion': 'Submit',
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
         'permissions': Permission(),
         'step': 4,
     },
-    'proposal_discussion' : {
+    'proposal_discussion': {
         'transitions': {
-            'proposal_internal_review' : 'Open Review',
+            'proposal_internal_review': 'Open Review',
             'proposal_rejected': 'Reject',
         },
         'display': 'Under Discussion',
@@ -197,9 +190,9 @@ DoubleStageDefinition = {
         'permissions': Permission(),
         'step': 5,
     },
-    'proposal_internal_review' : {
+    'proposal_internal_review': {
         'transitions': {
-            'post_proposal_review_discussion' : 'Close Review',
+            'post_proposal_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
         'stage': Proposal,
@@ -262,6 +255,7 @@ DoubleStage = {
     for phase_name, phase_data in DoubleStageDefinition.items()
 }
 
+
 def get_stages(workflow):
     return list(set(phase.stage for phase in workflow.values()))
 
@@ -279,7 +273,7 @@ active_statuses = [
 ]
 
 
-def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
+def get_review_statuses(user=None):
     reviews = set()
 
     for phase_name, phase in PHASES:
@@ -289,5 +283,6 @@ def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
             elif phase.permissions.can_review(user):
                 reviews.add(phase_name)
     return reviews
+
 
 review_statuses = get_review_statuses()

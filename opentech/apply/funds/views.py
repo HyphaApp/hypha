@@ -95,7 +95,6 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
             return HttpResponseRedirect(instance.get_absolute_url())
 
 
-
 @method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission

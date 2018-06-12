@@ -43,6 +43,7 @@ class TestStaffSubmissionView(SubmissionTestCase):
         self.assertEqual(submission_origional.status, 'invited_to_proposal')
         self.assertEqual(submission_next.status, 'draft_proposal')
 
+
 class TestApplicantSubmissionView(SubmissionTestCase):
     user_factory = UserFactory
 
@@ -70,7 +71,7 @@ class TestApplicantSubmissionView(SubmissionTestCase):
 
     def test_cant_edit_other_submission(self):
         submission = ApplicationSubmissionFactory()
-        submission.status='Proposal__invited-for-proposal__0'
+        submission.status = 'Proposal__invited-for-proposal__0'
         submission.save()
         response = self.get_submission_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
