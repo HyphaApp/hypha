@@ -4,7 +4,7 @@ register = template.Library()
 
 
 def check_permission(user, perm, submission):
-    perm_method = getattr(submission.phase['permissions'], f'can_{perm}', lambda x: False)
+    perm_method = getattr(submission.phase.permissions, f'can_{perm}', lambda x: False)
     return perm_method(user)
 
 
