@@ -42,6 +42,7 @@ class SubmissionsTable(tables.Table):
             'class': make_row_class,
             'data-record-id': lambda record: record.id,
         }
+        attrs = {'class': 'all-submissions'}
 
     def render_user(self, value):
         return value.get_full_name()
