@@ -45,7 +45,7 @@ def build_form(data, prefix=''):
             extras[field][attr] = value
 
     form_fields = {}
-    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys()):
+    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories):
         form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
         for attr, value in extras[field].items():
             form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
@@ -139,7 +139,7 @@ class LabFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in get_stages(self.workflow):
                 # Generate a form based on all defined fields on the model
                 LabFormFactory(
                     lab=self,
