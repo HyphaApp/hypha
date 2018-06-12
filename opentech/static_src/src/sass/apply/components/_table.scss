@@ -56,7 +56,7 @@ table {
         padding: 5px 20px;
 
         @include media-query($table-breakpoint) {
-            padding: 20px;
+            padding: 15px 10px;
         }
     }
 }
