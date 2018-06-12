@@ -4,7 +4,6 @@ import itertools
 
 from typing import Dict, Iterable, Iterator, List, Sequence, Set, Type, Union, TYPE_CHECKING
 
-from django.utils.text import slugify
 
 if TYPE_CHECKING:
     from opentech.apply.users.models import User  # NOQA
@@ -59,8 +58,6 @@ class ReviewerReviewPermission(Permission):
 class CanEditPermission(Permission):
     def can_edit(self, user: 'User') -> bool:
         return True
-
-
 
 
 Request = Stage('Request', False)
@@ -224,15 +221,30 @@ DoubleStage = {
 
 }
 
+PHASES = list(itertools.chain(SingleStage.items(), DoubleStage.items()))
 
-status_options = [(key, value['display']) for key, value in SingleStage.items()]
+STATUSES = defaultdict(set)
 
+for key, value in PHASES:
+    STATUSES[value['display']].add(key)
 
-active_statuses = []
+active_statuses = [
+    status for status in PHASES
+    if 'accepted' not in status or 'rejected' not in status
+]
 
 
 def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
-    return []
+    reviews = set()
 
+    for phase_name, phase in PHASES:
+        if 'review' in phase_name:
+            if user is None:
+                reviews.add(phase_name)
+            elif phase['permissions'].has_perm(user, 'review'):
+                reviews.add(phase_name)
+    return reviews
 
-review_statuses = []
+review_statuses = get_review_statuses()
+
+print(review_statuses)

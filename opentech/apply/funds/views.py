@@ -72,9 +72,9 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'progress_form'
 
     def form_valid(self, form):
-        old_phase = form.instance.phase['display']
+        old_phase = form.instance.phase.display_name
         response = super().form_valid(form)
-        new_phase = form.instance.phase['display']
+        new_phase = form.instance.phase.display_name
         Activity.actions.create(
             user=self.request.user,
             submission=self.kwargs['submission'],

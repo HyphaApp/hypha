@@ -1,14 +1,14 @@
 <div class="status-bar {{ class }}">
-    {% for phase_name, phase in phases.items %}
-        {% if not same_stage or current_phase.stage == phase.stage %}
+    {% for phase_name, phase_data in phases.items %}
+        {% if not same_stage or current_phase.stage == phase_data.stage %}
             <div class="status-bar__item
-                        {% if phase_name == status %}
+                        {% if phase_name == current_phase.name %}
                             status-bar__item--is-current
-                        {% elif current_phase.step > phase.step %}
+                        {% elif current_phase.step > phase_data.step %}
                             status-bar__item--is-complete
                         {% endif %}">
                 <span class="status-bar__tooltip"
-                    data-title="{{ phase.display }}" aria-label="{{ phase.display }}"
+                    data-title="{{ phase_data.display }}" aria-label="{{ phase_data.display }}"
                 ></span>
                 <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
             </div>
@@ -16,5 +16,5 @@
     {% endfor %}
 </div>
 <div class="status-bar--mobile">
-    <h6 class="status-bar__subheading">{{ current_phase.display }}</h6>
+    <h6 class="status-bar__subheading">{{ current_phase }}</h6>
 </div>

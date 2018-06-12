@@ -12,7 +12,7 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with phases=object.workflow status=object.status current_phase=object.phase same_stage=True%}
+        {% include "funds/includes/status_bar.html" with phases=object.workflow current_phase=object.phase same_stage=True%}
 
         <div class="tabs js-tabs">
             <div class="tabs__container">
