@@ -524,7 +524,7 @@ class AddTransitions(models.base.ModelBase):
                     attrs[method_name] = transition_func
 
         def get_transition(self, transition):
-            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase['step'])]))
+            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step)]))
 
         attrs['get_transition'] = get_transition
 
@@ -565,10 +565,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     objects = ApplicationSubmissionQueryset.as_manager()
 
     @property
-    def status_name(self):
-        return self.status
-
-    @property
     def stage(self):
         return self.phase.stage
 
@@ -579,7 +575,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def active(self):
-        return True
+        return self.status in active_statuses
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:

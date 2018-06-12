@@ -1,4 +1,5 @@
 from django import forms
+from django_fsm import can_proceed
 
 from opentech.apply.users.models import User
 
@@ -21,9 +22,16 @@ class ProgressSubmissionForm(forms.ModelForm):
         action_field.choices = choices
         self.should_show = bool(choices)
 
+    def clean_action(self):
+        action = self.cleaned_data['action']
+        transition = self.instance.get_transition(action)
+        if not can_proceed(transition):
+            raise forms.ValidationError('You do not have permission to do that')
+        self.transition = transition
+        return action
+
     def save(self, *args, **kwargs):
-        transition = self.instance.get_transition(self.cleaned_data['action'])
-        transition()
+        self.transition()
         return super().save(*args, **kwargs)
 
 
