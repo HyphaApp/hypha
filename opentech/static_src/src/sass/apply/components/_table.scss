@@ -49,51 +49,6 @@ table,
         background-color: transparent;
     }
 
-    &--reviews-summary {
-        display: none;
-
-        @include media-query($table-breakpoint) {
-            display: table;
-        }
-    }
-
-    &--reviews {
-        margin-top: 40px;
-        table-layout: auto;
-
-        tbody {
-            tr {
-                &:hover {
-                    box-shadow: none;
-                }
-
-                &:first-child {
-                    font-weight: $weight--bold;
-                }
-
-                > th:first-child,
-                > td:first-child {
-                    width: 160px;
-                    max-width: 160px;
-                    min-width: 160px;
-                    background-color: $color--light-mid-grey;
-                }
-
-                th,
-                td {
-                    display: table-cell;
-                    height: auto;
-                    vertical-align: top;
-                }
-
-                td {
-                    max-width: 340px;
-                    min-width: 340px;
-                }
-            }
-        }
-    }
-
     thead {
         display: none;
 
@@ -108,8 +63,7 @@ table,
         }
     }
 
-    tr:not(.tr--child):not(.tr--subchild),
-    .tr:not(.tr--child):not(.tr--subchild) {
+    tr {
         border: 1px solid $color--light-mid-grey;
         transition: box-shadow 0.15s ease;
 
@@ -137,16 +91,13 @@ table,
                 width: initial;
             }
 
-            &:first-child {
-                padding-top: 20px;
-            }
-
-            &:last-child {
-                padding-bottom: 20px;
-            }
-
             &.title {
+                padding-top: 15px;
                 font-weight: $weight--bold;
+
+                @include media-query($table-breakpoint) {
+                    padding-top: 20px;
+                }
 
                 a {
                     color: $color--primary;
@@ -184,6 +135,15 @@ table,
     }
 
     .tr {
+        &--child,
+        &--subchild {
+            border: 0;
+
+            &:hover {
+                box-shadow: none;
+            }
+        }
+
         @include media-query($table-breakpoint) {
             .arrow {
                 @include triangle(bottom, $color--primary, 6px);
@@ -260,20 +220,15 @@ table,
             }
         }
 
-        &--subchild {
-            vertical-align: top;
-
-            th,
-            td {
-                padding: 10px;
-            }
-        }
-
         &--black {
             color: $color--default;
         }
 
         .td {
+            &--child {
+                border: 0;
+            }
+
             &__copy {
                 &--light {
                     font-weight: $weight--normal;
