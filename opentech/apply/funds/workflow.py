@@ -246,5 +246,3 @@ def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
     return reviews
 
 review_statuses = get_review_statuses()
-
-print(review_statuses)
