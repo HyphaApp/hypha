@@ -53,6 +53,7 @@ $table-breakpoint: 'tablet-portrait';
             &.title {
                 @include media-query($table-breakpoint) {
                     width: 230px;
+                    padding-left: 20px;
                 }
             }
 
@@ -79,6 +80,7 @@ $table-breakpoint: 'tablet-portrait';
 
                 @include media-query($table-breakpoint) {
                     padding-top: 20px;
+                    padding-left: 20px;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
