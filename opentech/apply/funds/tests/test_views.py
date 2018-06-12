@@ -42,7 +42,7 @@ class TestApplicantSubmissionView(SubmissionTestCase):
 
     def test_can_edit_own_submission(self):
         submission = ApplicationSubmissionFactory(user=self.user)
-        submission.status='Proposal__invited-for-proposal__0'
+        submission.status = 'Proposal__invited-for-proposal__0'
         submission.save()
         response = self.get_submission_page(submission, 'edit')
         self.assertContains(response, submission.title)
