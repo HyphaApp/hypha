@@ -40,7 +40,7 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE
+from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE, Phase
 
 
 WORKFLOW_CLASS = {
@@ -577,11 +577,12 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def stage(self):
-        return self.phase['stage']
+        return self.phase.stage
 
     @property
     def phase(self):
-        return self.workflow.get(self.status) or self.workflow.get(list(self.workflow.keys())[0])
+        phase_data = self.workflow.get(self.status)
+        return Phase(self.status, **phase_data)
 
     @property
     def active(self):
