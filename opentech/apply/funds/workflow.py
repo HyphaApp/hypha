@@ -115,10 +115,20 @@ SingleStageDefinition = {
         'transitions': {
             'internal_review': 'Open Review',
             'rejected': 'Reject',
+            'more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Request,
         'permissions': Permission(),
+        'step': 0,
+    },
+    'more_info': {
+        'transitions': {
+            INITAL_STATE: 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Request,
+        'permissions': CanEditPermission(),
         'step': 0,
     },
     'internal_review': {
@@ -134,12 +144,23 @@ SingleStageDefinition = {
         'transitions': {
             'accepted': 'Accept',
             'rejected': 'Reject',
+            'post_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Request,
         'permissions': Permission(),
         'step': 2,
     },
+    'post_review_more_info': {
+        'transitions': {
+            'post_review_discussion': 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Request,
+        'permissions': CanEditPermission(),
+        'step': 2,
+    },
+
     'accepted': {
         'display': 'Accepted',
         'stage': Request,
@@ -160,10 +181,20 @@ DoubleStageDefinition = {
         'transitions': {
             'concept_internal_review': 'Open Review',
             'concept_rejected': 'Reject',
+            'concept_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Concept,
         'permissions': Permission(),
+        'step': 0,
+    },
+    'concept_more_info': {
+        'transitions': {
+            INITAL_STATE: 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Concept,
+        'permissions': CanEditPermission(),
         'step': 0,
     },
     'concept_internal_review': {
@@ -179,10 +210,20 @@ DoubleStageDefinition = {
         'transitions': {
             'invited_to_proposal': 'Invite to Proposal',
             'concept_rejected': 'Reject',
+            'concept_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Concept,
         'permissions': Permission(),
+        'step': 2,
+    },
+    'concept_review_more_info': {
+        'transitions': {
+            'concept_review_discussion': 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Concept,
+        'permissions': CanEditPermission(),
         'step': 2,
     },
     'invited_to_proposal': {
@@ -213,10 +254,20 @@ DoubleStageDefinition = {
         'transitions': {
             'proposal_internal_review': 'Open Review',
             'proposal_rejected': 'Reject',
+            'proposal_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
+        'step': 5,
+    },
+    'proposal_more_info': {
+        'transitions': {
+            'proposal_discussion': 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 5,
     },
     'proposal_internal_review': {
@@ -232,10 +283,20 @@ DoubleStageDefinition = {
         'transitions': {
             'external_review': 'Open AC review',
             'proposal_rejected': 'Reject',
+            'post_proposal_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': ReviewerReviewPermission(),
+        'step': 7,
+    },
+    'post_proposal_review_more_info': {
+        'transitions': {
+            'post_proposal_review_discussion': 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 7,
     },
     'external_review': {
@@ -251,10 +312,20 @@ DoubleStageDefinition = {
         'transitions': {
             'proposal_accepted': 'Accept',
             'proposal_rejected': 'Reject',
+            'post_external_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
+        'step': 9,
+    },
+    'post_external_review_more_info': {
+        'transitions': {
+            'post_external_review_discussion': 'Submit',
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 9,
     },
     'proposal_accepted': {

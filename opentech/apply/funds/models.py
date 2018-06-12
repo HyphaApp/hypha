@@ -503,17 +503,16 @@ class AddTransitions(models.base.ModelBase):
                     # Get the method defined on the parent or default to a NOOP
                     transition_state = attrs.get(method, lambda self: None)
                     # Provide a neat name for graph viz display
-                    function_name = '_'.join([transition_prefix, slugify(action)])
-                    transition_state.__name__ = function_name
+                    transition_state.__name__ = slugify(action)
                     # Wrap with transition decorator
                     transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
 
                     # Attach to new class
-                    method_name = '_'.join([transition_prefix, transition_name, str(data.step)])
+                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
                     attrs[method_name] = transition_func
 
         def get_transition(self, transition):
-            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step)]))
+            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
 
         attrs['get_transition'] = get_transition
 
