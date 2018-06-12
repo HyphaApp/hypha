@@ -7,13 +7,13 @@
     {% with submission=row.record %}
         <tr class="all-submissions__child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
-                <table class="table table--transparent">
-                    <tr class="tr tr--subchild">
+                <table class="submission-meta">
+                    <tr class="submission-meta__row">
                         <th><h6 class="heading heading--normal heading--no-margin">Applicant</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">Last updated</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">Reviewers / Outcomes</h6></th>
                     </tr>
-                    <tr class="tr tr--subchild tr--black">
+                    <tr class="submission-meta__row submission-meta__row--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
                             {% with row.record.activities.last as last_update %}
@@ -45,8 +45,8 @@
         {# we have a linked application, re-render the header row #}
         <tr class="all-submissions__child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
-                <table class="table table--transparent">
-                    <tr class="tr tr--subchild">
+                <table class="submission-meta">
+                    <tr class="submission-meta__row">
                     {% for column in row.table.columns %}
                         {% if forloop.first %}
                             <th>Linked {{ row.record.previous.stage }}</th>

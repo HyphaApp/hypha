@@ -1,0 +1,15 @@
+.submission-meta {
+    background-color: transparent;
+
+    &__row {
+        border: 0;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &--black {
+            color: $color--default;
+        }
+    }
+}
