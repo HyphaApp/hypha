@@ -59,6 +59,9 @@ table,
 
                 @include media-query($table-breakpoint) {
                     padding-top: 20px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
 
                 a {
