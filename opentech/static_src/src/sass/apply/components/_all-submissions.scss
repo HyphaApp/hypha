@@ -55,6 +55,12 @@ $table-breakpoint: 'tablet-portrait';
                     width: 230px;
                 }
             }
+
+            &.status_name {
+                @include media-query($table-breakpoint) {
+                    width: 150px;
+                }
+            }
         }
 
         tr {
