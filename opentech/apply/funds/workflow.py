@@ -177,7 +177,7 @@ DoubleStageDefinition = {
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': CanEditPermission(),
         'step': 4,
     },
     'proposal_discussion': {

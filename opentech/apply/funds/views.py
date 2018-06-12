@@ -196,7 +196,7 @@ class SubmissionEditView(UpdateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user != self.get_object().user:
             raise PermissionDenied
-        if not self.get_object().phase.has_perm(request.user, 'edit'):
+        if not self.get_object().phase.permissions.can_edit(request.user):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 

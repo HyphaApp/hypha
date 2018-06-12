@@ -58,9 +58,7 @@ class TestApplicantSubmissionView(SubmissionTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_can_edit_own_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user)
-        submission.status = 'Proposal__invited-for-proposal__0'
-        submission.save()
+        submission = ApplicationSubmissionFactory(user=self.user, status='draft_proposal', workflow_stages=2)
         response = self.get_submission_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
@@ -70,8 +68,6 @@ class TestApplicantSubmissionView(SubmissionTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_edit_other_submission(self):
-        submission = ApplicationSubmissionFactory()
-        submission.status = 'Proposal__invited-for-proposal__0'
-        submission.save()
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
         response = self.get_submission_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
