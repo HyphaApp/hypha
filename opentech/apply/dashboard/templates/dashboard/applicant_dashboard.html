@@ -26,7 +26,7 @@
                 <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submission:detail' submission.id %}">{{ submission.title }}</a></h5>
                 <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
             </div>
-            {% include "funds/includes/status_bar.html" with phases=submission.workflow status=submission.status current_phase=submission.phase class="status-bar--small" %}
+            {% include "funds/includes/status_bar.html" with phases=submission.workflow current_phase=submission.phase class="status-bar--small" %}
             {% if request.user|has_edit_perm:submission %}
                 <a class="button button--primary" href="{% url 'funds:submission:edit' submission.id %}">Start your {{ submission.stage }} application</a>
             {% endif %}
