@@ -16,14 +16,26 @@ class Phase:
         self.stage = stage
         self.permissions = permissions
         self.step = step
+
+        # For building transition methods on the parent
+        self.all_transitions = {}
         self.transition_methods = {}
+
+        # For building form actions
         self.transitions = {}
         for transition, action in transitions.items():
             try:
-                self.transition_methods[transition] = action['action']
-                self.transitions[transition] = action['display']
+                self.all_transitions[transition] = action['display']
+                method_name = action.get('action')
+                if method_name:
+                    self.transition_methods[transition] = method_name
+                show_in_form = action.get('form', True)
             except TypeError:
-                self.transitions[transition] = action
+                show_in_form = True
+                self.all_transitions[transition] = action
+
+            if show_in_form:
+                self.transitions[transition] = self.all_transitions[transition]
 
     def __str__(self):
         return self.display_name
@@ -151,17 +163,17 @@ DoubleStageDefinition = {
         'permissions': Permission(),
         'step': 2,
     },
-    'concept_rejected': {
-        'display': 'Rejected',
+    'invited_to_proposal': {
+        'display': 'Invited for Proposal',
+        'transitions': {
+            'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'form': False},
+        },
         'stage': Concept,
         'permissions': Permission(),
         'step': 3,
     },
-    'invited_to_proposal': {
-        'display': 'Invited for Proposal',
-        'transitions': {
-            'draft_proposal': {'display': 'Progress', 'action': 'progress_application'},
-        },
+    'concept_rejected': {
+        'display': 'Rejected',
         'stage': Concept,
         'permissions': Permission(),
         'step': 3,
@@ -263,7 +275,7 @@ for key, value in PHASES:
 
 active_statuses = [
     status for status in PHASES
-    if 'accepted' not in status or 'rejected' not in status
+    if 'accepted' not in status or 'rejected' not in status or 'invited' not in status
 ]
 
 
