@@ -1,6 +1,7 @@
 $table-breakpoint: 'tablet-portrait';
 
 .all-submissions {
+    $root: &;
     font-size: 14px;
 
     thead {
@@ -40,6 +41,14 @@ $table-breakpoint: 'tablet-portrait';
                 }
             }
 
+            &.reviews_stats {
+                color: $color--mid-dark-grey;
+
+                span {
+                    font-size: 13px;
+                }
+            }
+
             // set column widths
             &.title {
                 @include media-query($table-breakpoint) {
@@ -56,10 +65,6 @@ $table-breakpoint: 'tablet-portrait';
     }
 
     tbody {
-        tr {
-
-        }
-
         td {
             // project title
             &.title {
@@ -100,6 +105,20 @@ $table-breakpoint: 'tablet-portrait';
                 }
             }
 
+            // comments
+            &.comments {
+                display: none;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
+                    font-size: 13px;
+                    text-align: center;
+                    vertical-align: middle;
+                    background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
+                    background-size: 24px;
+                }
+            }
+
             // arrow to toggle project info - added via js
             @include media-query($table-breakpoint) {
                 .arrow {
@@ -116,4 +135,68 @@ $table-breakpoint: 'tablet-portrait';
             }
         }
     }
+
+    &__parent {
+        &.is-expanded {
+            background-color: $color--mist;
+            border-bottom: 1px solid $color--light-mid-grey;
+
+            + #{$root}__child {
+                border-bottom: 1px solid $color--light-mid-grey;
+            }
+
+            + #{$root}__child,
+            + #{$root}__child + #{$root}__child {
+                display: table-row;
+            }
+
+            .arrow {
+                border-top-color: darken($color--dark-blue, 10%);
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    &__child {
+        display: none;
+        color: $color--mid-dark-grey;
+        vertical-align: top;
+        background-color: $color--mist;
+        border: 0;
+        border-bottom: 2px solid $color--light-grey;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        p {
+            margin: 0;
+            font-weight: $weight--bold;
+            color: $color--default;
+        }
+
+        .status_name {
+            span {
+                display: inline-block;
+                padding: 10px;
+                font-size: 13px;
+                font-weight: $weight--bold;
+                color: $color--mid-dark-grey;
+                text-align: center;
+                background-color: transparent;
+                border: 1px solid $color--mid-dark-grey;
+            }
+        }
+
+        .title {
+            a {
+                visibility: hidden;
+            }
+        }
+    }
 }
+

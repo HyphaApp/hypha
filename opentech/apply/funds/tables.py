@@ -17,7 +17,7 @@ from .widgets import Select2MultiCheckboxesWidget
 
 
 def make_row_class(record):
-    css_class = 'tr tr--child' if record.next else 'tr tr--parent'
+    css_class = 'all-submissions__child' if record.next else 'all-submissions__parent'
     css_class += '' if record.active else ' is-inactive'
     return css_class
 
