@@ -84,6 +84,28 @@ $table-breakpoint: 'tablet-portrait';
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+
+                    &::before {
+                        position: absolute;
+                        z-index: -1;
+                        width: 200px;
+                        padding: 5px;
+                        margin-top: 25px;
+                        font-size: 12px;
+                        white-space: normal;
+                        background: #f0fbff;
+                        border: 1px solid #a6ccdd;
+                        content: attr(data-tooltip);
+                        opacity: 0;
+                        transition: opacity $transition;
+                    }
+
+                    &:hover {
+                        &::before {
+                            z-index: 10;
+                            opacity: 1;
+                        }
+                    }
                 }
 
                 a {
