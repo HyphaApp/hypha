@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import UpdateView
 
 from django_filters.views import FilterView
+from django_fsm import can_proceed
 from django_tables2.views import SingleTableMixin
 
 from opentech.apply.activity.views import (
@@ -80,7 +81,19 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
             submission=self.kwargs['submission'],
             message=f'Progressed from {old_phase} to {new_phase}'
         )
-        return response
+        return self.progress_stage(form.instance) or response
+
+    def progress_stage(self, instance):
+        try:
+            proposal_transition = instance.get_transition('draft_proposal')
+        except AttributeError:
+            pass
+        else:
+            if can_proceed(proposal_transition):
+                proposal_transition()
+                instance.save()
+            return HttpResponseRedirect(instance.get_absolute_url())
+
 
 
 @method_decorator(staff_required, name='dispatch')

@@ -1,5 +1,7 @@
 from wagtail.admin.forms import WagtailAdminPageForm
 
+from .workflow import get_stages
+
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):
     def clean(self):
@@ -19,7 +21,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
             number_of_forms = len(valid_forms)
             plural_form = 's' if number_of_forms > 1 else ''
 
-            number_of_stages = len(workflow.stage_classes)
+            number_of_stages = len(get_stages(workflow))
             plural_stage = 's' if number_of_stages > 1 else ''
 
             if number_of_forms != number_of_stages:

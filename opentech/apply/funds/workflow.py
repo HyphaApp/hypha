@@ -16,7 +16,14 @@ class Phase:
         self.stage = stage
         self.permissions = permissions
         self.step = step
-        self.transitions = transitions
+        self.transition_methods = {}
+        self.transitions = {}
+        for transition, action in transitions.items():
+            try:
+                self.transition_methods[transition] = action['action']
+                self.transitions[transition] = action['display']
+            except TypeError:
+                self.transitions[transition] = action
 
     def __str__(self):
         return self.display_name
@@ -69,7 +76,7 @@ Proposal = Stage('Proposal', False)
 
 INITAL_STATE = 'in_discussion'
 
-SingleStage = {
+SingleStageDefinition = {
     INITAL_STATE : {
         'transitions': {
             'internal_review' : 'Open Review',
@@ -113,7 +120,8 @@ SingleStage = {
     },
 }
 
-DoubleStage = {
+
+DoubleStageDefinition = {
     INITAL_STATE : {
         'transitions': {
             'concept_internal_review' : 'Open Review',
@@ -150,13 +158,22 @@ DoubleStage = {
         'step': 3,
     },
     'invited_to_proposal': {
+        'display': 'Invited for Proposal',
+        'transitions': {
+            'draft_proposal': {'display': 'Progress', 'action': 'progress_application'},
+        },
+        'stage': Concept,
+        'permissions': Permission(),
+        'step': 3,
+    },
+    'draft_proposal': {
         'transitions': {
             'proposal_discussion' : 'Submit',
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 3,
+        'step': 4,
     },
     'proposal_discussion' : {
         'transitions': {
@@ -166,7 +183,7 @@ DoubleStage = {
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 4,
+        'step': 5,
     },
     'proposal_internal_review' : {
         'transitions': {
@@ -175,7 +192,7 @@ DoubleStage = {
         'display': 'Internal Review',
         'stage': Proposal,
         'permissions': StaffReviewPermission(),
-        'step': 5,
+        'step': 6,
     },
     'post_proposal_review_discussion': {
         'transitions': {
@@ -185,7 +202,7 @@ DoubleStage = {
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': ReviewerReviewPermission(),
-        'step': 6,
+        'step': 7,
     },
     'external_review': {
         'transitions': {
@@ -194,7 +211,7 @@ DoubleStage = {
         'display': 'Advisory Council Review',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 7,
+        'step': 8,
     },
     'post_external_review_discussion': {
         'transitions': {
@@ -204,29 +221,45 @@ DoubleStage = {
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 8,
+        'step': 9,
     },
     'proposal_accepted': {
         'display': 'Accepted',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 9,
+        'step': 10,
     },
     'proposal_rejected': {
         'display': 'Rejected',
         'stage': Proposal,
         'permissions': Permission(),
-        'step': 9,
+        'step': 10,
     },
 
 }
+
+
+SingleStage = {
+    phase_name: Phase(phase_name, **phase_data)
+    for phase_name, phase_data in SingleStageDefinition.items()
+}
+
+
+DoubleStage = {
+    phase_name: Phase(phase_name, **phase_data)
+    for phase_name, phase_data in DoubleStageDefinition.items()
+}
+
+def get_stages(workflow):
+    return list(set(phase.stage for phase in workflow.values()))
+
 
 PHASES = list(itertools.chain(SingleStage.items(), DoubleStage.items()))
 
 STATUSES = defaultdict(set)
 
 for key, value in PHASES:
-    STATUSES[value['display']].add(key)
+    STATUSES[value.display_name].add(key)
 
 active_statuses = [
     status for status in PHASES
@@ -241,7 +274,7 @@ def get_review_statuses(user: Union[None, 'User']=None) -> Set[str]:
         if 'review' in phase_name:
             if user is None:
                 reviews.add(phase_name)
-            elif phase['permissions'].has_perm(user, 'review'):
+            elif phase.permissions.can_review(user):
                 reviews.add(phase_name)
     return reviews
 
