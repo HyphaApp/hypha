@@ -276,6 +276,12 @@ table,
                 @include triangle(bottom, $color--default, 5px);
             }
         }
+
+        &.title {
+            @include media-query($table-breakpoint) {
+                width: 230px;
+            }
+        }
     }
 
     td {
