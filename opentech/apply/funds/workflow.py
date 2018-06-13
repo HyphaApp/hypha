@@ -13,6 +13,20 @@ be fixed when streamfield, may require intermediate fix prior to launch]
 """
 
 
+class Workflow(dict):
+    def __init__(self, name, admin_name, **data):
+        self.name = name
+        self.admin_name = admin_name
+        super().__init__(**data)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def stages(self):
+        return list(set(phase.stage for phase in self.values()))
+
+
 class Phase:
     def __init__(self, name, display, stage, permissions, step, transitions=dict()):
         self.name = name
@@ -255,23 +269,26 @@ DoubleStageDefinition = {
 }
 
 
-SingleStage = {
+Request = Workflow('Request', 'single', **{
     phase_name: Phase(phase_name, **phase_data)
     for phase_name, phase_data in SingleStageDefinition.items()
-}
+})
 
 
-DoubleStage = {
+ConceptProposal = Workflow('Concept & Proposal', 'double', **{
     phase_name: Phase(phase_name, **phase_data)
     for phase_name, phase_data in DoubleStageDefinition.items()
+})
+
+
+WORKFLOWS = {
+    Request.admin_name: Request,
+    ConceptProposal.admin_name: ConceptProposal,
 }
 
 
-def get_stages(workflow):
-    return list(set(phase.stage for phase in workflow.values()))
+PHASES = list(itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values()))
 
-
-PHASES = list(itertools.chain(SingleStage.items(), DoubleStage.items()))
 
 STATUSES = defaultdict(set)
 

@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import SubmissionSearchView, SubmissionDetailView, SubmissionEditView, SubmissionListView, demo_workflow
+from .views import SubmissionSearchView, SubmissionDetailView, SubmissionEditView, SubmissionListView
 
 
 app_name = 'funds'
@@ -13,7 +13,6 @@ submission_urls = ([
 ], 'submissions')
 
 urlpatterns = [
-    path('demo/<int:wf_id>/', demo_workflow, name="workflow_demo"),
     path('submissions/', include(submission_urls)),
     path('search', SubmissionSearchView.as_view(), name="search"),
 ]
