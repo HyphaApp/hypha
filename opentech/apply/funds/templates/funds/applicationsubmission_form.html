@@ -1,5 +1,12 @@
 {% extends "base-apply.html" %}
+{% block title %}Editing: {{object.title }}{% endblock %}
 {% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large">
+        <h2 class="heading heading--no-margin">Editing: {{ object.title }}</h2>
+    </div>
+</div>
+
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <form class="form" action="" method="post" enctype="multipart/form-data">
         {{ form.media }}
