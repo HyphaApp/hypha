@@ -47,6 +47,7 @@ WORKFLOW_CLASS = {
     'Request': SingleStage,
     'Concept & Proposal': DoubleStage,
 }
+from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITIAL_STATE, get_stages
 
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
@@ -531,7 +532,7 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_transition'] = get_transition
 
-        # attrs['restart'] = transition(attrs['status'], source='*', target=INITAL_STATE)(lambda x: None)
+        # attrs['restart'] = transition(attrs['status'], source='*', target=INITIAL_STATE)(lambda x: None)
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
@@ -560,7 +561,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
-    status = FSMField(default=INITAL_STATE, protected=True)
+    status = FSMField(default=INITIAL_STATE, protected=True)
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
