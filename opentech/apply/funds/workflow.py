@@ -124,7 +124,7 @@ SingleStageDefinition = {
     },
     'more_info': {
         'transitions': {
-            INITAL_STATE: 'Submit',
+            INITIAL_STATE: 'Submit',
         },
         'display': 'More information required',
         'stage': Request,
@@ -190,7 +190,7 @@ DoubleStageDefinition = {
     },
     'concept_more_info': {
         'transitions': {
-            INITAL_STATE: 'Submit',
+            INITIAL_STATE: 'Submit',
         },
         'display': 'More information required',
         'stage': Concept,
