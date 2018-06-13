@@ -227,7 +227,7 @@ DoubleStageDefinition = {
         'step': 2,
     },
     'invited_to_proposal': {
-        'display': 'Invited for Proposal',
+        'display': 'Concept Accepted',
         'transitions': {
             'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'form': False},
         },
@@ -371,7 +371,7 @@ for key, value in PHASES:
     STATUSES[value.display_name].add(key)
 
 active_statuses = [
-    status for status in PHASES
+    status for status, _ in PHASES
     if 'accepted' not in status or 'rejected' not in status or 'invited' not in status
 ]
 
