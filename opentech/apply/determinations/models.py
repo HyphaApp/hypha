@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+from opentech.apply.activity.models import Activity
 
 UNAPPROVED = 0
 UNDETERMINED = 1
@@ -36,3 +39,22 @@ class Determination(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.determination_responses)}>'
+
+
+@receiver(post_save, sender=Determination)
+def log_determination_activity(sender, **kwargs):
+    determination = kwargs.get('instance')
+
+    if kwargs.get('created', False):
+        Activity.actions.create(
+            user=determination.author,
+            submission=determination.submission,
+            message=f'Created a determination for {determination.submission.title}'
+        )
+
+    if not kwargs.get('is_draft', False):
+        Activity.actions.create(
+            user=determination.author,
+            submission=determination.submission,
+            message=f'Sent the determination for {determination.submission.title}'
+        )
