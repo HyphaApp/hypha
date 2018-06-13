@@ -91,7 +91,7 @@ class WorkflowHelpers(models.Model):
 
     @property
     def workflow(self):
-        return WORKFLOWS[self.workflow]
+        return WORKFLOWS[self.workflow_name]
 
 
 class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
