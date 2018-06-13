@@ -2,6 +2,17 @@ from collections import defaultdict
 import itertools
 
 
+"""
+This file defines classes which allow you to compose workflows based on the following structure:
+
+Workflow -> Stage -> Phase -> Action
+
+Current limitations:
+* Changing the name of a phase will mean that any object which references it cannot progress. [will
+be fixed when streamfield, may require intermediate fix prior to launch]
+"""
+
+
 class Phase:
     def __init__(self, name, display, stage, permissions, step, transitions=dict()):
         self.name = name
