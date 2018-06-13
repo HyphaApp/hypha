@@ -30,7 +30,7 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-    last_update = tables.DateColumn(accessor="activities.last.timestamp", verbose_name="Last updated")
+    last_update = tables.DateColumn(accessor="activities.first.timestamp", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
