@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import SubmissionSearchView, SubmissionDetailView, SubmissionEditView, SubmissionListView, demo_workflow
+from .views import SubmissionSearchView, SubmissionDetailView, SubmissionEditView, SubmissionListView
 
 
 app_name = 'funds'

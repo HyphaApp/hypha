@@ -40,14 +40,7 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITAL_STATE, get_stages
-
-
-WORKFLOW_CLASS = {
-    'Request': SingleStage,
-    'Concept & Proposal': DoubleStage,
-}
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses, INITIAL_STATE, get_stages
+from .workflow import active_statuses, get_review_statuses, review_statuses, INITIAL_STATE, WORKFLOWS
 
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
@@ -89,24 +82,16 @@ class WorkflowHelpers(models.Model):
     class Meta:
         abstract = True
 
-    WORKFLOWS = {
-        'single': 'Request',
-        'double': 'Concept & Proposal',
+    WORKFLOW_CHOICES = {
+        name: workflow.name
+        for name, workflow in WORKFLOWS.items()
     }
 
-    workflow_name = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single', verbose_name="Workflow")
+    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name="Workflow")
 
     @property
     def workflow(self):
-        return WORKFLOW_CLASS[self.get_workflow_name_display()]
-
-    @property
-    def stages(self):
-        return get_stages(self.workflow)
-
-    @classmethod
-    def workflow_class_from_name(cls, name):
-        return WORKFLOW_CLASS[cls.WORKFLOWS[name]]
+        return WORKFLOWS[self.workflow]
 
 
 class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
@@ -120,7 +105,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         if not stage:
             form_index = 0
         else:
-            form_index = self.stages.index(stage)
+            form_index = self.workflow.stages.index(stage)
         return self.forms.all()[form_index].fields
 
     content_panels = AbstractStreamForm.content_panels + [
@@ -511,7 +496,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
         transition_prefix = 'transition'
-        for workflow in WORKFLOW_CLASS.values():
+        for workflow in WORKFLOWS.values():
             for phase, data in workflow.items():
                 for transition_name, action in data.all_transitions.items():
                     method = data.transition_methods.get(transition_name)

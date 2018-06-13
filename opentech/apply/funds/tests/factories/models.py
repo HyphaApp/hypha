@@ -67,7 +67,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in get_stages(self.workflow):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
                     fund=self,
@@ -109,7 +109,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in get_stages(self.workflow):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 RoundFormFactory(
                     round=self,
@@ -139,7 +139,7 @@ class LabFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in get_stages(self.workflow):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 LabFormFactory(
                     lab=self,
