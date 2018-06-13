@@ -24,7 +24,11 @@ class Workflow(dict):
 
     @property
     def stages(self):
-        return list(set(phase.stage for phase in self.values()))
+        stages = []
+        for phase in self.values():
+            if phase.stage not in stages:
+                stages.append(phase.stage)
+        return stages
 
 
 class Phase:
