@@ -23,12 +23,13 @@ class ProgressSubmissionForm(forms.ModelForm):
         self.should_show = bool(choices)
 
     def clean_action(self):
-        action = self.cleaned_data['action']
-        transition = self.instance.get_transition(action)
+        action_name = self.cleaned_data['action']
+        transition = self.instance.get_transition(action_name)
         if not can_proceed(transition):
-            raise forms.ValidationError('You do not have permission to do that')
+            action = self.instance.phase.transitions[action_name]
+            raise forms.ValidationError(f'You do not have permission to "{ action }"')
         self.transition = transition
-        return action
+        return action_name
 
     def save(self, *args, **kwargs):
         self.transition()
