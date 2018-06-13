@@ -501,7 +501,7 @@ class AddTransitions(models.base.ModelBase):
                 for transition_name, action in data.all_transitions.items():
                     method = data.transition_methods.get(transition_name)
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = attrs.get(method, lambda self: None)
+                    transition_state = attrs.get(method, lambda *args, **kwargs: None)
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action)
                     # Wrap with transition decorator
