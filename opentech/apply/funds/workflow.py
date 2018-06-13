@@ -90,10 +90,10 @@ Concept = Stage('Concept', False)
 Proposal = Stage('Proposal', False)
 
 
-INITAL_STATE = 'in_discussion'
+INITIAL_STATE = 'in_discussion'
 
 SingleStageDefinition = {
-    INITAL_STATE: {
+    INITIAL_STATE: {
         'transitions': {
             'internal_review': 'Open Review',
             'rejected': 'Reject',
@@ -138,7 +138,7 @@ SingleStageDefinition = {
 
 
 DoubleStageDefinition = {
-    INITAL_STATE: {
+    INITIAL_STATE: {
         'transitions': {
             'concept_internal_review': 'Open Review',
             'concept_rejected': 'Reject',
