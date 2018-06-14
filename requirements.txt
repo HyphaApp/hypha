@@ -12,7 +12,6 @@ stellar==0.4.3
 django-tinymce4-lite==1.7.0
 uwsgidecorators==1.1.0
 
-mypy==0.550
 factory_boy==2.9.2
 # wagtail_factories - waiting on merge and release form master branch
 git+git://github.com/todd-dembrey/wagtail-factories.git#egg=wagtail_factories
