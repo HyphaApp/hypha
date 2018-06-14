@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load workflow_tags review_tags%}
+{% load workflow_tags review_tags determination_tags %}
 
 {% block admin_actions %}
     {% include "funds/includes/actions.html" with mobile=True %}
@@ -16,7 +16,8 @@
     <div class="sidebar__inner">
         <h5>Determination</h5>
         {% if object.determination %}
-            {{ object.determination.determination }} | {{ object.determination.author }}
+            <a href="{% url 'apply:determinations:determination' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_determination_display }}</a>
+            {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
         {% endif %}
         {% include 'determinations/includes/determination_button.html' with submission=object %}
     </div>
