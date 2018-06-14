@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.activity.models import Activity
 
@@ -12,9 +13,9 @@ UNDETERMINED = 1
 APPROVED = 2
 
 DETERMINATION_CHOICES = (
-    (UNAPPROVED, 'Unapproved'),
-    (UNDETERMINED, 'Undetermined'),
-    (APPROVED, 'Approved'),
+    (UNAPPROVED, _('Unapproved')),
+    (UNDETERMINED, _('Undetermined')),
+    (APPROVED, _('Approved')),
 )
 
 
@@ -29,8 +30,10 @@ class Determination(models.Model):
         on_delete=models.PROTECT,
     )
     determination_data = JSONField()
-    determination = models.IntegerField(verbose_name="Determination", choices=DETERMINATION_CHOICES, default=0)
-    is_draft = models.BooleanField(default=False, verbose_name="Draft")
+    determination = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=0)
+    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
 
     class Meta:
         unique_together = ('author', 'submission')
@@ -42,7 +45,7 @@ class Determination(models.Model):
         return f'Determination for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.determination_responses)}>'
+        return f'<{self.__class__.__name__}: {str(self.determination_data)}>'
 
 
 @receiver(post_save, sender=Determination)
