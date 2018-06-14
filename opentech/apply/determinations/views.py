@@ -106,30 +106,28 @@ class DeterminationDetailView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        determination = self.get_object().determination
+        determination_data = self.get_object().determination_data
+        # We only need the form fields that are not the determination value
+        determination_data.pop('determination')
+
         form_used = get_form_for_stage(self.get_object().submission)
-        determination_data = {}
+        form_determination_data = {}
 
         for name, field in form_used.base_fields.items():
             try:
-                # Add titles which exist
+                # Add any titles that exist
                 title = form_used.titles[field.group]
-                determination_data.setdefault(title, [])
+                form_determination_data.setdefault(title, [])
             except AttributeError:
                 pass
 
-            value = determination[name]
             try:
-                choices = dict(field.choices)
-            except AttributeError:
+                value = determination_data[name]
+                form_determination_data.setdefault(field.label, str(value))
+            except KeyError:
                 pass
-            else:
-                # Update the stored value to the display value
-                value = choices[int(value)]
-
-            determination_data.setdefault(field.label, str(value))
 
         return super().get_context_data(
-            determination_data=determination_data,
+            determination_data=form_determination_data,
             **kwargs
         )
