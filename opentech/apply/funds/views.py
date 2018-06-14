@@ -1,8 +1,6 @@
-from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.template.response import TemplateResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import UpdateView
 
