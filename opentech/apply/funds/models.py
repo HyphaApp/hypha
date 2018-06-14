@@ -719,6 +719,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         submission_in_db.next = self
         submission_in_db.save()
 
+    def create_revision(self):
+        pass
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
