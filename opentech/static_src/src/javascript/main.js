@@ -5,6 +5,7 @@ import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
 import listInputFiles from './components/list-input-files';
 import toggleActionsPanel from './components/toggle-actions-panel';
+import activityFeed from './components/activity-feed';
 import fancyboxGlobal from './components/fancybox-global';
 
 (function ($) {
@@ -37,34 +38,14 @@ import fancyboxGlobal from './components/fancybox-global';
         // Global fancybox options
         fancyboxGlobal();
 
+        // Activity feed functionality
+        activityFeed();
 
         // Close any open select2 dropdowns when inside a modal
         $('.modal').click((e) => {
             if(e.target.classList.contains('select2-selection__rendered')) return;
             $('.django-select2-checkboxes').select2('close');
         });
-
-        // Open the activity feed
-        $('.js-open-feed').click((e) => {
-            e.preventDefault();
-            $('body').addClass('no-scroll');
-            $('.js-activity-feed').addClass('is-open');
-        });
-
-        // Close the activity feed
-        $('.js-close-feed').click((e) => {
-            e.preventDefault();
-            $('body').removeClass('no-scroll');
-            $('.js-activity-feed').removeClass('is-open');
-        });
-
-        // Show scroll to top of activity feed button on scroll
-        $('.js-activity-feed').on('scroll', function() {
-            $(this).scrollTop() === 0 ? $('.js-to-top').removeClass('is-visible') : $('.js-to-top').addClass('is-visible');
-        });
-
-        // Scroll to the top of the activity feed
-        $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
 
         // Add <tr> toggle arrow
         $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
