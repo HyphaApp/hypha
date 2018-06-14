@@ -1,8 +1,10 @@
 span {
-    &.deleted {
+    &.deleted,
+    &.deleted a {
         background-color: #EE9090;
     }
-    &.added {
+    &.added,
+    &.added a {
         background-color: #90EE90;
     }
 }
