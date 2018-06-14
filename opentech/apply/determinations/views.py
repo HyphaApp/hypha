@@ -57,9 +57,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         if not self.submission.has_permission_to_add_determination(request.user):
             raise PermissionDenied()
 
-        if self.request.POST:
-            return self.get(request, *args, **kwargs)
-
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
