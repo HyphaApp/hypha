@@ -1,3 +1,5 @@
+import textwrap
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import OuterRef, Subquery, F, Q
@@ -46,6 +48,9 @@ class SubmissionsTable(tables.Table):
 
     def render_user(self, value):
         return value.get_full_name()
+
+    def render_title(self, value):
+        return textwrap.shorten(value, width=30, placeholder="...")
 
     def render_phase(self, value):
         return mark_safe(f'<span>{ value }</span>')
