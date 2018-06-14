@@ -11,6 +11,7 @@ import allSubmissions from './components/all-submissions-table';
 import allReviews from './components/all-reviews-table';
 import submissionFilters from './components/submission-filters';
 import mobileFilterPadding from './components/mobile-filter-padding';
+import generateTooltips from './components/submission-tooltips';
 
 (function ($) {
     $(document).ready(function(){
@@ -32,6 +33,9 @@ import mobileFilterPadding from './components/mobile-filter-padding';
         $(Tabs.selector()).each((index, el) => {
             new Tabs($(el));
         });
+
+        // Add tooltips to truncated titles on submissions overview table
+        generateTooltips();
 
         // Show list of selected files for upload on input[type=file]
         listInputFiles();

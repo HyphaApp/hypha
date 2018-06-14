@@ -52,7 +52,7 @@ $table-breakpoint: 'tablet-portrait';
             // set column widths
             &.title {
                 @include media-query($table-breakpoint) {
-                    width: 230px;
+                    width: 260px;
                     padding-left: 20px;
                 }
             }
@@ -75,32 +75,45 @@ $table-breakpoint: 'tablet-portrait';
         td {
             // project title
             &.title {
+                position: relative;
                 padding-top: 15px;
                 font-weight: $weight--bold;
 
-                @include media-query($table-breakpoint) {
+                &:hover {
+                    cursor: pointer;
+                }
 
-                    &::before {
-                        position: absolute;
-                        z-index: -1;
-                        width: 200px;
-                        padding: 5px;
-                        margin-top: 25px;
-                        font-size: 12px;
-                        white-space: normal;
-                        background: #f0fbff;
-                        border: 1px solid #a6ccdd;
-                        content: attr(data-tooltip);
-                        opacity: 0;
-                        transition: opacity $transition;
-                    }
-
-                    &:hover {
+                &.has-tooltip {
+                    @include media-query($table-breakpoint) {
                         &::before {
-                            z-index: 10;
-                            opacity: 1;
+                            position: absolute;
+                            top: 75px;
+                            left: 45px;
+                            z-index: -1;
+                            width: 200px;
+                            padding: 5px;
+                            font-size: 12px;
+                            font-weight: $weight--normal;
+                            white-space: normal;
+                            background: $color--sky-blue;
+                            border: 1px solid $color--marine;
+                            content: attr(data-tooltip);
+                            opacity: 0;
+                            transition: opacity $transition;
+                        }
+
+                        &:hover {
+                            &::before {
+                                z-index: 10;
+                                opacity: 1;
+                            }
                         }
                     }
+                }
+
+                @include media-query($table-breakpoint) {
+                    padding-top: 20px;
+                    padding-left: 20px;
                 }
 
                 a {
@@ -150,6 +163,7 @@ $table-breakpoint: 'tablet-portrait';
                     @include triangle(bottom, $color--primary, 6px);
                     position: relative;
                     display: inline-block;
+                    margin-right: 15px;
                     transform: rotate(0);
                     transition: transform, border-color, $transition;
 
