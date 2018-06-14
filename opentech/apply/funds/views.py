@@ -285,18 +285,37 @@ class RevisionCompareView(TemplateView):
 
         diff = SequenceMatcher(None, answer_a, answer_b)
         output = []
+        added = ''
+        deleted = ''
         for opcode, a0, a1, b0, b1 in diff.get_opcodes():
             if opcode == 'equal':
-                output.append(diff.a[a0:a1])
+                if a1 - a0 > 2 or not (added or deleted):
+                    if added:
+                        output.append(self.added(added))
+                        added = ''
+                    if deleted:
+                        output.append(self.deleted(deleted))
+                        deleted = ''
+                    output.append(diff.a[a0:a1])
+                else:
+                    added += diff.a[a0:a1]
+                    deleted += diff.a[a0:a1]
             elif opcode == 'insert':
-                output.append(self.added(diff.b[b0:b1]))
+                added += diff.b[b0:b1]
             elif opcode == 'delete':
-                output.append(self.deleted(diff.a[a0:a1]))
+                deleted += diff.a[a0:a1]
             elif opcode == 'replace':
-                output.append(self.deleted(diff.a[a0:a1]))
-                output.append(self.added(diff.b[b0:b1]))
-            else:
-                raise RuntimeError("unexpected opcode")
+                deleted += diff.a[a0:a1]
+                added += diff.b[b0:b1]
+
+        if added == deleted:
+            output.append(added)
+        else:
+            if added:
+                output.append(self.deleted(deleted))
+            if deleted:
+                output.append(self.added(added))
+
         return mark_safe(''.join(output))
 
     def compare(self, from_data, to_data):
