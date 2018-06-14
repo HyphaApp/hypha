@@ -8,13 +8,15 @@
 </div>
 
 <div class="wrapper wrapper--medium wrapper--tabs">
+    {% with base_revision=revisions.0.id %}
     {% for revision in revisions %}
         <div>
             {{ revision.date }} by {{ revision.author }}
             {% if not forloop.first %}
-                <a class="button button--primary" href="#">Compare</a>
+                <a class="button button--primary" href="{% url 'apply:revisions:compare' submission_pk=submission.id from=revision.id to=base_revision %}">Compare</a>
             {% endif %}
         </div>
     {% endfor %}
+    {% endwith %}
 </div>
 {% endblock %}

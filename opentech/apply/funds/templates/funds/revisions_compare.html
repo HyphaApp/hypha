@@ -1,0 +1,13 @@
+{% extends "base-apply.html" %}
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h2 class="heading heading--no-margin">Comparing Revisions</h2>
+        <h5>For <a href="{% url "funds:submission" submission.id %}">{{ submission.title }}</a></h5>
+    </div>
+</div>
+
+<div class="wrapper wrapper--medium wrapper--tabs">
+    {% include "funds/includes/rendered_answers.html" with object=diff %}
+</div>
+{% endblock %}

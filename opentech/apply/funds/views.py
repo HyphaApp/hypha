@@ -1,3 +1,5 @@
+from difflib import SequenceMatcher
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -255,5 +257,45 @@ class RevisionListView(ListView):
     def get_context_data(self, **kwargs):
         return super().get_context_data(
             submission=self.submission,
+            **kwargs,
+        )
+
+
+class RevisionCompareView(TemplateView):
+    template_name = 'funds/revisions_compare.html'
+
+    def compare_answer(self, answer_a, answer_b):
+        if not answer_a and not answer_b:
+            return answer_b
+        diff = SequenceMatcher(answer_a, answer_b)
+        output = []
+        for opcode, a0, a1, b0, b1 in diff.get_opcodes():
+            if opcode == 'equal':
+                output.append(diff.a[a0:a1])
+            elif opcode == 'insert':
+                output.append('<span class="added">' + diff.b[b0:b1] + '</span>')
+            elif opcode == 'delete':
+                output.append('<span class="deleted">' + diff.a[a0:a1] + "</span>")
+            elif opcode == 'replace':
+                raise NotImplementedError("what to do with 'replace' opcode?")
+            else:
+                raise RuntimeError("unexpected opcode")
+        return ''.join(output)
+
+    def compare(self, from_data, to_data):
+        diffed_form_data = {
+            field: self.compare_answer(from_data.form_data.get(field), to_data.form_data[field])
+            for field in to_data.form_data
+        }
+        to_data.form_data = diffed_form_data
+        return to_data
+
+    def get_context_data(self, **kwargs):
+        from_revision = ApplicationSubmission.objects.get(id=self.kwargs['from'])
+        to_revision = ApplicationSubmission.objects.get(id=self.kwargs['to'])
+        diff = self.compare(from_revision, to_revision)
+        return super().get_context_data(
+            submission = ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
+            diff=diff,
             **kwargs,
         )
