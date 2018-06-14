@@ -80,7 +80,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
             pass
         else:
             if can_proceed(proposal_transition):
-                proposal_transition()
+                proposal_transition(by=self.request.user)
                 instance.save()
             return HttpResponseRedirect(instance.get_absolute_url())
 
@@ -192,7 +192,7 @@ class SubmissionEditView(UpdateView):
 
     @property
     def transitions(self):
-        transitions =  self.object.get_available_user_status_transitions(self.request.user)
+        transitions = self.object.get_available_user_status_transitions(self.request.user)
         return {
             transition.name: transition
             for transition in transitions
@@ -236,7 +236,7 @@ class SubmissionEditView(UpdateView):
         transition = set(self.request.POST.keys()) & set(self.transitions.keys())
 
         if transition:
-            transition_object =self.transitions[transition.pop()]
+            transition_object = self.transitions[transition.pop()]
             self.object.get_transition(transition_object.target)(by=self.request.user)
             self.object.save()
 

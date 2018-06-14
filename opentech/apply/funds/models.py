@@ -637,7 +637,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
-    def progress_application(self):
+    def progress_application(self, **kwargs):
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
 
         self.id = None

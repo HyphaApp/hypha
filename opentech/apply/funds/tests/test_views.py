@@ -12,10 +12,15 @@ class SubmissionTestCase(TestCase):
         self.user = self.user_factory()
         self.client.force_login(self.user)
 
-    def get_submission_page(self, submission, view_name='detail'):
+    def submission_url(self, submission, view_name='detail'):
         view_name = f'funds:submissions:{ view_name }'
-        detail_url = reverse(view_name, kwargs={'pk': submission.id})
-        return self.client.get(detail_url)
+        return reverse(view_name, kwargs={'pk': submission.id})
+
+    def get_submission_page(self, submission, view_name='detail'):
+        return self.client.get(self.submission_url(submission, view_name))
+
+    def post_submission_page(self, submission, data, view_name='detail'):
+        return self.client.post(self.submission_url(submission, view_name), data)
 
 
 class TestStaffSubmissionView(SubmissionTestCase):
@@ -25,6 +30,18 @@ class TestStaffSubmissionView(SubmissionTestCase):
         submission = ApplicationSubmissionFactory()
         response = self.get_submission_page(submission)
         self.assertContains(response, submission.title)
+
+    def test_can_progress_stage(self):
+        submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2)
+        response = self.post_submission_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
+
+        # Cant use refresh from DB with FSM
+        submission_origional = submission.__class__.objects.get(id=submission.id)
+        submission_next = submission_origional.next
+
+        self.assertRedirects(response, self.submission_url(submission_next))
+        self.assertEqual(submission_origional.status, 'invited_to_proposal')
+        self.assertEqual(submission_next.status, 'draft_proposal')
 
 
 class TestApplicantSubmissionView(SubmissionTestCase):
@@ -41,9 +58,7 @@ class TestApplicantSubmissionView(SubmissionTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_can_edit_own_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user)
-        submission.status = 'Proposal__invited-for-proposal__0'
-        submission.save()
+        submission = ApplicationSubmissionFactory(user=self.user, status='draft_proposal', workflow_stages=2)
         response = self.get_submission_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
@@ -53,8 +68,6 @@ class TestApplicantSubmissionView(SubmissionTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_edit_other_submission(self):
-        submission = ApplicationSubmissionFactory()
-        submission.status='Proposal__invited-for-proposal__0'
-        submission.save()
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
         response = self.get_submission_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
