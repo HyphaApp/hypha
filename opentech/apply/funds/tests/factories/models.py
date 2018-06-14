@@ -15,7 +15,6 @@ from opentech.apply.funds.models import (
     Round,
     RoundForm,
 )
-from opentech.apply.funds.workflow import get_stages
 from opentech.apply.users.tests.factories import UserFactory
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -61,7 +60,7 @@ class FundTypeFactory(wagtail_factories.PageFactory):
         workflow_stages = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
@@ -132,7 +131,7 @@ class LabFactory(wagtail_factories.PageFactory):
         number_forms = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
     lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
     @factory.post_generation
@@ -192,7 +191,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
     round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'))
     user = factory.SubFactory(UserFactory)
 

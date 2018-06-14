@@ -12,7 +12,7 @@ from django.test import RequestFactory, TestCase
 from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.workflow import SingleStage
+from opentech.apply.funds.workflow import Request
 
 from .factories import (
     ApplicationSubmissionFactory,
@@ -33,7 +33,7 @@ class TestFundModel(TestCase):
 
     def test_can_access_workflow_class(self):
         self.assertEqual(self.fund.workflow_name, 'single')
-        self.assertEqual(self.fund.workflow, SingleStage)
+        self.assertEqual(self.fund.workflow, Request)
 
     def test_no_open_rounds(self):
         self.assertIsNone(self.fund.open_round)
@@ -201,7 +201,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, ['project', 0, email, name])}
+        data = {k: v for k, v in zip(fields, ['project', email, name])}
 
         request = self.request_factory.post('', data)
         request.user = user
