@@ -1,9 +1,9 @@
 {% load determination_tags workflow_tags %}
 {% if request.user.is_apply_staff %}
     {% if request.user|has_draft:submission or request.user|can_add_determination:submission %}
-        <a href="{% url 'apply:determinations:form' submission_pk=submission.id %}" class="button button--primary button--half-width">
+        <a href="{% url 'apply:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width">
             {% if request.user|has_draft:submission %}
-                Update determination draft
+                Update draft
             {% elif request.user|can_add_determination:submission %}
                 Add determination
             {% endif %}
