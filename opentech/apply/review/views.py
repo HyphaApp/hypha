@@ -27,10 +27,7 @@ class ReviewContextMixin:
 
 def get_form_for_stage(submission):
     forms = [ConceptReviewForm, ProposalReviewForm]
-    index = [
-        i for i, stage in enumerate(submission.workflow.stages)
-        if submission.stage.name == stage.name
-    ][0]
+    index = submission.workflow.stages.index(submission.stage)
     return forms[index]
 
 
@@ -63,7 +60,7 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        if not self.submission.phase.has_perm(request.user, 'review') or not self.submission.has_permission_to_review(request.user):
+        if not self.submission.phase.permissions.can_review(request.user) or not self.submission.has_permission_to_review(request.user):
             raise PermissionDenied()
 
         if self.request.POST and self.submission.reviewed_by(request.user):

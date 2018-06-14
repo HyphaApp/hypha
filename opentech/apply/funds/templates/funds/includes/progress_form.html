@@ -1,7 +1,7 @@
 {% if progress_form.should_show %}
 <div class="modal" id="update-status">
     <h4>Update status</h4>
-    <p>Current status: {{ object.phase.name }}</p>
+    <p>Current status: {{ object.phase }}</p>
     {% include 'funds/includes/delegated_form_base.html' with form=progress_form value='Progress'%}
 </div>
 {% endif %}

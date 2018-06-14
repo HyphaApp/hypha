@@ -78,7 +78,7 @@ table,
                 }
             }
 
-            &.status_name {
+            &.phase {
                 span {
                     display: inline-block;
                     padding: 10px;
@@ -162,7 +162,7 @@ table,
                 color: $color--default;
             }
 
-            .status_name {
+            .phase {
                 span {
                     display: inline-block;
                     padding: 10px;

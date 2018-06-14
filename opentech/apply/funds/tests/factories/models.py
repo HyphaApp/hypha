@@ -44,7 +44,7 @@ def build_form(data, prefix=''):
             extras[field][attr] = value
 
     form_fields = {}
-    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys()):
+    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories):
         form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
         for attr, value in extras[field].items():
             form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
@@ -60,13 +60,13 @@ class FundTypeFactory(wagtail_factories.PageFactory):
         workflow_stages = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
                     fund=self,
@@ -108,7 +108,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 RoundFormFactory(
                     round=self,
@@ -131,14 +131,14 @@ class LabFactory(wagtail_factories.PageFactory):
         number_forms = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
     lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 LabFormFactory(
                     lab=self,
@@ -191,7 +191,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
     round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'))
     user = factory.SubFactory(UserFactory)
 

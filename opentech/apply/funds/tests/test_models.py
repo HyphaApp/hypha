@@ -12,7 +12,7 @@ from django.test import RequestFactory, TestCase
 from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.workflow import SingleStage
+from opentech.apply.funds.workflow import Request
 
 from .factories import (
     ApplicationSubmissionFactory,
@@ -33,7 +33,7 @@ class TestFundModel(TestCase):
 
     def test_can_access_workflow_class(self):
         self.assertEqual(self.fund.workflow_name, 'single')
-        self.assertEqual(self.fund.workflow_class, SingleStage)
+        self.assertEqual(self.fund.workflow, Request)
 
     def test_no_open_rounds(self):
         self.assertIsNone(self.fund.open_round)
@@ -208,25 +208,26 @@ class TestFormSubmission(TestCase):
         request.site = self.site
 
         try:
-            return page.get_parent().serve(request)
+            response = page.get_parent().serve(request)
         except AttributeError:
-            return page.serve(request)
+            response = page.serve(request)
+
+        self.assertNotContains(response, 'There where some errors with your form')
+        return response
 
     def test_workflow_and_status_assigned(self):
         self.submit_form()
         submission = ApplicationSubmission.objects.first()
-        first_phase = self.round_page.workflow.first()
-        self.assertEqual(submission.workflow_name, self.round_page.workflow_name)
-        self.assertEqual(submission.status, str(first_phase))
-        self.assertEqual(submission.status_name, first_phase.name)
+        first_phase = list(self.round_page.workflow.keys())[0]
+        self.assertEqual(submission.workflow, self.round_page.workflow)
+        self.assertEqual(submission.status, first_phase)
 
     def test_workflow_and_status_assigned_lab(self):
         self.submit_form(page=self.lab_page)
         submission = ApplicationSubmission.objects.first()
-        first_phase = self.lab_page.workflow.first()
-        self.assertEqual(submission.workflow_name, self.lab_page.workflow_name)
-        self.assertEqual(submission.status, str(first_phase))
-        self.assertEqual(submission.status_name, first_phase.name)
+        first_phase = list(self.lab_page.workflow.keys())[0]
+        self.assertEqual(submission.workflow, self.lab_page.workflow)
+        self.assertEqual(submission.status, first_phase)
 
     def test_can_submit_if_new(self):
         self.submit_form()
@@ -363,24 +364,3 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(form_data__image__filename=filename)
         save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
         self.assertTrue(os.path.isfile(save_path))
-
-
-class TestApplicationProgression(TestCase):
-    def test_new_submission_created(self):
-        submission = ApplicationSubmissionFactory(workflow_name='double')
-        self.assertEqual(ApplicationSubmission.objects.count(), 1)
-        old_id = submission.id
-
-        # Update the status to the accepted phase of the current stage
-        submission.status = str(submission.workflow.stages[0].phases[-2])
-        submission.save()
-
-        old_submission = ApplicationSubmission.objects.get(id=old_id)
-
-        self.assertEqual(ApplicationSubmission.objects.count(), 2)
-        self.assertEqual(submission.previous, old_submission)
-        self.assertEqual(old_submission.next, submission)
-
-        form_fields = submission.round.forms.all()[1].fields
-
-        self.assertEqual(submission.form_fields, form_fields)
