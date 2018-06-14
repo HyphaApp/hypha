@@ -1,0 +1,8 @@
+span {
+    &.deleted {
+        background-color: #EE9090;
+    }
+    &.added {
+        background-color: #90EE90;
+    }
+}
