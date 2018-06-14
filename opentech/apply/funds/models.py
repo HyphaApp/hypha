@@ -891,12 +891,15 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             else:
                 yield data, stream_value
 
-    def render_answers(self):
-        fields = [
+    @property
+    def fields(self):
+        return [
             field.render(context={'data': data})
             for data, field in self.data_and_fields()
         ]
-        return mark_safe(''.join(fields))
+
+    def render_answers(self):
+        return mark_safe(''.join(self.fields))
 
     def prepare_search_values(self):
         for data, stream in self.data_and_fields():

@@ -294,7 +294,12 @@ class RevisionCompareView(TemplateView):
             field: self.compare_answer(from_data.form_data.get(field), to_data.form_data[field])
             for field in to_data.form_data
         }
+        diffed_answers = [
+            self.compare_answer(*fields)
+            for fields in zip(from_data.fields, to_data.fields)
+        ]
         to_data.form_data = diffed_form_data
+        to_data.render_answers = mark_safe(''.join(diffed_answers))
         return to_data
 
     def get_context_data(self, **kwargs):
