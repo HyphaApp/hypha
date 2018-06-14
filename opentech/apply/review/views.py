@@ -27,10 +27,7 @@ class ReviewContextMixin:
 
 def get_form_for_stage(submission):
     forms = [ConceptReviewForm, ProposalReviewForm]
-    index = [
-        i for i, stage in enumerate(submission.workflow.stages)
-        if submission.stage.name == stage.name
-    ][0]
+    index = submission.workflow.stages.index(submission.stage)
     return forms[index]
 
 
