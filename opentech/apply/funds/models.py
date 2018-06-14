@@ -761,6 +761,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         return False
 
+    def has_permission_to_add_determination(self, user):
+        return user.is_superuser or self.lead.id == user.id
+
     def can_review(self, user):
         if self.reviewed_by(user):
             return False

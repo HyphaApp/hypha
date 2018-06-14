@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 from opentech.apply.activity.models import Activity
 
@@ -33,6 +34,9 @@ class Determination(models.Model):
 
     class Meta:
         unique_together = ('author', 'submission')
+
+    def get_absolute_url(self):
+        return reverse('apply:determinations:review', args=(self.id,))
 
     def __str__(self):
         return f'Determination for {self.submission.title} by {self.author!s}'
