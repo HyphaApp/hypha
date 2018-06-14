@@ -5,7 +5,7 @@ import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
 import listInputFiles from './components/list-input-files';
 import toggleActionsPanel from './components/toggle-actions-panel';
-import '@fancyapps/fancybox';
+import fancyboxGlobal from './components/fancybox-global';
 
 (function ($) {
     $(document).ready(function(){
@@ -34,14 +34,9 @@ import '@fancyapps/fancybox';
         // Show actions sidebar on mobile
         toggleActionsPanel();
 
-        // Fancybox global options
-        $('[data-fancybox]').fancybox({
-            animationDuration : 350,
-            animationEffect : 'fade',
-            afterClose: function(){
-                $('.django-select2-checkboxes').select2('close');
-            }
-        });
+        // Global fancybox options
+        fancyboxGlobal();
+
 
         // Close any open select2 dropdowns when inside a modal
         $('.modal').click((e) => {
