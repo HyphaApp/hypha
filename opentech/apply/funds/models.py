@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, transition, RETURN_VALUE
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -552,6 +552,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     objects = ApplicationSubmissionQueryset.as_manager()
+
+    def not_progressed(self):
+        return not self.next and self.workflow != WORKFLOWS['single']
+
+    @transition(
+        status, source='*',
+        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal'),
+        conditions=[not_progressed]
+    )
+    def restart_stage(self):
+        return self.workflow.stages.index(self.stage)[INITIAL_STATE, 'draft_proposal']
 
     @property
     def stage(self):
