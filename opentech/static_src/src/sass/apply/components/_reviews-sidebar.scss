@@ -5,12 +5,12 @@
 
     tbody {
         tr {
-            @include media-query(tablet-portrait) {
-                border-bottom: 0;
-            }
-
             &:hover {
                 box-shadow: none;
+            }
+
+            @include media-query(tablet-portrait) {
+                border-bottom: 0;
             }
 
             > th {
@@ -28,6 +28,12 @@
             td:last-child,
             td:first-child {
                 padding: 10px;
+            }
+
+            &:only-child {
+                > td {
+                    padding: 0;
+                }
             }
 
             &.no-response {
@@ -52,5 +58,9 @@
                 overflow: visible;
             }
         }
+    }
+
+    &__no-reviews {
+        color: $color--mid-grey;
     }
 }
