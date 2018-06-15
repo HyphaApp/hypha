@@ -7,6 +7,7 @@ import listInputFiles from './components/list-input-files';
 import toggleActionsPanel from './components/toggle-actions-panel';
 import activityFeed from './components/activity-feed';
 import fancyboxGlobal from './components/fancybox-global';
+import allSubmissions from './components/all-submissions-table';
 
 (function ($) {
     $(document).ready(function(){
@@ -41,19 +42,8 @@ import fancyboxGlobal from './components/fancybox-global';
         // Activity feed functionality
         activityFeed();
 
-        // Add <tr> toggle arrow
-        $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
-
-        // Toggle show/hide for submissions overview table rows
-        const children = Array.prototype.slice.call(
-            document.querySelectorAll('.js-tr-toggle')
-        );
-
-        children.forEach(function (child) {
-            child.addEventListener('click', function (e) {
-                $(e.target).closest('.tr--parent').toggleClass('is-expanded');
-            });
-        });
+        // Submissions overview table logic
+        allSubmissions();
 
         // Allow click and drag scrolling within reviews table wrapper
         $('.js-reviews-table').attachDragger();
