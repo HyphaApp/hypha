@@ -1,4 +1,5 @@
 from collections import defaultdict
+from enum import Enum
 import itertools
 
 
@@ -11,6 +12,12 @@ Current limitations:
 * Changing the name of a phase will mean that any object which references it cannot progress. [will
 be fixed when streamfield, may require intermediate fix prior to launch]
 """
+
+class UserPermissions(Enum):
+    STAFF = 1
+    ADMIN = 2
+    LEAD = 3
+    APPLICANT = 4
 
 
 class Workflow(dict):
@@ -40,24 +47,21 @@ class Phase:
         self.step = step
 
         # For building transition methods on the parent
-        self.all_transitions = {}
-        self.transition_methods = {}
-
-        # For building form actions
         self.transitions = {}
-        for transition, action in transitions.items():
-            try:
-                self.all_transitions[transition] = action['display']
-                method_name = action.get('action')
-                if method_name:
-                    self.transition_methods[transition] = method_name
-                show_in_form = action.get('form', True)
-            except TypeError:
-                show_in_form = True
-                self.all_transitions[transition] = action
 
-            if show_in_form:
-                self.transitions[transition] = self.all_transitions[transition]
+        default_permissions = {UserPermissions.STAFF, UserPermissions.ADMIN, UserPermissions.LEAD}
+
+        for transition_target, action in transitions.items():
+            transition = dict()
+            try:
+                transition['display'] = action.get('display')
+            except AttributeError:
+                transition['display'] = action
+                transition['permissions'] = default_permissions
+            else:
+                transition['method'] = action.get('method')
+                transition['permissions'] = action.get('permissions', default_permissions)
+            self.transitions[transition_target] = transition
 
     def __str__(self):
         return self.display_name
@@ -124,7 +128,7 @@ SingleStageDefinition = {
     },
     'more_info': {
         'transitions': {
-            INITIAL_STATE: 'Submit',
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Request,
@@ -153,7 +157,7 @@ SingleStageDefinition = {
     },
     'post_review_more_info': {
         'transitions': {
-            'post_review_discussion': 'Submit',
+            'post_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Request,
@@ -190,7 +194,7 @@ DoubleStageDefinition = {
     },
     'concept_more_info': {
         'transitions': {
-            INITIAL_STATE: 'Submit',
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Concept,
@@ -219,7 +223,7 @@ DoubleStageDefinition = {
     },
     'concept_review_more_info': {
         'transitions': {
-            'concept_review_discussion': 'Submit',
+            'concept_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Concept,
@@ -243,7 +247,7 @@ DoubleStageDefinition = {
     },
     'draft_proposal': {
         'transitions': {
-            'proposal_discussion': 'Submit',
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
@@ -263,7 +267,7 @@ DoubleStageDefinition = {
     },
     'proposal_more_info': {
         'transitions': {
-            'proposal_discussion': 'Submit',
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -292,7 +296,7 @@ DoubleStageDefinition = {
     },
     'post_proposal_review_more_info': {
         'transitions': {
-            'post_proposal_review_discussion': 'Submit',
+            'post_proposal_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -321,7 +325,7 @@ DoubleStageDefinition = {
     },
     'post_external_review_more_info': {
         'transitions': {
-            'post_external_review_discussion': 'Submit',
+            'post_external_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'More information required',
         'stage': Proposal,

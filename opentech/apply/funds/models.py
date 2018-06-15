@@ -40,8 +40,14 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import active_statuses, get_review_statuses, review_statuses, INITIAL_STATE, WORKFLOWS
-
+from .workflow import (
+    active_statuses,
+    get_review_statuses,
+    INITIAL_STATE,
+    review_statuses,
+    UserPermissions,
+    WORKFLOWS,
+)
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
@@ -493,28 +499,69 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
 
+def make_permission_check(users):
+    def can_transition(instance, user):
+        if UserPermissions.STAFF in users and user.is_apply_staff:
+            return True
+        if UserPermissions.ADMIN in users and user.is_superuser:
+            return True
+        if UserPermissions.LEAD in users and instance.lead == user:
+            return True
+        if UserPermissions.APPLICANT in users and instance.user == user:
+            return True
+        return False
+
+    return can_transition
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
         transition_prefix = 'transition'
         for workflow in WORKFLOWS.values():
             for phase, data in workflow.items():
-                for transition_name, action in data.all_transitions.items():
-                    method = data.transition_methods.get(transition_name)
+                for transition_name, action in data.transitions.items():
+                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
+                    permission_name = method_name + '_permission'
+                    permission_func = make_permission_check(action['permissions'])
+
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = attrs.get(method, lambda *args, **kwargs: None)
+                    transition_state = attrs.get(action.get('method'), lambda *args, **kwargs: None)
                     # Provide a neat name for graph viz display
-                    transition_state.__name__ = slugify(action)
+                    transition_state.__name__ = slugify(action['display'])
+
                     # Wrap with transition decorator
-                    transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
+                    transition_func = transition(
+                        attrs['status'],
+                        source=phase,
+                        target=transition_name,
+                        permission=permission_func,
+                    )(transition_state)
 
                     # Attach to new class
-                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
                     attrs[method_name] = transition_func
+                    attrs[permission_name] = permission_func
 
         def get_transition(self, transition):
-            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+            try:
+                return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+            except TypeError:
+                # Defined on the class
+                return None
+            except AttributeError:
+                # For the other workflow
+                return None
 
         attrs['get_transition'] = get_transition
+
+        def get_actions_for_user(self, user):
+            transitions = self.get_available_user_status_transitions(user)
+            actions = [
+                (transition.target, self.phase.transitions[transition.target]['display'])
+                for transition in transitions if self.get_transition(transition.target)
+            ]
+            yield from actions
+
+        attrs['get_actions_for_user'] = get_actions_for_user
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
@@ -553,6 +600,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     @transition(
         status, source='*',
         target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
+        permission=make_permission_check({UserPermissions.ADMIN}),
     )
     def restart_stage(self, **kwargs):
         """

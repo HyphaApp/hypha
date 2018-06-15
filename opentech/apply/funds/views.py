@@ -74,11 +74,8 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
         return self.progress_stage(form.instance) or response
 
     def progress_stage(self, instance):
-        try:
-            proposal_transition = instance.get_transition('draft_proposal')
-        except AttributeError:
-            pass
-        else:
+        proposal_transition = instance.get_transition('draft_proposal')
+        if proposal_transition:
             if can_proceed(proposal_transition):
                 proposal_transition(by=self.request.user)
                 instance.save()
