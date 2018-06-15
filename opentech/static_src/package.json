@@ -61,7 +61,7 @@
     "watch:img": "onchange $npm_package_config_src_img'/**/**' -- npm-run-all sync:img reload",
     "watch:img:debug": "onchange $npm_package_config_src_img'/**/**' -- npm-run-all sync:img",
     "watch:js": "onchange $npm_package_config_dest_js'/**/**' -- npm-run-all -p reload lint:js",
-    "watch:css": "onchange $npm_package_config_dest_css -- npm-run-all -p reload:css lint:css",
+    "watch:css": "onchange $npm_package_config_dest_css -- npm-run-all -p reload lint:css",
     "watch:css:debug": "onchange $npm_package_config_dest_css -- npm-run-all -p autoprefixer",
     "watch": "npm-run-all -p watch:*",
     "//[ Syncs ]//": "",
