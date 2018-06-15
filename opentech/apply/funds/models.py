@@ -550,16 +550,24 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     objects = ApplicationSubmissionQueryset.as_manager()
 
-    def not_progressed(self):
-        return not self.next
-
     @transition(
         status, source='*',
-        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal'),
-        conditions=[not_progressed]
+        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
     )
-    def restart_stage(self):
-        return 'draft_proposal' if self.previous else INITIAL_STATE
+    def restart_stage(self, **kwargs):
+        """
+        If running form the console please include your user using the kwarg "by"
+
+        u = User.objects.get(email="<my@email.com>")
+        for a in ApplicationSubmission.objects.all():
+            a.restart_stage(by=u)
+            a.save()
+        """
+        if hasattr(self, 'previous'):
+            return 'draft_proposal'
+        elif self.next:
+            return 'invited_to_proposal'
+        return INITIAL_STATE
 
     @property
     def stage(self):
