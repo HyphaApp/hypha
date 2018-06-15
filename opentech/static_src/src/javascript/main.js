@@ -9,6 +9,8 @@ import activityFeed from './components/activity-feed';
 import fancyboxGlobal from './components/fancybox-global';
 import allSubmissions from './components/all-submissions-table';
 import allReviews from './components/all-reviews-table';
+import submissionFilters from './components/submission-filters';
+import mobileFilterPadding from './components/mobile-filter-padding';
 
 (function ($) {
     $(document).ready(function(){
@@ -73,86 +75,12 @@ import allReviews from './components/all-reviews-table';
         });
     });
 
-    // Add active class to filters - dropdowns are dynamically appended to the dom,
-    // so we have to listen for the event higher up
-    $('body').on('click', '.select2-dropdown', (e) => {
-        // get the id of the dropdown
-        let selectId = e.target.parentElement.parentElement.id;
+        // All reviews table logic
+        allReviews();
 
-        // find the matching dropdown
-        let match = $(`.select2-selection[aria-owns="${selectId}"]`);
-
-        // if the dropdown contains a clear class, the filters are active
-        if($(match[0]).find('span.select2-selection__clear').length !== 0) {
-            match[0].classList.add('is-active');
-        } else {
-            match[0].classList.remove('is-active');
-        }
+        // Submission filters logic
+        submissionFilters();
     });
-
-    // remove active class on clearing select2
-    $('.select2').on('select2:unselecting', (e) => {
-        const dropdown = e.target.nextElementSibling.firstChild.firstChild;
-        (dropdown.classList.contains('is-active')) ? dropdown.classList.remove('is-active') : null;
-    });
-
-    // open mobile filters
-    $('.js-open-filters').on('click', (e) => {
-        $('body').addClass('no-scroll');
-        e.target.nextElementSibling.classList.add('is-open');
-        $('.js-filter-list').addClass('form__filters--mobile');
-    });
-
-    // close mobile filters
-    $('.js-close-filters').on('click', (e) => {
-        $('body').removeClass('no-scroll');
-        e.target.parentElement.parentElement.classList.remove('is-open');
-        $('.js-filter-list').removeClass('form__filters--mobile');
-    });
-
-    // clear all filters
-    $('.js-clear-filters').on('click', () =>{
-        const dropdowns = document.querySelectorAll('.form__filters--mobile select');
-        dropdowns.forEach(dropdown => {
-            $(dropdown).val(null).trigger('change');
-            $('.select2-selection.is-active').removeClass('is-active');
-            mobileFilterPadding(dropdown);
-        });
-    });
-
-    function mobileFilterPadding (element) {
-        const expanded = 'expanded-filter-element';
-        const dropdown = $(element).closest('.select2');
-        const openDropdown = $('.select2 .' + expanded);
-        let dropdownMargin = 0;
-
-        if(openDropdown.length > 0 && !openDropdown.hasClass('select2-container--open')){
-            // reset the margin of the select we previously worked
-            openDropdown.removeClass(expanded);
-            // store the offset to adjust the new select box (elements above the old dropdown unaffected)
-            if (dropdown.position().top > openDropdown.position().top ){
-                dropdownMargin = parseInt(openDropdown.css('marginBottom'));
-            }
-            openDropdown.css('margin-bottom', '0px');
-        }
-
-        if(dropdown.hasClass('select2-container--open')){
-            dropdown.addClass(expanded);
-            const dropdownID = $(element).closest('.select2-selection').attr('aria-owns');
-            // Element which has the height of the select dropdown
-            const match = $(`ul#${dropdownID}`);
-            const dropdownHeight = match.outerHeight(true);
-
-            // Element which has the position of the dropdown
-            const positionalMatch = match.closest('.select2-container');
-
-            // Pad the bottom of the select box
-            dropdown.css('margin-bottom', `${dropdownHeight}px`);
-
-            // bump up the dropdown options by height of closed elements
-            positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
-        }
-    }
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
