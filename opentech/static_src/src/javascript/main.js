@@ -8,6 +8,7 @@ import toggleActionsPanel from './components/toggle-actions-panel';
 import activityFeed from './components/activity-feed';
 import fancyboxGlobal from './components/fancybox-global';
 import allSubmissions from './components/all-submissions-table';
+import allReviews from './components/all-reviews-table';
 
 (function ($) {
     $(document).ready(function(){
@@ -45,8 +46,6 @@ import allSubmissions from './components/all-submissions-table';
         // Submissions overview table logic
         allSubmissions();
 
-        // Allow click and drag scrolling within reviews table wrapper
-        $('.js-reviews-table').attachDragger();
 
         // Add colspan and accordion classes to review table header table rows
         const accordionTableHeaders = $('.table--reviews tr th:only-child');
@@ -154,23 +153,6 @@ import allSubmissions from './components/all-submissions-table';
             positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
         }
     }
-
-    // Enable click and drag scrolling within a div
-    $.fn.attachDragger = function(){
-        let attachment = false, lastPosition, position, difference;
-        $($(this).selector ).on('mousedown mouseup mousemove', (e) => {
-            if(e.type == 'mousedown') attachment = true, lastPosition = [e.clientX, e.clientY];
-            if(e.type == 'mouseup') attachment = false;
-            if(e.type == 'mousemove' && attachment == true ){
-                position = [e.clientX, e.clientY];
-                difference = [ (position[0]-lastPosition[0]), (position[1]-lastPosition[1])];
-                $(this).scrollLeft( $(this).scrollLeft() - difference[0]);
-                $(this).scrollTop( $(this).scrollTop() - difference[1]);
-                lastPosition = [e.clientX, e.clientY];
-            }
-        });
-        $(window).on('mouseup', () => attachment = false);
-    };
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
