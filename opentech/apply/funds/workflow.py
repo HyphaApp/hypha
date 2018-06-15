@@ -118,7 +118,7 @@ SingleStageDefinition = {
     INITIAL_STATE: {
         'transitions': {
             'internal_review': 'Open Review',
-            'rejected': 'Reject',
+            'rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -146,8 +146,8 @@ SingleStageDefinition = {
     },
     'post_review_discussion': {
         'transitions': {
-            'accepted': 'Accept',
-            'rejected': 'Reject',
+            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -184,7 +184,7 @@ DoubleStageDefinition = {
     INITIAL_STATE: {
         'transitions': {
             'concept_internal_review': 'Open Review',
-            'concept_rejected': 'Reject',
+            'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -213,7 +213,7 @@ DoubleStageDefinition = {
     'concept_review_discussion': {
         'transitions': {
             'invited_to_proposal': 'Invite to Proposal',
-            'concept_rejected': 'Reject',
+            'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -233,7 +233,7 @@ DoubleStageDefinition = {
     'invited_to_proposal': {
         'display': 'Concept Accepted',
         'transitions': {
-            'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'form': False},
+            'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'permissions': {}},
         },
         'stage': Concept,
         'permissions': Permission(),
@@ -257,7 +257,7 @@ DoubleStageDefinition = {
     'proposal_discussion': {
         'transitions': {
             'proposal_internal_review': 'Open Review',
-            'proposal_rejected': 'Reject',
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'proposal_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -286,7 +286,7 @@ DoubleStageDefinition = {
     'post_proposal_review_discussion': {
         'transitions': {
             'external_review': 'Open AC review',
-            'proposal_rejected': 'Reject',
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_proposal_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
@@ -314,8 +314,8 @@ DoubleStageDefinition = {
     },
     'post_external_review_discussion': {
         'transitions': {
-            'proposal_accepted': 'Accept',
-            'proposal_rejected': 'Reject',
+            'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_external_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
