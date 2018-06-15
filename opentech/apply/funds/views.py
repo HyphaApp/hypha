@@ -336,7 +336,7 @@ class RevisionCompareView(TemplateView):
         to_revision = ApplicationSubmission.objects.get(id=self.kwargs['to'])
         diff = self.compare(from_revision, to_revision)
         return super().get_context_data(
-            submission = ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
+            submission=ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
             diff=diff,
             **kwargs,
         )
