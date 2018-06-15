@@ -48,33 +48,6 @@ import mobileFilterPadding from './components/mobile-filter-padding';
         // Submissions overview table logic
         allSubmissions();
 
-
-        // Add colspan and accordion classes to review table header table rows
-        const accordionTableHeaders = $('.table--reviews tr th:only-child');
-        accordionTableHeaders.each((val, accordionHeader) => {
-            $(accordionHeader).attr('colspan', 100);
-            $(accordionHeader).parent('tr').addClass('js-accordion__toggle');
-        });
-
-        // Cache accordion items
-        const $jsAccordionToggle = $('.js-accordion__toggle');
-
-        // Add hidden classes to js-accordion items
-        $jsAccordionToggle.nextUntil('.js-accordion__toggle').addClass('is-hidden');
-
-        // Toggle accordion items
-        $jsAccordionToggle.click(function() {
-            if($(this).hasClass('is-expanded')){
-                $(this).removeClass('is-expanded');
-                $(this).nextUntil('.js-accordion__toggle').addClass('is-hidden');
-                return;
-            }
-            $('.js-accordion__toggle.is-expanded').nextUntil('.js-accordion__toggle').addClass('is-hidden');
-            $(this).addClass('is-expanded');
-            $(this).nextUntil('.js-accordion__toggle').removeClass('is-hidden');
-        });
-    });
-
         // All reviews table logic
         allReviews();
 
