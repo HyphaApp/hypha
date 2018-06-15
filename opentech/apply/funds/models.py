@@ -516,8 +516,6 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_transition'] = get_transition
 
-        # attrs['restart'] = transition(attrs['status'], source='*', target=INITIAL_STATE)(lambda x: None)
-
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
 
@@ -553,7 +551,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     objects = ApplicationSubmissionQueryset.as_manager()
 
     def not_progressed(self):
-        return not self.next and self.workflow != WORKFLOWS['single']
+        return not self.next
 
     @transition(
         status, source='*',
@@ -561,7 +559,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         conditions=[not_progressed]
     )
     def restart_stage(self):
-        return self.workflow.stages.index(self.stage)[INITIAL_STATE, 'draft_proposal']
+        return 'draft_proposal' if self.previous else INITIAL_STATE
 
     @property
     def stage(self):
