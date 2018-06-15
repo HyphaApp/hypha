@@ -98,12 +98,3 @@ import mobileFilterPadding from './components/mobile-filter-padding';
         }
     }).trigger('resize');
 })(jQuery);
-
-// wait for DOM content to load before checking for select2
-document.addEventListener('DOMContentLoaded', () => {
-    // Add active class to select2 checkboxes after page has been filtered
-    const clearButtons = document.querySelectorAll('.select2-selection__clear');
-    clearButtons.forEach(clearButton => {
-        clearButton.parentElement.parentElement.classList.add('is-active');
-    });
-});
