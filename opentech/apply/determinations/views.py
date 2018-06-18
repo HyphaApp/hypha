@@ -51,7 +51,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
         # TODO add proper permission
         # if not self.submission.phase.has_perm(request.user, 'add_determination') or \
-        if not self.submission.has_permission_to_add_determination(request.user):
+        if not self.submission.user_lead_or_admin(request.user):
             raise PermissionDenied()
 
         return super().dispatch(request, *args, **kwargs)
