@@ -401,3 +401,23 @@ def get_review_statuses(user=None):
 
 
 review_statuses = get_review_statuses()
+
+DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
+
+
+def get_determination_transitions():
+    transitions = set()
+
+    for phase_name, phase in PHASES:
+        for transition_name in phase.transitions:
+            if '_accepted' in transition_name:
+                transitions.add(transition_name)
+            elif '_rejected' in transition_name:
+                transitions.add(transition_name)
+            elif '_more_info' in transition_name:
+                transitions.add(transition_name)
+
+    return transitions
+
+
+DETERMINATION_RESPONSE_TRANSITIONS = get_determination_transitions()
