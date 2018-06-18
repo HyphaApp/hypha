@@ -1,4 +1,5 @@
 from collections import defaultdict
+from enum import Enum
 import itertools
 
 
@@ -11,6 +12,13 @@ Current limitations:
 * Changing the name of a phase will mean that any object which references it cannot progress. [will
 be fixed when streamfield, may require intermediate fix prior to launch]
 """
+
+
+class UserPermissions(Enum):
+    STAFF = 1
+    ADMIN = 2
+    LEAD = 3
+    APPLICANT = 4
 
 
 class Workflow(dict):
@@ -40,24 +48,23 @@ class Phase:
         self.step = step
 
         # For building transition methods on the parent
-        self.all_transitions = {}
-        self.transition_methods = {}
-
-        # For building form actions
         self.transitions = {}
-        for transition, action in transitions.items():
-            try:
-                self.all_transitions[transition] = action['display']
-                method_name = action.get('action')
-                if method_name:
-                    self.transition_methods[transition] = method_name
-                show_in_form = action.get('form', True)
-            except TypeError:
-                show_in_form = True
-                self.all_transitions[transition] = action
 
-            if show_in_form:
-                self.transitions[transition] = self.all_transitions[transition]
+        default_permissions = {UserPermissions.STAFF, UserPermissions.ADMIN, UserPermissions.LEAD}
+
+        for transition_target, action in transitions.items():
+            transition = dict()
+            try:
+                transition['display'] = action.get('display')
+            except AttributeError:
+                transition['display'] = action
+                transition['permissions'] = default_permissions
+            else:
+                transition['method'] = action.get('method')
+                conditions = action.get('conditions', '')
+                transition['conditions'] = conditions.split(',') if conditions else []
+                transition['permissions'] = action.get('permissions', default_permissions)
+            self.transitions[transition_target] = transition
 
     def __str__(self):
         return self.display_name
@@ -114,11 +121,21 @@ SingleStageDefinition = {
     INITIAL_STATE: {
         'transitions': {
             'internal_review': 'Open Review',
-            'rejected': 'Reject',
+            'rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Request,
         'permissions': Permission(),
+        'step': 0,
+    },
+    'more_info': {
+        'transitions': {
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Request,
+        'permissions': CanEditPermission(),
         'step': 0,
     },
     'internal_review': {
@@ -132,14 +149,25 @@ SingleStageDefinition = {
     },
     'post_review_discussion': {
         'transitions': {
-            'accepted': 'Accept',
-            'rejected': 'Reject',
+            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'post_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Request,
         'permissions': Permission(),
         'step': 2,
     },
+    'post_review_more_info': {
+        'transitions': {
+            'post_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Request,
+        'permissions': CanEditPermission(),
+        'step': 2,
+    },
+
     'accepted': {
         'display': 'Accepted',
         'stage': Request,
@@ -159,11 +187,21 @@ DoubleStageDefinition = {
     INITIAL_STATE: {
         'transitions': {
             'concept_internal_review': 'Open Review',
-            'concept_rejected': 'Reject',
+            'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'concept_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Concept,
         'permissions': Permission(),
+        'step': 0,
+    },
+    'concept_more_info': {
+        'transitions': {
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Concept,
+        'permissions': CanEditPermission(),
         'step': 0,
     },
     'concept_internal_review': {
@@ -177,18 +215,33 @@ DoubleStageDefinition = {
     },
     'concept_review_discussion': {
         'transitions': {
-            'invited_to_proposal': 'Invite to Proposal',
-            'concept_rejected': 'Reject',
+            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'concept_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Concept,
         'permissions': Permission(),
         'step': 2,
     },
-    'invited_to_proposal': {
-        'display': 'Invited for Proposal',
+    'concept_review_more_info': {
         'transitions': {
-            'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'form': False},
+            'concept_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Concept,
+        'permissions': CanEditPermission(),
+        'step': 2,
+    },
+    'invited_to_proposal': {
+        'display': 'Concept Accepted',
+        'transitions': {
+            'draft_proposal': {
+                'display': 'Progress',
+                'method': 'progress_application',
+                'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD},
+                'conditions': 'not_progressed',
+            },
         },
         'stage': Concept,
         'permissions': Permission(),
@@ -202,7 +255,7 @@ DoubleStageDefinition = {
     },
     'draft_proposal': {
         'transitions': {
-            'proposal_discussion': 'Submit',
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
@@ -212,11 +265,21 @@ DoubleStageDefinition = {
     'proposal_discussion': {
         'transitions': {
             'proposal_internal_review': 'Open Review',
-            'proposal_rejected': 'Reject',
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'proposal_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
+        'step': 5,
+    },
+    'proposal_more_info': {
+        'transitions': {
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 5,
     },
     'proposal_internal_review': {
@@ -231,11 +294,21 @@ DoubleStageDefinition = {
     'post_proposal_review_discussion': {
         'transitions': {
             'external_review': 'Open AC review',
-            'proposal_rejected': 'Reject',
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'post_proposal_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': ReviewerReviewPermission(),
+        'step': 7,
+    },
+    'post_proposal_review_more_info': {
+        'transitions': {
+            'post_proposal_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 7,
     },
     'external_review': {
@@ -249,12 +322,22 @@ DoubleStageDefinition = {
     },
     'post_external_review_discussion': {
         'transitions': {
-            'proposal_accepted': 'Accept',
-            'proposal_rejected': 'Reject',
+            'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'post_external_review_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
         'stage': Proposal,
         'permissions': Permission(),
+        'step': 9,
+    },
+    'post_external_review_more_info': {
+        'transitions': {
+            'post_external_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+        },
+        'display': 'More information required',
+        'stage': Proposal,
+        'permissions': CanEditPermission(),
         'step': 9,
     },
     'proposal_accepted': {
@@ -300,7 +383,7 @@ for key, value in PHASES:
     STATUSES[value.display_name].add(key)
 
 active_statuses = [
-    status for status in PHASES
+    status for status, _ in PHASES
     if 'accepted' not in status or 'rejected' not in status or 'invited' not in status
 ]
 

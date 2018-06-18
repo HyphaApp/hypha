@@ -1,8 +1,28 @@
 {% extends "base-apply.html" %}
+{% block title %}Editing: {{object.title }}{% endblock %}
 {% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large">
+        <h2 class="heading heading--no-margin">Editing: {{ object.title }}</h2>
+    </div>
+</div>
+
+{% if form.errors or form.non_field_errors %}
+<div class="wrapper wrapper--medium wrapper--error">
+    <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
+    <h5 class="heading heading--no-margin heading--regular">There were some errors with your form. Please amend the fields highlighted below</h5>
+    {% if form.non_field_errors %}
+        <ul>
+            {% for error in form.non_field_errors %}
+                <li class="error">{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endif %}
+
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <form class="form" action="" method="post" enctype="multipart/form-data">
-        {{ form.media }}
         {% csrf_token %}
 
         {% for field in form %}
@@ -12,7 +32,13 @@
             {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary" type="submit" value="Submit" />
+        {% for button_name, button_value in buttons %}
+            <input class="button button--primary" type="submit" name="{{ button_name }}" value="{{ button_value }}" />
+        {% endfor %}
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ form.media }}
 {% endblock %}

@@ -70,24 +70,14 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'progress_form'
 
     def form_valid(self, form):
-        old_phase = form.instance.phase.display_name
         response = super().form_valid(form)
-        new_phase = form.instance.phase.display_name
-        Activity.actions.create(
-            user=self.request.user,
-            submission=self.kwargs['submission'],
-            message=f'Progressed from {old_phase} to {new_phase}'
-        )
         return self.progress_stage(form.instance) or response
 
     def progress_stage(self, instance):
-        try:
-            proposal_transition = instance.get_transition('draft_proposal')
-        except AttributeError:
-            pass
-        else:
+        proposal_transition = instance.get_transition('draft_proposal')
+        if proposal_transition:
             if can_proceed(proposal_transition):
-                proposal_transition()
+                proposal_transition(by=self.request.user)
                 instance.save()
             return HttpResponseRedirect(instance.get_absolute_url())
 
@@ -197,6 +187,18 @@ class SubmissionEditView(UpdateView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
+    @property
+    def transitions(self):
+        transitions = self.object.get_available_user_status_transitions(self.request.user)
+        return {
+            transition.name: transition
+            for transition in transitions
+        }
+
+    def buttons(self):
+        yield ('save', 'Save')
+        yield from ((transition, transition.title) for transition in self.transitions)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop('instance')
@@ -215,10 +217,24 @@ class SubmissionEditView(UpdateView):
         kwargs['initial'] = form_data
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(buttons=self.buttons(), **kwargs)
+
     def get_form_class(self):
         return self.object.get_form_class()
 
     def form_valid(self, form):
         self.object.form_data = form.cleaned_data
         self.object.save()
+
+        if 'save' in self.request.POST:
+            return self.form_invalid(form)
+
+        transition = set(self.request.POST.keys()) & set(self.transitions.keys())
+
+        if transition:
+            transition_object = self.transitions[transition.pop()]
+            self.object.get_transition(transition_object.target)(by=self.request.user)
+            self.object.save()
+
         return HttpResponseRedirect(self.get_success_url())

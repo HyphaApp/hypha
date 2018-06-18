@@ -2,7 +2,7 @@
     <ul class="nav nav--primary" role="menubar">
         {% if request.user.is_apply_staff %}
             {% include "navigation/primarynav-apply-item.html" with name="Dashboard" url="dashboard:dashboard" %}
-            {% include "navigation/primarynav-apply-item.html" with name="Submissions" url="funds:submissions" %}
+            {% include "navigation/primarynav-apply-item.html" with name="Submissions" url="funds:submissions:list" %}
         {% else %}
             {% include "navigation/primarynav-apply-item.html" with name="Dashboard" url="dashboard:dashboard" %}
         {% endif %}

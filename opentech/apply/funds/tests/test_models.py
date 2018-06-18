@@ -201,7 +201,7 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, ['project', email, name])}
+        data = {k: v for k, v in zip(fields, ['project', 0, email, name])}
 
         request = self.request_factory.post('', data)
         request.user = user

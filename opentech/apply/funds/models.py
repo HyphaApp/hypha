@@ -40,8 +40,14 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import active_statuses, get_review_statuses, review_statuses, INITIAL_STATE, WORKFLOWS
-
+from .workflow import (
+    active_statuses,
+    get_review_statuses,
+    INITIAL_STATE,
+    review_statuses,
+    UserPermissions,
+    WORKFLOWS,
+)
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
@@ -493,31 +499,71 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
 
+def make_permission_check(users):
+    def can_transition(instance, user):
+        if UserPermissions.STAFF in users and user.is_apply_staff:
+            return True
+        if UserPermissions.ADMIN in users and user.is_superuser:
+            return True
+        if UserPermissions.LEAD in users and instance.lead == user:
+            return True
+        if UserPermissions.APPLICANT in users and instance.user == user:
+            return True
+        return False
+
+    return can_transition
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
         transition_prefix = 'transition'
         for workflow in WORKFLOWS.values():
             for phase, data in workflow.items():
-                for transition_name, action in data.all_transitions.items():
-                    method = data.transition_methods.get(transition_name)
+                for transition_name, action in data.transitions.items():
+                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
+                    permission_name = method_name + '_permission'
+                    permission_func = make_permission_check(action['permissions'])
+
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = attrs.get(method, lambda self: None)
+                    transition_state = attrs.get(action.get('method'), lambda *args, **kwargs: None)
                     # Provide a neat name for graph viz display
-                    function_name = '_'.join([transition_prefix, slugify(action)])
-                    transition_state.__name__ = function_name
+                    transition_state.__name__ = slugify(action['display'])
+
+                    conditions = [attrs[condition] for condition in action.get('conditions', [])]
                     # Wrap with transition decorator
-                    transition_func = transition(attrs['status'], source=phase, target=transition_name)(transition_state)
+                    transition_func = transition(
+                        attrs['status'],
+                        source=phase,
+                        target=transition_name,
+                        permission=permission_func,
+                        conditions=conditions,
+                    )(transition_state)
 
                     # Attach to new class
-                    method_name = '_'.join([transition_prefix, transition_name, str(data.step)])
                     attrs[method_name] = transition_func
+                    attrs[permission_name] = permission_func
 
         def get_transition(self, transition):
-            return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step)]))
+            try:
+                return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+            except TypeError:
+                # Defined on the class
+                return None
+            except AttributeError:
+                # For the other workflow
+                return None
 
         attrs['get_transition'] = get_transition
 
-        # attrs['restart'] = transition(attrs['status'], source='*', target=INITIAL_STATE)(lambda x: None)
+        def get_actions_for_user(self, user):
+            transitions = self.get_available_user_status_transitions(user)
+            actions = [
+                (transition.target, self.phase.transitions[transition.target]['display'])
+                for transition in transitions if self.get_transition(transition.target)
+            ]
+            yield from actions
+
+        attrs['get_actions_for_user'] = get_actions_for_user
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
@@ -554,15 +600,27 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     objects = ApplicationSubmissionQueryset.as_manager()
 
     def not_progressed(self):
-        return not self.next and self.workflow != WORKFLOWS['single']
+        return not self.next
 
     @transition(
         status, source='*',
-        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal'),
-        conditions=[not_progressed]
+        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
+        permission=make_permission_check({UserPermissions.ADMIN}),
     )
-    def restart_stage(self):
-        return self.workflow.stages.index(self.stage)[INITIAL_STATE, 'draft_proposal']
+    def restart_stage(self, **kwargs):
+        """
+        If running form the console please include your user using the kwarg "by"
+
+        u = User.objects.get(email="<my@email.com>")
+        for a in ApplicationSubmission.objects.all():
+            a.restart_stage(by=u)
+            a.save()
+        """
+        if hasattr(self, 'previous'):
+            return 'draft_proposal'
+        elif self.next:
+            return 'invited_to_proposal'
+        return INITIAL_STATE
 
     @property
     def stage(self):
@@ -575,6 +633,12 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     @property
     def active(self):
         return self.status in active_statuses
+
+    @property
+    def last_edit(self):
+        # Best estimate of last edit
+        # TODO update when we have revisioning included
+        return self.activities.first()
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
@@ -632,7 +696,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
-    def progress_application(self):
+    def progress_application(self, **kwargs):
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
 
         self.id = None
@@ -742,7 +806,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return form_data
 
     def get_absolute_url(self):
-        return reverse('funds:submission', args=(self.id,))
+        return reverse('funds:submissions:detail', args=(self.id,))
 
     def __getattribute__(self, item):
         # __getattribute__ allows correct error handling from django compared to __getattr__
@@ -755,4 +819,4 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return f'{self.title} from {self.full_name} for {self.page.title}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'

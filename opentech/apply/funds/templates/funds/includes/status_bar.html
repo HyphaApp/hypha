@@ -3,7 +3,7 @@
         {% if not same_stage or current_phase.stage == phase.stage %}
             {% ifchanged phase.step %}
                 <div class="status-bar__item
-                            {% if phase_name == current_phase.name %}
+                            {% if phase.step == current_phase.step %}
                                 status-bar__item--is-current
                             {% elif current_phase.step > phase.step %}
                                 status-bar__item--is-complete
