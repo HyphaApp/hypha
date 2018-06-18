@@ -191,8 +191,9 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
     workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
-    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'))
+    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'), lead=factory.SelfAttribute('..lead'))
     user = factory.SubFactory(UserFactory)
+    lead = factory.SubFactory(StaffFactory)
 
     @classmethod
     def _generate(cls, strat, params):

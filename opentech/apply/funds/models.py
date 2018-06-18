@@ -529,12 +529,14 @@ class AddTransitions(models.base.ModelBase):
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action['display'])
 
+                    conditions = [attrs[condition] for condition in action.get('conditions', [])]
                     # Wrap with transition decorator
                     transition_func = transition(
                         attrs['status'],
                         source=phase,
                         target=transition_name,
                         permission=permission_func,
+                        conditions=conditions,
                     )(transition_state)
 
                     # Attach to new class
@@ -596,6 +598,9 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     objects = ApplicationSubmissionQueryset.as_manager()
+
+    def not_progressed(self):
+        return not self.next
 
     @transition(
         status, source='*',

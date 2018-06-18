@@ -60,6 +60,8 @@ class Phase:
                 transition['permissions'] = default_permissions
             else:
                 transition['method'] = action.get('method')
+                conditions = action.get('conditions', '')
+                transition['conditions'] = conditions.split(',') if conditions else []
                 transition['permissions'] = action.get('permissions', default_permissions)
             self.transitions[transition_target] = transition
 
@@ -212,7 +214,7 @@ DoubleStageDefinition = {
     },
     'concept_review_discussion': {
         'transitions': {
-            'invited_to_proposal': 'Invite to Proposal',
+            'invited_to_proposal': {'display': 'Invited to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_review_more_info': 'Request More Information',
         },
@@ -233,7 +235,12 @@ DoubleStageDefinition = {
     'invited_to_proposal': {
         'display': 'Concept Accepted',
         'transitions': {
-            'draft_proposal': {'display': 'Progress', 'action': 'progress_application', 'permissions': {}},
+            'draft_proposal': {
+                'display': 'Progress',
+                'method': 'progress_application',
+                'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD},
+                'conditions': 'not_progressed',
+            },
         },
         'stage': Concept,
         'permissions': Permission(),
