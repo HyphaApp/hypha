@@ -17,10 +17,10 @@ class SubmissionTestCase(TestCase):
         return reverse(view_name, kwargs={'pk': submission.id})
 
     def get_submission_page(self, submission, view_name='detail'):
-        return self.client.get(self.submission_url(submission, view_name))
+        return self.client.get(self.submission_url(submission, view_name), secure=True)
 
     def post_submission_page(self, submission, data, view_name='detail'):
-        return self.client.post(self.submission_url(submission, view_name), data)
+        return self.client.post(self.submission_url(submission, view_name), data, secure=True)
 
     def refresh(self, instance):
         return instance.__class__.objects.get(id=instance.id)
