@@ -13,6 +13,7 @@
     <div>
         <h5>Determination</h5>
         <p>{{ determination.get_determination_display }}</p>
+        {{ determination.determination_message|bleach }}
     </div>
 </div>
 
