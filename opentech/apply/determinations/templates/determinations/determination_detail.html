@@ -17,10 +17,12 @@
     </div>
 </div>
 
-<div class="rich-text rich-text--answers">
-    {% for question, answer in determination_data.items %}
-        <h5>{{ question }}</h5>
-        {{ answer|bleach }}
-    {% endfor %}
-</div>
+    {% if can_view_extended_data %}
+        <div class="rich-text rich-text--answers">
+            {% for question, answer in determination_data.items %}
+                <h5>{{ question }}</h5>
+                {{ answer|bleach }}
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
