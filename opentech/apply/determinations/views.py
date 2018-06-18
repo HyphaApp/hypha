@@ -99,7 +99,7 @@ class DeterminationDetailView(DetailView):
             raise PermissionDenied
 
         if determination.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:determinations:form', args=(determination.submission.id,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(determination.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
