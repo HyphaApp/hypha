@@ -819,4 +819,4 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return f'{self.title} from {self.full_name} for {self.page.title}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'

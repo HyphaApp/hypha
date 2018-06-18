@@ -27,3 +27,4 @@ class ReviewFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     author = factory.SubFactory(StaffFactory)
     review = factory.Dict({'submission': factory.SelfAttribute('..submission')}, dict_factory=ReviewDataFactory)
+    is_draft = False
