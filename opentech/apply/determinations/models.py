@@ -13,9 +13,9 @@ UNDETERMINED = 1
 APPROVED = 2
 
 DETERMINATION_CHOICES = (
-    (UNAPPROVED, _('Unapproved')),
-    (UNDETERMINED, _('Undetermined')),
-    (APPROVED, _('Approved')),
+    (UNAPPROVED, _('Rejected')),
+    (UNDETERMINED, _('Needs more info')),
+    (APPROVED, _('Accepted')),
 )
 
 
