@@ -12,17 +12,6 @@
         {% include "funds/includes/update_reviewer_form.html" %}
 {% endblock %}
 
-{% block determination %}
-    <div class="sidebar__inner">
-        <h5>Determination</h5>
-        {% if object.determination %}
-            <a href="{% url 'apply:submissions:determinations:detail' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_determination_display }}</a>
-            {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
-        {% endif %}
-        {% include 'determinations/includes/determination_button.html' with submission=object %}
-    </div>
-{% endblock %}
-
 {% block reviews %}
     <div class="sidebar__inner">
         <h5>Reviews &amp; assignees</h5>
