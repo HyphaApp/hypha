@@ -30,7 +30,7 @@ class Determination(models.Model):
         on_delete=models.PROTECT,
     )
 
-    determination = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=0)
+    determination = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
     determination_message = models.TextField(verbose_name=_("Determination message"), blank=True)
     determination_data = JSONField()
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))

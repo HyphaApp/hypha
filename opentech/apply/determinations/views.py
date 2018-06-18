@@ -9,10 +9,10 @@ from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ProcessFormView, ModelFormMixin
 
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.users.decorators import staff_required
+from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination
+from .models import Determination, UNDETERMINED
 
 
 def get_form_for_stage(submission):
@@ -50,22 +50,22 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        # TODO add proper permission
-        # if not self.submission.phase.has_perm(request.user, 'add_determination') or \
-        if not self.submission.user_lead_or_admin(request.user):
+        if self.submission.phase not in DETERMINATION_PHASES \
+                and not self.submission.user_lead_or_admin(request.user):
             raise PermissionDenied()
 
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         try:
-            has_submitted_determination = not self.submission.determination.is_draft
+            has_determination_response = self.submission.determination.determination != UNDETERMINED \
+                                         and not self.submission.determination.is_draft
         except ObjectDoesNotExist:
-            has_submitted_determination = False
+            has_determination_response = False
 
         return super().get_context_data(
             submission=self.submission,
-            has_submitted_determination=has_submitted_determination,
+            has_determination_response=has_determination_response,
             title="Update Determination draft" if self.object else 'Add Determination',
             **kwargs
         )
