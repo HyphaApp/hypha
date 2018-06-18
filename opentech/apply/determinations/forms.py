@@ -61,20 +61,8 @@ class BaseDeterminationForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         if self.draft_button_name not in self.data:
-            action_name = self.request.GET.get('action')
-            if not action_name:
-                # The action name was not passed as a request parameter, so derive it
-                # from the determination and submission status
-                determination = int(cleaned_data['determination'])
-                suffix = '_more_info'
-                if determination == APPROVED:
-                    suffix = '_accepted'
-                elif determination == UNAPPROVED:
-                    suffix = '_rejected'
-                # Use get_available_status_transitions()?
-                for key, _ in self.submission.phase.transitions.items():
-                    action_name = key if suffix in key else None
-
+            action_name = self.request.GET.get('action') or \
+                          self.get_action_name_from_determination(int(cleaned_data['determination']))
             if action_name:
                 transition = self.submission.get_transition(action_name)
                 if not can_proceed(transition):
@@ -88,9 +76,9 @@ class BaseDeterminationForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.determination = int(self.cleaned_data['determination'])
         self.instance.determination_message = self.cleaned_data['determination_message']
-        self.instance.is_draft = self.draft_button_name in self.data or self.instance.determination == UNDETERMINED
+        self.instance.is_draft = self.draft_button_name in self.data
 
-        if self.transition:
+        if self.transition and not self.instance.is_draft:
             self.transition(by=self.request.user)
             self.submission.save()
 
@@ -104,6 +92,20 @@ class BaseDeterminationForm(forms.ModelForm):
             elif '_accepted' in action_name:
                 return APPROVED
         return UNAPPROVED
+
+    def get_action_name_from_determination(self, determination):
+        action_name = None
+
+        suffix = '_more_info'
+        if determination == APPROVED:
+            suffix = '_accepted'
+        elif determination == UNAPPROVED:
+            suffix = '_rejected'
+
+        # Use get_available_status_transitions()?
+        for key, _ in self.submission.phase.transitions.items():
+            action_name = key if suffix in key else None
+        return action_name
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
