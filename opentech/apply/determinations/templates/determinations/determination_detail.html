@@ -21,7 +21,7 @@
         <div class="rich-text rich-text--answers">
             {% for question, answer in determination_data.items %}
                 <h5>{{ question }}</h5>
-                {{ answer|bleach }}
+                {% if answer %}{{ answer|bleach }}{% else %}&mdash;{% endif %}
             {% endfor %}
         </div>
     {% endif %}
