@@ -1,5 +1,3 @@
-from difflib import SequenceMatcher
-
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -28,6 +26,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 from opentech.apply.users.models import User
 
 from .blocks import MustIncludeFieldBlock
+from .differ import compare
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
@@ -266,65 +265,13 @@ class RevisionListView(ListView):
 class RevisionCompareView(TemplateView):
     template_name = 'funds/revisions_compare.html'
 
-    def wrap(self, class_name, text):
-        return format_html('<span class="{}">{}</span>', class_name, mark_safe(text))
-
-    def deleted(self, text):
-        return self.wrap('deleted', text)
-
-    def added(self, text):
-        return self.wrap('added', text)
-
-    def compare_answer(self, answer_a, answer_b):
-        if not answer_a and not answer_b:
-            # This catches the case where both results are None and we cant compare
-            return answer_b
-        if isinstance(answer_a, dict) or isinstance(answer_b, dict):
-            # TODO: handle file dictionaries
-            return answer_b
-
-        diff = SequenceMatcher(None, answer_a, answer_b)
-        output = []
-        added = ''
-        deleted = ''
-        for opcode, a0, a1, b0, b1 in diff.get_opcodes():
-            if opcode == 'equal':
-                if a1 - a0 > 2 or not (added or deleted):
-                    if added:
-                        output.append(self.added(added))
-                        added = ''
-                    if deleted:
-                        output.append(self.deleted(deleted))
-                        deleted = ''
-                    output.append(diff.a[a0:a1])
-                else:
-                    added += diff.a[a0:a1]
-                    deleted += diff.a[a0:a1]
-            elif opcode == 'insert':
-                added += diff.b[b0:b1]
-            elif opcode == 'delete':
-                deleted += diff.a[a0:a1]
-            elif opcode == 'replace':
-                deleted += diff.a[a0:a1]
-                added += diff.b[b0:b1]
-
-        if added == deleted:
-            output.append(added)
-        else:
-            if added:
-                output.append(self.deleted(deleted))
-            if deleted:
-                output.append(self.added(added))
-
-        return mark_safe(''.join(output))
-
-    def compare(self, from_data, to_data):
+    def compare_revisions(self, from_data, to_data):
         diffed_form_data = {
-            field: self.compare_answer(from_data.form_data.get(field), to_data.form_data[field])
+            field: compare(from_data.form_data.get(field), to_data.form_data[field])
             for field in to_data.form_data
         }
         diffed_answers = [
-            self.compare_answer(*fields)
+            compare(*fields, should_bleach=False)
             for fields in zip(from_data.fields, to_data.fields)
         ]
         to_data.form_data = diffed_form_data
@@ -334,7 +281,7 @@ class RevisionCompareView(TemplateView):
     def get_context_data(self, **kwargs):
         from_revision = ApplicationSubmission.objects.get(id=self.kwargs['from'])
         to_revision = ApplicationSubmission.objects.get(id=self.kwargs['to'])
-        diff = self.compare(from_revision, to_revision)
+        diff = self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(
             submission=ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
             diff=diff,
