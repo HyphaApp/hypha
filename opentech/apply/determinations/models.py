@@ -41,7 +41,7 @@ class Determination(models.Model):
         unique_together = ('author', 'submission')
 
     def get_absolute_url(self):
-        return reverse('apply:submissions:determinations:review', args=(self.id,))
+        return reverse('apply:submissions:determinations:detail', args=(self.id,))
 
     def __str__(self):
         return f'Determination for {self.submission.title} by {self.author!s}'
