@@ -60,17 +60,17 @@ class BaseDeterminationForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        if not self.draft_button_name in self.data:
+        if self.draft_button_name not in self.data:
             action_name = self.request.GET.get('action')
             if not action_name:
                 # The action name was not passed as a request parameter, so derive it
                 # from the determination and submission status
+                determination = int(cleaned_data['determination'])
                 suffix = '_more_info'
-                if cleaned_data['determination'] == APPROVED:
+                if determination == APPROVED:
                     suffix = '_accepted'
-                elif cleaned_data['determination'] == UNAPPROVED:
+                elif determination == UNAPPROVED:
                     suffix = '_rejected'
-
                 # Use get_available_status_transitions()?
                 for key, _ in self.submission.phase.transitions.items():
                     action_name = key if suffix in key else None
@@ -89,7 +89,6 @@ class BaseDeterminationForm(forms.ModelForm):
         self.instance.determination = int(self.cleaned_data['determination'])
         self.instance.determination_message = self.cleaned_data['determination_message']
         self.instance.is_draft = self.draft_button_name in self.data or self.instance.determination == UNDETERMINED
-        self.instance.is_draft = True
 
         if self.transition:
             self.transition(by=self.request.user)
