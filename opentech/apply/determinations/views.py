@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -88,18 +89,20 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class DeterminationDetailView(DetailView):
     model = Determination
 
     def dispatch(self, request, *args, **kwargs):
         determination = self.get_object()
+        submission = determination.submission
 
-        if request.user != determination.submission.lead and not request.user.is_superuser:
+        if request.user != submission.user and request.user != submission.lead \
+                and not request.user.is_apply_staff and not request.user.is_superuser:
             raise PermissionDenied
 
         if determination.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(determination.submission.id,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
