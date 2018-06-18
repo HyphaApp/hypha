@@ -122,7 +122,10 @@ class DeterminationDetailView(DetailView):
             except KeyError:
                 pass
 
+        lead_or_admin = self.request.user.is_superuser or self.request.user == self.get_object().submission.lead
+
         return super().get_context_data(
+            can_view_extended_data=lead_or_admin,
             determination_data=form_determination_data,
             **kwargs
         )
