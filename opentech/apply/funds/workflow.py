@@ -13,6 +13,7 @@ Current limitations:
 be fixed when streamfield, may require intermediate fix prior to launch]
 """
 
+
 class UserPermissions(Enum):
     STAFF = 1
     ADMIN = 2

@@ -39,16 +39,17 @@ class TestStaffSubmissionView(SubmissionTestCase):
         response = self.post_submission_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
 
         # Cant use refresh from DB with FSM
-        submission_origional = self.refresh(submission)
-        submission_next = submission_origional.next
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
 
         self.assertRedirects(response, self.submission_url(submission_next))
-        self.assertEqual(submission_origional.status, 'invited_to_proposal')
+        self.assertEqual(submission_original.status, 'invited_to_proposal')
         self.assertEqual(submission_next.status, 'draft_proposal')
 
     def test_cant_progress_stage_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2)
-        response = self.post_submission_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
+        self.post_submission_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
+
         submission = self.refresh(submission)
 
         self.assertEqual(submission.status, 'concept_review_discussion')
