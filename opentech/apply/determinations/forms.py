@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django_fsm import can_proceed
 
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from .models import Determination, DETERMINATION_CHOICES, UNDETERMINED, UNAPPROVED, APPROVED
@@ -35,6 +36,7 @@ class BaseDeterminationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         self.submission = kwargs.pop('submission')
+        self.transition = None
         super().__init__(*args, **kwargs)
 
         self.fields['determination'].initial = self.get_determination_default()
@@ -55,20 +57,52 @@ class BaseDeterminationForm(forms.ModelForm):
         except ValidationError as e:
             self._update_errors(e)
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if not self.draft_button_name in self.data:
+            action_name = self.request.GET.get('action')
+            if not action_name:
+                # The action name was not passed as a request parameter, so derive it
+                # from the determination and submission status
+                suffix = '_more_info'
+                if cleaned_data['determination'] == APPROVED:
+                    suffix = '_accepted'
+                elif cleaned_data['determination'] == UNAPPROVED:
+                    suffix = '_rejected'
+
+                # Use get_available_status_transitions()?
+                for key, _ in self.submission.phase.transitions.items():
+                    action_name = key if suffix in key else None
+
+            if action_name:
+                transition = self.submission.get_transition(action_name)
+                if not can_proceed(transition):
+                    action = self.submission.phase.transitions[action_name]
+                    raise forms.ValidationError(f'You do not have permission to "{ action }"')
+
+                self.transition = transition
+
+        return cleaned_data
+
     def save(self, commit=True):
-        self.instance.determination = self.cleaned_data['determination']
+        self.instance.determination = int(self.cleaned_data['determination'])
         self.instance.determination_message = self.cleaned_data['determination_message']
+        self.instance.is_draft = self.draft_button_name in self.data or self.instance.determination == UNDETERMINED
+        self.instance.is_draft = True
 
-        self.instance.is_draft = self.draft_button_name in self.data
+        if self.transition:
+            self.transition(by=self.request.user)
+            self.submission.save()
 
-        super().save()
+        super().save(commit)
 
     def get_determination_default(self):
-        action = self.request.GET.get('action')
-        if action in DETERMINATION_RESPONSE_TRANSITIONS:
-            if '_more_info' in action:
+        action_name = self.request.GET.get('action')
+        if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
+            if '_more_info' in action_name:
                 return UNDETERMINED
-            elif '_accepted' in action:
+            elif '_accepted' in action_name:
                 return APPROVED
         return UNAPPROVED
 
