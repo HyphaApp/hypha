@@ -410,7 +410,6 @@ def get_determination_transitions():
 
     for phase_name, phase in PHASES:
         for transition_name in phase.transitions:
-            if '_accepted' in transition_name:
             if 'accepted' in transition_name:
                 transitions.add(transition_name)
             elif 'rejected' in transition_name:
