@@ -29,8 +29,10 @@ class Determination(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    determination_data = JSONField()
+
     determination = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=0)
+    determination_message = models.TextField(verbose_name=_("Determination message"), blank=True)
+    determination_data = JSONField()
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)

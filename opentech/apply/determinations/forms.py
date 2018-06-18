@@ -44,7 +44,8 @@ class BaseDeterminationForm(forms.ModelForm):
         # update the instance data prior to validating uniqueness
         self.instance.submission = self.submission
         self.instance.author = self.request.user
-        self.instance.determination_data = self.cleaned_data
+        self.instance.determination_data = {key: value for key, value in self.cleaned_data.items()
+                                            if key not in ['determination', 'determination_message']}
 
         try:
             self.instance.validate_unique()
@@ -53,6 +54,8 @@ class BaseDeterminationForm(forms.ModelForm):
 
     def save(self, commit=True):
         self.instance.determination = self.cleaned_data['determination']
+        self.instance.determination_message = self.cleaned_data['determination_message']
+
         self.instance.is_draft = self.draft_button_name in self.data
 
         super().save()
@@ -66,7 +69,8 @@ class ConceptDeterminationForm(BaseDeterminationForm):
     )
     determination_message = RichTextField(
         label='Determination message',
-        help_text='This text will be e-mailed to the applicant. Ones when text is first added and then every time the text is changed.'
+        help_text='This text will be e-mailed to the applicant. '
+        'Ones when text is first added and then every time the text is changed.'
     )
 
     principles = RichTextField(
@@ -138,7 +142,8 @@ class ProposalDeterminationForm(BaseDeterminationForm):
 
     determination_message = RichTextField(
         label='Determination message',
-        help_text='This text will be e-mailed to the applicant. Ones when text is first added and then every time the text is changed.'
+        help_text='This text will be e-mailed to the applicant. '
+        'Ones when text is first added and then every time the text is changed.'
     )
     determination_message.group = 1
 

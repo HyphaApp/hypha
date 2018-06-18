@@ -80,6 +80,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         if self.object:
             kwargs['initial'] = self.object.determination_data
             kwargs['initial']['determination'] = self.object.determination
+            kwargs['initial']['determination_message'] = self.object.determination_message
 
         return kwargs
 
@@ -104,9 +105,6 @@ class DeterminationDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         determination_data = self.get_object().determination_data
-        # We only need the form fields that are not the determination value
-        determination_data.pop('determination')
-
         form_used = get_form_for_stage(self.get_object().submission)
         form_determination_data = {}
 
