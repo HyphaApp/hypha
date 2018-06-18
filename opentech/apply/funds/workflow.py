@@ -215,7 +215,7 @@ DoubleStageDefinition = {
     },
     'concept_review_discussion': {
         'transitions': {
-            'invited_to_proposal': {'display': 'Invited to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_review_more_info': 'Request More Information',
         },

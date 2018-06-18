@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -9,18 +9,21 @@ class SubmissionTestCase(TestCase):
     user_factory = None
 
     def setUp(self):
+        self.factory = RequestFactory()
         self.user = self.user_factory()
         self.client.force_login(self.user)
 
     def submission_url(self, submission, view_name='detail'):
         view_name = f'funds:submissions:{ view_name }'
-        return reverse(view_name, kwargs={'pk': submission.id})
+        url = reverse(view_name, kwargs={'pk': submission.id})
+        request = self.factory.get(url, secure=True)
+        return request.build_absolute_uri()
 
     def get_submission_page(self, submission, view_name='detail'):
-        return self.client.get(self.submission_url(submission, view_name), secure=True)
+        return self.client.get(self.submission_url(submission, view_name), secure=True, follow=True)
 
     def post_submission_page(self, submission, data, view_name='detail'):
-        return self.client.post(self.submission_url(submission, view_name), data, secure=True)
+        return self.client.post(self.submission_url(submission, view_name), data, secure=True, follow=True)
 
     def refresh(self, instance):
         return instance.__class__.objects.get(id=instance.id)
