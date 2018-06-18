@@ -1,23 +1,10 @@
-language: python
-python:
-  - 3.6
-cache:
-  pip: true
-  directories:
-    - node_modules
-
-# Only build branch updates for master
-branches:
-  only:
-    - master
-
 # Use container-based infrastructure
 dist: trusty
-sudo: false
 
 # Services
 services:
   - postgresql
+  - docker
 
 addons:
   postgresql: "9.6"
@@ -35,42 +22,27 @@ before_script:
 
 # Package installation
 install:
-  - pip install codecov
-
-  # Install project dependencies
-  - pip install -r requirements.txt
-
-  # Install node
-  - nvm install 8
-
-  # Move into the static_src folder where we will compile the FE
-  - cd ./opentech/static_src
-
-  # Install node dependencies
-  - npm install --quiet
-
-  # Build the static files
-  - npm run build:prod
-
-  # Change back to the original folder
-  - cd -
+  - docker build -t opentech:latest .
+  - docker run opentech:latest pip install codecov
 
 # Run the tests
 script:
   # Run python code style checks
-  - flake8
-
-  # Collect static
-  - python manage.py collectstatic --noinput --verbosity=0
+  - docker run opentech:latest flake8
 
   # Run system checks
-  - python manage.py check
+  - |
+    docker run -e DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE \
+    -e DATABASE_URL=$DATABASE_URL \
+    -e CFG_SECRET_KEY=$CFG_SECRET_KEY \
+    -e CFG_ALLOWED_HOSTS=$CFG_ALLOWED_HOSTS \
+    opentech:latest python manage.py check
 
   # Check for missing migrations
-  - python manage.py makemigrations --check --noinput --verbosity=0
+  - docker run opentech:latest python manage.py makemigrations --check --noinput --verbosity=0
 
   # Run tests
-  - coverage run --source='.' manage.py test .
+  - docker run opentech:latest coverage run --source='.' manage.py test .
 
 after_success:
   codecov
