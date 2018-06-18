@@ -1,7 +1,8 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 
-from .models import Determination, DETERMINATION_CHOICES
+from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
+from .models import Determination, DETERMINATION_CHOICES, UNDETERMINED, UNAPPROVED, APPROVED
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
@@ -36,6 +37,8 @@ class BaseDeterminationForm(forms.ModelForm):
         self.submission = kwargs.pop('submission')
         super().__init__(*args, **kwargs)
 
+        self.fields['determination'].initial = self.get_determination_default()
+
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
@@ -60,12 +63,21 @@ class BaseDeterminationForm(forms.ModelForm):
 
         super().save()
 
+    def get_determination_default(self):
+        action = self.request.GET.get('action')
+        if action in DETERMINATION_RESPONSE_TRANSITIONS:
+            if '_more_info' in action:
+                return UNDETERMINED
+            elif '_accepted' in action:
+                return APPROVED
+        return UNAPPROVED
+
 
 class ConceptDeterminationForm(BaseDeterminationForm):
     determination = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label='Determination',
-        help_text='Do you recommend requesting a proposal based on this concept note?'
+        help_text='Do you recommend requesting a proposal based on this concept note?',
     )
     determination_message = RichTextField(
         label='Determination message',
