@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load workflow_tags %}
+{% load workflow_tags determination_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -38,6 +38,7 @@
         {% block admin_actions %}
         {% endblock %}
         <div class="wrapper wrapper--sidebar">
+            {# FIXME: this should only show when invited for proposal! #}
             {% if request.user|has_edit_perm:object and not request.user.is_apply_staff %}
                 <div>
                     <h4>Congratulations!</h4>
@@ -92,8 +93,12 @@
                     <div class="sidebar__inner">
                         <h5>Determination</h5>
                         {% if object.determination %}
-                            <a href="{% url 'apply:submissions:determinations:detail' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_determination_display }}</a>
-                            {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
+                            {% if object|pending_determination:request.user %}
+                                <p>Pending</p>
+                            {% else %}
+                                <a href="{% url 'apply:submissions:determinations:detail' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_determination_display }}</a>
+                                {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
+                            {% endif %}
                         {% endif %}
                         {% include 'determinations/includes/determination_button.html' with submission=object %}
                     </div>

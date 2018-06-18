@@ -39,11 +39,17 @@ class BaseDeterminationForm(forms.ModelForm):
         self.transition = None
         super().__init__(*args, **kwargs)
 
-        self.fields['determination'].initial = self.get_determination_default()
-
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == 'determination':
+            action_name = self.request.GET.get('action')
+            if action_name:
+                return self.get_determination_from_action_name(action_name)
+
+        return super().get_initial_for_field(field, field_name)
 
     def validate_unique(self):
         # update the instance data prior to validating uniqueness
@@ -84,8 +90,7 @@ class BaseDeterminationForm(forms.ModelForm):
 
         super().save(commit)
 
-    def get_determination_default(self):
-        action_name = self.request.GET.get('action')
+    def get_determination_from_action_name(self, action_name):
         if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
             if 'more_info' in action_name:
                 return UNDETERMINED
@@ -104,7 +109,10 @@ class BaseDeterminationForm(forms.ModelForm):
 
         # Use get_available_status_transitions()?
         for key, _ in self.submission.phase.transitions.items():
-            action_name = key if suffix in key else None
+            if suffix  in key:
+                action_name = key
+                break
+
         return action_name
 
 
