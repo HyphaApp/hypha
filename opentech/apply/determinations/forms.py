@@ -87,20 +87,20 @@ class BaseDeterminationForm(forms.ModelForm):
     def get_determination_default(self):
         action_name = self.request.GET.get('action')
         if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
-            if '_more_info' in action_name:
+            if 'more_info' in action_name:
                 return UNDETERMINED
-            elif '_accepted' in action_name:
+            elif 'accepted' in action_name:
                 return APPROVED
         return UNAPPROVED
 
     def get_action_name_from_determination(self, determination):
         action_name = None
 
-        suffix = '_more_info'
+        suffix = 'more_info'
         if determination == APPROVED:
-            suffix = '_accepted'
+            suffix = 'accepted'
         elif determination == UNAPPROVED:
-            suffix = '_rejected'
+            suffix = 'rejected'
 
         # Use get_available_status_transitions()?
         for key, _ in self.submission.phase.transitions.items():
