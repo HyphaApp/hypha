@@ -30,7 +30,7 @@ def render_title(record):
 
 class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
-    title = tables.LinkColumn('funds:submissions:detail', args=[A('pk')], orderable=True, attrs={'td': {'data-tooltip': lambda record: record.title, 'class': 'js-title'}})
+    title = tables.LinkColumn('funds:submissions:detail', text=render_title, args=[A('pk')], orderable=True, attrs={'td': {'data-tooltip': lambda record: record.title, 'class': 'js-title'}})
     submit_time = tables.DateColumn(verbose_name="Submitted")
     phase = tables.Column(verbose_name="Status", order_by=('status',))
     stage = tables.Column(verbose_name="Type", order_by=('status',))
