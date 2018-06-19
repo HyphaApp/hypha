@@ -186,6 +186,10 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
 
     class Params:
         workflow_stages = 1
+        draft_proposal = factory.Trait(
+            status='draft_proposal',
+            workflow_name='double',
+        )
 
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
