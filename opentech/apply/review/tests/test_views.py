@@ -121,15 +121,11 @@ class ReviewDetailTestCase(BaseTestCase):
     url_name = 'funds:submissions:reviews:{}'
 
     def get_kwargs(self, instance):
-        return {'submission_pk': instance.id}
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
 
     def test_review_detail_field_groups(self):
-        submission = ApplicationSubmissionFactory(workflow_stages=2)
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
         review = ReviewFactory(submission=submission, author=self.user)
-        response = self.get_page(review, 'detail')
+        response = self.get_page(review)
         self.assertContains(response, submission.title)
-        self.assertContains(response, reverse('funds:submissions:reviews:review', kwargs={
-            'pk': review.id,
-            'submission_pk': submission.id,
-        }))
         self.assertContains(response, "<h4>A. Conflicts of Interest and Confidentiality</h4>")
