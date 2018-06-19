@@ -115,7 +115,7 @@ class DeterminationDetailView(DetailView):
             try:
                 # Add any titles that exist
                 title = form_used.titles[field.group]
-                form_determination_data.setdefault(title, [])
+                form_determination_data.setdefault(title, '')
             except AttributeError:
                 pass
 
