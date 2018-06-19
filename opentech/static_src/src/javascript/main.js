@@ -42,7 +42,7 @@ import mobileFilterPadding from './components/mobile-filter-padding';
         // Global fancybox options
         fancyboxGlobal();
 
-        // Activity feed functionality
+        // Activity feed logic
         activityFeed();
 
         // Submissions overview table logic
