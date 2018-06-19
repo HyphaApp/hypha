@@ -57,7 +57,7 @@ $table-breakpoint: 'tablet-portrait';
                 }
             }
 
-            &.status_name {
+            &.phase {
                 @include media-query($table-breakpoint) {
                     width: 150px;
                 }
@@ -126,7 +126,7 @@ $table-breakpoint: 'tablet-portrait';
             }
 
             // project status label
-            &.status_name {
+            &.phase {
                 span {
                     display: inline-block;
                     padding: 5px;
