@@ -1,4 +1,3 @@
-from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -96,9 +95,10 @@ class UserReviewFormTestCase(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class ReviewDetailTestCase(BaseTestCase):
+class ReviewDetailTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
     def get_kwargs(self, instance):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}

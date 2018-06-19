@@ -1,6 +1,3 @@
-from django.test import TestCase, RequestFactory
-from django.urls import reverse
-
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.tests import BaseViewTestCase
