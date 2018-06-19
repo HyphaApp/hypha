@@ -3,6 +3,7 @@ import MobileMenu from './components/mobile-menu';
 import Search from './components/search';
 import MobileSearch from './components/mobile-search';
 import Tabs from './components/tabs';
+import DeterminationCopy from './components/determination-template';
 import '@fancyapps/fancybox';
 
 (function ($) {
@@ -24,6 +25,10 @@ import '@fancyapps/fancybox';
 
         $(Tabs.selector()).each((index, el) => {
             new Tabs($(el));
+        });
+
+        $(DeterminationCopy.selector()).each((index, el) => {
+            new DeterminationCopy($(el));
         });
 
         // Show list of selected files for upload on input[type=file]

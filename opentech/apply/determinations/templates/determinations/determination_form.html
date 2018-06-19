@@ -33,8 +33,8 @@
         <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
     </form>
     {% for type, message in canned_messages.items %}
-        <div id="determination-message-{{ type }}">
-        {{ message|bleach }}
+        <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
+            {{ message|bleach }}
         </div>
     {% endfor %}
 {% else %}
