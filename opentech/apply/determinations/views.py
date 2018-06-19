@@ -66,8 +66,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
     def get_context_data(self, **kwargs):
         try:
-            has_determination_response = self.submission.determination.outcome != NEEDS_MORE_INFO \
-                                         and not self.submission.determination.is_draft
+            has_determination_response = self.submission.determination.submitted
         except ObjectDoesNotExist:
             has_determination_response = False
 

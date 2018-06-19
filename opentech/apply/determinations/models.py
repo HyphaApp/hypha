@@ -41,6 +41,7 @@ class Determination(models.Model):
     def get_absolute_url(self):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))
 
+    @property
     def submitted(self):
         return self.outcome != NEEDS_MORE_INFO and not self.is_draft
 
