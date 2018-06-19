@@ -12,13 +12,19 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, NEEDS_MORE_INFO
+from .models import Determination, NEEDS_MORE_INFO, DeterminationMessageSettings
 
 
 def get_form_for_stage(submission):
     forms = [ConceptDeterminationForm, ProposalDeterminationForm]
     index = submission.workflow.stages.index(submission.stage)
     return forms[index]
+
+
+def get_prefix_for_stage(submission):
+    labels = ['concept_', 'proposal_']
+    index = submission.workflow.stages.index(submission.stage)
+    return labels[index]
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
@@ -71,10 +77,20 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         except ObjectDoesNotExist:
             has_determination_response = False
 
+        messages = DeterminationMessageSettings.for_site(self.request.site)
+        prefix = get_prefix_for_stage(self.submission)
+        canned_messages = {}
+
+        for field in DeterminationMessageSettings._meta.get_fields():
+            if prefix in field.name:
+                key = field.name.replace(prefix, '')
+                canned_messages[key] = getattr(messages, field.name)
+
         return super().get_context_data(
             submission=self.submission,
             has_determination_response=has_determination_response,
             title="Update Determination draft" if self.object else 'Add Determination',
+            canned_messages=canned_messages,
             **kwargs
         )
 

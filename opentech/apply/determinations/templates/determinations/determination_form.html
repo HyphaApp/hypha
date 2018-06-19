@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load bleach_tags %}
 {% block title %}Create a determination{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--breakout wrapper--admin">
@@ -14,7 +15,6 @@
         {{ form.media }}
         {% csrf_token %}
         {% for field in form %}
-            {# to be replaced with better logic when we use stream form #}
             {% ifchanged field.field.group %}
                 {% for key, value in form.titles.items %}
                     {% if key == field.field.group %}
@@ -32,6 +32,11 @@
         <input class="button button--primary" type="submit" value="Send Determination" name="submit" />
         <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
     </form>
+    {% for type, message in canned_messages %}
+        <div id="determination-message-{{ type }}">
+        {{ message|bleach }}
+        </div>
+    {% endfor %}
 {% else %}
     <p>You have already added a determination for this submission</p>
 {% endif %}
