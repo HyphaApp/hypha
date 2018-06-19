@@ -38,9 +38,6 @@ class Determination(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
 
-    class Meta:
-        unique_together = ('author', 'submission')
-
     def get_absolute_url(self):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))
 

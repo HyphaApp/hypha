@@ -51,18 +51,6 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return super().get_initial_for_field(field, field_name)
 
-    def validate_unique(self):
-        # update the instance data prior to validating uniqueness
-        self.instance.submission = self.submission
-        self.instance.author = self.request.user
-        self.instance.data = {key: value for key, value in self.cleaned_data.items()
-                                            if key not in ['outcome', 'message']}
-
-        try:
-            self.instance.validate_unique()
-        except ValidationError as e:
-            self._update_errors(e)
-
     def clean(self):
         cleaned_data = super().clean()
 
@@ -86,6 +74,8 @@ class BaseDeterminationForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.outcome = int(self.cleaned_data['outcome'])
         self.instance.message = self.cleaned_data['message']
+        self.instance.data = {key: value for key, value in self.cleaned_data.items()
+                              if key not in ['outcome', 'message']}
         self.instance.is_draft = self.draft_button_name in self.data
 
         if self.transition and not self.instance.is_draft:

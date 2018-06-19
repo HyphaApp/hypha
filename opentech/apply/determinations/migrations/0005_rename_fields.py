@@ -25,4 +25,8 @@ class Migration(migrations.Migration):
             old_name='determination',
             new_name='outcome',
         ),
+        migrations.AlterUniqueTogether(
+            name='determination',
+            unique_together=set(),
+        ),
     ]
