@@ -21,14 +21,13 @@ It is assumed the developer's computer is running OSX or Linux. Depending on you
   * support for using any installed node modules on the webiste
   * display file size information
 * Consideration for images, currently copying the directory only - to avoid slowdowns and non-essential dependancies. We encourage using SVG for UI vectors and pre-optimised UI photograph assets.
-* An automated way to upload your site to a staging server using [dploy](https://github.com/LeanMeanFightingMachine/dploy).
 * [Build commands](#build-scripts) for generating testable or deployable assets only
 
 ## Installation
 
 To start a prototype using this bootstrap;
 
-* **Get the files:** Clone this repository to a new directory, for example 
+* **Get the files:** Clone this repository to a new directory, for example
 `git clone https://github.com/SimonDEvans/simple-tooling.git new-project`.
 * **Name the project:** Open `package.json` and replace the `name` with your project name [following npm guidelines](http://browsenpm.org/package.json#name).
 * **Setup git**: Run `npm run git:init` in the root of your new project to remove existing git links with this repository and create a fresh project with the directory as is committed.
@@ -52,14 +51,6 @@ To start a prototype using this bootstrap;
 
 
 ## Deploying it
-
-### Deploy script
-
-You can take advantage of the nodejs package [dploy](https://github.com/LeanMeanFightingMachine/dploy) to upload the `/dist` directory. To do so you will need to;
-
- * Make a copy of `example.dploy.yaml` and name it `dploy.yaml`.
- * Modify the `host` `user` and `path.remote` variables.
- * Run `npm run deploy` to start the deployment process.
 
 ### Build scripts
 
