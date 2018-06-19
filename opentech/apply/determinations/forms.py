@@ -3,7 +3,7 @@ from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django_fsm import can_proceed
 
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
-from .models import Determination, DETERMINATION_CHOICES, UNDETERMINED, UNAPPROVED, APPROVED
+from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
@@ -44,7 +44,7 @@ class BaseDeterminationForm(forms.ModelForm):
                 field.required = False
 
     def get_initial_for_field(self, field, field_name):
-        if field_name == 'determination':
+        if field_name == 'outcome':
             action_name = self.request.GET.get('action')
             if action_name:
                 return self.get_determination_from_action_name(action_name)
@@ -55,8 +55,8 @@ class BaseDeterminationForm(forms.ModelForm):
         # update the instance data prior to validating uniqueness
         self.instance.submission = self.submission
         self.instance.author = self.request.user
-        self.instance.determination_data = {key: value for key, value in self.cleaned_data.items()
-                                            if key not in ['determination', 'determination_message']}
+        self.instance.data = {key: value for key, value in self.cleaned_data.items()
+                                            if key not in ['outcome', 'message']}
 
         try:
             self.instance.validate_unique()
@@ -68,7 +68,7 @@ class BaseDeterminationForm(forms.ModelForm):
 
         if self.draft_button_name not in self.data:
             action_name = self.request.GET.get('action') or \
-                self.get_action_name_from_determination(int(cleaned_data['determination']))
+                self.get_action_name_from_determination(int(cleaned_data['outcome']))
             if action_name:
                 transition = self.submission.get_transition(action_name)
                 if not can_proceed(transition):
@@ -80,8 +80,8 @@ class BaseDeterminationForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        self.instance.determination = int(self.cleaned_data['determination'])
-        self.instance.determination_message = self.cleaned_data['determination_message']
+        self.instance.outcome = int(self.cleaned_data['outcome'])
+        self.instance.message = self.cleaned_data['message']
         self.instance.is_draft = self.draft_button_name in self.data
 
         if self.transition and not self.instance.is_draft:
@@ -93,18 +93,18 @@ class BaseDeterminationForm(forms.ModelForm):
     def get_determination_from_action_name(self, action_name):
         if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
             if 'more_info' in action_name:
-                return UNDETERMINED
+                return NEEDS_MORE_INFO
             elif 'accepted' in action_name:
-                return APPROVED
-        return UNAPPROVED
+                return ACCEPTED
+        return REJECTED
 
     def get_action_name_from_determination(self, determination):
         action_name = None
 
         suffix = 'more_info'
-        if determination == APPROVED:
+        if determination == ACCEPTED:
             suffix = 'accepted'
-        elif determination == UNAPPROVED:
+        elif determination == REJECTED:
             suffix = 'rejected'
 
         # Use get_available_status_transitions()?
@@ -117,12 +117,12 @@ class BaseDeterminationForm(forms.ModelForm):
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
-    determination = forms.ChoiceField(
+    outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label='Determination',
         help_text='Do you recommend requesting a proposal based on this concept note?',
     )
-    determination_message = RichTextField(
+    message = RichTextField(
         label='Determination message',
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
@@ -188,19 +188,19 @@ class ProposalDeterminationForm(BaseDeterminationForm):
 
     # A. Determination
 
-    determination = forms.ChoiceField(
+    outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label='Determination',
         help_text='Do you recommend requesting a proposal based on this concept note?'
     )
-    determination.group = 1
+    outcome.group = 1
 
-    determination_message = RichTextField(
+    message = RichTextField(
         label='Determination message',
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
     )
-    determination_message.group = 1
+    message.group = 1
 
     # B. General thoughts
     liked = RichTextField(

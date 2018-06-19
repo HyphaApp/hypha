@@ -12,7 +12,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, UNDETERMINED
+from .models import Determination, NEEDS_MORE_INFO
 
 
 def get_form_for_stage(submission):
@@ -66,8 +66,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
     def get_context_data(self, **kwargs):
         try:
-            has_determination_response = self.submission.determination.determination != UNDETERMINED \
-                and not self.submission.determination.is_draft
+            has_determination_response = self.submission.determination.outcome != NEEDS_MORE_INFO \
+                                         and not self.submission.determination.is_draft
         except ObjectDoesNotExist:
             has_determination_response = False
 
@@ -87,9 +87,9 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         kwargs['submission'] = self.submission
 
         if self.object:
-            kwargs['initial'] = self.object.determination_data
-            kwargs['initial']['determination'] = self.object.determination
-            kwargs['initial']['determination_message'] = self.object.determination_message
+            kwargs['initial'] = self.object.data
+            kwargs['initial']['outcome'] = self.object.outcome
+            kwargs['initial']['message'] = self.object.message
 
         return kwargs
 
@@ -115,28 +115,26 @@ class DeterminationDetailView(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        determination_data = self.get_object().determination_data
-        form_used = get_form_for_stage(self.get_object().submission)
-        form_determination_data = {}
+        determination = self.get_object()
+        form_used = get_form_for_stage(determination.submission)
+        form_data = {}
 
         for name, field in form_used.base_fields.items():
             try:
                 # Add any titles that exist
                 title = form_used.titles[field.group]
-                form_determination_data.setdefault(title, '')
+                form_data.setdefault(title, '')
             except AttributeError:
                 pass
 
             try:
-                value = determination_data[name]
-                form_determination_data.setdefault(field.label, str(value))
+                value = determination.data[name]
+                form_data.setdefault(field.label, str(value))
             except KeyError:
                 pass
 
-        lead_or_admin = self.request.user.is_superuser or self.request.user == self.get_object().submission.lead
-
         return super().get_context_data(
-            can_view_extended_data=lead_or_admin,
-            determination_data=form_determination_data,
+            can_view_extended_data=determination.submission.user_lead_or_admin(self.request.user),
+            determination_data=form_data,
             **kwargs
         )

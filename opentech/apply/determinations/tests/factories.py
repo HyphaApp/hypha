@@ -2,7 +2,7 @@ import factory
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 
-from ..models import Determination, APPROVED, UNDETERMINED, UNAPPROVED
+from ..models import Determination, ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from ..views import get_form_for_stage
 
 
@@ -24,16 +24,16 @@ class DeterminationFactory(factory.DjangoModelFactory):
         model = Determination
 
     class Params:
-        submitted = factory.Trait(determination=APPROVED, is_draft=False)
-        approved = factory.Trait(determination=APPROVED)
-        rejected = factory.Trait(determination=UNAPPROVED)
+        submitted = factory.Trait(outcome=ACCEPTED, is_draft=False)
+        accepted = factory.Trait(outcome=ACCEPTED)
+        rejected = factory.Trait(outcome=REJECTED)
         not_draft = factory.Trait(is_draft=False)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     author = factory.SelfAttribute('submission.lead')
 
-    determination = UNDETERMINED
-    determination_message = factory.Faker('sentence')
-    determination_data = factory.Dict({'submission': factory.SelfAttribute('..submission')}, dict_factory=DeterminationDataFactory)
+    outcome = NEEDS_MORE_INFO
+    message = factory.Faker('sentence')
+    data = factory.Dict({'submission': factory.SelfAttribute('..submission')}, dict_factory=DeterminationDataFactory)
 
     is_draft = True

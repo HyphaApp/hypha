@@ -1,7 +1,7 @@
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
 
-from opentech.apply.determinations.models import UNDETERMINED
+from opentech.apply.determinations.models import NEEDS_MORE_INFO
 from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 register = template.Library()
@@ -21,9 +21,7 @@ def can_add_determination(user, submission):
     - there was not determination response (i.e. accepted / rejected)
     """
     try:
-        has_determination_response = submission.determination \
-            and not submission.determination.is_draft \
-            and submission.determination.determination != UNDETERMINED
+        has_determination_response = submission.determination.submitted
     except ObjectDoesNotExist:
         has_determination_response = False
 
@@ -52,8 +50,8 @@ def pending_determination(submission, user):
     if submission.status in DETERMINATION_PHASES:
         try:
             return not submission.determination \
-                or (submission.determination.is_draft and not user.is_apply_staff) \
-                or submission.determination.determination == UNDETERMINED
+                   or (submission.determination.is_draft and not user.is_apply_staff) \
+                   or submission.determination.outcome == NEEDS_MORE_INFO
         except ObjectDoesNotExist:
             return True
 

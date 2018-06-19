@@ -8,14 +8,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.activity.models import Activity
 
-UNAPPROVED = 0
-UNDETERMINED = 1
-APPROVED = 2
+REJECTED = 0
+NEEDS_MORE_INFO = 1
+ACCEPTED = 2
 
 DETERMINATION_CHOICES = (
-    (UNAPPROVED, _('Rejected')),
-    (UNDETERMINED, _('Needs more info')),
-    (APPROVED, _('Accepted')),
+    (REJECTED, _('Rejected')),
+    (NEEDS_MORE_INFO, _('Needs more info')),
+    (ACCEPTED, _('Accepted')),
 )
 
 
@@ -30,9 +30,9 @@ class Determination(models.Model):
         on_delete=models.PROTECT,
     )
 
-    determination = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
-    determination_message = models.TextField(verbose_name=_("Determination message"), blank=True)
-    determination_data = JSONField(blank=True)
+    outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
+    message = models.TextField(verbose_name=_("Determination message"), blank=True)
+    data = JSONField(blank=True)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
@@ -44,13 +44,13 @@ class Determination(models.Model):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))
 
     def submitted(self):
-        return self.determination != UNDETERMINED and not self.is_draft
+        return self.outcome != NEEDS_MORE_INFO and not self.is_draft
 
     def __str__(self):
         return f'Determination for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.determination_data)}>'
+        return f'<{self.__class__.__name__}: {str(self.data)}>'
 
 
 @receiver(post_save, sender=Determination)

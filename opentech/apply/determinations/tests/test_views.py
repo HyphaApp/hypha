@@ -74,21 +74,21 @@ class DeterminationFormTestCase(BaseTestCase):
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
         determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.determination}, 'form')
+        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
         self.assertTrue(response.context['has_determination_response'])
         self.assertContains(response, 'You have already added a determination for this submission')
 
     def test_can_edit_draft_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
         determination = DeterminationFactory(submission=submission, author=self.user)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.determination}, 'form')
+        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
         self.assertFalse(response.context['has_determination_response'])
         self.assertEqual(response.context['title'], 'Update Determination draft')
 
     def test_cannot_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         determination = DeterminationFactory(submission=submission, author=self.user)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.determination}, 'form')
+        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
         self.assertEqual(response.status_code, 403)
 
 
