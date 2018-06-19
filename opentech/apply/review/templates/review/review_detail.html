@@ -22,8 +22,13 @@
 
 <div class="rich-text rich-text--answers">
     {% for question, answer in review_data.items %}
-        <h5>{{ question }}</h5>
-        {{ answer|bleach }}
+        {% if answer == "<field_group_title>" %}
+            {# Field group title #}
+            <h4>{{ question }}</h4>
+        {% else %}
+            <h5>{{ question }}</h5>
+            {{ answer|bleach }}
+        {% endif %}
     {% endfor %}
 </div>
 {% endblock %}

@@ -119,7 +119,7 @@ class ReviewDetailView(DetailView):
             try:
                 # Add titles which exist
                 title = form_used.titles[field.group]
-                review_data.setdefault(title, '')
+                review_data.setdefault(title, '<field_group_title>')
             except AttributeError:
                 pass
 
@@ -133,7 +133,6 @@ class ReviewDetailView(DetailView):
                 value = choices[int(value)]
 
             review_data.setdefault(field.label, str(value))
-
         return super().get_context_data(
             review_data=review_data,
             **kwargs
