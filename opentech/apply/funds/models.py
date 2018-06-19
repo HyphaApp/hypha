@@ -767,8 +767,8 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         return self.has_permission_to_review(user)
 
-    def user_lead_or_admin(self, user):
-        return user.is_superuser or self.lead.id == user.id
+    def has_permission_to_add_determination(self, user):
+        return user.is_superuser or self.lead == user
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

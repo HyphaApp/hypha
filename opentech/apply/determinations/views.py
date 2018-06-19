@@ -51,7 +51,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
         if self.submission.phase not in DETERMINATION_PHASES \
-                and not self.submission.user_lead_or_admin(request.user):
+                and not self.submission.has_permission_to_add_determination(request.user):
             raise PermissionDenied()
 
         try:
@@ -108,8 +108,8 @@ class DeterminationDetailView(DetailView):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         determination = self.get_object()
 
-        if request.user != submission.user and request.user != submission.lead \
-                and not request.user.is_apply_staff and not request.user.is_superuser:
+        if request.user != self.submission.user and not request.user.is_apply_staff and not \
+                self.submission.has_permission_to_add_determination(request.user):
             raise PermissionDenied
 
         if determination.is_draft:
@@ -137,7 +137,7 @@ class DeterminationDetailView(DetailView):
                 pass
 
         return super().get_context_data(
-            can_view_extended_data=determination.submission.user_lead_or_admin(self.request.user),
+            can_view_extended_data=determination.submission.has_permission_to_add_determination(self.request.user),
             determination_data=form_data,
             **kwargs
         )
