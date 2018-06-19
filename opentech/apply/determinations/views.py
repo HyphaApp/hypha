@@ -45,7 +45,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     template_name = 'determinations/determination_form.html'
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, author=self.request.user)
+        return self.model.objects.get(submission=self.submission)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -101,16 +101,19 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 class DeterminationDetailView(DetailView):
     model = Determination
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission)
+
     def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         determination = self.get_object()
-        submission = determination.submission
 
         if request.user != submission.user and request.user != submission.lead \
                 and not request.user.is_apply_staff and not request.user.is_superuser:
             raise PermissionDenied
 
         if determination.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(submission.id,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(self.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 

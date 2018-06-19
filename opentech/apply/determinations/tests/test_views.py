@@ -36,7 +36,7 @@ class StaffDeterminationsTestCase(BaseTestCase):
     url_name = 'funds:submissions:determinations:{}'
 
     def get_kwargs(self, instance):
-        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+        return {'submission_pk': instance.submission.id}
 
     def test_can_access_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
