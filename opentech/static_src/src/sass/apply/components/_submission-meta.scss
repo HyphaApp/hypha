@@ -1,0 +1,32 @@
+.submission-meta {
+    background-color: transparent;
+
+    tbody {
+        td {
+            &.status_name {
+                span {
+                    display: inline-block;
+                    padding: 10px;
+                    font-size: 13px;
+                    font-weight: $weight--bold;
+                    color: $color--mid-dark-grey;
+                    text-align: center;
+                    background-color: transparent;
+                    border: 1px solid $color--mid-dark-grey;
+                }
+            }
+        }
+    }
+
+    &__row {
+        border: 0;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &--black {
+            color: $color--default;
+        }
+    }
+}

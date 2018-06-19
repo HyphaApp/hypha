@@ -1,30 +1,25 @@
 $table-breakpoint: 'tablet-portrait';
 
-table,
-.table {
+table {
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
 
-    &--transparent {
-        background-color: transparent;
-    }
+    // table head
+    th {
+        padding: 20px 15px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: left;
 
-    thead {
-        display: none;
-
-        @include media-query($table-breakpoint) {
-            display: table-header-group;
-        }
-
-        tr {
-            &:hover {
-                box-shadow: none;
-            }
+        a {
+            color: $color--mid-dark-grey;
+            transition: color 0.25s ease-out;
         }
     }
 
+    // tale rows
     tr {
         border: 1px solid $color--light-mid-grey;
         transition: box-shadow 0.15s ease;
@@ -44,6 +39,7 @@ table,
             }
         }
 
+        // responsive table styles
         > td {
             display: block;
             width: 100%;
@@ -52,172 +48,6 @@ table,
                 display: table-cell;
                 width: initial;
             }
-
-            &.title {
-                padding-top: 15px;
-                font-weight: $weight--bold;
-
-                @include media-query($table-breakpoint) {
-                    padding-top: 20px;
-                }
-
-                a {
-                    color: $color--primary;
-
-                    @include media-query($table-breakpoint) {
-                        margin-left: 10px;
-                        color: $color--dark-grey;
-                    }
-                }
-            }
-
-            .td {
-                &--traffic-light {
-                    padding: 5px;
-                    vertical-align: middle;
-                }
-            }
-
-            &.phase {
-                span {
-                    display: inline-block;
-                    padding: 10px;
-                    font-size: 13px;
-                    font-weight: $weight--bold;
-                    color: $color--marine;
-                    text-align: center;
-                    background-color: $color--sky-blue;
-
-                    @include media-query($table-breakpoint) {
-                        width: 100%;
-                    }
-                }
-            }
-        }
-    }
-
-    .tr {
-        &--child,
-        &--subchild {
-            border: 0;
-
-            &:hover {
-                box-shadow: none;
-            }
-        }
-
-        @include media-query($table-breakpoint) {
-            .arrow {
-                @include triangle(bottom, $color--primary, 6px);
-                position: relative;
-                display: inline-block;
-                transform: rotate(0);
-                transition: transform, border-color, $transition;
-
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-        }
-
-        &--parent {
-            &.is-expanded {
-                background-color: $color--mist;
-                border-bottom: 1px solid $color--light-mid-grey;
-
-                + .tr--child {
-                    border-bottom: 1px solid $color--light-mid-grey;
-                }
-
-                + .tr--child,
-                + .tr--child + .tr--child {
-                    display: table-row;
-                }
-
-                .arrow {
-                    border-top-color: darken($color--dark-blue, 10%);
-                    transform: rotate(180deg);
-                }
-            }
-        }
-
-        &--child {
-            display: none;
-            color: $color--mid-dark-grey;
-            vertical-align: top;
-            background-color: $color--mist;
-            border-bottom: 2px solid $color--light-grey;
-
-            td {
-                padding: 10px;
-            }
-
-            .tr--child {
-                display: table-row;
-            }
-
-            p {
-                margin: 0;
-                font-weight: $weight--bold;
-                color: $color--default;
-            }
-
-            .phase {
-                span {
-                    display: inline-block;
-                    padding: 10px;
-                    font-size: 13px;
-                    font-weight: $weight--bold;
-                    color: $color--mid-dark-grey;
-                    text-align: center;
-                    background-color: transparent;
-                    border: 1px solid $color--mid-dark-grey;
-                }
-            }
-
-            .title {
-                a {
-                    visibility: hidden;
-                }
-            }
-        }
-
-        &--black {
-            color: $color--default;
-        }
-
-        .td {
-            &--child {
-                border: 0;
-            }
-
-            &__copy {
-                &--light {
-                    font-weight: $weight--normal;
-                }
-            }
-
-            &__deadline {
-                display: flex;
-                align-items: center;
-                font-size: 15px;
-
-                div {
-                    color: $color--tomato;
-
-                    &:first-child {
-                        padding: 10px;
-                        margin-right: 5px;
-                        background-color: $color--light-pink;
-                    }
-                }
-            }
-        }
-    }
-
-    .th {
-        &--title {
-            display: none;
         }
     }
 
@@ -226,71 +56,7 @@ table,
         padding: 5px 20px;
 
         @include media-query($table-breakpoint) {
-            padding: 20px;
-        }
-    }
-
-    th {
-        padding: 20px 15px;
-        font-size: 15px;
-        font-weight: 600;
-        text-align: left;
-
-        &.reviews_stats {
-            color: $color--mid-dark-grey;
-
-            span {
-                font-size: 13px;
-            }
-        }
-
-        a {
-            color: $color--mid-dark-grey;
-            transition: color 0.25s ease-out;
-        }
-
-        &.desc,
-        &.asc {
-            position: relative;
-            color: $color--dark-grey;
-
-            &::after {
-                position: absolute;
-                top: 25px;
-                margin-left: 10px;
-            }
-
-            a {
-                color: inherit;
-            }
-        }
-
-        &.desc {
-            &::after {
-                @include triangle(top, $color--default, 5px);
-            }
-        }
-
-        &.asc {
-            &::after {
-                @include triangle(bottom, $color--default, 5px);
-            }
-        }
-    }
-
-    td {
-
-        &.comments {
-            display: none;
-            font-size: 13px;
-            text-align: center;
-            vertical-align: middle;
-            background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
-            background-size: 24px;
-
-            @include media-query($table-breakpoint) {
-                display: table-cell;
-            }
+            padding: 15px 10px;
         }
     }
 }
