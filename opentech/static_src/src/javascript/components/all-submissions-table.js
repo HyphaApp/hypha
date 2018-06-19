@@ -2,7 +2,7 @@ import $ from './../globals';
 
 export default () => {
     // Add <tr> toggle arrow
-    $('.tr--parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
+    $('.all-submissions__parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
 
     // Toggle show/hide for submissions overview table rows
     const children = Array.prototype.slice.call(
@@ -11,7 +11,7 @@ export default () => {
 
     children.forEach(function (child) {
         child.addEventListener('click', (e) => {
-            $(e.target).closest('.tr--parent').toggleClass('is-expanded');
+            $(e.target).closest('.all-submissions__parent').toggleClass('is-expanded');
         });
     });
 };
