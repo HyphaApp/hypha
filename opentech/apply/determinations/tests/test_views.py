@@ -45,7 +45,16 @@ class StaffDeterminationsTestCase(BaseTestCase):
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
+        self.assertFalse(response.context['can_view_extended_data'])
 
+    def test_lead_can_access_determination(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        determination = DeterminationFactory(submission=submission, author=self.user, not_draft=True)
+        response = self.get_page(determination)
+        self.assertContains(response, determination.submission.title)
+        self.assertContains(response, self.user.full_name)
+        self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
+        self.assertTrue(response.context['can_view_extended_data'])
 
 class DeterminationFormTestCase(BaseTestCase):
     user_factory = StaffFactory
