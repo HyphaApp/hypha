@@ -1,3 +1,4 @@
+import bleach
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -65,8 +66,11 @@ def log_determination_activity(sender, **kwargs):
         )
 
     if not kwargs.get('is_draft', False):
+        submission = determination.submission
+        message = bleach.clean(determination.message, tags=[], strip=True)
+        outcome = determination.get_outcome_display()
         Activity.actions.create(
             user=determination.author,
-            submission=determination.submission,
-            message=f'Sent the determination for {determination.submission.title}'
+            submission=submission,
+            message=f"Sent a {outcome} determination for {submission.title}:\r\n{message}"
         )
