@@ -1,12 +1,10 @@
 {% load determination_tags workflow_tags %}
-{% if request.user|is_lead_or_admin:submission %}
-    {% if request.user|can_add_determination:submission %}
-        <a href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width">
-            {% if request.user|has_determination_draft:submission %}
-                Update draft
-            {% elif request.user|can_add_determination:submission %}
-                Add determination
-            {% endif %}
-        </a>
-    {% endif %}
+{% if request.user|can_add_determination:submission %}
+    <a href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width">
+        {% if request.user|has_determination_draft:submission %}
+            Update draft
+        {% elif request.user|can_add_determination:submission %}
+            Add determination
+        {% endif %}
+    </a>
 {% endif %}
