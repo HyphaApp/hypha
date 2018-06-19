@@ -120,7 +120,6 @@ $table-breakpoint: 'tablet-portrait';
                     color: $color--primary;
 
                     @include media-query($table-breakpoint) {
-                        margin-left: 10px;
                         color: $color--dark-grey;
                     }
                 }
