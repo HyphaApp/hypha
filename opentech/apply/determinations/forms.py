@@ -68,7 +68,7 @@ class BaseDeterminationForm(forms.ModelForm):
 
         if self.draft_button_name not in self.data:
             action_name = self.request.GET.get('action') or \
-                          self.get_action_name_from_determination(int(cleaned_data['determination']))
+                self.get_action_name_from_determination(int(cleaned_data['determination']))
             if action_name:
                 transition = self.submission.get_transition(action_name)
                 if not can_proceed(transition):
@@ -109,7 +109,7 @@ class BaseDeterminationForm(forms.ModelForm):
 
         # Use get_available_status_transitions()?
         for key, _ in self.submission.phase.transitions.items():
-            if suffix  in key:
+            if suffix in key:
                 action_name = key
                 break
 
