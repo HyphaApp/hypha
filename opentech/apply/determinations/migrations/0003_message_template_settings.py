@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailcore', '0040_page_draft_title'),
-        ('determinations', '0004_determination_tweaks'),
+        ('determinations', '0002_add_fields'),
     ]
 
     operations = [
