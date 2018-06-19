@@ -96,7 +96,7 @@
                             {% if object|pending_determination:request.user %}
                                 <p>Pending</p>
                             {% else %}
-                                <a href="{% url 'apply:submissions:determinations:detail' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_determination_display }}</a>
+                                <a href="{% url 'apply:submissions:determinations:detail' pk=object.determination.id submission_pk=object.id %}">{{ object.determination.get_outcome_display }}</a>
                                 {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
                             {% endif %}
                         {% endif %}
