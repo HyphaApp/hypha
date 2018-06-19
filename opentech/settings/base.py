@@ -63,6 +63,9 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
 
+    'hijack',
+    'compat',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -339,3 +342,8 @@ BLEACH_ALLOWED_STYLES = ['font-family', 'font-weight', 'text-decoration', 'font-
 BLEACH_STRIP_TAGS = True
 
 BLEACH_STRIP_COMMENTS = True
+
+# Hijack Settings
+HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
+HIJACK_LOGOUT_REDIRECT_URL = '/account/'
+HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'

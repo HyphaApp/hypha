@@ -16,6 +16,28 @@
         <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
     {% endif %}
 
+    {% if swappable %}
+        <form action="{% url 'users:become' %}" method="post" class="form">
+            {% csrf_token %}
+            {% for user in swappable %}
+                {% if forloop.first %}
+                <label for="user" class="form__question">Become: </label>
+                <div class="form__item">
+                <div class="form__select">
+                    <select name="user" id="user">
+                {% endif %}
+                    <option value="{{ user.id }}">{{ user }}</option>
+                {% if forloop.last %}
+                    </select>
+                </div>
+                </div>
+                <p class="form__help">Only includes active, non-superusers</p>
+                {% endif %}
+            {% endfor %}
+            <button class="button button--primary" type="submit">Become</button>
+        </form>
+    {% endif %}
+
     {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
     {% comment %}
     {% can_use_oauth as show_oauth_link %}

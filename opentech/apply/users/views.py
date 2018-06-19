@@ -10,18 +10,35 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic.base import TemplateView
 
+from hijack.views import login_with_id
+
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
+
+User = get_user_model()
 
 
 @login_required(login_url=reverse_lazy('users:login'))
 def account(request):
     """Account page placeholder view"""
+    if request.user.is_superuser:
+        swappable = User.objects.filter(is_active=True, is_superuser=False)
+    else:
+        swappable = []
 
     return render(request, 'users/account.html', {
         'show_change_password': password_management_enabled() and request.user.has_usable_password(),
+        'swappable': swappable,
     })
+
+
+@login_required(login_url=reverse_lazy('users:login'))
+def become(request):
+    if request.POST:
+        id = request.POST['user']
+        return login_with_id(request, id)
+    return redirect('users:account')
 
 
 @login_required(login_url=reverse_lazy('users:login'))
@@ -61,8 +78,6 @@ class ActivationView(TemplateView):
         corresponding user account if it exists, or ``None`` if it
         doesn't.
         """
-        User = get_user_model()
-
         try:
             user = User.objects.get(**{
                 'pk': force_text(urlsafe_base64_decode(uidb64)),

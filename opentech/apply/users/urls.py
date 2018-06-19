@@ -2,13 +2,14 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from opentech.apply.users.views import account, oauth, ActivationView, create_password
+from opentech.apply.users.views import account, become, oauth, ActivationView, create_password
 
 
 app_name = 'users'
 
 urlpatterns = [
     path('', account, name='account'),
+    path('become/', become, name='become'),
     path(
         'login/',
         auth_views.LoginView.as_view(
