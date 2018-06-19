@@ -119,7 +119,7 @@ class ReviewDetailView(DetailView):
             try:
                 # Add titles which exist
                 title = form_used.titles[field.group]
-                review_data.setdefault(title, [])
+                review_data.setdefault(title, '')
             except AttributeError:
                 pass
 
