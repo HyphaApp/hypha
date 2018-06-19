@@ -8,4 +8,5 @@ urlpatterns = [
     path('apply/', include('opentech.apply.funds.urls', 'apply')),
     path('account/', include(users_urls)),
     path('dashboard/', include(dashboard_urls)),
+    path('hijack/', include('hijack.urls', 'hijack')),
 ]

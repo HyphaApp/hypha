@@ -20,3 +20,8 @@ def is_apply_staff(user):
 
 
 staff_required = [login_required, user_passes_test(is_apply_staff)]
+
+
+def superuser_decorator(fn):
+    check = user_passes_test(lambda user: user.is_superuser)
+    return check(fn)

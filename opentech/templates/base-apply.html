@@ -1,4 +1,4 @@
-{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
+{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags %}<!doctype html>
 <html class="no-js" lang="en">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
@@ -26,9 +26,13 @@
 
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/apply/main.css' %}">
+        {# Hijack styling #}
+        <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
+        {% hijack_notification %}
+
         {% if GOOGLE_TAG_MANAGER_ID %}
             {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
             <!-- Google Tag Manager (noscript) -->
