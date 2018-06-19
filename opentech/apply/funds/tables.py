@@ -24,6 +24,10 @@ def make_row_class(record):
     return css_class
 
 
+def render_title(record):
+    return textwrap.shorten(record.title, width=30, placeholder="...")
+
+
 class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submissions:detail', args=[A('pk')], orderable=True, attrs={'td': {'data-tooltip': lambda record: record.title, 'class': 'js-title'}})
@@ -48,9 +52,6 @@ class SubmissionsTable(tables.Table):
 
     def render_user(self, value):
         return value.get_full_name()
-
-    def render_title(self, value):
-        return textwrap.shorten(value, width=30, placeholder="...")
 
     def render_phase(self, value):
         return mark_safe(f'<span>{ value }</span>')
