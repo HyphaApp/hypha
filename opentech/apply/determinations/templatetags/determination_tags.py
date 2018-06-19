@@ -22,14 +22,14 @@ def can_add_determination(user, submission):
     """
     try:
         has_determination_response = submission.determination \
-                                     and not submission.determination.is_draft \
-                                     and submission.determination.determination != UNDETERMINED
+            and not submission.determination.is_draft \
+            and submission.determination.determination != UNDETERMINED
     except ObjectDoesNotExist:
         has_determination_response = False
 
     return submission.user_lead_or_admin(user) \
-           and submission.status in DETERMINATION_PHASES \
-           and not has_determination_response
+        and submission.status in DETERMINATION_PHASES \
+        and not has_determination_response
 
 
 @register.filter
@@ -52,8 +52,8 @@ def pending_determination(submission, user):
     if submission.status in DETERMINATION_PHASES:
         try:
             return not submission.determination \
-                    or (submission.determination.is_draft and not user.is_apply_staff) \
-                    or submission.determination.determination == UNDETERMINED
+                or (submission.determination.is_draft and not user.is_apply_staff) \
+                or submission.determination.determination == UNDETERMINED
         except ObjectDoesNotExist:
             return True
 

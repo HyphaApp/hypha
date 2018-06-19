@@ -59,7 +59,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def get_context_data(self, **kwargs):
         try:
             has_determination_response = self.submission.determination.determination != UNDETERMINED \
-                                         and not self.submission.determination.is_draft
+                and not self.submission.determination.is_draft
         except ObjectDoesNotExist:
             has_determination_response = False
 

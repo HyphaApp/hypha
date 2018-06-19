@@ -75,8 +75,9 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
         action = form.cleaned_data.get('action')
         # Defer to the determination form for any of the determination transitions
         if action in DETERMINATION_RESPONSE_TRANSITIONS:
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(form.instance.id,))
-                                        + "?action=" + action)
+            return HttpResponseRedirect(reverse_lazy(
+                'apply:submissions:determinations:form',
+                args=(form.instance.id,)) + "?action=" + action)
 
         response = super().form_valid(form)
         return self.progress_stage(form.instance) or response
