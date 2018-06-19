@@ -43,6 +43,9 @@ class Determination(models.Model):
     def get_absolute_url(self):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))
 
+    def submitted(self):
+        return self.determination != UNDETERMINED and not self.is_draft
+
     def __str__(self):
         return f'Determination for {self.submission.title} by {self.author!s}'
 

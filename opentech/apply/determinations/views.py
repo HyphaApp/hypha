@@ -54,6 +54,14 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 and not self.submission.user_lead_or_admin(request.user):
             raise PermissionDenied()
 
+        try:
+            submitted = self.get_object().submitted
+        except Determination.DoesNotExist:
+            submitted = False
+
+        if self.request.POST and submitted:
+            return self.get(request, *args, **kwargs)
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
