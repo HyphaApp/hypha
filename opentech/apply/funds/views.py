@@ -4,7 +4,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.html import format_html
 from django.utils.text import mark_safe
 from django.views.generic import ListView, TemplateView, UpdateView
 
