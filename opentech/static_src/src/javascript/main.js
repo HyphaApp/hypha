@@ -55,6 +55,15 @@ import mobileFilterPadding from './components/mobile-filter-padding';
         submissionFilters();
     });
 
+    // Add active class to select2 checkboxes after page has been filtered
+    document.addEventListener('DOMContentLoaded', () => {
+        // If there are clear buttons in the dom, it means the filters have been applied
+        const clearButtons = document.querySelectorAll('.select2-selection__clear');
+        clearButtons.forEach(clearButton => {
+            clearButton.parentElement.parentElement.classList.add('is-active');
+        });
+    });
+
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize(){
         if ($(window).width() < 768) {
