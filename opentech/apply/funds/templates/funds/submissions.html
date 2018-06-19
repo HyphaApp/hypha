@@ -7,7 +7,7 @@
     <div class="wrapper wrapper--large wrapper--search">
         {% block page_header %}
             <div>
-                <h3 class="heading heading--no-margin">Received Submissions</h3>
+                <h1 class="gamma heading heading--no-margin heading--bold">Received Submissions</h1>
                 <h5>Track and explore recent submissions</h5>
             </div>
         {% endblock %}
@@ -30,7 +30,9 @@
             <form action="" method="get" class="form form--filters">
                 <ul class="form__filters select2 js-filter-list">
                     {{ filter.form.as_ul }}
-                    <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                    <li>
+                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                    </li>
                 </ul>
             </form>
         </div>

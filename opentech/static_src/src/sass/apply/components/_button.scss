@@ -10,11 +10,8 @@
         display: inline-block;
 
         .form--filters & {
-            margin-right: 0;
-
-            @include media-query(tablet-portrait) {
-                flex-basis: 125px;
-            }
+            width: 100%;
+            height: 100%;
         }
     }
 
