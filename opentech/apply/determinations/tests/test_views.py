@@ -63,8 +63,7 @@ class DeterminationFormTestCase(BaseTestCase):
     def test_cannot_access_form_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         response = self.get_page(submission, 'form')
-        self.assertContains(response, submission.title)
-        self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_wrong_status(self):
         submission = ApplicationSubmissionFactory()
