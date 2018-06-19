@@ -15,9 +15,12 @@ class BaseViewTestCase(TestCase):
     def get_kwargs(self, instance):
         return {}
 
-    def url(self, instance, view_name=None):
+    def url(self, instance, view_name=None, absolute=True):
         full_url_name = self.url_name.format(view_name or self.base_view_name)
         url = reverse(full_url_name, kwargs=self.get_kwargs(instance))
+        if not absolute:
+            return url
+
         request = self.factory.get(url, secure=True)
         return request.build_absolute_uri()
 

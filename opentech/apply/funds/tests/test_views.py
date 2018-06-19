@@ -43,6 +43,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.status, 'concept_review_discussion')
         self.assertIsNone(submission.next)
 
+    def test_cant_access_edit_button_on_applicant_submission(self):
+        submission = ApplicationSubmissionFactory(status='more_info')
+        response = self.get_page(submission)
+        self.assertNotContains(response, self.url(submission, 'edit', absolute=False))
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
@@ -57,8 +62,20 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 403)
 
+    def test_get_edit_link_when_editable(self):
+        submission = ApplicationSubmissionFactory(user=self.user, status='more_info')
+        response = self.get_page(submission)
+        self.assertContains(response, 'Edit')
+        self.assertContains(response, self.url(submission, 'edit', absolute=False))
+        self.assertNotContains(response, 'Congratulations')
+
+    def test_get_congratulations_draft_proposal(self):
+        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
+        response = self.get_page(submission)
+        self.assertContains(response, 'Congratulations')
+
     def test_can_edit_own_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user, status='draft_proposal', workflow_stages=2)
+        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
         response = self.get_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
@@ -68,6 +85,6 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_edit_other_submission(self):
-        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        submission = ApplicationSubmissionFactory(draft_proposal=True)
         response = self.get_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
