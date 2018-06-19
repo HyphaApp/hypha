@@ -384,7 +384,7 @@ for key, value in PHASES:
 
 active_statuses = [
     status for status, _ in PHASES
-    if 'accepted' not in status or 'rejected' not in status or 'invited' not in status
+    if 'accepted' not in status and 'rejected' not in status and 'invited' not in status
 ]
 
 
