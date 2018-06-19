@@ -1,6 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
+from opentech.apply.determinations.models import ACCEPTED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from .factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -82,21 +83,29 @@ class DeterminationFormTestCase(BaseTestCase):
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
         determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
+        response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertTrue(response.context['has_determination_response'])
         self.assertContains(response, 'You have already added a determination for this submission')
 
     def test_can_edit_draft_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
-        determination = DeterminationFactory(submission=submission, author=self.user)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
-        self.assertFalse(response.context['has_determination_response'])
-        self.assertEqual(response.context['title'], 'Update Determination draft')
+        DeterminationFactory(submission=submission, author=self.user)
+        response = self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'Accepted determination draft message',
+            'save_draft': True
+        }, 'form')
+        self.assertContains(response, 'Accepted')
+        self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))
+        self.assertContains(response, 'Accepted determination draft message')
+
+
 
     def test_cannot_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         determination = DeterminationFactory(submission=submission, author=self.user)
-        response = self.post_page(submission, {'data': 'value', 'determination': determination.outcome}, 'form')
+        response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertEqual(response.status_code, 403)
 
 

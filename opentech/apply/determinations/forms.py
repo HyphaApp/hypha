@@ -55,12 +55,8 @@ class BaseDeterminationForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         if self.draft_button_name not in self.data:
-            try:
-                outcome = int(cleaned_data['outcome'])
-            except KeyError:
-                outcome = -1
-
-            action_name = self.request.GET.get('action') or self.get_action_name_from_determination(outcome)
+            action_name = self.request.GET.get('action') or \
+                self.get_action_name_from_determination(int(cleaned_data['outcome']))
             if action_name:
                 transition = self.submission.get_transition(action_name)
                 if not can_proceed(transition):
@@ -83,6 +79,7 @@ class BaseDeterminationForm(forms.ModelForm):
             self.instance.validate_unique()
         except ValidationError as e:
             self._update_errors(e)
+
     def save(self, commit=True):
         self.instance.outcome = int(self.cleaned_data['outcome'])
         self.instance.message = self.cleaned_data['message']
