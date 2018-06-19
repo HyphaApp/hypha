@@ -71,11 +71,21 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return cleaned_data
 
+    def validate_unique(self):
+        # Update the instance data
+        # form_valid on the View does not return the determination instance so we have to do this here.
+        self.instance.submission = self.submission
+        self.instance.author = self.request.user
+        self.instance.data = {key: value for key, value in self.cleaned_data.items()
+                              if key not in ['outcome', 'message']}
+
+        try:
+            self.instance.validate_unique()
+        except ValidationError as e:
+            self._update_errors(e)
     def save(self, commit=True):
         self.instance.outcome = int(self.cleaned_data['outcome'])
         self.instance.message = self.cleaned_data['message']
-        self.instance.data = {key: value for key, value in self.cleaned_data.items()
-                              if key not in ['outcome', 'message']}
         self.instance.is_draft = self.draft_button_name in self.data
 
         if self.transition and not self.instance.is_draft:
