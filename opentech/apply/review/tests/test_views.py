@@ -1,39 +1,16 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-from .factories import ReviewFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.users.tests.factories import StaffFactory, UserFactory
+from opentech.apply.utils.tests import BaseViewTestCase
+from .factories import ReviewFactory
 
 
-class BaseTestCase(TestCase):
-    url_name = ''
-    user_factory = None
-
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.user = self.user_factory()
-        self.client.force_login(self.user)
-
-    def url(self, instance, view_name='review'):
-        full_url_name = self.url_name.format(view_name)
-        url = reverse(full_url_name, kwargs=self.get_kwargs(instance))
-        request = self.factory.get(url, secure=True)
-        return request.build_absolute_uri()
-
-    def get_page(self, instance, view_name='review'):
-        return self.client.get(self.url(instance, view_name), secure=True, follow=True)
-
-    def post_page(self, instance, data, view_name='review'):
-        return self.client.post(self.url(instance, view_name), data, secure=True, follow=True)
-
-    def refresh(self, instance):
-        return instance.__class__.objects.get(id=instance.id)
-
-
-class StaffReviewsTestCase(BaseTestCase):
+class StaffReviewsTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
     def get_kwargs(self, instance):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}
@@ -53,9 +30,10 @@ class StaffReviewsTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class StaffReviewListingTestCase(BaseTestCase):
+class StaffReviewListingTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -70,9 +48,10 @@ class StaffReviewListingTestCase(BaseTestCase):
             self.assertContains(response, review.author.full_name)
 
 
-class StaffReviewFormTestCase(BaseTestCase):
+class StaffReviewFormTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -103,9 +82,10 @@ class StaffReviewFormTestCase(BaseTestCase):
         self.assertEqual(response.context['title'], 'Update Review draft')
 
 
-class UserReviewFormTestCase(BaseTestCase):
+class UserReviewFormTestCase(BaseViewTestCase):
     user_factory = UserFactory
     url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
