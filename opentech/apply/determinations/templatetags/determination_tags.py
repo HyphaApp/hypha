@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.filter
 def is_lead_or_admin(user, submission):
-    return submission.user_lead_or_admin(user)
+    return submission.has_permission_to_add_determination(user)
 
 
 @register.filter
@@ -25,7 +25,7 @@ def can_add_determination(user, submission):
     except ObjectDoesNotExist:
         has_determination_response = False
 
-    return submission.user_lead_or_admin(user) \
+    return submission.has_permission_to_add_determination(user) \
         and submission.status in DETERMINATION_PHASES \
         and not has_determination_response
 
@@ -33,7 +33,7 @@ def can_add_determination(user, submission):
 @register.filter
 def has_determination_draft(user, submission):
     try:
-        return submission.user_lead_or_admin(user) and submission.determination.is_draft
+        return submission.has_permission_to_add_determination(user) and submission.determination.is_draft
     except ObjectDoesNotExist:
         return False
 
