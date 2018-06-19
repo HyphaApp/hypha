@@ -114,3 +114,18 @@ class UserReviewFormTestCase(BaseTestCase):
         submission = ApplicationSubmissionFactory(status='internal_review')
         response = self.get_page(submission, 'form')
         self.assertEqual(response.status_code, 403)
+
+
+class ReviewDetailTestCase(BaseTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+    def test_review_detail_field_groups(self):
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        review = ReviewFactory(submission=submission, author=self.user)
+        response = self.get_page(review)
+        self.assertContains(response, submission.title)
+        self.assertContains(response, "<h4>A. Conflicts of Interest and Confidentiality</h4>")
