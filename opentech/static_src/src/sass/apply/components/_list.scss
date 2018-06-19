@@ -1,4 +1,6 @@
 .list {
+    $root: &;
+
     &--no-margin {
         margin: 0;
     }
@@ -8,11 +10,30 @@
             display: flex;
             justify-content: space-between;
             max-width: 150px;
+        }
 
-            span {
-                font-weight: $weight--normal;
-                color: $color--tomato;
+        &--reviewer-name {
+            max-width: 100px;
+            overflow: hidden;
+            font-weight: $weight--bold;
+            text-overflow: ellipsis;
+
+            // show truncated emails on hover
+            &:hover {
+                position: absolute;
+                max-width: initial;
+                overflow: visible;
+                background-color: #f3fafe;
+
+                + #{$root}__item--reviewer-outcome {
+                    width: 100%;
+                    text-align: right;
+                }
             }
+        }
+
+        &--reviewer-outcome {
+            color: $color--tomato;
         }
     }
 }

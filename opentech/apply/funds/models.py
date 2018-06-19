@@ -13,9 +13,10 @@ from django.db.models.expressions import RawSQL, OrderBy
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.text import mark_safe
+from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
+from django_fsm import FSMField, transition, RETURN_VALUE
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -39,14 +40,14 @@ from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from .admin_forms import WorkflowFormAdminForm
 from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
-from .workflow import SingleStage, DoubleStage, active_statuses, get_review_statuses, review_statuses
-
-
-WORKFLOW_CLASS = {
-    SingleStage.name: SingleStage,
-    DoubleStage.name: DoubleStage,
-}
-
+from .workflow import (
+    active_statuses,
+    get_review_statuses,
+    INITIAL_STATE,
+    review_statuses,
+    UserPermissions,
+    WORKFLOWS,
+)
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
@@ -87,24 +88,16 @@ class WorkflowHelpers(models.Model):
     class Meta:
         abstract = True
 
-    WORKFLOWS = {
-        'single': SingleStage.name,
-        'double': DoubleStage.name,
+    WORKFLOW_CHOICES = {
+        name: workflow.name
+        for name, workflow in WORKFLOWS.items()
     }
 
-    workflow_name = models.CharField(choices=WORKFLOWS.items(), max_length=100, default='single', verbose_name="Workflow")
+    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name="Workflow")
 
     @property
     def workflow(self):
-        return self.workflow_class()
-
-    @property
-    def workflow_class(self):
-        return WORKFLOW_CLASS[self.get_workflow_name_display()]
-
-    @classmethod
-    def workflow_class_from_name(cls, name):
-        return WORKFLOW_CLASS[cls.WORKFLOWS[name]]
+        return WORKFLOWS[self.workflow_name]
 
 
 class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
@@ -488,13 +481,6 @@ class JSONOrderable(models.QuerySet):
 class ApplicationSubmissionQueryset(JSONOrderable):
     json_field = 'form_data'
 
-    def step_order(self, desc=False):
-        # Use the last value of the status to order by status
-        qs = self.extra(select={'step': 'substr(reverse(status), 1)'})
-        order = '-' if desc else ''
-        order += 'step'
-        return qs.order_by(order, 'status')
-
     def active(self):
         return self.filter(status__in=active_statuses)
 
@@ -513,7 +499,76 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
 
-class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission):
+def make_permission_check(users):
+    def can_transition(instance, user):
+        if UserPermissions.STAFF in users and user.is_apply_staff:
+            return True
+        if UserPermissions.ADMIN in users and user.is_superuser:
+            return True
+        if UserPermissions.LEAD in users and instance.lead == user:
+            return True
+        if UserPermissions.APPLICANT in users and instance.user == user:
+            return True
+        return False
+
+    return can_transition
+
+
+class AddTransitions(models.base.ModelBase):
+    def __new__(cls, name, bases, attrs, **kwargs):
+        transition_prefix = 'transition'
+        for workflow in WORKFLOWS.values():
+            for phase, data in workflow.items():
+                for transition_name, action in data.transitions.items():
+                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
+                    permission_name = method_name + '_permission'
+                    permission_func = make_permission_check(action['permissions'])
+
+                    # Get the method defined on the parent or default to a NOOP
+                    transition_state = attrs.get(action.get('method'), lambda *args, **kwargs: None)
+                    # Provide a neat name for graph viz display
+                    transition_state.__name__ = slugify(action['display'])
+
+                    conditions = [attrs[condition] for condition in action.get('conditions', [])]
+                    # Wrap with transition decorator
+                    transition_func = transition(
+                        attrs['status'],
+                        source=phase,
+                        target=transition_name,
+                        permission=permission_func,
+                        conditions=conditions,
+                    )(transition_state)
+
+                    # Attach to new class
+                    attrs[method_name] = transition_func
+                    attrs[permission_name] = permission_func
+
+        def get_transition(self, transition):
+            try:
+                return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+            except TypeError:
+                # Defined on the class
+                return None
+            except AttributeError:
+                # For the other workflow
+                return None
+
+        attrs['get_transition'] = get_transition
+
+        def get_actions_for_user(self, user):
+            transitions = self.get_available_user_status_transitions(user)
+            actions = [
+                (transition.target, self.phase.transitions[transition.target]['display'])
+                for transition in transitions if self.get_transition(transition.target)
+            ]
+            yield from actions
+
+        attrs['get_actions_for_user'] = get_actions_for_user
+
+        return super().__new__(cls, name, bases, attrs, **kwargs)
+
+
+class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission, metaclass=AddTransitions):
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
@@ -537,16 +592,35 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
-    status = models.CharField(max_length=254)
+    status = FSMField(default=INITIAL_STATE, protected=True)
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     objects = ApplicationSubmissionQueryset.as_manager()
 
-    @property
-    def status_name(self):
-        return self.phase.name
+    def not_progressed(self):
+        return not self.next
+
+    @transition(
+        status, source='*',
+        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
+        permission=make_permission_check({UserPermissions.ADMIN}),
+    )
+    def restart_stage(self, **kwargs):
+        """
+        If running form the console please include your user using the kwarg "by"
+
+        u = User.objects.get(email="<my@email.com>")
+        for a in ApplicationSubmission.objects.all():
+            a.restart_stage(by=u)
+            a.save()
+        """
+        if hasattr(self, 'previous'):
+            return 'draft_proposal'
+        elif self.next:
+            return 'invited_to_proposal'
+        return INITIAL_STATE
 
     @property
     def stage(self):
@@ -554,11 +628,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     @property
     def phase(self):
-        return self.workflow.current(self.status)
+        return self.workflow.get(self.status)
 
     @property
     def active(self):
-        return self.phase.active
+        return self.status in active_statuses
+
+    @property
+    def last_edit(self):
+        # Best estimate of last edit
+        # TODO update when we have revisioning included
+        return self.activities.first()
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
@@ -616,6 +696,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
+    def progress_application(self, **kwargs):
+        submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+
+        self.id = None
+        self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
+
+        self.save()
+
+        submission_in_db.next = self
+        submission_in_db.save()
+
     def save(self, *args, **kwargs):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
@@ -635,7 +726,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
-            self.status = str(self.workflow.first())
             # Copy extra relevant information to the child
             self.lead = self.get_from_parent('lead')
 
@@ -646,19 +736,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         if creating:
             self.reviewers.set(self.get_from_parent('reviewers').all())
-
-        # Check to see if we should progress to the next stage
-        if self.phase.can_proceed and not self.next:
-            submission_in_db = ApplicationSubmission.objects.get(id=self.id)
-
-            self.id = None
-            self.status = str(self.workflow.next(self.status))
-            self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
-
-            super().save(*args, **kwargs)
-
-            submission_in_db.next = self
-            submission_in_db.save()
 
     @property
     def missing_reviewers(self):
@@ -729,7 +806,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return form_data
 
     def get_absolute_url(self):
-        return reverse('funds:submission', args=(self.id,))
+        return reverse('funds:submissions:detail', args=(self.id,))
 
     def __getattribute__(self, item):
         # __getattribute__ allows correct error handling from django compared to __getattr__
@@ -742,4 +819,4 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return f'{self.title} from {self.full_name} for {self.page.title}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'

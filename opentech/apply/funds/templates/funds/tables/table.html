@@ -27,9 +27,12 @@
                         </td>
                         <td>
                             <ul class="list list--no-margin">
-                            {% for review in row.record.reviews.all %}
-                                <li class="list__item list__item--reviewer"><strong>{{ review.author }}</strong> <span>{{ review.get_recommendation_display }}</span></li>
-                            {% endfor %}
+                                {% for review in row.record.reviews.all %}
+                                    <li class="list__item list__item--reviewer">
+                                        <span class="list__item--reviewer-name">{{ review.author }}</span>
+                                        <span class="list__item list__item--reviewer-outcome">{{ review.get_recommendation_display }}</span>
+                                    </li>
+                                {% endfor %}
                             </ul>
                         </td>
                     </tr>

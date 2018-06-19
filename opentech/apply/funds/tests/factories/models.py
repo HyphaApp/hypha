@@ -15,8 +15,7 @@ from opentech.apply.funds.models import (
     Round,
     RoundForm,
 )
-from opentech.apply.users.tests.factories import UserFactory
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 
 from . import blocks
 
@@ -44,7 +43,7 @@ def build_form(data, prefix=''):
             extras[field][attr] = value
 
     form_fields = {}
-    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories.keys()):
+    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories):
         form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
         for attr, value in extras[field].items():
             form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
@@ -60,13 +59,13 @@ class FundTypeFactory(wagtail_factories.PageFactory):
         workflow_stages = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
                     fund=self,
@@ -102,13 +101,13 @@ class RoundFactory(wagtail_factories.PageFactory):
     title = factory.Sequence('Round {}'.format)
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
-    lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
+    lead = factory.SubFactory(StaffFactory)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 RoundFormFactory(
                     round=self,
@@ -131,14 +130,14 @@ class LabFactory(wagtail_factories.PageFactory):
         number_forms = 1
 
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
-    lead = factory.SubFactory(UserFactory, groups__name=STAFF_GROUP_NAME)
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
+    lead = factory.SubFactory(StaffFactory)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             fields = build_form(kwargs, prefix='form')
-            for _ in range(len(self.workflow_class.stage_classes)):
+            for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 LabFormFactory(
                     lab=self,
@@ -191,9 +190,10 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOWS.keys())[o.workflow_stages - 1])
-    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'))
+    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
+    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'), lead=factory.SelfAttribute('..lead'))
     user = factory.SubFactory(UserFactory)
+    lead = factory.SubFactory(StaffFactory)
 
     @classmethod
     def _generate(cls, strat, params):

@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_select2',
     'addressfield',
     'django_bleach',
+    'django_fsm',
 
     'django.contrib.admin',
     'django.contrib.auth',

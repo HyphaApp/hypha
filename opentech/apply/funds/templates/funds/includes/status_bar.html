@@ -1,27 +1,26 @@
 <div class="status-bar {{ class }}">
-    {% for phase in phases %}
-        <div class="status-bar__item
-                    {% if phase == status %}
-                        status-bar__item--is-current
-                    {% elif phase < status %}
-                        status-bar__item--is-complete
-                    {% endif %}">
-            <span class="status-bar__tooltip"
-                {% if phase == status %}
-                    {# We want to display the status explicitly in case phase is a MultiStep (displays "Outcome" for name) #}
-                    data-title="{{ status.name }}" aria-label="{{ status.name }}"
-                {% else %}
-                    data-title="{{ phase.name }}" aria-label="{{ phase.name }}"
-                {% endif %}
-            ></span>
-            <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
-        </div>
+    {% for phase_name, phase in phases.items %}
+        {% if not same_stage or current_phase.stage == phase.stage %}
+            {% ifchanged phase.step %}
+                <div class="status-bar__item
+                            {% if phase.step == current_phase.step %}
+                                status-bar__item--is-current
+                            {% elif current_phase.step > phase.step %}
+                                status-bar__item--is-complete
+                            {% endif %}">
+                    <span class="status-bar__tooltip"
+                    {% if phase.step != current_phase.step %}
+                        data-title="{{ phase }}" aria-label="{{ phase }}"
+                    {% else %}
+                        data-title="{{ current_phase }}" aria-label="{{ current_phase }}"
+                    {% endif %}
+                    ></span>
+                    <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
+                </div>
+                {% endifchanged %}
+        {% endif %}
     {% endfor %}
 </div>
 <div class="status-bar--mobile">
-    {% for phase in status.stage %}
-        {% if phase == status %}
-            <h6 class="status-bar__subheading">{{ status.name }}</h6>
-        {% endif %}
-    {% endfor %}
+    <h6 class="status-bar__subheading">{{ current_phase }}</h6>
 </div>

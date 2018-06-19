@@ -3,6 +3,8 @@ from django.contrib.auth.models import Group
 
 import factory
 
+from ..groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+
 
 class GroupFactory(factory.DjangoModelFactory):
     class Meta:
@@ -18,7 +20,7 @@ class UserFactory(factory.DjangoModelFactory):
 
     email = factory.Sequence('email{}@email.com'.format)
 
-    @factory.PostGeneration
+    @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         if create:
             if not extracted:
@@ -27,3 +29,21 @@ class UserFactory(factory.DjangoModelFactory):
                 groups = extracted
 
             self.groups.add(groups)
+
+
+class AdminFactory(UserFactory):
+    is_admin = True
+
+
+class StaffFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+
+
+class ReviewerFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=REVIEWER_GROUP_NAME))

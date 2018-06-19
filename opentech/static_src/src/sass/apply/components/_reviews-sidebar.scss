@@ -1,0 +1,66 @@
+.reviews-sidebar {
+    $root: &;
+    margin-bottom: 20px;
+    font-weight: $weight--bold;
+
+    tbody {
+        tr {
+            &:hover {
+                box-shadow: none;
+            }
+
+            @include media-query(tablet-portrait) {
+                border-bottom: 0;
+            }
+
+            > th {
+                font-size: inherit;
+                font-weight: $weight--bold;
+            }
+
+            > td {
+                display: table-cell;
+                height: auto;
+            }
+
+            th,
+            td,
+            td:last-child,
+            td:first-child {
+                padding: 10px;
+            }
+
+            &:only-child {
+                > td {
+                    padding: 0;
+                }
+            }
+
+            &.no-response {
+                color: $color--black-20;
+            }
+        }
+    }
+
+    &__author {
+        span {
+            position: relative;
+            z-index: 1;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: $color--white;
+        }
+
+        &:hover {
+            span {
+                display: inline;
+                overflow: visible;
+            }
+        }
+    }
+
+    &__no-reviews {
+        color: $color--mid-grey;
+    }
+}

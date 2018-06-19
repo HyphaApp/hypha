@@ -1,0 +1,39 @@
+.reviews-list {
+    margin-top: 40px;
+    table-layout: auto;
+
+    &__th {
+        &:hover {
+            box-shadow: none;
+        }
+
+        &:first-child {
+            font-weight: $weight--bold;
+        }
+    }
+
+    &__tr {
+        border-top: 0;
+        border-bottom: 2px solid $color--light-grey;
+    }
+
+    &__td {
+        max-width: 340px;
+        min-width: 340px;
+        padding: 20px;
+    }
+
+    &__th,
+    &__td {
+        display: table-cell;
+        height: auto;
+        vertical-align: top;
+
+        &:first-child {
+            width: 160px;
+            max-width: 160px;
+            min-width: 160px;
+            background-color: $color--light-mid-grey;
+        }
+    }
+}

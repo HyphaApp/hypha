@@ -60,9 +60,6 @@ script:
   # Run python code style checks
   - flake8
 
-  # Type check the project
-  - mypy .
-
   # Collect static
   - python manage.py collectstatic --noinput --verbosity=0
 
