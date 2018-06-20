@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError, ObjectDoesNotExist, PermissionDenied
 from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
-from django_fsm import FSMField, transition, RETURN_VALUE
+from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -564,6 +564,17 @@ class AddTransitions(models.base.ModelBase):
             yield from actions
 
         attrs['get_actions_for_user'] = get_actions_for_user
+
+        def perform_transition(self, action, user):
+            transition = self.get_transition(action)
+            if not can_proceed(transition):
+                action = self.phase.transitions[action]
+                raise PermissionDenied(f'You do not have permission to "{ action }"')
+
+            transition(by=user)
+            self.save()
+
+        attrs['perform_transition'] = perform_transition
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 

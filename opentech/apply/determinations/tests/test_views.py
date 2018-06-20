@@ -57,6 +57,7 @@ class StaffDeterminationsTestCase(BaseTestCase):
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
         self.assertTrue(response.context['can_view_extended_data'])
 
+
 class DeterminationFormTestCase(BaseTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:determinations:{}'
@@ -94,7 +95,7 @@ class DeterminationFormTestCase(BaseTestCase):
             'data': 'value',
             'outcome': ACCEPTED,
             'message': 'Accepted determination draft message',
-            'save_draft': True
+            'save_draft': True,
         }, 'form')
         self.assertContains(response, 'Accepted')
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))

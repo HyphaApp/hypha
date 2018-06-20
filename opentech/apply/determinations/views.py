@@ -84,14 +84,9 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
-
-        if self.object:
-            kwargs['initial'] = self.object.data
-            kwargs['initial']['outcome'] = self.object.outcome
-            kwargs['initial']['message'] = self.object.message
-
+        kwargs['action'] = self.request.GET.get('action')
         return kwargs
 
     def get_success_url(self):
@@ -100,41 +95,22 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def form_valid(self, form):
         super().form_valid(form)
 
-        self.perform_transition(form)
+        if not self.object.is_draft:
+            action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
+            self.submission.perform_transition(action_name, self.request.user)
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def perform_transition(self, form):
-        if not self.object or self.object.is_draft:
-            return
-
-        action_name = self.request.GET.get('action') or \
-            self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
-        if action_name:
-            transition = self.submission.get_transition(action_name)
-            if not can_proceed(transition):
-                action = self.submission.phase.transitions[action_name]
-                raise forms.ValidationError(f'You do not have permission to "{ action }"')
-
-            transition(by=self.request.user)
-            self.submission.save()
-
     def get_action_name_from_determination(self, determination):
-        action_name = None
+        suffix = {
+            ACCEPTED: 'accepted',
+            REJECTED: 'rejected',
+            NEEDS_MORE_INFO: 'more_info',
+        }
 
-        suffix = 'more_info'
-        if determination == ACCEPTED:
-            suffix = 'accepted'
-        elif determination == REJECTED:
-            suffix = 'rejected'
-
-        # Use get_available_status_transitions()?
-        for key, _ in self.submission.phase.transitions.items():
-            if suffix in key:
-                action_name = key
-                break
-
-        return action_name
+        for transition_name in self.submission.phase.transitions:
+            if suffix[determination] in transition_name:
+                return transition_name
 
 
 @method_decorator(login_required, name='dispatch')

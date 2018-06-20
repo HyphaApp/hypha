@@ -25,7 +25,13 @@ class BaseDeterminationForm(forms.ModelForm):
 
     class Meta:
         model = Determination
-        fields: list = []
+        fields = ['outcome', 'message', 'submission', 'author', 'data']
+
+        widgets = {
+            'submission': forms.HiddenInput(),
+            'author': forms.HiddenInput(),
+            'data': forms.HiddenInput(),
+        }
 
         error_messages = {
             NON_FIELD_ERRORS: {
@@ -33,40 +39,35 @@ class BaseDeterminationForm(forms.ModelForm):
             }
         }
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
-        self.submission = kwargs.pop('submission')
-        self.transition = None
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, user, submission, action='', initial={}, instance=None, **kwargs):
+        if action:
+            initial.update(outcome=self.get_determination_from_action_name(action))
+        initial.update(submission=submission.id)
+        initial.update(author=user)
+
+        if instance:
+            for key, value in instance.data.items():
+                if key not in self._meta.fields:
+                    initial[key] = value
+
+        super().__init__(*args, initial=initial, instance=instance, **kwargs)
+
+        for field in self._meta.widgets:
+            self.fields[field].disabled = True
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
 
-    def get_initial_for_field(self, field, field_name):
-        if field_name == 'outcome':
-            action_name = self.request.GET.get('action')
-            if action_name:
-                return self.get_determination_from_action_name(action_name)
-
-        return super().get_initial_for_field(field, field_name)
-
-    def validate_unique(self):
-        # Update the instance data
-        # form_valid on the View does not return the determination instance so we have to do this here.
-        self.instance.submission = self.submission
-        self.instance.author = self.request.user
-        self.instance.data = {key: value for key, value in self.cleaned_data.items()
-                              if key not in ['outcome', 'message']}
-
-        try:
-            self.instance.validate_unique()
-        except ValidationError as e:
-            self._update_errors(e)
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['data'] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
 
     def save(self, commit=True):
-        self.instance.outcome = int(self.cleaned_data['outcome'])
-        self.instance.message = self.cleaned_data['message']
         self.instance.is_draft = self.draft_button_name in self.data
 
         return super().save(commit)
