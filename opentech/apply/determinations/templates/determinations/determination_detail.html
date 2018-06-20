@@ -11,8 +11,7 @@
 
 <div class="grid">
     <div>
-        <h5>Determination</h5>
-        <p>{{ determination.get_outcome_display }}</p>
+        <h5>Determination: {{ determination.get_outcome_display }}</h5>
         {{ determination.message|bleach }}
     </div>
 </div>
@@ -20,8 +19,13 @@
     {% if can_view_extended_data %}
         <div class="rich-text rich-text--answers">
             {% for question, answer in determination_data.items %}
-                <h5>{{ question }}</h5>
-                {% if answer %}{{ answer|bleach }}{% else %}&mdash;{% endif %}
+                {% if answer == "<field_group_title>" %}
+                    {# Field group title #}
+                    <h4>{{ question }}</h4>
+                {% else %}
+                    <h5>{{ question }}</h5>
+                    {% if answer %}{{ answer|bleach }}{% else %}&mdash;{% endif %}
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}
