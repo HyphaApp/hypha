@@ -51,22 +51,6 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return super().get_initial_for_field(field, field_name)
 
-    def clean(self):
-        cleaned_data = super().clean()
-
-        if self.draft_button_name not in self.data:
-            action_name = self.request.GET.get('action') or \
-                self.get_action_name_from_determination(int(cleaned_data['outcome']))
-            if action_name:
-                transition = self.submission.get_transition(action_name)
-                if not can_proceed(transition):
-                    action = self.submission.phase.transitions[action_name]
-                    raise forms.ValidationError(f'You do not have permission to "{ action }"')
-
-                self.transition = transition
-
-        return cleaned_data
-
     def validate_unique(self):
         # Update the instance data
         # form_valid on the View does not return the determination instance so we have to do this here.
@@ -85,11 +69,7 @@ class BaseDeterminationForm(forms.ModelForm):
         self.instance.message = self.cleaned_data['message']
         self.instance.is_draft = self.draft_button_name in self.data
 
-        if self.transition and not self.instance.is_draft:
-            self.transition(by=self.request.user)
-            self.submission.save()
-
-        super().save(commit)
+        return super().save(commit)
 
     def get_determination_from_action_name(self, action_name):
         if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
@@ -98,23 +78,6 @@ class BaseDeterminationForm(forms.ModelForm):
             elif 'accepted' in action_name:
                 return ACCEPTED
         return REJECTED
-
-    def get_action_name_from_determination(self, determination):
-        action_name = None
-
-        suffix = 'more_info'
-        if determination == ACCEPTED:
-            suffix = 'accepted'
-        elif determination == REJECTED:
-            suffix = 'rejected'
-
-        # Use get_available_status_transitions()?
-        for key, _ in self.submission.phase.transitions.items():
-            if suffix in key:
-                action_name = key
-                break
-
-        return action_name
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):

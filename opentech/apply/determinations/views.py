@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.forms import forms
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -7,12 +8,13 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ProcessFormView, ModelFormMixin
+from django_fsm import can_proceed
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, NEEDS_MORE_INFO
+from .models import Determination, NEEDS_MORE_INFO, ACCEPTED, REJECTED
 
 
 def get_form_for_stage(submission):
@@ -94,6 +96,45 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
     def get_success_url(self):
         return self.submission.get_absolute_url()
+
+    def form_valid(self, form):
+        super().form_valid(form)
+
+        self.perform_transition(form)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def perform_transition(self, form):
+        if not self.object or self.object.is_draft:
+            return
+
+        action_name = self.request.GET.get('action') or \
+            self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
+        if action_name:
+            transition = self.submission.get_transition(action_name)
+            if not can_proceed(transition):
+                action = self.submission.phase.transitions[action_name]
+                raise forms.ValidationError(f'You do not have permission to "{ action }"')
+
+            transition(by=self.request.user)
+            self.submission.save()
+
+    def get_action_name_from_determination(self, determination):
+        action_name = None
+
+        suffix = 'more_info'
+        if determination == ACCEPTED:
+            suffix = 'accepted'
+        elif determination == REJECTED:
+            suffix = 'rejected'
+
+        # Use get_available_status_transitions()?
+        for key, _ in self.submission.phase.transitions.items():
+            if suffix in key:
+                action_name = key
+                break
+
+        return action_name
 
 
 @method_decorator(login_required, name='dispatch')
