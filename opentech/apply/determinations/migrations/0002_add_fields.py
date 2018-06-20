@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='determination',
             name='data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, default=django.utils.timezone.now),
+            field=django.contrib.postgres.fields.jsonb.JSONField(blank=True),
             preserve_default=False,
         ),
         migrations.AddField(
