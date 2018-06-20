@@ -22,10 +22,9 @@
 
         {% if reviewer_reviews or object.reviewers_not_reviewed  %}
             {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
-            {# Add logic for showing missing reviews #}
             {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True class="hidden" %}
             <tr><td colspan="4"><a class="link link--bold link--underlined js-toggle-reviewers" href="#">all assigned advisors</a></td></tr>
-            {% else %}
+        {% else %}
             <tr><td colspan="4" class="reviews-sidebar__no-reviews">No assignees or reviews yet</td></tr>
         {% endif %}
     {% endif %}
