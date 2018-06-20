@@ -496,10 +496,8 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(status__in=user_review_statuses).filter(reviewers=user).exclude(reviews__author=user)
 
     def need_determination_for(self, user):
-        qs = self.filter(status__in=DETERMINATION_PHASES)
-        if not user.is_superuser:
-            qs = qs.filter(lead=user)
-        return qs
+        # TODO only limit to the last in_discussion phase
+        return self.filter(status__in=DETERMINATION_PHASES).filter(lead=user)
 
     def current(self):
         # Applications which have the current stage active (have not been progressed)
