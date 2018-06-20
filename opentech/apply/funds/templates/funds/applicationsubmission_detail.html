@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load workflow_tags determination_tags %}
+{% load workflow_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -89,18 +89,7 @@
                 {% endif %}
 
                 {% block determination %}
-                    <div class="sidebar__inner">
-                        <h5>Determination</h5>
-                        {% if object.determination %}
-                            {% if object|pending_determination:request.user %}
-                                <p>Pending</p>
-                            {% else %}
-                                <a href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">{{ object.determination.get_outcome_display }}</a>
-                                {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
-                            {% endif %}
-                        {% endif %}
-                        {% include 'determinations/includes/determination_button.html' with submission=object %}
-                    </div>
+                    {% include 'determinations/includes/determination_block.html' with submission=object %}
                 {% endblock %}
 
                 {% block reviews %}
