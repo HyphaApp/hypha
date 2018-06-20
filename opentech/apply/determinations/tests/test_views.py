@@ -57,6 +57,7 @@ class StaffDeterminationsTestCase(BaseTestCase):
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
         self.assertTrue(response.context['can_view_extended_data'])
 
+
 class DeterminationFormTestCase(BaseTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:determinations:{}'

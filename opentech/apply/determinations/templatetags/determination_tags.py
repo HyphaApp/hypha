@@ -2,7 +2,6 @@ from django import template
 from django.core.exceptions import ObjectDoesNotExist
 
 from opentech.apply.determinations.models import NEEDS_MORE_INFO
-from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 register = template.Library()
 

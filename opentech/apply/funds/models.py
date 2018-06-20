@@ -25,7 +25,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
     ObjectList,
     StreamFieldPanel,
-    TabbedInterface
+    TabbedInterface,
 )
 
 from wagtail.admin.utils import send_mail
@@ -47,7 +47,8 @@ from .workflow import (
     review_statuses,
     UserPermissions,
     WORKFLOWS,
-    DETERMINATION_PHASES)
+    DETERMINATION_PHASES,
+)
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}

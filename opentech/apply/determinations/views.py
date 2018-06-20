@@ -11,10 +11,9 @@ from django.views.generic.edit import ProcessFormView, ModelFormMixin
 from django_fsm import can_proceed
 
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.workflow import DETERMINATION_PHASES
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, NEEDS_MORE_INFO, ACCEPTED, REJECTED
+from .models import Determination, ACCEPTED, REJECTED
 
 
 def get_form_for_stage(submission):
