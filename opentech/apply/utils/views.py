@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, View
+from django.views.generic.detail import SingleObjectTemplateResponseMixin
+from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
 
 @method_decorator(login_required, name='dispatch')
@@ -76,3 +78,22 @@ class DelegatedViewMixin(View):
         form = cls.form_class(instance=submission, user=user)
         form.name = cls.context_name
         return cls.context_name, form
+
+
+class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except self.model.DoesNotExist:
+            self.object = None
+
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except self.model.DoesNotExist:
+            self.object = None
+
+        return super().post(request, *args, **kwargs)

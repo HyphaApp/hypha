@@ -4,11 +4,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
-from django.views.generic.detail import SingleObjectTemplateResponseMixin
-from django.views.generic.edit import ProcessFormView, ModelFormMixin
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
@@ -29,25 +28,6 @@ def get_form_for_stage(submission):
     forms = [ConceptReviewForm, ProposalReviewForm]
     index = submission.workflow.stages.index(submission.stage)
     return forms[index]
-
-
-class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
-
-    def get(self, request, *args, **kwargs):
-        try:
-            self.object = self.get_object()
-        except self.model.DoesNotExist:
-            self.object = None
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            self.object = self.get_object()
-        except self.model.DoesNotExist:
-            self.object = None
-
-        return super().post(request, *args, **kwargs)
 
 
 class ReviewCreateOrUpdateView(CreateOrUpdateView):
