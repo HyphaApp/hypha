@@ -50,8 +50,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        if self.submission.phase not in DETERMINATION_PHASES \
-                and not self.submission.has_permission_to_add_determination(request.user):
+        if not self.submission.in_determination_phase \
+                or not self.submission.has_permission_to_add_determination(request.user):
             raise PermissionDenied()
 
         try:

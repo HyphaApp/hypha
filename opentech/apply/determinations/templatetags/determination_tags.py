@@ -9,16 +9,13 @@ register = template.Library()
 
 @register.filter
 def can_add_determination(user, submission):
-    if submission.status not in DETERMINATION_PHASES:
+    if not submission.can_have_determination:
         return False
 
     if not submission.has_permission_to_add_determination(user):
         return False
 
-    try:
-        return not submission.determination.submitted
-    except ObjectDoesNotExist:
-        return True
+    return True
 
 
 @register.filter
@@ -40,7 +37,7 @@ def pending_determination(submission, user):
     if not submission.active or 'more_info' in submission.status:
         return False
 
-    if submission.status not in DETERMINATION_PHASES:
+    if not submission.in_determination_phase:
         return True
 
     try:

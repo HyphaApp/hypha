@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -47,7 +47,7 @@ from .workflow import (
     review_statuses,
     UserPermissions,
     WORKFLOWS,
-)
+    DETERMINATION_PHASES)
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
@@ -769,6 +769,20 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def has_permission_to_add_determination(self, user):
         return user.is_superuser or self.lead == user
+
+    @property
+    def in_determination_phase(self):
+        return self.status in DETERMINATION_PHASES
+
+    @property
+    def can_have_determination(self):
+        if not self.in_determination_phase:
+            return False
+
+        try:
+            return not self.determination.submitted
+        except ObjectDoesNotExist:
+            return True
 
     def data_and_fields(self):
         for stream_value in self.form_fields:
