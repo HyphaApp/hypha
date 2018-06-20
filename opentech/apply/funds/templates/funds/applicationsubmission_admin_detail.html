@@ -17,7 +17,6 @@
         <h5>Reviews &amp; assignees</h5>
 
         {% include 'funds/includes/review_table.html' %}
-        <a class="link link--bold link--underlined link--toggle-reviewers js-toggle-reviewers" href="#">all assigned advisors</a>
 
         <div class="wrapper wrapper--button-container">
             {% include 'review/includes/review_button.html' with submission=object %}
@@ -27,7 +26,6 @@
         </div>
     </div>
 {% endblock %}
-
 
 {% block extra_js %}
     {{ reviewer_form.media }}
