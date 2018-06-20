@@ -85,3 +85,27 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(draft_proposal=True)
         response = self.get_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
+
+
+class TestRevisionsView(BaseSubmissionViewTestCase):
+    user_factory = UserFactory
+
+    def test_create_revisions_on_submit(self):
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        old_data = submission.form_data
+        self.post_page(submission, {'proposal_discussion': True}, 'edit')
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, 'proposal_discussion')
+        self.assertEqual(submission.revisions.count(), 2)
+        self.asswerEqual(submission.revisions.first().form_data, old_data)
+        self.assertEqual(submission.form_data, {})
+
+    def test_dont_update_live_revision_on_save(self):
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        old_data = submission.form_data
+        self.post_page(submission, {'save': True}, 'edit')
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, 'draft_proposal')
+        self.assertEqual(submission.revisions.count(), 2)
+        self.asswerEqual(submission.revisions.first().form_data, old_data)
+        self.assertEqual(submission.form_data, {})

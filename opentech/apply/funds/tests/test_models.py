@@ -311,6 +311,9 @@ class TestApplicationSubmission(TestCase):
     def make_submission(self, **kwargs):
         return ApplicationSubmissionFactory(**kwargs)
 
+    def refresh(self, instance):
+        return instance.__class__.objects.get(id=instance.id)
+
     def test_can_get_required_block_names(self):
         email = 'test@test.com'
         submission = self.make_submission(user__email=email)
@@ -364,3 +367,41 @@ class TestApplicationSubmission(TestCase):
         submission = self.make_submission(form_data__image__filename=filename)
         save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
         self.assertTrue(os.path.isfile(save_path))
+
+    def test_create_revision_on_create(self):
+        submission = ApplicationSubmissionFactory()
+        self.assertEqual(submission.revisions.count(), 1)
+        self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+
+    def test_create_revision_on_data_change(self):
+        submission = ApplicationSubmissionFactory()
+        new_data = {'title': 'My Awesome Title'}
+        submission.form_data = new_data
+        submission.create_revision()
+        submission = self.refresh(submission)
+        self.assertEqual(submission.revisions.count(), 2)
+        self.assertDictEqual(submission.live_revision.form_data, new_data)
+
+    def test_dont_create_revision_on_data_same(self):
+        submission = ApplicationSubmissionFactory()
+        submission.create_revision()
+        self.assertEqual(submission.revisions.count(), 1)
+        self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+
+    def test_can_get_draft_data(self):
+        submission = ApplicationSubmissionFactory()
+        title = 'My new title'
+        submission.form_data = {'title': title}
+        submission.create_revision(draft=True)
+        self.assertEqual(submission.revisions.count(), 2)
+
+        draft_submission = submission.from_draft()
+        self.assertDictEqual(draft_submission.form_data, submission.form_data)
+        self.assertEqual(draft_submission.title, title)
+        self.assertTrue(draft_submission.is_draft, True)
+
+        with self.assertRaises(ValueError):
+            draft_submission.save()
+
+        submission = self.refresh(submission)
+        self.assertNotEqual(submission.title, title)

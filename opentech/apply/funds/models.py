@@ -606,6 +606,23 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
 
+    is_draft = False
+
+    live_revision = models.OneToOneField(
+        'ApplicationRevision',
+        on_delete=models.PROTECT,
+        related_name='live',
+        null=True,
+        editable=False,
+    )
+    draft_revision = models.OneToOneField(
+        'ApplicationRevision',
+        on_delete=models.PROTECT,
+        related_name='draft',
+        null=True,
+        editable=False,
+    )
+
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
@@ -719,10 +736,30 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         submission_in_db.next = self
         submission_in_db.save()
 
-    def create_revision(self):
-        pass
+    def from_draft(self):
+        self.is_draft = True
+        self.form_data = self.draft_revision.form_data
+        return self
 
-    def save(self, *args, **kwargs):
+    def create_revision(self, draft=False):
+        self.clean_submission()
+        current_data = ApplicationSubmission.objects.get(id=self.id).form_data
+        if current_data != self.form_data:
+            revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            if draft:
+                self.form_data = self.live_revision.form_data
+            else:
+                self.live_revision = revision
+
+            self.draft_revision = revision
+            self.save()
+
+    def clean_submission(self):
+        self.process_form_data()
+        self.ensure_user_has_account()
+        self.process_file_data()
+
+    def process_form_data(self):
         for field in self.form_fields:
             # Update the ids which are unique to use the unique name
             if isinstance(field.block, MustIncludeFieldBlock):
@@ -730,12 +767,17 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 if response:
                     self.form_data[field.block.name] = response
 
-        self.ensure_user_has_account()
-
+    def process_file_data(self):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
+
+    def save(self, *args, **kwargs):
+        if self.is_draft:
+            raise ValueError('Cannot save with draft data')
+
+        self.clean_submission()
 
         creating = not self.id
         if creating:
@@ -751,6 +793,10 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         if creating:
             self.reviewers.set(self.get_from_parent('reviewers').all())
+            first_revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            self.live_revision = first_revision
+            self.draft_revision = first_revision
+            self.save()
 
     @property
     def missing_reviewers(self):
@@ -852,3 +898,8 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+
+class ApplicationRevision(models.Model):
+    submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
+    form_data = JSONField(encoder=DjangoJSONEncoder)
