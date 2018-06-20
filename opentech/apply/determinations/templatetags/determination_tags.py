@@ -37,18 +37,33 @@ def has_determination_draft(user, submission):
 @register.filter
 def pending_determination(submission, user):
     """
+    Check when to show the determination block.
+
     The submission doesn't have a determination response (accepted / rejected), does not require more info
     and is not in a determination state.
     """
     if not submission.active or 'more_info' in submission.status:
         return False
 
-    if submission.status in DETERMINATION_PHASES:
-        try:
-            return not submission.determination \
-                   or (submission.determination.is_draft and not user.is_apply_staff) \
-                   or submission.determination.outcome == NEEDS_MORE_INFO
-        except ObjectDoesNotExist:
+    if submission.status not in DETERMINATION_PHASES:
+        return True
+
+    try:
+        # No determination at all -> pending
+        if not submission.determination:
             return True
 
-    return True
+        # When the determination is in draft, only the lead and admins can see that as such
+        if submission.has_permission_to_add_determination(user):
+            return False
+
+        if submission.determination.is_draft:
+            return True
+
+        # There is a determination, that is not draft. Yet we are in a determination phase (i.e. in discussion)
+        # If the determination outcome is that it needs
+        return submission.determination.outcome == NEEDS_MORE_INFO
+
+    except ObjectDoesNotExist:
+        # No determination and we are ina determination phase
+        return not submission.has_permission_to_add_determination(user)

@@ -1,5 +1,5 @@
 {% load determination_tags %}
-{% if not object|pending_determination:request.user %}
+{% if object|pending_determination:request.user %}
 <div class="sidebar__inner">
     <h5>Determination</h5>
     {% if object.determination %}
