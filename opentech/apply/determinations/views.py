@@ -10,7 +10,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, ACCEPTED, REJECTED
+from .models import Determination, ACCEPTED, REJECTED, NEEDS_MORE_INFO
 
 
 def get_form_for_stage(submission):
