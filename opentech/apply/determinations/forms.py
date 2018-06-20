@@ -1,5 +1,5 @@
 from django import forms
-from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS
 
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED
