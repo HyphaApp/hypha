@@ -42,7 +42,7 @@ class BaseDeterminationForm(forms.ModelForm):
         if action:
             initial.update(outcome=self.get_determination_from_action_name(action))
         initial.update(submission=submission.id)
-        initial.update(author=user)
+        initial.update(author=user.id)
 
         if instance:
             for key, value in instance.data.items():
