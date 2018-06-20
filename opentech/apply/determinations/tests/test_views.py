@@ -95,7 +95,7 @@ class DeterminationFormTestCase(BaseTestCase):
             'data': 'value',
             'outcome': ACCEPTED,
             'message': 'Accepted determination draft message',
-            'save_draft': True
+            'save_draft': True,
         }, 'form')
         self.assertContains(response, 'Accepted')
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))

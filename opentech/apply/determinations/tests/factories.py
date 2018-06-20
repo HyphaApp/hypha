@@ -10,7 +10,7 @@ class DeterminationDataFactory(factory.DictFactory):
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
         submission = kwargs.pop('submission')
-        form = get_form_for_stage(submission)(request=None, submission=None)
+        form = get_form_for_stage(submission)(user=None, submission=submission)
         form_fields = {}
         for field_name, field in form.fields.items():
             form_fields[field_name] = 0
