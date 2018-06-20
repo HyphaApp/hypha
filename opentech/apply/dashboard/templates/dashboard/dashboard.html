@@ -14,11 +14,22 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
             <h3>Applications to review</h3>
-            {% if table.data %}
-                {% render_table table %}
+            {% if in_review.data %}
+                {% render_table in_review %}
             {% else %}
                 No reviews to complete
             {% endif %}
         </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <h3>Applications awaiting determination</h3>
+        {% if need_determination.data %}
+            {% render_table need_determination %}
+        {% else %}
+            No applications awaiting determination
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
