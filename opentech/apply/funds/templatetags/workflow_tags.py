@@ -16,8 +16,3 @@ def has_edit_perm(user, submission):
 @register.filter
 def has_review_perm(user, submission):
     return check_permission(user, 'review', submission)
-
-
-@register.filter
-def has_determination_perm(user, submission):
-    return check_permission(user, 'create_determination', submission)
