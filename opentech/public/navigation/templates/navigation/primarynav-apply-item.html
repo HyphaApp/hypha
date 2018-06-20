@@ -1,6 +1,6 @@
 <li class="nav__item" role="presentation">
     {% url url as target_url%}
-    <a class="nav__link {% if target_url == request.path %}nav__link--active{% endif %}" href="{{ target_url }}" role="menuitem">
+    <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}" href="{{ target_url }}" role="menuitem">
         {{ name }}
     </a>
 </li>
