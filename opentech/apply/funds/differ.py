@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
 import bleach
@@ -7,7 +8,7 @@ from django.utils.text import mark_safe
 
 
 def wrap_with_span(text, class_name):
-    return format_html('<span class="{}">{}</span>', class_name, mark_safe(text))
+    return format_html('<div class="diff diff__{}">{}</div>', class_name, mark_safe(text))
 
 
 def wrap_deleted(text):
@@ -68,9 +69,11 @@ def compare(answer_a, answer_b, should_bleach=True):
     if added == deleted:
         output.append(''.join(added))
     else:
-        if added:
-            output.append(wrap_deleted(''.join(deleted)))
         if deleted:
+            output.append(wrap_deleted(''.join(deleted)))
+        if added:
             output.append(wrap_added(''.join(added)))
 
-    return mark_safe(''.join(output))
+    display = BeautifulSoup(''.join(output)).prettify()
+
+    return mark_safe(display)
