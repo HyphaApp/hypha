@@ -38,7 +38,7 @@
         <input class="button button--primary" type="submit" value="Send Determination" name="submit" />
         <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
     </form>
-    {% for type, message in canned_messages.items %}
+    {% for type, message in message_templates.items %}
         <div id="determination-message-{{ type }}">
         {{ message|bleach }}
         </div>

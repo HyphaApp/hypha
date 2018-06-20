@@ -95,6 +95,17 @@ class DeterminationMessageSettings(BaseSetting):
     proposal_rejected = RichTextField("Rejected")
     proposal_more_info = RichTextField("Needs more info")
 
+    def get_for_stage(self, stage_name):
+        message_templates = {}
+        prefix = f"{stage_name.lower()}_"
+
+        for field in self._meta.get_fields():
+            if prefix in field.name:
+                key = field.name.replace(prefix, '')
+                message_templates[key] = getattr(self, field.name)
+
+        return message_templates
+
     request_tab_panels = [
         FieldPanel('request_accepted'),
         FieldPanel('request_rejected'),
