@@ -8,11 +8,6 @@ register = template.Library()
 
 
 @register.filter
-def is_lead_or_admin(user, submission):
-    return submission.has_permission_to_add_determination(user)
-
-
-@register.filter
 def can_add_determination(user, submission):
     if submission.status not in DETERMINATION_PHASES:
         return False
