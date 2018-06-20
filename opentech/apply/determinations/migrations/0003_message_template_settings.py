@@ -17,6 +17,9 @@ class Migration(migrations.Migration):
             name='DeterminationMessageSettings',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('request_accepted', wagtail.core.fields.RichTextField(verbose_name='Accepted')),
+                ('request_rejected', wagtail.core.fields.RichTextField(verbose_name='Rejected')),
+                ('request_more_info', wagtail.core.fields.RichTextField(verbose_name='Needs more info')),
                 ('concept_accepted', wagtail.core.fields.RichTextField(verbose_name='Accepted')),
                 ('concept_rejected', wagtail.core.fields.RichTextField(verbose_name='Rejected')),
                 ('concept_more_info', wagtail.core.fields.RichTextField(verbose_name='Needs more info')),
