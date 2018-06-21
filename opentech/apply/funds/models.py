@@ -1,4 +1,5 @@
 from datetime import date
+import copy
 import os
 
 from django.conf import settings
@@ -735,11 +736,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.draft_revision = None
         self.save()
 
-        new_revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
-        self.live_revision = new_revision
-        self.draft_revision = new_revision
-        self.save()
-
         submission_in_db.next = self
         submission_in_db.save()
 
@@ -748,7 +744,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.form_data = self.draft_revision.form_data
         return self
 
-    def create_revision(self, draft=False):
+    def create_revision(self, draft=False, **kwargs):
         self.clean_submission()
         current_data = ApplicationSubmission.objects.get(id=self.id).form_data
         if current_data != self.form_data:
@@ -771,13 +767,20 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.ensure_user_has_account()
         self.process_file_data()
 
+    @property
+    def must_include(self):
+        return {
+            field.block.name: field.id
+            for field in self.form_fields
+            if isinstance(field.block, MustIncludeFieldBlock)
+        }
+
+
     def process_form_data(self):
-        for field in self.form_fields:
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = self.form_data.pop(field.id, None)
-                if response:
-                    self.form_data[field.block.name] = response
+        for field_name, field_id in self.must_include.items():
+            response = self.form_data.pop(field_id, None)
+            if response:
+                self.form_data[field_name] = response
 
     def process_file_data(self):
         for field in self.form_fields:
@@ -856,6 +859,14 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             return not self.determination.submitted
         except ObjectDoesNotExist:
             return True
+
+    @property
+    def raw_data(self):
+        data = self.form_data.copy()
+        for field_name, field_id in self.must_include.items():
+            response = data.pop(field_name)
+            data[field_id] = response
+        return data
 
     def data_and_fields(self):
         for stream_value in self.form_fields:

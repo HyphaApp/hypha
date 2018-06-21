@@ -28,12 +28,7 @@ class ProgressSubmissionForm(forms.ModelForm):
         if not can_proceed(transition):
             action = self.instance.phase.transitions[action_name]
             raise forms.ValidationError(f'You do not have permission to "{ action }"')
-        self.transition = transition
         return action_name
-
-    def save(self, *args, **kwargs):
-        self.transition(by=self.user)
-        return super().save(*args, **kwargs)
 
 
 class UpdateSubmissionLeadForm(forms.ModelForm):

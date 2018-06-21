@@ -91,21 +91,31 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
 
     def test_create_revisions_on_submit(self):
-        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
-        old_data = submission.form_data
-        self.post_page(submission, {'proposal_discussion': True}, 'edit')
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
+        old_data = submission.form_data.copy()
+        new_data = submission.raw_data
+        new_data[submission.must_include['title']] = 'New title'
+
+        self.post_page(submission, {'submit': True, **new_data}, 'edit')
+
         submission = self.refresh(submission)
+
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
-        self.asswerEqual(submission.revisions.first().form_data, old_data)
-        self.assertEqual(submission.form_data, {})
+        self.assertDictEqual(submission.revisions_first().form_data, old_data)
+        self.assertDictEqual(submission.live_revision, new_data)
+        self.assertDictEqual(submission.form_data, new_data)
 
     def test_dont_update_live_revision_on_save(self):
-        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
-        old_data = submission.form_data
-        self.post_page(submission, {'save': True}, 'edit')
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
+        old_data = submission.form_data.copy()
+        new_data = submission.raw_data
+        new_data[submission.must_include['title']] = 'New title'
+        self.post_page(submission, {'save': True, **new_data}, 'edit')
+
         submission = self.refresh(submission)
+
         self.assertEqual(submission.status, 'draft_proposal')
         self.assertEqual(submission.revisions.count(), 2)
-        self.asswerEqual(submission.revisions.first().form_data, old_data)
-        self.assertEqual(submission.form_data, {})
+        self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
+        self.assertDictEqual(submission.live_revision.form_data, old_data)

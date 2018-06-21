@@ -255,7 +255,7 @@ DoubleStageDefinition = {
     },
     'draft_proposal': {
         'transitions': {
-            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,

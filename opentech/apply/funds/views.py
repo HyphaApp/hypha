@@ -79,15 +79,17 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
+        form.instance.perform_transition(action, self.request.user)
+
         response = super().form_valid(form)
         return self.progress_stage(form.instance) or response
 
     def progress_stage(self, instance):
-        proposal_transition = instance.get_transition('draft_proposal')
-        if proposal_transition:
-            if can_proceed(proposal_transition):
-                proposal_transition(by=self.request.user)
-                instance.save()
+        try:
+            instance.perform_transition('draft_proposal', self.request.user)
+        except PermissionDenied:
+            pass
+        else:
             return HttpResponseRedirect(instance.get_absolute_url())
 
 
@@ -211,19 +213,7 @@ class SubmissionEditView(UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop('instance')
-        form_data = instance.form_data
-
-        for field in self.object.form_fields:
-            if isinstance(field.block, MustIncludeFieldBlock):
-                # convert certain data to the correct field id
-                try:
-                    response = form_data[field.block.name]
-                except KeyError:
-                    pass
-                else:
-                    form_data[field.id] = response
-
-        kwargs['initial'] = form_data
+        kwargs['initial'] = instance.raw_data
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -234,16 +224,16 @@ class SubmissionEditView(UpdateView):
 
     def form_valid(self, form):
         self.object.form_data = form.cleaned_data
-        self.object.save()
 
         if 'save' in self.request.POST:
+            self.object.create_revision(draft=True)
             return self.form_invalid(form)
 
-        transition = set(self.request.POST.keys()) & set(self.transitions.keys())
+        action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
-        if transition:
-            transition_object = self.transitions[transition.pop()]
-            self.object.get_transition(transition_object.target)(by=self.request.user)
-            self.object.save()
+        transition = self.transitions[action.pop()]
+        print(self.object.status)
+        self.object.perform_transition(transition.target, self.request.user)
+        print(self.object.status)
 
         return HttpResponseRedirect(self.get_success_url())
