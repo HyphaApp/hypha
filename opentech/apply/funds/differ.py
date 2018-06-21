@@ -27,8 +27,15 @@ def compare(answer_a, answer_b, should_bleach=True):
         return answer_b
 
     if should_bleach:
-        answer_a = bleach.clean(answer_a)
-        answer_b = bleach.clean(answer_b)
+        if isinstance(answer_a, str):
+            answer_a = bleach.clean(answer_a)
+        else:
+            answer_a = str(answer_a)
+
+        if isinstance(answer_b, str):
+            answer_b = bleach.clean(answer_b)
+        else:
+            answer_b = str(answer_b)
 
     diff = SequenceMatcher(None, answer_a, answer_b)
     output = []
@@ -59,7 +66,7 @@ def compare(answer_a, answer_b, should_bleach=True):
 
     # Handle text not added to the output already
     if added == deleted:
-        output.append(added)
+        output.append(''.join(added))
     else:
         if added:
             output.append(wrap_deleted(''.join(deleted)))
