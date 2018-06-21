@@ -43,6 +43,8 @@
         }
 
         a {
+            font-weight: $weight--bold;
+
             @include media-query(tablet-landscape) {
                 margin-left: auto;
             }
