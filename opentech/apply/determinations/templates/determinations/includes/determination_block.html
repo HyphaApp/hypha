@@ -1,11 +1,13 @@
 {% load determination_tags %}
 {% if not object|pending_determination:request.user %}
-<div class="sidebar__inner">
-    <h5>Determination</h5>
-    {% if object.determination %}
-        <a href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">{{ object.determination.get_outcome_display }}</a>
-        {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
-    {% endif %}
-    {% include 'determinations/includes/determination_button.html' with submission=object %}
-</div>
+    <div class="sidebar__inner">
+        <h5>Determination</h5>
+        {% if object.determination %}
+            <p>
+                <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">{{ object.determination.get_outcome_display }}</a>
+                - {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
+            </p>
+        {% endif %}
+        {% include 'determinations/includes/determination_button.html' with submission=object %}
+    </div>
 {% endif %}

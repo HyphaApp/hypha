@@ -47,10 +47,13 @@
             {% else %}
                 <div>
                     <h6 class="heading heading--submission-meta">
-                        <span>Submitted: </span>{{ object.submit_time.date }} by {{ object.user.get_full_name }}
-                        <span>Edited: </span>{{ object.last_edit.timestamp.date }} by {{ object.last_edit.user.get_full_name }}
+                        <span>Submitted: <strong>{{ object.submit_time.date }} by {{ object.user.get_full_name }}</strong></span>
+                        <span>Last edited: <strong>{{ object.last_edit.timestamp.date }} by {{ object.last_edit.user.get_full_name }}</strong></span>
                         {% if request.user|has_edit_perm:object and object.user == request.user %}
-                            <a href="{% url 'funds:submissions:edit' object.id %}">Edit</a>
+                            <a href="{% url 'funds:submissions:edit' object.id %}">
+                                Edit
+                                <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                            </a>
                         {% endif %}
                     </h6>
 

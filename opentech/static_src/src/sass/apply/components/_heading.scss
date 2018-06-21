@@ -27,10 +27,27 @@
     }
 
     &--submission-meta {
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+        font-weight: $weight--normal;
         color: transparentize($color--dark-grey, 0.5);
 
+        @include media-query(tablet-landscape) {
+            flex-direction: row;
+            margin-top: 0;
+        }
+
         span {
-            font-weight: $weight--normal;
+            margin-right: 15px;
+        }
+
+        a {
+            font-weight: $weight--bold;
+
+            @include media-query(tablet-landscape) {
+                margin-left: auto;
+            }
         }
     }
 

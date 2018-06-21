@@ -164,7 +164,7 @@ $table-breakpoint: 'tablet-portrait';
                     display: inline-block;
                     margin-right: 15px;
                     transform: rotate(0);
-                    transition: transform, border-color, $transition;
+                    transition: transform, border-color, 0.2s ease-in-out;
 
                     &:hover {
                         cursor: pointer;
@@ -222,6 +222,10 @@ $table-breakpoint: 'tablet-portrait';
                 visibility: hidden;
             }
         }
+    }
+
+    &__toggle {
+        padding: 5px 0 5px 5px;
     }
 }
 
