@@ -168,9 +168,7 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
     form_views = [CommentFormView]
 
     def get_object(self):
-        object = super().get_object()
-        object = object.from_draft()
-        return object
+        return super().get_object().from_draft()
 
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().user != request.user:
