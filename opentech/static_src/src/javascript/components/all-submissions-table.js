@@ -1,14 +1,15 @@
 import $ from './../globals';
 
 export default () => {
-    // Add <tr> toggle arrow
-    $('.all-submissions__parent td.title').prepend('<span class="js-tr-toggle arrow"></span>');
+    // add the toggle arrow before the submission titles
+    $('.all-submissions__parent td.title').prepend('<span class="all-submissions__toggle js-toggle-submission"><span class="arrow"></span></span>');
 
-    // Toggle show/hide for submissions overview table rows
+    // grab all the toggles
     const children = Array.prototype.slice.call(
-        document.querySelectorAll('.js-tr-toggle')
+        document.querySelectorAll('.js-toggle-submission')
     );
 
+    // show/hide the submission child rows
     children.forEach(function (child) {
         child.addEventListener('click', (e) => {
             $(e.target).closest('.all-submissions__parent').toggleClass('is-expanded');
