@@ -94,7 +94,8 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         old_data = submission.form_data.copy()
         new_data = submission.raw_data
-        new_data[submission.must_include['title']] = 'New title'
+        new_title = 'New title'
+        new_data[submission.must_include['title']] = new_title
 
         self.post_page(submission, {'submit': True, **new_data}, 'edit')
 
@@ -102,9 +103,9 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
-        self.assertDictEqual(submission.revisions_first().form_data, old_data)
-        self.assertDictEqual(submission.live_revision, new_data)
-        self.assertDictEqual(submission.form_data, new_data)
+        self.assertDictEqual(submission.revisions.first().form_data, old_data)
+        self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertEqual(submission.title, new_title)
 
     def test_dont_update_live_revision_on_save(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)

@@ -232,8 +232,6 @@ class SubmissionEditView(UpdateView):
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
         transition = self.transitions[action.pop()]
-        print(self.object.status)
         self.object.perform_transition(transition.target, self.request.user)
-        print(self.object.status)
 
         return HttpResponseRedirect(self.get_success_url())

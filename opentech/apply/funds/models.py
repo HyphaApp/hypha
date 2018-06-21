@@ -516,18 +516,31 @@ def make_permission_check(users):
     return can_transition
 
 
+def wrap_method(func):
+    def wrapped(*args, **kwargs):
+        # Provides an new function that can be wrapped with the django fsm method
+        # Without this using the same method for multiple transitions fails as
+        # the fsm wrapping is overwritten
+        return func(*args, **kwargs)
+    return wrapped
+
+
+def transition_id(target, phase):
+    transition_prefix = 'transition'
+    return '__'.join([transition_prefix, phase.stage.name.lower(), phase.name, target])
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
-        transition_prefix = 'transition'
         for workflow in WORKFLOWS.values():
             for phase, data in workflow.items():
                 for transition_name, action in data.transitions.items():
-                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
+                    method_name = transition_id(transition_name, data)
                     permission_name = method_name + '_permission'
                     permission_func = make_permission_check(action['permissions'])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = attrs.get(action.get('method'), lambda *args, **kwargs: None)
+                    transition_state = wrap_method(attrs.get(action.get('method'), lambda *args, **kwargs: None))
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action['display'])
 
@@ -547,7 +560,7 @@ class AddTransitions(models.base.ModelBase):
 
         def get_transition(self, transition):
             try:
-                return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+                return getattr(self, transition_id(transition, self.phase))
             except TypeError:
                 # Defined on the class
                 return None
