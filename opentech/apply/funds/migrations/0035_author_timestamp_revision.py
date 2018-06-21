@@ -23,4 +23,8 @@ class Migration(migrations.Migration):
             name='timestamp',
             field=models.DateTimeField(auto_now=True),
         ),
+        migrations.AlterModelOptions(
+            name='applicationrevision',
+            options={'ordering': ['-timestamp']},
+        ),
     ]
