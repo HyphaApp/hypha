@@ -1,0 +1,44 @@
+{% extends "base-apply.html" %}
+{% block title %}Create a determination{% endblock %}
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h2 class="heading heading--no-margin">{{ title|default:"Create Determination" }}</h2>
+        <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+    </div>
+</div>
+
+<div class="wrapper wrapper--medium wrapper--inner-space-medium">
+{% if not has_determination_response %}
+    <form class="form form--with-p-tags" action="" method="post" novalidate>
+        {{ form.media }}
+        {% csrf_token %}
+
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+            {# to be replaced with better logic when we use stream form #}
+            {% ifchanged field.field.group %}
+                {% for key, value in form.titles.items %}
+                    {% if key == field.field.group %}
+                        <h2>{{ value }}</h2>
+                    {% endif %}
+                {% endfor %}
+            {% endifchanged %}
+
+            {% if field.field %}
+                {% include "funds/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+        <input class="button button--primary" type="submit" value="Send Determination" name="submit" />
+        <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+    </form>
+{% else %}
+    <p>You have already added a determination for this submission</p>
+{% endif %}
+</div>
+{% endblock %}

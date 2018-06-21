@@ -10,6 +10,7 @@ submission_urls = ([
     path('<int:pk>/', SubmissionDetailView.as_view(), name="detail"),
     path('<int:pk>/edit/', SubmissionEditView.as_view(), name="edit"),
     path('<int:submission_pk>/', include('opentech.apply.review.urls', namespace="reviews")),
+    path('<int:submission_pk>/', include('opentech.apply.determinations.urls', namespace="determinations")),
 ], 'submissions')
 
 urlpatterns = [

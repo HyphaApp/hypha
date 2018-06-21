@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import UpdateView
 
@@ -15,6 +16,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.models import Activity
+from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
@@ -70,6 +72,13 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'progress_form'
 
     def form_valid(self, form):
+        action = form.cleaned_data.get('action')
+        # Defer to the determination form for any of the determination transitions
+        if action in DETERMINATION_RESPONSE_TRANSITIONS:
+            return HttpResponseRedirect(reverse_lazy(
+                'apply:submissions:determinations:form',
+                args=(form.instance.id,)) + "?action=" + action)
+
         response = super().form_valid(form)
         return self.progress_stage(form.instance) or response
 

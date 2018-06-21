@@ -88,6 +88,10 @@
                     {% endblock %}
                 {% endif %}
 
+                {% block determination %}
+                    {% include 'determinations/includes/determination_block.html' with submission=object %}
+                {% endblock %}
+
                 {% block reviews %}
                 {% endblock %}
 

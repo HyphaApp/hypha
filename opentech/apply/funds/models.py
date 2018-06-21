@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist, PermissionDenied
 from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
-from django_fsm import FSMField, transition, RETURN_VALUE
+from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -25,7 +25,7 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
     ObjectList,
     StreamFieldPanel,
-    TabbedInterface
+    TabbedInterface,
 )
 
 from wagtail.admin.utils import send_mail
@@ -47,6 +47,7 @@ from .workflow import (
     review_statuses,
     UserPermissions,
     WORKFLOWS,
+    DETERMINATION_PHASES,
 )
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
@@ -565,6 +566,17 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_actions_for_user'] = get_actions_for_user
 
+        def perform_transition(self, action, user):
+            transition = self.get_transition(action)
+            if not can_proceed(transition):
+                action = self.phase.transitions[action]
+                raise PermissionDenied(f'You do not have permission to "{ action }"')
+
+            transition(by=user)
+            self.save()
+
+        attrs['perform_transition'] = perform_transition
+
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
 
@@ -766,6 +778,23 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             return False
 
         return self.has_permission_to_review(user)
+
+    def has_permission_to_add_determination(self, user):
+        return user.is_superuser or self.lead == user
+
+    @property
+    def in_determination_phase(self):
+        return self.status in DETERMINATION_PHASES
+
+    @property
+    def can_have_determination(self):
+        if not self.in_determination_phase:
+            return False
+
+        try:
+            return not self.determination.submitted
+        except ObjectDoesNotExist:
+            return True
 
     def data_and_fields(self):
         for stream_value in self.form_fields:
