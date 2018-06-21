@@ -1,0 +1,38 @@
+.revision {
+    margin: 20px 0;
+    border: 1px solid $color--mid-grey;
+
+    @include media-query(tablet-portrait) {
+        margin: 4rem 0;
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        background: $color--white;
+        border-bottom: 1px dashed $color--mid-grey;
+
+        @include media-query(tablet-portrait) {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        &:first-child {
+            background-color: $color--sky-blue;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    &__meta {
+        margin: 0;
+    }
+
+    &__date,
+    &__current {
+        font-weight: $weight--semibold;
+    }
+}

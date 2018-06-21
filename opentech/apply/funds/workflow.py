@@ -131,7 +131,7 @@ SingleStageDefinition = {
     },
     'more_info': {
         'transitions': {
-            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Request,
@@ -160,7 +160,7 @@ SingleStageDefinition = {
     },
     'post_review_more_info': {
         'transitions': {
-            'post_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'post_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Request,
@@ -197,7 +197,7 @@ DoubleStageDefinition = {
     },
     'concept_more_info': {
         'transitions': {
-            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Concept,
@@ -226,7 +226,7 @@ DoubleStageDefinition = {
     },
     'concept_review_more_info': {
         'transitions': {
-            'concept_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'concept_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Concept,
@@ -255,7 +255,7 @@ DoubleStageDefinition = {
     },
     'draft_proposal': {
         'transitions': {
-            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
@@ -275,7 +275,7 @@ DoubleStageDefinition = {
     },
     'proposal_more_info': {
         'transitions': {
-            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -304,7 +304,7 @@ DoubleStageDefinition = {
     },
     'post_proposal_review_more_info': {
         'transitions': {
-            'post_proposal_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'post_proposal_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -333,7 +333,7 @@ DoubleStageDefinition = {
     },
     'post_external_review_more_info': {
         'transitions': {
-            'post_external_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}},
+            'post_external_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
         },
         'display': 'More information required',
         'stage': Proposal,
