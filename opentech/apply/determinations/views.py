@@ -5,12 +5,13 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
+from django_fsm import can_proceed
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, ACCEPTED, REJECTED, NEEDS_MORE_INFO, DeterminationMessageSettings
+from .models import Determination, DETERMINATION_TRANSITION_SUFFIX, DeterminationMessageSettings
 
 
 def get_form_for_stage(submission):
@@ -73,24 +74,38 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        super().form_valid(form)
+        response = super().form_valid(form)
 
         if not self.object.is_draft:
             action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
             self.submission.perform_transition(action_name, self.request.user)
 
-        return HttpResponseRedirect(self.get_success_url())
+        return self.progress_stage(self.submission) or response
+
+    def progress_stage(self, instance):
+        proposal_transition = instance.get_transition('draft_proposal')
+        if proposal_transition:
+            if can_proceed(proposal_transition):
+                proposal_transition(by=self.request.user)
+                instance.save()
+            return HttpResponseRedirect(instance.get_absolute_url())
+
+    def form_invalid(self, form):
+        from pprint import pprint
+        pprint(form.errors)
+        return super().form_invalid(form)
 
     def get_action_name_from_determination(self, determination):
-        suffix = {
-            ACCEPTED: 'accepted',
-            REJECTED: 'rejected',
-            NEEDS_MORE_INFO: 'more_info',
-        }
+        suffix = DETERMINATION_TRANSITION_SUFFIX[determination]
 
         for transition_name in self.submission.phase.transitions:
-            if suffix[determination] in transition_name:
-                return transition_name
+            if type(suffix) is list:
+                for item in suffix:
+                    if item in transition_name:
+                        return transition_name
+            else:
+                if suffix in transition_name:
+                    return transition_name
 
 
 @method_decorator(login_required, name='dispatch')

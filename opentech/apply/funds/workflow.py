@@ -421,6 +421,8 @@ def get_determination_transitions():
                 transitions.add(transition_name)
             elif 'more_info' in transition_name:
                 transitions.add(transition_name)
+            elif 'invited_to_proposal' in transition_name:
+                transitions.add(transition_name)
 
     return transitions
 

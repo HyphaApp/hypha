@@ -2,7 +2,8 @@ from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
-from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED
+from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED, \
+    DETERMINATION_TRANSITION_SUFFIX
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
@@ -77,7 +78,7 @@ class BaseDeterminationForm(forms.ModelForm):
         if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
             if 'more_info' in action_name:
                 return NEEDS_MORE_INFO
-            elif 'accepted' in action_name:
+            elif 'accepted' in action_name or 'invited_to_proposal' in action_name:
                 return ACCEPTED
         return REJECTED
 
@@ -87,19 +88,19 @@ class BaseDeterminationForm(forms.ModelForm):
         We need to filter out non-matching choices.
         i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
         """
-        suffix = {
-            ACCEPTED: 'accepted',
-            REJECTED: 'rejected',
-            NEEDS_MORE_INFO: 'more_info',
-        }
-
         available_choices = set()
         choices = list(self.fields['outcome'].choices)
 
         for key, value in choices:
+            suffix = DETERMINATION_TRANSITION_SUFFIX[key]
             for transition_name in phase.transitions:
-                if suffix[key] in transition_name:
-                    available_choices.add((key, value))
+                if type(suffix) is list:
+                    for item in suffix:
+                        if item in transition_name:
+                            available_choices.add((key, value))
+                else:
+                    if suffix in transition_name:
+                        available_choices.add((key, value))
 
         self.fields['outcome'].choices = available_choices
         self.fields['outcome'].widget.choices = available_choices

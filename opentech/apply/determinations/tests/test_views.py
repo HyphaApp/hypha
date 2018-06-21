@@ -89,7 +89,7 @@ class DeterminationFormTestCase(BaseTestCase):
         self.assertContains(response, 'You have already added a determination for this submission')
 
     def test_can_edit_draft_determination(self):
-        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        submission = ApplicationSubmissionFactory(status='post_review_discussion', lead=self.user)
         DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {
             'data': 'value',
@@ -106,6 +106,30 @@ class DeterminationFormTestCase(BaseTestCase):
         determination = DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertEqual(response.status_code, 403)
+
+    def test_can_progress_stage_via_determination(self):
+        submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)
+        DeterminationFactory(submission=submission, author=self.user)
+
+        response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
+
+        # we are taken to the determination form
+        url = reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission))
+        self.assertRedirects(response, f"{url}?action=invited_to_proposal")
+
+        response = self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertRedirects(response, reverse('funds:submissions:detail', kwargs={'pk': submission_next.id}))
+        self.assertEqual(submission_original.status, 'invited_to_proposal')
+        self.assertEqual(submission_next.status, 'draft_proposal')
 
 
 class UserDeterminationFormTestCase(BaseTestCase):

@@ -23,6 +23,12 @@ DETERMINATION_CHOICES = (
     (ACCEPTED, _('Accepted')),
 )
 
+DETERMINATION_TRANSITION_SUFFIX = {
+    ACCEPTED: ['accepted', 'invited_to_proposal'],
+    REJECTED: 'rejected',
+    NEEDS_MORE_INFO: 'more_info',
+}
+
 
 class Determination(models.Model):
     submission = models.OneToOneField(

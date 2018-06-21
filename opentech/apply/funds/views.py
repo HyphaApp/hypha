@@ -80,18 +80,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
-        form.instance.perform_transition(action, self.request.user)
-
-        response = super().form_valid(form)
-        return self.progress_stage(form.instance) or response
-
-    def progress_stage(self, instance):
-        try:
-            instance.perform_transition('draft_proposal', self.request.user)
-        except PermissionDenied:
-            pass
-        else:
-            return HttpResponseRedirect(instance.get_absolute_url())
+        return super().form_valid(form)
 
 
 @method_decorator(staff_required, name='dispatch')
