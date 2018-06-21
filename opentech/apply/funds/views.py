@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, TemplateView
 
 from django_filters.views import FilterView
 from django_fsm import can_proceed
@@ -20,6 +20,7 @@ from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
+from opentech.apply.users.models import User
 
 from .blocks import MustIncludeFieldBlock
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
@@ -79,15 +80,17 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
+        form.instance.perform_transition(action, self.request.user)
+
         response = super().form_valid(form)
         return self.progress_stage(form.instance) or response
 
     def progress_stage(self, instance):
-        proposal_transition = instance.get_transition('draft_proposal')
-        if proposal_transition:
-            if can_proceed(proposal_transition):
-                proposal_transition(by=self.request.user)
-                instance.save()
+        try:
+            instance.perform_transition('draft_proposal', self.request.user)
+        except PermissionDenied:
+            pass
+        else:
             return HttpResponseRedirect(instance.get_absolute_url())
 
 
@@ -165,6 +168,9 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
     model = ApplicationSubmission
     form_views = [CommentFormView]
 
+    def get_object(self):
+        return super().get_object().from_draft()
+
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().user != request.user:
             raise PermissionDenied
@@ -211,19 +217,7 @@ class SubmissionEditView(UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop('instance')
-        form_data = instance.form_data
-
-        for field in self.object.form_fields:
-            if isinstance(field.block, MustIncludeFieldBlock):
-                # convert certain data to the correct field id
-                try:
-                    response = form_data[field.block.name]
-                except KeyError:
-                    pass
-                else:
-                    form_data[field.id] = response
-
-        kwargs['initial'] = form_data
+        kwargs['initial'] = instance.raw_data
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -234,16 +228,32 @@ class SubmissionEditView(UpdateView):
 
     def form_valid(self, form):
         self.object.form_data = form.cleaned_data
-        self.object.save()
 
         if 'save' in self.request.POST:
+            self.object.create_revision(draft=True)
             return self.form_invalid(form)
 
-        transition = set(self.request.POST.keys()) & set(self.transitions.keys())
+        action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
-        if transition:
-            transition_object = self.transitions[transition.pop()]
-            self.object.get_transition(transition_object.target)(by=self.request.user)
-            self.object.save()
+        transition = self.transitions[action.pop()]
+        self.object.perform_transition(transition.target, self.request.user)
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class RevisionListView(TemplateView):
+    template_name = 'funds/revisions_list.html'
+
+    def get_context_data(self, **kwargs):
+        revisions = [
+            {
+                'date': "2018/06/14",
+                'author': User.objects.all()[i],
+            }
+            for i in range(5)
+        ]
+        return super().get_context_data(
+            submission=ApplicationSubmission.objects.first(),
+            revisions=revisions,
+            **kwargs,
+        )

@@ -19,6 +19,7 @@ class UserFactory(factory.DjangoModelFactory):
         model = get_user_model()
 
     email = factory.Sequence('email{}@email.com'.format)
+    full_name = factory.Faker('name')
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):

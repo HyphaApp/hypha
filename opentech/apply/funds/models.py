@@ -1,4 +1,5 @@
 from datetime import date
+import copy
 import os
 
 from django.conf import settings
@@ -515,18 +516,31 @@ def make_permission_check(users):
     return can_transition
 
 
+def wrap_method(func):
+    def wrapped(*args, **kwargs):
+        # Provides an new function that can be wrapped with the django fsm method
+        # Without this using the same method for multiple transitions fails as
+        # the fsm wrapping is overwritten
+        return func(*args, **kwargs)
+    return wrapped
+
+
+def transition_id(target, phase):
+    transition_prefix = 'transition'
+    return '__'.join([transition_prefix, phase.stage.name.lower(), phase.name, target])
+
+
 class AddTransitions(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
-        transition_prefix = 'transition'
         for workflow in WORKFLOWS.values():
             for phase, data in workflow.items():
                 for transition_name, action in data.transitions.items():
-                    method_name = '_'.join([transition_prefix, transition_name, str(data.step), data.stage.name])
+                    method_name = transition_id(transition_name, data)
                     permission_name = method_name + '_permission'
                     permission_func = make_permission_check(action['permissions'])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = attrs.get(action.get('method'), lambda *args, **kwargs: None)
+                    transition_state = wrap_method(attrs.get(action.get('method'), lambda *args, **kwargs: None))
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action['display'])
 
@@ -546,7 +560,7 @@ class AddTransitions(models.base.ModelBase):
 
         def get_transition(self, transition):
             try:
-                return getattr(self, '_'.join([transition_prefix, transition, str(self.phase.step), self.stage.name]))
+                return getattr(self, transition_id(transition, self.phase))
             except TypeError:
                 # Defined on the class
                 return None
@@ -605,6 +619,23 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
+
+    is_draft = False
+
+    live_revision = models.OneToOneField(
+        'ApplicationRevision',
+        on_delete=models.CASCADE,
+        related_name='live',
+        null=True,
+        editable=False,
+    )
+    draft_revision = models.OneToOneField(
+        'ApplicationRevision',
+        on_delete=models.CASCADE,
+        related_name='draft',
+        null=True,
+        editable=False,
+    )
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
@@ -714,25 +745,67 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.id = None
         self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
 
+        self.live_revision = None
+        self.draft_revision = None
         self.save()
 
         submission_in_db.next = self
         submission_in_db.save()
 
-    def save(self, *args, **kwargs):
-        for field in self.form_fields:
-            # Update the ids which are unique to use the unique name
-            if isinstance(field.block, MustIncludeFieldBlock):
-                response = self.form_data.pop(field.id, None)
-                if response:
-                    self.form_data[field.block.name] = response
+    def from_draft(self):
+        self.is_draft = True
+        self.form_data = self.draft_revision.form_data
+        return self
 
+    def create_revision(self, draft=False, **kwargs):
+        self.clean_submission()
+        current_data = ApplicationSubmission.objects.get(id=self.id).form_data
+        if current_data != self.form_data:
+            if self.live_revision == self.draft_revision:
+                revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            else:
+                revision = self.draft_revision
+                revision.form_data = self.form_data
+
+            if draft:
+                self.form_data = self.live_revision.form_data
+            else:
+                self.live_revision = revision
+
+            self.draft_revision = revision
+            self.save()
+
+    def clean_submission(self):
+        self.process_form_data()
         self.ensure_user_has_account()
+        self.process_file_data()
 
+    @property
+    def must_include(self):
+        return {
+            field.block.name: field.id
+            for field in self.form_fields
+            if isinstance(field.block, MustIncludeFieldBlock)
+        }
+
+
+    def process_form_data(self):
+        for field_name, field_id in self.must_include.items():
+            response = self.form_data.pop(field_id, None)
+            if response:
+                self.form_data[field_name] = response
+
+    def process_file_data(self):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 file = self.form_data.get(field.id, {})
                 self.form_data[field.id] = self.handle_files(file)
+
+    def save(self, *args, **kwargs):
+        if self.is_draft:
+            raise ValueError('Cannot save with draft data')
+
+        self.clean_submission()
 
         creating = not self.id
         if creating:
@@ -748,6 +821,10 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         if creating:
             self.reviewers.set(self.get_from_parent('reviewers').all())
+            first_revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            self.live_revision = first_revision
+            self.draft_revision = first_revision
+            self.save()
 
     @property
     def missing_reviewers(self):
@@ -795,6 +872,14 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             return not self.determination.submitted
         except ObjectDoesNotExist:
             return True
+
+    @property
+    def raw_data(self):
+        data = self.form_data.copy()
+        for field_name, field_id in self.must_include.items():
+            response = data.pop(field_name)
+            data[field_id] = response
+        return data
 
     def data_and_fields(self):
         for stream_value in self.form_fields:
@@ -849,3 +934,8 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+
+class ApplicationRevision(models.Model):
+    submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
+    form_data = JSONField(encoder=DjangoJSONEncoder)

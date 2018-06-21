@@ -20,10 +20,18 @@ class ApplicantDashboardView(SingleTableView):
     table_class = SubmissionsTable
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user).inactive().current()
+        return self.model.objects.filter(
+            user=self.request.user
+        ).inactive().current()
 
     def get_context_data(self, **kwargs):
-        my_active_submissions = self.model.objects.filter(user=self.request.user).active().current()
+        my_active_submissions = self.model.objects.filter(
+            user=self.request.user
+        ).active().current().select_related('draft_revision')
+
+        my_active_submissions = [
+            submission.from_draft() for submission in my_active_submissions
+        ]
 
         return super().get_context_data(
             my_active_submissions=my_active_submissions,
