@@ -8,7 +8,6 @@ from django.utils.text import mark_safe
 from django.views.generic import DetailView, ListView, UpdateView
 
 from django_filters.views import FilterView
-from django_fsm import can_proceed
 from django_tables2.views import SingleTableMixin
 
 from opentech.apply.activity.views import (
@@ -22,9 +21,7 @@ from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
-from opentech.apply.users.models import User
 
-from .blocks import MustIncludeFieldBlock
 from .differ import compare
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision
@@ -252,7 +249,6 @@ class RevisionListView(ListView):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         self.queryset = self.model.objects.filter(submission=self.submission).exclude(id=self.submission.draft_revision.id)
         return super().get_queryset()
-
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(

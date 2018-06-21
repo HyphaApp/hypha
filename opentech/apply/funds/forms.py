@@ -1,5 +1,4 @@
 from django import forms
-from django_fsm import can_proceed
 
 from opentech.apply.users.models import User
 

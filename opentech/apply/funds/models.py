@@ -1,5 +1,4 @@
 from datetime import date
-import copy
 import os
 
 from django.conf import settings
@@ -788,7 +787,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             for field in self.form_fields
             if isinstance(field.block, MustIncludeFieldBlock)
         }
-
 
     def process_form_data(self):
         for field_name, field_id in self.must_include.items():

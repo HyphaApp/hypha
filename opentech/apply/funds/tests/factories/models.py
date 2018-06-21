@@ -184,7 +184,7 @@ class FormDataFactory(factory.Factory, metaclass=Metaclass):
                 for field in form_fields
             }
         else:
-            form_definition =  {
+            form_definition = {
                 f.block_type: f.id
                 for f in form_fields or ApplicationSubmission.form_fields.field.to_python(form_fields)
             }
