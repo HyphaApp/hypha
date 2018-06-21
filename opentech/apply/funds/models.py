@@ -745,7 +745,12 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.clean_submission()
         current_data = ApplicationSubmission.objects.get(id=self.id).form_data
         if current_data != self.form_data:
-            revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            if self.live_revision == self.draft_revision:
+                revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            else:
+                revision = self.draft_revision
+                revision.form_data = self.form_data
+
             if draft:
                 self.form_data = self.live_revision.form_data
             else:

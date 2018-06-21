@@ -405,3 +405,15 @@ class TestApplicationSubmission(TestCase):
 
         submission = self.refresh(submission)
         self.assertNotEqual(submission.title, title)
+
+    def test_draft_updated(self):
+        submission = ApplicationSubmissionFactory()
+        title = 'My new title'
+        submission.form_data = {'title': title}
+        submission.create_revision(draft=True)
+        self.assertEqual(submission.revisions.count(), 2)
+
+        title = 'My even newer title'
+        submission.form_data = {'title': title}
+        submission.create_revision(draft=True)
+        self.assertEqual(submission.revisions.count(), 2)
