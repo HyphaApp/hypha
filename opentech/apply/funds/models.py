@@ -624,14 +624,14 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     live_revision = models.OneToOneField(
         'ApplicationRevision',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='live',
         null=True,
         editable=False,
     )
     draft_revision = models.OneToOneField(
         'ApplicationRevision',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='draft',
         null=True,
         editable=False,

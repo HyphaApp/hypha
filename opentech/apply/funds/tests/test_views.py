@@ -1,4 +1,4 @@
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.tests import BaseViewTestCase
 
@@ -53,6 +53,17 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(user=self.user)
         response = self.get_page(submission)
         self.assertContains(response, submission.title)
+
+    def test_sees_latest_draft_if_it_exists(self):
+        submission = ApplicationSubmissionFactory(user=self.user)
+        draft_revision = ApplicationRevisionFactory(submission=submission)
+        submission.draft_revision = draft_revision
+        submission.save()
+
+        draft_submission = submission.from_draft()
+        response = self.get_page(submission)
+
+        self.assertContains(response, draft_submission.title)
 
     def test_cant_view_others_submission(self):
         submission = ApplicationSubmissionFactory()

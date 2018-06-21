@@ -24,11 +24,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='applicationsubmission',
             name='draft_revision',
-            field=models.OneToOneField(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='draft', to='funds.ApplicationRevision'),
+            field=models.OneToOneField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='draft', to='funds.ApplicationRevision'),
         ),
         migrations.AddField(
             model_name='applicationsubmission',
             name='live_revision',
-            field=models.OneToOneField(editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='live', to='funds.ApplicationRevision'),
+            field=models.OneToOneField(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='live', to='funds.ApplicationRevision'),
         ),
     ]

@@ -167,6 +167,11 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
     model = ApplicationSubmission
     form_views = [CommentFormView]
 
+    def get_object(self):
+        object = super().get_object()
+        object = object.from_draft()
+        return object
+
     def dispatch(self, request, *args, **kwargs):
         if self.get_object().user != request.user:
             raise PermissionDenied
