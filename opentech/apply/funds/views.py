@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
-from django.views.generic import ListView, TemplateView, UpdateView
+from django.views.generic import DetailView, ListView, UpdateView
 
 from django_filters.views import FilterView
 from django_fsm import can_proceed
@@ -261,25 +261,33 @@ class RevisionListView(ListView):
         )
 
 
-class RevisionCompareView(TemplateView):
+class RevisionCompareView(DetailView):
+    model = ApplicationSubmission
     template_name = 'funds/revisions_compare.html'
+    pk_url_kwarg = 'submission_pk'
 
     def compare_revisions(self, from_data, to_data):
         diffed_form_data = {
             field: compare(from_data.form_data.get(field), to_data.form_data[field])
             for field in to_data.form_data
         }
+        self.object.form_data = from_data.form_data
+        from_fields = self.object.fields
+
+        self.object.form_data = to_data.form_data
+        to_fields = self.object.fields
+
         diffed_answers = [
             compare(*fields, should_bleach=False)
-            for fields in zip(from_data.fields, to_data.fields)
+            for fields in zip(from_fields, to_fields)
         ]
         to_data.form_data = diffed_form_data
         to_data.render_answers = mark_safe(''.join(diffed_answers))
         return to_data
 
     def get_context_data(self, **kwargs):
-        from_revision = ApplicationSubmission.objects.get(id=self.kwargs['from'])
-        to_revision = ApplicationSubmission.objects.get(id=self.kwargs['to'])
+        from_revision = self.object.revisions.get(id=self.kwargs['from'])
+        to_revision = self.object.revisions.get(id=self.kwargs['to'])
         diff = self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(
             submission=ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
