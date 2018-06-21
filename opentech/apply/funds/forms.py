@@ -22,14 +22,6 @@ class ProgressSubmissionForm(forms.ModelForm):
         action_field.choices = choices
         self.should_show = bool(choices)
 
-    def clean_action(self):
-        action_name = self.cleaned_data['action']
-        transition = self.instance.get_transition(action_name)
-        if not can_proceed(transition):
-            action = self.instance.phase.transitions[action_name]
-            raise forms.ValidationError(f'You do not have permission to "{ action }"')
-        return action_name
-
 
 class UpdateSubmissionLeadForm(forms.ModelForm):
     class Meta:
