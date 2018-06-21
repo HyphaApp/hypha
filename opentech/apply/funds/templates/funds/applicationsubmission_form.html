@@ -21,22 +21,31 @@
 </div>
 {% endif %}
 
-<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
-    <form class="form" action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div>
+        <form class="form" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        {% for field in form %}
-            {% if field.field %}
-            {% include "funds/includes/field.html" %}
-            {% else %}
-            {{ field }}
-            {% endif %}
-        {% endfor %}
-        {% for button_name, button_value in buttons %}
-            <input class="button button--primary" type="submit" name="{{ button_name }}" value="{{ button_value }}" />
-        {% endfor %}
-    </form>
+            {% for field in form %}
+                {% if field.field %}
+                {% include "funds/includes/field.html" %}
+                {% else %}
+                {{ field }}
+                {% endif %}
+            {% endfor %}
+            {% for button_name, button_value in buttons %}
+                <input class="button button--primary" type="submit" name="{{ button_name }}" value="{{ button_value }}" />
+            {% endfor %}
+        </form>
+    </div>
+
+    <aside class="sidebar">
+    {% block determination %}
+        {% include 'determinations/includes/determination_block.html' with submission=object %}
+    {% endblock %}
+    </aside>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
