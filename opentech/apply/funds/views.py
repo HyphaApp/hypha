@@ -24,7 +24,7 @@ from opentech.apply.users.models import User
 
 from .blocks import MustIncludeFieldBlock
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission
+from .models import ApplicationSubmission, ApplicationRevision
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 
 
@@ -241,19 +241,18 @@ class SubmissionEditView(UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class RevisionListView(TemplateView):
-    template_name = 'funds/revisions_list.html'
+@method_decorator(staff_required, name='dispatch')
+class RevisionListView(ListView):
+    model = Revision
+
+    def dispatch(self):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        self.queryset = self.model.objects.filter(submission=self.submission)
+        return super().get_queryset()
+
 
     def get_context_data(self, **kwargs):
-        revisions = [
-            {
-                'date': "2018/06/14",
-                'author': User.objects.all()[i],
-            }
-            for i in range(5)
-        ]
         return super().get_context_data(
-            submission=ApplicationSubmission.objects.first(),
-            revisions=revisions,
+            submission=self.submission,
             **kwargs,
         )

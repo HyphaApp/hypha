@@ -158,5 +158,28 @@
     &--top-space {
         margin-top: 20px;
     }
+
+    &--compare {
+        width: 75px;
+        padding: 3px;
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: $weight--bold;
+        text-align: center;
+        text-transform: uppercase;
+        border: 1px solid currentColor;
+        transition: background-color, color, border, $quick-transition;
+
+        @include media-query(tablet-portrait) {
+            margin-top: 0;
+        }
+
+        &:focus,
+        &:hover {
+            color: $color--white;
+            background-color: $color--light-blue;
+            border: 1px solid $color--light-blue;
+        }
+    }
 }
 
