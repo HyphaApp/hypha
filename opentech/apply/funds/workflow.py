@@ -403,6 +403,11 @@ def get_review_statuses(user=None):
 review_statuses = get_review_statuses()
 
 DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
+DETERMINATION_RESPONSE_PHASES = [
+    'post_review_discussion',
+    'concept_review_discussion',
+    'post_external_review_discussion',
+]
 
 
 def get_determination_transitions():

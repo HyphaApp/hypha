@@ -16,12 +16,15 @@ class AdminDashboardView(TemplateView):
         in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
 
-        need_determination = AdminSubmissionsTable(qs.need_determination_for(request.user), prefix='need-determination-')
-        RequestConfig(request, paginate={'per_page': 10}).configure(need_determination)
+        awaiting_determination = AdminSubmissionsTable(
+            qs.awaiting_determination_for(request.user),
+            prefix='pending-determination-'
+        )
+        RequestConfig(request, paginate={'per_page': 10}).configure(awaiting_determination)
 
         return render(request, 'dashboard/dashboard.html', {
             'in_review': in_review,
-            'need_determination': need_determination,
+            'awaiting_determination': awaiting_determination,
         })
 
 

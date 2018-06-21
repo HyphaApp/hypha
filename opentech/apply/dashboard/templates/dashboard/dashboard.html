@@ -25,8 +25,8 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <h3>Applications awaiting determination</h3>
-        {% if need_determination.data %}
-            {% render_table need_determination %}
+        {% if awaiting_determination.data %}
+            {% render_table awaiting_determination %}
         {% else %}
             No applications awaiting determination
         {% endif %}
