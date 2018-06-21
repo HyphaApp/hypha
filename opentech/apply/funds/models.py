@@ -757,15 +757,16 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.form_data = self.draft_revision.form_data
         return self
 
-    def create_revision(self, draft=False, **kwargs):
+    def create_revision(self, draft=False, force=False, by=None, **kwargs):
         self.clean_submission()
         current_data = ApplicationSubmission.objects.get(id=self.id).form_data
-        if current_data != self.form_data:
+        if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
-                revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+                revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
             else:
                 revision = self.draft_revision
                 revision.form_data = self.form_data
+                revision.author = by
 
             if draft:
                 self.form_data = self.live_revision.form_data
@@ -939,3 +940,5 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 class ApplicationRevision(models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
     form_data = JSONField(encoder=DjangoJSONEncoder)
+    timestamp = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)

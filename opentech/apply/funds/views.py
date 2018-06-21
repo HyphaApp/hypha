@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import UpdateView, TemplateView
+from django.views.generic import ListView, TemplateView, UpdateView
 
 from django_filters.views import FilterView
 from django_fsm import can_proceed
@@ -243,9 +244,9 @@ class SubmissionEditView(UpdateView):
 
 @method_decorator(staff_required, name='dispatch')
 class RevisionListView(ListView):
-    model = Revision
+    model = ApplicationRevision
 
-    def dispatch(self):
+    def get_queryset(self):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         self.queryset = self.model.objects.filter(submission=self.submission)
         return super().get_queryset()
