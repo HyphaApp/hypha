@@ -54,6 +54,8 @@ class BaseDeterminationForm(forms.ModelForm):
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
+        self.update_outcome_choices_for_phase(submission.phase)
+
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
@@ -78,6 +80,29 @@ class BaseDeterminationForm(forms.ModelForm):
             elif 'accepted' in action_name:
                 return ACCEPTED
         return REJECTED
+
+    def update_outcome_choices_for_phase(self, phase):
+        """
+        Outcome choices correspond to Phase transitions.
+        We need to filter out non-matching choices.
+        i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
+        """
+        suffix = {
+            ACCEPTED: 'accepted',
+            REJECTED: 'rejected',
+            NEEDS_MORE_INFO: 'more_info',
+        }
+
+        available_choices = set()
+        choices = list(self.fields['outcome'].choices)
+
+        for key, value in choices:
+            for transition_name in phase.transitions:
+                if suffix[key] in transition_name:
+                    available_choices.add((key, value))
+
+        self.fields['outcome'].choices = available_choices
+        self.fields['outcome'].widget.choices = available_choices
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
