@@ -4,6 +4,8 @@ from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, A
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.tests import BaseViewTestCase
 
+from ..models import ApplicationRevision
+
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:{}'
@@ -154,9 +156,16 @@ class TestRevisionList(BaseSubmissionViewTestCase):
 
     def test_get_in_correct_order(self):
         submission = ApplicationSubmissionFactory()
-        revision = ApplicationRevisionFactory(submission=submission, timestamp=datetime.now() - timedelta(days=1))
-        revision_older = ApplicationRevisionFactory(submission=submission, timestamp=datetime.now() - timedelta(days=2))
+
+        revision = ApplicationRevisionFactory(submission=submission)
+        ApplicationRevision.objects.filter(id=revision.id).update(timestamp=datetime.now() - timedelta(days=1))
+
+        revision_older = ApplicationRevisionFactory(submission=submission)
+        ApplicationRevision.objects.filter(id=revision_older.id).update(timestamp=datetime.now() - timedelta(days=2))
 
         response = self.get_page(submission)
 
-        self.assertQuerysetEqual([submission.live_revision, revision, revision_older], response.context['object_list'])
+        self.assertSequenceEqual(
+            response.context['object_list'],
+            [submission.live_revision, revision, revision_older],
+        )
