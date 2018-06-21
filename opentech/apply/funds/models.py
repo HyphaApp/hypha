@@ -945,3 +945,6 @@ class ApplicationRevision(models.Model):
     form_data = JSONField(encoder=DjangoJSONEncoder)
     timestamp = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        ordering = ['-timestamp']

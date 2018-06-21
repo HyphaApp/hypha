@@ -15,7 +15,7 @@
         {% for revision in object_list %}
             <li class="revision__item">
                 <p class="revision__meta">
-                    <span class="revision__date">{{ revision.timestamp.date }} </span>
+                    <span class="revision__date">{{ revision.timestamp|date:"m.d.y h:iA e"}} </span>
                     by {{ revision.author }}
                     {% if forloop.first %}
                         <span class="revision__current">- current</span>

@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.tests import BaseViewTestCase
@@ -114,7 +116,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
-        self.assertDictEqual(submission.revisions.first().form_data, old_data)
+        self.assertDictEqual(submission.revisions.last().form_data, old_data)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
         self.assertEqual(submission.title, new_title)
 
@@ -149,3 +151,12 @@ class TestRevisionList(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
 
         self.assertNotIn(draft_revision, response.context['object_list'])
+
+    def test_get_in_correct_order(self):
+        submission = ApplicationSubmissionFactory()
+        revision = ApplicationRevisionFactory(submission=submission, timestamp=datetime.now() - timedelta(days=1))
+        revision_older = ApplicationRevisionFactory(submission=submission, timestamp=datetime.now() - timedelta(days=2))
+
+        response = self.get_page(submission)
+
+        self.assertQuerysetEqual([submission.live_revision, revision, revision_older], response.context['object_list'])
