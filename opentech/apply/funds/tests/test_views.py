@@ -131,3 +131,21 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
         self.assertDictEqual(submission.live_revision.form_data, old_data)
+
+
+class TestRevisionList(BaseSubmissionViewTestCase):
+    base_view_name = 'revisions:list'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.pk}
+
+    def test_list_doesnt_include_draft(self):
+        submission = ApplicationSubmissionFactory()
+        draft_revision = ApplicationRevisionFactory(submission=submission)
+        submission.draft_revision = draft_revision
+        submission.save()
+
+        response = self.get_page(submission)
+
+        self.assertNotIn(draft_revision, response.context['object_list'])

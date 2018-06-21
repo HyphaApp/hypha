@@ -250,7 +250,7 @@ class RevisionListView(ListView):
 
     def get_queryset(self):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        self.queryset = self.model.objects.filter(submission=self.submission)
+        self.queryset = self.model.objects.filter(submission=self.submission).exclude(id=self.submission.draft_revision.id)
         return super().get_queryset()
 
 
@@ -281,16 +281,11 @@ class RevisionCompareView(DetailView):
             compare(*fields, should_bleach=False)
             for fields in zip(from_fields, to_fields)
         ]
-        to_data.form_data = diffed_form_data
-        to_data.render_answers = mark_safe(''.join(diffed_answers))
-        return to_data
+        self.object.form_data = diffed_form_data
+        self.object.render_answers = mark_safe(''.join(diffed_answers))
 
     def get_context_data(self, **kwargs):
         from_revision = self.object.revisions.get(id=self.kwargs['from'])
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
-        diff = self.compare_revisions(from_revision, to_revision)
-        return super().get_context_data(
-            submission=ApplicationSubmission.objects.get(id=self.kwargs['submission_pk']),
-            diff=diff,
-            **kwargs,
-        )
+        self.object = self.compare_revisions(from_revision, to_revision)
+        return super().get_context_data(**kwargs)

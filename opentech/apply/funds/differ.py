@@ -74,6 +74,9 @@ def compare(answer_a, answer_b, should_bleach=True):
         if added:
             output.append(wrap_added(''.join(added)))
 
-    display = BeautifulSoup(''.join(output)).prettify()
+    display = ''.join(output)
+
+    if not should_bleach:
+        display = BeautifulSoup(display, "html5lib").prettify()
 
     return mark_safe(display)

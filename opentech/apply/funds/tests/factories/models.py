@@ -102,8 +102,8 @@ class RoundFactory(wagtail_factories.PageFactory):
         model = Round
 
     title = factory.Sequence('Round {}'.format)
-    start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=n-1))
-    end_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=n))
+    start_date = factory.LazyFunction(datetime.date.today)
+    end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
     lead = factory.SubFactory(StaffFactory)
 
     @factory.post_generation
@@ -116,6 +116,11 @@ class RoundFactory(wagtail_factories.PageFactory):
                     round=self,
                     **fields,
                 )
+
+
+class TodayRoundFactory(RoundFactory):
+    start_date = factory.LazyFunction(datetime.date.today)
+    end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
 
 
 class RoundFormFactory(AbstractRelatedFormFactory):
@@ -189,7 +194,7 @@ class FormDataFactory(factory.Factory, metaclass=Metaclass):
             form_data[form_definition[name]] = answer
 
         if clean:
-            application = ApplicationSubmissionFactory()
+            application = ApplicationSubmissionFactory(round=Round.objects.first())
             application.form_fields = form_fields
             application.form_data = form_data
             application.save()
@@ -223,7 +228,11 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     form_data = factory.SubFactory(FormDataFactory, form_fields=factory.SelfAttribute('..form_fields'))
     page = factory.SubFactory(FundTypeFactory)
     workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
-    round = factory.SubFactory(RoundFactory, workflow_name=factory.SelfAttribute('..workflow_name'), lead=factory.SelfAttribute('..lead'))
+    round = factory.SubFactory(
+        RoundFactory,
+        workflow_name=factory.SelfAttribute('..workflow_name'),
+        lead=factory.SelfAttribute('..lead'),
+    )
     user = factory.SubFactory(UserFactory)
     lead = factory.SubFactory(StaffFactory)
     live_revision = None
