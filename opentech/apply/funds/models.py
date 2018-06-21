@@ -731,6 +731,13 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.id = None
         self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
 
+        self.live_revision = None
+        self.draft_revision = None
+        self.save()
+
+        new_revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+        self.live_revision = new_revision
+        self.draft_revision = new_revision
         self.save()
 
         submission_in_db.next = self
