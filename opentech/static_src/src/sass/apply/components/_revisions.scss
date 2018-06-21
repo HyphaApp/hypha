@@ -1,10 +1,19 @@
-span {
-    &.deleted,
-    &.deleted a {
-        background-color: #EE9090;
+.diff {
+    display: inline-block;
+
+    &__deleted {
+        background-color: $color--pastel-red;
+
+        a {
+            background-color: inherit;
+        }
     }
-    &.added,
-    &.added a {
-        background-color: #90EE90;
+
+    &__added {
+        background-color: $color--pastel-green;
+
+        a {
+            background-color: inherit;
+        }
     }
 }
