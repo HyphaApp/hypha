@@ -86,4 +86,10 @@
         width: 35px;
         height: 25px;
     }
+
+    &--pen {
+        width: 12px;
+        margin-left: 2px;
+        fill: $color--light-blue;
+    }
 }
