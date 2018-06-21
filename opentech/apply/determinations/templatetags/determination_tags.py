@@ -18,7 +18,7 @@ def can_add_determination(user, submission):
 
 
 @register.filter
-def has_determination_draft(user, submission):
+def has_determination_draft(submission, user):
     try:
         return submission.has_permission_to_add_determination(user) and submission.determination.is_draft
     except ObjectDoesNotExist:
