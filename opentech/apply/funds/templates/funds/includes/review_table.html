@@ -1,14 +1,19 @@
 {% load review_tags %}
 <table class="reviews-sidebar">
-    {% if staff_reviews or object.staff_not_reviewed %}
+    {% if staff_reviews %}
         <tr class="tr tr--subchild light-grey-bg">
             <th colspan="2"></th>
             <th>{{ object.reviews.submitted.recommendation|traffic_light }}</th>
             <th>{{ object.reviews.submitted.score|floatformat|default_if_none:'-' }}</th>
         </tr>
         {% include 'funds/includes/review_table_row.html' with reviews=staff_reviews %}
+    {% endif %}
+
+    {% if object.staff_not_reviewed %}
         {% include 'funds/includes/review_table_row.html' with reviews=object.staff_not_reviewed missing=True %}
-    {% else %}
+    {% endif %}
+
+    {% if not staff_reviews and not object.staff_not_reviewed %}
         <tr><td class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 
