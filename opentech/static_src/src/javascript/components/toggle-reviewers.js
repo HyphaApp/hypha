@@ -9,7 +9,7 @@ export default () => {
 
         // toggle class and update text
         $(this).toggleClass('is-open');
-        $(this).hasClass('is-open') ? $(this).html('hide all assigned advisors') : $(this).html('all assigned advisors');
+        $(this).hasClass('is-open') ? $(this).html('Hide All Assigned Advisors') : $(this).html('All Assigned Advisors');
 
         // toggle the reviewers
         toggleReviewers(reviewers);
