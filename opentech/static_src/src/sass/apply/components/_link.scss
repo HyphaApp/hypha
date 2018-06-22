@@ -164,4 +164,14 @@
             opacity: 1;
         }
     }
+
+    &--edit-submission {
+        color: $color--mid-grey;
+        pointer-events: none;
+
+        &.is-active {
+            color: $color--light-blue;
+            pointer-events: auto;
+        }
+    }
 }

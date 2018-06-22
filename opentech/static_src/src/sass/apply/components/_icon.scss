@@ -88,8 +88,24 @@
     }
 
     &--pen {
+        display: none;
         width: 12px;
-        margin-left: 2px;
-        fill: $color--light-blue;
+        margin-left: 7px;
+
+        .is-active & {
+            display: block;
+            fill: $color--light-blue;
+        }
+    }
+
+    &--padlock {
+        display: block;
+        width: 12px;
+        margin-left: 7px;
+        stroke: $color--mid-grey;
+
+        .is-active & {
+            display: none;
+        }
     }
 }
