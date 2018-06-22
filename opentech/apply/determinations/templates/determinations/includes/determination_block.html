@@ -4,7 +4,9 @@
         <h5>Determination</h5>
         {% if object.determination %}
             <p>
-                <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">{{ object.determination.get_outcome_display }}</a>
+                <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">
+                    {% if object|has_determination_draft:request.user %}[Draft] {% endif %}{{ object.determination.get_outcome_display }}
+                </a>
                 - {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
             </p>
         {% endif %}

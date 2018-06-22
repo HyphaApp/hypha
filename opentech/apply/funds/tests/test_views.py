@@ -27,13 +27,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)
         response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
 
-        # Cant use refresh from DB with FSM
-        submission_original = self.refresh(submission)
-        submission_next = submission_original.next
-
-        self.assertRedirects(response, self.url(submission_next))
-        self.assertEqual(submission_original.status, 'invited_to_proposal')
-        self.assertEqual(submission_next.status, 'draft_proposal')
+        # Invited for proposal is a a determination, so this will redirect to the determination form.
+        url = self.url_from_pattern('funds:submissions:determinations:form', kwargs={'submission_pk': submission.id})
+        self.assertRedirects(response, f"{url}?action=invited_to_proposal")
 
     def test_cant_progress_stage_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2)

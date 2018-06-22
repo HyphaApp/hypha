@@ -20,7 +20,7 @@
         {% endfor %}
 
         {% for field in form.visible_fields %}
-            {# to be replaced with better logic when we use stream form #}
+            {# to be replaced with better logic when/if we use stream form #}
             {% ifchanged field.field.group %}
                 {% for key, value in form.titles.items %}
                     {% if key == field.field.group %}

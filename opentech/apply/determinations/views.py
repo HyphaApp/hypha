@@ -10,7 +10,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, ACCEPTED, REJECTED, NEEDS_MORE_INFO, DeterminationMessageSettings
+from .models import Determination, DETERMINATION_TRANSITION_SUFFIX, DeterminationMessageSettings
 
 
 def get_form_for_stage(submission):
@@ -73,24 +73,29 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        super().form_valid(form)
+        response = super().form_valid(form)
 
         if not self.object.is_draft:
             action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
             self.submission.perform_transition(action_name, self.request.user)
 
-        return HttpResponseRedirect(self.get_success_url())
+        return self.progress_stage(self.submission) or response
+
+    def progress_stage(self, instance):
+        try:
+            instance.perform_transition('draft_proposal', self.request.user)
+        except PermissionDenied:
+            pass
+        else:
+            return HttpResponseRedirect(instance.get_absolute_url())
 
     def get_action_name_from_determination(self, determination):
-        suffix = {
-            ACCEPTED: 'accepted',
-            REJECTED: 'rejected',
-            NEEDS_MORE_INFO: 'more_info',
-        }
+        suffix = DETERMINATION_TRANSITION_SUFFIX[determination]
 
         for transition_name in self.submission.phase.transitions:
-            if suffix[determination] in transition_name:
-                return transition_name
+            for item in suffix:
+                if item in transition_name:
+                    return transition_name
 
 
 @method_decorator(login_required, name='dispatch')

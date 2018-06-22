@@ -89,7 +89,7 @@ class DeterminationFormTestCase(BaseTestCase):
         self.assertContains(response, 'You have already added a determination for this submission')
 
     def test_can_edit_draft_determination(self):
-        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        submission = ApplicationSubmissionFactory(status='post_review_discussion', lead=self.user)
         DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {
             'data': 'value',
@@ -97,7 +97,7 @@ class DeterminationFormTestCase(BaseTestCase):
             'message': 'Accepted determination draft message',
             'save_draft': True,
         }, 'form')
-        self.assertContains(response, 'Accepted')
+        self.assertContains(response, '[Draft] Approved')
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))
         self.assertContains(response, 'Accepted determination draft message')
 
@@ -106,6 +106,25 @@ class DeterminationFormTestCase(BaseTestCase):
         determination = DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertEqual(response.status_code, 403)
+
+    def test_can_progress_stage_via_determination(self):
+        submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)
+
+        response = self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        # Cannot use self.url() as that uses a different base.
+        url = reverse('funds:submissions:detail', kwargs={'pk': submission_next.id})
+        self.assertRedirects(response, self.factory.get(url, secure=True).build_absolute_uri(url))
+        self.assertEqual(submission_original.status, 'invited_to_proposal')
+        self.assertEqual(submission_next.status, 'draft_proposal')
 
 
 class UserDeterminationFormTestCase(BaseTestCase):
