@@ -48,6 +48,7 @@ from .workflow import (
     UserPermissions,
     WORKFLOWS,
     DETERMINATION_PHASES,
+    DETERMINATION_RESPONSE_PHASES,
 )
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
@@ -494,6 +495,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def in_review_for(self, user):
         user_review_statuses = get_review_statuses(user)
         return self.filter(status__in=user_review_statuses).filter(reviewers=user).exclude(reviews__author=user)
+
+    def awaiting_determination_for(self, user):
+        return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
 
     def current(self):
         # Applications which have the current stage active (have not been progressed)
