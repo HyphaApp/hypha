@@ -89,16 +89,16 @@ class DeterminationMessageSettings(BaseSetting):
     class Meta:
         verbose_name = 'determination messages'
 
-    request_accepted = RichTextField("Accepted")
-    request_rejected = RichTextField("Rejected")
+    request_accepted = RichTextField("Approved")
+    request_rejected = RichTextField("Dismissed")
     request_more_info = RichTextField("Needs more info")
 
-    concept_accepted = RichTextField("Accepted")
-    concept_rejected = RichTextField("Rejected")
+    concept_accepted = RichTextField("Approved")
+    concept_rejected = RichTextField("Dismissed")
     concept_more_info = RichTextField("Needs more info")
 
-    proposal_accepted = RichTextField("Accepted")
-    proposal_rejected = RichTextField("Rejected")
+    proposal_accepted = RichTextField("Approved")
+    proposal_rejected = RichTextField("Dismissed")
     proposal_more_info = RichTextField("Needs more info")
 
     def get_for_stage(self, stage_name):
