@@ -13,6 +13,7 @@ import submissionFilters from './components/submission-filters';
 import mobileFilterPadding from './components/mobile-filter-padding';
 import generateTooltips from './components/submission-tooltips';
 import DeterminationCopy from './components/determination-template';
+import toggleReviewers from './components/toggle-reviewers';
 
 (function ($) {
     $(document).ready(function(){
@@ -62,6 +63,9 @@ import DeterminationCopy from './components/determination-template';
 
         // Submission filters logic
         submissionFilters();
+
+        // Toggle all reviewers in the sidebar
+        toggleReviewers();
     });
 
     // Add active class to select2 checkboxes after page has been filtered
