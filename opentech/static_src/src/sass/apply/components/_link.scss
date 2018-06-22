@@ -166,12 +166,25 @@
     }
 
     &--edit-submission {
+        display: flex;
+        align-items: center;
+        font-weight: $weight--bold;
         color: $color--mid-grey;
-        pointer-events: none;
+
+        &:hover {
+            cursor: not-allowed;
+        }
+
+        @include media-query(tablet-landscape) {
+            margin-left: auto;
+        }
 
         &.is-active {
             color: $color--light-blue;
-            pointer-events: auto;
+
+            &:hover {
+                cursor: pointer;
+            }
         }
     }
 }

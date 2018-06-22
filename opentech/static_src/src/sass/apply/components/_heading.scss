@@ -40,21 +40,9 @@
 
         span {
             margin-right: 15px;
-
-            &:last-of-type {
-                margin-right: 0;
-            }
         }
 
-        a {
-            display: flex;
-            align-items: center;
-            font-weight: $weight--bold;
 
-            @include media-query(tablet-landscape) {
-                margin-left: auto;
-            }
-        }
     }
 
     &--small {
