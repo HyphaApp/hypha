@@ -89,7 +89,13 @@
 
     &--pen {
         width: 12px;
-        margin-left: 2px;
+        margin-left: 7px;
         fill: $color--light-blue;
+    }
+
+    &--padlock {
+        width: 12px;
+        margin-left: 7px;
+        stroke: $color--mid-grey;
     }
 }

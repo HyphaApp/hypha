@@ -164,4 +164,27 @@
             opacity: 1;
         }
     }
+
+    &--edit-submission {
+        display: flex;
+        align-items: center;
+        font-weight: $weight--bold;
+        color: $color--mid-grey;
+
+        &:hover {
+            cursor: not-allowed;
+        }
+
+        @include media-query(tablet-landscape) {
+            margin-left: auto;
+        }
+
+        &.is-active {
+            color: $color--light-blue;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
 }
