@@ -14,7 +14,7 @@ class TestApplicantDashboard(BaseViewTestCase):
         self.assertContains(response, application.title)
         self.assertNotContains(response, 'Submission history')
 
-    def test_can_has_draft_titles_on_dashboard(self):
+    def test_can_have_draft_titles_on_dashboard(self):
         submission = ApplicationSubmissionFactory(user=self.user)
         draft_revision = ApplicationRevisionFactory(submission=submission)
         submission.draft_revision = draft_revision

@@ -45,7 +45,7 @@ def compare(answer_a, answer_b, should_bleach=True):
     for opcode, a0, a1, b0, b1 in diff.get_opcodes():
         if opcode == 'equal':
             if a1 - a0 > 2 or not (added or deleted):
-                # if there is more than 2 chars the same commit the added and removed text
+                # if there are more than two of the same characters, commit the added and removed text
                 if added:
                     output.append(wrap_added(''.join(added)))
                     added = []
@@ -54,7 +54,7 @@ def compare(answer_a, answer_b, should_bleach=True):
                     deleted = []
                 output.append(diff.a[a0:a1])
             else:
-                # ignore the small gap pretend it has been both added and removed
+                # Ignore the small gap pretend it has been both added and removed
                 added.append(diff.a[a0:a1])
                 deleted.append(diff.a[a0:a1])
         elif opcode == 'insert':

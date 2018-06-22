@@ -517,7 +517,7 @@ def make_permission_check(users):
 
 def wrap_method(func):
     def wrapped(*args, **kwargs):
-        # Provides an new function that can be wrapped with the django fsm method
+        # Provides a new function that can be wrapped with the django_fsm method
         # Without this using the same method for multiple transitions fails as
         # the fsm wrapping is overwritten
         return func(*args, **kwargs)
