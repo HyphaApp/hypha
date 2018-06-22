@@ -10,7 +10,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, ACCEPTED, REJECTED, NEEDS_MORE_INFO
+from .models import Determination, ACCEPTED, REJECTED, NEEDS_MORE_INFO, DeterminationMessageSettings
 
 
 def get_form_for_stage(submission):
@@ -49,10 +49,13 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         except ObjectDoesNotExist:
             has_determination_response = False
 
+        messages = DeterminationMessageSettings.for_site(self.request.site)
+
         return super().get_context_data(
             submission=self.submission,
             has_determination_response=has_determination_response,
             title="Update Determination draft" if self.object else 'Add Determination',
+            message_templates=messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
 

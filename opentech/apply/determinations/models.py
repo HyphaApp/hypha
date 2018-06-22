@@ -6,6 +6,10 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel
+from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.registry import register_setting
+from wagtail.core.fields import RichTextField
 
 from opentech.apply.activity.models import Activity
 
@@ -72,3 +76,55 @@ def log_determination_activity(sender, **kwargs):
             submission=submission,
             message=f"Sent a {outcome} determination for {submission.title}:\r\n{message}"
         )
+
+
+@register_setting
+class DeterminationMessageSettings(BaseSetting):
+    class Meta:
+        verbose_name = 'determination messages'
+
+    request_accepted = RichTextField("Accepted")
+    request_rejected = RichTextField("Rejected")
+    request_more_info = RichTextField("Needs more info")
+
+    concept_accepted = RichTextField("Accepted")
+    concept_rejected = RichTextField("Rejected")
+    concept_more_info = RichTextField("Needs more info")
+
+    proposal_accepted = RichTextField("Accepted")
+    proposal_rejected = RichTextField("Rejected")
+    proposal_more_info = RichTextField("Needs more info")
+
+    def get_for_stage(self, stage_name):
+        message_templates = {}
+        prefix = f"{stage_name.lower()}_"
+
+        for field in self._meta.get_fields():
+            if prefix in field.name:
+                key = field.name.replace(prefix, '')
+                message_templates[key] = getattr(self, field.name)
+
+        return message_templates
+
+    request_tab_panels = [
+        FieldPanel('request_accepted'),
+        FieldPanel('request_rejected'),
+        FieldPanel('request_more_info'),
+    ]
+
+    concept_tab_panels = [
+        FieldPanel('concept_accepted'),
+        FieldPanel('concept_rejected'),
+        FieldPanel('concept_more_info'),
+    ]
+    proposal_tab_panels = [
+        FieldPanel('proposal_accepted'),
+        FieldPanel('proposal_rejected'),
+        FieldPanel('proposal_more_info'),
+    ]
+
+    edit_handler = TabbedInterface([
+        ObjectList(request_tab_panels, heading='Request'),
+        ObjectList(concept_tab_panels, heading='Concept note'),
+        ObjectList(proposal_tab_panels, heading='Proposal'),
+    ])
