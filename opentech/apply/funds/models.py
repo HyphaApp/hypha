@@ -585,6 +585,8 @@ class AddTransitions(models.base.ModelBase):
 
         def perform_transition(self, action, user):
             transition = self.get_transition(action)
+            if not transition:
+                raise PermissionDenied(f'Invalid "{ action }" transition')
             if not can_proceed(transition):
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
