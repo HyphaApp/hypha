@@ -112,7 +112,7 @@ Request = Stage('Request', False)
 
 Concept = Stage('Concept', False)
 
-Proposal = Stage('Proposal', False)
+Proposal = Stage('Proposal', True)
 
 
 INITIAL_STATE = 'in_discussion'
