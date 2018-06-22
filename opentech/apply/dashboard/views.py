@@ -11,7 +11,7 @@ from opentech.apply.utils.views import ViewDispatcher
 class AdminDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
-        qs = ApplicationSubmission.objects
+        qs = ApplicationSubmission.objects.all()
 
         in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
