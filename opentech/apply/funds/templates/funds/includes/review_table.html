@@ -22,8 +22,10 @@
 
         {% if reviewer_reviews or object.reviewers_not_reviewed  %}
             {% include 'funds/includes/review_table_row.html' with reviews=reviewer_reviews %}
-            {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True class="hidden" %}
-            <tr><td colspan="4"><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></td></tr>
+            {% if object.reviewers_not_reviewed %}
+                {% include 'funds/includes/review_table_row.html' with reviews=object.reviewers_not_reviewed missing=True class="hidden" %}
+                <tr><td colspan="4"><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></td></tr>
+            {% endif %}
         {% else %}
             <tr><td colspan="4" class="reviews-sidebar__no-reviews">No assignees or reviews yet</td></tr>
         {% endif %}
