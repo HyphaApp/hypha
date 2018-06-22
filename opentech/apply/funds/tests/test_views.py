@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.urls import reverse
-
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.tests import BaseViewTestCase
