@@ -8,7 +8,7 @@ from django.utils.text import mark_safe
 
 
 def wrap_with_span(text, class_name):
-    return format_html('<div class="diff diff__{}">{}</div>', class_name, mark_safe(text))
+    return format_html('<span class="diff diff__{}">{}</span>', class_name, mark_safe(text))
 
 
 def wrap_deleted(text):
