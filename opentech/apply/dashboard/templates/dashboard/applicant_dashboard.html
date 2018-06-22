@@ -21,12 +21,14 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>Your active submissions</h3>
     {% for submission in my_active_submissions %}
-        <div class="wrapper wrapper--status-bar">
-            <div>
-                <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+        <div class="wrapper wrapper--status-bar-outer">
+            <div class="wrapper wrapper--status-bar-inner">
+                <div>
+                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
+                    <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+                </div>
+                {% include "funds/includes/status_bar.html" with phases=submission.workflow current_phase=submission.phase class="status-bar--small" %}
             </div>
-            {% include "funds/includes/status_bar.html" with phases=submission.workflow current_phase=submission.phase class="status-bar--small" %}
             {% if request.user|has_edit_perm:submission %}
                 <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
                     {% if submission.status == 'draft_proposal' %}
@@ -36,7 +38,7 @@
                     {% endif %}
                 </a>
             {% endif %}
-        </div>
+    </div>
     {% empty %}
         No active submissions
     {% endfor %}
