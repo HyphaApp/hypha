@@ -1,4 +1,4 @@
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
 from opentech.apply.users.tests.factories import UserFactory
 from opentech.apply.utils.tests import BaseViewTestCase
 
@@ -12,6 +12,16 @@ class TestApplicantDashboard(BaseViewTestCase):
         application = ApplicationSubmissionFactory(user=self.user, form_data__title='Improve the internet')
         response = self.get_page()
         self.assertContains(response, application.title)
+        self.assertNotContains(response, 'Submission history')
+
+    def test_can_have_draft_titles_on_dashboard(self):
+        submission = ApplicationSubmissionFactory(user=self.user)
+        draft_revision = ApplicationRevisionFactory(submission=submission)
+        submission.draft_revision = draft_revision
+        submission.save()
+        response = self.get_page()
+        self.assertNotContains(response, submission.title)
+        self.assertContains(response, submission.from_draft().title)
         self.assertNotContains(response, 'Submission history')
 
     def test_can_not_access_other_users_active(self):

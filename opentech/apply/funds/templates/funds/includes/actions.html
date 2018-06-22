@@ -12,5 +12,5 @@
         <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">Lead</a>
     </div>
 
-    <a class="button button--white button--full-width button--bottom-space" href="#">Placeholder</a>
+    <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">Revisions</a>
 </div>

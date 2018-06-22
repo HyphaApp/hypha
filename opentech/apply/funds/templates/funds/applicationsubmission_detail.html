@@ -62,31 +62,7 @@
                         {% endif %}
                     </h6>
 
-                    <h3>Proposal Information</h3>
-                    <div class="grid grid--proposal-info">
-                        <div>
-                            <h5>Requested Funding</h5>
-                            <p>{{ object.value }}</p>
-                        </div>
-
-                        <div>
-                            <h5>Project Duration</h5>
-                            <p>{{ object.value }}</p>
-                        </div>
-
-                        <div>
-                            <h5>Legal Name</h5>
-                            <p>{{ object.full_name }}</p>
-                        </div>
-
-                        <div>
-                            <h5>Email</h5>
-                            <p>{{ object.email }}</p>
-                        </div>
-                    </div>
-                    <div class="rich-text rich-text--answers">
-                        {{ object.render_answers }}
-                    </div>
+                    {% include "funds/includes/rendered_answers.html" %}
                 </div>
             {% endif %}
 

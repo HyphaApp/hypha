@@ -1,4 +1,5 @@
 import json
+import random
 import uuid
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -49,10 +50,14 @@ class NumberFieldBlockFactory(FormFieldBlockFactory):
 
 
 class RadioFieldBlockFactory(FormFieldBlockFactory):
-    choices = wagtail_factories.ListBlockFactory(CharBlockFactory)
+    choices = ['first', 'second']
 
     class Meta:
         model = stream_blocks.RadioButtonsFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return cls.choices[0]
 
 
 class UploadableMediaFactory(FormFieldBlockFactory):
@@ -84,16 +89,22 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
 
 
 class TitleBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('sentence')
+
     class Meta:
         model = blocks.TitleBlock
 
 
 class EmailBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('email')
+
     class Meta:
         model = blocks.EmailBlock
 
 
 class FullNameBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('name')
+
     class Meta:
         model = blocks.FullNameBlock
 
@@ -106,6 +117,10 @@ class RichTextFieldBlockFactory(FormFieldBlockFactory):
 class ValueFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = blocks.ValueBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return random.randint(0, 1_000_000)
 
 
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
