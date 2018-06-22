@@ -99,7 +99,6 @@ class BaseDeterminationForm(forms.ModelForm):
                         available_choices.add((key, value))
 
         self.fields['outcome'].choices = available_choices
-        self.fields['outcome'].widget.choices = available_choices
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
