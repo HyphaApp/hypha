@@ -18,9 +18,9 @@ NEEDS_MORE_INFO = 1
 ACCEPTED = 2
 
 DETERMINATION_CHOICES = (
-    (REJECTED, _('Rejected')),
+    (REJECTED, _('Dismissed')),
     (NEEDS_MORE_INFO, _('Needs more info')),
-    (ACCEPTED, _('Accepted')),
+    (ACCEPTED, _('Approved')),
 )
 
 DETERMINATION_TRANSITION_SUFFIX = {
