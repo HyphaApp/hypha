@@ -93,12 +93,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         suffix = DETERMINATION_TRANSITION_SUFFIX[determination]
 
         for transition_name in self.submission.phase.transitions:
-            if type(suffix) is list:
-                for item in suffix:
-                    if item in transition_name:
-                        return transition_name
-            else:
-                if suffix in transition_name:
+            for item in suffix:
+                if item in transition_name:
                     return transition_name
 
 

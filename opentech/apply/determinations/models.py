@@ -25,8 +25,8 @@ DETERMINATION_CHOICES = (
 
 DETERMINATION_TRANSITION_SUFFIX = {
     ACCEPTED: ['accepted', 'invited_to_proposal'],
-    REJECTED: 'rejected',
-    NEEDS_MORE_INFO: 'more_info',
+    REJECTED: ['rejected'],
+    NEEDS_MORE_INFO: ['more_info'],
 }
 
 

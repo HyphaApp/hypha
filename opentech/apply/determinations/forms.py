@@ -94,12 +94,8 @@ class BaseDeterminationForm(forms.ModelForm):
         for key, value in choices:
             suffix = DETERMINATION_TRANSITION_SUFFIX[key]
             for transition_name in phase.transitions:
-                if type(suffix) is list:
-                    for item in suffix:
-                        if item in transition_name:
-                            available_choices.add((key, value))
-                else:
-                    if suffix in transition_name:
+                for item in suffix:
+                    if item in transition_name:
                         available_choices.add((key, value))
 
         self.fields['outcome'].choices = available_choices
