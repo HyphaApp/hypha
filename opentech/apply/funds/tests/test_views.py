@@ -30,7 +30,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
 
         # Invited for proposal is a a determination, so this will redirect to the determination form.
-        url = reverse('funds:submissions:determinations:form', kwargs={'submission_pk': submission.id})
+        url = self.url_from_pattern('funds:submissions:determinations:form', kwargs={'submission_pk': submission.id})
         self.assertRedirects(response, f"{url}?action=invited_to_proposal")
 
     def test_cant_progress_stage_if_not_lead(self):

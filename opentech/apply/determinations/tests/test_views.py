@@ -109,13 +109,6 @@ class DeterminationFormTestCase(BaseTestCase):
 
     def test_can_progress_stage_via_determination(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)
-        DeterminationFactory(submission=submission, author=self.user)
-
-        response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
-
-        # we are taken to the determination form
-        url = reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission))
-        self.assertRedirects(response, f"{url}?action=invited_to_proposal")
 
         response = self.post_page(submission, {
             'data': 'value',
@@ -127,7 +120,9 @@ class DeterminationFormTestCase(BaseTestCase):
         submission_original = self.refresh(submission)
         submission_next = submission_original.next
 
-        self.assertRedirects(response, reverse('funds:submissions:detail', kwargs={'pk': submission_next.id}))
+        # Cannot use self.url() as that uses a different base.
+        url = reverse('funds:submissions:detail', kwargs={'pk': submission_next.id})
+        self.assertRedirects(response, self.factory.get(url, secure=True).build_absolute_uri(url))
         self.assertEqual(submission_original.status, 'invited_to_proposal')
         self.assertEqual(submission_next.status, 'draft_proposal')
 
