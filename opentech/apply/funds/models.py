@@ -751,6 +751,11 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         submission_in_db.next = self
         submission_in_db.save()
 
+    def new_data(self, data):
+        self.is_draft = False
+        self.form_data = data
+        return self
+
     def from_draft(self):
         self.is_draft = True
         self.form_data = self.draft_revision.form_data

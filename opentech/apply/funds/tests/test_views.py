@@ -91,6 +91,15 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
+    def test_gets_draft_on_edit_submission(self):
+        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
+        draft_revision = ApplicationRevisionFactory(submission=submission)
+        submission.draft_revision = draft_revision
+        submission.save()
+
+        response = self.get_page(submission, 'edit')
+        self.assertDictEqual(response.context['object'].form_data, draft_revision.form_data)
+
     def test_cant_edit_submission_incorrect_state(self):
         submission = ApplicationSubmissionFactory(user=self.user, workflow_stages=2)
         response = self.get_page(submission, 'edit')
@@ -120,6 +129,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.revisions.last().form_data, old_data)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertEqual(submission.live_revision.author, self.user)
         self.assertEqual(submission.title, new_title)
 
     def test_dont_update_live_revision_on_save(self):
@@ -134,6 +144,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.status, 'draft_proposal')
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
+        self.assertEqual(submission.draft_revision.author, self.user)
         self.assertDictEqual(submission.live_revision.form_data, old_data)
 
 

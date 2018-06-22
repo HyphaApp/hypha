@@ -216,7 +216,7 @@ class SubmissionEditView(UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        instance = kwargs.pop('instance')
+        instance = kwargs.pop('instance').from_draft()
         kwargs['initial'] = instance.raw_data
         return kwargs
 
@@ -227,10 +227,10 @@ class SubmissionEditView(UpdateView):
         return self.object.get_form_class()
 
     def form_valid(self, form):
-        self.object.form_data = form.cleaned_data
+        self.object.new_data(form.cleaned_data)
 
         if 'save' in self.request.POST:
-            self.object.create_revision(draft=True)
+            self.object.create_revision(draft=True, by=self.request.user)
             return self.form_invalid(form)
 
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
