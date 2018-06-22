@@ -83,17 +83,12 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.progress_stage(self.submission) or response
 
     def progress_stage(self, instance):
-        proposal_transition = instance.get_transition('draft_proposal')
-        if proposal_transition:
-            if can_proceed(proposal_transition):
-                proposal_transition(by=self.request.user)
-                instance.save()
+        try:
+            instance.perform_transition('draft_proposal', self.request.user)
+        except PermissionDenied:
+            pass
+        else:
             return HttpResponseRedirect(instance.get_absolute_url())
-
-    def form_invalid(self, form):
-        from pprint import pprint
-        pprint(form.errors)
-        return super().form_invalid(form)
 
     def get_action_name_from_determination(self, determination):
         suffix = DETERMINATION_TRANSITION_SUFFIX[determination]
