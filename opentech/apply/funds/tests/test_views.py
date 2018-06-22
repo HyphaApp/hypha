@@ -147,6 +147,27 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.draft_revision.author, self.user)
         self.assertDictEqual(submission.live_revision.form_data, old_data)
 
+    def test_existing_draft_edit_and_submit(self):
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
+        draft_data = submission.raw_data.copy()
+        draft_data[submission.must_include['title']] = 'New title'
+        self.post_page(submission, {'save': True, **draft_data}, 'edit')
+
+        submission = self.refresh(submission)
+
+        new_title = 'Newer title'
+        draft_data[submission.must_include['title']] = new_title
+        self.post_page(submission, {'submit': True, **draft_data}, 'edit')
+
+        submission = self.refresh(submission)
+
+        self.maxDiff = None
+        self.assertEqual(submission.revisions.count(), 2)
+        self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
+        self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+
+        self.assertEqual(submission.title, new_title)
+
 
 class TestRevisionList(BaseSubmissionViewTestCase):
     base_view_name = 'revisions:list'

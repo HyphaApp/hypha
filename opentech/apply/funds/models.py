@@ -771,6 +771,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
                 revision = self.draft_revision
                 revision.form_data = self.form_data
                 revision.author = by
+                revision.save()
 
             if draft:
                 self.form_data = self.live_revision.form_data
