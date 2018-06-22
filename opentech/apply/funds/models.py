@@ -650,14 +650,28 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     def not_progressed(self):
         return not self.next
 
+    @property
+    def stage(self):
+        return self.phase.stage
+
+    @property
+    def phase(self):
+        return self.workflow.get(self.status)
+
+    @property
+    def active(self):
+        return self.status in active_statuses
+
     @transition(
         status, source='*',
         target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
+        conditions=[active],
         permission=make_permission_check({UserPermissions.ADMIN}),
     )
     def restart_stage(self, **kwargs):
         """
         If running form the console please include your user using the kwarg "by"
+        Will not reset applications which are accepted/rejected
 
         u = User.objects.get(email="<my@email.com>")
         for a in ApplicationSubmission.objects.all():
@@ -670,17 +684,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
             return 'invited_to_proposal'
         return INITIAL_STATE
 
-    @property
-    def stage(self):
-        return self.phase.stage
-
-    @property
-    def phase(self):
-        return self.workflow.get(self.status)
-
-    @property
-    def active(self):
-        return self.status in active_statuses
 
     @property
     def last_edit(self):
