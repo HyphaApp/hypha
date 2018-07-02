@@ -11,6 +11,7 @@ from django.db.utils import IntegrityError
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm
+from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 User = get_user_model()
 
@@ -244,7 +245,13 @@ class Command(BaseCommand):
                 self.process(id)
 
     def process(self, id):
+        User = get_user_model()
         node = self.data[id]
+
+        try:
+            lead = User.objects.get(full_name="Lindsay Beck")
+        except User.DoesNotExist:
+            lead = User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
         try:
             submission = ApplicationSubmission.objects.get(drupal_id=node['nid'])
@@ -259,7 +266,7 @@ class Command(BaseCommand):
         submission.round = ROUND
         submission.form_fields = FORM.form.form_fields
 
-        submission.status = self.get_workflow_state(node)
+        status = self.get_workflow_state(node)
 
         form_data = {
             'skip_account_creation_notification': True,
@@ -281,6 +288,7 @@ class Command(BaseCommand):
 
         try:
             submission.save()
+            submission.perform_transition(status, lead)
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
             pass
@@ -356,17 +364,20 @@ class Command(BaseCommand):
         workbench_moderation: {'current': {'state': STATE, 'timestamp': TS}}
         """
         states = {
-            "draft": "Request__internal-review__0",
-            "in_discussion": "Request__under-discussion__2",
-            "dropped": "Request__rejected__3",
-            "dropped_concept_note": "Request__rejected__3",
-            "dropped_without_review": "Request__rejected__3",
-            "published": "Request__accepted__3",
-            "invited_for_proposal": "Request__accepted__3",
-            "in_contract": "Request__accepted__3"
+            "draft": "",
+            "published": "in_discussion",
+            "in_discussion": "in_discussion",
+            "council_review": "internal_review",
+            "ready_for_reply": "post_review_discussion",
+            "contract_review": "post_review_discussion",
+            "in_contract": "accepted",
+            "invited_for_proposal": "accepted",
+            "dropped_concept_note": "rejected",
+            "dropped": "rejected",
+            "dropped_without_review": "rejected"
         }
 
-        return states.get(node['workbench_moderation']['current']['state'], "Internal Review")
+        return states.get(node['workbench_moderation']['current']['state'], "in_discussion")
 
     def nl2br(self, value):
         return value.replace('\r\n', '<br>\n')
