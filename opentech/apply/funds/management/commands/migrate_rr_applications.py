@@ -7,11 +7,12 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
+from django_fsm import FSMField
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.funds.workflow import INITIAL_STATE
 
 User = get_user_model()
 
@@ -221,6 +222,10 @@ FUND = FundType.objects.get(title='Rapid Response')
 ROUND = Round.objects.get(title='Rapid Response open round')
 FORM = RoundForm.objects.get(round=ROUND)
 
+# Monkey patch the status field so it is no longer protected
+patched_status_field = FSMField(default=INITIAL_STATE, protected=False)
+setattr(ApplicationSubmission, 'status', patched_status_field)
+
 
 class Command(BaseCommand):
     help = "Rapid response migration script. Requires a source JSON file."
@@ -245,13 +250,7 @@ class Command(BaseCommand):
                 self.process(id)
 
     def process(self, id):
-        User = get_user_model()
         node = self.data[id]
-
-        try:
-            lead = User.objects.get(full_name="Lindsay Beck")
-        except User.DoesNotExist:
-            lead = User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
         try:
             submission = ApplicationSubmission.objects.get(drupal_id=node['nid'])
@@ -266,7 +265,7 @@ class Command(BaseCommand):
         submission.round = ROUND
         submission.form_fields = FORM.form.form_fields
 
-        status = self.get_workflow_state(node)
+        submission.status = self.get_workflow_state(node)
 
         form_data = {
             'skip_account_creation_notification': True,
@@ -288,7 +287,6 @@ class Command(BaseCommand):
 
         try:
             submission.save()
-            submission.perform_transition(status, lead)
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
             pass
