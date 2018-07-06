@@ -68,17 +68,17 @@ class Command(BaseCommand):
             {"type": "address", "value": {"field_label": "Address", "help_text": "", "info": None}, "id": "bd29eb88-9754-4305-9b2d-406a875ec56a"},
             {"type": "multi_file", "value": {"field_label": "Upload", "help_text": "", "required": "false"}, "id": "607daeba-1f33-4ad0-b135-eda743ba8e3a"},
             {"type": "text_markup", "value": "<h3>I acknowledge</h3>", "id": "5688ddc7-0397-41e7-9e6b-2c0fe44f42aa"},
-            {"type": "checkbox", "value": {"field_label": "My application will be dismissed if it does not fit within OTF\'s mission, values, principles statements.", "help_text": "", "default_value": "true"}, "id": "e695f0d7-4c74-4cc6-853f-bd62ecd19d3d"},
+            {"type": "checkbox", "value": {"field_label": "My application will be dismissed if it does not fit within OTF\'s mission, values, principles statements.", "help_text": "", "required": "true", "default_value": ""}, "id": "e695f0d7-4c74-4cc6-853f-bd62ecd19d3d"},
             {"type": "text_markup", "value": "Read our <a href=\"\/about/program\">mission, values, and principles</a>.", "id": "051be067-d45a-4bc3-8016-a09dadd734f5"},
-            {"type": "checkbox", "value": {"field_label": "I have read and understand OTF\'s Terms and Privacy policy.", "help_text": "", "default_value": "true"}, "id": "f40d1acc-d802-4cc6-b0e9-fff78dc54223"},
+            {"type": "checkbox", "value": {"field_label": "I have read and understand OTF\'s Terms and Privacy policy.", "help_text": "", "required": "true", "default_value": ""}, "id": "f40d1acc-d802-4cc6-b0e9-fff78dc54223"},
             {"type": "text_markup", "value": "Read the <a href=\"\/tos\">Terms and Privacy policy</a>.", "id": "bcf64886-df76-41d2-9a22-fb7e49a7718c"},
-            {"type": "checkbox", "value": {"field_label": "I am legally able to sign contracts or represent an organization that can.", "help_text": "", "default_value": "true"}, "id": "0b3c0827-38e2-439b-bca5-735835af1019"},
-            {"type": "checkbox", "value": {"field_label": "I understand that all intellectual property created with support for this application must be openly licensed.", "help_text": "", "default_value": "true"}, "id": "bc9c960e-a6f4-4bc2-b626-efb5bc5552c6"},
-            {"type": "checkbox", "value": {"field_label": "I understand that if my application is incomplete in any way, it will be dismissed.", "help_text": "", "default_value": "true"}, "id": "5812b66d-630e-4ca2-8bea-819084278f55"},
-            {"type": "checkbox", "value": {"field_label": "I understand that if my application is after a deadline, it will not be reviewed until after the next deadline.", "help_text": "", "default_value": "true"}, "id": "97d3746c-cf0f-449a-b3a3-7a9cdd45cc6d"},
+            {"type": "checkbox", "value": {"field_label": "I am legally able to sign contracts or represent an organization that can.", "help_text": "", "required": "true", "default_value": ""}, "id": "0b3c0827-38e2-439b-bca5-735835af1019"},
+            {"type": "checkbox", "value": {"field_label": "I understand that all intellectual property created with support for this application must be openly licensed.", "help_text": "", "required": "true", "default_value": ""}, "id": "bc9c960e-a6f4-4bc2-b626-efb5bc5552c6"},
+            {"type": "checkbox", "value": {"field_label": "I understand that if my application is incomplete in any way, it will be dismissed.", "help_text": "", "required": "true", "default_value": ""}, "id": "5812b66d-630e-4ca2-8bea-819084278f55"},
+            {"type": "checkbox", "value": {"field_label": "I understand that if my application is after a deadline, it will not be reviewed until after the next deadline.", "help_text": "", "required": "true", "default_value": ""}, "id": "97d3746c-cf0f-449a-b3a3-7a9cdd45cc6d"},
             {"type": "text_markup", "value": "<h3>I would like to</h3>", "id": "e99c9dbe-f788-4eb2-813d-1787c0871210"},
-            {"type": "checkbox", "value": {"field_label": "Sign up to the OTF-Announce list, low traffic (funding opportunities, major alerts, etc)", "help_text": "", "default_value": "false"}, "id": "fc3d2a87-1151-418b-b1cd-9289f00bde35"},
-            {"type": "checkbox", "value": {"field_label": "Sign up for OTF\'s daily newsletter (collection of news related to global internet freedom).", "help_text": "", "default_value": "false"}, "id": "83ecc69a-f47c-495e-bc8f-326e55aed67a"}
+            {"type": "checkbox", "value": {"field_label": "Sign up to the OTF-Announce list, low traffic (funding opportunities, major alerts, etc)", "help_text": "", "required": "true", "default_value": ""}, "id": "fc3d2a87-1151-418b-b1cd-9289f00bde35"},
+            {"type": "checkbox", "value": {"field_label": "Sign up for OTF\'s daily newsletter (collection of news related to global internet freedom).", "help_text": "", "required": "true", "default_value": ""}, "id": "83ecc69a-f47c-495e-bc8f-326e55aed67a"}
         ]
 
         application_form, _ = ApplicationForm.objects.get_or_create(name='Rapid response', defaults={'form_fields': json.dumps(data)})
