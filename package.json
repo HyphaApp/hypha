@@ -7,6 +7,6 @@
       "postinstall": "cd opentech/static_src && yarn install && npm build:prod"
     },
     "engines": {
-    "node": ">=7.0.0"
+    "yarn": ">=1.7.0"
     }
 }
