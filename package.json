@@ -2,7 +2,11 @@
     "name": "Opentech",
     "version": "1.0.0",
     "description": "Build the static src.",
+    "cacheDirectories": ["client/node_modules"],
     "scripts": {
       "postinstall": "cd opentech/static_src && npm install && npm build:prod"
-}
+    },
+    "engines": {
+        "node": ">=4"
+    }
 }
