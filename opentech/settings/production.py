@@ -2,6 +2,7 @@ import os
 
 import dj_database_url
 # import raven
+import django_heroku
 
 from .base import *  # noqa
 
@@ -143,6 +144,7 @@ if 'LOG_DIR' in env:
     LOGGING['loggers']['django.request']['handlers'].append('errors_file')
     LOGGING['loggers']['django.security']['handlers'].append('errors_file')
 
+django_heroku.settings(locals())
 
 try:
     from .local import *  # noqa
