@@ -4,9 +4,10 @@
     "description": "Build the static src.",
     "cacheDirectories": ["client/node_modules"],
     "scripts": {
-      "postinstall": "cd opentech/static_src && yarn install && npm build:prod"
+        "postinstall": "cd opentech/static_src && yarn install && npm run build:prod"
     },
     "engines": {
-    "yarn": ">=1.7.0"
+        "node": "8.11.3",
+        "yarn": "1.7.0"
     }
 }

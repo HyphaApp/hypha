@@ -97,7 +97,7 @@
     "sass-lint": "^1.12.1"
   },
   "engines": {
-    "node": ">=7.0.0"
+    "node": "8.11.3"
   },
   "dependencies": {
     "@fancyapps/fancybox": "^3.2.5"
