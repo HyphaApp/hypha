@@ -1,6 +1,10 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
 from wagtail.users.forms import UserEditForm, UserCreationForm
+
+
+User = get_user_model()
 
 
 class CustomUserAdminFormBase():
@@ -18,3 +22,9 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
     pass
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['full_name', 'email']

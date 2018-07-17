@@ -6,8 +6,10 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 
 from hijack.views import login_with_id
@@ -15,22 +17,36 @@ from hijack.views import login_with_id
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
+from .forms import ProfileForm
+
 
 User = get_user_model()
 
 
-@login_required(login_url=reverse_lazy('users:login'))
-def account(request):
-    """Account page placeholder view"""
-    if request.user.is_superuser:
-        swappable = User.objects.filter(is_active=True, is_superuser=False)
-    else:
-        swappable = []
+@method_decorator(login_required, name='dispatch')
+class AccountView(UpdateView):
+    form_class = ProfileForm
+    template_name = 'users/account.html'
 
-    return render(request, 'users/account.html', {
-        'show_change_password': password_management_enabled() and request.user.has_usable_password(),
-        'swappable': swappable,
-    })
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self,):
+        return reverse_lazy('users:account')
+
+    def get_context_data(self, **kwargs):
+        if self.request.user.is_superuser:
+            swappable = User.objects.filter(is_active=True, is_superuser=False)
+        else:
+            swappable = []
+
+        show_change_password = password_management_enabled() and self.request.user.has_usable_password(),
+
+        return super().get_context_data(
+            swappable=swappable,
+            show_change_password=show_change_password,
+            **kwargs,
+        )
 
 
 @login_required(login_url=reverse_lazy('users:login'))

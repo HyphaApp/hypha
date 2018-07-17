@@ -12,10 +12,24 @@
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% if show_change_password and user.has_usable_password and not backends.associated %}
-        <a href="{% url 'users:password_change' %}">{% trans "Change password" %}</a>
-    {% endif %}
+    <h3>Profile</h3>
+    <form action="" method="post" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+            {% include "funds/includes/field.html" %}
+        {% endfor %}
+        <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
+    </form>
+</div>
 
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% if show_change_password and user.has_usable_password and not backends.associated %}
+        <h3>Change password</h3>
+        <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
+    {% endif %}
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if swappable %}
         <form action="{% url 'users:become' %}" method="post" class="form">
             {% csrf_token %}
