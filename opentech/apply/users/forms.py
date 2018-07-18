@@ -27,4 +27,9 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['full_name', 'email']
+        fields = ['full_name', 'email', 'slack']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.is_apply_staff:
+            del self.fields['slack']

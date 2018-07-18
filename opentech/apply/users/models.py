@@ -56,6 +56,12 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
+    slack = models.CharField(
+        verbose_name='Slack name',
+        blank=True,
+        help_text='This is the name we should "@" when sending notifications',
+        max_length=50,
+    )
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
