@@ -36,10 +36,10 @@ from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmissi
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
-from opentech.apply.utils.blocks import MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
+from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
 from .admin_forms import WorkflowFormAdminForm
-from .blocks import ApplicationCustomFormFieldsBlock
+from .blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .workflow import (
     active_statuses,

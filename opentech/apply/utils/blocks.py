@@ -161,6 +161,3 @@ class MustIncludeFieldBlock(FormFieldBlock):
         kwargs = super().get_field_kwargs(struct_value)
         kwargs['required'] = True
         return kwargs
-
-
-REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]

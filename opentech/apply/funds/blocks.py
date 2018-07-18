@@ -53,3 +53,6 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
 class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
     category = CategoryQuestionBlock(group=_('Custom'))
     required_blocks = ApplicationMustIncludeFieldBlock.__subclasses__()
+
+
+REQUIRED_BLOCK_NAMES = [block.name for block in ApplicationMustIncludeFieldBlock.__subclasses__()]
