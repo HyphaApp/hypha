@@ -11,7 +11,7 @@ from django_fsm import FSMField
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm
+from opentech.apply.funds.models import ApplicationSubmission, LabType, LabForm
 from opentech.apply.funds.workflow import INITIAL_STATE
 
 User = get_user_model()
@@ -135,9 +135,8 @@ STREAMFIELD_MAP = {
     },
 }
 
-FUND = FundType.objects.get(title='Community lab')
-ROUND = Round.objects.get(title='Community lab open round')
-FORM = RoundForm.objects.get(round=ROUND)
+LAB = LabType.objects.get(title='Community lab')
+FORM = LabForm.objects.get(lab=LAB)
 
 # Monkey patch the status field so it is no longer protected
 patched_status_field = FSMField(default=INITIAL_STATE, protected=False)
@@ -178,8 +177,7 @@ class Command(BaseCommand):
         submission.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
         submission.user = self.get_user(node['uid'])
 
-        submission.page = FUND
-        submission.round = ROUND
+        submission.page = LAB
         submission.form_fields = FORM.form.form_fields
 
         submission.status = self.get_workflow_state(node)

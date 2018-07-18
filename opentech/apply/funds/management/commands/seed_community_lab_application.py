@@ -6,26 +6,18 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opentech.apply.funds.models import ApplicationForm, FundForm, FundType, Round
+from opentech.apply.funds.models import ApplicationForm, LabForm, LabType
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-CL_ROUND_TITLE = 'Community lab open round'
-
 
 class Command(BaseCommand):
-    help = "Pre-seeds the Community lab application form and fund type. Depends on the categories seed being run first."
+    help = "Pre-seeds the Community lab application form and lab type. Depends on the categories seed being run first."
 
     @transaction.atomic
     def handle(self, *args, **options):
-        # There's an Community lab open round, so bail out. Avoids duplicate command runs.
-        if Round.objects.filter(title=CL_ROUND_TITLE).count():
-            self.stdout.write(self.style.WARNING('Skipping. The target Round/Fund Type and Application Form exist'))
-            return
-
         application_form = self.create_community_lab_form()
-        fund = self.create_community_lab_fund_type(application_form)
-        self.create_community_lab_round(fund)
+        self.create_community_lab_fund_type(application_form)
 
     def create_community_lab_form(self):
 
@@ -68,21 +60,6 @@ class Command(BaseCommand):
         return application_form
 
     def create_community_lab_fund_type(self, application_form):
-        try:
-            fund = FundType.objects.get(title='Community lab')
-        except FundType.DoesNotExist:
-            apply_home = ApplyHomePage.objects.first()
-
-            fund = FundType(title='Community lab', workflow_name='single')
-            apply_home.add_child(instance=fund)
-
-            fund_form = FundForm.objects.create(fund=fund, form=application_form)
-            fund.forms = [fund_form]
-            fund.save()
-
-        return fund
-
-    def create_community_lab_round(self, fund):
         User = get_user_model()
 
         try:
@@ -90,12 +67,16 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             lead = User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
-        round = Round(
-            title=CL_ROUND_TITLE,
-            lead=lead,
-            # The date of the original Community lab request type
-            start_date=date(2015, 8, 28),
-            end_date=None
-        )
-        round.parent_page = fund
-        fund.add_child(instance=round)
+        try:
+            lab = LabType.objects.get(title='Community lab')
+        except LabType.DoesNotExist:
+            apply_home = ApplyHomePage.objects.first()
+
+            lab = LabType(title='Community lab', lead=lead, workflow_name='single')
+            apply_home.add_child(instance=lab)
+
+            lab_form = LabForm.objects.create(lab=lab, form=application_form)
+            lab.forms = [lab_form]
+            lab.save()
+
+        return lab
