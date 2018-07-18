@@ -20,6 +20,7 @@ class UserFactory(factory.DjangoModelFactory):
 
     email = factory.Sequence('email{}@email.com'.format)
     full_name = factory.Faker('name')
+    password = factory.PostGenerationMethodCall('set_password', 'defaultpassword')
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -30,6 +31,10 @@ class UserFactory(factory.DjangoModelFactory):
                 groups = extracted
 
             self.groups.add(groups)
+
+
+class OAuthUserFactory(UserFactory):
+    password = factory.PostGenerationMethodCall('set_unusable_password')
 
 
 class AdminFactory(UserFactory):
