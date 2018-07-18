@@ -33,3 +33,16 @@ class ProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.is_apply_staff:
             del self.fields['slack']
+
+
+    def clean_slack(self):
+        slack = self.cleaned_data['slack']
+        if slack:
+            slack = slack.strip()
+            if ' ' in slack:
+                raise forms.ValidationError('Slack IDs must not include spaces')
+
+            if not slack.startswith('@'):
+                slack = '@' + slack
+
+        return slack
