@@ -39,7 +39,7 @@ class ProfileForm(forms.ModelForm):
         if slack:
             slack = slack.strip()
             if ' ' in slack:
-                raise forms.ValidationError('Slack IDs must not include spaces')
+                raise forms.ValidationError('Slack names must not include spaces')
 
             if not slack.startswith('@'):
                 slack = '@' + slack

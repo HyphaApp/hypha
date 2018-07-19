@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='slack',
-            field=models.CharField(blank=True, help_text='This is the name we should "@" when sending notifications', max_length=50, verbose_name='Slack name'),
+            field=models.CharField(blank=True, help_text='This is the name we should "@mention" when sending notifications', max_length=50, verbose_name='Slack name'),
         ),
     ]
