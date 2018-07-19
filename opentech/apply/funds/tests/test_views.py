@@ -23,7 +23,15 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         self.assertContains(response, submission.title)
 
-    def test_can_progress_stage(self):
+    def test_can_progress_phase(self):
+        submission = ApplicationSubmissionFactory()
+        next_status = list(submission.get_actions_for_user(self.user))[0][0]
+        self.post_page(submission, {'form-submitted-progress_form': '', 'action': next_status})
+
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, next_status)
+
+    def test_redirected_to_determination(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)
         response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'invited_to_proposal'})
 

@@ -80,6 +80,8 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
+        self.object.perform_transition(action, self.request.user)
+
         return super().form_valid(form)
 
 
