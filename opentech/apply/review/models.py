@@ -24,6 +24,9 @@ class ReviewForm(models.Model):
         StreamFieldPanel('form_fields'),
     ]
 
+    def __str__(self):
+        return self.name
+
     def process_form_submission(self, form):
         return Review.objects.create(
             form_data=form.cleaned_data,
