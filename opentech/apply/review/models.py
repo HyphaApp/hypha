@@ -6,17 +6,10 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 from opentech.apply.activity.models import Activity
+from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.users.models import User
 
-NO = 0
-MAYBE = 1
-YES = 2
 
-RECOMMENDATION_CHOICES = (
-    (NO, 'No'),
-    (MAYBE, 'Maybe'),
-    (YES, 'Yes'),
-)
 
 
 class ReviewQuerySet(models.QuerySet):

@@ -1,21 +1,11 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 
+from opentech.apply.review.options import RATE_CHOICES, RECOMMENDATION_CHOICES, NA
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
-from .models import Review, RECOMMENDATION_CHOICES
+from .models import Review
 
-NA = 99
-
-RATE_CHOICES = (
-    (0, '0. Need more info'),
-    (1, '1. Poor'),
-    (2, '2. Not so good'),
-    (3, '3. Is o.k.'),
-    (4, '4. Good'),
-    (5, '5. Excellent'),
-    (NA, 'n/a - choose not to answer'),
-)
 
 YES_NO_CHOICES = (
     (1, 'Yes'),
