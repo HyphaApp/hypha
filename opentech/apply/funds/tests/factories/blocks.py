@@ -10,6 +10,7 @@ import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 from opentech.apply.funds import blocks
+from opentech.apply.utils import blocks as utils_blocks
 
 
 __all__ = ['CustomFormFieldsFactory', 'FormFieldBlockFactory', 'FullNameBlockFactory', 'EmailBlockFactory']
@@ -111,7 +112,7 @@ class FullNameBlockFactory(FormFieldBlockFactory):
 
 class RichTextFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
-        model = blocks.RichTextFieldBlock
+        model = utils_blocks.RichTextFieldBlock
 
 
 class ValueFieldBlockFactory(FormFieldBlockFactory):

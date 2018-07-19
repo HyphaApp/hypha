@@ -8,6 +8,9 @@ import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 from opentech.apply.review import blocks
+from opentech.apply.utils import blocks as utils_blocks
+
+__all__ = ['ReviewFormFieldsFactory', 'RecommendationBlockFactory', 'ScoreFieldBlockFactory']
 
 
 class CharBlockFactory(wagtail_factories.blocks.BlockFactory):
@@ -35,7 +38,7 @@ class CharFieldBlockFactory(FormFieldBlockFactory):
 
 class RichTextFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
-        model = blocks.RichTextFieldBlock
+        model = utils_blocks.RichTextFieldBlock
 
 
 class RecommendationBlockFactory(FormFieldBlockFactory):

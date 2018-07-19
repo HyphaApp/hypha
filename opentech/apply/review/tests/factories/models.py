@@ -8,6 +8,8 @@ from opentech.apply.review.views import get_form_for_stage
 
 from . import blocks
 
+__all__ = ['ReviewFactory', 'ApplicationFormFactory']
+
 
 class ReviewDataFactory(factory.DictFactory):
     @classmethod
