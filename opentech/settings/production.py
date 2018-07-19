@@ -11,12 +11,6 @@ from .base import *  # noqa
 # Disable debug mode
 DEBUG = False
 
-# Raven (sentry) configuration. See local settings for DSN
-
-INSTALLED_APPS += (
-    'raven.contrib.django.raven_compat',
-)
-
 
 # Cache everything for 10 minutes
 # This only applies to pages that do not have a more specific cache-control
@@ -28,6 +22,16 @@ CACHE_CONTROL_MAX_AGE = 600
 # Alternatively, you can set these in a local.py file on the server
 
 env = os.environ.copy()
+
+# Raven (sentry) configuration. See local settings for DSN
+
+if 'SENTRY_DSN' in env:
+    INSTALLED_APPS += (
+        'raven.contrib.django.raven_compat',
+    )
+
+    SENTRY_DSN = env['SENTRY_DSN']
+
 
 # On Torchbox servers, many environment variables are prefixed with "CFG_"
 for key, value in os.environ.items():
