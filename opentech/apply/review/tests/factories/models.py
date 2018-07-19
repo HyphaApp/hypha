@@ -3,8 +3,10 @@ import factory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import StaffFactory
 
-from ..models import Review
-from ..views import get_form_for_stage
+from opentech.apply.review.models import Review, ReviewForm
+from opentech.apply.review.views import get_form_for_stage
+
+from . import blocks
 
 
 class ReviewDataFactory(factory.DictFactory):
@@ -28,3 +30,11 @@ class ReviewFactory(factory.DjangoModelFactory):
     author = factory.SubFactory(StaffFactory)
     review = factory.Dict({'submission': factory.SelfAttribute('..submission')}, dict_factory=ReviewDataFactory)
     is_draft = False
+
+
+class ApplicationFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ReviewForm
+
+    name = factory.Faker('word')
+    form_fields = blocks.ReviewFormFieldsFactory
