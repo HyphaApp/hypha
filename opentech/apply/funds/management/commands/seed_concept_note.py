@@ -12,6 +12,7 @@ from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 CN_ROUND_TITLE = 'Internet Freedom Fund'
+CN_FUND_TITLE = 'Internet Freedom Fund'
 
 
 class Command(BaseCommand):
@@ -39,7 +40,6 @@ class Command(BaseCommand):
         status_id = Category.objects.get(name='Project status').id
         tech_id = Category.objects.get(name='Technology attributes').id
         countries_id = Category.objects.get(name='Countries').id
-
 
         data = [
             {"type": "text_markup", "value": "<h3>Basic information</h3>", "id": "25108c8b-c268-4f47-a441-99c3bc4ce43a"},
@@ -145,11 +145,11 @@ class Command(BaseCommand):
 
     def create_concept_note_fund_type(self, application_form, proposal_form):
         try:
-            fund = FundType.objects.get(title='Internet Freedom Fund')
+            fund = FundType.objects.get(title=CN_FUND_TITLE)
         except FundType.DoesNotExist:
             apply_home = ApplyHomePage.objects.first()
 
-            fund = FundType(title='Internet Freedom Fund', workflow_name='double')
+            fund = FundType(title=CN_FUND_TITLE, workflow_name='double')
             apply_home.add_child(instance=fund)
 
             fund_form = FundForm.objects.create(fund=fund, form=application_form)
