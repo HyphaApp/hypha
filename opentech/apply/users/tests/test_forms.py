@@ -1,10 +1,8 @@
-from django import forms
 from django.forms.models import model_to_dict
 from django.test import TestCase
-from django.urls import reverse
 
 from ..forms import ProfileForm
-from .factories import OAuthUserFactory, StaffFactory, UserFactory
+from .factories import StaffFactory, UserFactory
 
 
 class BaseTestProfileForm(TestCase):
@@ -46,7 +44,7 @@ class TestProfileForm(BaseTestProfileForm):
         self.assertNotEqual(self.user.slack, slack_name)
 
 
-class TestStaffProfileView(BaseTestProfileForm):
+class TestStaffProfileForm(BaseTestProfileForm):
     def setUp(self):
         self.staff = StaffFactory()
 

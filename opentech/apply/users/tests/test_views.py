@@ -1,8 +1,6 @@
-from django.forms.models import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
 
-from ..forms import ProfileForm
 from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 
@@ -10,12 +8,6 @@ class BaseTestProfielView(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse('users:account')
-
-    def form_data(self, user, **values):
-        fields = ProfileForm.Meta.fields
-        data = model_to_dict(user, fields)
-        data.update(**values)
-        return data
 
 
 class TestProfileView(BaseTestProfielView):
