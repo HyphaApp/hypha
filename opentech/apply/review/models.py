@@ -19,7 +19,7 @@ class ReviewForm(models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
 
-    content_panels = [
+    panels = [
         FieldPanel('name'),
         StreamFieldPanel('form_fields'),
     ]
