@@ -34,7 +34,6 @@ class ProfileForm(forms.ModelForm):
         if not self.instance.is_apply_staff:
             del self.fields['slack']
 
-
     def clean_slack(self):
         slack = self.cleaned_data['slack']
         if slack:
