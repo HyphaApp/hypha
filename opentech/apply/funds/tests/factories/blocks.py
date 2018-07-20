@@ -5,7 +5,7 @@ from opentech.apply.funds import blocks
 from opentech.apply.stream_forms.tests.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
     NumberFieldBlockFactory, RadioFieldBlockFactory, ImageFieldBlockFactory, FileFieldBlockFactory, \
     MultiFileFieldBlockFactory, StreamFieldUUIDFactory
-from opentech.apply.utils.tests.factories import RichTextFieldBlockFactory
+from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['CustomFormFieldsFactory', 'TitleBlockFactory', 'EmailBlockFactory', 'FullNameBlockFactory', 'ValueFieldBlockFactory']
 

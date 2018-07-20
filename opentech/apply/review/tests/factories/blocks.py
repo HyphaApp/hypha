@@ -5,7 +5,7 @@ import factory
 from opentech.apply.review import blocks
 from opentech.apply.stream_forms.tests.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
     StreamFieldUUIDFactory
-from opentech.apply.utils.tests.factories import RichTextFieldBlockFactory
+from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['ReviewFormFieldsFactory', 'RecommendationBlockFactory', 'ScoreFieldBlockFactory']
 
