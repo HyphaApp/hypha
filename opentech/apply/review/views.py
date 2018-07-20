@@ -11,7 +11,7 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import ScoreFieldBlock
 from opentech.apply.review.forms import ReviewModelForm
-from opentech.apply.review.options import RATE_CHOICES, NA
+from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
@@ -120,8 +120,6 @@ class ReviewListView(ListView):
 
     def get_context_data(self, **kwargs):
         review_data = {}
-        choices = dict(RATE_CHOICES)
-        not_available = choices[NA]
 
         for review in self.object_list:
             # Add the name header row
@@ -138,7 +136,7 @@ class ReviewListView(ListView):
                     review_data.setdefault(f'Rate {title}', [])
 
                     rating = int(value[1])
-                    review_data.setdefault(f'Rate {title}', []).append(choices.get(rating, not_available))
+                    review_data.setdefault(f'Rate {title}', []).append(RATE_CHOICES_DICT.get(rating, RATE_CHOICE_NA))
                 else:
                     review_data.setdefault(title, []).append(str(data))
 
