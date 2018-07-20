@@ -2,7 +2,7 @@ import random
 import factory
 
 from opentech.apply.funds import blocks
-from opentech.apply.stream_forms.tests.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
+from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
     NumberFieldBlockFactory, RadioFieldBlockFactory, ImageFieldBlockFactory, FileFieldBlockFactory, \
     MultiFileFieldBlockFactory, StreamFieldUUIDFactory
 from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
