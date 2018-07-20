@@ -8,9 +8,8 @@ from django.utils.text import mark_safe
 
 from wagtail.core.blocks import StaticBlock, StreamValue, StreamBlock
 
-from tinymce.widgets import TinyMCE
-
 from opentech.apply.stream_forms.blocks import FormFieldBlock, TextFieldBlock
+from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
 
 def find_duplicates(items):
@@ -30,23 +29,7 @@ def nice_field_name(name):
 
 
 class RichTextFieldBlock(TextFieldBlock):
-    widget = TinyMCE(mce_attrs={
-        'elementpath': False,
-        'branding': False,
-        'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
-        'style_formats': [
-            {'title': 'Headers', 'items': [
-                {'title': 'Header 1', 'format': 'h1'},
-                {'title': 'Header 2', 'format': 'h2'},
-                {'title': 'Header 3', 'format': 'h3'},
-            ]},
-            {'title': 'Inline', 'items': [
-                {'title': 'Bold', 'icon': 'bold', 'format': 'bold'},
-                {'title': 'Italic', 'icon': 'italic', 'format': 'italic'},
-                {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
-            ]},
-        ],
-    })
+    widget = RICH_TEXT_WIDGET
 
     class Meta:
         label = _('Rich text field')
