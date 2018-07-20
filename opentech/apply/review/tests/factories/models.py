@@ -8,7 +8,7 @@ from opentech.apply.review.views import get_form_for_stage
 
 from . import blocks
 
-__all__ = ['ReviewFactory', 'ApplicationFormFactory']
+__all__ = ['ReviewFactory', 'ReviewFormFactory']
 
 
 class ReviewDataFactory(factory.DictFactory):
@@ -34,7 +34,7 @@ class ReviewFactory(factory.DjangoModelFactory):
     is_draft = False
 
 
-class ApplicationFormFactory(factory.DjangoModelFactory):
+class ReviewFormFactory(factory.DjangoModelFactory):
     class Meta:
         model = ReviewForm
 
