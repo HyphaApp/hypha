@@ -49,6 +49,13 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
         kwargs['choices'] = RECOMMENDATION_CHOICES
         return kwargs
 
+    def render(self, value, context=None):
+        data = int(context['data'])
+        choices = dict(RECOMMENDATION_CHOICES)
+        context['data'] = choices[data]
+
+        return super().render(value, context)
+
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
     name = 'Comments'
