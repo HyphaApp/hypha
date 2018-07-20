@@ -12,7 +12,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.users.models import User
 
-from .blocks import ReviewCustomFormFieldsBlock, ReviewMustIncludeFieldBlock
+from .blocks import ReviewCustomFormFieldsBlock
 
 
 class ReviewForm(models.Model):
@@ -98,29 +98,10 @@ class Review(models.Model):
         return reverse('apply:reviews:review', args=(self.id,))
 
     def __str__(self):
-        return f'Review for {self.page.title} by {self.author!s}'
+        return f'Review for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
-
-    @property
-    def must_include(self):
-        return {
-            field.block.name: field.id
-            for field in self.form_fields
-            if isinstance(field.block, ReviewMustIncludeFieldBlock)
-        }
-
-    def clean_submission(self):
-        for field_name, field_id in self.must_include.items():
-            response = self.form_data.pop(field_id, None)
-            if response:
-                self.form_data[field_name] = response
-
-    def save(self, *args, **kwargs):
-        self.clean_submission()
-
-        super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=Review)

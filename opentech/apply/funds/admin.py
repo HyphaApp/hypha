@@ -3,7 +3,7 @@ from django.utils.html import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from opentech.apply.review.models import ReviewForm
+from opentech.apply.review.admin import ReviewFormAdmin
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
@@ -66,11 +66,6 @@ class ApplicationFormAdmin(ModelAdmin):
             if related:
                 rows.append(model.title() + ': ' + related)
         return mark_safe('<br>'.join(rows))
-
-
-class ReviewFormAdmin(ModelAdmin):
-    model = ReviewForm
-    menu_icon = 'form'
 
 
 class ApplyAdminGroup(ModelAdminGroup):

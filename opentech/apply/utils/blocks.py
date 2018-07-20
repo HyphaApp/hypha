@@ -41,8 +41,7 @@ class RichTextFieldBlock(TextFieldBlock):
 
 class CustomFormFieldsBlock(StreamBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))
-    required_blocks = None
-    required_block_names = None
+    required_blocks = []
 
     def __init__(self, *args, **kwargs):
         child_blocks = [(block.name, block(group=_('Required'))) for block in self.required_blocks]
@@ -96,6 +95,10 @@ class CustomFormFieldsBlock(StreamBlock):
             )
 
     def to_python(self, value):
+        """
+        This allows historic data to still be accessible even
+        if a custom field type is removed from the code in the future.
+        """
         # If the data type is missing, fallback to a CharField
         for child_data in value:
             if child_data['type'] not in self.child_blocks:
