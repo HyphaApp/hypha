@@ -1,3 +1,5 @@
+import json
+
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -7,7 +9,9 @@ from django.views.generic import ListView, DetailView
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.review.blocks import ScoreFieldBlock
 from opentech.apply.review.forms import ReviewModelForm
+from opentech.apply.review.options import RATE_CHOICES, NA
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
@@ -115,33 +119,28 @@ class ReviewListView(ListView):
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):
-        form_used = get_form_for_stage(self.submission)
         review_data = {}
+        choices = dict(RATE_CHOICES)
+        not_available = choices[NA]
 
         for review in self.object_list:
             # Add the name header row
             review_data.setdefault('', []).append(str(review.author))
             review_data.setdefault('Score', []).append(str(review.score))
 
-        for name, field in form_used.base_fields.items():
-            try:
-                # Add titles which exist
-                title = form_used.titles[field.group]
+            for data, field in review.data_and_fields():
+                title = field.value['field_label']
                 review_data.setdefault(title, [])
-            except AttributeError:
-                pass
 
-            for review in self.object_list:
-                value = review.review[name]
-                try:
-                    choices = dict(field.choices)
-                except AttributeError:
-                    pass
+                if isinstance(field.block, ScoreFieldBlock):
+                    value = json.loads(data)
+                    review_data.setdefault(title, []).append(str(value[0]))
+                    review_data.setdefault(f'Rate {title}', [])
+
+                    rating = int(value[1])
+                    review_data.setdefault(f'Rate {title}', []).append(choices.get(rating, not_available))
                 else:
-                    # Update the stored value to the display value
-                    value = choices[int(value)]
-
-                review_data.setdefault(field.label, []).append(str(value))
+                    review_data.setdefault(title, []).append(str(data))
 
         return super().get_context_data(
             submission=self.submission,
