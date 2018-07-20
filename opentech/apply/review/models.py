@@ -9,12 +9,13 @@ from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
+from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
-from .blocks import ReviewCustomFormFieldsBlock
+from .blocks import ReviewCustomFormFieldsBlock, RecommendationBlock
 
 
-class ReviewForm(models.Model):
+class ReviewForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
 
@@ -26,11 +27,12 @@ class ReviewForm(models.Model):
     def __str__(self):
         return self.name
 
-    def process_form_submission(self, form):
-        return Review.objects.create(
-            form_data=form.cleaned_data,
-            form_fields=self.form_fields,
-        )
+    def get_recommendation_field(self):
+        field_blocks = self.get_defined_fields()
+        for struct_child in field_blocks:
+            block = struct_child.block
+            if isinstance(block, RecommendationBlock):
+                return struct_child.id
 
 
 class ReviewQuerySet(models.QuerySet):
@@ -72,14 +74,12 @@ class ReviewQuerySet(models.QuerySet):
             return MAYBE
 
 
-class Review(models.Model):
+class Review(BaseStreamForm, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    # TODO remove when handling submissions
-    review = JSONField()
 
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())

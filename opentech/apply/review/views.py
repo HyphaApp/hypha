@@ -7,10 +7,10 @@ from django.views.generic import ListView, DetailView
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
-from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
 
 
@@ -26,9 +26,9 @@ class ReviewContextMixin:
 
 
 def get_form_for_stage(submission):
-    forms = [ConceptReviewForm, ProposalReviewForm]
+    forms = submission.page.specific.review_forms.all()
     index = submission.workflow.stages.index(submission.stage)
-    return forms[index]
+    return forms[index].form
 
 
 class ReviewCreateOrUpdateView(CreateOrUpdateView):
@@ -59,15 +59,16 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
         )
 
     def get_form_class(self):
-        return get_form_for_stage(self.submission)
+        return ReviewModelForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
+        kwargs['review_form'] = get_form_for_stage(self.submission)
 
         if self.object:
-            kwargs['initial'] = self.object.review
+            kwargs['initial'] = self.object.form_data
             kwargs['initial']['recommendation'] = self.object.recommendation
 
         return kwargs
