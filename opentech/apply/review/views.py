@@ -104,36 +104,6 @@ class ReviewDetailView(DetailView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        review = self.get_object().review
-        form_used = get_form_for_stage(self.get_object().submission)
-        review_data = {}
-
-        for name, field in form_used.base_fields.items():
-            try:
-                # Add titles which exist
-                title = form_used.titles[field.group]
-                # Setting the value to a flag, so the output is treated slightly differently
-                # This will change with the StreamForms implementation
-                review_data.setdefault(title, '<field_group_title>')
-            except AttributeError:
-                pass
-
-            value = review[name]
-            try:
-                choices = dict(field.choices)
-            except AttributeError:
-                pass
-            else:
-                # Update the stored value to the display value
-                value = choices[int(value)]
-
-            review_data.setdefault(field.label, str(value))
-        return super().get_context_data(
-            review_data=review_data,
-            **kwargs
-        )
-
 
 @method_decorator(staff_required, name='dispatch')
 class ReviewListView(ListView):

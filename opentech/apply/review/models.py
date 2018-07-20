@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
@@ -101,6 +102,25 @@ class Review(BaseStreamForm, models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+
+    def data_and_fields(self):
+        for stream_value in self.form_fields:
+            try:
+                data = self.form_data[stream_value.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                yield data, stream_value
+
+    @property
+    def fields(self):
+        return [
+            field.render(context={'data': data})
+            for data, field in self.data_and_fields()
+        ]
+
+    def render_answers(self):
+        return mark_safe(''.join(self.fields))
 
 
 @receiver(post_save, sender=Review)
