@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
-from opentech.apply.utils.tests import BaseViewTestCase
+from opentech.apply.utils.tests.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision
 
