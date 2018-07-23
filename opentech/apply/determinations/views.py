@@ -90,6 +90,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         else:
             messenger(
                 MESSAGES.INVITED_TO_PROPOSAL,
+                request=self.request,
                 user=self.request.user,
                 submission=instance,
             )

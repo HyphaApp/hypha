@@ -124,6 +124,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,
+            request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
             added=added,
