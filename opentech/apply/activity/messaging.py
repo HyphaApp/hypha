@@ -9,6 +9,7 @@ class MESSAGES(Enum):
     NEW_DETERMINATION = 'new_determination'
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
+    REVIEWERS_UPDATED = 'reviewers_updated'
 
 
 class MessageAdapter:
@@ -22,14 +23,33 @@ class ActivityAdapter:
         MESSAGES.NEW_DETERMINATION: 'Created a determination for {submission.title}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
         MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
+        MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
     }
 
     def message(self, message_type, **kwargs):
-        return self.messages[message_type].format(**kwargs)
+        message = self.messages[message_type]
+        try:
+            method = getattr(self, message)
+        except AttributeError:
+            return message.format(**kwargs)
+        else:
+            return method(**kwargs)
+
+    def reviewers_updated(self, added, removed, **kwargs):
+        message = ['Reviewers updated.']
+        if added:
+            message.append('Added:')
+            message.append(', '.join([str(user) for user in added]) + '.')
+
+        if removed:
+            message.append('Removed:')
+            message.append(', '.join([str(user) for user in removed]) + '.')
+
+        return ' '.join(message)
 
     def process(self, message_type, **kwargs):
         try:
-            message = self.message(message_type, kwargs)
+            message = self.message(message_type, **kwargs)
         except KeyError:
             return
 

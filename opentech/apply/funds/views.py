@@ -120,21 +120,15 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         new_reviewers = set(form.instance.reviewers.all())
 
-        message = ['Reviewers updated.']
         added = new_reviewers - old_reviewers
-        if added:
-            message.append('Added:')
-            message.append(', '.join([str(user) for user in added]) + '.')
-
         removed = old_reviewers - new_reviewers
-        if removed:
-            message.append('Removed:')
-            message.append(', '.join([str(user) for user in removed]) + '.')
 
-        Activity.actions.create(
+        messenger(
+            MESSAGES.REVIEWERS_UPDATED,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            message=' '.join(message),
+            added=added,
+            removed=removed,
         )
         return response
 
