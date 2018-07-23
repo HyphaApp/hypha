@@ -6,6 +6,9 @@ from .models import Activity
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'update_lead'
+    NEW_DETERMINATION = 'new_determination'
+    DETERMINATION_OUTCOME = 'determination_outcome'
+
 
 class MessageAdapter:
     def process(self, request, payload):
@@ -15,6 +18,8 @@ class MessageAdapter:
 class ActivityAdapter:
     messages = {
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {new.lead}',
+        MESSAGES.NEW_DETERMINATION: 'Created a determination for {submission.title}',
+        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
     }
 
     def message(self, message_type):
