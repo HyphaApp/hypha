@@ -1,10 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.dispatch import receiver
 
-from django_fsm.signals import post_transition
-
-from opentech.apply.funds.models import ApplicationSubmission
 
 COMMENT = 'comment'
 ACTION = 'action'
@@ -101,18 +97,3 @@ class Activity(models.Model):
     @classmethod
     def visibility_choices_for(cls, user):
         return [(choice, VISIBILITY[choice]) for choice in cls.visibility_for(user)]
-
-
-@receiver(post_transition, sender=ApplicationSubmission)
-def log_status_update(sender, **kwargs):
-    instance = kwargs['instance']
-    old_phase = instance.workflow[kwargs['source']].display_name
-    new_phase = instance.workflow[kwargs['target']].display_name
-
-    by = kwargs['method_kwargs']['by']
-
-    Activity.actions.create(
-        user=by,
-        submission=instance,
-        message=f'Progressed from {old_phase} to {new_phase}'
-    )

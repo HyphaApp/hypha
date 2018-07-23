@@ -19,6 +19,7 @@ from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
+from django_fsm.signals import post_transition
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -963,6 +964,21 @@ def log_submission_activity(sender, **kwargs):
             user=submission.user,
             submission=submission,
         )
+
+
+@receiver(post_transition, sender=ApplicationSubmission)
+def log_status_update(sender, **kwargs):
+    instance = kwargs['instance']
+    old_phase = instance.workflow[kwargs['source']]
+
+    by = kwargs['method_kwargs']['by']
+
+    messenger(
+        MESSAGES.TRANSITION,
+        user=by,
+        submission=instance,
+        old_phase=old_phase,
+    )
 
 
 class ApplicationRevision(models.Model):
