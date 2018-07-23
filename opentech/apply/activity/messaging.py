@@ -40,6 +40,14 @@ class AdapterBase:
         raise NotImplementedError()
 
 
+class MessageAdapter(AdapterBase):
+    messages = {
+        enum: enum.value
+        for enum in MESSAGES.__members__.values()
+    }
+
+    def send_message(self, message, **kwargs):
+        messages.add_message(kwargs['request'], messages.INFO, message)
 
 
 class ActivityAdapter(AdapterBase):
@@ -75,10 +83,13 @@ class ActivityAdapter(AdapterBase):
 
 
 class MessengerBackend:
-    adapters = [ActivityAdapter()]
+    adapters = [
+        ActivityAdapter(),
+        MessageAdapter(),
+    ]
 
-    def __call__(self, message_type, user, submission, **kwargs):
-        return self.send(message_type, user=user, submission=submission, **kwargs)
+    def __call__(self, message_type, request, user, submission, **kwargs):
+        return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
     def send(self, message_type, **kwargs):
         for adapter in self.adapters:

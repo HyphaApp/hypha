@@ -1,0 +1,11 @@
+.messages {
+
+    &__text {
+        padding: 10px;
+
+        &-info {
+            background: $color--pastel-green;
+            border: solid 1px darken($color--pastel-green, 20%);
+        }
+    }
+}

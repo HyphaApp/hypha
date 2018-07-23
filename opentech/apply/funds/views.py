@@ -100,6 +100,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         messenger(
             MESSAGES.UPDATE_LEAD,
+            request=self.request,
             user=self.request.user,
             submission=form.instance,
             old=old,
