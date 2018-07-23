@@ -32,7 +32,10 @@ class ReviewContextMixin:
 def get_form_for_stage(submission):
     forms = submission.page.specific.review_forms.all()
     index = submission.workflow.stages.index(submission.stage)
-    return forms[index].form
+    try:
+        return forms[index].form
+    except IndexError:
+        return forms[0].form
 
 
 class ReviewCreateOrUpdateView(CreateOrUpdateView):
