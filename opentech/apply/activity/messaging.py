@@ -12,6 +12,7 @@ class MESSAGES(Enum):
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
     REVIEWERS_UPDATED = 'reviewers_updated'
+    NEW_REVIEW = 'new_review'
     COMMENT = 'comment'
 
 
@@ -29,6 +30,7 @@ class ActivityAdapter:
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
         MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
+        MESSAGES.NEW_REVIEW: 'Created a review for {submission.title}'
     }
 
     def message(self, message_type, **kwargs):

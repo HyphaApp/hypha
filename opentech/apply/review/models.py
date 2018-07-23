@@ -5,8 +5,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 
-from opentech.apply.activity.models import Activity
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.users.models import User
+
 
 NO = 0
 MAYBE = 1
@@ -92,8 +93,8 @@ def update_submission_reviewers_list(sender, **kwargs):
         review.submission.reviewers.add(review.author)
 
     if kwargs.get('created', False):
-        Activity.actions.create(
+        messenger(
+            MESSAGES.NEW_REVIEW,
             user=review.author,
             submission=review.submission,
-            message=f'Created a review for {review.submission.title}'
         )
