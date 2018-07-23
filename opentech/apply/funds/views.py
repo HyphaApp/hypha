@@ -98,13 +98,11 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         # Fetch the old lead from the database
         old = copy(self.get_object())
         response = super().form_valid(form)
-        new = form.instance
         messenger(
             MESSAGES.UPDATE_LEAD,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            submission=form.instance,
             old=old,
-            new=new,
         )
         return response
 
