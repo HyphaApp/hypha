@@ -16,12 +16,33 @@ class MESSAGES(Enum):
     COMMENT = 'comment'
 
 
-class MessageAdapter:
-    def process(self, request, payload):
-        messages.add_message(request, messages.INFO, 'Hello world.')
+class AdapterBase:
+    messages = {}
+
+    def message(self, message_type, **kwargs):
+        message = self.messages[message_type]
+        try:
+            # see if its a method on the adapter
+            method = getattr(self, message)
+        except AttributeError:
+            return message.format(**kwargs)
+        else:
+            return method(**kwargs)
+
+    def process(self, message_type, **kwargs):
+        try:
+            message = self.message(message_type, **kwargs)
+        except KeyError:
+            return
+        self.send_message(message, **kwargs)
+
+    def send_message(self, message, **kwargs):
+        raise NotImplementedError()
 
 
-class ActivityAdapter:
+
+
+class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
@@ -32,15 +53,6 @@ class ActivityAdapter:
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Created a review for {submission.title}'
     }
-
-    def message(self, message_type, **kwargs):
-        message = self.messages[message_type]
-        try:
-            method = getattr(self, message)
-        except AttributeError:
-            return message.format(**kwargs)
-        else:
-            return method(**kwargs)
 
     def reviewers_updated(self, added, removed, **kwargs):
         message = ['Reviewers updated.']
@@ -54,15 +66,10 @@ class ActivityAdapter:
 
         return ' '.join(message)
 
-    def process(self, message_type, **kwargs):
-        try:
-            message = self.message(message_type, **kwargs)
-        except KeyError:
-            return
-
+    def send_message(self, message, user, submission, **kwargs):
         Activity.actions.create(
-            user=kwargs['user'],
-            submission=kwargs['submission'],
+            user=user,
+            submission=submission,
             message=message,
         )
 
