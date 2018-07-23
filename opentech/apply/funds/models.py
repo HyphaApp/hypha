@@ -10,6 +10,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -33,6 +35,7 @@ from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
 
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
@@ -948,6 +951,18 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+
+@receiver(post_save, sender=ApplicationSubmission)
+def log_submission_activity(sender, **kwargs):
+    if kwargs.get('created', False):
+        submission = kwargs.get('instance')
+
+        messenger(
+            MESSAGES.NEW_APPLICATION,
+            user=submission.user,
+            submission=submission,
+        )
 
 
 class ApplicationRevision(models.Model):

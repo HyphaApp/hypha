@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from django_fsm.signals import post_transition
@@ -102,18 +101,6 @@ class Activity(models.Model):
     @classmethod
     def visibility_choices_for(cls, user):
         return [(choice, VISIBILITY[choice]) for choice in cls.visibility_for(user)]
-
-
-@receiver(post_save, sender=ApplicationSubmission)
-def log_submission_activity(sender, **kwargs):
-    if kwargs.get('created', False):
-        submission = kwargs.get('instance')
-
-        Activity.actions.create(
-            user=submission.user,
-            submission=submission,
-            message=f'Submitted {submission.title} for {submission.page.title}'
-        )
 
 
 @receiver(post_transition, sender=ApplicationSubmission)

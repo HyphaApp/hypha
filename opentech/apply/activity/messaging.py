@@ -6,6 +6,7 @@ from .models import Activity
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'update_lead'
+    NEW_SUBMISSION = 'new_submission'
     NEW_DETERMINATION = 'new_determination'
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
@@ -19,6 +20,7 @@ class MessageAdapter:
 
 class ActivityAdapter:
     messages = {
+        MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {new.lead}',
         MESSAGES.NEW_DETERMINATION: 'Created a determination for {submission.title}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
