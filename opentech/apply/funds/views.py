@@ -1,3 +1,5 @@
+from copy import copy
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -16,6 +18,7 @@ from opentech.apply.activity.views import (
     CommentFormView,
     DelegatedViewMixin,
 )
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.activity.models import Activity
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
@@ -93,13 +96,15 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old_lead = self.get_object().lead
+        old = copy(self.get_object())
         response = super().form_valid(form)
-        new_lead = form.instance.lead
-        Activity.actions.create(
+        new = form.instance
+        messenger(
+            MESSAGES.UPDATE_LEAD,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            message=f'Lead changed from {old_lead} to {new_lead}'
+            old=old,
+            new=new,
         )
         return response
 
