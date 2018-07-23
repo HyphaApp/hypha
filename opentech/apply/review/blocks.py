@@ -64,6 +64,7 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
 
     class Meta:
         icon = 'openquote'
+        template = 'stream_forms/render_unsafe_field.html'
 
 
 class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
