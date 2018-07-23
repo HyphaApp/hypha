@@ -12,6 +12,7 @@ class MESSAGES(Enum):
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
     REVIEWERS_UPDATED = 'reviewers_updated'
+    COMMENT = 'comment'
 
 
 class MessageAdapter:
