@@ -24,19 +24,19 @@ class ActivityAdapter:
         MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
     }
 
-    def message(self, message_type):
-        return self.messages[message_type]
+    def message(self, message_type, **kwargs):
+        return self.messages[message_type].format(**kwargs)
 
     def process(self, message_type, **kwargs):
         try:
-            message = self.message(message_type)
+            message = self.message(message_type, kwargs)
         except KeyError:
             return
 
         Activity.actions.create(
             user=kwargs['user'],
             submission=kwargs['submission'],
-            message=message.format(**kwargs),
+            message=message,
         )
 
 
