@@ -75,7 +75,7 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        if self.object.created:
+        if not self.object.is_draft:
             messenger(
                 MESSAGES.NEW_REVIEW,
                 request=self.request,
