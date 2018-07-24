@@ -10,7 +10,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.http import Http404
 from django.template.loader import render_to_string

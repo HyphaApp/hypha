@@ -19,7 +19,6 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.activity.models import Activity
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
