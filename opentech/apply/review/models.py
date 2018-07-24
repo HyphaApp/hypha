@@ -5,7 +5,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.users.models import User
 
 
@@ -89,12 +88,6 @@ class Review(models.Model):
 def update_submission_reviewers_list(sender, **kwargs):
     review = kwargs.get('instance')
 
+    # Make sure the reviewer is in the reviewers list on the submission
     if not review.submission.reviewers.filter(id=review.author.id).exists():
         review.submission.reviewers.add(review.author)
-
-    if kwargs.get('created', False):
-        messenger(
-            MESSAGES.NEW_REVIEW,
-            user=review.author,
-            submission=review.submission,
-        )
