@@ -33,14 +33,6 @@
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
         {% hijack_notification %}
 
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="messages__text{% if message.tags %} messages__text-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
         {% if GOOGLE_TAG_MANAGER_ID %}
             {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
             <!-- Google Tag Manager (noscript) -->
@@ -52,6 +44,19 @@
         {% include "includes/sprites.html" %}
 
         {% wagtailuserbar %}
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="messages__text{% if message.tags %} messages__text--{{ message.tags }} js-message"{% endif %}>
+                    {{ message }}
+                    <a href="#" class="messages__close js-close-message">
+                        <svg class="icon icon--close"><use xlink:href="#cross"></use></svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
         <header class="header">
 
