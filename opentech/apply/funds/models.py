@@ -123,7 +123,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         # We only reach this page after creation of a new submission
         # Hook in to notify about new applications
         messenger(
-            MESSAGES.NEW_APPLICATION,
+            MESSAGES.NEW_SUBMISSION,
             request=request,
             user=form_submission.user,
             submission=form_submission,

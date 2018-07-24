@@ -5,6 +5,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import RequestFactory, TestCase
@@ -206,6 +207,8 @@ class TestFormSubmission(TestCase):
         request = self.request_factory.post('', data)
         request.user = user
         request.site = self.site
+        request.session = {}
+        request._messages = FallbackStorage(request)
 
         try:
             response = page.get_parent().serve(request)

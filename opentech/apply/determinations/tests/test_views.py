@@ -99,7 +99,7 @@ class DeterminationFormTestCase(BaseTestCase):
         }, 'form')
         self.assertContains(response, '[Draft] Approved')
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))
-        self.assertContains(response, 'Accepted determination draft message')
+        self.assertNotContains(response, 'Accepted determination draft message')
 
     def test_cannot_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
