@@ -87,7 +87,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             )
             action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
 
-            self.submission.perform_transition(action_name, self.request.user)
+            self.submission.perform_transition(action_name, self.request.user, request=self.request)
         elif is_new:
             messenger(
                 MESSAGES.NEW_DETERMINATION,
@@ -100,7 +100,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
     def progress_stage(self, instance):
         try:
-            instance.perform_transition('draft_proposal', self.request.user)
+            instance.perform_transition('draft_proposal', self.request.user, request=self.request)
         except PermissionDenied:
             pass
         else:

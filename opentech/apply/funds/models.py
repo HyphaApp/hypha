@@ -598,7 +598,7 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_actions_for_user'] = get_actions_for_user
 
-        def perform_transition(self, action, user):
+        def perform_transition(self, action, user, request=None):
             transition = self.get_transition(action)
             if not transition:
                 raise PermissionDenied(f'Invalid "{ action }" transition')
@@ -606,7 +606,7 @@ class AddTransitions(models.base.ModelBase):
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
 
-            transition(by=user)
+            transition(by=user, request=request)
             self.save()
 
         attrs['perform_transition'] = perform_transition
@@ -971,13 +971,16 @@ def log_status_update(sender, **kwargs):
     old_phase = instance.workflow[kwargs['source']]
 
     by = kwargs['method_kwargs']['by']
+    request = kwargs['method_kwargs']['request']
 
-    messenger(
-        MESSAGES.TRANSITION,
-        user=by,
-        submission=instance,
-        old_phase=old_phase,
-    )
+    if request:
+        messenger(
+            MESSAGES.TRANSITION,
+            user=by,
+            request=request,
+            submission=instance,
+            old_phase=old_phase,
+        )
 
 
 class ApplicationRevision(models.Model):

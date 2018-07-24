@@ -83,7 +83,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
-        self.object.perform_transition(action, self.request.user)
+        self.object.perform_transition(action, self.request.user, request=self.request)
 
         return super().form_valid(form)
 
@@ -226,7 +226,7 @@ class SubmissionEditView(UpdateView):
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
         transition = self.transitions[action.pop()]
-        self.object.perform_transition(transition.target, self.request.user)
+        self.object.perform_transition(transition.target, self.request.user, request=self.request)
 
         return HttpResponseRedirect(self.get_success_url())
 
