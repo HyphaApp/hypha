@@ -2,17 +2,12 @@ import bleach
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.fields import RichTextField
-
-from opentech.apply.activity.models import Activity
-from opentech.apply.activity.messaging import messenger, MESSAGES
 
 
 REJECTED = 0
@@ -66,26 +61,6 @@ class Determination(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.data)}>'
-
-
-@receiver(post_save, sender=Determination)
-def log_determination_activity(sender, **kwargs):
-    determination = kwargs.get('instance')
-
-    if kwargs.get('created', False):
-        messenger(
-            MESSAGES.NEW_DETERMINATION,
-            user=determination.author,
-            submission=determination.submission,
-        )
-
-    if not kwargs.get('is_draft', False):
-        submission = determination.submission
-        messenger(
-            MESSAGES.DETERMINATION_OUTCOME,
-            user=determination.author,
-            submission=submission,
-        )
 
 
 @register_setting
