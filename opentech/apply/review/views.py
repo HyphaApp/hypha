@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.review.blocks import ScoreFieldBlock
+from opentech.apply.review.blocks import ScoreFieldBlock, RecommendationBlock
 from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
 from opentech.apply.users.decorators import staff_required
@@ -128,20 +128,22 @@ class ReviewListView(ListView):
             # Add the name header row
             review_data.setdefault('', []).append(str(review.author))
             review_data.setdefault('Score', []).append(str(review.score))
+            review_data.setdefault('Recommendation', []).append(review.get_recommendation_display())
 
             for data, field in review.data_and_fields():
-                title = field.value['field_label']
-                review_data.setdefault(title, [])
+                if not isinstance(field.block, RecommendationBlock):
+                    title = field.value['field_label']
+                    review_data.setdefault(title, [])
 
-                if isinstance(field.block, ScoreFieldBlock):
-                    value = json.loads(data)
-                    review_data.setdefault(title, []).append(str(value[0]))
-                    review_data.setdefault(f'Rate {title}', [])
+                    if isinstance(field.block, ScoreFieldBlock):
+                        value = json.loads(data)
+                        review_data.setdefault(title, []).append(str(value[0]))
+                        review_data.setdefault(f'Rate {title}', [])
 
-                    rating = int(value[1])
-                    review_data.setdefault(f'Rate {title}', []).append(RATE_CHOICES_DICT.get(rating, RATE_CHOICE_NA))
-                else:
-                    review_data.setdefault(title, []).append(str(data))
+                        rating = int(value[1])
+                        review_data.setdefault(f'Rate {title}', []).append(RATE_CHOICES_DICT.get(rating, RATE_CHOICE_NA))
+                    else:
+                        review_data.setdefault(title, []).append(str(data))
 
         return super().get_context_data(
             submission=self.submission,
