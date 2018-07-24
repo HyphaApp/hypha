@@ -120,6 +120,17 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             form_index = self.workflow.stages.index(stage)
         return self.forms.all()[form_index].fields
 
+    def render_landing_page(self, request, form_submission=None, *args, **kwargs):
+        # We only reach this page after creation of a new submission
+        # Hook in to notify about new applications
+        messenger(
+            MESSAGES.NEW_APPLICATION,
+            request=request,
+            user=form_submission.user,
+            submission=form_submission,
+        )
+        return super().render_landing_page(request, form_submission=None, *args, **kwargs)
+
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
         InlinePanel('forms', label="Forms"),
@@ -952,18 +963,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
-
-
-@receiver(post_save, sender=ApplicationSubmission)
-def log_submission_activity(sender, **kwargs):
-    if kwargs.get('created', False):
-        submission = kwargs.get('instance')
-
-        messenger(
-            MESSAGES.NEW_APPLICATION,
-            user=submission.user,
-            submission=submission,
-        )
 
 
 @receiver(post_transition, sender=ApplicationSubmission)
