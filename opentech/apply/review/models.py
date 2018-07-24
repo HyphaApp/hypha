@@ -13,10 +13,10 @@ from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
-from .blocks import ReviewCustomFormFieldsBlock, RecommendationBlock
+from .blocks import ReviewCustomFormFieldsBlock
 
 
-class ReviewForm(BaseStreamForm, models.Model):
+class ReviewForm(models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
 
@@ -27,13 +27,6 @@ class ReviewForm(BaseStreamForm, models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_recommendation_field(self):
-        field_blocks = self.get_defined_fields()
-        for struct_child in field_blocks:
-            block = struct_child.block
-            if isinstance(block, RecommendationBlock):
-                return struct_child.id
 
 
 class ReviewQuerySet(models.QuerySet):

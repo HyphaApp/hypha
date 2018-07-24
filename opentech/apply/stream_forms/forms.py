@@ -1,3 +1,4 @@
+from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass
 
 from wagtail.contrib.forms.forms import BaseForm
@@ -15,7 +16,7 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
         return new_class
 
 
-class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
+class StreamBaseForm(forms.Form, metaclass=MixedFieldMetaclass):
     def swap_fields_for_display(func):
         def wrapped(self, *args, **kwargs):
             # Replaces the form fields with the display fields
@@ -33,6 +34,11 @@ class StreamBaseForm(BaseForm, metaclass=MixedFieldMetaclass):
     @swap_fields_for_display
     def _html_output(self, *args, **kwargs):
         return super()._html_output(*args, **kwargs)
+
+
+class PageStreamBaseForm(BaseForm, StreamBaseForm):
+    # Adds page and user reference to the form class
+    pass
 
 
 class BlockFieldWrapper:

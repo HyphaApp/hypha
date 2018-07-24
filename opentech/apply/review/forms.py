@@ -5,11 +5,28 @@ from django.core.exceptions import NON_FIELD_ERRORS
 
 from opentech.apply.review.blocks import ScoredAnswerField
 from opentech.apply.review.options import NA
+from opentech.apply.stream_forms.forms import StreamBaseForm
 
+from .blocks import RecommendationBlock
 from .models import Review
 
 
-class ReviewModelForm(forms.ModelForm):
+def get_recommendation_field(fields):
+    for field in fields:
+        try:
+            block = field.block
+        except AttributeError:
+            pass
+        else:
+            if isinstance(block, RecommendationBlock):
+                return field.id
+
+
+class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
+    pass
+
+
+class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
     draft_button_name = "save_draft"
 
     class Meta:
@@ -29,7 +46,7 @@ class ReviewModelForm(forms.ModelForm):
             }
         }
 
-    def __init__(self, *args, user, submission, review_form, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, user, submission, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
         initial.update(author=user.id)
 
@@ -39,11 +56,6 @@ class ReviewModelForm(forms.ModelForm):
                     initial[key] = value
 
         super().__init__(*args, initial=initial, instance=instance, **kwargs)
-        self.review_form = review_form
-        self.form_fields = review_form.get_form_fields()
-
-        for name, field in self.form_fields.items():
-            self.fields.update({name: field})
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
@@ -63,19 +75,19 @@ class ReviewModelForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
-        self.instance.score = self.calculate_score()
-        self.instance.recommendation = self.cleaned_data[self.review_form.get_recommendation_field()]
+        self.instance.score = self.calculate_score(self.cleaned_data)
+        self.instance.recommendation = self.cleaned_data[get_recommendation_field(self.instance.form_fields)]
         self.instance.is_draft = self.draft_button_name in self.data
+
         self.instance.form_data = self.cleaned_data['form_data']
-        self.instance.form_fields = self.review_form.get_defined_fields()
 
         return super().save(commit)
 
-    def calculate_score(self):
+    def calculate_score(self, data):
         scores = list()
 
         for field in self.get_score_fields():
-            value = json.loads(self.cleaned_data.get(field, '[null, null]'))
+            value = json.loads(data.get(field, '[null, null]'))
 
             try:
                 score = int(value[1])

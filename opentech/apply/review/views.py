@@ -12,6 +12,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import ScoreFieldBlock, RecommendationBlock
 from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
+from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
@@ -29,16 +30,17 @@ class ReviewContextMixin:
         )
 
 
-def get_form_for_stage(submission):
+def get_fields_for_stage(submission):
     forms = submission.page.specific.review_forms.all()
     index = submission.workflow.stages.index(submission.stage)
     try:
-        return forms[index].form
+        return forms[index].form.form_fields
     except IndexError:
-        return forms[0].form
+        return forms[0].form.form_fields
 
 
-class ReviewCreateOrUpdateView(CreateOrUpdateView):
+class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
+    submission_form_class = ReviewModelForm
     model = Review
     template_name = 'review/review_form.html'
 
@@ -65,22 +67,21 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
             **kwargs
         )
 
-    def get_form_class(self):
-        return ReviewModelForm
+    def get_defined_fields(self):
+        return get_fields_for_stage(self.submission)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
-        kwargs['review_form'] = get_form_for_stage(self.submission)
 
         if self.object:
             kwargs['initial'] = self.object.form_data
-            kwargs['initial']['recommendation'] = self.object.recommendation
 
         return kwargs
 
     def form_valid(self, form):
+        form.instance.form_fields = self.get_defined_fields()
         response = super().form_valid(form)
 
         if not self.object.is_draft:
