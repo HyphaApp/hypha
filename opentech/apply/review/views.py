@@ -124,26 +124,29 @@ class ReviewListView(ListView):
     def get_context_data(self, **kwargs):
         review_data = {}
 
+        # Add the header rows
+        review_data['title'] = {'question': '', 'answers': list()}
+        review_data['score'] = {'question': 'Overall Score', 'answers': list()}
+        review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
+
         for review in self.object_list:
-            # Add the name header row
-            review_data.setdefault('', []).append(str(review.author))
-            review_data.setdefault('Score', []).append(str(review.score))
-            review_data.setdefault('Recommendation', []).append(review.get_recommendation_display())
+            review_data['title']['answers'].append(str(review.author))
+            review_data['score']['answers'].append(str(review.score))
+            review_data['recommendation']['answers'].append(review.get_recommendation_display())
 
             for data, field in review.data_and_fields():
                 if not isinstance(field.block, RecommendationBlock):
-                    title = field.value['field_label']
-                    review_data.setdefault(title, [])
+                    question = field.value['field_label']
+                    review_data.setdefault(field.id, {'question': question, 'answers': list()})
 
                     if isinstance(field.block, ScoreFieldBlock):
                         value = json.loads(data)
-                        review_data.setdefault(title, []).append(str(value[0]))
-                        review_data.setdefault(f'Rate {title}', [])
-
-                        rating = int(value[1])
-                        review_data.setdefault(f'Rate {title}', []).append(RATE_CHOICES_DICT.get(rating, RATE_CHOICE_NA))
+                        rating_value = int(value[1])
+                        rating = RATE_CHOICES_DICT.get(rating_value, RATE_CHOICE_NA)
+                        comment = str(value[0])
+                        review_data[field.id]['answers'].append(rating + comment)
                     else:
-                        review_data.setdefault(title, []).append(str(data))
+                        review_data[field.id]['answers'].append(str(data))
 
         return super().get_context_data(
             submission=self.submission,
