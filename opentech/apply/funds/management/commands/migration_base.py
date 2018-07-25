@@ -58,7 +58,12 @@ class MigrateCommand(BaseCommand):
             submission.page = FUND
             ROUND = Round.objects.get(title=self.ROUND_NAME)
             submission.round = ROUND
-            FORM = RoundForm.objects.get(round=ROUND)
+            if self.APPLICATION_TYPE == "request":
+                FORM = RoundForm.objects.get(round=ROUND)
+            elif self.APPLICATION_TYPE == "concept":
+                FORM = RoundForm.objects.filter(round=ROUND)[0]
+            elif self.APPLICATION_TYPE == "proposal":
+                FORM = RoundForm.objects.filter(round=ROUND)[1]
             submission.form_fields = FORM.form.form_fields
         elif self.CONTENT_TYPE == "lab":
             LAB = LabType.objects.get(title=self.LAB_NAME)
