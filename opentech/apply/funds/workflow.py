@@ -299,7 +299,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Proposal,
-        'permissions': ReviewerReviewPermission(),
+        'permissions': Permission(),
         'step': 7,
     },
     'post_proposal_review_more_info': {
@@ -317,7 +317,7 @@ DoubleStageDefinition = {
         },
         'display': 'Advisory Council Review',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': ReviewerReviewPermission(),
         'step': 8,
     },
     'post_external_review_discussion': {
@@ -392,7 +392,7 @@ def get_review_statuses(user=None):
     reviews = set()
 
     for phase_name, phase in PHASES:
-        if 'review' in phase_name:
+        if 'review' in phase_name and 'discussion' not in phase_name:
             if user is None:
                 reviews.add(phase_name)
             elif phase.permissions.can_review(user):

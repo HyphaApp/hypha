@@ -543,9 +543,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def in_review(self):
         return self.filter(status__in=review_statuses)
 
-    def in_review_for(self, user):
+    def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_statuses(user)
-        return self.filter(status__in=user_review_statuses).filter(reviewers=user).exclude(reviews__author=user)
+        qs = self.filter(status__in=user_review_statuses).exclude(reviews__author=user)
+        if assigned:
+            qs = qs.filter(reviewers=user)
+        return qs
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)

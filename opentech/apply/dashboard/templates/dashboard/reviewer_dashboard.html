@@ -1,0 +1,37 @@
+{% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
+
+{% block title %}OTF reviewer Dashboard{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--large">
+        {% block page_header %}
+            <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
+        {% endblock %}
+    </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            <h3>Applications to review</h3>
+            {% if my_review.data %}
+                <p>These are applications for which your review has been requested.</p>
+                {% render_table my_review %}
+            {% else %}
+                No reviews to complete
+            {% endif %}
+        </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <h3>Other Applications in review</h3>
+        {% if also_in_review.data %}
+            <p>You are not assigned to review these applications but they may be of interest</p>
+            {% render_table also_in_review %}
+        {% else %}
+            There are no other applications in review
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
