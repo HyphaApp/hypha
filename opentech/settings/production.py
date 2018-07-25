@@ -106,6 +106,8 @@ else:
     }
 
 
+SLACK_DESTINATION = env.get('SLACK_DESTINATION', None)
+
 # Logging
 
 if 'LOG_DIR' in env:

@@ -102,6 +102,9 @@ class SlackAdapter(AdapterBase):
             return str(user)
 
     def send_message(self, message, user, **kwargs):
+        if not self.destination:
+            return
+
         message = ' '.join([self.slack_id(user), message])
         data = {
             "room": "CBQUCH458",
