@@ -317,8 +317,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:account'
-SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:login'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:dashboard'
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
 # Create / associate accounts (including by email)
