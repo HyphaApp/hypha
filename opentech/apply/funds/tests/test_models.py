@@ -202,7 +202,7 @@ class TestFormSubmission(TestCase):
         page = page or self.round_page
         fields = page.get_form_fields()
         data = {k: v for k, v in zip(fields, ['project', 0, email, name])}
-        request = make_request(self.user, data, method='post', site=self.site)
+        request = make_request(user, data, method='post', site=self.site)
 
         try:
             response = page.get_parent().serve(request)
