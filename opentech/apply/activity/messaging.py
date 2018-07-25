@@ -83,10 +83,8 @@ class ActivityAdapter(AdapterBase):
 
 
 class MessengerBackend:
-    adapters = [
-        ActivityAdapter(),
-        MessageAdapter(),
-    ]
+    def __init__(self, *adpaters):
+        self.adapters = adpaters
 
     def __call__(self, message_type, request, user, submission, **kwargs):
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
@@ -96,4 +94,10 @@ class MessengerBackend:
             adapter.process(message_type, **kwargs)
 
 
-messenger = MessengerBackend()
+adapters = [
+    ActivityAdapter(),
+    MessageAdapter(),
+]
+
+
+messenger = MessengerBackend(*adapters)

@@ -1,8 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test import TestCase
 
-from ..messaging import AdapterBase, MESSAGES
+from ..messaging import AdapterBase, MessengerBackend, MESSAGES
 
 
 class TestAdapter(AdapterBase):
@@ -59,3 +59,28 @@ class TestBaseAdapter(TestCase):
         self.adapter.process(message_type, message=message)
 
         self.adapter.send_message.assert_called_once_with(message, message=message)
+
+
+class TestMessageBackend(TestCase):
+    def setUp(self):
+        self.mocked_adapter = Mock(AdapterBase)
+        self.backend = MessengerBackend
+
+    def test_message_sent_to_adapter(self):
+        adapter = self.mocked_adapter()
+        messenger = self.backend(adapter)
+
+        kwargs = {'request': None, 'user': None, 'submission': None}
+        messenger(MESSAGES.UPDATE_LEAD, **kwargs)
+
+        adapter.process.assert_called_once_with(MESSAGES.UPDATE_LEAD, **kwargs)
+
+    def test_message_sent_to_all_adapter(self):
+        adapters = [self.mocked_adapter(), self.mocked_adapter()]
+        messenger = self.backend(*adapters)
+
+        kwargs = {'request': None, 'user': None, 'submission': None}
+        messenger(MESSAGES.UPDATE_LEAD, **kwargs)
+
+        adapter = adapters[0]
+        self.assertEqual(adapter.process.call_count, len(adapters))
