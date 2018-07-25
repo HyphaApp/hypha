@@ -2,6 +2,7 @@ from opentech.apply.funds.management.commands.migration_base import MigrateComma
 
 
 class Command(MigrateCommand):
+    CONTENT_TYPE = "fund"
     FUND_NAME = "Rapid Response"
     ROUND_NAME = "Rapid Response open round"
     APPLICATION_TYPE = "request"
