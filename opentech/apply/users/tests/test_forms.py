@@ -48,6 +48,13 @@ class TestStaffProfileForm(BaseTestProfileForm):
     def setUp(self):
         self.staff = StaffFactory()
 
+    def test_cant_change_password(self):
+        new_email = 'me@this.com'
+        form = self.submit_form(self.staff, email=new_email)
+        self.assertFalse('email' in form.fields)
+        self.staff.refresh_from_db()
+        self.assertNotEqual(new_email, self.staff.email)
+
     def test_can_set_slack_name(self):
         slack_name = '@foobar'
         self.submit_form(self.staff, slack=slack_name)

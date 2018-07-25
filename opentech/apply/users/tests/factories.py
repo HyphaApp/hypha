@@ -41,7 +41,7 @@ class AdminFactory(UserFactory):
     is_admin = True
 
 
-class StaffFactory(UserFactory):
+class StaffFactory(OAuthUserFactory):
     class Meta:
         exclude = ('slack_temp', )
     is_staff = True
