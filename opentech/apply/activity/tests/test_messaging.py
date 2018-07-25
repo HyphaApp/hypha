@@ -28,3 +28,34 @@ class TestBaseAdapter(TestCase):
         self.adapter.process(message_type)
 
         self.adapter.send_message.assert_called_once_with(message_type.value)
+
+    def test_doesnt_send_a_message_if_not_configured(self):
+        self.adapter.process('this_is_not_a_message_type')
+
+        self.adapter.send_message.assert_not_called()
+
+    def test_calls_method_if_avaliable(self):
+        method_name = 'new_method'
+        return_message = 'Returned message'
+        setattr(self.adapter, method_name, lambda: return_message)
+        self.adapter.messages[method_name] = method_name
+
+        self.adapter.process(method_name)
+
+        self.adapter.send_message.assert_called_once_with(return_message)
+
+    def test_that_kwargs_passed_to_send_message(self):
+        message_type = MESSAGES.UPDATE_LEAD
+        kwargs = {'test': 'that', 'these': 'exist'}
+        self.adapter.process(message_type, **kwargs)
+
+        self.adapter.send_message.assert_called_once_with(message_type.value, **kwargs)
+
+    def test_that_message_is_formatted(self):
+        message_type = MESSAGES.UPDATE_LEAD
+        self.adapter.messages[message_type] = '{message}'
+        message = 'message value'
+
+        self.adapter.process(message_type, message=message)
+
+        self.adapter.send_message.assert_called_once_with(message, message=message)
