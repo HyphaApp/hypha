@@ -2,8 +2,6 @@ import bleach
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel
@@ -11,7 +9,6 @@ from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.fields import RichTextField
 
-from opentech.apply.activity.models import Activity
 
 REJECTED = 0
 NEEDS_MORE_INFO = 1
@@ -48,6 +45,10 @@ class Determination(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
 
+    @property
+    def clean_message(self):
+        return bleach.clean(self.message, tags=[], strip=True)
+
     def get_absolute_url(self):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))
 
@@ -60,28 +61,6 @@ class Determination(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.data)}>'
-
-
-@receiver(post_save, sender=Determination)
-def log_determination_activity(sender, **kwargs):
-    determination = kwargs.get('instance')
-
-    if kwargs.get('created', False):
-        Activity.actions.create(
-            user=determination.author,
-            submission=determination.submission,
-            message=f'Created a determination for {determination.submission.title}'
-        )
-
-    if not kwargs.get('is_draft', False):
-        submission = determination.submission
-        message = bleach.clean(determination.message, tags=[], strip=True)
-        outcome = determination.get_outcome_display()
-        Activity.actions.create(
-            user=determination.author,
-            submission=submission,
-            message=f"Sent a {outcome} determination for {submission.title}:\r\n{message}"
-        )
 
 
 @register_setting

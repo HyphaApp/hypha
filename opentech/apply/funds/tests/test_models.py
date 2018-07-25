@@ -7,12 +7,13 @@ from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 
 from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import Request
+from opentech.apply.utils.tests import make_request
 
 from .factories import (
     ApplicationSubmissionFactory,
@@ -184,7 +185,6 @@ class TestFormSubmission(TestCase):
         self.email = 'test@test.com'
         self.name = 'My Name'
 
-        self.request_factory = RequestFactory()
         fund = FundTypeFactory()
 
         self.site.root_page = fund
@@ -202,10 +202,7 @@ class TestFormSubmission(TestCase):
         page = page or self.round_page
         fields = page.get_form_fields()
         data = {k: v for k, v in zip(fields, ['project', 0, email, name])}
-
-        request = self.request_factory.post('', data)
-        request.user = user
-        request.site = self.site
+        request = make_request(user, data, method='post', site=self.site)
 
         try:
             response = page.get_parent().serve(request)

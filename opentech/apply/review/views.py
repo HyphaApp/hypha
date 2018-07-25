@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
@@ -70,6 +71,18 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
             kwargs['initial']['recommendation'] = self.object.recommendation
 
         return kwargs
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        if not self.object.is_draft:
+            messenger(
+                MESSAGES.NEW_REVIEW,
+                request=self.request,
+                user=self.object.author,
+                submission=self.submission,
+            )
+        return response
 
     def get_success_url(self):
         return self.submission.get_absolute_url()

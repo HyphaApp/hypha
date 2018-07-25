@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
@@ -73,20 +74,42 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
+        is_new = not form.instance.id
+
         response = super().form_valid(form)
 
         if not self.object.is_draft:
+            messenger(
+                MESSAGES.DETERMINATION_OUTCOME,
+                request=self.request,
+                user=self.object.author,
+                submission=self.object.submission,
+            )
             action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
-            self.submission.perform_transition(action_name, self.request.user)
+
+            self.submission.perform_transition(action_name, self.request.user, request=self.request)
+        elif is_new:
+            messenger(
+                MESSAGES.NEW_DETERMINATION,
+                request=self.request,
+                user=self.object.author,
+                submission=self.object.submission,
+            )
 
         return self.progress_stage(self.submission) or response
 
     def progress_stage(self, instance):
         try:
-            instance.perform_transition('draft_proposal', self.request.user)
+            instance.perform_transition('draft_proposal', self.request.user, request=self.request)
         except PermissionDenied:
             pass
         else:
+            messenger(
+                MESSAGES.INVITED_TO_PROPOSAL,
+                request=self.request,
+                user=self.request.user,
+                submission=instance,
+            )
             return HttpResponseRedirect(instance.get_absolute_url())
 
     def get_action_name_from_determination(self, determination):

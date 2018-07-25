@@ -5,8 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 
-from opentech.apply.activity.models import Activity
 from opentech.apply.users.models import User
+
 
 NO = 0
 MAYBE = 1
@@ -88,12 +88,6 @@ class Review(models.Model):
 def update_submission_reviewers_list(sender, **kwargs):
     review = kwargs.get('instance')
 
+    # Make sure the reviewer is in the reviewers list on the submission
     if not review.submission.reviewers.filter(id=review.author.id).exists():
         review.submission.reviewers.add(review.author)
-
-    if kwargs.get('created', False):
-        Activity.actions.create(
-            user=review.author,
-            submission=review.submission,
-            message=f'Created a review for {review.submission.title}'
-        )

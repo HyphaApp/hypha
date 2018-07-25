@@ -10,6 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
+from django.dispatch import receiver
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -17,6 +18,7 @@ from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
 from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
+from django_fsm.signals import post_transition
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -33,6 +35,7 @@ from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
 
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
@@ -115,6 +118,17 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         else:
             form_index = self.workflow.stages.index(stage)
         return self.forms.all()[form_index].fields
+
+    def render_landing_page(self, request, form_submission=None, *args, **kwargs):
+        # We only reach this page after creation of a new submission
+        # Hook in to notify about new applications
+        messenger(
+            MESSAGES.NEW_SUBMISSION,
+            request=request,
+            user=form_submission.user,
+            submission=form_submission,
+        )
+        return super().render_landing_page(request, form_submission=None, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
@@ -583,7 +597,7 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_actions_for_user'] = get_actions_for_user
 
-        def perform_transition(self, action, user):
+        def perform_transition(self, action, user, request=None):
             transition = self.get_transition(action)
             if not transition:
                 raise PermissionDenied(f'Invalid "{ action }" transition')
@@ -591,7 +605,7 @@ class AddTransitions(models.base.ModelBase):
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
 
-            transition(by=user)
+            transition(by=user, request=request)
             self.save()
 
         attrs['perform_transition'] = perform_transition
@@ -948,6 +962,24 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+
+@receiver(post_transition, sender=ApplicationSubmission)
+def log_status_update(sender, **kwargs):
+    instance = kwargs['instance']
+    old_phase = instance.workflow[kwargs['source']]
+
+    by = kwargs['method_kwargs']['by']
+    request = kwargs['method_kwargs']['request']
+
+    if request:
+        messenger(
+            MESSAGES.TRANSITION,
+            user=by,
+            request=request,
+            submission=instance,
+            old_phase=old_phase,
+        )
 
 
 class ApplicationRevision(models.Model):

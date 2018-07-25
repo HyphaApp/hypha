@@ -3,6 +3,7 @@ from django.views.generic import CreateView
 from opentech.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
+from .messaging import messenger, MESSAGES
 from .models import Activity, COMMENT
 
 
@@ -37,6 +38,12 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.submission = self.kwargs['submission']
         form.instance.type = COMMENT
+        messenger(
+            MESSAGES.COMMENT,
+            user=self.request.user,
+            submission=self.submission,
+            comment=form.instance,
+        )
         return super().form_valid(form)
 
     def get_success_url(self):
