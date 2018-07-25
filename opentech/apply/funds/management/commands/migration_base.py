@@ -11,7 +11,7 @@ from django_fsm import FSMField
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm
+from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm, LabType, LabForm
 from opentech.apply.funds.workflow import INITIAL_STATE
 
 
@@ -44,10 +44,6 @@ class MigrateCommand(BaseCommand):
     def process(self, id):
         node = self.data[id]
 
-        FUND = FundType.objects.get(title=self.FUND_NAME)
-        ROUND = Round.objects.get(title=self.ROUND_NAME)
-        FORM = RoundForm.objects.get(round=ROUND)
-
         try:
             submission = ApplicationSubmission.objects.get(drupal_id=node['nid'])
         except ApplicationSubmission.DoesNotExist:
@@ -57,9 +53,18 @@ class MigrateCommand(BaseCommand):
         submission.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
         submission.user = self.get_user(node['uid'])
 
-        submission.page = FUND
-        submission.round = ROUND
-        submission.form_fields = FORM.form.form_fields
+        if self.CONTENT_TYPE == "fund":
+            FUND = FundType.objects.get(title=self.FUND_NAME)
+            submission.page = FUND
+            ROUND = Round.objects.get(title=self.ROUND_NAME)
+            submission.round = ROUND
+            FORM = RoundForm.objects.get(round=ROUND)
+            submission.form_fields = FORM.form.form_fields
+        elif self.CONTENT_TYPE == "lab":
+            LAB = LabType.objects.get(title=self.LAB_NAME)
+            submission.page = LAB
+            FORM = LabForm.objects.get(lab=LAB)
+            submission.form_fields = FORM.form.form_fields
 
         submission.status = self.get_workflow_state(node)
 
