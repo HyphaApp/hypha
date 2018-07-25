@@ -1,4 +1,8 @@
 from enum import Enum
+
+import requests
+
+from django.conf import settings
 from django.contrib import messages
 
 from .models import Activity
@@ -82,6 +86,30 @@ class ActivityAdapter(AdapterBase):
         )
 
 
+class SlackAdapter(AdapterBase):
+    messages = {
+        MESSAGES.UPDATE_LEAD: 'has updated the lead of "{submission}" to {submission.lead}'
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.destination = settings.SLACK_DESTINATION
+
+    def slack_id(self, user):
+        if user.slack:
+            return f'<user.slack>'
+        else:
+            return str(user)
+
+    def send_message(self, message, user, **kwargs):
+        message = ' '.join([self.slack_id(user), message])
+        data = {
+            "room": "CBQUCH458",
+            "message": message,
+        }
+        requests.post(self.destination, data=data)
+
+
 class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
@@ -97,6 +125,7 @@ class MessengerBackend:
 adapters = [
     ActivityAdapter(),
     MessageAdapter(),
+    SlackAdapter(),
 ]
 
 
