@@ -1,8 +1,20 @@
 from unittest.mock import Mock, patch
 
 from django.test import TestCase
+from django.contrib.messages import get_messages
 
-from ..messaging import AdapterBase, MessengerBackend, MESSAGES
+from opentech.apply.utils.tests import make_request
+from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.users.tests.factories import UserFactory
+
+from ..models import Activity
+from ..messaging import (
+    AdapterBase,
+    ActivityAdapter,
+    MessageAdapter,
+    MessengerBackend,
+    MESSAGES,
+)
 
 
 class TestAdapter(AdapterBase):
@@ -84,3 +96,56 @@ class TestMessageBackend(TestCase):
 
         adapter = adapters[0]
         self.assertEqual(adapter.process.call_count, len(adapters))
+
+
+class TestDjangoMessagesAdapter(TestCase):
+    def test_message_added(self):
+        adapter = MessageAdapter()
+        request = make_request()
+
+        message = 'test message'
+        adapter.send_message(message, request=request)
+
+        messages = list(get_messages(request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].message, message)
+
+
+class TestActivityAdapter(TestCase):
+    def setUp(self):
+        self.adapter = ActivityAdapter()
+
+    def test_activity_created(self):
+        message = 'test message'
+        user = UserFactory()
+        submission = ApplicationSubmissionFactory()
+
+        self.adapter.send_message(message, user=user, submission=submission)
+
+        self.assertEqual(Activity.objects.count(), 1)
+        activity = Activity.objects.first()
+        self.assertEqual(activity.user, user)
+        self.assertEqual(activity.message, message)
+        self.assertEqual(activity.submission, submission)
+
+    def test_reviewers_message_no_removed(self):
+        message = self.adapter.reviewers_updated([1], [])
+
+        self.assertTrue('Added' in message)
+        self.assertFalse('Removed' in message)
+        self.assertTrue('1' in message)
+
+    def test_reviewers_message_no_added(self):
+        message = self.adapter.reviewers_updated([], [1])
+
+        self.assertFalse('Added' in message)
+        self.assertTrue('Removed' in message)
+        self.assertTrue('1' in message)
+
+    def test_reviewers_message_both(self):
+        message = self.adapter.reviewers_updated([1], [2])
+
+        self.assertTrue('Added' in message)
+        self.assertTrue('Removed' in message)
+        self.assertTrue('1' in message)
+        self.assertTrue('2' in message)
