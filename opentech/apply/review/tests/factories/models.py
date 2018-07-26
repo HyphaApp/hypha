@@ -1,15 +1,15 @@
-import json
 from collections import defaultdict
 
 import factory
 
-from opentech.apply.funds.models import AbstractRelatedReviewForm, FundReviewForm, ApplicationSubmission
+from opentech.apply.funds.models import AbstractRelatedReviewForm, FundReviewForm
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, FundTypeFactory
 from opentech.apply.review.options import YES, NO, MAYBE
 from opentech.apply.users.tests.factories import StaffFactory
 
 from opentech.apply.review.models import Review, ReviewForm
-from opentech.apply.review.views import get_form_for_stage
+from opentech.apply.review.views import get_fields_for_stage
+from opentech.apply.stream_forms.testing.factories import AddFormFieldsMetaclass
 
 from . import blocks
 
@@ -36,31 +36,17 @@ def build_form(data, prefix=''):
     return form_fields
 
 
-class AnswerFactory(factory.Factory):
-    def _create(self, *args, sub_factory=None, **kwargs):
-        return sub_factory.make_answer(kwargs)
+class ReviewFormDataFactory(factory.DictFactory, metaclass=AddFormFieldsMetaclass):
+    field_factory = blocks.ReviewFormFieldsFactory
 
-
-class Metaclass(factory.base.FactoryMetaClass):
-    def __new__(mcs, class_name, bases, attrs):
-        # Add the form field definitions to allow nested calls
-        wrapped_factories = {
-            k: factory.SubFactory(AnswerFactory, sub_factory=v)
-            for k, v in blocks.ReviewFormFieldsFactory.factories.items()
-        }
-        attrs.update(wrapped_factories)
-        return super().__new__(mcs, class_name, bases, attrs)
-
-
-class ReviewFormDataFactory(factory.DictFactory, metaclass=Metaclass):
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
         submission = kwargs.pop('submission')
-        form = get_form_for_stage(submission)
 
-        form_fields = {}
-        for field_name, field in form.get_form_fields().items():
-            form_fields[field_name] = 0
+        form_fields = {
+            field.id: 0
+            for field in get_fields_for_stage(submission)
+        }
 
         form_fields.update(**kwargs)
         return super()._build(model_class, *args, **form_fields)
