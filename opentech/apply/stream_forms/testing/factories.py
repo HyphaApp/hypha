@@ -14,6 +14,54 @@ __all__ = ['CharBlockFactory', 'FormFieldBlockFactory', 'CharFieldBlockFactory',
            'MultiFileFieldBlockFactory']
 
 
+class AnswerFactory(factory.Factory):
+    def _create(self, *args, sub_factory=None, **kwargs):
+        return sub_factory.make_answer(kwargs)
+
+
+class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
+    def __new__(mcs, class_name, bases, attrs):
+        # Add the form field definitions to allow nested calls
+        field_factory = attrs.pop('field_factory', None)
+        if field_factory:
+            wrapped_factories = {
+                k: factory.SubFactory(AnswerFactory, sub_factory=v)
+                for k, v in field_factory.factories.items()
+            }
+            attrs.update(wrapped_factories)
+        return super().__new__(mcs, class_name, bases, attrs)
+
+
+class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
+    def _create(self, *args, form_fields={}, for_factory=None, clean=False, **kwargs):
+        if form_fields and isinstance(form_fields, str):
+            form_fields = json.loads(form_fields)
+            form_definition = {
+                field['type']: field['id']
+                for field in form_fields
+            }
+        else:
+            form_definition = {
+                f.block_type: f.id
+                for f in form_fields or for_factory.Meta.model.form_fields.field.to_python(form_fields)
+            }
+
+        form_data = {}
+        for name, answer in kwargs.items():
+            form_data[form_definition[name]] = answer
+
+        if clean:
+            clean_object = for_factory()
+            clean_object.form_fields = form_fields
+            clean_object.form_data = form_data
+            clean_object.save()
+            form_data = clean_object.form_data.copy()
+            clean_object.delete()
+            return form_data
+
+        return form_data
+
+
 class CharBlockFactory(wagtail_factories.blocks.BlockFactory):
     class Meta:
         model = CharBlock

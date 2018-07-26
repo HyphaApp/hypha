@@ -28,6 +28,26 @@ class AdminDashboardView(TemplateView):
         })
 
 
+class ReviewerDashboardView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        qs = ApplicationSubmission.objects.all()
+
+        my_review_qs = qs.in_review_for(request.user)
+        my_review = SubmissionsTable(my_review_qs, prefix='my-review-')
+        RequestConfig(request, paginate={'per_page': 10}).configure(my_review)
+
+        also_in_review = AdminSubmissionsTable(
+            qs.in_review_for(request.user, assigned=False).exclude(id__in=my_review_qs),
+            prefix='also-in-review-'
+        )
+        RequestConfig(request, paginate={'per_page': 10}).configure(also_in_review)
+
+        return render(request, 'dashboard/reviewer_dashboard.html', {
+            'my_review': my_review,
+            'also_in_review': also_in_review,
+        })
+
+
 class ApplicantDashboardView(SingleTableView):
     template_name = 'dashboard/applicant_dashboard.html'
     model = ApplicationSubmission
@@ -55,9 +75,5 @@ class ApplicantDashboardView(SingleTableView):
 
 class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
+    reviewer_view = ReviewerDashboardView
     applicant_view = ApplicantDashboardView
-
-    def admin_check(self, request):
-        if request.user.is_reviewer:
-            return True
-        return super().admin_check(request)

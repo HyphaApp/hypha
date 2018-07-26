@@ -134,6 +134,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
         InlinePanel('forms', label="Forms"),
+        InlinePanel('review_forms', label="Review Forms")
     ]
 
 
@@ -262,12 +263,40 @@ class AbstractRelatedForm(Orderable):
         return self.form.name
 
 
+class AbstractRelatedReviewForm(Orderable):
+    form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
+
+    panels = [
+        FieldPanel('form')
+    ]
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return self.form.name
+
+
 class FundForm(AbstractRelatedForm):
     fund = ParentalKey('FundType', related_name='forms')
 
 
 class RoundForm(AbstractRelatedForm):
     round = ParentalKey('Round', related_name='forms')
+
+
+class FundReviewForm(AbstractRelatedReviewForm):
+    fund = ParentalKey('FundType', related_name='review_forms')
 
 
 class ApplicationForm(models.Model):
@@ -422,6 +451,9 @@ class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     class Meta:
         verbose_name = _("Lab")
 
+    # Adds validation around forms & workflows.
+    base_form_class = WorkflowFormAdminForm
+
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
@@ -468,6 +500,10 @@ class LabForm(AbstractRelatedForm):
     lab = ParentalKey('LabType', related_name='forms')
 
 
+class LabReviewForm(AbstractRelatedReviewForm):
+    lab = ParentalKey('LabType', related_name='review_forms')
+
+
 class JSONOrderable(models.QuerySet):
     json_field = ''
 
@@ -507,9 +543,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def in_review(self):
         return self.filter(status__in=review_statuses)
 
-    def in_review_for(self, user):
+    def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_statuses(user)
-        return self.filter(status__in=user_review_statuses).filter(reviewers=user).exclude(reviews__author=user)
+        qs = self.filter(status__in=user_review_statuses).exclude(reviews__author=user)
+        if assigned:
+            qs = qs.filter(reviewers=user)
+        return qs
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)

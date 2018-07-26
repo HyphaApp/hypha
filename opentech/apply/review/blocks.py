@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 
 from django.utils.translation import ugettext_lazy as _
@@ -5,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.review.fields import ScoredAnswerField
-from opentech.apply.review.options import RECOMMENDATION_CHOICES
+from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA
 from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock
 from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
@@ -17,6 +19,17 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
     class Meta:
         label = _('Score')
         icon = 'order'
+        template = 'review/render_scored_answer_field.html'
+
+    def render(self, value, context=None):
+        data = json.loads(context['data'])
+        label = value['field_label']
+        context['data'] = {
+            label: data[0],
+            f'Score {label}': RATE_CHOICES_DICT.get(data[1], RATE_CHOICE_NA)
+        }
+
+        return super().render(value, context)
 
 
 class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
@@ -36,6 +49,13 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
         kwargs['choices'] = RECOMMENDATION_CHOICES
         return kwargs
 
+    def render(self, value, context=None):
+        data = int(context['data'])
+        choices = dict(RECOMMENDATION_CHOICES)
+        context['data'] = choices[data]
+
+        return super().render(value, context)
+
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
     name = 'Comments'
@@ -44,6 +64,7 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
 
     class Meta:
         icon = 'openquote'
+        template = 'stream_forms/render_unsafe_field.html'
 
 
 class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):

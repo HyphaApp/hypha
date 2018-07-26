@@ -4,11 +4,11 @@ from collections import OrderedDict
 from wagtail.contrib.forms.models import AbstractForm
 
 from .blocks import FormFieldBlock
-from .forms import BlockFieldWrapper, StreamBaseForm
+from .forms import BlockFieldWrapper, PageStreamBaseForm
 
 
 class BaseStreamForm:
-    page_form_class = StreamBaseForm
+    submission_form_class = PageStreamBaseForm
 
     def get_defined_fields(self):
         return self.form_fields
@@ -26,7 +26,7 @@ class BaseStreamForm:
         return form_fields
 
     def get_form_class(self):
-        return type('WagtailStreamForm', (self.page_form_class,), self.get_form_fields())
+        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields())
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):

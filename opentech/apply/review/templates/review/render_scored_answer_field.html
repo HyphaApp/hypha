@@ -1,0 +1,17 @@
+{% load bleach_tags %}
+{% block data_display %}
+    {% if data %}
+        {% for label, item in data.items %}
+            <div>
+                <h5>{{ label }}</h5>
+                <div>{{ item|bleach }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div>
+            <h5>{{ value.field_label }}</h5>
+            <div>No response</div>
+        </div>
+    {% endif %}
+{% endblock %}
+

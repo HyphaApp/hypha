@@ -13,7 +13,23 @@
     <form class="form form--with-p-tags" action="" method="post" novalidate>
         {{ form.media }}
         {% csrf_token %}
-        {% for field in form %}
+
+        {% if form.non_field_errors %}
+            <div class="messages">
+                <ul>
+                    {% for error in form.non_field_errors %}
+                    <li class="error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
             {# to be replaced with better logic when we use stream form #}
             {% ifchanged field.field.group %}
                 {% for key, value in form.titles.items %}

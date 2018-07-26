@@ -21,10 +21,10 @@
 </div>
 <div class="wrapper wrapper--reviews-table js-reviews-table">
     <table class="reviews-list">
-    {% for question, answers in review_data.items %}
+    {% for answers in review_data.values %}
         <tr class="reviews-list__tr">
-            <th class="reviews-list__th">{{ question }}</th>
-            {% for answer in answers %}
+            <th class="reviews-list__th">{{ answers.question }}</th>
+            {% for answer in answers.answers %}
                 <td class="reviews-list__td">{{ answer|bleach }}</td>
             {% endfor %}
         </tr>

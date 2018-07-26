@@ -40,11 +40,11 @@ class TestFundModel(TestCase):
         self.assertIsNone(self.fund.open_round)
 
     def test_open_ended_round(self):
-        open_round = RoundFactory(end_date=None, parent=self.fund)
+        open_round = RoundFactory(start_date=date.today(), end_date=None, parent=self.fund)
         self.assertEqual(self.fund.open_round, open_round)
 
     def test_normal_round(self):
-        open_round = RoundFactory(parent=self.fund)
+        open_round = RoundFactory(parent=self.fund, now=True)
         self.assertEqual(self.fund.open_round, open_round)
 
     def test_closed_round(self):
@@ -59,7 +59,7 @@ class TestFundModel(TestCase):
         self.assertIsNone(self.fund.open_round)
 
     def test_multiple_open_rounds(self):
-        open_round = RoundFactory(parent=self.fund)
+        open_round = RoundFactory(parent=self.fund, now=True)
         next_round_start = open_round.end_date + timedelta(days=1)
         RoundFactory(start_date=next_round_start, end_date=None, parent=self.fund)
         self.assertEqual(self.fund.open_round, open_round)
@@ -149,10 +149,12 @@ class TestRoundModelWorkflowAndForms(TestCase):
     def setUp(self):
         self.fund = FundTypeFactory(parent=None)
 
-        self.round = RoundFactory.build()
-        self.round.parent_page = self.fund
-        self.round.lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
+        # Must create lead, adding child complains about "built" user with no id
+        lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
+        self.round = RoundFactory.build(lead=lead, parent=None)
 
+        # Assign parent_page like the init does
+        self.round.parent_page = self.fund
         self.fund.add_child(instance=self.round)
 
     def test_workflow_is_copied_to_new_rounds(self):
@@ -190,7 +192,7 @@ class TestFormSubmission(TestCase):
         self.site.root_page = fund
         self.site.save()
 
-        self.round_page = RoundFactory(parent=fund)
+        self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
 
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
@@ -322,7 +324,7 @@ class TestApplicationSubmission(TestCase):
         submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_a, submission_b]
         self.assertEqual(
-            list(ApplicationSubmission.objects.order_by('email')),
+            list(ApplicationSubmission.objects.order_by('id')),
             submissions,
         )
 
@@ -331,7 +333,7 @@ class TestApplicationSubmission(TestCase):
         submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_b, submission_a]
         self.assertEqual(
-            list(ApplicationSubmission.objects.order_by('-email')),
+            list(ApplicationSubmission.objects.order_by('-id')),
             submissions,
         )
 

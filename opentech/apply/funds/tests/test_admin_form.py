@@ -5,14 +5,15 @@ import factory
 from opentech.apply.funds.models import FundType
 
 from .factories import ApplicationFormFactory, FundTypeFactory
+from opentech.apply.review.tests.factories import ReviewFormFactory
 
 
-def formset_base(field, total, delete):
+def formset_base(field, total, delete, factory):
     base_data = {
         f'{field}-TOTAL_FORMS': total + delete,
         f'{field}-INITIAL_FORMS': 0,
     }
-    application_forms = ApplicationFormFactory.create_batch(total + delete)
+    application_forms = factory.create_batch(total + delete)
 
     deleted = 0
     for i, form in enumerate(application_forms):
@@ -28,9 +29,11 @@ def formset_base(field, total, delete):
 
 
 def form_data(number_forms=0, delete=0):
-    base_data = formset_base('forms', number_forms, delete)
-    base_data.update(factory.build(dict, FACTORY_CLASS=FundTypeFactory))
-    return base_data
+    form_data = formset_base('forms', number_forms, delete, factory=ApplicationFormFactory)
+    review_form_data = formset_base('review_forms', number_forms, False, factory=ReviewFormFactory)
+    form_data.update(review_form_data)
+    form_data.update(factory.build(dict, FACTORY_CLASS=FundTypeFactory))
+    return form_data
 
 
 class TestWorkflowFormAdminForm(TestCase):

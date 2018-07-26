@@ -1,3 +1,5 @@
+import json
+
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -7,10 +9,13 @@ from django.views.generic import ListView, DetailView
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.review.blocks import ScoreFieldBlock, RecommendationBlock
+from opentech.apply.review.forms import ReviewModelForm
+from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
+from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
-from .forms import ConceptReviewForm, ProposalReviewForm
 from .models import Review
 
 
@@ -25,13 +30,17 @@ class ReviewContextMixin:
         )
 
 
-def get_form_for_stage(submission):
-    forms = [ConceptReviewForm, ProposalReviewForm]
+def get_fields_for_stage(submission):
+    forms = submission.page.specific.review_forms.all()
     index = submission.workflow.stages.index(submission.stage)
-    return forms[index]
+    try:
+        return forms[index].form.form_fields
+    except IndexError:
+        return forms[0].form.form_fields
 
 
-class ReviewCreateOrUpdateView(CreateOrUpdateView):
+class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
+    submission_form_class = ReviewModelForm
     model = Review
     template_name = 'review/review_form.html'
 
@@ -58,21 +67,21 @@ class ReviewCreateOrUpdateView(CreateOrUpdateView):
             **kwargs
         )
 
-    def get_form_class(self):
-        return get_form_for_stage(self.submission)
+    def get_defined_fields(self):
+        return get_fields_for_stage(self.submission)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
 
         if self.object:
-            kwargs['initial'] = self.object.review
-            kwargs['initial']['recommendation'] = self.object.recommendation
+            kwargs['initial'] = self.object.form_data
 
         return kwargs
 
     def form_valid(self, form):
+        form.instance.form_fields = self.get_defined_fields()
         response = super().form_valid(form)
 
         if not self.object.is_draft:
@@ -103,36 +112,6 @@ class ReviewDetailView(DetailView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        review = self.get_object().review
-        form_used = get_form_for_stage(self.get_object().submission)
-        review_data = {}
-
-        for name, field in form_used.base_fields.items():
-            try:
-                # Add titles which exist
-                title = form_used.titles[field.group]
-                # Setting the value to a flag, so the output is treated slightly differently
-                # This will change with the StreamForms implementation
-                review_data.setdefault(title, '<field_group_title>')
-            except AttributeError:
-                pass
-
-            value = review[name]
-            try:
-                choices = dict(field.choices)
-            except AttributeError:
-                pass
-            else:
-                # Update the stored value to the display value
-                value = choices[int(value)]
-
-            review_data.setdefault(field.label, str(value))
-        return super().get_context_data(
-            review_data=review_data,
-            **kwargs
-        )
-
 
 @method_decorator(staff_required, name='dispatch')
 class ReviewListView(ListView):
@@ -144,33 +123,31 @@ class ReviewListView(ListView):
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):
-        form_used = get_form_for_stage(self.submission)
         review_data = {}
 
+        # Add the header rows
+        review_data['title'] = {'question': '', 'answers': list()}
+        review_data['score'] = {'question': 'Overall Score', 'answers': list()}
+        review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
+
         for review in self.object_list:
-            # Add the name header row
-            review_data.setdefault('', []).append(str(review.author))
-            review_data.setdefault('Score', []).append(str(review.score))
+            review_data['title']['answers'].append(str(review.author))
+            review_data['score']['answers'].append(str(review.score))
+            review_data['recommendation']['answers'].append(review.get_recommendation_display())
 
-        for name, field in form_used.base_fields.items():
-            try:
-                # Add titles which exist
-                title = form_used.titles[field.group]
-                review_data.setdefault(title, [])
-            except AttributeError:
-                pass
+            for data, field in review.data_and_fields():
+                if not isinstance(field.block, RecommendationBlock):
+                    question = field.value['field_label']
+                    review_data.setdefault(field.id, {'question': question, 'answers': list()})
 
-            for review in self.object_list:
-                value = review.review[name]
-                try:
-                    choices = dict(field.choices)
-                except AttributeError:
-                    pass
-                else:
-                    # Update the stored value to the display value
-                    value = choices[int(value)]
-
-                review_data.setdefault(field.label, []).append(str(value))
+                    if isinstance(field.block, ScoreFieldBlock):
+                        value = json.loads(data)
+                        rating_value = int(value[1])
+                        rating = RATE_CHOICES_DICT.get(rating_value, RATE_CHOICE_NA)
+                        comment = str(value[0])
+                        review_data[field.id]['answers'].append(rating + comment)
+                    else:
+                        review_data[field.id]['answers'].append(str(data))
 
         return super().get_context_data(
             submission=self.submission,

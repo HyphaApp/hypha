@@ -5,10 +5,12 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
+from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
 from .blocks import ReviewCustomFormFieldsBlock
@@ -25,12 +27,6 @@ class ReviewForm(models.Model):
 
     def __str__(self):
         return self.name
-
-    def process_form_submission(self, form):
-        return Review.objects.create(
-            form_data=form.cleaned_data,
-            form_fields=self.form_fields,
-        )
 
 
 class ReviewQuerySet(models.QuerySet):
@@ -72,14 +68,12 @@ class ReviewQuerySet(models.QuerySet):
             return MAYBE
 
 
-class Review(models.Model):
+class Review(BaseStreamForm, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    # TODO remove when handling submissions
-    review = JSONField()
 
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
@@ -101,6 +95,25 @@ class Review(models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+
+    def data_and_fields(self):
+        for stream_value in self.form_fields:
+            try:
+                data = self.form_data[stream_value.id]
+            except KeyError:
+                pass  # It was a named field or a paragraph
+            else:
+                yield data, stream_value
+
+    @property
+    def fields(self):
+        return [
+            field.render(context={'data': data})
+            for data, field in self.data_and_fields()
+        ]
+
+    def render_answers(self):
+        return mark_safe(''.join(self.fields))
 
 
 @receiver(post_save, sender=Review)
