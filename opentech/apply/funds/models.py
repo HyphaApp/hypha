@@ -793,6 +793,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
     def get_from_parent(self, attribute):
         try:
+
             return getattr(self.round.specific, attribute)
         except AttributeError:
             # We are a lab submission

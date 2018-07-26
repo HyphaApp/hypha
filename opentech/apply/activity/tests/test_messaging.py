@@ -197,3 +197,8 @@ class TestSlackAdapter(TestCase):
                 'message': message,
             }
         )
+
+
+class TestEmailAdapter(TestCase):
+    def test_email_new_submission(self):
+        adapter = EmailAdapter()

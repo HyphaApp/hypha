@@ -4,6 +4,7 @@ import requests
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.mail import send_mail
 
 from .models import Activity
 
@@ -142,6 +143,19 @@ class SlackAdapter(AdapterBase):
         requests.post(self.destination, json=data)
 
 
+class EmailAdapter(AdapterBase):
+    adapter_type = 'Email'
+    messages = {
+        MESSAGES.NEW_SUBMISSION: 'email_from_submission',
+    }
+
+    def email_from_submission(self, submission):
+        print(submission.page)
+
+    def send_message(self, message, **kwargs):
+        send_message()
+
+
 class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
@@ -157,6 +171,7 @@ class MessengerBackend:
 adapters = [
     ActivityAdapter(),
     SlackAdapter(),
+    EmailAdapter(),
 ]
 
 
