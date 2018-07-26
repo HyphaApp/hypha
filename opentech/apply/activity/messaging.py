@@ -22,6 +22,7 @@ class MESSAGES(Enum):
 
 class AdapterBase:
     messages = {}
+    always_send = False
 
     def message(self, message_type, **kwargs):
         message = self.messages[message_type]
@@ -38,7 +39,7 @@ class AdapterBase:
             message = self.message(message_type, **kwargs)
         except KeyError:
             return
-        if settings.SEND_MESSAGES:
+        if settings.SEND_MESSAGES or self.always_send:
             self.send_message(message, **kwargs)
         else:
             message  = self.adapter_type + ': ' + message
@@ -51,6 +52,7 @@ class AdapterBase:
 
 class ActivityAdapter(AdapterBase):
     adapter_type = "Activity Feed"
+    always_send = True
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
