@@ -1,6 +1,5 @@
 from collections import defaultdict
 import datetime
-import json
 
 import factory
 import wagtail_factories
