@@ -76,7 +76,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score(self.cleaned_data)
-        self.instance.recommendation = self.cleaned_data[get_recommendation_field(self.instance.form_fields)]
+        self.instance.recommendation = int(self.cleaned_data[get_recommendation_field(self.instance.form_fields)])
         self.instance.is_draft = self.draft_button_name in self.data
 
         self.instance.form_data = self.cleaned_data['form_data']

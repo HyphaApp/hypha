@@ -65,7 +65,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
         MESSAGES.NEW_DETERMINATION: 'Created a determination for {submission.title}',
-        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
+        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{submission.determination.clean_message}',
         MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Created a review for {submission.title}'
@@ -102,6 +102,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email: {submission.determination.get_outcome_display}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
+        MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}'
     }
 
     def __init__(self):

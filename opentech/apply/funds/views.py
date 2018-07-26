@@ -84,7 +84,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
         self.object.perform_transition(action, self.request.user, request=self.request)
 
-        if object.phase.name == 'proposal_discussion' and action == 'proposal_discussion':
+        if self.object.phase.name == 'proposal_discussion' and action == 'proposal_discussion':
             messenger(
                 MESSAGES.PROPOSAL_SUBMITTED,
                 request=self.request,
