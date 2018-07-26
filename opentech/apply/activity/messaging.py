@@ -8,6 +8,10 @@ from django.contrib import messages
 from .models import Activity
 
 
+def link_to(target, request):
+    return request.scheme + '://' + request.get_host() + target.get_absolute_url()
+
+
 class MESSAGES(Enum):
     UPDATE_LEAD = 'update_lead'
     NEW_SUBMISSION = 'new_submission'
@@ -35,10 +39,11 @@ class AdapterBase:
             return method(**kwargs)
 
     def process(self, message_type, **kwargs):
-        try:
-            message = self.message(message_type, **kwargs)
-        except KeyError:
+        message = self.message(message_type, **kwargs)
+
+        if not message:
             return
+
         if settings.SEND_MESSAGES or self.always_send:
             self.send_message(message, **kwargs)
 
@@ -89,9 +94,10 @@ class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     always_send = True
     messages = {
-        MESSAGES.UPDATE_LEAD: 'The lead of "{submission.title}" has been updated form { old.lead } to {submission.lead} by {user}',
-        MESSAGES.COMMENT: 'A new comment has been posted on "{submission.title}"',
-        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on {submission.title}',
+        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {{submission.page.title}}: <{link}|{submission.title}>',
+        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
+        MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
+        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
     }
 
     def __init__(self):
@@ -99,17 +105,23 @@ class SlackAdapter(AdapterBase):
         self.destination = settings.SLACK_DESTINATION
 
     def message(self, message_type,  **kwargs):
-        message = super().message(message_type, **kwargs)
         user = kwargs['user']
         submission = kwargs['submission']
-        message = ' '.join([self.slack_id(submission.lead), message])
+        request = kwargs['request']
+        link = link_to(submission, request)
+
+        message = super().message(message_type, link=link, **kwargs)
+
+        if submission.lead.slack:
+            slack_target = self.slack_id(submission.lead)
+        else:
+            slack_target = ''
+
+        message = ' '.join([slack_target, message]).strip()
         return message
 
     def slack_id(self, user):
-        if user.slack:
-            return f'<{user.slack}>'
-        else:
-            return str(user)
+        return f'<{user.slack}>'
 
     def send_message(self, message, **kwargs):
         if not self.destination:
