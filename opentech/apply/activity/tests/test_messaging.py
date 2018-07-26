@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 from django.test import TestCase
 from django.contrib.messages import get_messages
 
-from opentech.apply.utils.tests import make_request
+from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory
 
