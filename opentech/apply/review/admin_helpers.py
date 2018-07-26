@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from wagtail.contrib.modeladmin.helpers import PageButtonHelper
 
 

@@ -14,7 +14,6 @@ from opentech.apply.users.models import User
 from .blocks import ReviewCustomFormFieldsBlock
 
 
-
 class ReviewForm(models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
