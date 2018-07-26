@@ -91,6 +91,7 @@ class SlackAdapter(AdapterBase):
     messages = {
         MESSAGES.UPDATE_LEAD: 'The lead of "{submission.title}" has been updated form { old.lead } to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on "{submission.title}"',
+        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on {submission.title}',
     }
 
     def __init__(self):
