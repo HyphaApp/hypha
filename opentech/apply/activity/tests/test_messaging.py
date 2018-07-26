@@ -1,6 +1,6 @@
 from unittest.mock import Mock, patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
@@ -11,7 +11,6 @@ from ..models import Activity
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
-    MessageAdapter,
     MessengerBackend,
     MESSAGES,
 )
@@ -19,6 +18,7 @@ from ..messaging import (
 
 class TestAdapter(AdapterBase):
     """A test class which will pass the message type to send_message"""
+    adapter_type = 'Test Adapter'
     messages = {
         enum: enum.value
         for enum in MESSAGES.__members__.values()
@@ -28,6 +28,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
+@override_settings(SEND_MESSAGES=True)
 class TestBaseAdapter(TestCase):
     def setUp(self):
         patched_class = patch.object(TestAdapter, 'send_message')
@@ -72,6 +73,17 @@ class TestBaseAdapter(TestCase):
 
         self.adapter.send_message.assert_called_once_with(message, message=message)
 
+    @override_settings(SEND_MESSAGES=False)
+    def test_django_messages_used(self):
+        request = make_request()
+
+        self.adapter.process(MESSAGES.UPDATE_LEAD, request=request)
+
+        messages = list(get_messages(request))
+        self.assertEqual(len(messages), 1)
+        self.assertTrue(MESSAGES.UPDATE_LEAD.value in messages[0].message)
+        self.assertTrue(self.adapter.adapter_type in messages[0].message)
+
 
 class TestMessageBackend(TestCase):
     def setUp(self):
@@ -98,19 +110,7 @@ class TestMessageBackend(TestCase):
         self.assertEqual(adapter.process.call_count, len(adapters))
 
 
-class TestDjangoMessagesAdapter(TestCase):
-    def test_message_added(self):
-        adapter = MessageAdapter()
-        request = make_request()
-
-        message = 'test message'
-        adapter.send_message(message, request=request)
-
-        messages = list(get_messages(request))
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(messages[0].message, message)
-
-
+@override_settings(SEND_MESSAGES=True)
 class TestActivityAdapter(TestCase):
     def setUp(self):
         self.adapter = ActivityAdapter()
