@@ -152,7 +152,8 @@ class EmailAdapter(AdapterBase):
     }
 
     def notify_comment(self, comment, **kwargs):
-        return render_to_string('messages/email/comment.html', kwargs)
+        if not comment.private:
+            return render_to_string('messages/email/comment.html', kwargs)
 
     def email_from_submission(self, submission, **kwargs):
         return render_to_string('funds/email/confirmation.html', kwargs)
