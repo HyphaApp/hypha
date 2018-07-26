@@ -318,7 +318,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:login'
-SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:dashboard'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
 # Create / associate accounts (including by email)
