@@ -1,0 +1,16 @@
+Dear {{ submission.user.get_full_name|default:"applicant" }},
+
+There has been a new comment on your application: {{ submission.title }}
+
+{{ comment.message }}
+
+You can access your application here: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+
+If you have any questions, please email us at info@opentechfund.org.
+
+Kind Regards,
+The OTF Team
+
+--
+Open Technology Fund
+https://www.opentech.fund/

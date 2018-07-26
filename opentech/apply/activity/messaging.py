@@ -148,11 +148,14 @@ class EmailAdapter(AdapterBase):
     adapter_type = 'Email'
     messages = {
         MESSAGES.NEW_SUBMISSION: 'email_from_submission',
+        MESSAGES.COMMENT: 'notify_comment',
     }
 
+    def notify_comment(self, comment, **kwargs):
+        return render_to_string('messages/email/comment.html', kwargs)
+
     def email_from_submission(self, submission, **kwargs):
-        context = {'submission': submission}
-        return render_to_string('funds/email/confirmation.txt', context)
+        return render_to_string('funds/email/confirmation.html', kwargs)
 
     def send_message(self, message, submission, **kwargs):
         subject = submission.page.specific.subject or 'Thank you for your submission to Open Technology Fund'
