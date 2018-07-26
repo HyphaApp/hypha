@@ -5,6 +5,7 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 from .models import Activity
 
@@ -149,11 +150,25 @@ class EmailAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'email_from_submission',
     }
 
-    def email_from_submission(self, submission):
-        print(submission.page)
+    def email_from_submission(self, submission, **kwargs):
+        email_data = submission.page.specific
+        context = {
+            'name': submission.user.get_full_name(),
+            'email': submission.user.email,
+            'project_name': submission.form_data.get('title'),
+            'extra_text': email_data.confirmation_text_extra,
+            'fund_type': email_data.title,
+        }
+        return render_to_string('funds/email/confirmation.txt', context)
 
-    def send_message(self, message, **kwargs):
-        send_message()
+    def send_message(self, message, submission, **kwargs):
+        subject = submission.page.specific.subject or 'Thank you for your submission to Open Technology Fund'
+        send_mail(
+            subject,
+            message,
+            submission.page.specific.from_address,
+            (submission.user.email,),
+        )
 
 
 class MessengerBackend:

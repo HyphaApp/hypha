@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 
 import responses
 
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
@@ -14,6 +15,7 @@ from ..models import Activity
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
+    EmailAdapter,
     MessengerBackend,
     MESSAGES,
     SlackAdapter,
@@ -199,6 +201,11 @@ class TestSlackAdapter(TestCase):
         )
 
 
+@override_settings(SEND_MESSAGES=True)
 class TestEmailAdapter(TestCase):
     def test_email_new_submission(self):
         adapter = EmailAdapter()
+        submission = ApplicationSubmissionFactory()
+        adapter.process(MESSAGES.NEW_SUBMISSION, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 1)

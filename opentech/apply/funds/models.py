@@ -30,7 +30,6 @@ from wagtail.admin.edit_handlers import (
     TabbedInterface,
 )
 
-from wagtail.admin.utils import send_mail
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormSubmission
@@ -149,23 +148,9 @@ class EmailForm(AbstractEmailForm):
 
     confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
 
-    def process_form_submission(self, form):
-        submission = super().process_form_submission(form)
-        self.send_mail(submission)
-        return submission
-
     def send_mail(self, submission):
-        user = submission.user
-        context = {
-            'name': user.get_full_name(),
-            'email': user.email,
-            'project_name': submission.form_data.get('title'),
-            'extra_text': self.confirmation_text_extra,
-            'fund_type': self.title,
-        }
-
-        subject = self.subject if self.subject else 'Thank you for your submission to Open Technology Fund'
-        send_mail(subject, render_to_string('funds/email/confirmation.txt', context), (user.email,), self.from_address, )
+        # Make sure we don't send emails to users here. Messaging handles that
+        pass
 
     email_confirmation_panels = [
         MultiFieldPanel(
@@ -385,11 +370,6 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             round=self,
             **kwargs,
         )
-
-    def process_form_submission(self, form):
-        submission = super().process_form_submission(form)
-        self.get_parent().specific.send_mail(submission)
-        return submission
 
     def clean(self):
         super().clean()
