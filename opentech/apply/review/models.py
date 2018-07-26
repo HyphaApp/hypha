@@ -1,22 +1,36 @@
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.core.fields import StreamField
 
+from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.users.models import User
 
+from .blocks import ReviewCustomFormFieldsBlock
 
-NO = 0
-MAYBE = 1
-YES = 2
 
-RECOMMENDATION_CHOICES = (
-    (NO, 'No'),
-    (MAYBE, 'Maybe'),
-    (YES, 'Yes'),
-)
+class ReviewForm(models.Model):
+    name = models.CharField(max_length=255)
+    form_fields = StreamField(ReviewCustomFormFieldsBlock())
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    def process_form_submission(self, form):
+        return Review.objects.create(
+            form_data=form.cleaned_data,
+            form_fields=self.form_fields,
+        )
 
 
 class ReviewQuerySet(models.QuerySet):
@@ -64,7 +78,12 @@ class Review(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+    # TODO remove when handling submissions
     review = JSONField()
+
+    form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
+    form_fields = StreamField(ReviewCustomFormFieldsBlock())
+
     recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     is_draft = models.BooleanField(default=False, verbose_name="Draft")
@@ -81,7 +100,7 @@ class Review(models.Model):
         return f'Review for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.review)}>'
+        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
 
 
 @receiver(post_save, sender=Review)

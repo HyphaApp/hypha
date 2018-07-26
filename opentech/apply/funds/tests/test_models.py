@@ -13,7 +13,7 @@ from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import Request
-from opentech.apply.utils.tests import make_request
+from opentech.apply.utils.testing import make_request
 
 from .factories import (
     ApplicationSubmissionFactory,

@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-from opentech.apply.utils.tests import BaseViewTestCase
+from opentech.apply.utils.testing.tests import BaseViewTestCase
 from .factories import ReviewFactory
 
 

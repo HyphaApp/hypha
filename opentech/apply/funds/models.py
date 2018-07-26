@@ -39,9 +39,10 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import AbstractStreamForm, BaseStreamForm
 from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
 from .admin_forms import WorkflowFormAdminForm
-from .blocks import CustomFormFieldsBlock, MustIncludeFieldBlock, REQUIRED_BLOCK_NAMES
+from .blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .workflow import (
     active_statuses,
@@ -271,7 +272,7 @@ class RoundForm(AbstractRelatedForm):
 
 class ApplicationForm(models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(CustomFormFieldsBlock())
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
 
     panels = [
         FieldPanel('name'),
@@ -617,7 +618,7 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
-    form_fields = StreamField(CustomFormFieldsBlock())
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     lead = models.ForeignKey(

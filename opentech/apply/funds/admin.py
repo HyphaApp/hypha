@@ -3,6 +3,7 @@ from django.utils.html import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
+from opentech.apply.review.admin import ReviewFormAdmin
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
@@ -70,4 +71,4 @@ class ApplicationFormAdmin(ModelAdmin):
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = 'Apply'
     menu_icon = 'folder-open-inverse'
-    items = (RoundAdmin, FundAdmin, LabAdmin, ApplicationFormAdmin, CategoryAdmin)
+    items = (RoundAdmin, FundAdmin, LabAdmin, ApplicationFormAdmin, ReviewFormAdmin, CategoryAdmin)

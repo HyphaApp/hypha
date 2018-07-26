@@ -1,184 +1,28 @@
-from collections import Counter
-
-import bleach
 from django import forms
-from django.core.exceptions import ValidationError
-from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import mark_safe
 
-from wagtail.core.blocks import StaticBlock, StreamValue
-
-from tinymce.widgets import TinyMCE
-
-from opentech.apply.stream_forms.blocks import (
-    FormFieldsBlock,
-    FormFieldBlock,
-    TextFieldBlock,
-)
-from opentech.apply.categories.blocks import CategoryQuestionBlock
 from addressfield.fields import AddressField
+from opentech.apply.categories.blocks import CategoryQuestionBlock
+from opentech.apply.stream_forms.blocks import FormFieldsBlock
+from opentech.apply.utils.blocks import MustIncludeFieldBlock, CustomFormFieldsBlock
 
 
-def find_duplicates(items):
-    counted = Counter(items)
-    duplicates = [
-        name for name, count in counted.items() if count > 1
-    ]
-    return duplicates
+class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
+    pass
 
 
-def prettify_names(sequence):
-    return [nice_field_name(item) for item in sequence]
-
-
-def nice_field_name(name):
-    return name.title().replace('_', ' ')
-
-
-class RichTextFieldBlock(TextFieldBlock):
-    widget = TinyMCE(mce_attrs={
-        'elementpath': False,
-        'branding': False,
-        'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
-        'style_formats': [
-            {'title': 'Headers', 'items': [
-                {'title': 'Header 1', 'format': 'h1'},
-                {'title': 'Header 2', 'format': 'h2'},
-                {'title': 'Header 3', 'format': 'h3'},
-            ]},
-            {'title': 'Inline', 'items': [
-                {'title': 'Bold', 'icon': 'bold', 'format': 'bold'},
-                {'title': 'Italic', 'icon': 'italic', 'format': 'italic'},
-                {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
-            ]},
-        ],
-    })
-
-    class Meta:
-        label = _('Rich text field')
-        icon = 'form'
-
-    def get_searchable_content(self, value, data):
-        return bleach.clean(data, tags=[], strip=True)
-
-
-class CustomFormFieldsBlock(FormFieldsBlock):
-    rich_text = RichTextFieldBlock(group=_('Fields'))
-    category = CategoryQuestionBlock(group=_('Custom'))
-
-    def __init__(self, *args, **kwargs):
-        child_blocks = [(block.name, block(group=_('Required'))) for block in MustIncludeFieldBlock.__subclasses__()]
-        super().__init__(child_blocks, *args, **kwargs)
-
-    def clean(self, value):
-        try:
-            value = super().clean(value)
-        except ValidationError as e:
-            error_dict = e.params
-        else:
-            error_dict = dict()
-
-        block_types = [block.block_type for block in value]
-        missing = set(REQUIRED_BLOCK_NAMES) - set(block_types)
-
-        duplicates = [
-            name for name in find_duplicates(block_types)
-            if name in REQUIRED_BLOCK_NAMES
-        ]
-
-        all_errors = list()
-        if missing:
-            all_errors.append(
-                'You are missing the following required fields: {}'.format(', '.join(prettify_names(missing)))
-            )
-
-        if duplicates:
-            all_errors.append(
-                'You have duplicates of the following required fields: {}'.format(', '.join(prettify_names(duplicates)))
-            )
-            for i, block_name in enumerate(block_types):
-                if block_name in duplicates:
-                    self.add_error_to_child(error_dict, i, 'info', 'Duplicate field')
-
-        if all_errors or error_dict:
-            error_dict['__all__'] = all_errors
-            raise ValidationError('Error', params=error_dict)
-
-        return value
-
-    def add_error_to_child(self, errors, child_number, field, message):
-        new_error = ErrorList([message])
-        try:
-            errors[child_number].data[0].params[field] = new_error
-        except KeyError:
-            errors[child_number] = ErrorList(
-                [ValidationError('Error', params={field: new_error})]
-            )
-
-    def to_python(self, value):
-        # If the data type is missing, fallback to a CharField
-        for child_data in value:
-            if child_data['type'] not in self.child_blocks:
-                child_data['type'] = 'char'
-
-        return StreamValue(self, value, is_lazy=True)
-
-
-class MustIncludeStatic(StaticBlock):
-    """Helper block which displays additional information about the must include block and
-    helps display the error in a noticeable way.
-    """
-    def __init__(self, *args, description='', **kwargs):
-        self.description = description
-        super().__init__(*args, **kwargs)
-
-    class Meta:
-        admin_text = 'Must be included in the form only once.'
-
-    def render_form(self, *args, **kwargs):
-        errors = kwargs.pop('errors')
-        if errors:
-            # Pretend the error is a readonly input so that we get nice formatting
-            # Issue discussed here: https://github.com/wagtail/wagtail/issues/4122
-            error_message = '<div class="error"><input readonly placeholder="{}"></div>'.format(errors[0])
-        else:
-            error_message = ''
-        form = super().render_form(*args, **kwargs)
-        form = '<br>'.join([self.description, form]) + error_message
-        return mark_safe(form)
-
-    def deconstruct(self):
-        return ('wagtail.core.blocks.static_block.StaticBlock', (), {})
-
-
-class MustIncludeFieldBlock(FormFieldBlock):
-    """Any block inheriting from this will need to be included in the application forms
-    This data will also be available to query on the submission object
-    """
-    def __init__(self, *args, **kwargs):
-        info_name = f'{self.name.title()} Field'
-        child_blocks = [('info', MustIncludeStatic(label=info_name, description=self.description))]
-        super().__init__(child_blocks, *args, **kwargs)
-
-    def get_field_kwargs(self, struct_value):
-        kwargs = super().get_field_kwargs(struct_value)
-        kwargs['required'] = True
-        return kwargs
-
-
-class TitleBlock(MustIncludeFieldBlock):
+class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = 'title'
     description = 'The title of the project'
 
 
-class ValueBlock(MustIncludeFieldBlock):
+class ValueBlock(ApplicationMustIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
     widget = forms.NumberInput
 
 
-class EmailBlock(MustIncludeFieldBlock):
+class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = 'email'
     description = 'The applicant email address'
     widget = forms.EmailInput
@@ -187,7 +31,7 @@ class EmailBlock(MustIncludeFieldBlock):
         icon = 'mail'
 
 
-class AddressFieldBlock(MustIncludeFieldBlock):
+class AddressFieldBlock(ApplicationMustIncludeFieldBlock):
     name = 'address'
     description = 'The postal address of the user'
 
@@ -198,7 +42,7 @@ class AddressFieldBlock(MustIncludeFieldBlock):
         icon = 'home'
 
 
-class FullNameBlock(MustIncludeFieldBlock):
+class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = 'full_name'
     description = 'Full name'
 
@@ -206,4 +50,9 @@ class FullNameBlock(MustIncludeFieldBlock):
         icon = 'user'
 
 
-REQUIRED_BLOCK_NAMES = [block.name for block in MustIncludeFieldBlock.__subclasses__()]
+class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
+    category = CategoryQuestionBlock(group=_('Custom'))
+    required_blocks = ApplicationMustIncludeFieldBlock.__subclasses__()
+
+
+REQUIRED_BLOCK_NAMES = [block.name for block in ApplicationMustIncludeFieldBlock.__subclasses__()]
