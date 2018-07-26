@@ -151,14 +151,7 @@ class EmailAdapter(AdapterBase):
     }
 
     def email_from_submission(self, submission, **kwargs):
-        email_data = submission.page.specific
-        context = {
-            'name': submission.user.get_full_name(),
-            'email': submission.user.email,
-            'project_name': submission.form_data.get('title'),
-            'extra_text': email_data.confirmation_text_extra,
-            'fund_type': email_data.title,
-        }
+        context = {'submission': submission}
         return render_to_string('funds/email/confirmation.txt', context)
 
     def send_message(self, message, submission, **kwargs):

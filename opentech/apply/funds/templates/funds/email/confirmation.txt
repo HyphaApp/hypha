@@ -1,16 +1,18 @@
-Dear {{ name|default:"applicant" }},
+Dear {{ submission.user.get_full_name|default:"applicant" }},
 
-We appreciate your {{ fund_type }} application submission to the Open Technology Fund. We will review and reply to your
-submission as quickly as possible. Our reply will have the next steps for your {{ fund_type }} application.
+{% with email_context=submission.page.specific %}
+We appreciate your {{ email_context.title }} application submission to the Open Technology Fund. We will review and reply to your
+submission as quickly as possible. Our reply will have the next steps for your {{ email_context.title }} application.
 You can find more information about our support options, review process and selection criteria on our website.
 
-{% if extra_text %}{{ extra_text }}{% endif %}
+{{ email_context.confirmation_text_text }}
+{% endwith %}
 
 If you have any questions, please email us at info@opentechfund.org.
 
-{% if project_name %}Project name: {{ project_name }}{% endif %}
-{% if name %}Contact name: {{ name }}{% endif %}
-{% if email %}Contact email: {{ email }}{% endif %}
+Project name: {{ submission.title }}
+Contact name: {{ submission.user.get_full_name }}
+Contact email: {{ submission.user.email }}
 
 Thanks again,
 The OTF Team
