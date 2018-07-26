@@ -38,7 +38,11 @@ class AdapterBase:
             message = self.message(message_type, **kwargs)
         except KeyError:
             return
-        self.send_message(message, **kwargs)
+        if settings.SEND_MESSAGES:
+            self.send_message(message, **kwargs)
+        else:
+            messages.add_message(kwargs['request'], messages.INFO, message)
+
 
     def send_message(self, message, **kwargs):
         raise NotImplementedError()

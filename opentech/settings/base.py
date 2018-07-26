@@ -348,3 +348,8 @@ BLEACH_STRIP_COMMENTS = True
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
 HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
+
+
+# Messaging Settings
+SEND_MESSAGES = env.get('SLACK_DESTINATION', 'false').lower() == 'true'
+SLACK_DESTINATION = env.get('SLACK_DESTINATION', None)
