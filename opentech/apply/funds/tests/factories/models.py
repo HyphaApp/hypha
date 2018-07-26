@@ -68,13 +68,16 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
+            from opentech.apply.review.tests.factories.models import build_form as review_build_form, ReviewFormFactory
             fields = build_form(kwargs, prefix='form')
+            review_fields = review_build_form(kwargs)
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 FundFormFactory(
                     fund=self,
                     **fields,
                 )
+                ReviewFormFactory(**review_fields)
 
 
 class AbstractRelatedFormFactory(factory.DjangoModelFactory):
