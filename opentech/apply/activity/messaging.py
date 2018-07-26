@@ -41,6 +41,7 @@ class AdapterBase:
         if settings.SEND_MESSAGES:
             self.send_message(message, **kwargs)
         else:
+            message  = self.adapter_type + ': ' + message
             messages.add_message(kwargs['request'], messages.INFO, message)
 
 
@@ -48,17 +49,8 @@ class AdapterBase:
         raise NotImplementedError()
 
 
-class MessageAdapter(AdapterBase):
-    messages = {
-        enum: enum.value
-        for enum in MESSAGES.__members__.values()
-    }
-
-    def send_message(self, message, **kwargs):
-        messages.add_message(kwargs['request'], messages.INFO, message)
-
-
 class ActivityAdapter(AdapterBase):
+    adapter_type = "Activity Feed"
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
@@ -91,25 +83,31 @@ class ActivityAdapter(AdapterBase):
 
 
 class SlackAdapter(AdapterBase):
+    adapter_type = "Slack"
     messages = {
-        MESSAGES.UPDATE_LEAD: 'has updated the lead of "{submission}" to {submission.lead}'
+        MESSAGES.UPDATE_LEAD: 'has updated the lead of "{submission.title}" to {submission.lead}'
     }
 
     def __init__(self):
         super().__init__()
         self.destination = settings.SLACK_DESTINATION
 
+    def message(self, message_type, **kwargs):
+        message = super().message(message_type, **kwargs)
+        user = kwargs['user']
+        message = ' '.join([self.slack_id(user), message])
+        return message
+
     def slack_id(self, user):
         if user.slack:
-            return f'<user.slack>'
+            return f'<{user.slack}>'
         else:
             return str(user)
 
-    def send_message(self, message, user, **kwargs):
+    def send_message(self, message, **kwargs):
         if not self.destination:
             return
 
-        message = ' '.join([self.slack_id(user), message])
         data = {
             "room": "CBQUCH458",
             "message": message,
@@ -131,7 +129,6 @@ class MessengerBackend:
 
 adapters = [
     ActivityAdapter(),
-    MessageAdapter(),
     SlackAdapter(),
 ]
 

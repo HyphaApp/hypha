@@ -351,5 +351,5 @@ HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
 
 
 # Messaging Settings
-SEND_MESSAGES = env.get('SLACK_DESTINATION', 'false').lower() == 'true'
-SLACK_DESTINATION = env.get('SLACK_DESTINATION', None)
+SEND_MESSAGES = False
+SLACK_DESTINATION = None

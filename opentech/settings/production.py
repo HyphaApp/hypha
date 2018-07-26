@@ -144,6 +144,11 @@ if 'LOG_DIR' in env:
     LOGGING['loggers']['django.security']['handlers'].append('errors_file')
 
 
+# Messaging Settings
+SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
+SLACK_DESTINATION = env.get('SLACK_DESTINATION', None)
+
+
 try:
     from .local import *  # noqa
 except ImportError:
