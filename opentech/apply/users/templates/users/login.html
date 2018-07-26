@@ -1,18 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'base-apply.html' %}
 {% block header_modifier %}header--light-bg{% endblock %}
 {% block page_title %}Login{% endblock %}
 {% block title %}Login{% endblock %}
 
 {% block content %}
   <div class="wrapper wrapper--small">
-    {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
     <form class="form form--with-p-tags" method="post">
       {% csrf_token %}
       {{ form.as_p }}
