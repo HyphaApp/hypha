@@ -41,7 +41,8 @@ class AdapterBase:
             return
         if settings.SEND_MESSAGES or self.always_send:
             self.send_message(message, **kwargs)
-        else:
+
+        if not settings.SEND_MESSAGES:
             message  = self.adapter_type + ': ' + message
             messages.add_message(kwargs['request'], messages.INFO, message)
 
@@ -86,6 +87,7 @@ class ActivityAdapter(AdapterBase):
 
 class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
+    always_send = True
     messages = {
         MESSAGES.UPDATE_LEAD: 'The lead of "{submission.title}" has been updated form { old.lead } to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on "{submission.title}"',
