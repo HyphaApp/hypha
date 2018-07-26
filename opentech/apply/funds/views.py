@@ -1,3 +1,5 @@
+from copy import copy
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -16,7 +18,7 @@ from opentech.apply.activity.views import (
     CommentFormView,
     DelegatedViewMixin,
 )
-from opentech.apply.activity.models import Activity
+from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
@@ -80,7 +82,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
-        self.object.perform_transition(action, self.request.user)
+        self.object.perform_transition(action, self.request.user, request=self.request)
 
         return super().form_valid(form)
 
@@ -93,13 +95,14 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old_lead = self.get_object().lead
+        old = copy(self.get_object())
         response = super().form_valid(form)
-        new_lead = form.instance.lead
-        Activity.actions.create(
+        messenger(
+            MESSAGES.UPDATE_LEAD,
+            request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
-            message=f'Lead changed from {old_lead} to {new_lead}'
+            submission=form.instance,
+            old=old,
         )
         return response
 
@@ -115,21 +118,16 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         new_reviewers = set(form.instance.reviewers.all())
 
-        message = ['Reviewers updated.']
         added = new_reviewers - old_reviewers
-        if added:
-            message.append('Added:')
-            message.append(', '.join([str(user) for user in added]) + '.')
-
         removed = old_reviewers - new_reviewers
-        if removed:
-            message.append('Removed:')
-            message.append(', '.join([str(user) for user in removed]) + '.')
 
-        Activity.actions.create(
+        messenger(
+            MESSAGES.REVIEWERS_UPDATED,
+            request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            message=' '.join(message),
+            added=added,
+            removed=removed,
         )
         return response
 
@@ -227,7 +225,7 @@ class SubmissionEditView(UpdateView):
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
         transition = self.transitions[action.pop()]
-        self.object.perform_transition(transition.target, self.request.user)
+        self.object.perform_transition(transition.target, self.request.user, request=self.request)
 
         return HttpResponseRedirect(self.get_success_url())
 

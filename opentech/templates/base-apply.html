@@ -45,6 +45,19 @@
 
         {% wagtailuserbar %}
 
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="messages__text{% if message.tags %} messages__text--{{ message.tags }} js-message"{% endif %}>
+                    {{ message }}
+                    <a href="#" class="messages__close js-close-message">
+                        <svg class="icon icon--close"><use xlink:href="#cross"></use></svg>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <header class="header">
 
             <div class="header__inner wrapper wrapper--large">

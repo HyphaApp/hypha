@@ -1,5 +1,20 @@
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
+
+
+request_factory = RequestFactory()
+
+
+def make_request(user=AnonymousUser(), data={}, method='get', site=None):
+    method = getattr(request_factory, method)
+    request = method('', data)
+    request.user = user
+    request.site = site
+    request.session = {}
+    request._messages = FallbackStorage(request)
+    return request
 
 
 class BaseViewTestCase(TestCase):

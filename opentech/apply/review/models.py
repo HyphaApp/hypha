@@ -8,11 +8,11 @@ from django.urls import reverse
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
-from opentech.apply.activity.models import Activity
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.users.models import User
 
 from .blocks import ReviewCustomFormFieldsBlock
+
 
 
 class ReviewForm(models.Model):
@@ -108,12 +108,6 @@ class Review(models.Model):
 def update_submission_reviewers_list(sender, **kwargs):
     review = kwargs.get('instance')
 
+    # Make sure the reviewer is in the reviewers list on the submission
     if not review.submission.reviewers.filter(id=review.author.id).exists():
         review.submission.reviewers.add(review.author)
-
-    if kwargs.get('created', False):
-        Activity.actions.create(
-            user=review.author,
-            submission=review.submission,
-            message=f'Created a review for {review.submission.title}'
-        )

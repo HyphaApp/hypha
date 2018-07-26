@@ -1,0 +1,30 @@
+.messages {
+
+    &__text {
+        max-height:1000px;
+        padding: 15px;
+        padding-right: 35px;
+        position:relative;
+
+        &--info {
+            background: $color--pastel-green;
+            border: solid 1px darken($color--pastel-green, 20%);
+        }
+
+        &--hide {
+            max-height: 0px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            border: 0 none;
+            transform-origin: top;
+            transition: all $transition;
+        }
+    }
+
+    &__close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
+    }
+}
