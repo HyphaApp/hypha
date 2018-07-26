@@ -1,1 +1,1 @@
-from .tests import make_request, BaseViewTestCase
+from .tests import make_request, BaseViewTestCase  # NOQA
