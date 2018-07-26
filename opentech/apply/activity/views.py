@@ -38,13 +38,15 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.submission = self.kwargs['submission']
         form.instance.type = COMMENT
+        response = super().form_valid(form)
         messenger(
             MESSAGES.COMMENT,
+            request=self.request,
             user=self.request.user,
-            submission=self.submission,
-            comment=form.instance,
+            submission=self.object.submission,
+            comment=self.object,
         )
-        return super().form_valid(form)
+        return response
 
     def get_success_url(self):
         return self.object.submission.get_absolute_url() + '#communications'

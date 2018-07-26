@@ -85,17 +85,19 @@ class ActivityAdapter(AdapterBase):
 class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     messages = {
-        MESSAGES.UPDATE_LEAD: 'has updated the lead of "{submission.title}" to {submission.lead}'
+        MESSAGES.UPDATE_LEAD: 'The lead of "{submission.title}" has been updated form { old.lead } to {submission.lead} by {user}',
+        MESSAGES.COMMENT: 'A new comment has been posted on "{submission.title}"',
     }
 
     def __init__(self):
         super().__init__()
         self.destination = settings.SLACK_DESTINATION
 
-    def message(self, message_type, **kwargs):
+    def message(self, message_type,  **kwargs):
         message = super().message(message_type, **kwargs)
         user = kwargs['user']
-        message = ' '.join([self.slack_id(user), message])
+        submission = kwargs['submission']
+        message = ' '.join([self.slack_id(submission.lead), message])
         return message
 
     def slack_id(self, user):
