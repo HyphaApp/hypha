@@ -22,6 +22,7 @@ class MESSAGES(Enum):
     REVIEWERS_UPDATED = 'reviewers_updated'
     NEW_REVIEW = 'new_review'
     COMMENT = 'comment'
+    PROPOSAL_SUBMITTED = 'proposal_submitted'
 
 
 class AdapterBase:
@@ -98,6 +99,9 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
+        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email: {submission.determination.get_outcome_display}',
+        MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
     }
 
     def __init__(self):

@@ -19,7 +19,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
+from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
@@ -38,7 +38,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     filterset_class = SubmissionFilter
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.active().current()
 
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data
@@ -77,12 +77,20 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         action = form.cleaned_data.get('action')
         # Defer to the determination form for any of the determination transitions
-        if action in DETERMINATION_RESPONSE_TRANSITIONS:
+        if action in DETERMINATION_OUTCOMES and not self.object.determination.submitted:
             return HttpResponseRedirect(reverse_lazy(
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
         self.object.perform_transition(action, self.request.user, request=self.request)
+
+        if object.phase.name == 'proposal_discussion' and action == 'proposal_discussion':
+            messenger(
+                MESSAGES.PROPOSAL_SUBMITTED,
+                request=self.request,
+                user=self.request.user,
+                submission=self.object.instance,
+            )
 
         return super().form_valid(form)
 

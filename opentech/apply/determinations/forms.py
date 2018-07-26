@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.funds.workflow import DETERMINATION_RESPONSE_TRANSITIONS
+from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED, \
     DETERMINATION_TRANSITION_SUFFIX
 
@@ -75,7 +75,7 @@ class BaseDeterminationForm(forms.ModelForm):
         return super().save(commit)
 
     def get_determination_from_action_name(self, action_name):
-        if action_name in DETERMINATION_RESPONSE_TRANSITIONS:
+        if action_name in DETERMINATION_OUTCOMES:
             if 'more_info' in action_name:
                 return NEEDS_MORE_INFO
             elif 'accepted' in action_name or 'invited_to_proposal' in action_name:

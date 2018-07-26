@@ -427,4 +427,4 @@ def get_determination_transitions():
     return transitions
 
 
-DETERMINATION_RESPONSE_TRANSITIONS = get_determination_transitions()
+DETERMINATION_OUTCOMES = get_determination_transitions()
