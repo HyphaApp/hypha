@@ -21,6 +21,7 @@ class MESSAGES(Enum):
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
     REVIEWERS_UPDATED = 'reviewers_updated'
+    READY_FOR_REVIEW = 'ready_for_review'
     NEW_REVIEW = 'new_review'
     COMMENT = 'comment'
     PROPOSAL_SUBMITTED = 'proposal_submitted'
@@ -103,7 +104,7 @@ class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     always_send = True
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {{submission.page.title}}: <{link}|{submission.title}>',
+        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
@@ -111,7 +112,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
-        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}'
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}',
+        MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
     }
 
     def __init__(self):
@@ -126,16 +128,33 @@ class SlackAdapter(AdapterBase):
 
         message = super().message(message_type, link=link, **kwargs)
 
-        if submission.lead.slack:
-            slack_target = self.slack_id(submission.lead)
-        else:
-            slack_target = ''
+        slack_target = self.slack_id(submission.lead)
 
         message = ' '.join([slack_target, message]).strip()
         return message
 
+    def notify_reviewers(self, submission, **kwargs):
+        reviewers_to_notify = []
+        for reviewer in submission.reviewers.all():
+            if submission.phase.permissions.can_review(reviewer):
+                reviewers_to_notify.append(reviewer)
+
+        reviewers = ', '.join(
+            self.slack_id(reviewer) or str(reviewer) for reviewer in reviewers_to_notify
+        )
+
+        return (
+            '<{link}|{submission.title}> is ready for review. The following are assigned as reviewers: {reviewers}'.format(
+                reviewers=reviewers,
+                submission=submission,
+                **kwargs
+            )
+        )
+
     def slack_id(self, user):
-        return f'<{user.slack}>'
+        if user.slack:
+            return f'<{user.slack}>'
+        return ''
 
     def send_message(self, message, **kwargs):
         if not self.destination or not self.target_room:

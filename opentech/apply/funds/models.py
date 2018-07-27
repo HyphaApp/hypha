@@ -1003,6 +1003,14 @@ def log_status_update(sender, **kwargs):
             old_phase=old_phase,
         )
 
+        if instance.status in review_statuses:
+            messenger(
+                MESSAGES.READY_FOR_REVIEW,
+                user=by,
+                request=request,
+                submission=instance,
+            )
+
 
 class ApplicationRevision(models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
