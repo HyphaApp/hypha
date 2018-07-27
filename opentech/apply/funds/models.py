@@ -46,7 +46,6 @@ from .blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .workflow import (
     active_statuses,
-    DETERMINATION_OUTCOMES,
     DETERMINATION_PHASES,
     DETERMINATION_RESPONSE_PHASES,
     get_review_statuses,

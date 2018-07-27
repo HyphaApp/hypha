@@ -48,9 +48,8 @@ class AdapterBase:
             self.send_message(message, **kwargs)
 
         if not settings.SEND_MESSAGES:
-            message  = self.adapter_type + ': ' + message
+            message = self.adapter_type + ': ' + message
             messages.add_message(kwargs['request'], messages.INFO, message)
-
 
     def send_message(self, message, **kwargs):
         raise NotImplementedError()
@@ -109,8 +108,7 @@ class SlackAdapter(AdapterBase):
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
 
-    def message(self, message_type,  **kwargs):
-        user = kwargs['user']
+    def message(self, message_type, **kwargs):
         submission = kwargs['submission']
         request = kwargs['request']
         link = link_to(submission, request)
