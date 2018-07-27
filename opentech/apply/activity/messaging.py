@@ -153,6 +153,7 @@ class EmailAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
+        MESSAGES.TRANSITION: 'funds/email/transition.html',
     }
 
     def notify_comment(self, **kwargs):
@@ -164,7 +165,7 @@ class EmailAdapter(AdapterBase):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, **kwargs):
-        subject = submission.page.specific.subject or 'Thank you for your submission to Open Technology Fund'
+        subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission)
         send_mail(
             subject,
             message,
