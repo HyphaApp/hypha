@@ -101,14 +101,14 @@ class BaseDeterminationForm(forms.ModelForm):
         self.fields['outcome'].choices = available_choices
 
     @classmethod
-    def get_detailed_response(cls, data):
+    def get_detailed_response(cls, saved_data):
         data = {}
         for group, title in cls.titles.items():
             data.setdefault(group, {'title': title, 'questions': list()})
 
         for name, field in cls.base_fields.items():
             try:
-                value = data[name]
+                value = saved_data[name]
             except KeyError:
                 # The field is not stored in the data
                 pass
@@ -119,16 +119,22 @@ class BaseDeterminationForm(forms.ModelForm):
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
+    titles = {
+        1: 'Feedback',
+    }
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label='Determination',
         help_text='Do you recommend requesting a proposal based on this concept note?',
     )
+    outcome.group = 1
+
     message = RichTextField(
         label='Determination message',
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
     )
+    message.group = 1
 
     principles = RichTextField(
         label='Goals and principles',
@@ -148,6 +154,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'RFA, OTF, the Advisory Council, or other RFA-OTF projects? Is the project team an organization, community '
         'or an individual?'
     )
+    principles.group = 1
 
     technical = RichTextField(
         label='Technical merit',
@@ -162,6 +169,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'What are the unintended or illicit uses and consequences of this technology? Has the project identified '
         'and/or developed any safeguards for these consequences?'
     )
+    technical.group = 1
 
     sustainable = RichTextField(
         label='Reasonable, realistic and sustainable',
@@ -175,6 +183,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'supporters approachable? Are they likely aware and/or comfortable with the Intellectual property language '
         'within USG contracts?'
     )
+    sustainable.group = 1
 
     # TODO option to not send message, or resend
 

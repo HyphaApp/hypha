@@ -6,12 +6,13 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, DETERMINATION_TRANSITION_SUFFIX, DeterminationMessageSettings
+from .models import Determination, TRANSITION_SUFFIX, DeterminationMessageSettings, NEEDS_MORE_INFO
 
 
 def get_form_for_stage(submission):
@@ -45,16 +46,11 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        try:
-            has_determination_response = self.submission.determination.submitted
-        except ObjectDoesNotExist:
-            has_determination_response = False
-
         messages = DeterminationMessageSettings.for_site(self.request.site)
 
         return super().get_context_data(
             submission=self.submission,
-            has_determination_response=has_determination_response,
+            has_determination_response=self.submission.has_determination,
             title="Update Determination draft" if self.object else 'Add Determination',
             message_templates=messages.get_for_stage(self.submission.stage.name),
             **kwargs
@@ -83,9 +79,14 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 user=self.object.author,
                 submission=self.object.submission,
             )
-            action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
+            transition = self.transition_from_outcome(int(form.cleaned_data.get('outcome')))
 
-            self.submission.perform_transition(action_name, self.request.user, request=self.request)
+            if self.object.outcome == NEEDS_MORE_INFO:
+                # We keep a record of the message sent to the user in the comment
+                Activity.comments.create(message=self.object.clean_message, user=self.request.user)
+
+            self.submission.perform_transition(transition, self.request.user, request=self.request)
+
         return self.progress_stage(self.submission) or response
 
     def progress_stage(self, instance):
@@ -102,12 +103,12 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             )
             return HttpResponseRedirect(instance.get_absolute_url())
 
-    def get_action_name_from_determination(self, determination):
-        suffix = DETERMINATION_TRANSITION_SUFFIX[determination]
+    def transition_from_outcome(self, outcome):
+        transition_types = TRANSITION_SUFFIX[outcome]
 
         for transition_name in self.submission.phase.transitions:
-            for item in suffix:
-                if item in transition_name:
+            for transition_type in transition_types:
+                if transition_type in transition_name:
                     return transition_name
 
 
@@ -133,10 +134,9 @@ class DeterminationDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         determination = self.get_object()
-        detailed_determination = determination.extra_fields
 
         return super().get_context_data(
             can_view_extended_data=determination.submission.has_permission_to_add_determination(self.request.user),
-            determination_data=detailed_determination,
+            determination_data=determination.detailed_data,
             **kwargs
         )

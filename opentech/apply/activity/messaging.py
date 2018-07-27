@@ -73,10 +73,10 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
-        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{submission.determination.clean_message}',
-        MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
+        MESSAGES.DETERMINATION_OUTCOME: 'Sent a  determination. Outcome: {submission.determination.clean_outcome}',
+        MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.NEW_REVIEW: 'Created a review for {submission.title}'
+        MESSAGES.NEW_REVIEW: '{user} submitted a review'
     }
 
     def reviewers_updated(self, added, removed, **kwargs):
@@ -108,7 +108,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
-        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email: {submission.determination.get_outcome_display}',
+        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}'
@@ -153,8 +153,8 @@ class EmailAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
-        MESSAGES.DETERMINATION_OUTCOME: 'funds/email/determination.html',
         MESSAGES.TRANSITION: 'messages/email/transition.html',
+        MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
     }
 
     def notify_comment(self, **kwargs):

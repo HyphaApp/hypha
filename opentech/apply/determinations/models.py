@@ -20,7 +20,7 @@ DETERMINATION_CHOICES = (
     (ACCEPTED, _('Approved')),
 )
 
-DETERMINATION_TRANSITION_SUFFIX = {
+TRANSITION_SUFFIX = {
     ACCEPTED: ['accepted', 'invited_to_proposal'],
     REJECTED: ['rejected'],
     NEEDS_MORE_INFO: ['more_info'],
@@ -48,6 +48,10 @@ class Determination(models.Model):
     @property
     def clean_message(self):
         return bleach.clean(self.message, tags=[], strip=True)
+
+    @property
+    def clean_outcome(self):
+        return self.get_outcome_display()
 
     def get_absolute_url(self):
         return reverse('apply:submissions:determinations:detail', args=(self.id,))

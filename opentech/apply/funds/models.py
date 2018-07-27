@@ -910,14 +910,15 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         return self.status in DETERMINATION_PHASES
 
     @property
-    def can_have_determination(self):
-        if not self.in_determination_phase:
+    def has_determination(self):
+        try:
+            return self.determination.submitted
+        except ObjectDoesNotExist:
             return False
 
-        try:
-            return not self.determination.submitted
-        except ObjectDoesNotExist:
-            return True
+    @property
+    def can_have_determination(self):
+        return self.in_determination_phase and not self.has_determination
 
     @property
     def raw_data(self):
