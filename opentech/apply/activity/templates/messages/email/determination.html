@@ -7,10 +7,12 @@
 
 
 {% block post_signature_content %}
-{% for group in submission.determination.detailed_data.values %}
-    {% for question, answer in group.questions %}
-        <h5>{{ question }}</h5>
-        {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
+{% if submission.determination.submitted %}
+    {% for group in submission.determination.detailed_data.values %}
+        {% for question, answer in group.questions %}
+            <h5>{{ question }}</h5>
+            {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
+        {% endfor %}
     {% endfor %}
-{% endfor %}
+{% endif %}
 {% endblock %}
