@@ -73,7 +73,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
-        MESSAGES.DETERMINATION_OUTCOME: 'Sent a  determination. Outcome: {submission.determination.clean_outcome}',
+        MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: '{user} submitted a review'
@@ -155,6 +155,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.TRANSITION: 'messages/email/transition.html',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
+        MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
     }
 
     def notify_comment(self, **kwargs):
