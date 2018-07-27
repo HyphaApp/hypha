@@ -41,9 +41,13 @@ class AdapterBase:
             # see if its a method on the adapter
             method = getattr(self, message)
         except AttributeError:
-            return message.format(**kwargs)
+            return self.render_message(message, **kwargs)
         else:
+            # Delegate all responsibility to the custom method
             return method(**kwargs)
+
+    def render_message(self, message, **kwargs):
+        return message.format(**kwargs)
 
     def process(self, message_type, **kwargs):
         message = self.message(message_type, **kwargs)
@@ -147,17 +151,17 @@ class SlackAdapter(AdapterBase):
 class EmailAdapter(AdapterBase):
     adapter_type = 'Email'
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'email_from_submission',
+        MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
     }
 
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
         if not comment.private:
-            return render_to_string('messages/email/comment.html', kwargs)
+            return self.render_message('messages/email/comment.html', **kwargs)
 
-    def email_from_submission(self, **kwargs):
-        return render_to_string('funds/email/confirmation.html', kwargs)
+    def render_message(self, template, **kwargs):
+        return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, **kwargs):
         subject = submission.page.specific.subject or 'Thank you for your submission to Open Technology Fund'
