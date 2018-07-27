@@ -1,6 +1,9 @@
+import json
 from unittest.mock import Mock, patch
 
-from django.test import TestCase
+import responses
+
+from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
@@ -11,14 +14,15 @@ from ..models import Activity
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
-    MessageAdapter,
     MessengerBackend,
     MESSAGES,
+    SlackAdapter,
 )
 
 
 class TestAdapter(AdapterBase):
     """A test class which will pass the message type to send_message"""
+    adapter_type = 'Test Adapter'
     messages = {
         enum: enum.value
         for enum in MESSAGES.__members__.values()
@@ -28,6 +32,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
+@override_settings(SEND_MESSAGES=True)
 class TestBaseAdapter(TestCase):
     def setUp(self):
         patched_class = patch.object(TestAdapter, 'send_message')
@@ -72,6 +77,17 @@ class TestBaseAdapter(TestCase):
 
         self.adapter.send_message.assert_called_once_with(message, message=message)
 
+    @override_settings(SEND_MESSAGES=False)
+    def test_django_messages_used(self):
+        request = make_request()
+
+        self.adapter.process(MESSAGES.UPDATE_LEAD, request=request)
+
+        messages = list(get_messages(request))
+        self.assertEqual(len(messages), 1)
+        self.assertTrue(MESSAGES.UPDATE_LEAD.value in messages[0].message)
+        self.assertTrue(self.adapter.adapter_type in messages[0].message)
+
 
 class TestMessageBackend(TestCase):
     def setUp(self):
@@ -98,19 +114,7 @@ class TestMessageBackend(TestCase):
         self.assertEqual(adapter.process.call_count, len(adapters))
 
 
-class TestDjangoMessagesAdapter(TestCase):
-    def test_message_added(self):
-        adapter = MessageAdapter()
-        request = make_request()
-
-        message = 'test message'
-        adapter.send_message(message, request=request)
-
-        messages = list(get_messages(request))
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(messages[0].message, message)
-
-
+@override_settings(SEND_MESSAGES=True)
 class TestActivityAdapter(TestCase):
     def setUp(self):
         self.adapter = ActivityAdapter()
@@ -149,3 +153,47 @@ class TestActivityAdapter(TestCase):
         self.assertTrue('Removed' in message)
         self.assertTrue('1' in message)
         self.assertTrue('2' in message)
+
+
+class TestSlackAdapter(TestCase):
+    target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
+    target_room = '<ROOM ID>'
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=None,
+    )
+    @responses.activate
+    def test_cant_send_with_no_room(self):
+        adapter = SlackAdapter()
+        adapter.send_message('my message')
+        self.assertEqual(len(responses.calls), 0)
+
+    @override_settings(
+        SLACK_DESTINATION_URL=None,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_cant_send_with_no_url(self):
+        adapter = SlackAdapter()
+        adapter.send_message('my message')
+        self.assertEqual(len(responses.calls), 0)
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_correct_payload(self):
+        responses.add(responses.POST, self.target_url, status=200)
+        adapter = SlackAdapter()
+        message = 'my message'
+        adapter.send_message(message)
+        self.assertEqual(len(responses.calls), 1)
+        self.assertDictEqual(
+            json.loads(responses.calls[0].request.body),
+            {
+                'room': self.target_room,
+                'message': message,
+            }
+        )

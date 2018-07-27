@@ -70,6 +70,8 @@
 
         {% wagtailuserbar %}
 
+        {% include 'includes/messages.html' %}
+
         {% block header %}
             {% image page.header_image fill-2560x410 as header_image %}
             <header class="header header--standard {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if page.header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>

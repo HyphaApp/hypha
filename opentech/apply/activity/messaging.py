@@ -1,26 +1,40 @@
 from enum import Enum
+
+import requests
+
+from django.conf import settings
 from django.contrib import messages
 
 from .models import Activity
+
+
+def link_to(target, request):
+    return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'update_lead'
     NEW_SUBMISSION = 'new_submission'
     TRANSITION = 'transition'
-    NEW_DETERMINATION = 'new_determination'
     DETERMINATION_OUTCOME = 'determination_outcome'
     INVITED_TO_PROPOSAL = 'invited_to_proposal'
     REVIEWERS_UPDATED = 'reviewers_updated'
     NEW_REVIEW = 'new_review'
     COMMENT = 'comment'
+    PROPOSAL_SUBMITTED = 'proposal_submitted'
 
 
 class AdapterBase:
     messages = {}
+    always_send = False
 
     def message(self, message_type, **kwargs):
-        message = self.messages[message_type]
+        try:
+            message = self.messages[message_type]
+        except KeyError:
+            # We don't know how to handle that message type
+            return
+
         try:
             # see if its a method on the adapter
             method = getattr(self, message)
@@ -30,33 +44,30 @@ class AdapterBase:
             return method(**kwargs)
 
     def process(self, message_type, **kwargs):
-        try:
-            message = self.message(message_type, **kwargs)
-        except KeyError:
+        message = self.message(message_type, **kwargs)
+
+        if not message:
             return
-        self.send_message(message, **kwargs)
+
+        if settings.SEND_MESSAGES or self.always_send:
+            self.send_message(message, **kwargs)
+
+        if not settings.SEND_MESSAGES:
+            message = self.adapter_type + ': ' + message
+            messages.add_message(kwargs['request'], messages.INFO, message)
 
     def send_message(self, message, **kwargs):
         raise NotImplementedError()
 
 
-class MessageAdapter(AdapterBase):
-    messages = {
-        enum: enum.value
-        for enum in MESSAGES.__members__.values()
-    }
-
-    def send_message(self, message, **kwargs):
-        messages.add_message(kwargs['request'], messages.INFO, message)
-
-
 class ActivityAdapter(AdapterBase):
+    adapter_type = "Activity Feed"
+    always_send = True
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
-        MESSAGES.NEW_DETERMINATION: 'Created a determination for {submission.title}',
-        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{determination.clean_message}',
+        MESSAGES.DETERMINATION_OUTCOME: 'Sent a {submission.determination.get_outcome_display} determination for {submission.title}:\r\n{submission.determination.clean_message}',
         MESSAGES.INVITED_TO_PROPOSAL: '{submission.title} has been invited to submit a proposal.',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Created a review for {submission.title}'
@@ -82,6 +93,55 @@ class ActivityAdapter(AdapterBase):
         )
 
 
+class SlackAdapter(AdapterBase):
+    adapter_type = "Slack"
+    always_send = True
+    messages = {
+        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {{submission.page.title}}: <{link}|{submission.title}>',
+        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
+        MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
+        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
+        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email: {submission.determination.get_outcome_display}',
+        MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
+        MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}'
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.destination = settings.SLACK_DESTINATION_URL
+        self.target_room = settings.SLACK_DESTINATION_ROOM
+
+    def message(self, message_type, **kwargs):
+        submission = kwargs['submission']
+        request = kwargs['request']
+        link = link_to(submission, request)
+
+        message = super().message(message_type, link=link, **kwargs)
+
+        if submission.lead.slack:
+            slack_target = self.slack_id(submission.lead)
+        else:
+            slack_target = ''
+
+        message = ' '.join([slack_target, message]).strip()
+        return message
+
+    def slack_id(self, user):
+        return f'<{user.slack}>'
+
+    def send_message(self, message, **kwargs):
+        if not self.destination or not self.target_room:
+            return
+
+        data = {
+            "room": self.target_room,
+            "message": message,
+        }
+        requests.post(self.destination, json=data)
+
+
 class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
@@ -96,7 +156,7 @@ class MessengerBackend:
 
 adapters = [
     ActivityAdapter(),
-    MessageAdapter(),
+    SlackAdapter(),
 ]
 
 

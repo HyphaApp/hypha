@@ -16,6 +16,7 @@ django-hijack==2.1.9
 factory_boy==2.9.2
 # wagtail_factories - waiting on merge and release form master branch
 git+git://github.com/mvantellingen/wagtail-factories.git#egg=wagtail_factories
+responses == 0.9.0
 
 flake8
 

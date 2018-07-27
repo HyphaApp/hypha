@@ -5,6 +5,8 @@ Django settings for opentech project.
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+env = os.environ.copy()
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
@@ -348,3 +350,9 @@ BLEACH_STRIP_COMMENTS = True
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
 HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
+
+
+# Messaging Settings
+SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
+SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
+SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)

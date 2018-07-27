@@ -46,13 +46,13 @@ from .blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from .edit_handlers import FilteredFieldPanel, ReadOnlyPanel, ReadOnlyInlinePanel
 from .workflow import (
     active_statuses,
+    DETERMINATION_PHASES,
+    DETERMINATION_RESPONSE_PHASES,
     get_review_statuses,
     INITIAL_STATE,
     review_statuses,
     UserPermissions,
     WORKFLOWS,
-    DETERMINATION_PHASES,
-    DETERMINATION_RESPONSE_PHASES,
 )
 
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}

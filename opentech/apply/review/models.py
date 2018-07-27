@@ -87,6 +87,10 @@ class Review(BaseStreamForm, models.Model):
     class Meta:
         unique_together = ('author', 'submission')
 
+    @property
+    def outcome(self):
+        return self.get_recommendation_display()
+
     def get_absolute_url(self):
         return reverse('apply:reviews:review', args=(self.id,))
 
