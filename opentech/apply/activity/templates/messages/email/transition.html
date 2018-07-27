@@ -1,5 +1,5 @@
 {% extends "messages/email/base.html" %}
 
 {% block content %}
-Your application has been progressed from {old_phase.display_name} to {submission.phase}.
+Your application has been progressed from {{ old_phase.display_name }} to {{ submission.phase }}.
 {% endblock %}

@@ -153,8 +153,8 @@ class EmailAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
-        MESSAGES.TRANSITION: 'funds/email/transition.html',
         MESSAGES.DETERMINATION_OUTCOME: 'funds/email/determination.html',
+        MESSAGES.TRANSITION: 'messages/email/transition.html',
     }
 
     def notify_comment(self, **kwargs):

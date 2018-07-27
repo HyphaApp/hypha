@@ -38,7 +38,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     filterset_class = SubmissionFilter
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.active().current()
+        return self.filterset_class._meta.model.objects.current()
 
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data
