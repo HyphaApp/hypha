@@ -74,8 +74,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        is_new = not form.instance.id
-
         response = super().form_valid(form)
 
         if not self.object.is_draft:
@@ -88,14 +86,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             action_name = self.get_action_name_from_determination(int(form.cleaned_data.get('outcome')))
 
             self.submission.perform_transition(action_name, self.request.user, request=self.request)
-        elif is_new:
-            messenger(
-                MESSAGES.NEW_DETERMINATION,
-                request=self.request,
-                user=self.object.author,
-                submission=self.object.submission,
-            )
-
         return self.progress_stage(self.submission) or response
 
     def progress_stage(self, instance):
