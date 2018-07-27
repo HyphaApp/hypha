@@ -106,7 +106,8 @@ class SlackAdapter(AdapterBase):
 
     def __init__(self):
         super().__init__()
-        self.destination = settings.SLACK_DESTINATION
+        self.destination = settings.SLACK_DESTINATION_URL
+        self.target_room = settings.SLACK_DESTINATION_ROOM
 
     def message(self, message_type,  **kwargs):
         user = kwargs['user']
@@ -128,11 +129,11 @@ class SlackAdapter(AdapterBase):
         return f'<{user.slack}>'
 
     def send_message(self, message, **kwargs):
-        if not self.destination:
+        if not self.destination and not self.target_room:
             return
 
         data = {
-            "room": "CBQUCH458",
+            "room": self.target_room,
             "message": message,
         }
         requests.post(self.destination, data=data)
