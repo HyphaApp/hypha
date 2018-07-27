@@ -133,25 +133,10 @@ class DeterminationDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         determination = self.get_object()
-        form_used = get_form_for_stage(determination.submission)
-        form_data = {}
-
-        for name, field in form_used.base_fields.items():
-            try:
-                # Add any titles that exist
-                title = form_used.titles[field.group]
-                form_data.setdefault(title, '<field_group_title>')
-            except AttributeError:
-                pass
-
-            try:
-                value = determination.data[name]
-                form_data.setdefault(field.label, str(value))
-            except KeyError:
-                pass
+        detailed_determination = determination.extra_fields
 
         return super().get_context_data(
             can_view_extended_data=determination.submission.has_permission_to_add_determination(self.request.user),
-            determination_data=form_data,
+            determination_data=detailed_determination,
             **kwargs
         )

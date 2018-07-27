@@ -62,6 +62,11 @@ class Determination(models.Model):
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.data)}>'
 
+    @property
+    def detailed_data(self):
+        from .views import get_form_for_stage
+        return get_form_for_stage(self.submission).get_detailed_response(self.data)
+
 
 @register_setting
 class DeterminationMessageSettings(BaseSetting):

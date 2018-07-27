@@ -100,6 +100,23 @@ class BaseDeterminationForm(forms.ModelForm):
 
         self.fields['outcome'].choices = available_choices
 
+    @classmethod
+    def get_detailed_response(cls, data):
+        data = {}
+        for group, title in cls.titles.items():
+            data.setdefault(group, {'title': title, 'questions': list()})
+
+        for name, field in cls.base_fields.items():
+            try:
+                value = data[name]
+            except KeyError:
+                # The field is not stored in the data
+                pass
+            else:
+                data[field.group]['questions'].append((field.label, str(value)))
+
+        return data
+
 
 class ConceptDeterminationForm(BaseDeterminationForm):
     outcome = forms.ChoiceField(
