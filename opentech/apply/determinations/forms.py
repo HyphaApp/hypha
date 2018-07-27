@@ -2,8 +2,14 @@ from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
-from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED, \
-    DETERMINATION_TRANSITION_SUFFIX
+from .models import (
+    Determination,
+    DETERMINATION_CHOICES,
+    NEEDS_MORE_INFO,
+    REJECTED,
+    ACCEPTED,
+    TRANSITION_DETERMINATION,
+)
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
@@ -40,8 +46,10 @@ class BaseDeterminationForm(forms.ModelForm):
         }
 
     def __init__(self, *args, user, submission, action='', initial={}, instance=None, **kwargs):
-        if action:
-            initial.update(outcome=self.get_determination_from_action_name(action))
+        try:
+            initial.update(outcome=TRANSITION_DETERMINATION[action])
+        except KeyError:
+            pass
         initial.update(submission=submission.id)
         initial.update(author=user.id)
 
@@ -55,7 +63,7 @@ class BaseDeterminationForm(forms.ModelForm):
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
-        self.update_outcome_choices_for_phase(submission.phase)
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission.phase)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
@@ -74,31 +82,25 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return super().save(commit)
 
-    def get_determination_from_action_name(self, action_name):
-        if action_name in DETERMINATION_OUTCOMES:
-            if 'more_info' in action_name:
-                return NEEDS_MORE_INFO
-            elif 'accepted' in action_name or 'invited_to_proposal' in action_name:
-                return ACCEPTED
-        return REJECTED
-
-    def update_outcome_choices_for_phase(self, phase):
+    def outcome_choices_for_phase(self, phase):
         """
         Outcome choices correspond to Phase transitions.
         We need to filter out non-matching choices.
         i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
         """
         available_choices = set()
-        choices = list(self.fields['outcome'].choices)
+        choices = dict(self.fields['outcome'].choices)
 
-        for key, value in choices:
-            suffix = DETERMINATION_TRANSITION_SUFFIX[key]
-            for transition_name in phase.transitions:
-                for item in suffix:
-                    if item in transition_name:
-                        available_choices.add((key, value))
+        for transition_name in phase.transitions:
+            try:
+                determination_type = TRANSITION_DETERMINATION[transition_name]
+            except KeyError:
+                pass
+            else:
+                available_choices.add((determination_type, choices[determination_type]))
 
-        self.fields['outcome'].choices = available_choices
+        return available_choices
+
 
     @classmethod
     def get_detailed_response(cls, saved_data):

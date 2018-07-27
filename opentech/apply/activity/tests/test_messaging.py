@@ -72,12 +72,12 @@ class TestBaseAdapter(TestCase):
 
     def test_that_message_is_formatted(self):
         message_type = MESSAGES.UPDATE_LEAD
-        self.adapter.messages[message_type] = '{message}'
+        self.adapter.messages[message_type] = '{message_to_format}'
         message = 'message value'
 
-        self.adapter.process(message_type, message=message)
+        self.adapter.process(message_type, message_to_format=message)
 
-        self.adapter.send_message.assert_called_once_with(message, message=message)
+        self.adapter.send_message.assert_called_once_with(message, message_to_format=message)
 
     @override_settings(SEND_MESSAGES=False)
     def test_django_messages_used(self):

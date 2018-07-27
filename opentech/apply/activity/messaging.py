@@ -166,7 +166,7 @@ class EmailAdapter(AdapterBase):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, **kwargs):
-        subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission)
+        subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
         send_mail(
             subject,
             message,

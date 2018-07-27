@@ -12,7 +12,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, TRANSITION_SUFFIX, DeterminationMessageSettings, NEEDS_MORE_INFO
+from .models import Determination, TRANSITION_DETERMINATION, DeterminationMessageSettings, NEEDS_MORE_INFO
 
 
 def get_form_for_stage(submission):
@@ -83,7 +83,11 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
-                Activity.comments.create(message=self.object.clean_message, user=self.request.user)
+                Activity.comments.create(
+                    message=self.object.clean_message,
+                    user=self.request.user,
+                    submission=self.submission,
+                )
 
             self.submission.perform_transition(transition, self.request.user, request=self.request)
 
@@ -104,11 +108,13 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             return HttpResponseRedirect(instance.get_absolute_url())
 
     def transition_from_outcome(self, outcome):
-        transition_types = TRANSITION_SUFFIX[outcome]
-
         for transition_name in self.submission.phase.transitions:
-            for transition_type in transition_types:
-                if transition_type in transition_name:
+            try:
+                transition_type = TRANSITION_DETERMINATION[transition_name]
+            except KeyError:
+                pass
+            else:
+                if transition_type == outcome:
                     return transition_name
 
 

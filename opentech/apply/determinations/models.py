@@ -9,6 +9,8 @@ from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.fields import RichTextField
 
+from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+
 
 REJECTED = 0
 NEEDS_MORE_INFO = 1
@@ -20,10 +22,15 @@ DETERMINATION_CHOICES = (
     (ACCEPTED, _('Approved')),
 )
 
-TRANSITION_SUFFIX = {
-    ACCEPTED: ['accepted', 'invited_to_proposal'],
-    REJECTED: ['rejected'],
-    NEEDS_MORE_INFO: ['more_info'],
+DETRMINATION_TO_OUTCOME = {
+    'rejected': REJECTED,
+    'accepted': ACCEPTED,
+    'more_info': NEEDS_MORE_INFO,
+}
+
+TRANSITION_DETERMINATION = {
+    name: DETRMINATION_TO_OUTCOME[type]
+    for name, type in DETERMINATION_OUTCOMES.items()
 }
 
 
