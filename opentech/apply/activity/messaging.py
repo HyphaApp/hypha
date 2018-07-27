@@ -29,7 +29,12 @@ class AdapterBase:
     always_send = False
 
     def message(self, message_type, **kwargs):
-        message = self.messages[message_type]
+        try:
+            message = self.messages[message_type]
+        except KeyError:
+            # We don't know how to handle that message type
+            return
+
         try:
             # see if its a method on the adapter
             method = getattr(self, message)
@@ -127,14 +132,14 @@ class SlackAdapter(AdapterBase):
         return f'<{user.slack}>'
 
     def send_message(self, message, **kwargs):
-        if not self.destination and not self.target_room:
+        if not self.destination or not self.target_room:
             return
 
         data = {
             "room": self.target_room,
             "message": message,
         }
-        requests.post(self.destination, data=data)
+        requests.post(self.destination, json=data)
 
 
 class MessengerBackend:

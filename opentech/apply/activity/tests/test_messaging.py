@@ -1,4 +1,7 @@
+import json
 from unittest.mock import Mock, patch
+
+import responses
 
 from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
@@ -13,6 +16,7 @@ from ..messaging import (
     ActivityAdapter,
     MessengerBackend,
     MESSAGES,
+    SlackAdapter,
 )
 
 
@@ -149,3 +153,47 @@ class TestActivityAdapter(TestCase):
         self.assertTrue('Removed' in message)
         self.assertTrue('1' in message)
         self.assertTrue('2' in message)
+
+
+class TestSlackAdapter(TestCase):
+    target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
+    target_room = '<ROOM ID>'
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=None,
+    )
+    @responses.activate
+    def test_cant_send_with_no_room(self):
+        adapter = SlackAdapter()
+        adapter.send_message('my message')
+        self.assertEqual(len(responses.calls), 0)
+
+    @override_settings(
+        SLACK_DESTINATION_URL=None,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_cant_send_with_no_url(self):
+        adapter = SlackAdapter()
+        adapter.send_message('my message')
+        self.assertEqual(len(responses.calls), 0)
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_correct_payload(self):
+        responses.add(responses.POST, self.target_url, status=200)
+        adapter = SlackAdapter()
+        message = 'my message'
+        adapter.send_message(message)
+        self.assertEqual(len(responses.calls), 1)
+        self.assertDictEqual(
+            json.loads(responses.calls[0].request.body),
+            {
+                'room': self.target_room,
+                'message': message,
+            }
+        )
