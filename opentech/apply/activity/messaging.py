@@ -70,14 +70,12 @@ class AdapterBase:
 
         for recipient in self.recipients(message_type, **kwargs):
             if settings.SEND_MESSAGES or self.always_send:
-                self.send_message(message, recipient=recipient, **kwargs)
-                from.models import Message
-                Message.objects.create(
-                    type=self.adapter_type,
-                    content=message,
-                    recipient=recipient,
-                    event=event,
-                )
+                status = self.send_message(message, recipient=recipient, **kwargs)
+            else:
+                status = 'Message not sent as SEND_MESSAGES==FALSE'
+
+            if status:
+                self.log_message(message, recipient, event, status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -86,7 +84,19 @@ class AdapterBase:
                     message = '{}: {}'.format(self.adapter_type, message)
                 messages.add_message(kwargs['request'], messages.INFO, message)
 
+    def log_message(self, message, recipient, event, status):
+        from.models import Message
+        Message.objects.create(
+            type=self.adapter_type,
+            content=message,
+            recipient=recipient,
+            event=event,
+            status=status,
+        )
+
     def send_message(self, message, **kwargs):
+        # Process the message, should return the result of the send
+        # Returning None will not record this action
         raise NotImplementedError()
 
 
@@ -182,7 +192,12 @@ class SlackAdapter(AdapterBase):
 
     def send_message(self, message, recipient, **kwargs):
         if not self.destination or not self.target_room:
-            return
+            errors = list()
+            if not self.destination:
+                errors.append('Destination URL')
+            if not self.target_room:
+                errors.append('Room ID')
+            return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
 
@@ -190,7 +205,7 @@ class SlackAdapter(AdapterBase):
             "room": self.target_room,
             "message": message,
         }
-        requests.post(self.destination, json=data)
+        return requests.post(self.destination, json=data)
 
 
 class EmailAdapter(AdapterBase):
@@ -215,7 +230,8 @@ class EmailAdapter(AdapterBase):
 
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
-        if not comment.private:
+        submission = kwargs['submission']
+        if not comment.private and not comment.user == submission.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
     def recipients(self, message_type, submission, **kwargs):
@@ -234,7 +250,7 @@ class EmailAdapter(AdapterBase):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
-        send_mail(
+        return send_mail(
             subject,
             message,
             submission.page.specific.from_address,

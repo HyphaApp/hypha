@@ -120,3 +120,4 @@ class Message(models.Model):
     content = models.TextField()
     recipient = models.CharField(max_length=250)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    status = models.TextField()

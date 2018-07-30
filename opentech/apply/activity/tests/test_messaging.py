@@ -20,6 +20,7 @@ from ..messaging import (
     MESSAGES,
     SlackAdapter,
 )
+from .factories import CommentFactory, EventFactory
 
 
 class TestAdapter(AdapterBase):
@@ -36,9 +37,30 @@ class TestAdapter(AdapterBase):
     def recipients(self, message_type, **kwargs):
         return [message_type]
 
+    def log_message(self, message, recipient, event, status):
+        pass
+
+
+class AdapterMixin:
+    adapter = None
+
+    def process_kwargs(self, **kwargs):
+        if 'user' not in kwargs:
+            kwargs['user'] = UserFactory()
+        if 'submission' not in kwargs:
+            kwargs['submission'] = ApplicationSubmissionFactory()
+        if 'request' not in kwargs:
+            kwargs['request'] = None
+
+        return kwargs
+
+    def adapter_process(self, message_type, **kwargs):
+        kwargs = self.process_kwargs(**kwargs)
+        self.adapter.process(message_type, event=EventFactory(submission=kwargs['submission']), **kwargs)
+
 
 @override_settings(SEND_MESSAGES=True)
-class TestBaseAdapter(TestCase):
+class TestBaseAdapter(AdapterMixin, TestCase):
     def setUp(self):
         patched_class = patch.object(TestAdapter, 'send_message')
         self.mock_adapter = patched_class.start()
@@ -47,55 +69,61 @@ class TestBaseAdapter(TestCase):
 
     def test_can_send_a_message(self):
         message_type = MESSAGES.UPDATE_LEAD
-        self.adapter.process(message_type)
+        self.adapter_process(message_type)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type)
+        self.adapter.send_message.assert_called_once()
+        self.assertEqual(self.adapter.send_message.call_args[0], (message_type.value,))
 
     def test_doesnt_send_a_message_if_not_configured(self):
-        self.adapter.process('this_is_not_a_message_type')
+        self.adapter_process('this_is_not_a_message_type')
 
         self.adapter.send_message.assert_not_called()
 
     def test_calls_method_if_avaliable(self):
         method_name = 'new_method'
         return_message = 'Returned message'
-        setattr(self.adapter, method_name, lambda: return_message)
+        setattr(self.adapter, method_name, lambda **kw: return_message)
         self.adapter.messages[method_name] = method_name
 
-        self.adapter.process(method_name)
+        self.adapter_process(method_name)
 
-        self.adapter.send_message.assert_called_once_with(return_message, recipient=method_name)
+        self.adapter.send_message.assert_called_once()
+        self.assertEqual(self.adapter.send_message.call_args[0], (return_message,))
 
     def test_that_kwargs_passed_to_send_message(self):
         message_type = MESSAGES.UPDATE_LEAD
         kwargs = {'test': 'that', 'these': 'exist'}
-        self.adapter.process(message_type, **kwargs)
+        self.adapter_process(message_type, **kwargs)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type, **kwargs)
+        self.adapter.send_message.assert_called_once()
+        for key in kwargs:
+            self.assertTrue(key in self.adapter.send_message.call_args[1])
 
     def test_that_message_is_formatted(self):
         message_type = MESSAGES.UPDATE_LEAD
         message = 'message value'
 
         with patch.dict(self.adapter.messages, {message_type: '{message_to_format}'}):
-            self.adapter.process(message_type, message_to_format=message)
+            self.adapter_process(message_type, message_to_format=message)
 
-        self.adapter.send_message.assert_called_once_with(message, message_to_format=message, recipient=message_type)
+        self.adapter.send_message.assert_called_once()
+        self.assertEqual(self.adapter.send_message.call_args[0], (message,))
 
     def test_can_include_extra_kwargs(self):
         message_type = MESSAGES.UPDATE_LEAD
 
         with patch.dict(self.adapter.messages, {message_type: '{extra}'}):
             with patch.object(self.adapter, 'extra_kwargs', return_value={'extra': 'extra'}):
-                self.adapter.process(message_type)
+                self.adapter_process(message_type)
 
-        self.adapter.send_message.assert_called_once_with('extra', extra='extra', recipient=message_type)
+        self.adapter.send_message.assert_called_once()
+        self.assertTrue('extra' in self.adapter.send_message.call_args[1])
 
     @override_settings(SEND_MESSAGES=False)
     def test_django_messages_used(self):
         request = make_request()
 
-        self.adapter.process(MESSAGES.UPDATE_LEAD, request=request)
+        self.adapter_process(MESSAGES.UPDATE_LEAD, request=request)
 
         messages = list(get_messages(request))
         self.assertEqual(len(messages), 1)
@@ -107,7 +135,11 @@ class TestMessageBackend(TestCase):
     def setUp(self):
         self.mocked_adapter = Mock(AdapterBase)
         self.backend = MessengerBackend
-        self.kwargs = {'request': None, 'user': None, 'submission': None}
+        self.kwargs = {
+            'request': None,
+            'user': UserFactory(),
+            'submission': ApplicationSubmissionFactory(),
+        }
 
     def test_message_sent_to_adapter(self):
         adapter = self.mocked_adapter()
@@ -115,7 +147,7 @@ class TestMessageBackend(TestCase):
 
         messenger(MESSAGES.UPDATE_LEAD, **self.kwargs)
 
-        adapter.process.assert_called_once_with(MESSAGES.UPDATE_LEAD, **self.kwargs)
+        adapter.process.assert_called_once_with(MESSAGES.UPDATE_LEAD, Event.objects.first(), **self.kwargs)
 
     def test_message_sent_to_all_adapter(self):
         adapters = [self.mocked_adapter(), self.mocked_adapter()]
@@ -135,8 +167,8 @@ class TestMessageBackend(TestCase):
         messenger(MESSAGES.UPDATE_LEAD, **self.kwargs)
 
         self.assertEqual(Event.objects.count(), 1)
-        self.assertEqual(Event.objects.first().type, MESSAGES.UPDATE_LEAD)
-        self.assertEqual(Event.objects.first().get_type_display, MESSAGES.UPDATE_LEAD.value)
+        self.assertEqual(Event.objects.first().type, MESSAGES.UPDATE_LEAD.name)
+        self.assertEqual(Event.objects.first().get_type_display(), MESSAGES.UPDATE_LEAD.value)
         self.assertEqual(Event.objects.first().by, user)
 
 
@@ -240,20 +272,33 @@ class TestSlackAdapter(TestCase):
 
 
 @override_settings(SEND_MESSAGES=True)
-class TestEmailAdapter(TestCase):
+class TestEmailAdapter(AdapterMixin, TestCase):
+    adapter = EmailAdapter()
+
     def test_email_new_submission(self):
-        adapter = EmailAdapter()
         submission = ApplicationSubmissionFactory()
-        adapter.process(MESSAGES.NEW_SUBMISSION, submission=submission)
+        self.adapter_process(MESSAGES.NEW_SUBMISSION, submission=submission)
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [submission.user.email])
 
+    def test_no_email_private_comment(self):
+        comment = CommentFactory(internal=True)
+
+        self.adapter_process(MESSAGES.COMMENT, comment=comment, submission=comment.submission)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_no_email_own_comment(self):
+        application = ApplicationSubmissionFactory()
+        comment = CommentFactory(user=application.user, submission=application)
+
+        self.adapter_process(MESSAGES.COMMENT, comment=comment, user=comment.user, submission=comment.submission)
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_reviewers_email(self):
-        adapter = EmailAdapter()
         reviewers = ReviewerFactory.create_batch(4)
         submission = ApplicationSubmissionFactory(status='external_review', reviewers=reviewers, workflow_stages=2)
-        adapter.process(MESSAGES.READY_FOR_REVIEW, submission=submission)
+        self.adapter_process(MESSAGES.READY_FOR_REVIEW, submission=submission)
 
         self.assertEqual(len(mail.outbox), 4)
         self.assertTrue(mail.outbox[0].subject, 'ready to review')

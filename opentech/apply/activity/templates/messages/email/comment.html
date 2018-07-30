@@ -1,7 +1,5 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% block content %}
-There has been a new comment on your application: {{ submission.title }}
+{% block content %}There has been a new comment on your application: {{ submission.title }}
 
-{{ comment.message }}
-{% endblock %}
+{{ comment.user }}: {{ comment.message }}{% endblock %}
