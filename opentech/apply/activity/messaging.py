@@ -50,19 +50,27 @@ class AdapterBase:
     def render_message(self, message, **kwargs):
         return message.format(**kwargs)
 
+    def extra_kwargs(self, message_type, **kwargs):
+        return {}
+
+    def recipients(self, message_type, **kwargs):
+        raise NotImplementedError()
+
     def process(self, message_type, **kwargs):
         message = self.message(message_type, **kwargs)
-        kwargs.update(self.extra_kwargs(message_type, **kwargs))
-
         if not message:
             return
 
-        if settings.SEND_MESSAGES or self.always_send:
-            self.send_message(message, **kwargs)
+        recipients = self.recipients(message_type, **kwargs)
+        kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
-        if not settings.SEND_MESSAGES:
-            message = self.adapter_type + ': ' + message
-            messages.add_message(kwargs['request'], messages.INFO, message)
+        for recipient in recipients:
+            if settings.SEND_MESSAGES or self.always_send:
+                self.send_message(message, recipient=recipient, **kwargs)
+
+            if not settings.SEND_MESSAGES:
+                message = self.adapter_type + ': ' + message
+                messages.add_message(kwargs['request'], messages.INFO, message)
 
     def send_message(self, message, **kwargs):
         raise NotImplementedError()
@@ -80,6 +88,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: '{user} submitted a review'
     }
+
+    def recipients(self, message_type, **kwargs):
+        return [None]
 
     def reviewers_updated(self, added, removed, **kwargs):
         message = ['Reviewers updated.']
@@ -122,22 +133,14 @@ class SlackAdapter(AdapterBase):
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
 
-    def message(self, message_type, **kwargs):
-        message = super().message(message_type, **kwargs)
-
-        user = kwargs['user']
-        submission = kwargs['submission']
-
-        slack_target = self.slack_id(submission.lead)
-
-        message = ' '.join([slack_target, message]).strip()
-        return message
-
     def extra_kwargs(self, message_type, **kwargs):
         submission = kwargs['submission']
         request = kwargs['request']
         link = link_to(submission, request)
         return {'link': link}
+
+    def recipients(self, message_type, message, **kwargs):
+        return [self.slack_id(submission.lead)]
 
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
@@ -162,9 +165,11 @@ class SlackAdapter(AdapterBase):
             return f'<{user.slack}>'
         return ''
 
-    def send_message(self, message, **kwargs):
+    def send_message(self, message, recipient, **kwargs):
         if not self.destination or not self.target_room:
             return
+
+        message = ' '.join([recipient, message]).strip()
 
         data = {
             "room": self.target_room,
@@ -183,22 +188,29 @@ class EmailAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
     }
-    recipients = {
-        MESSAGES.READY_FOR_REVIEW: 'get_reviewers',
-    }
+
+    def extra_kwargs(self, message_type, submission, **kwargs):
+        if message_type == MESSAGES.READY_FOR_REVIEW:
+            subject = 'Application ready to review: {submission.title}'.format(submission=submission)
+        else:
+            subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
+        return {
+            'subject': subject,
+        }
 
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
         if not comment.private:
             return self.render_message('messages/email/comment.html', **kwargs)
 
-    def get_recipients(self, submission):
-        try:
-            return getattr(self, self.recipients[''])
+    def recipients(self, message_type, submission, **kwargs):
+        if message_type == MESSAGES.READY_FOR_REVIEW:
+            return self.reviewers(submission)
+        return [submission.user.email]
 
-    def get_reviewers(self, )
+    def reviewers(self, submission):
         return [
-            [reviewer.email]
+            reviewer.email
             for reviewer in submission.reviewers.all()
             if submission.phase.permissions.can_review(reviewer)
         ]
@@ -206,16 +218,13 @@ class EmailAdapter(AdapterBase):
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)
 
-    def send_message(self, message, submission, **kwargs):
-        subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
-        recipients = self.get_recipients(submission) or [(submission.user.email,)]
-        for recipient in recipients:
-            send_mail(
-                subject,
-                message,
-                submission.page.specific.from_address,
-                recipient,
-            )
+    def send_message(self, message, submission, subject, recipient, **kwargs):
+        send_mail(
+            subject,
+            message,
+            submission.page.specific.from_address,
+            [recipient],
+        )
 
 
 class MessengerBackend:

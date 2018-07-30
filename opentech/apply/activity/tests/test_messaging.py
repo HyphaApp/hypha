@@ -33,6 +33,9 @@ class TestAdapter(AdapterBase):
     def send_message(self, message, **kwargs):
         pass
 
+    def recipients(self, message_type, **kwargs):
+        return [message_type]
+
 
 @override_settings(SEND_MESSAGES=True)
 class TestBaseAdapter(TestCase):
@@ -46,7 +49,7 @@ class TestBaseAdapter(TestCase):
         message_type = MESSAGES.UPDATE_LEAD
         self.adapter.process(message_type)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value)
+        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type)
 
     def test_doesnt_send_a_message_if_not_configured(self):
         self.adapter.process('this_is_not_a_message_type')
@@ -61,14 +64,14 @@ class TestBaseAdapter(TestCase):
 
         self.adapter.process(method_name)
 
-        self.adapter.send_message.assert_called_once_with(return_message)
+        self.adapter.send_message.assert_called_once_with(return_message, recipient=method_name)
 
     def test_that_kwargs_passed_to_send_message(self):
         message_type = MESSAGES.UPDATE_LEAD
         kwargs = {'test': 'that', 'these': 'exist'}
         self.adapter.process(message_type, **kwargs)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value, **kwargs)
+        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type, **kwargs)
 
     def test_that_message_is_formatted(self):
         message_type = MESSAGES.UPDATE_LEAD
@@ -77,7 +80,7 @@ class TestBaseAdapter(TestCase):
 
         self.adapter.process(message_type, message_to_format=message)
 
-        self.adapter.send_message.assert_called_once_with(message, message_to_format=message)
+        self.adapter.send_message.assert_called_once_with(message, message_to_format=message, recipient=message_type)
 
     @override_settings(SEND_MESSAGES=False)
     def test_django_messages_used(self):
@@ -168,7 +171,7 @@ class TestSlackAdapter(TestCase):
     @responses.activate
     def test_cant_send_with_no_room(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message')
+        adapter.send_message('my message', '')
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -178,7 +181,7 @@ class TestSlackAdapter(TestCase):
     @responses.activate
     def test_cant_send_with_no_url(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message')
+        adapter.send_message('my message', '')
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -190,7 +193,7 @@ class TestSlackAdapter(TestCase):
         responses.add(responses.POST, self.target_url, status=200)
         adapter = SlackAdapter()
         message = 'my message'
-        adapter.send_message(message)
+        adapter.send_message(message, '')
         self.assertEqual(len(responses.calls), 1)
         self.assertDictEqual(
             json.loads(responses.calls[0].request.body),
@@ -218,3 +221,4 @@ class TestEmailAdapter(TestCase):
         adapter.process(MESSAGES.READY_FOR_REVIEW, submission=submission)
 
         self.assertEqual(len(mail.outbox), 4)
+        self.assertTrue(mail.outbox[0].subject, 'ready to review')
