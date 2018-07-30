@@ -7,24 +7,29 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from .models import Activity
-
 
 def link_to(target, request):
     return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
 class MESSAGES(Enum):
-    UPDATE_LEAD = 'update_lead'
-    NEW_SUBMISSION = 'new_submission'
-    TRANSITION = 'transition'
-    DETERMINATION_OUTCOME = 'determination_outcome'
-    INVITED_TO_PROPOSAL = 'invited_to_proposal'
-    REVIEWERS_UPDATED = 'reviewers_updated'
-    READY_FOR_REVIEW = 'ready_for_review'
-    NEW_REVIEW = 'new_review'
-    COMMENT = 'comment'
-    PROPOSAL_SUBMITTED = 'proposal_submitted'
+    UPDATE_LEAD = 'Update Lead'
+    NEW_SUBMISSION = 'New Submission'
+    TRANSITION = 'Transition'
+    DETERMINATION_OUTCOME = 'Determination Outcome'
+    INVITED_TO_PROPOSAL = 'Invited To Proposal'
+    REVIEWERS_UPDATED = 'Reviewers Updated'
+    READY_FOR_REVIEW = 'Ready For Review'
+    NEW_REVIEW = 'New Review'
+    COMMENT = 'Comment'
+    PROPOSAL_SUBMITTED = 'Proposal Submitted'
+
+    @classmethod
+    def choices(cls):
+        return [
+            (choice.name, choice.value)
+            for choice in cls
+        ]
 
 
 class AdapterBase:
@@ -56,7 +61,7 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, **kwargs):
+    def process(self, message_type, event, **kwargs):
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         message = self.message(message_type, **kwargs)
@@ -66,6 +71,13 @@ class AdapterBase:
         for recipient in self.recipients(message_type, **kwargs):
             if settings.SEND_MESSAGES or self.always_send:
                 self.send_message(message, recipient=recipient, **kwargs)
+                from.models import Message
+                Message.objects.create(
+                    type=self.adapter_type,
+                    content=message,
+                    recipient=recipient,
+                    event=event,
+                )
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -107,6 +119,7 @@ class ActivityAdapter(AdapterBase):
         return ' '.join(message)
 
     def send_message(self, message, user, submission, **kwargs):
+        from .models import Activity
         Activity.actions.create(
             user=user,
             submission=submission,
@@ -236,9 +249,11 @@ class MessengerBackend:
     def __call__(self, message_type, request, user, submission, **kwargs):
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
-    def send(self, message_type, **kwargs):
+    def send(self, message_type, user, submission, **kwargs):
+        from.models import Event
+        event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, **kwargs)
+            adapter.process(message_type, event, user=user, submission=submission, **kwargs)
 
 
 adapters = [

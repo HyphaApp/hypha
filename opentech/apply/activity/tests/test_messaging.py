@@ -11,7 +11,7 @@ from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory
 
-from ..models import Activity
+from ..models import Activity, Event
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
@@ -107,25 +107,37 @@ class TestMessageBackend(TestCase):
     def setUp(self):
         self.mocked_adapter = Mock(AdapterBase)
         self.backend = MessengerBackend
+        self.kwargs = {'request': None, 'user': None, 'submission': None}
 
     def test_message_sent_to_adapter(self):
         adapter = self.mocked_adapter()
         messenger = self.backend(adapter)
 
-        kwargs = {'request': None, 'user': None, 'submission': None}
-        messenger(MESSAGES.UPDATE_LEAD, **kwargs)
+        messenger(MESSAGES.UPDATE_LEAD, **self.kwargs)
 
-        adapter.process.assert_called_once_with(MESSAGES.UPDATE_LEAD, **kwargs)
+        adapter.process.assert_called_once_with(MESSAGES.UPDATE_LEAD, **self.kwargs)
 
     def test_message_sent_to_all_adapter(self):
         adapters = [self.mocked_adapter(), self.mocked_adapter()]
         messenger = self.backend(*adapters)
 
-        kwargs = {'request': None, 'user': None, 'submission': None}
-        messenger(MESSAGES.UPDATE_LEAD, **kwargs)
+        messenger(MESSAGES.UPDATE_LEAD, **self.kwargs)
 
         adapter = adapters[0]
         self.assertEqual(adapter.process.call_count, len(adapters))
+
+    def test_event_created(self):
+        adapters = [self.mocked_adapter(), self.mocked_adapter()]
+        messenger = self.backend(*adapters)
+        user = UserFactory()
+        self.kwargs.update(user=user)
+
+        messenger(MESSAGES.UPDATE_LEAD, **self.kwargs)
+
+        self.assertEqual(Event.objects.count(), 1)
+        self.assertEqual(Event.objects.first().type, MESSAGES.UPDATE_LEAD)
+        self.assertEqual(Event.objects.first().get_type_display, MESSAGES.UPDATE_LEAD.value)
+        self.assertEqual(Event.objects.first().by, user)
 
 
 @override_settings(SEND_MESSAGES=True)
