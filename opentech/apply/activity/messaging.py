@@ -69,7 +69,10 @@ class AdapterBase:
                 self.send_message(message, recipient=recipient, **kwargs)
 
             if not settings.SEND_MESSAGES:
-                message = self.adapter_type + ': ' + message
+                if recipient:
+                    message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
+                else:
+                    message = '{}: {}'.format(self.adapter_type, message)
                 messages.add_message(kwargs['request'], messages.INFO, message)
 
     def send_message(self, message, **kwargs):
