@@ -57,11 +57,11 @@ class AdapterBase:
         raise NotImplementedError()
 
     def process(self, message_type, **kwargs):
+        kwargs.update(self.extra_kwargs(message_type, **kwargs))
+
         message = self.message(message_type, **kwargs)
         if not message:
             return
-
-        kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         for recipient in self.recipients(message_type, **kwargs):
             if settings.SEND_MESSAGES or self.always_send:
