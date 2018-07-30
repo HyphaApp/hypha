@@ -9,7 +9,7 @@ from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import UserFactory
+from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory
 
 from ..models import Activity
 from ..messaging import (
@@ -209,3 +209,12 @@ class TestEmailAdapter(TestCase):
         adapter.process(MESSAGES.NEW_SUBMISSION, submission=submission)
 
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [submission.user.email])
+
+    def test_reviewers_email(self):
+        adapter = EmailAdapter()
+        reviewers = ReviewerFactory.create_batch(4)
+        submission = ApplicationSubmissionFactory(status='external_review', reviewers=reviewers, workflow_stages=2)
+        adapter.process(MESSAGES.READY_FOR_REVIEW, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 4)

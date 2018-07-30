@@ -52,6 +52,7 @@ class AdapterBase:
 
     def process(self, message_type, **kwargs):
         message = self.message(message_type, **kwargs)
+        kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         if not message:
             return
@@ -122,16 +123,21 @@ class SlackAdapter(AdapterBase):
         self.target_room = settings.SLACK_DESTINATION_ROOM
 
     def message(self, message_type, **kwargs):
-        submission = kwargs['submission']
-        request = kwargs['request']
-        link = link_to(submission, request)
+        message = super().message(message_type, **kwargs)
 
-        message = super().message(message_type, link=link, **kwargs)
+        user = kwargs['user']
+        submission = kwargs['submission']
 
         slack_target = self.slack_id(submission.lead)
 
         message = ' '.join([slack_target, message]).strip()
         return message
+
+    def extra_kwargs(self, message_type, **kwargs):
+        submission = kwargs['submission']
+        request = kwargs['request']
+        link = link_to(submission, request)
+        return {'link': link}
 
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
@@ -175,6 +181,10 @@ class EmailAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'messages/email/transition.html',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
+        MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
+    }
+    recipients = {
+        MESSAGES.READY_FOR_REVIEW: 'get_reviewers',
     }
 
     def notify_comment(self, **kwargs):
@@ -182,17 +192,30 @@ class EmailAdapter(AdapterBase):
         if not comment.private:
             return self.render_message('messages/email/comment.html', **kwargs)
 
+    def get_recipients(self, submission):
+        try:
+            return getattr(self, self.recipients[''])
+
+    def get_reviewers(self, )
+        return [
+            [reviewer.email]
+            for reviewer in submission.reviewers.all()
+            if submission.phase.permissions.can_review(reviewer)
+        ]
+
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, **kwargs):
         subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
-        send_mail(
-            subject,
-            message,
-            submission.page.specific.from_address,
-            (submission.user.email,),
-        )
+        recipients = self.get_recipients(submission) or [(submission.user.email,)]
+        for recipient in recipients:
+            send_mail(
+                subject,
+                message,
+                submission.page.specific.from_address,
+                recipient,
+            )
 
 
 class MessengerBackend:
