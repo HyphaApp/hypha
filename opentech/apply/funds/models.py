@@ -12,7 +12,6 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL, OrderBy
 from django.dispatch import receiver
 from django.http import Http404
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _

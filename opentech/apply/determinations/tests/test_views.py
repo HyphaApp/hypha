@@ -113,7 +113,7 @@ class DeterminationFormTestCase(BaseTestCase):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
         determination = DeterminationFactory(submission=submission, author=self.user)
         determination_message = 'This is the message'
-        response = self.post_page(
+        self.post_page(
             submission,
             {'data': 'value', 'outcome': determination.outcome, 'message': determination_message},
             'form',

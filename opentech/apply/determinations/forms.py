@@ -1,13 +1,9 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 from .models import (
     Determination,
     DETERMINATION_CHOICES,
-    NEEDS_MORE_INFO,
-    REJECTED,
-    ACCEPTED,
     TRANSITION_DETERMINATION,
 )
 
@@ -100,7 +96,6 @@ class BaseDeterminationForm(forms.ModelForm):
                 available_choices.add((determination_type, choices[determination_type]))
 
         return available_choices
-
 
     @classmethod
     def get_detailed_response(cls, saved_data):

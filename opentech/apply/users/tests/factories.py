@@ -42,6 +42,14 @@ class AdminFactory(UserFactory):
 
 
 class StaffFactory(UserFactory):
+    class Meta:
+        exclude = ('slack_temp', )
+
+    # Required to generate the fake data add pass to LazyAttribute
+    slack_temp = factory.Faker('word')
+
+    slack = factory.LazyAttribute(lambda p: '@{}'.format(p.slack_temp))
+
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         if create:

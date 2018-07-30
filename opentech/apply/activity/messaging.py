@@ -61,10 +61,9 @@ class AdapterBase:
         if not message:
             return
 
-        recipients = self.recipients(message_type, **kwargs)
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
-        for recipient in recipients:
+        for recipient in self.recipients(message_type, **kwargs):
             if settings.SEND_MESSAGES or self.always_send:
                 self.send_message(message, recipient=recipient, **kwargs)
 
@@ -142,7 +141,7 @@ class SlackAdapter(AdapterBase):
         link = link_to(submission, request)
         return {'link': link}
 
-    def recipients(self, message_type, message, **kwargs):
+    def recipients(self, message_type, submission, **kwargs):
         return [self.slack_id(submission.lead)]
 
     def notify_reviewers(self, submission, **kwargs):
