@@ -5,7 +5,7 @@ class Tabs {
 
     constructor() {
         // The tabs
-        this.tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item'));
+        this.tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item:not(.js-tabs-off)'));
 
         // The tabs content
         this.tabsContents = Array.prototype.slice.call(document.querySelectorAll('.tabs__content'));
