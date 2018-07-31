@@ -12,8 +12,12 @@ class DeterminationDataFactory(factory.DictFactory):
         submission = kwargs.pop('submission')
         form = get_form_for_stage(submission)(user=submission.lead, submission=submission)
         form_fields = {}
-        for field_name, field in form.fields.items():
-            form_fields[field_name] = 0
+
+        form_fields = {
+            field_name: 0
+            for field_name, field in form.fields.items()
+            if field_name not in form._meta.fields
+        }
 
         form_fields.update(**kwargs)
         return super()._build(model_class, *args, **form_fields)

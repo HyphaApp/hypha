@@ -7,7 +7,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from wagtail.core.models import Site
 
@@ -293,12 +293,14 @@ class TestFormSubmission(TestCase):
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
 
+    @override_settings(SEND_MESSAGES=True)
     def test_email_sent_to_user_on_submission_fund(self):
         self.submit_form()
         # "Thank you for your submission" and "Account Creation"
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to[0], self.email)
 
+    @override_settings(SEND_MESSAGES=True)
     def test_email_sent_to_user_on_submission_lab(self):
         self.submit_form(page=self.lab_page)
         # "Thank you for your submission" and "Account Creation"

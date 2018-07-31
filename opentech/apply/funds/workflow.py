@@ -411,18 +411,17 @@ DETERMINATION_RESPONSE_PHASES = [
 
 
 def get_determination_transitions():
-    transitions = set()
-
+    transitions = {}
     for phase_name, phase in PHASES:
         for transition_name in phase.transitions:
             if 'accepted' in transition_name:
-                transitions.add(transition_name)
+                transitions[transition_name] = 'accepted'
             elif 'rejected' in transition_name:
-                transitions.add(transition_name)
+                transitions[transition_name] = 'rejected'
             elif 'more_info' in transition_name:
-                transitions.add(transition_name)
+                transitions[transition_name] = 'more_info'
             elif 'invited_to_proposal' in transition_name:
-                transitions.add(transition_name)
+                transitions[transition_name] = 'accepted'
 
     return transitions
 

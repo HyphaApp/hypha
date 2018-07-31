@@ -1,0 +1,15 @@
+{% extends "messages/email/base.html" %}
+
+{% block content %}
+{% with email_context=submission.page.specific %}
+We appreciate your {{ email_context.title }} application submission to the Open Technology Fund. We will review and reply to your
+submission as quickly as possible. Our reply will have the next steps for your {{ email_context.title }} application.
+You can find more information about our support options, review process and selection criteria on our website.
+
+{{ email_context.confirmation_text_text }}
+{% endwith %}
+
+Project name: {{ submission.title }}
+Contact name: {{ submission.user.get_full_name }}
+Contact email: {{ submission.user.email }}
+{% endblock %}

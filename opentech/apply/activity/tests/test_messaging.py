@@ -3,17 +3,19 @@ from unittest.mock import Mock, patch
 
 import responses
 
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import UserFactory
+from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory
 
 from ..models import Activity
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
+    EmailAdapter,
     MessengerBackend,
     MESSAGES,
     SlackAdapter,
@@ -31,6 +33,9 @@ class TestAdapter(AdapterBase):
     def send_message(self, message, **kwargs):
         pass
 
+    def recipients(self, message_type, **kwargs):
+        return [message_type]
+
 
 @override_settings(SEND_MESSAGES=True)
 class TestBaseAdapter(TestCase):
@@ -44,7 +49,7 @@ class TestBaseAdapter(TestCase):
         message_type = MESSAGES.UPDATE_LEAD
         self.adapter.process(message_type)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value)
+        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type)
 
     def test_doesnt_send_a_message_if_not_configured(self):
         self.adapter.process('this_is_not_a_message_type')
@@ -59,23 +64,32 @@ class TestBaseAdapter(TestCase):
 
         self.adapter.process(method_name)
 
-        self.adapter.send_message.assert_called_once_with(return_message)
+        self.adapter.send_message.assert_called_once_with(return_message, recipient=method_name)
 
     def test_that_kwargs_passed_to_send_message(self):
         message_type = MESSAGES.UPDATE_LEAD
         kwargs = {'test': 'that', 'these': 'exist'}
         self.adapter.process(message_type, **kwargs)
 
-        self.adapter.send_message.assert_called_once_with(message_type.value, **kwargs)
+        self.adapter.send_message.assert_called_once_with(message_type.value, recipient=message_type, **kwargs)
 
     def test_that_message_is_formatted(self):
         message_type = MESSAGES.UPDATE_LEAD
-        self.adapter.messages[message_type] = '{message}'
         message = 'message value'
 
-        self.adapter.process(message_type, message=message)
+        with patch.dict(self.adapter.messages, {message_type: '{message_to_format}'}):
+            self.adapter.process(message_type, message_to_format=message)
 
-        self.adapter.send_message.assert_called_once_with(message, message=message)
+        self.adapter.send_message.assert_called_once_with(message, message_to_format=message, recipient=message_type)
+
+    def test_can_include_extra_kwargs(self):
+        message_type = MESSAGES.UPDATE_LEAD
+
+        with patch.dict(self.adapter.messages, {message_type: '{extra}'}):
+            with patch.object(self.adapter, 'extra_kwargs', return_value={'extra': 'extra'}):
+                self.adapter.process(message_type)
+
+        self.adapter.send_message.assert_called_once_with('extra', extra='extra', recipient=message_type)
 
     @override_settings(SEND_MESSAGES=False)
     def test_django_messages_used(self):
@@ -166,7 +180,7 @@ class TestSlackAdapter(TestCase):
     @responses.activate
     def test_cant_send_with_no_room(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message')
+        adapter.send_message('my message', '')
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -176,7 +190,7 @@ class TestSlackAdapter(TestCase):
     @responses.activate
     def test_cant_send_with_no_url(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message')
+        adapter.send_message('my message', '')
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -188,7 +202,7 @@ class TestSlackAdapter(TestCase):
         responses.add(responses.POST, self.target_url, status=200)
         adapter = SlackAdapter()
         message = 'my message'
-        adapter.send_message(message)
+        adapter.send_message(message, '')
         self.assertEqual(len(responses.calls), 1)
         self.assertDictEqual(
             json.loads(responses.calls[0].request.body),
@@ -197,3 +211,37 @@ class TestSlackAdapter(TestCase):
                 'message': message,
             }
         )
+
+    @responses.activate
+    def test_gets_lead_if_slack_set(self):
+        adapter = SlackAdapter()
+        submission = ApplicationSubmissionFactory()
+        recipients = adapter.recipients(MESSAGES.COMMENT, submission)
+        self.assertTrue(submission.lead.slack in recipients[0])
+
+    @responses.activate
+    def test_gets_black_if_slack_not_set(self):
+        adapter = SlackAdapter()
+        submission = ApplicationSubmissionFactory(lead__slack='')
+        recipients = adapter.recipients(MESSAGES.COMMENT, submission)
+        self.assertTrue(submission.lead.slack in recipients[0])
+
+
+@override_settings(SEND_MESSAGES=True)
+class TestEmailAdapter(TestCase):
+    def test_email_new_submission(self):
+        adapter = EmailAdapter()
+        submission = ApplicationSubmissionFactory()
+        adapter.process(MESSAGES.NEW_SUBMISSION, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [submission.user.email])
+
+    def test_reviewers_email(self):
+        adapter = EmailAdapter()
+        reviewers = ReviewerFactory.create_batch(4)
+        submission = ApplicationSubmissionFactory(status='external_review', reviewers=reviewers, workflow_stages=2)
+        adapter.process(MESSAGES.READY_FOR_REVIEW, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 4)
+        self.assertTrue(mail.outbox[0].subject, 'ready to review')

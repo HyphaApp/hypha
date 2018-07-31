@@ -1,10 +1,12 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.models import ACCEPTED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-from .factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+
+from .factories import DeterminationFactory
 
 
 class BaseTestCase(TestCase):
@@ -106,6 +108,18 @@ class DeterminationFormTestCase(BaseTestCase):
         determination = DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertEqual(response.status_code, 403)
+
+    def test_sends_message_if_requires_more_info(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        determination = DeterminationFactory(submission=submission, author=self.user)
+        determination_message = 'This is the message'
+        self.post_page(
+            submission,
+            {'data': 'value', 'outcome': determination.outcome, 'message': determination_message},
+            'form',
+        )
+        self.assertEqual(Activity.comments.count(), 1)
+        self.assertEqual(Activity.comments.first().message, determination_message)
 
     def test_can_progress_stage_via_determination(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user)

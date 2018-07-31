@@ -1,0 +1,18 @@
+{% extends "messages/email/applicant_base.html" %}
+{% load bleach_tags %}
+
+{% block content %}
+{{ submission.determination.clean_message }}
+{% endblock %}
+
+
+{% block post_signature_content %}
+{% if submission.determination.submitted %}
+    {% for group in submission.determination.detailed_data.values %}
+        {% for question, answer in group.questions %}
+            <h5>{{ question }}</h5>
+            {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+{% endblock %}

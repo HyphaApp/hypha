@@ -1,9 +1,11 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
-from .models import Determination, DETERMINATION_CHOICES, NEEDS_MORE_INFO, REJECTED, ACCEPTED, \
-    DETERMINATION_TRANSITION_SUFFIX
+from .models import (
+    Determination,
+    DETERMINATION_CHOICES,
+    TRANSITION_DETERMINATION,
+)
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
@@ -40,8 +42,10 @@ class BaseDeterminationForm(forms.ModelForm):
         }
 
     def __init__(self, *args, user, submission, action='', initial={}, instance=None, **kwargs):
-        if action:
-            initial.update(outcome=self.get_determination_from_action_name(action))
+        try:
+            initial.update(outcome=TRANSITION_DETERMINATION[action])
+        except KeyError:
+            pass
         initial.update(submission=submission.id)
         initial.update(author=user.id)
 
@@ -55,7 +59,7 @@ class BaseDeterminationForm(forms.ModelForm):
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
-        self.update_outcome_choices_for_phase(submission.phase)
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission.phase)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
@@ -74,44 +78,60 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return super().save(commit)
 
-    def get_determination_from_action_name(self, action_name):
-        if action_name in DETERMINATION_OUTCOMES:
-            if 'more_info' in action_name:
-                return NEEDS_MORE_INFO
-            elif 'accepted' in action_name or 'invited_to_proposal' in action_name:
-                return ACCEPTED
-        return REJECTED
-
-    def update_outcome_choices_for_phase(self, phase):
+    def outcome_choices_for_phase(self, phase):
         """
         Outcome choices correspond to Phase transitions.
         We need to filter out non-matching choices.
         i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
         """
         available_choices = set()
-        choices = list(self.fields['outcome'].choices)
+        choices = dict(self.fields['outcome'].choices)
 
-        for key, value in choices:
-            suffix = DETERMINATION_TRANSITION_SUFFIX[key]
-            for transition_name in phase.transitions:
-                for item in suffix:
-                    if item in transition_name:
-                        available_choices.add((key, value))
+        for transition_name in phase.transitions:
+            try:
+                determination_type = TRANSITION_DETERMINATION[transition_name]
+            except KeyError:
+                pass
+            else:
+                available_choices.add((determination_type, choices[determination_type]))
 
-        self.fields['outcome'].choices = available_choices
+        return available_choices
+
+    @classmethod
+    def get_detailed_response(cls, saved_data):
+        data = {}
+        for group, title in cls.titles.items():
+            data.setdefault(group, {'title': title, 'questions': list()})
+
+        for name, field in cls.base_fields.items():
+            try:
+                value = saved_data[name]
+            except KeyError:
+                # The field is not stored in the data
+                pass
+            else:
+                data[field.group]['questions'].append((field.label, str(value)))
+
+        return data
 
 
 class ConceptDeterminationForm(BaseDeterminationForm):
+    titles = {
+        1: 'Feedback',
+    }
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
         label='Determination',
         help_text='Do you recommend requesting a proposal based on this concept note?',
     )
+    outcome.group = 1
+
     message = RichTextField(
         label='Determination message',
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
     )
+    message.group = 1
 
     principles = RichTextField(
         label='Goals and principles',
@@ -131,6 +151,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'RFA, OTF, the Advisory Council, or other RFA-OTF projects? Is the project team an organization, community '
         'or an individual?'
     )
+    principles.group = 1
 
     technical = RichTextField(
         label='Technical merit',
@@ -145,6 +166,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'What are the unintended or illicit uses and consequences of this technology? Has the project identified '
         'and/or developed any safeguards for these consequences?'
     )
+    technical.group = 1
 
     sustainable = RichTextField(
         label='Reasonable, realistic and sustainable',
@@ -158,6 +180,7 @@ class ConceptDeterminationForm(BaseDeterminationForm):
         'supporters approachable? Are they likely aware and/or comfortable with the Intellectual property language '
         'within USG contracts?'
     )
+    sustainable.group = 1
 
     # TODO option to not send message, or resend
 

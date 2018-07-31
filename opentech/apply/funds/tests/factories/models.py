@@ -200,6 +200,11 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     live_revision = None
     draft_revision = None
 
+    @factory.post_generation
+    def reviewers(self, create, reviewers, **kwargs):
+        if create and reviewers:
+            self.reviewers.set(reviewers)
+
     @classmethod
     def _generate(cls, strat, params):
         params.update(**build_form(params))
