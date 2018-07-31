@@ -205,7 +205,9 @@ class SlackAdapter(AdapterBase):
             "room": self.target_room,
             "message": message,
         }
-        return requests.post(self.destination, json=data)
+        response = requests.post(self.destination, json=data)
+
+        return str(response.status_code) + ': ' + response.content.decode()
 
 
 class EmailAdapter(AdapterBase):
@@ -250,12 +252,18 @@ class EmailAdapter(AdapterBase):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
-        return send_mail(
-            subject,
-            message,
-            submission.page.specific.from_address,
-            [recipient],
-        )
+        try:
+            emails_sent = send_mail(
+                subject,
+                message,
+                submission.page.specific.from_address,
+                [recipient],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return 'Error: ' + str(e)
+
+        return 'Emails sent: ' + str(emails_sent)
 
 
 class MessengerBackend:

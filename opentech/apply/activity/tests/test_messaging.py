@@ -11,7 +11,7 @@ from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory
 
-from ..models import Activity, Event
+from ..models import Activity, Event, Message
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
@@ -50,7 +50,7 @@ class AdapterMixin:
         if 'submission' not in kwargs:
             kwargs['submission'] = ApplicationSubmissionFactory()
         if 'request' not in kwargs:
-            kwargs['request'] = None
+            kwargs['request'] = make_request()
 
         return kwargs
 
@@ -213,7 +213,7 @@ class TestActivityAdapter(TestCase):
         self.assertTrue('2' in message)
 
 
-class TestSlackAdapter(TestCase):
+class TestSlackAdapter(AdapterMixin, TestCase):
     target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
     target_room = '<ROOM ID>'
 
@@ -243,7 +243,7 @@ class TestSlackAdapter(TestCase):
     )
     @responses.activate
     def test_correct_payload(self):
-        responses.add(responses.POST, self.target_url, status=200)
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '')
@@ -264,11 +264,41 @@ class TestSlackAdapter(TestCase):
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @responses.activate
-    def test_gets_black_if_slack_not_set(self):
+    def test_gets_blank_if_slack_not_set(self):
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory(lead__slack='')
         recipients = adapter.recipients(MESSAGES.COMMENT, submission)
         self.assertTrue(submission.lead.slack in recipients[0])
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_message_with_good_response(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+
+        self.adapter = SlackAdapter()
+        self.adapter_process(MESSAGES.NEW_SUBMISSION)
+        self.assertEqual(Message.objects.count(), 1)
+        sent_message = Message.objects.first()
+        self.assertEqual(sent_message.content[0:10], self.adapter.messages[MESSAGES.NEW_SUBMISSION][0:10])
+        self.assertEqual(sent_message.status, '200: OK')
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_message_with_bad_response(self):
+        responses.add(responses.POST, self.target_url, status=400, body='Bad Request')
+
+        self.adapter = SlackAdapter()
+        self.adapter_process(MESSAGES.NEW_SUBMISSION)
+        self.assertEqual(Message.objects.count(), 1)
+        sent_message = Message.objects.first()
+        self.assertEqual(sent_message.content[0:10], self.adapter.messages[MESSAGES.NEW_SUBMISSION][0:10])
+        self.assertEqual(sent_message.status, '400: Bad Request')
 
 
 @override_settings(SEND_MESSAGES=True)
@@ -302,3 +332,17 @@ class TestEmailAdapter(AdapterMixin, TestCase):
 
         self.assertEqual(len(mail.outbox), 4)
         self.assertTrue(mail.outbox[0].subject, 'ready to review')
+
+    def test_email_sent(self):
+        self.adapter_process(MESSAGES.NEW_SUBMISSION)
+        self.assertEqual(Message.objects.count(), 1)
+        sent_message = Message.objects.first()
+        self.assertEqual(sent_message.status, 'Emails sent: 1')
+
+    def test_email_failed(self):
+        with patch('django.core.mail.backends.locmem.EmailBackend.send_messages', side_effect=Exception('An error occurred')):
+            self.adapter_process(MESSAGES.NEW_SUBMISSION)
+
+        self.assertEqual(Message.objects.count(), 1)
+        sent_message = Message.objects.first()
+        self.assertEqual(sent_message.status, 'Error: An error occurred')
