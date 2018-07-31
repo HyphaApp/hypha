@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Case, When, Value
+from django.db.models.functions import Concat
 
 from .messaging import MESSAGES
 
@@ -121,3 +123,11 @@ class Message(models.Model):
     recipient = models.CharField(max_length=250)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     status = models.TextField()
+
+    def update_status(self, status):
+        if status:
+            self.status = Case(
+                When(status='', then=Value(status)),
+                default=Concat('status', Value('<br />' + status))
+            )
+            self.save()

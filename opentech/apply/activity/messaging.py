@@ -4,8 +4,9 @@ import requests
 
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
+
+from .tasks import send_mail, update_message_status
 
 
 def link_to(target, request):
@@ -69,13 +70,13 @@ class AdapterBase:
             return
 
         for recipient in self.recipients(message_type, **kwargs):
+            message_log = self.create_log(message, recipient, event)
             if settings.SEND_MESSAGES or self.always_send:
-                status = self.send_message(message, recipient=recipient, **kwargs)
+                status = self.send_message(message, recipient=recipient, message_log=message_log, **kwargs)
             else:
                 status = 'Message not sent as SEND_MESSAGES==FALSE'
 
-            if status:
-                self.log_message(message, recipient, event, status)
+            message_log.update_status(status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -84,14 +85,13 @@ class AdapterBase:
                     message = '{}: {}'.format(self.adapter_type, message)
                 messages.add_message(kwargs['request'], messages.INFO, message)
 
-    def log_message(self, message, recipient, event, status):
-        from.models import Message
-        Message.objects.create(
+    def create_log(self, message, recipient, event):
+        from .models import Message
+        return Message.objects.create(
             type=self.adapter_type,
             content=message,
             recipient=recipient,
             event=event,
-            status=status,
         )
 
     def send_message(self, message, **kwargs):
@@ -253,17 +253,17 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
         try:
-            emails_sent = send_mail(
-                subject,
-                message,
-                submission.page.specific.from_address,
-                [recipient],
-                fail_silently=False,
+            emails_sent = send_mail.apply_async(
+                (
+                    subject,
+                    message,
+                    submission.page.specific.from_address,
+                    [recipient],
+                ),
+                link=update_message_status.s(kwargs['message_log'].id),
             )
         except Exception as e:
             return 'Error: ' + str(e)
-
-        return 'Emails sent: ' + str(emails_sent)
 
 
 class MessengerBackend:

@@ -356,3 +356,10 @@ HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
 SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
 SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
 SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
+
+
+# Celery config
+if 'REDIS_URL' in env:
+    CELERY_BROKER_URL = env.get('REDIS_URL')
+else:
+    CELERY_TASK_ALWAYS_EAGER = True
