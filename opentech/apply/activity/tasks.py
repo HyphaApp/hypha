@@ -43,6 +43,8 @@ def send_mail_task(**kwargs):
 
 
 @app.task
-def update_message_status(response, message):
+def update_message_status(response, message_id):
     from .models import Message
-    Message.objects.get(id=message).update_status(response['status'])
+    message = Message.objects.get(id=message_id)
+    message.external_id = response['id']
+    message.update_status(response['status'])

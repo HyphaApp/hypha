@@ -123,6 +123,7 @@ class Message(models.Model):
     recipient = models.CharField(max_length=250)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     status = models.TextField()
+    external_id = models.CharField(max_length=75, null=True, blank=True)  # Stores the id of the object from an external system
 
     def update_status(self, status):
         if status:

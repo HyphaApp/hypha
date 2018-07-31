@@ -1,6 +1,8 @@
+import uuid
+
 import factory
 
-from opentech.apply.activity.models import Activity, Event, INTERNAL, MESSAGES, REVIEWER
+from opentech.apply.activity.models import Activity, Event, INTERNAL, Message, MESSAGES, REVIEWER
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory
 
@@ -29,3 +31,14 @@ class EventFactory(factory.DjangoModelFactory):
     type = factory.Iterator([choice[0] for choice in MESSAGES.choices()])
     by = factory.SubFactory(UserFactory)
     submission = factory.SubFactory(ApplicationSubmissionFactory)
+
+
+class MessageFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Message
+
+    type = 'Email'
+    content = factory.Faker('sentence')
+    recipient = factory.Faker('email')
+    event = factory.SubFactory(EventFactory)
+    external_id = factory.LazyFunction(lambda : '<{}>'.format(uuid.uuid4()))

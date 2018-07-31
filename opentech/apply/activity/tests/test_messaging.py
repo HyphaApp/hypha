@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import json
 from unittest.mock import Mock, patch
 
@@ -20,7 +22,7 @@ from ..messaging import (
     MESSAGES,
     SlackAdapter,
 )
-from .factories import CommentFactory, EventFactory
+from .factories import CommentFactory, EventFactory, MessageFactory
 
 
 class TestAdapter(AdapterBase):
@@ -354,6 +356,21 @@ class TestEmailAdapter(AdapterMixin, TestCase):
 )
 class TestAnyMailBehaviour(AdapterMixin, TestCase):
     adapter = EmailAdapter()
+    TEST_API_KEY = 'TEST_API_KEY'
+
+    # from: https://github.com/anymail/django-anymail/blob/7d8dbdace92d8addfcf0a517be0aaf481da11952/tests/test_mailgun_webhooks.py#L19
+    def mailgun_sign(self, data, api_key=TEST_API_KEY):
+        """Add a Mailgun webhook signature to data dict"""
+        # Modifies the dict in place
+        data.setdefault('timestamp', '1234567890')
+        data.setdefault('token', '1234567890abcdef1234567890abcdef')
+        data['signature'] = hmac.new(
+            key=api_key.encode('ascii'),
+            msg='{timestamp}{token}'.format(**data).encode('ascii'),
+            digestmod=hashlib.sha256,
+        ).hexdigest()
+
+        return data
 
     def test_email_new_submission(self):
         submission = ApplicationSubmissionFactory()
@@ -361,11 +378,43 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [submission.user.email])
-        self.assertEqual(Message.objects.first().status, 'sent')
+        message = Message.objects.first()
+        self.assertEqual(message.status, 'sent')
+        # Anymail test Backend uses the index of the email as id: '0'
+        self.assertEqual(message.external_id, '0')
 
-    def test_email_new_submission(self):
-        submission = ApplicationSubmissionFactory()
-        self.adapter_process(MESSAGES.NEW_SUBMISSION, submission=submission)
+    @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
+    def test_webhook_updates_status(self):
+        message = MessageFactory()
+        response = self.client.post(
+            '/activity/anymail/mailgun/tracking/',
+            data=self.mailgun_sign({
+                'event': 'delivered',
+                'Message-Id': message.external_id
+            }),
+            secure=True,
+            json=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        message.refresh_from_db()
+        self.assertTrue('delivered' in message.status)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [submission.user.email])
+    @override_settings(ANYMAIL_MAILGUN_API_KEY=TEST_API_KEY)
+    def test_webhook_adds_reject_reason(self):
+        message = MessageFactory()
+        response = self.client.post(
+            '/activity/anymail/mailgun/tracking/',
+            data=self.mailgun_sign({
+                'event': 'dropped',
+                'reason': 'hardfail',
+                'code': 607,
+                'description': 'Marked as spam',
+                'Message-Id': message.external_id
+            }),
+            secure=True,
+            json=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        message.refresh_from_db()
+        self.assertTrue('rejected' in message.status)
+        self.assertTrue('spam' in message.status)
