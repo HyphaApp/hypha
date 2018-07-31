@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
-from .tasks import send_mail, update_message_status
+from .tasks import send_mail
 
 
 def link_to(target, request):
@@ -253,14 +253,12 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
         try:
-            emails_sent = send_mail.apply_async(
-                (
-                    subject,
-                    message,
-                    submission.page.specific.from_address,
-                    [recipient],
-                ),
-                link=update_message_status.s(kwargs['message_log'].id),
+            emails_sent = send_mail(
+                subject,
+                message,
+                submission.page.specific.from_address,
+                [recipient],
+                log=kwargs['message_log']
             )
         except Exception as e:
             return 'Error: ' + str(e)

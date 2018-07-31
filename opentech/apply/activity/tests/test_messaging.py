@@ -346,3 +346,26 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.assertEqual(Message.objects.count(), 1)
         sent_message = Message.objects.first()
         self.assertEqual(sent_message.status, 'Error: An error occurred')
+
+
+@override_settings(
+    SEND_MESSAGES=True,
+    EMAIL_BACKEND='anymail.backends.test.EmailBackend',
+)
+class TestAnyMailBehaviour(AdapterMixin, TestCase):
+    adapter = EmailAdapter()
+
+    def test_email_new_submission(self):
+        submission = ApplicationSubmissionFactory()
+        self.adapter_process(MESSAGES.NEW_SUBMISSION, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [submission.user.email])
+        self.assertEqual(Message.objects.first().status, 'sent')
+
+    def test_email_new_submission(self):
+        submission = ApplicationSubmissionFactory()
+        self.adapter_process(MESSAGES.NEW_SUBMISSION, submission=submission)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [submission.user.email])
