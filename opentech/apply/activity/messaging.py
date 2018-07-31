@@ -274,7 +274,7 @@ class MessengerBackend:
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
     def send(self, message_type, user, submission, **kwargs):
-        from.models import Event
+        from .models import Event
         event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
             adapter.process(message_type, event, user=user, submission=submission, **kwargs)
