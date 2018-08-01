@@ -7,24 +7,29 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
-from .models import Activity
-
 
 def link_to(target, request):
     return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
 class MESSAGES(Enum):
-    UPDATE_LEAD = 'update_lead'
-    NEW_SUBMISSION = 'new_submission'
-    TRANSITION = 'transition'
-    DETERMINATION_OUTCOME = 'determination_outcome'
-    INVITED_TO_PROPOSAL = 'invited_to_proposal'
-    REVIEWERS_UPDATED = 'reviewers_updated'
-    READY_FOR_REVIEW = 'ready_for_review'
-    NEW_REVIEW = 'new_review'
-    COMMENT = 'comment'
-    PROPOSAL_SUBMITTED = 'proposal_submitted'
+    UPDATE_LEAD = 'Update Lead'
+    NEW_SUBMISSION = 'New Submission'
+    TRANSITION = 'Transition'
+    DETERMINATION_OUTCOME = 'Determination Outcome'
+    INVITED_TO_PROPOSAL = 'Invited To Proposal'
+    REVIEWERS_UPDATED = 'Reviewers Updated'
+    READY_FOR_REVIEW = 'Ready For Review'
+    NEW_REVIEW = 'New Review'
+    COMMENT = 'Comment'
+    PROPOSAL_SUBMITTED = 'Proposal Submitted'
+
+    @classmethod
+    def choices(cls):
+        return [
+            (choice.name, choice.value)
+            for choice in cls
+        ]
 
 
 class AdapterBase:
@@ -56,7 +61,7 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, **kwargs):
+    def process(self, message_type, event, **kwargs):
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         message = self.message(message_type, **kwargs)
@@ -65,7 +70,12 @@ class AdapterBase:
 
         for recipient in self.recipients(message_type, **kwargs):
             if settings.SEND_MESSAGES or self.always_send:
-                self.send_message(message, recipient=recipient, **kwargs)
+                status = self.send_message(message, recipient=recipient, **kwargs)
+            else:
+                status = 'Message not sent as SEND_MESSAGES==FALSE'
+
+            if status:
+                self.log_message(message, recipient, event, status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -74,7 +84,19 @@ class AdapterBase:
                     message = '{}: {}'.format(self.adapter_type, message)
                 messages.add_message(kwargs['request'], messages.INFO, message)
 
+    def log_message(self, message, recipient, event, status):
+        from.models import Message
+        Message.objects.create(
+            type=self.adapter_type,
+            content=message,
+            recipient=recipient,
+            event=event,
+            status=status,
+        )
+
     def send_message(self, message, **kwargs):
+        # Process the message, should return the result of the send
+        # Returning None will not record this action
         raise NotImplementedError()
 
 
@@ -107,6 +129,7 @@ class ActivityAdapter(AdapterBase):
         return ' '.join(message)
 
     def send_message(self, message, user, submission, **kwargs):
+        from .models import Activity
         Activity.actions.create(
             user=user,
             submission=submission,
@@ -169,7 +192,12 @@ class SlackAdapter(AdapterBase):
 
     def send_message(self, message, recipient, **kwargs):
         if not self.destination or not self.target_room:
-            return
+            errors = list()
+            if not self.destination:
+                errors.append('Destination URL')
+            if not self.target_room:
+                errors.append('Room ID')
+            return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
 
@@ -177,7 +205,9 @@ class SlackAdapter(AdapterBase):
             "room": self.target_room,
             "message": message,
         }
-        requests.post(self.destination, json=data)
+        response = requests.post(self.destination, json=data)
+
+        return str(response.status_code) + ': ' + response.content.decode()
 
 
 class EmailAdapter(AdapterBase):
@@ -202,7 +232,8 @@ class EmailAdapter(AdapterBase):
 
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
-        if not comment.private:
+        submission = kwargs['submission']
+        if not comment.private and not comment.user == submission.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
     def recipients(self, message_type, submission, **kwargs):
@@ -221,12 +252,18 @@ class EmailAdapter(AdapterBase):
         return render_to_string(template, kwargs)
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
-        send_mail(
-            subject,
-            message,
-            submission.page.specific.from_address,
-            [recipient],
-        )
+        try:
+            emails_sent = send_mail(
+                subject,
+                message,
+                submission.page.specific.from_address,
+                [recipient],
+                fail_silently=False,
+            )
+        except Exception as e:
+            return 'Error: ' + str(e)
+
+        return 'Emails sent: ' + str(emails_sent)
 
 
 class MessengerBackend:
@@ -236,9 +273,11 @@ class MessengerBackend:
     def __call__(self, message_type, request, user, submission, **kwargs):
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
-    def send(self, message_type, **kwargs):
+    def send(self, message_type, user, submission, **kwargs):
+        from .models import Event
+        event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, **kwargs)
+            adapter.process(message_type, event, user=user, submission=submission, **kwargs)
 
 
 adapters = [

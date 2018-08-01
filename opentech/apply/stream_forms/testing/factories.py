@@ -1,3 +1,4 @@
+from collections import defaultdict
 import json
 import uuid
 
@@ -136,8 +137,10 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
 
 
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
-    def generate(self, *args, **kwargs):
-        blocks = super().generate(*args, **kwargs)
+    def generate(self, step, params):
+        if not params:
+            params = self.build_form(params)
+        blocks = super().generate(step, params)
         ret_val = list()
         # Convert to JSON so we can add id before create
         for block_name, value in blocks:
@@ -145,3 +148,14 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
             value = block.get_prep_value(value)
             ret_val.append({'type': block_name, 'value': value, 'id': str(uuid.uuid4())})
         return json.dumps(ret_val)
+
+    def build_form(self, data):
+        extras = defaultdict(dict)
+
+        form_fields = {}
+        for i, field in enumerate(self.factories):
+            form_fields[f'{i}__{field}__'] = ''
+            for attr, value in extras[field].items():
+                form_fields[f'{i}__{field}__{attr}'] = value
+
+        return form_fields

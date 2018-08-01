@@ -9,3 +9,5 @@ def make_otf_staff(backend, user, response, *args, **kwargs):
     if email_domain in settings.STAFF_EMAIL_DOMAINS:
         staff_group = Group.objects.get(name=STAFF_GROUP_NAME)
         user.groups.add(staff_group)
+        # Required in order to allow access to django admin, no other functional use
+        user.is_staff = True

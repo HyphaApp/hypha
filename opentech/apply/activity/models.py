@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from .messaging import MESSAGES
+
 
 COMMENT = 'comment'
 ACTION = 'action'
@@ -97,3 +99,25 @@ class Activity(models.Model):
     @classmethod
     def visibility_choices_for(cls, user):
         return [(choice, VISIBILITY[choice]) for choice in cls.visibility_for(user)]
+
+
+class Event(models.Model):
+    """Model to track when messages are triggered"""
+
+    when = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(choices=MESSAGES.choices(), max_length=50)
+    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    submission = models.ForeignKey('funds.ApplicationSubmission', related_name='+', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.submission.title])
+
+
+class Message(models.Model):
+    """Model to track content of messages sent from an event"""
+
+    type = models.CharField(max_length=15)
+    content = models.TextField()
+    recipient = models.CharField(max_length=250)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    status = models.TextField()
