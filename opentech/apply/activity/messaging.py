@@ -253,7 +253,7 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, submission, subject, recipient, **kwargs):
         try:
-            emails_sent = send_mail(
+            send_mail(
                 subject,
                 message,
                 submission.page.specific.from_address,

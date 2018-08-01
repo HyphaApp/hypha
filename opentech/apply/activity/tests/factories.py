@@ -41,4 +41,4 @@ class MessageFactory(factory.DjangoModelFactory):
     content = factory.Faker('sentence')
     recipient = factory.Faker('email')
     event = factory.SubFactory(EventFactory)
-    external_id = factory.LazyFunction(lambda : '<{}>'.format(uuid.uuid4()))
+    external_id = factory.LazyFunction(lambda: '<{}>'.format(uuid.uuid4()))

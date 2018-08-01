@@ -1,7 +1,6 @@
 from celery import Celery
 
 from django.conf import settings
-from django.core.mail import send_mail as dj_send_mail
 from django.core.mail import EmailMessage
 
 app = Celery('tasks')
