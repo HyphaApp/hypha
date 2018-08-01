@@ -53,7 +53,7 @@ class Determination(models.Model):
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
 
     @property
-    def clean_message(self):
+    def stripped_message(self):
         return bleach.clean(self.message, tags=[], strip=True)
 
     @property

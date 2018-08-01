@@ -3,6 +3,7 @@ from tinymce.widgets import TinyMCE
 MCE_ATTRIBUTES = {
     'elementpath': False,
     'branding': False,
+    'entity_encoding': 'raw',
     'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
     'style_formats': [
         {'title': 'Headers', 'items': [
