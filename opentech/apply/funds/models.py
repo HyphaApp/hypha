@@ -168,34 +168,38 @@ class EmailForm(AbstractEmailForm):
     email_tab = ObjectList(email_confirmation_panels, heading='Confirmation email')
 
 
-class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
+class RoundBasedParent(EmailForm, WorkflowStreamForm):  # type: ignore
     class Meta:
-        verbose_name = _("Fund")
+        abstract = True
 
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
 
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='fund_reviewers',
+        related_name='%(class)s_reviewers',
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
 
     parent_page_types = ['apply_home.ApplyHomePage']
-    subpage_types = ['funds.Round']
 
     def detail(self):
         # The location to find out more information
         return self.fund_public.first()
 
-    @property
-    def open_round(self):
-        rounds = Round.objects.child_of(self).live().public().specific()
+    def _open_for(self, round_type):
+        rounds = round_type.objects.child_of(self).live().public().specific()
         return rounds.filter(
             Q(start_date__lte=date.today()) &
             Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
         ).first()
+
+    @property
+    def open_round(self):
+        open_round = self._open_for(Round)
+        open_sealed_round = self._open_for(SealedRound)
+        return open_round or open_sealed_round
 
     def next_deadline(self):
         try:
@@ -223,35 +227,25 @@ class FundType(EmailForm, WorkflowStreamForm):  # type: ignore
     ])
 
 
+class FundType(RoundBasedParent):
+    subpage_types = ['funds.Round']
+
+    class Meta:
+        verbose_name = _("Fund")
+
+
+class RequestForPartners(RoundBasedParent):
+    subpage_types = ['funds.Round', 'funds.SealedRound']
+
+    class Meta:
+        verbose_name = _("RFP")
+
+
 class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
 
     panels = [
         FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
-    ]
-
-    @property
-    def fields(self):
-        return self.form.form_fields
-
-    class Meta(Orderable.Meta):
-        abstract = True
-
-    def __eq__(self, other):
-        try:
-            return self.fields == other.fields
-        except AttributeError:
-            return False
-
-    def __str__(self):
-        return self.form.name
-
-
-class AbstractRelatedReviewForm(Orderable):
-    form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
-
-    panels = [
-        FieldPanel('form')
     ]
 
     @property
@@ -279,8 +273,44 @@ class RoundForm(AbstractRelatedForm):
     round = ParentalKey('Round', related_name='forms')
 
 
+class SealedRoundForn(AbstractRelatedForm):
+    round = ParentalKey('SealedRound', related_name='forms')
+
+
+class RFPForm(AbstractRelatedForm):
+    rfp = ParentalKey('RequestForPartners', related_name='forms')
+
+
+class AbstractRelatedReviewForm(Orderable):
+    form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
+
+    panels = [
+        FieldPanel('form')
+    ]
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return self.form.name
+
+
 class FundReviewForm(AbstractRelatedReviewForm):
     fund = ParentalKey('FundType', related_name='review_forms')
+
+
+class RFPReviewForm(AbstractRelatedReviewForm):
+    rfp = ParentalKey('RequestForPartners', related_name='review_forms')
 
 
 class ApplicationForm(models.Model):
@@ -296,19 +326,22 @@ class ApplicationForm(models.Model):
         return self.name
 
 
-class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
-    parent_page_types = ['funds.FundType']
+class AbstractRound(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
+    class Meta:
+        abstract = True
+
+    parent_page_types = ['funds.FundType', 'funds.RequestForPartners']
     subpage_types = []  # type: ignore
 
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
-        related_name='round_lead',
+        related_name='%(class)s_lead',
         on_delete=models.PROTECT,
     )
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='rounds_reviewer',
+        related_name='%(class)s_reviewer',
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
@@ -319,6 +352,7 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         default=date.today,
         help_text='When no end date is provided the round will remain open indefinitely.'
     )
+    sealed = models.BooleanField(default=False)
 
     content_panels = SubmittableStreamForm.content_panels + [
         FieldPanel('lead'),
@@ -424,6 +458,18 @@ class Round(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # We hide the round as only the open round is used which is displayed through the
         # fund page
         raise Http404()
+
+
+class Round(AbstractRound):
+    parent_page_types = ['funds.FundType', 'funds.RequestForPartners']
+
+
+class SealedRound(AbstractRound):
+    parent_page_types = ['funds.RequestForPartners']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.sealed = True
 
 
 class LabType(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
