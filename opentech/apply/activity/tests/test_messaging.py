@@ -67,6 +67,7 @@ class TestBaseAdapter(AdapterMixin, TestCase):
         patched_class = patch.object(TestAdapter, 'send_message')
         self.mock_adapter = patched_class.start()
         self.adapter = TestAdapter()
+        self.adapter.send_message.return_value = 'dummy_message'
         self.addCleanup(patched_class.stop)
 
     def test_can_send_a_message(self):
@@ -339,7 +340,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(MESSAGES.NEW_SUBMISSION)
         self.assertEqual(Message.objects.count(), 1)
         sent_message = Message.objects.first()
-        self.assertEqual(sent_message.status, 'Emails sent: 1')
+        self.assertEqual(sent_message.status, 'sent')
 
     def test_email_failed(self):
         with patch('django.core.mail.backends.locmem.EmailBackend.send_messages', side_effect=Exception('An error occurred')):

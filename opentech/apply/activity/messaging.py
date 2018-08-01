@@ -90,7 +90,7 @@ class AdapterBase:
         return Message.objects.create(
             type=self.adapter_type,
             content=message,
-            recipient=recipient,
+            recipient=recipient or '',
             event=event,
         )
 
