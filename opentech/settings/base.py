@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'wagtail.admin',
     'wagtail.core',
 
+    'anymail',
     'modelcluster',
     'taggit',
     'django_extensions',
@@ -356,3 +357,18 @@ HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
 SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
 SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
 SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
+
+
+# Email and Celery config
+EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+
+if 'MAILGUN_API_KEY' in env:
+    MAILGUN_API_KEY = env.get('MAILGUN_API_KEY')
+
+if 'ANYMAIL_WEBHOOK_SECRET' in env:
+    ANYMAIL_WEBHOOK_SECRET = env.get('ANYMAIL_WEBHOOK_SECRET')
+
+if 'REDIS_URL' in env:
+    CELERY_BROKER_URL = env.get('REDIS_URL')
+else:
+    CELERY_TASK_ALWAYS_EAGER = True

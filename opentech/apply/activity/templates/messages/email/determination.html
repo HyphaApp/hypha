@@ -2,7 +2,7 @@
 {% load bleach_tags %}
 
 {% block content %}
-{{ submission.determination.clean_message }}
+{{ submission.determination.message|bleach }}
 {% endblock %}
 
 

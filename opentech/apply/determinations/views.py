@@ -84,7 +84,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
                 Activity.comments.create(
-                    message=self.object.clean_message,
+                    message=self.object.stripped_message,
                     user=self.request.user,
                     submission=self.submission,
                 )

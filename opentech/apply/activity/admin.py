@@ -4,7 +4,7 @@ from .models import Event, Message
 
 class MessageInline(admin.TabularInline):
     model = Message
-    readonly_fields = ('type', 'recipient', 'content', 'status')
+    readonly_fields = ('type', 'recipient', 'content', 'status', 'external_id')
     can_delete = False
 
     def has_add_permission(self, request):
