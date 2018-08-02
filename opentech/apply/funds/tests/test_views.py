@@ -223,7 +223,8 @@ class TestStaffSealedView(BaseSubmissionViewTestCase):
     def test_cant_post_to_sealed(self):
         submission = SealedSubmissionFactory()
         response = self.post_page(submission, {'some': 'data'}, 'sealed')
-        url = self.url_from_pattern('funds:submissions:sealed', kwargs={'pk': submission.id})
+        # Because of the redirect chain the url returned is not absolute
+        url = self.url_from_pattern('funds:submissions:sealed', kwargs={'pk': submission.id}, absolute=False)
         self.assertRedirects(response, url)
 
     def test_non_sealed_unaffected(self):
