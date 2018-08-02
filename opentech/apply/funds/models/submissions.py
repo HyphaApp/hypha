@@ -25,7 +25,7 @@ from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
 
-from . import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
+from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from ..workflow import (
     active_statuses,
