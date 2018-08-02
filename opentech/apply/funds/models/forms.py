@@ -30,7 +30,7 @@ class AbstractRelatedForm(Orderable):
     form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
 
     panels = [
-        FilteredFieldPanel('form', filter_query={'roundform__isnull': True})
+        FilteredFieldPanel('form', filter_query={'roundbaseform__isnull': True})
     ]
 
     @property
@@ -83,7 +83,7 @@ class AbstractRelatedReviewForm(Orderable):
 
 
 class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
-    fund = ParentalKey('ApplicationBase', related_name='review_forms')
+    application = ParentalKey('ApplicationBase', related_name='review_forms')
 
 
 class LabBaseForm(AbstractRelatedForm):
