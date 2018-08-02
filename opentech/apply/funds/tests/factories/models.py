@@ -134,6 +134,7 @@ class RoundFactory(wagtail_factories.PageFactory):
                     **fields,
                 )
 
+
 class SealedRoundFactory(RoundFactory):
     class Meta:
         model = SealedRound
