@@ -15,7 +15,7 @@ def recreate_objects(apps, schema_editor):
             ('LabType', 'LabBase'),
             ('Round', 'RoundBase'),
     ]:
-        content_type, _ = ContentType.objects.get_or_create(model=model_name, app_label='funds')
+        content_type, _ = ContentType.objects.get_or_create(model=model_name.lower(), app_label='funds')
 
         model = apps.get_model('funds', model_name)
         new_model = apps.get_model('funds', new_model_name)
