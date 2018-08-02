@@ -360,10 +360,9 @@ SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
 
 
 # Email and Celery config
-EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
-
 if 'MAILGUN_API_KEY' in env:
     MAILGUN_API_KEY = env.get('MAILGUN_API_KEY')
+    EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
 
 if 'ANYMAIL_WEBHOOK_SECRET' in env:
     ANYMAIL_WEBHOOK_SECRET = env.get('ANYMAIL_WEBHOOK_SECRET')
