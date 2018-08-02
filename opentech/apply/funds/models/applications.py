@@ -130,6 +130,14 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             self.workflow_name = self.parent_page.workflow_name
             self.reviewers = self.parent_page.reviewers.all()
 
+    @property
+    def is_sealed(self):
+        return self.sealed and self.is_open
+
+    @property
+    def is_open(self):
+        return self.start_date <= date.today() <= self.end_date
+
     def save(self, *args, **kwargs):
         is_new = not self.id
         if is_new and hasattr(self, 'parent_page'):

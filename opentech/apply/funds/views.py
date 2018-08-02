@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, TemplateView, ListView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -150,6 +150,12 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateReviewersView,
     ]
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        if submission.round.specific.is_sealed:
+            return HttpResponseRedirect(reverse_lazy('funds:submissions:sealed', args=(submission.id,)))
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
         if self.object.next:
@@ -159,6 +165,12 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
             other_submissions=other_submissions,
             **kwargs,
         )
+
+
+@method_decorator(staff_required, 'dispatch')
+class SubmissionSealedView(DetailView):
+    template_name = 'funds/submission_sealed.html'
+    model = ApplicationSubmission
 
 
 class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
