@@ -37,6 +37,7 @@ class BaseViewTestCase(TestCase):
             return url
 
         request = self.factory.get(url, secure=True)
+        # request._session = {}
         return request.build_absolute_uri()
 
     def url_from_pattern(self, pattern, kwargs=None):
@@ -44,7 +45,7 @@ class BaseViewTestCase(TestCase):
         request = self.factory.get(url, secure=True)
         return request.build_absolute_uri()
 
-    def get_page(self, instance=None, view_name=None):
+    def get_page(self, instance=None, view_name=None,):
         return self.client.get(self.url(instance, view_name), secure=True, follow=True)
 
     def post_page(self, instance=None, data=dict(), view_name=None):

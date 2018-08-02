@@ -44,6 +44,7 @@ class AdminFactory(UserFactory):
 class StaffFactory(UserFactory):
     class Meta:
         exclude = ('slack_temp', )
+    is_staff = True
 
     # Required to generate the fake data add pass to LazyAttribute
     slack_temp = factory.Faker('word')
@@ -54,6 +55,10 @@ class StaffFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+
+
+class SuperUserFactory(StaffFactory):
+    is_superuser = True
 
 
 class ReviewerFactory(UserFactory):

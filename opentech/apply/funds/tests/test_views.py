@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
-from opentech.apply.users.tests.factories import UserFactory, StaffFactory
+from opentech.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    ApplicationRevisionFactory,
+    SealedSubmissionFactory,
+)
+from opentech.apply.users.tests.factories import UserFactory, StaffFactory, SuperUserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision
@@ -205,3 +209,55 @@ class TestRevisionList(BaseSubmissionViewTestCase):
             response.context['object_list'],
             [submission.live_revision, revision, revision_older],
         )
+
+
+class TestStaffSealedView(BaseSubmissionViewTestCase):
+    user_factory = StaffFactory
+
+    def test_redirected_to_sealed(self):
+        submission = SealedSubmissionFactory()
+        response = self.get_page(submission)
+        url = self.url_from_pattern('funds:submissions:sealed', kwargs={'pk': submission.id})
+        self.assertRedirects(response, url)
+
+    def test_cant_post_to_sealed(self):
+        submission = SealedSubmissionFactory()
+        response = self.post_page(submission, {'some': 'data'}, 'sealed')
+        url = self.url_from_pattern('funds:submissions:sealed', kwargs={'pk': submission.id})
+        self.assertRedirects(response, url)
+
+    def test_non_sealed_unaffected(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+    def test_non_sealed_redirected_away(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission, 'sealed')
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+        self.assertRedirects(response, url)
+
+
+class TestSuperUserSealedView(BaseSubmissionViewTestCase):
+    user_factory = SuperUserFactory
+
+    def test_redirected_to_sealed(self):
+        submission = SealedSubmissionFactory()
+        response = self.get_page(submission)
+        url = self.url_from_pattern('funds:submissions:sealed', kwargs={'pk': submission.id})
+        self.assertRedirects(response, url)
+
+    def test_can_post_to_sealed(self):
+        submission = SealedSubmissionFactory()
+        response = self.post_page(submission, {}, 'sealed')
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+        self.assertRedirects(response, url)
+
+    def test_not_asked_again(self):
+        submission = SealedSubmissionFactory()
+
+        self.post_page(submission, {}, 'sealed')
+
+        # Now request the page again
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)

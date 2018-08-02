@@ -9,7 +9,9 @@ from opentech.apply.funds.models import (
     ApplicationRevision,
     FundType,
     LabType,
+    RequestForPartners,
     Round,
+    SealedRound,
 )
 from opentech.apply.funds.models.forms import (
     ApplicationForm,
@@ -33,6 +35,7 @@ __all__ = [
     'RoundBaseFormFactory',
     'LabFactory',
     'LabBaseFormFactory',
+    'SealedSubmissionFactory',
 ]
 
 
@@ -80,6 +83,11 @@ class FundTypeFactory(wagtail_factories.PageFactory):
                 ReviewFormFactory(**review_fields)
 
 
+class RequestForPartnersFactory(FundTypeFactory):
+    class Meta:
+        model = RequestForPartners
+
+
 class AbstractRelatedFormFactory(factory.DjangoModelFactory):
     class Meta:
         abstract = True
@@ -125,6 +133,10 @@ class RoundFactory(wagtail_factories.PageFactory):
                     round=self,
                     **fields,
                 )
+
+class SealedRoundFactory(RoundFactory):
+    class Meta:
+        model = SealedRound
 
 
 class TodayRoundFactory(RoundFactory):
@@ -209,6 +221,16 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     def _generate(cls, strat, params):
         params.update(**build_form(params))
         return super()._generate(strat, params)
+
+
+class SealedSubmissionFactory(ApplicationSubmissionFactory):
+    page = factory.SubFactory(RequestForPartnersFactory)
+    round = factory.SubFactory(
+        SealedRoundFactory,
+        workflow_name=factory.SelfAttribute('..workflow_name'),
+        lead=factory.SelfAttribute('..lead'),
+        now=True,
+    )
 
 
 class ApplicationRevisionFactory(factory.DjangoModelFactory):

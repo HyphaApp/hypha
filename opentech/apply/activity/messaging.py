@@ -23,6 +23,7 @@ class MESSAGES(Enum):
     NEW_REVIEW = 'New Review'
     COMMENT = 'Comment'
     PROPOSAL_SUBMITTED = 'Proposal Submitted'
+    OPENED_SEALED = 'Opened sealed application'
 
     @classmethod
     def choices(cls):
@@ -110,11 +111,18 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.NEW_REVIEW: '{user} submitted a review'
+        MESSAGES.NEW_REVIEW: '{user} submitted a review',
+        MESSAGES.OPENED_SEALED: '{user} opened the application while still sealed',
     }
 
     def recipients(self, message_type, **kwargs):
         return [None]
+
+    def extra_kwargs(self, message_type, **kwargs):
+        if message_type == MESSAGES.OPENED_SEALED:
+            from .models import INTERNAL
+            return {'visibility': INTERNAL}
+        return {}
 
     def reviewers_updated(self, added, removed, **kwargs):
         message = ['Reviewers updated.']
@@ -129,11 +137,13 @@ class ActivityAdapter(AdapterBase):
         return ' '.join(message)
 
     def send_message(self, message, user, submission, **kwargs):
-        from .models import Activity
+        from .models import Activity, PUBLIC
+        visibility = kwargs.get('visibility', PUBLIC)
         Activity.actions.create(
             user=user,
             submission=submission,
             message=message,
+            visibility=visibility,
         )
 
 
@@ -151,6 +161,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
+        MESSAGES.OPENED_SEALED: '{user} has opened the sealed application: <{link}|{submission.title}>'
     }
 
     def __init__(self):
