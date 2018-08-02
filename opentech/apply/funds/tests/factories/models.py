@@ -5,16 +5,17 @@ import factory
 import wagtail_factories
 
 from opentech.apply.funds.models import (
-    AbstractRelatedForm,
-    ApplicationForm,
     ApplicationSubmission,
     ApplicationRevision,
     FundType,
-    FundForm,
-    LabForm,
     LabType,
     Round,
-    RoundForm,
+)
+from opentech.apply.funds.models.forms import (
+    ApplicationForm,
+    ApplicationBaseForm,
+    LabBaseForm,
+    RoundBaseForm,
 )
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
@@ -24,14 +25,14 @@ from . import blocks
 
 __all__ = [
     'FundTypeFactory',
-    'FundFormFactory',
+    'ApplicationBaseFormFactory',
     'ApplicationFormFactory',
     'ApplicationRevisionFactory',
     'ApplicationSubmissionFactory',
     'RoundFactory',
-    'RoundFormFactory',
+    'RoundBaseFormFactory',
     'LabFactory',
-    'LabFormFactory',
+    'LabBaseFormFactory',
 ]
 
 
@@ -72,8 +73,8 @@ class FundTypeFactory(wagtail_factories.PageFactory):
             review_fields = review_build_form(kwargs)
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
-                FundFormFactory(
-                    fund=self,
+                ApplicationBaseFormFactory(
+                    application=self,
                     **fields,
                 )
                 ReviewFormFactory(**review_fields)
@@ -81,15 +82,14 @@ class FundTypeFactory(wagtail_factories.PageFactory):
 
 class AbstractRelatedFormFactory(factory.DjangoModelFactory):
     class Meta:
-        model = AbstractRelatedForm
         abstract = True
     form = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationFormFactory')
 
 
-class FundFormFactory(AbstractRelatedFormFactory):
+class ApplicationBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
-        model = FundForm
-    fund = factory.SubFactory(FundTypeFactory, parent=None)
+        model = ApplicationBaseForm
+    application = factory.SubFactory(FundTypeFactory, parent=None)
 
 
 class ApplicationFormFactory(factory.DjangoModelFactory):
@@ -121,7 +121,7 @@ class RoundFactory(wagtail_factories.PageFactory):
             fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
-                RoundFormFactory(
+                RoundBaseFormFactory(
                     round=self,
                     **fields,
                 )
@@ -132,9 +132,9 @@ class TodayRoundFactory(RoundFactory):
     end_date = factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7))
 
 
-class RoundFormFactory(AbstractRelatedFormFactory):
+class RoundBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
-        model = RoundForm
+        model = RoundBaseForm
     round = factory.SubFactory(RoundFactory, parent=None)
 
 
@@ -156,15 +156,15 @@ class LabFactory(wagtail_factories.PageFactory):
             fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
-                LabFormFactory(
+                LabBaseFormFactory(
                     lab=self,
                     **fields,
                 )
 
 
-class LabFormFactory(AbstractRelatedFormFactory):
+class LabBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
-        model = LabForm
+        model = LabBaseForm
     lab = factory.SubFactory(LabFactory, parent=None)
 
 

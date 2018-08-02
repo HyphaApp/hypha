@@ -9,13 +9,11 @@ from .admin_helpers import (
     FormsFundRoundListFilter,
     RoundFundChooserView,
 )
-from .models import ApplicationForm, FundType, LabType, Round
+from .models import ApplicationForm, FundType, LabType, RequestForPartners, Round, SealedRound
 from opentech.apply.categories.admin import CategoryAdmin
 
 
-class RoundAdmin(ModelAdmin):
-    model = Round
-    menu_icon = 'repeat'
+class BaseRoundAdmin(ModelAdmin):
     choose_parent_view_class = RoundFundChooserView
     choose_parent_template_name = 'funds/admin/parent_chooser.html'
     list_display = ('title', 'fund', 'start_date', 'end_date')
@@ -25,10 +23,27 @@ class RoundAdmin(ModelAdmin):
         return obj.get_parent()
 
 
+class RoundAdmin(BaseRoundAdmin):
+    model = Round
+    menu_icon = 'repeat'
+
+
+class SealedRoundAdmin(BaseRoundAdmin):
+    model = SealedRound
+    menu_icon = 'locked'
+    menu_label = 'Sealed Rounds'
+
+
 class FundAdmin(ModelAdmin):
     model = FundType
     menu_icon = 'doc-empty'
     menu_label = 'Funds'
+
+
+class RFPAdmin(ModelAdmin):
+    model = RequestForPartners
+    menu_icon = 'group'
+    menu_label = 'Request For Partners'
 
 
 class LabAdmin(ModelAdmin):
@@ -71,4 +86,4 @@ class ApplicationFormAdmin(ModelAdmin):
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = 'Apply'
     menu_icon = 'folder-open-inverse'
-    items = (RoundAdmin, FundAdmin, LabAdmin, ApplicationFormAdmin, ReviewFormAdmin, CategoryAdmin)
+    items = (RoundAdmin, SealedRoundAdmin, FundAdmin, LabAdmin, RFPAdmin, ApplicationFormAdmin, ReviewFormAdmin, CategoryAdmin)

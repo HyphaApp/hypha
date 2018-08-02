@@ -92,7 +92,7 @@ def get_used_funds(request):
 
 def get_round_leads(request):
     User = get_user_model()
-    return User.objects.filter(round_lead__isnull=False).distinct()
+    return User.objects.filter(roundbase_lead__isnull=False).distinct()
 
 
 def get_reviewers(request):

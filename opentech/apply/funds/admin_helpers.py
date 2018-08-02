@@ -9,10 +9,15 @@ from wagtail.contrib.modeladmin.views import ChooseParentView
 from wagtail.core.models import Page
 
 
+class VerboseLabelModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(str, obj):
+        return '[{}] {}'.format(obj._meta.verbose_name, obj.title)
+
+
 class FundChooserForm(ParentChooserForm):
     """Changes the default chooser to be fund orientated """
-    parent_page = forms.ModelChoiceField(
-        label=_('Fund'),
+    parent_page = VerboseLabelModelChoiceField(
+        label=_('Fund or RFP'),
         required=True,
         empty_label=None,
         queryset=Page.objects.none(),
@@ -22,7 +27,7 @@ class FundChooserForm(ParentChooserForm):
 
 class RoundFundChooserView(ChooseParentView):
     def get_form(self, request):
-        parents = self.permission_helper.get_valid_parent_pages(request.user)
+        parents = self.permission_helper.get_valid_parent_pages(request.user).specific()
         return FundChooserForm(parents, request.POST or None)
 
 

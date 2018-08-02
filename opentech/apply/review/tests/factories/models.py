@@ -2,18 +2,18 @@ from collections import defaultdict
 
 import factory
 
-from opentech.apply.funds.models import AbstractRelatedReviewForm, FundReviewForm
+from opentech.apply.funds.models.forms import ApplicationBaseReviewForm
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, FundTypeFactory
-from opentech.apply.review.options import YES, NO, MAYBE
+from opentech.apply.stream_forms.testing.factories import AddFormFieldsMetaclass
 from opentech.apply.users.tests.factories import StaffFactory
 
-from opentech.apply.review.models import Review, ReviewForm
-from opentech.apply.review.views import get_fields_for_stage
-from opentech.apply.stream_forms.testing.factories import AddFormFieldsMetaclass
+from ...options import YES, NO, MAYBE
+from ...models import Review, ReviewForm
+from ...views import get_fields_for_stage
 
 from . import blocks
 
-__all__ = ['ReviewFactory', 'ReviewFormFactory', 'AbstractRelatedReviewFormFactory', 'FundReviewFormFactory',
+__all__ = ['ReviewFactory', 'ReviewFormFactory', 'ApplicationBaseReviewFormFactory',
            'ReviewFundTypeFactory', 'ReviewApplicationSubmissionFactory']
 
 
@@ -80,7 +80,6 @@ class ReviewFormFactory(factory.DjangoModelFactory):
 
 class AbstractRelatedReviewFormFactory(factory.DjangoModelFactory):
     class Meta:
-        model = AbstractRelatedReviewForm
         abstract = True
     form = factory.SubFactory(ReviewFormFactory)
 
@@ -93,16 +92,16 @@ class ReviewFundTypeFactory(FundTypeFactory):
             fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
-                FundReviewFormFactory(
-                    fund=self,
+                ApplicationBaseReviewFormFactory(
+                    application=self,
                     **fields
                 )
 
 
-class FundReviewFormFactory(AbstractRelatedReviewFormFactory):
+class ApplicationBaseReviewFormFactory(AbstractRelatedReviewFormFactory):
     class Meta:
-        model = FundReviewForm
-    fund = factory.SubFactory(ReviewFundTypeFactory, parent=None)
+        model = ApplicationBaseReviewForm
+    application = factory.SubFactory(ReviewFundTypeFactory, parent=None)
 
 
 class ReviewApplicationSubmissionFactory(ApplicationSubmissionFactory):
