@@ -253,6 +253,8 @@ class TestSuperUserSealedView(BaseSubmissionViewTestCase):
         response = self.post_page(submission, {}, 'sealed')
         url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
         self.assertRedirects(response, url)
+        self.assertTrue('peeked' in self.client.session)
+        self.assertTrue(str(submission.id) in self.client.session['peeked'])
 
     def test_not_asked_again(self):
         submission = SealedSubmissionFactory()
