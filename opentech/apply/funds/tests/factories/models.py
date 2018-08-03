@@ -35,6 +35,7 @@ __all__ = [
     'RoundBaseFormFactory',
     'LabFactory',
     'LabBaseFormFactory',
+    'SealedRoundFactory',
     'SealedSubmissionFactory',
 ]
 

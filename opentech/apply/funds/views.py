@@ -194,6 +194,8 @@ class SubmissionSealedView(DetailView):
             submission=submission,
         )
         self.request.session.setdefault('peeked', {})[str(submission.id)] = True
+        # Dictionary updates do not trigger session saves. Force update
+        self.request.session.modified = True
 
     def can_view_sealed(self, user):
         return user.is_superuser

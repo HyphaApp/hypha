@@ -4,6 +4,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    SealedRoundFactory,
     SealedSubmissionFactory,
 )
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory, SuperUserFactory
@@ -272,3 +273,14 @@ class TestSuperUserSealedView(BaseSubmissionViewTestCase):
         # Now request the page again
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
+
+    def test_can_view_multiple_sealed(self):
+        sealed_round = SealedRoundFactory()
+        first, second = SealedSubmissionFactory.create_batch(2, round=sealed_round)
+
+        self.post_page(first, {}, 'sealed')
+        self.post_page(second, {}, 'sealed')
+
+        self.assertTrue('peeked' in self.client.session)
+        self.assertTrue(str(first.id) in self.client.session['peeked'])
+        self.assertTrue(str(second.id) in self.client.session['peeked'])
