@@ -34,6 +34,10 @@ class ProfileForm(forms.ModelForm):
         if not self.instance.is_apply_staff:
             del self.fields['slack']
 
+        if not self.instance.has_usable_password():
+            # User is registered with oauth - no password change allowed
+            del self.fields['email']
+
     def clean_slack(self):
         slack = self.cleaned_data['slack']
         if slack:
