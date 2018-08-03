@@ -1,0 +1,30 @@
+{% extends "base-apply.html" %}
+
+{% block title %}Sealed: {{ object.title }}{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--breakout wrapper--admin">
+    <div class="wrapper wrapper--medium">
+        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
+        <h5 class="heading heading--meta">
+            <span>{{ object.stage }}</span>
+            <span>{{ object.page }}</span>
+            <span>{{ object.round }}</span>
+            <span>Lead: {{ object.lead }}</span>
+        </h5>
+        {% include "funds/includes/status_bar.html" with phases=object.workflow current_phase=object.phase same_stage=True%}
+    </div>
+</div>
+<div class="wrapper wrapper--medium">
+    <h2 class="heading">This application is sealed until the round is closed</h2>
+    <h3>The round ends on: {{ object.round.specific.end_date }}</h3>
+    <a class="button button--primary" href="{% url 'apply:submissions:list' %}">Go back</a>
+    {% if can_view_sealed %}
+        <p>As an admin you are allowed to access the application. However, this action will be recorded.</p>
+        <form method="post">
+            {% csrf_token %}
+            <input class="button button--warning" type="submit" value="View application" />
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

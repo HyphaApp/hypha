@@ -64,22 +64,24 @@ class ApplicationFormAdmin(ModelAdmin):
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = NoDeletePermission
 
-    related_models = ['fund', 'lab', 'round']
+    related_models = [
+        ('applicationbaseform', 'application'),
+        ('roundbaseform', 'round'),
+        ('labbaseform', 'lab'),
+    ]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        related = [f'{field}form_set__{field}' for field in self.related_models]
+        related = [f'{form}_set__{field}' for form, field in self.related_models]
         return qs.prefetch_related(*related)
 
-    def _list_related(self, obj, field):
-        return ', '.join(getattr(obj, f'{field}form_set').values_list(f'{field}__title', flat=True))
+    def _list_related(self, obj, form, field):
+        return ', '.join(getattr(obj, f'{form}_set').values_list(f'{field}__title', flat=True))
 
     def used_by(self, obj):
         rows = list()
-        for model in self.related_models:
-            related = self._list_related(obj, model)
-            if related:
-                rows.append(model.title() + ': ' + related)
+        for form, field in self.related_models:
+            rows.append(self._list_related(obj, form, field))
         return mark_safe('<br>'.join(rows))
 
 

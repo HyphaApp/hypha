@@ -58,6 +58,10 @@ class RoundBaseForm(AbstractRelatedForm):
     round = ParentalKey('RoundBase', related_name='forms')
 
 
+class LabBaseForm(AbstractRelatedForm):
+    lab = ParentalKey('LabBase', related_name='forms')
+
+
 class AbstractRelatedReviewForm(Orderable):
     form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
 
@@ -84,10 +88,6 @@ class AbstractRelatedReviewForm(Orderable):
 
 class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey('ApplicationBase', related_name='review_forms')
-
-
-class LabBaseForm(AbstractRelatedForm):
-    lab = ParentalKey('LabBase', related_name='forms')
 
 
 class LabBaseReviewForm(AbstractRelatedReviewForm):

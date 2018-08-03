@@ -130,6 +130,22 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             self.workflow_name = self.parent_page.workflow_name
             self.reviewers = self.parent_page.reviewers.all()
 
+    def get_template(self, request, *args, **kwargs):
+        # Make sure all children use the shared template
+        return 'funds/round.html'
+
+    def get_landing_page_template(self, request, *args, **kwargs):
+        # Make sure all children use the shared template
+        return 'funds/round_landing.html'
+
+    @property
+    def is_sealed(self):
+        return self.sealed and self.is_open
+
+    @property
+    def is_open(self):
+        return self.start_date <= date.today() <= self.end_date
+
     def save(self, *args, **kwargs):
         is_new = not self.id
         if is_new and hasattr(self, 'parent_page'):

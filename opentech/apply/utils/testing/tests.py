@@ -32,17 +32,14 @@ class BaseViewTestCase(TestCase):
 
     def url(self, instance, view_name=None, absolute=True):
         full_url_name = self.url_name.format(view_name or self.base_view_name)
-        url = reverse(full_url_name, kwargs=self.get_kwargs(instance))
-        if not absolute:
-            return url
+        return self.url_from_pattern(full_url_name, self.get_kwargs(instance), secure=True, absolute=absolute)
 
-        request = self.factory.get(url, secure=True)
-        return request.build_absolute_uri()
-
-    def url_from_pattern(self, pattern, kwargs=None):
+    def url_from_pattern(self, pattern, kwargs=None, secure=True, absolute=True):
         url = reverse(pattern, kwargs=kwargs)
-        request = self.factory.get(url, secure=True)
-        return request.build_absolute_uri()
+        request = self.factory.get(url, secure=secure)
+        if absolute:
+            return request.build_absolute_uri()
+        return request.path
 
     def get_page(self, instance=None, view_name=None):
         return self.client.get(self.url(instance, view_name), secure=True, follow=True)

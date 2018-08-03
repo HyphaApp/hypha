@@ -58,6 +58,14 @@
         }
     }
 
+    &--warning {
+        @include button($color--error, $color--error);
+
+        &:focus {
+            background-color: $color--pastel-red;
+        }
+    }
+
     &--filters {
         display: flex;
         justify-content: space-between;
@@ -182,4 +190,3 @@
         }
     }
 }
-

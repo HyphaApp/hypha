@@ -1,14 +1,28 @@
 .messages {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 
     &__text {
         max-height:1000px;
         padding: 15px;
         padding-right: 35px;
         position:relative;
+        border: solid 1px;
 
         &--info {
             background: $color--pastel-green;
-            border: solid 1px darken($color--pastel-green, 20%);
+            border-color: darken($color--pastel-green, 20%);
+        }
+
+        &--warning{
+            color: $color--white;
+            font-weight: bold;
+            background: $color--error;
+            border-color: darken($color--error, 20%);
         }
 
         &--hide {

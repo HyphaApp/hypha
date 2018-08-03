@@ -150,6 +150,11 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateReviewersView,
     ]
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        redirect = SubmissionSealedView.should_redirect(request, submission)
+        return redirect or super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
         if self.object.next:
@@ -159,6 +164,60 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
             other_submissions=other_submissions,
             **kwargs,
         )
+
+
+@method_decorator(staff_required, 'dispatch')
+class SubmissionSealedView(DetailView):
+    template_name = 'funds/submission_sealed.html'
+    model = ApplicationSubmission
+
+    def get(self, request, *args, **kwargs):
+        submission = self.get_object()
+        if not self.round_is_sealed(submission):
+            return self.redirect_detail(submission)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        submission = self.get_object()
+        if self.can_view_sealed(request.user):
+            self.peeked(submission)
+        return self.redirect_detail(submission)
+
+    def redirect_detail(self, submission):
+        return HttpResponseRedirect(reverse_lazy('funds:submissions:detail', args=(submission.id,)))
+
+    def peeked(self, submission):
+        messenger(
+            MESSAGES.OPENED_SEALED,
+            request=self.request,
+            user=self.request.user,
+            submission=submission,
+        )
+        self.request.session.setdefault('peeked', {})[str(submission.id)] = True
+        # Dictionary updates do not trigger session saves. Force update
+        self.request.session.modified = True
+
+    def can_view_sealed(self, user):
+        return user.is_superuser
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            can_view_sealed=self.can_view_sealed(self.request.user),
+            **kwargs,
+        )
+
+    @classmethod
+    def round_is_sealed(cls, submission):
+        return submission.round.specific.is_sealed
+
+    @classmethod
+    def has_peeked(cls, request, submission):
+        return str(submission.id) in request.session.get('peeked', {})
+
+    @classmethod
+    def should_redirect(cls, request, submission):
+        if cls.round_is_sealed(submission) and not cls.has_peeked(request, submission):
+            return HttpResponseRedirect(reverse_lazy('funds:submissions:sealed', args=(submission.id,)))
 
 
 class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
