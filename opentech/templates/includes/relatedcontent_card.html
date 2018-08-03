@@ -1,13 +1,16 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% with page=page.specific %}
 <a class="card" href="{% pageurl page %}">
-    {% if page.deadline %}
-        <h6 class="card__subheading">
+    <h6 class="card__subheading">
+        {% if page.deadline %}
             <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
             Next deadline:
             <span>{{ page.deadline|date:"M j, Y" }}</span>
-        </h6>
-    {% endif %}
+        {% else %}
+            Closed
+        {% endif %}
+    </h6>
     {% if page.listing_image %}
         {% image page.listing_image fill-450x300 %}
     {% endif %}
@@ -19,3 +22,4 @@
     {% endif %}
     <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
 </a>
+{% endwith %}

@@ -59,7 +59,7 @@ class BaseApplicationPage(BasePage):
 
     @property
     def deadline(self):
-        return self.application_type or self.application_type.specific.next_deadline()
+        return self.application_type and self.application_type.specific.next_deadline()
 
 
 class FundPage(BaseApplicationPage):

@@ -18,6 +18,6 @@
             {% include_block page.body %}
         </section>
     </div>
-    {% include "public_funds/includes/fund_apply_cta.html" with page=page apply_page=page.fund_type %}
+    {% include "public_funds/includes/fund_apply_cta.html" with page=page apply_page=page.application_type %}
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}
 {% endblock %}
