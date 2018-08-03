@@ -61,6 +61,10 @@ class CommentManger(ActivityBaseManager):
     type = COMMENT
 
 
+class ActionQueryset(BaseActivityQuerySet):
+    pass
+
+
 class ActionManager(ActivityBaseManager):
     type = ACTION
 
@@ -75,7 +79,7 @@ class Activity(models.Model):
 
     objects = models.Manager.from_queryset(ActivityQuerySet)()
     comments = CommentManger.from_queryset(CommentQueryset)()
-    actions = ActionManager()
+    actions = ActionManager.from_queryset(ActionQueryset)()
 
     class Meta:
         ordering = ['-timestamp']
