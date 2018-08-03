@@ -15,27 +15,22 @@ def recreate_objects(apps, schema_editor):
             ('LabType', 'LabBase'),
             ('Round', 'RoundBase'),
     ]:
-        content_type, _ = ContentType.objects.get_or_create(model=model_name, app_label='funds')
+        content_type, _ = ContentType.objects.get_or_create(model=model_name.lower(), app_label='funds')
 
         model = apps.get_model('funds', model_name)
         new_model = apps.get_model('funds', new_model_name)
         for obj in new_model.objects.all():
+            field_values = {}
+            for field in obj._meta.fields:
+                if field.name not in ['page_ptr']:
+                    field_values[field.name] = getattr(obj, field.name)
+
             kwargs = {
                 f'{new_model_name.lower()}_ptr': obj,
-                'title': obj.title,
                 'draft_title': obj.draft_title,
-                'slug': obj.slug,
                 'content_type': content_type,
-                'path': obj.path,
-                'depth': obj.depth,
-                'numchild': obj.numchild,
-                'url_path': obj.url_path,
             }
-            try:
-                kwargs.update(lead=obj.lead)
-            except:
-                pass
-
+            field_values.update(**kwargs)
             new_obj = model(**kwargs)
             new_obj.save()
 
