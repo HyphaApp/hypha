@@ -42,7 +42,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     def detail(self):
         # The location to find out more information
-        return self.fund_public.first()
+        return self.application_public.first()
 
     @property
     def open_round(self):
