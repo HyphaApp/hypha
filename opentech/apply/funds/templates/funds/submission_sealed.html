@@ -15,7 +15,7 @@
 </div>
 <div class="wrapper wrapper--medium">
     <h2 class="heading">This application is sealed until the round is closed</h2>
-    <h3>The round ends on: {{ object.open_round.end_date }}</h3>
+    <h3>The round ends on: {{ object.round.specific.end_date }}</h3>
     <a class="button button--primary" href="{% url 'apply:submissions:list' %}">Go back</a>
     {% if can_view_sealed %}
         <p>As an admin you are allowed to access the application. However, this action will be recorded.</p>
