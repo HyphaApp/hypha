@@ -6,12 +6,14 @@
                 <h2>{{ title }}</h2>
                 <p>{{ intro }}</p>
             </div>
-            <div class="show-tablet">
-                <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
-                    {{ link_text }}
-                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                </a>
-            </div>
+            {% if link_text and link %}
+                <div class="show-tablet">
+                    <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
+                        {{ link_text }}
+                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                    </a>
+                </div>
+            {% endif %}
         </section>
 
         <section class="grid grid--max-three">
@@ -36,13 +38,15 @@
                 </a>
             {% endfor %}
         </section>
-        <div class="wrapper wrapper--center show-mobile">
-            <h5 class="heading heading--contains-link">
-                <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
-                    {{ link_text }}
-                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                </a>
-            </h5>
-        </div>
+        {% if link_text and link %}
+            <div class="wrapper wrapper--center show-mobile">
+                <h5 class="heading heading--contains-link">
+                    <a class="link link--arrow-pixels-{{ arrow_color }}" href="{% pageurl link %}">
+                        {{ link_text }}
+                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                    </a>
+                </h5>
+            </div>
+        {% endif %}
     </div>
 </div>

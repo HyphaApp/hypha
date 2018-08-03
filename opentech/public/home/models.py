@@ -9,7 +9,7 @@ from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage
 
-from opentech.public.funds.models import FundPage, LabPage
+from opentech.public.funds.models import FundPage, LabPage, RFPPage
 
 from .blocks import OurWorkBlock
 
@@ -42,6 +42,20 @@ class PromotedLabs(RelatedPage):
     ]
 
 
+class PromotedRFPs(RelatedPage):
+    source_page = ParentalKey(
+        'home.HomePage',
+        related_name='promoted_rfps'
+    )
+
+    class Meta(RelatedPage.Meta):
+        unique_together = ('page',)
+
+    panels = [
+        PageChooserPanel('page', 'public_funds.RFPPage'),
+    ]
+
+
 class HomePage(BasePage):
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']
@@ -68,6 +82,9 @@ class HomePage(BasePage):
     labs_intro = models.TextField(blank=True)
     labs_link = models.ForeignKey('wagtailcore.Page', related_name='+', on_delete=models.PROTECT)
     labs_link_text = models.CharField(max_length=255)
+
+    rfps_title = models.CharField(max_length=255)
+    rfps_intro = models.TextField(blank=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('strapline'),
@@ -99,6 +116,11 @@ class HomePage(BasePage):
             PageChooserPanel('labs_link'),
             FieldPanel('labs_link_text'),
         ], heading='Labs'),
+        MultiFieldPanel([
+            FieldPanel('rfps_title'),
+            FieldPanel('rfps_intro'),
+            InlinePanel('promoted_rfps', label='Promoted RFPs', max_num=NUM_RELATED),
+        ], heading='Labs'),
     ]
 
     def get_related(self, page_type, base_list):
@@ -125,4 +147,5 @@ class HomePage(BasePage):
         context = super().get_context(*args, **kwargs)
         context['lab_list'] = self.get_related(LabPage, self.promoted_labs)
         context['fund_list'] = self.get_related(FundPage, self.promoted_funds)
+        context['rfps_list'] = self.get_related(RFPPage, self.promoted_rfps)
         return context
