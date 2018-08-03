@@ -58,9 +58,9 @@ class FormsFundRoundListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('fund', _('Funds')),
-            ('round', _('Rounds')),
-            ('lab', _('Labs')),
+            ('applicationbase', _('Funds & RFP')),
+            ('roundbase', _('Rounds and Sealed Rounds')),
+            ('labbase', _('Labs')),
         )
 
     def queryset(self, request, queryset):
