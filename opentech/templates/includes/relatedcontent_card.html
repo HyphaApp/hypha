@@ -1,0 +1,21 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<a class="card" href="{% pageurl page %}">
+    {% if page.deadline %}
+        <h6 class="card__subheading">
+            <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
+            Next deadline:
+            <span>{{ page.deadline|date:"M j, Y" }}</span>
+        </h6>
+    {% endif %}
+    {% if page.listing_image %}
+        {% image page.listing_image fill-450x300 %}
+    {% endif %}
+    <h4>
+        {{ page.listing_title|default:page.title }}
+    </h4>
+    {% if page.listing_summary or page.introduction %}
+        <p class="card__teaser">{{ page.listing_summary|default:page.introduction|truncatechars_html:130  }}</p>
+    {% endif %}
+    <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
+</a>

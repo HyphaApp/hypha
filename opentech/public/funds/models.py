@@ -49,13 +49,17 @@ class BaseApplicationPage(BasePage):
         InlinePanel('related_pages', label="Related pages"),
     ]
 
+    def get_template(self, request, *args, **kwargs):
+        # Make sure all children use the shared template
+        return 'public_funds/fund_page.html'
+
     @property
     def is_open(self):
-        return bool(self.fund_type.specific.open_round)
+        return self.application_type and bool(self.application_type.specific.open_round)
 
     @property
     def deadline(self):
-        return self.fund_type.specific.next_deadline()
+        return self.application_type or self.application_type.specific.next_deadline()
 
 
 class FundPage(BaseApplicationPage):
@@ -138,6 +142,11 @@ class LabPage(BasePage):
         StreamFieldPanel('body'),
         InlinePanel('related_pages', label="Related pages"),
     ]
+
+    def get_context(self, request):
+        context = super().get_context(request)
+        context['rfps'] = self.get_children().live().public()
+        return context
 
     @property
     def is_open(self):

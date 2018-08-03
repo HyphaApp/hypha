@@ -3,7 +3,7 @@
 {% if related_documents or related_pages %}
     <div class="wrapper wrapper--breakout wrapper--dark-bg wrapper--inner-space-xl">
         <div class="wrapper wrapper--medium">
-            <h2>You might also like...</h2>
+            <h2>{{ title|default:"You might also like..."}}</h2>
             <section class="grid grid--max-three">
                     {% for related_document in related_documents %}
                         {% with document=related_document.document %}
@@ -26,26 +26,10 @@
                         {# a related object links to the original page (related.source_page) and a related one (related.page) #}
                         {% if related.page.live %}
                             {% with specific_related_page=related.page.specific %}
-                                <a class="card" href="{% pageurl specific_related_page %}">
-                                    {% if specific_related_page.deadline %}
-                                        <h6 class="card__subheading">
-                                            <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
-                                            Next deadline:
-                                            <span>{{ specific_related_page.deadline|date:"M j, Y" }}</span>
-                                        </h6>
-                                    {% endif %}
-                                    {% if specific_related_page.listing_image %}
-                                        {% image specific_related_page.listing_image fill-450x300 %}
-                                    {% endif %}
-                                    <h4>
-                                        {{ specific_related_page.listing_title|default:specific_related_page.title }}
-                                    </h4>
-                                    {% if specific_related_page.listing_summary or specific_related_page.introduction %}
-                                        <p class="card__teaser">{{ specific_related_page.listing_summary|default:specific_related_page.introduction|truncatechars_html:130  }}</p>
-                                    {% endif %}
-                                    <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
-                                </a>
+                                {% include "includes/relatedcontent_card.html" with page=specific_related_page %}
                             {% endwith %}
+                        {% else %}
+                            {% include "includes/relatedcontent_card.html" with page=related %}
                         {% endif %}
                     {% endfor %}
             </section>
