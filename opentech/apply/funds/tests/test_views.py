@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
@@ -253,8 +254,15 @@ class TestSuperUserSealedView(BaseSubmissionViewTestCase):
         response = self.post_page(submission, {}, 'sealed')
         url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
         self.assertRedirects(response, url)
+
+    def test_peeking_is_logged(self):
+        submission = SealedSubmissionFactory()
+        self.post_page(submission, {}, 'sealed')
+
         self.assertTrue('peeked' in self.client.session)
         self.assertTrue(str(submission.id) in self.client.session['peeked'])
+        self.assertEqual(Activity.objects.count(), 1)
+        self.assertTrue('sealed' in Activity.objects.first().message)
 
     def test_not_asked_again(self):
         submission = SealedSubmissionFactory()
