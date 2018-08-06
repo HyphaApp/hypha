@@ -8,8 +8,8 @@
     {% include "includes/message_item.html" with message="This submission is sealed " tag="warning" close=False %}
 </ul>
 {% endif %}
-<div class="wrapper wrapper--breakout wrapper--admin">
-    <div class="wrapper wrapper--medium">
+<div class="admin-bar">
+    <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
@@ -42,7 +42,7 @@
     </div>
 </div>
 
-<div class="wrapper wrapper--medium wrapper--tabs">
+<div class="wrapper wrapper--large wrapper--tabs">
 {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
         {% block admin_actions %}

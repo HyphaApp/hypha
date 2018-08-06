@@ -2,8 +2,8 @@
 {% block title %}Revisions for {{ submission.title }}{% endblock %}
 
 {% block content %}
-<div class="wrapper wrapper--breakout wrapper--admin">
-    <div class="wrapper wrapper--medium">
+<div class="admin-bar">
+    <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">Revisions</h1>
         <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>

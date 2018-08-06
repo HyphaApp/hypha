@@ -1,0 +1,25 @@
+.admin-bar {
+    position: relative;
+    right: 50%;
+    left: 50%;
+    width: 100vw;
+    padding: 20px;
+    margin-right: -50vw;
+    margin-left: -50vw;
+    color: $color--white;
+    background-color: $color--dark-grey;
+
+    &__inner {
+        max-width: $site-width;
+        margin: 0 auto;
+
+        &--with-button {
+            @include media-query(tablet-portrait) {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+    }
+}
