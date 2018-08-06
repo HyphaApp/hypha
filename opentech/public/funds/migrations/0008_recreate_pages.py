@@ -20,7 +20,7 @@ def recreate_objects(apps, schema_editor):
         for obj in new_model.objects.all():
             field_values = {}
             for field in obj._meta.fields:
-                if field.name not in ['page_ptr', 'path']:
+                if field.name not in ['page_ptr']:
                     field_values[field.name] = getattr(obj, field.name)
 
             kwargs = {
