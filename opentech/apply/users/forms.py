@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from wagtail.users.forms import UserEditForm, UserCreationForm
 
@@ -36,7 +37,10 @@ class ProfileForm(forms.ModelForm):
 
         if not self.instance.has_usable_password():
             # User is registered with oauth - no password change allowed
-            del self.fields['email']
+            email_field = self.fields['email']
+            email_field.disabled = True
+            email_field.required = False
+            email_field.help_text = _('You are registered using OAuth, please contact an admin if you need to change your email address.')
 
     def clean_slack(self):
         slack = self.cleaned_data['slack']
