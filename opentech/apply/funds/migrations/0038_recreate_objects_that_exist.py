@@ -29,10 +29,9 @@ def recreate_objects(apps, schema_editor):
                 f'{new_model_name.lower()}_ptr': obj,
                 'draft_title': obj.draft_title,
                 'content_type': content_type,
-                'depth': obj.depth,
             }
             field_values.update(**kwargs)
-            new_obj = model(**kwargs)
+            new_obj = model(**field_values)
             new_obj.save()
 
 

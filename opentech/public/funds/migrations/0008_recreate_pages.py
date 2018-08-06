@@ -20,14 +20,13 @@ def recreate_objects(apps, schema_editor):
         for obj in new_model.objects.all():
             field_values = {}
             for field in obj._meta.fields:
-                if field.name not in ['page_ptr']:
+                if field.name not in ['page_ptr', 'path']:
                     field_values[field.name] = getattr(obj, field.name)
 
             kwargs = {
                 f'{new_model_name.lower()}_ptr': obj,
                 'draft_title': obj.draft_title,
                 'content_type': content_type,
-                'depth': obj.depth,
             }
             field_values.update(**kwargs)
             new_obj = model(**field_values)
