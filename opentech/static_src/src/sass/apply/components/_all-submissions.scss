@@ -160,7 +160,7 @@ $table-breakpoint: 'tablet-portrait';
                     display: inline-block;
                     margin-right: 15px;
                     transform: rotate(0);
-                    transition: transform, border-color, 0.2s ease-in-out;
+                    transition: transform $transition;
 
                     &:hover {
                         cursor: pointer;
