@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from opentech.apply.home.models import ApplyHomePage
 from opentech.public.home.models import HomePage
 
