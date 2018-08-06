@@ -79,10 +79,6 @@ $table-breakpoint: 'tablet-portrait';
                 padding-top: 15px;
                 font-weight: $weight--bold;
 
-                &:hover {
-                    cursor: pointer;
-                }
-
                 &.has-tooltip {
                     @include media-query($table-breakpoint) {
                         &::before {
@@ -164,7 +160,7 @@ $table-breakpoint: 'tablet-portrait';
                     display: inline-block;
                     margin-right: 15px;
                     transform: rotate(0);
-                    transition: transform, border-color, 0.2s ease-in-out;
+                    transition: transform $transition;
 
                     &:hover {
                         cursor: pointer;
