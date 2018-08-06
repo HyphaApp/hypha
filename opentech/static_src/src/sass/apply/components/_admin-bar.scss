@@ -12,5 +12,14 @@
     &__inner {
         max-width: $site-width;
         margin: 0 auto;
+
+        &--with-button {
+            @include media-query(tablet-portrait) {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
     }
 }

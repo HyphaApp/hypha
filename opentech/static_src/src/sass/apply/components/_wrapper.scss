@@ -306,13 +306,4 @@
             cursor: all-scroll;
         }
     }
-
-    &--reviews {
-        @include media-query(tablet-portrait) {
-            display: flex;
-            align-items: center;
-            flex-direction: row;
-            justify-content: space-between;
-        }
-    }
 }
