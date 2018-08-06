@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
 {% block content %}
-<div class="wrapper wrapper--breakout wrapper--admin">
-    <div class="wrapper wrapper--medium">
+<div class="admin-bar">
+    <div class="admin-bar__inner">
         <h2 class="heading heading--no-margin">Comparing Revisions</h2>
         <h5>For <a href="{% url "funds:submissions:detail" object.id %}">{{ object.title }}</a></h5>
         <h5><a href="{% url "funds:submissions:revisions:list" object.id %}">Back to revisions</a></h5>
