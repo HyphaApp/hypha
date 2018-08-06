@@ -183,6 +183,10 @@
             max-width: 385px;
         }
 
+        .form--scoreable & {
+            margin-top: 20px;
+        }
+
         select[multiple='multiple'] {
             display: block;
         }

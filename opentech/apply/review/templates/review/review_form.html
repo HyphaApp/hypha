@@ -10,7 +10,7 @@
 
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
 {% if not has_submitted_review %}
-    <form class="form form--with-p-tags" action="" method="post" novalidate>
+    <form class="form form--with-p-tags form--scoreable" action="" method="post" novalidate>
         {{ form.media }}
         {% csrf_token %}
 
