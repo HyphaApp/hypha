@@ -7,17 +7,6 @@
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {% if GOOGLE_TAG_MANAGER_ID %}
-            {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
-            <!-- Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','{{ GOOGLE_TAG_MANAGER_ID|escapejs }}');</script>
-            <!-- End Google Tag Manager -->
-        {% endif %}
-
         <!-- favicons -->
         {% comment %}
             Generate favicons by http://realfavicongenerator.net using the following path: settings.STATIC_URL + img/favicons.
@@ -58,13 +47,6 @@
     </head>
 
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
-        {% if GOOGLE_TAG_MANAGER_ID %}
-            {# To enable GTM code you need to specify GOOGLE_TAG_MANAGER_ID in production.py or in local.py #}
-            <!-- Google Tag Manager (noscript) -->
-            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ GOOGLE_TAG_MANAGER_ID|escapejs }}"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-            <!-- End Google Tag Manager (noscript) -->
-        {% endif %}
 
         {% include "includes/sprites.html" %}
 
