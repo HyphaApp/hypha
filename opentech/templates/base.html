@@ -23,6 +23,18 @@
             Generate favicons by http://realfavicongenerator.net using the following path: settings.STATIC_URL + img/favicons.
             Then favicon.ico should be copied to a directory called "public" in the application root and puppet does some magic to serve it up at the site root.
         {% endcomment %}
+        <link rel="icon" sizes="144x144" href="{% static 'images/favicons/android-chrome-144.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicons/favicon-16.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicons/favicon-32.png' %}">
+        <link rel="apple-touch-icon" sizes="76x76" href="{% static 'images/favicons/apple-icon-76.png' %}">
+        <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/favicons/apple-icon-120.png' %}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/favicons/apple-icon-152.png' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicons/apple-icon-180.png' %}">
+        <link rel="manifest" href="{% static 'images/favicons/site.webmanifest.json' %}">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-TileImage" content="{% static 'images/favicons/mstile-150.png' %}">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
 
         <!-- Twitter summary card - see https://dev.twitter.com/cards/types/summary -->
         <!--  and https://dev.twitter.com/cards/getting-started -->
