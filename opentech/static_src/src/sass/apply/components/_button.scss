@@ -85,7 +85,7 @@
             background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
         }
 
-        @include media-query(tablet-portrait) {
+        @include media-query(tablet-landscape) {
             display: none;
         }
     }
