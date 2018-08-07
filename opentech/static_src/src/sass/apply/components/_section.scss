@@ -8,4 +8,29 @@
             margin-bottom: 0;
         }
     }
+
+    &--profile {
+        max-width: $site-width;
+        padding-bottom: $mobile-gutter;
+        margin: 0 auto;
+        margin-bottom: $mobile-gutter;
+        border-bottom: 1px solid $color--light-mid-grey;
+
+        @include media-query(tablet-portrait) {
+            padding-bottom: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        &:first-of-type {
+            padding-top: $mobile-gutter;
+
+            @include media-query(tablet-portrait) {
+                padding-top: 2rem;
+            }
+        }
+
+        &:last-of-type {
+            border-bottom: 0;
+        }
+    }
 }
