@@ -45,7 +45,7 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary" type="submit" value="Submit Review" name="submit" />
+        <input class="button button--primary button--bottom-space" type="submit" value="Submit Review" name="submit" />
         {% if not object.id or object.is_draft %}
             <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
         {% endif %}
