@@ -175,12 +175,16 @@
     }
 
     &__select {
-        max-width: 100%;
+        max-width: 385px;
         background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
         background-size: 8px;
 
-        @include media-query(tablet-portrait) {
-            max-width: 385px;
+        .form--scoreable & {
+            margin-top: 20px;
+        }
+
+        .form__filters & {
+            max-width: 100%;
         }
 
         select[multiple='multiple'] {
@@ -258,7 +262,6 @@
                 content: '';
             }
         }
-
     }
 
     // make date & time input siblings inline
