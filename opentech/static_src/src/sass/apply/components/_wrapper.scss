@@ -17,7 +17,11 @@
     }
 
     &--main {
-        padding: 0 20px;
+        padding: 0 $mobile-gutter;
+
+        @include media-query(desktop) {
+            padding: 0;
+        }
     }
 
     &--blockquote {

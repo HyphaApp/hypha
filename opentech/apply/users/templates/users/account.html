@@ -3,39 +3,41 @@
 
 {% block title %}Account{% endblock %}
 
-
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
-        <h3>Welcome {{ user }}</h3>
+        <h3 class="admin-bar__heading">Welcome {{ user }}</h3>
     </div>
 </div>
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
+<section class="section section--profile">
     <h3>Profile</h3>
     <form action="" method="post" class="form">
         {% csrf_token %}
-        {% for field in form %}
-            {% include "funds/includes/field.html" %}
-        {% endfor %}
+        <div class="form__columns">
+            {% for field in form %}
+                {% include "funds/includes/field.html" %}
+            {% endfor %}
+        </div>
         <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
     </form>
-</div>
+</section>
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% if show_change_password and user.has_usable_password and not backends.associated %}
+{% if show_change_password and user.has_usable_password and not backends.associated %}
+    <section class="section section--profile">
         <h3>Change password</h3>
         <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
-    {% endif %}
-</div>
+    </section>
+{% endif %}
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
+<section class="section section--profile">
     {% if swappable %}
         <form action="{% url 'users:become' %}" method="post" class="form">
             {% csrf_token %}
             {% for user in swappable %}
                 {% if forloop.first %}
-                <label for="user" class="form__question">Become: </label>
+                <h3>Become:</h3>
+                <p class="form__help">Only includes active, non-superusers</p>
                 <div class="form__item">
                 <div class="form__select">
                     <select name="user" id="user">
@@ -45,10 +47,9 @@
                     </select>
                 </div>
                 </div>
-                <p class="form__help">Only includes active, non-superusers</p>
                 {% endif %}
             {% endfor %}
-            <button class="button button--primary" type="submit">Become</button>
+            <button class="button button--primary button--top-space" type="submit">Become</button>
         </form>
     {% endif %}
 
@@ -59,5 +60,5 @@
         <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
     {% endif %}
     {% endcomment %}
-</div>
+</section>
 {% endblock %}

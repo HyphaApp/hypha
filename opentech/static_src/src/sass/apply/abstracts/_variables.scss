@@ -80,10 +80,13 @@ $breakpoints: (
     'small-tablet'      '(min-width: 600px)',
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
-    'desktop'           '(min-width: 1280px)',
+    'desktop'           '(min-width: 1320px)',
     'deskop-wide'       '(min-width: 2556px)'
 );
 
 // Transition
 $transition: 0.25s ease-out;
 $quick-transition: 0.15s ease;
+
+// Spacing
+$mobile-gutter: 20px;
