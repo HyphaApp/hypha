@@ -223,6 +223,11 @@
         max-width: 385px;
         padding: 10px;
         border: 1px solid $color--mid-grey;
+
+        &:disabled {
+            color: $color--black-50;
+            cursor: not-allowed;
+        }
     }
 
     &__error {
