@@ -50,8 +50,19 @@ class FormFieldBlock(StructBlock):
         return self.get_field_class(struct_value)(
             **self.get_field_kwargs(struct_value))
 
+    def get_context(self, value, parent_context):
+        context = super().get_context(value, parent_context)
+        parent_context['data'] = self.format_data(parent_context['data']) or self.no_response()
+        return context
+
     def get_searchable_content(self, value, data):
         return str(data)
+
+    def format_data(self, data):
+        return data
+
+    def no_responose(self):
+        return "No response"
 
 
 class OptionalFormFieldBlock(FormFieldBlock):
@@ -125,6 +136,9 @@ class CheckboxFieldBlock(FormFieldBlock):
 
     def get_searchable_content(self, value, data):
         return None
+
+    def no_responose(self):
+        return False
 
 
 class RadioButtonsFieldBlock(OptionalFormFieldBlock):

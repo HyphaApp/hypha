@@ -80,6 +80,9 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
         field_kwargs['choices'] = self.DURATION_OPTIONS.items()
         return field_kwargs
 
+    def format_data(self, data):
+        return self.DURATION_OPTIONS[int(data)]
+
     class Meta:
         icon = 'date'
 
