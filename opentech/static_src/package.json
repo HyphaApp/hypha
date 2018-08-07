@@ -95,7 +95,7 @@
     "rollup-plugin-sizes": "^0.2.3",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-watch": "^3.2.2",
-    "sass-lint": "^1.8.2"
+    "sass-lint": "^1.12.1"
   },
   "engines": {
     "node": ">=4"
