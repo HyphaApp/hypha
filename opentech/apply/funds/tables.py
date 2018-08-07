@@ -80,6 +80,9 @@ class AdminSubmissionsTable(SubmissionsTable):
         fields = ('title', 'phase', 'stage', 'page', 'round', 'lead', 'submit_time', 'last_update', 'reviews_stats')  # type: ignore
         sequence = fields + ('comments',)
 
+    def render_lead(self, value):
+        return mark_safe(f'<span>{ value }</span>')
+
 
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()

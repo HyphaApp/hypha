@@ -1,7 +1,7 @@
 {% for review in reviews %}
     <tr class="tr--subchild {{ class }} {% if missing %}no-response{% endif %}">
         {% if missing %}
-            <td colspan="2">{{ review }}</td>
+            <td class="reviews-sidebar__author" colspan="2"><span>{{ review }}</span></td>
             <td>-</td>
             <td>-</td>
         {% else %}
