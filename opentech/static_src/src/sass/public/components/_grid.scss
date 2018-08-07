@@ -143,9 +143,9 @@
             @include media-query(tablet-landscape) {
                 justify-content: space-between;
                 margin: 3rem 0;
-                grid-gap: 35px;  // sass-lint:disable-line no-misspelled-properties
-                grid-template-columns: repeat(4, 1fr);
                 text-align: center;
+                grid-template-columns: repeat(4, 1fr);
+                grid-gap: 35px;  // sass-lint:disable-line no-misspelled-properties
             }
         }
     }

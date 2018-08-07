@@ -5,7 +5,7 @@
 
     .select2-container--default,
     &.select2-container--default {
-        width: 100% !important;
+        width: 100% !important; // sass-lint:disable-line no-important
 
         .select2-selection--single {
             height: 55px;
@@ -54,8 +54,8 @@
 .select2-container {
     &--default {
         .select2-results__option--highlighted[aria-selected] {
-            color: $color--default !important;
-            background-color: transparentize($color--primary, 0.9) !important;
+            color: $color--default !important; // sass-lint:disable-line no-important
+            background-color: transparentize($color--primary, 0.9) !important; // sass-lint:disable-line no-important
         }
     }
 

@@ -1,16 +1,16 @@
 .messages {
-    width: 100vw;
     position: relative;
-    left: 50%;
     right: 50%;
-    margin-left: -50vw;
+    left: 50%;
+    width: 100vw;
     margin-right: -50vw;
+    margin-left: -50vw;
 
     &__text {
-        max-height:1000px;
+        position: relative;
+        max-height: 1000px;
         padding: 15px;
         padding-right: 35px;
-        position:relative;
         border: solid 1px;
 
         &--info {
@@ -18,20 +18,20 @@
             border-color: darken($color--pastel-green, 20%);
         }
 
-        &--warning{
-            color: $color--white;
+        &--warning {
             font-weight: bold;
+            color: $color--white;
             background: $color--error;
             border-color: darken($color--error, 20%);
         }
 
         &--hide {
-            max-height: 0px;
-            padding-top: 0px;
-            padding-bottom: 0px;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
             border: 0 none;
+            transition: all $transition; // sass-lint:disable-line no-transition-all
             transform-origin: top;
-            transition: all $transition;
         }
     }
 

@@ -131,7 +131,7 @@
             flex-direction: column;
             padding: 0;
 
-            .select2 .select2-selection.select2-selection--single {
+            .select2 .select2-selection.select2-selection--single { // sass-lint:disable-line force-element-nesting
                 border: 0;
                 border-top: 1px solid $color--mid-grey;
 
@@ -142,6 +142,7 @@
                 }
             }
 
+            // so the form can be output in any tag
             > * {
                 flex-basis: auto;
                 margin: 0;
@@ -201,7 +202,7 @@
             -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
 
             option {
-                background-color: white;
+                background-color: $color--white;
             }
         }
 

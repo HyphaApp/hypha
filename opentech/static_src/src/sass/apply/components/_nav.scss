@@ -47,10 +47,13 @@
 
         @include media-query(tablet-portrait) {
             display: inline;
-            padding: 30px 0;
+            padding: 40px 0;
             color: $color--default;
         }
 
+        @include media-query(tablet-landscape) {
+            padding: 30px 0;
+        }
 
         &--active {
             &::after {

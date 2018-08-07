@@ -85,7 +85,7 @@
         &--progress {
             width: 100%;
             margin: 5px 0 0;
-            font-size: map-get($font-sizes, milli);;
+            font-size: map-get($font-sizes, milli);
             color: $color--black-50;
 
             @include media-query(small-tablet) {
