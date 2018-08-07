@@ -58,7 +58,7 @@
 
     &__content {
         @include media-query(small-tablet) {
-            width: 70%;
+            width: 80%;
             padding-left: 20px;
         }
     }
@@ -106,12 +106,14 @@
     }
 
     &__heading {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
+        margin-bottom: 0;
 
-        > * {
-            margin: 0 10px 0 0;
+        @include media-query(small-tablet) {
+            font-size: 18px;
+        }
+
+        span {
+            font-weight: $weight--bold;
         }
     }
 
@@ -123,30 +125,6 @@
         text-align: center;
         text-transform: uppercase;
         background-color: $color--sky-blue;
-    }
-
-    &__teaser {
-        display: none;
-        margin: 10px 0 0;
-        color: $color--black-50;
-
-        @include media-query(small-tablet) {
-            display: block;
-        }
-    }
-
-    &__name {
-        width: 100%;
-        margin: 5px 0 10px;
-
-        .feed__item--opened & {
-            color: $color--black-50;
-        }
-
-        @include media-query(small-tablet) {
-            width: auto;
-            margin: 0 10px 0 0;
-        }
     }
 
     &__company {
