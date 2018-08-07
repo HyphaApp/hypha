@@ -32,6 +32,12 @@ table {
 
             &.is-expanded {
                 border-bottom: 1px solid $color--light-mid-grey;
+
+                .lead {
+                    span {
+                        background-color: $color--mist;
+                    }
+                }
             }
 
             &:hover {
