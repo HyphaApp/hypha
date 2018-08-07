@@ -23,12 +23,12 @@
     </form>
 </section>
 
-{# {% if show_change_password and user.has_usable_password and not backends.associated %} #}
+{% if show_change_password and user.has_usable_password and not backends.associated %}
     <section class="section section--profile">
         <h3>Change password</h3>
         <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
     </section>
-{# {% endif %} #}
+{% endif %}
 
 <section class="section section--profile">
     {% if swappable %}
