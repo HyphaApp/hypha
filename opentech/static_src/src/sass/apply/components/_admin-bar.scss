@@ -3,7 +3,7 @@
     right: 50%;
     left: 50%;
     width: 100vw;
-    padding: 20px;
+    padding: $mobile-gutter;
     margin-right: -50vw;
     margin-left: -50vw;
     color: $color--white;
@@ -20,6 +20,12 @@
                 flex-direction: row;
                 justify-content: space-between;
             }
+        }
+    }
+
+    &__heading {
+        &:only-child {
+            margin-bottom: 0;
         }
     }
 }
