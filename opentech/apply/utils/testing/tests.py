@@ -1,6 +1,6 @@
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.auth.models import AnonymousUser
-from django.test import TestCase, RequestFactory
+from django.test import override_settings, TestCase, RequestFactory
 from django.urls import reverse
 
 
@@ -17,6 +17,7 @@ def make_request(user=AnonymousUser(), data={}, method='get', site=None):
     return request
 
 
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
 class BaseViewTestCase(TestCase):
     url_name = ''  # resolvable url, you should use "path:to:view:{}" and {} with be replaced with base_view_name
     base_view_name = ''

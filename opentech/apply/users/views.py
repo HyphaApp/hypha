@@ -49,7 +49,7 @@ class AccountView(UpdateView):
         )
 
 
-@login_required(login_url=reverse_lazy('users:login'))
+@login_required()
 def become(request):
     if request.POST:
         id = request.POST['user']
@@ -57,7 +57,7 @@ def become(request):
     return redirect('users:account')
 
 
-@login_required(login_url=reverse_lazy('users:login'))
+@login_required()
 @require_oauth_whitelist
 def oauth(request):
     """Generic, empty view for the OAuth associations."""

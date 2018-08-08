@@ -4,6 +4,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestOAuthAccess(TestCase):
     def login(self):
         email = 'test@email.com'
@@ -19,8 +20,12 @@ class TestOAuthAccess(TestCase):
         """
         oauth_page = reverse('users:oauth')
         response = self.client.get(oauth_page, follow=True)
-        self.assertRedirects(response, reverse(
-            'users:login') + '?next=' + reverse('users:oauth'), status_code=301, target_status_code=200)
+        self.assertRedirects(
+            response,
+            reverse('users_public:login') + '?next=' + reverse('users:oauth'),
+            status_code=301,
+            target_status_code=200,
+        )
 
     @override_settings()
     def test_oauth_not_set_up(self):
