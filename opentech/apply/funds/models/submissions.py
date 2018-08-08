@@ -1,4 +1,5 @@
 import os
+from functools import partialmethod
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -190,6 +191,38 @@ class AddTransitions(models.base.ModelBase):
         attrs['perform_transition'] = perform_transition
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
+
+
+class ApplicationSubmissionMetaclass(AddTransitions):
+    def __new__(cls, name, bases, attrs, **kwargs):
+        cls = super().__new__(cls, name, bases, attrs, **kwargs)
+
+        # We want to access the redered display of the required fields.
+        # Treat in similar way to django's get_FIELD_display
+        for required_name in REQUIRED_BLOCK_NAMES:
+            partial_method_name = f'_{required_name}_method'
+            # We need to generate the partial method and the wrap it in property so
+            # we can access the required fields like normal fields. e.g. self.title
+            # Partial method requires __get__ to be called in order to bind it to the
+            # class properly this is using the <name> -> _<name>_method -> _get_REQUIRED_value
+            # call chain which instantiates each method correctly at the cost of an extra
+            # lookup
+            setattr(
+                cls,
+                partial_method_name,
+                partialmethod(cls._get_REQUIRED_value, name=required_name),
+            )
+            setattr(
+                cls,
+                f'{required_name}',
+                property(getattr(cls, partial_method_name)),
+            )
+            setattr(
+                cls,
+                f'get_{required_name}_display',
+                partialmethod(cls._get_REQUIRED_display, name=required_name),
+            )
+        return cls
 
 
 class ApplicationSubmission(
@@ -494,13 +527,6 @@ class ApplicationSubmission(
     def get_absolute_url(self):
         return reverse('funds:submissions:detail', args=(self.id,))
 
-    def __getattribute__(self, item):
-        # __getattribute__ allows correct error handling from django compared to __getattr__
-        # fall back to values defined on the data
-        if item in REQUIRED_BLOCK_NAMES:
-            return self.form_data[item]
-        return super().__getattribute__(item)
-
     def __str__(self):
         return f'{self.title} from {self.full_name} for {self.page.title}'
 
@@ -510,7 +536,7 @@ class ApplicationSubmission(
     # Methods for accessing data on the submission
 
     def get_data(self):
-        # Updated for JSONField
+        # Updated for JSONField - Not used but base get_data will error
         form_data = self.form_data.copy()
         form_data.update({
             'submit_time': self.submit_time,
@@ -595,6 +621,12 @@ class ApplicationSubmission(
             if field_id not in self.must_include
         ]
         return mark_safe(''.join(answers))
+
+    def _get_REQUIRED_display(self, name):
+        return self.render_answer(name)
+
+    def _get_REQUIRED_value(self, name):
+        return self.form_data[name]
 
 
 @receiver(post_transition, sender=ApplicationSubmission)
