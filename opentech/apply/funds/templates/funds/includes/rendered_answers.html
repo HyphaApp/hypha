@@ -20,6 +20,10 @@
         <h5>Email</h5>
         <p>{{ object.email }}</p>
     </div>
+    <div class="grid__cell--span-two">
+        <h5>Address</h5>
+        <p>{{ object.get_address_display }}</p>
+    </div>
 </div>
 <div class="rich-text rich-text--answers">
     {{ object.render_answers }}

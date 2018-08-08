@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,6 +45,10 @@ class AddressFieldBlock(ApplicationMustIncludeFieldBlock):
     class Meta:
         label = _('Address')
         icon = 'home'
+
+    def format_data(self, data):
+        address = json.loads(data)
+        return ', '.join(address.values())
 
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
