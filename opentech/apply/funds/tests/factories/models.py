@@ -100,7 +100,6 @@ class FundTypeFactory(wagtail_factories.PageFactory):
                 ReviewFormFactory(**review_fields)
 
 
-
 class RequestForPartnersFactory(FundTypeFactory):
     class Meta:
         model = RequestForPartners
