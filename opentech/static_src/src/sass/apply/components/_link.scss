@@ -11,21 +11,24 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px;
-        color: $color--default;
-        border-top: 1px solid $color--mid-grey;
-        border-right: 1px solid $color--mid-grey;
-        border-left: 1px solid $color--mid-grey;
+        padding: 15px 20px;
+        margin-top: 5px;
+        color: $color--white;
+        background: $color--light-blue;
         transition: background-color, $transition;
 
-        &:only-child,
-        &:last-child {
-            border-bottom: 1px solid $color--mid-grey;
+        @include media-query(mob-landscape) {
+            max-width: 300px;
         }
 
         &:focus,
         &:hover {
-            background-color: transparentize($color--light-blue, 0.9);
+            background-color: $color--dark-blue;
+        }
+
+        > div {
+            display: flex;
+            align-items: center;
         }
 
         span {
@@ -38,13 +41,13 @@
             &:first-child {
                 width: 26px;
                 height: 32px;
-                stroke: $color--dark-grey;
+                stroke: $color--white;
             }
 
             &:last-child {
                 width: 12px;
                 height: 18px;
-                stroke: $color--primary;
+                stroke: $color--white;
             }
         }
     }
