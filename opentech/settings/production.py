@@ -144,6 +144,21 @@ if 'LOG_DIR' in env:
     LOGGING['loggers']['django.request']['handlers'].append('errors_file')
     LOGGING['loggers']['django.security']['handlers'].append('errors_file')
 
+# Basic auth to stop access to other than primary hosts.
+
+MIDDLEWARE += [
+    'baipw.middleware.BasicAuthIPWhitelistMiddleware'
+]
+
+if 'BASIC_AUTH_LOGIN' in env:
+    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
+
+if 'BASIC_AUTH_PASSWORD' in env:
+    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
+
+if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
+    BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
+
 django_heroku.settings(locals())
 
 try:
