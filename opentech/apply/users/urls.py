@@ -27,7 +27,6 @@ urlpatterns = [
     path('account/', include([
         path('', AccountView.as_view(), name='account'),
         path('become/', become, name='become'),
-        # Password change
         path('password/', include([
             path(
                 'change/',
@@ -37,8 +36,6 @@ urlpatterns = [
                 ),
                 name='password_change',
             ),
-
-            # Password reset
             path(
                 'reset/',
                 auth_views.PasswordResetView.as_view(
@@ -68,14 +65,13 @@ urlpatterns = [
                 auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset/complete.html'),
                 name='password_reset_complete'
             ),
-            path(
-                'activate/<uidb64>/<token>/',
-                ActivationView.as_view(),
-                name='activate'
-            ),
-            path('activate/', create_password, name="activate_password"),
-
         ])),
+        path(
+            'activate/<uidb64>/<token>/',
+            ActivationView.as_view(),
+            name='activate'
+        ),
+        path('activate/', create_password, name="activate_password"),
         path('oauth', oauth, name='oauth'),
     ]))
 ]
