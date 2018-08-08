@@ -609,14 +609,14 @@ class ApplicationSubmission(
             if isinstance(field.block, MustIncludeFieldBlock)
         }
 
-    def render_answer(self, field_id):
+    def render_answer(self, field_id, include_question=False):
         field = self.field(field_id)
         data = self.data(field_id)
-        return field.render(context={'data': data})
+        return field.render(context={'data': data, 'include_question': include_question})
 
     def render_answers(self):
         answers = [
-            self.render_answer(field_id)
+            self.render_answer(field_id, include_question=True)
             for field_id in self.question_field_ids
             if field_id not in self.must_include
         ]
