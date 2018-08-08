@@ -47,8 +47,16 @@ class AddressFieldBlock(ApplicationMustIncludeFieldBlock):
         icon = 'home'
 
     def format_data(self, data):
+        # Based on the fields listed in addressfields/widgets.py
+        order_fields = [
+            'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
+        ]
         address = json.loads(data)
-        return ', '.join(address.values())
+        return ', '.join(
+            address[field]
+            for field in order_fields
+            if address[field]
+        )
 
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
