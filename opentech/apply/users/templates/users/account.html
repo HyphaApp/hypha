@@ -10,55 +10,55 @@
     </div>
 </div>
 
-<section class="section section--profile">
-    <h3>Profile</h3>
-    <form action="" method="post" class="form">
-        {% csrf_token %}
-        <div class="form__columns">
+<div class="profile">
+    <div class="profile__column">
+        <h3>Profile</h3>
+        <form action="" method="post" class="form">
+            {% csrf_token %}
             {% for field in form %}
                 {% include "funds/includes/field.html" %}
             {% endfor %}
-        </div>
-        <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
-    </form>
-</section>
-
-{% if show_change_password and user.has_usable_password and not backends.associated %}
-    <section class="section section--profile">
-        <h3>Change password</h3>
-        <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
-    </section>
-{% endif %}
-
-<section class="section section--profile">
-    {% if swappable %}
-        <form action="{% url 'users:become' %}" method="post" class="form">
-            {% csrf_token %}
-            {% for user in swappable %}
-                {% if forloop.first %}
-                <h3>Become:</h3>
-                <p class="form__help">Only includes active, non-superusers</p>
-                <div class="form__item">
-                <div class="form__select">
-                    <select name="user" id="user">
-                {% endif %}
-                    <option value="{{ user.id }}">{{ user }}</option>
-                {% if forloop.last %}
-                    </select>
-                </div>
-                </div>
-                {% endif %}
-            {% endfor %}
-            <button class="button button--primary button--top-space" type="submit">Become</button>
+            <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
         </form>
+    </div>
+
+    {% if show_change_password and user.has_usable_password and not backends.associated %}
+        <div class="profile__column">
+            <h3>Change password</h3>
+            <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
+        </div>
     {% endif %}
 
-    {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
-    {% comment %}
-    {% can_use_oauth as show_oauth_link %}
-    {% if show_oauth_link %}
-        <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
-    {% endif %}
-    {% endcomment %}
-</section>
+    <div class="profile__column">
+        {% if swappable %}
+            <form action="{% url 'users:become' %}" method="post" class="form">
+                {% csrf_token %}
+                {% for user in swappable %}
+                    {% if forloop.first %}
+                    <h3>Become:</h3>
+                    <p class="form__help">Only includes active, non-superusers</p>
+                    <div class="form__item">
+                    <div class="form__select">
+                        <select name="user" id="user">
+                    {% endif %}
+                        <option value="{{ user.id }}">{{ user }}</option>
+                    {% if forloop.last %}
+                        </select>
+                    </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <button class="button button--primary button--top-space" type="submit">Become</button>
+            </form>
+        {% endif %}
+
+        {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
+        {% comment %}
+        {% can_use_oauth as show_oauth_link %}
+        {% if show_oauth_link %}
+            <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
+        {% endif %}
+        {% endcomment %}
+    </div>
+</div>
 {% endblock %}
