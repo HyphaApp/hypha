@@ -2,9 +2,17 @@ import random
 import factory
 
 from opentech.apply.funds import blocks
-from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
-    NumberFieldBlockFactory, RadioFieldBlockFactory, ImageFieldBlockFactory, FileFieldBlockFactory, \
-    MultiFileFieldBlockFactory, StreamFieldUUIDFactory
+from opentech.apply.stream_forms.testing.factories import (
+    CharFieldBlockFactory,
+    FileFieldBlockFactory,
+    FormFieldBlockFactory,
+    ImageFieldBlockFactory,
+    MultiFileFieldBlockFactory,
+    NumberFieldBlockFactory,
+    RadioFieldBlockFactory,
+    ParagraphBlockFactory,
+    StreamFieldUUIDFactory,
+)
 from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['CustomFormFieldsFactory', 'TitleBlockFactory', 'EmailBlockFactory', 'FullNameBlockFactory', 'ValueFieldBlockFactory']
@@ -31,6 +39,16 @@ class FullNameBlockFactory(FormFieldBlockFactory):
         model = blocks.FullNameBlock
 
 
+class DurationBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.DurationBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        choices = list(blocks.DurationBlock.DURATION_OPTIONS.keys())
+        return random.choice(choices)
+
+
 class ValueFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = blocks.ValueBlock
@@ -41,6 +59,7 @@ class ValueFieldBlockFactory(FormFieldBlockFactory):
 
 
 CustomFormFieldsFactory = StreamFieldUUIDFactory({
+    'duration': DurationBlockFactory,
     'title': TitleBlockFactory,
     'value': ValueFieldBlockFactory,
     'email': EmailBlockFactory,
@@ -52,4 +71,5 @@ CustomFormFieldsFactory = StreamFieldUUIDFactory({
     'image': ImageFieldBlockFactory,
     'file': FileFieldBlockFactory,
     'multi_file': MultiFileFieldBlockFactory,
+    'text_markup': ParagraphBlockFactory,
 })

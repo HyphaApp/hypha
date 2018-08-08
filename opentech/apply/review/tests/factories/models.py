@@ -17,24 +17,6 @@ __all__ = ['ReviewFactory', 'ReviewFormFactory', 'ApplicationBaseReviewFormFacto
            'ReviewFundTypeFactory', 'ReviewApplicationSubmissionFactory']
 
 
-def build_form(data, prefix=''):
-    if prefix:
-        prefix += '__'
-
-    extras = defaultdict(dict)
-    for key, value in data.items():
-        if 'form_fields' in key:
-            _, field, attr = key.split('__')
-            extras[field][attr] = value
-
-    form_fields = {}
-    for i, field in enumerate(blocks.ReviewFormFieldsFactory.factories):
-        form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
-        for attr, value in extras[field].items():
-            form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
-
-    return form_fields
-
 
 class ReviewFormDataFactory(factory.DictFactory, metaclass=AddFormFieldsMetaclass):
     field_factory = blocks.ReviewFormFieldsFactory
@@ -89,12 +71,11 @@ class ReviewFundTypeFactory(FundTypeFactory):
     @factory.post_generation
     def review_forms(self, create, extracted, **kwargs):
         if create:
-            fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 ApplicationBaseReviewFormFactory(
                     application=self,
-                    **fields
+                    **kwargs
                 )
 
 

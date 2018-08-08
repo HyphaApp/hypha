@@ -36,7 +36,7 @@ class RichTextFieldBlock(TextFieldBlock):
         icon = 'form'
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data, tags=[], strip=True)
+        return bleach.clean(data or '', tags=[], strip=True)
 
 
 class CustomFormFieldsBlock(StreamBlock):
