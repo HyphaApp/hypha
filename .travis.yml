@@ -6,11 +6,6 @@ cache:
   directories:
     - node_modules
 
-# Only build branch updates for master
-branches:
-  only:
-    - master
-
 # Use container-based infrastructure
 dist: trusty
 sudo: false
