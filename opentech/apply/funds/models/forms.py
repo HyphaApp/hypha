@@ -90,5 +90,9 @@ class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey('ApplicationBase', related_name='review_forms')
 
 
+class RoundBaseReviewForm(AbstractRelatedReviewForm):
+    round = ParentalKey('RoundBase', related_name='review_forms')
+
+
 class LabBaseReviewForm(AbstractRelatedReviewForm):
     lab = ParentalKey('LabBase', related_name='review_forms')

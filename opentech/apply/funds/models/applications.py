@@ -115,7 +115,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         ], heading="Dates"),
         FieldPanel('reviewers'),
         ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
+        # Forms comes from parental key in models/forms.py
         ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
+        ReadOnlyInlinePanel('review_forms', help_text="Are copied from the parent fund."),
     ]
 
     edit_handler = TabbedInterface([
@@ -156,13 +158,22 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
         if is_new and hasattr(self, 'parent_page'):
             # Would be nice to do this using model clusters as part of the __init__
-            for form in self.parent_page.forms.all():
-                # Create a copy of the existing form object
-                new_form = form.form
-                new_form.id = None
-                new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
-                new_form.save()
-                RoundBaseForm.objects.create(round=self, form=new_form)
+            self._copy_forms('forms')
+            self._copy_forms('review_forms')
+
+    def _copy_forms(self, field):
+        for form in getattr(self.parent_page, field).all():
+            new_form = self._meta.get_field(field).related_model
+            self._copy_form(form, new_form)
+
+    def _copy_form(self, form, new_class):
+        # Create a copy of the existing form object
+        new_form = form.form
+        new_form.id = None
+        new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
+        new_form.save()
+        new_class.objects.create(round=self, form=new_form)
+
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
