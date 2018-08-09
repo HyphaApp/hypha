@@ -61,9 +61,8 @@ class Command(BaseCommand):
     def get_user_groups(self, user):
         groups = []
         role_map = {
-            'proposer': 'Applicant',
-            'council': 'Advisor',
-            'administrator': 'Administrator',
+            'council': 'Reviewer',
+            'administrator': 'Editors',
             'dev': 'Administrator',
         }
 
