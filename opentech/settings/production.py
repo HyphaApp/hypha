@@ -69,12 +69,14 @@ if 'EMAIL_HOST' in env:
 if 'EMAIL_SUBJECT_PREFIX' in env:
     EMAIL_SUBJECT_PREFIX = env['EMAIL_SUBJECT_PREFIX']
 
-if 'CACHE_PURGE_URL' in env:
+if 'CLOUDFLARE_API_TOKEN' in env:
     INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
     WAGTAILFRONTENDCACHE = {
-        'default': {
-            'BACKEND': 'wagtail.contrib.frontend_cache.backends.HTTPBackend',
-            'LOCATION': env['CACHE_PURGE_URL'],
+        'cloudflare': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
+            'EMAIL': 'blah@opentech.fund',
+            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'ZONEID': '5f8c38d2059c775439b3b562fc51a636',
         },
     }
 
