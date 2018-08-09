@@ -72,8 +72,7 @@
     "build:prod": "npm-run-all clean create_dirs sync compile:*:prod",
     "deploy": "npm-run-all clean create_dirs build:prod upload",
     "start": "npm-run-all clean create_dirs sync compile:*:dev -p compile:*:watch watch serve --silent",
-    "debug": "npm-run-all clean create_dirs sync compile:*:prod -p compile:*:debug watch:*:debug --silent",
-    "postinstall": "npm run build"
+    "debug": "npm-run-all clean create_dirs sync compile:*:prod -p compile:*:debug watch:*:debug --silent"
   },
   "devDependencies": {
     "autoprefixer": "^8.1.0",
