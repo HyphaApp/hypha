@@ -53,8 +53,12 @@ $table-breakpoint: 'tablet-landscape';
             // set column widths
             &.title {
                 @include media-query($table-breakpoint) {
-                    width: 260px;
+                    width: 130px;
                     padding-left: 20px;
+                }
+
+                @include media-query(desktop) {
+                    width: 260px;
                 }
             }
 

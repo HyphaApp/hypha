@@ -38,6 +38,10 @@ table {
             &:hover {
                 box-shadow: 0 6px 35px -13px $color--black-50;
             }
+
+            &.reviews-summary__tr {
+                box-shadow: none;
+            }
         }
 
         // responsive table styles

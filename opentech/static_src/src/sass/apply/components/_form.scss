@@ -33,6 +33,11 @@
 
         @include media-query(tablet-portrait) {
             margin: 2rem 0;
+
+            // reduce spacing on the profile page
+            .profile & {
+                margin: 1rem 0;
+            }
         }
 
         &:nth-of-type(1) {
@@ -165,6 +170,10 @@
 
     &__help {
         @extend %h6;
+
+        .profile & {
+            margin-top: 0;
+        }
     }
 
     &__item {
@@ -390,25 +399,6 @@
 
         @include media-query(tablet-portrait) {
             max-width: 70%;
-        }
-    }
-
-    &__columns {
-        display: flex;
-        flex-wrap: wrap;
-
-        #{$root}__group {
-            width: 100%;
-            margin: 0;
-
-            @include media-query(mob-landscape) {
-                width: 50%;
-                padding-right: 20px;
-
-                &:nth-child(even) {
-                    padding-right: 0;
-                }
-            }
         }
     }
 }

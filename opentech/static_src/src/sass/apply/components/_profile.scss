@@ -1,0 +1,28 @@
+.profile {
+    margin-top: $mobile-gutter;
+
+    @include media-query(tablet-portrait) {
+        display: flex;
+        margin-top: 2rem;
+    }
+
+    &__column {
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid $color--light-mid-grey;
+
+        @include media-query(tablet-portrait) {
+            width: 50%;
+            padding-right: 3rem;
+            margin: 0 3rem 0 0;
+            border-right: 1px solid $color--light-mid-grey;
+            border-bottom: 0;
+
+            &:last-child {
+                padding-right: 0;
+                margin-right: 0;
+                border-right: 0;
+            }
+        }
+    }
+}

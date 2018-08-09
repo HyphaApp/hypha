@@ -10,12 +10,14 @@
             <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
             <p class="feed__meta-item">{{ activity.timestamp|date:"m.d.y h:iA e" }}</p>
         </div>
-        <div class="feed__heading">
-            <h4 class="feed__name">{{ activity.user }}</h4>
+        <p class="feed__heading">
+            <span>{{ activity.user }}</span>
+
             {% if submission_title %}
-                <h6>updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a></h6>
+                updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
-        </div>
-        <p class="feed__teaser">{{ activity.message }}</p>
+
+            - {{ activity.message }}
+        </p>
     </div>
 </div>

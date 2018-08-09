@@ -36,6 +36,7 @@
             .select2-selection__arrow {
                 right: 15px;
                 height: 53px;
+                pointer-events: none;
                 background: url('./../../images/dropdown.svg') transparent no-repeat 95% center;
                 background-size: 8px;
 
