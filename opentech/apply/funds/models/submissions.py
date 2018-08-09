@@ -39,7 +39,8 @@ from ..workflow import (
 )
 
 
-submission_storage = DefaultStorage()
+storage_settings = settings.get('APPLY_STORAGE_CONFIG', {})
+submission_storage = DefaultStorage(**storage_settings)
 
 
 class JSONOrderable(models.QuerySet):
