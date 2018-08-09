@@ -43,7 +43,3 @@ class TestStaffProfileView(BaseTestProfielView):
     def test_can_set_slack_name(self):
         response = self.client.get(self.url, follow=True)
         self.assertContains(response, 'Slack name')
-
-    def test_can_not_set_email(self):
-        response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, 'Email')
