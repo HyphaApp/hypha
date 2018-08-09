@@ -30,27 +30,9 @@ class NavigationSettings(BaseSetting, ClusterableModel):
         blank=True,
         help_text="Main site navigation"
     )
-    secondary_navigation = StreamField(
-        [('link', LinkBlock()), ],
-        blank=True,
-        help_text="Alternative navigation"
-    )
-    footer_navigation = StreamField(
-        [('column', LinkColumnWithHeader()), ],
-        blank=True,
-        help_text="Multiple columns of footer links with optional header."
-    )
-    footer_links = StreamField(
-        [('link', LinkBlock()), ],
-        blank=True,
-        help_text="Single list of elements at the base of the page."
-    )
 
     panels = [
         StreamFieldPanel('primary_navigation'),
-        StreamFieldPanel('secondary_navigation'),
-        StreamFieldPanel('footer_navigation'),
-        StreamFieldPanel('footer_links'),
     ]
 
     def save(self, *args, **kwargs):

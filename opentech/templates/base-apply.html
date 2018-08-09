@@ -73,7 +73,7 @@
                         <svg class="icon"><use xlink:href="#person-icon"></use></svg>
                         {{ request.user }}
                     </a>
-                    <a href="{% url 'users:logout' %}" class="link link--button-transparent link--mobile-standout">Logout</a>
+                    <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout">Logout</a>
                 </section>
 
                 <div class="header__button-container">
@@ -81,7 +81,7 @@
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
                         {{ request.user }}
                     </a>
-                    <a href="{% url 'users:logout' %}" class="button button--transparent button--narrow">
+                    <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
                         Log Out
                     </a>
                 </div>

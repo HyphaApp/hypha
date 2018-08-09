@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'opentech.public.esi',
     'opentech.public.funds',
     'opentech.public.home',
+    'opentech.public.mailchimp',
     'opentech.public.navigation',
     'opentech.public.news',
     'opentech.public.people',
@@ -95,6 +96,8 @@ MIDDLEWARE = [
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
     'opentech.public.esi.middleware.ESIMiddleware',
+
+    'opentech.apply.middleware.apply_url_conf_middleware',
 ]
 
 ROOT_URLCONF = 'opentech.urls'
@@ -218,13 +221,14 @@ WAGTAIL_USER_EDIT_FORM = 'opentech.apply.users.forms.CustomUserEditForm'
 WAGTAIL_USER_CREATION_FORM = 'opentech.apply.users.forms.CustomUserCreationForm'
 WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
 
-LOGIN_URL = 'users:login'
+LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+
 
 # Logging
 
@@ -317,7 +321,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
-SOCIAL_AUTH_LOGIN_ERROR_URL = 'users:login'
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'users_public:login'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
@@ -372,7 +376,7 @@ if 'REDIS_URL' in env:
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
-
+    
 # S3 configuration
 
 if 'AWS_STORAGE_BUCKET_NAME' in env:
@@ -404,3 +408,8 @@ if 'AWS_STORAGE_BUCKET_NAME' in env:
             'AWS_DEFAULT_ACL': 'private',
             'AWS_BUCKET_ACL': 'private',
         }
+
+        
+MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
+MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
+

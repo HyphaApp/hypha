@@ -118,10 +118,7 @@
                     </section>
 
                     <div class="header__button-container">
-                        <a href="{% url 'users:login' %}" class="button button--transparent button--contains-icons">
-                            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                            My OTF
-                        </a>
+                        {% include "utils/includes/login_button.html" %}
                         <div class="button button--google-translate" id="google_translate_element"></div>
                     </div>
                 </div>
@@ -153,34 +150,7 @@
         <footer class="footer">
             <div class="grid grid--two wrapper wrapper--large">
                 <div class="footer__inner">
-                    <h4>Get the latest internet freedom news</h4>
-                    <form class="form">
-                        <div>
-                            <div class="mailchimp-signup-subscribe-form-description"></div>
-                            <div id="mailchimp-newsletter-32632431e3-mergefields" class="mailchimp-newsletter-mergefields">
-                                <div class="form-item form-type-textfield form-item-mergevars-EMAIL">
-                                    <label for="edit-mergevars-email">Email Address <span class="form-required" title="This field is required.">*</span></label>
-                                    <input type="text" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="128" class="form-text required input--secondary">
-                                </div>
-
-                                <div class="form-item form-type-textfield form-item-mergevars-FNAME">
-                                    <label for="edit-mergevars-fname">First Name </label>
-                                    <input type="text" id="edit-mergevars-fname" name="mergevars[FNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
-                                </div>
-
-                                <div class="form-item form-type-textfield form-item-mergevars-LNAME">
-                                    <label for="edit-mergevars-lname">Last Name </label>
-                                    <input type="text" id="edit-mergevars-lname" name="mergevars[LNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
-                                </div>
-
-                            </div>
-                            <input type="hidden" name="form_build_id" value="form-2Dy9x5istHLUmufjcHabtyuZ_niL-RlfSoHBIq39hpI">
-                            <input type="hidden" name="form_id" value="mailchimp_signup_subscribe_block_otf_newsletter_form">
-                            <div class="form-actions form-wrapper" id="edit-actions--3">
-                                <input type="submit" id="edit-submit--3" name="op" value="Sign up" class="form-submit link link--button-transparent link--footer-signup">
-                            </div>
-                        </div>
-                    </form>
+                    {% include "mailchimp/newsletter_signup.html" %}
                 </div>
 
                 <div class="footer__inner">
@@ -199,12 +169,10 @@
                         <p>
                             <a href="mailto:hello@opentech.fund">hello@opentech.fund</a></br>
                             <a href="mailto:press@opentech.fund">press@opentech.fund</a></br>
-                            <span>PGP: 67AC DDCF B909 4685 36DD BC03 F766 3861 965A 90D2</span>
+                            <span>PGP: <a href="https://keybase.io/opentechfund/pgp_keys.asc?fingerprint=67acddcfb909468536ddbc03f7663861965a90d2">67AC DDCF B909 4685 36DD BC03 F766 3861 965A 90D2</a></span>
                         </p>
 
-                        <p><a href="/rss.xml">RSS Feed</a></p>
-
-                        <p><a class="link link--underlined" href="#">Terms of Use</a></p>
+                        <p><a class="link link--underlined" href="/tos">Terms of Use</a></p>
 
                         <p>Test the OTF website for censorship</p>
 
@@ -219,14 +187,6 @@
                                 <img src="{% static 'images/radio-free-asia-logo.svg' %}" alt="logo fo radio free asia">
                             </a>
                         </div>
-
-                    <section>
-                        {% footernav %}
-                    </section>
-
-                    <section>
-                        {% footerlinks %}
-                    </section>
                 </div>
             </div>
 

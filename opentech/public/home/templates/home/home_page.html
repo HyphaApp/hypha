@@ -52,10 +52,7 @@
             </section>
 
             <div class="header__button-container">
-                <a href="{% url 'users:login' %}" class="button button--transparent button--contains-icons">
-                    <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                    My OTF
-                </a>
+                {% include "utils/includes/login_button.html" %}
                 <div class="button button--google-translate" id="google_translate_element"></div>
             </div>
         </div>
