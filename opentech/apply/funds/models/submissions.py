@@ -570,7 +570,7 @@ class ApplicationSubmission(
             return self.form_data[id]
         except KeyError as e:
             try:
-                transposed_must_include = {v:k for k,v in self.must_include.items()}
+                transposed_must_include = {v: k for k, v in self.must_include.items()}
                 actual_id = transposed_must_include[id]
             except KeyError:
                 # We have most likely progressed application forms so the data isnt in form_data

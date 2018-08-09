@@ -11,9 +11,10 @@ import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 
-__all__ = ['CharBlockFactory', 'FormFieldBlockFactory', 'CharFieldBlockFactory', 'NumberFieldBlockFactory',
-           'RadioFieldBlockFactory', 'UploadableMediaFactory', 'ImageFieldBlockFactory', 'FileFieldBlockFactory',
-           'MultiFileFieldBlockFactory']
+__all__ = ['FormFieldBlockFactory', 'CharFieldBlockFactory',
+           'NumberFieldBlockFactory', 'RadioFieldBlockFactory',
+           'UploadableMediaFactory', 'ImageFieldBlockFactory',
+           'FileFieldBlockFactory', 'MultiFileFieldBlockFactory']
 
 
 class AnswerFactory(factory.Factory):
@@ -79,7 +80,6 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
     default_value = factory.Faker('sentence')
     field_label = factory.Faker('sentence')
     help_text = factory.LazyAttribute(lambda o: str(o._Resolver__step.builder.factory_meta.model))
-
 
     class Meta:
         model = stream_blocks.FormFieldBlock

@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import factory
 
 from opentech.apply.funds.models.forms import ApplicationBaseReviewForm
@@ -13,9 +11,9 @@ from ...views import get_fields_for_stage
 
 from . import blocks
 
-__all__ = ['ReviewFactory', 'ReviewFormFactory', 'ApplicationBaseReviewFormFactory',
-           'ReviewFundTypeFactory', 'ReviewApplicationSubmissionFactory']
-
+__all__ = ['ReviewFactory', 'ReviewFormFactory',
+           'ApplicationBaseReviewFormFactory', 'ReviewFundTypeFactory',
+           'ReviewApplicationSubmissionFactory']
 
 
 class ReviewFormDataFactory(factory.DictFactory, metaclass=AddFormFieldsMetaclass):
@@ -46,7 +44,11 @@ class ReviewFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     author = factory.SubFactory(StaffFactory)
     form_fields = blocks.ReviewFormFieldsFactory
-    form_data = factory.SubFactory(ReviewFormDataFactory, form_fields=factory.SelfAttribute('..form_fields'), submission=factory.SelfAttribute('..submission'))
+    form_data = factory.SubFactory(
+        ReviewFormDataFactory,
+        form_fields=factory.SelfAttribute('..form_fields'),
+        submission=factory.SelfAttribute('..submission'),
+    )
     is_draft = False
     recommendation = NO
     score = 0
