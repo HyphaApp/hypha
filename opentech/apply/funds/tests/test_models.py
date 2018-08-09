@@ -179,6 +179,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
             self.assertNotEqual(round_form, fund_form)
 
 
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestFormSubmission(TestCase):
     def setUp(self):
         self.site = Site.objects.first()

@@ -21,6 +21,7 @@ from opentech.apply.funds.models.forms import (
 )
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
+from opentech.apply.home.factories import ApplyHomePageFactory
 
 from . import blocks
 
@@ -70,6 +71,21 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
 
     @factory.post_generation
+    def parent(self, create, extracted_parent, **parent_kwargs):
+        # THIS MUST BE THE FIRST POST GENERATION METHOD OR THE OBJECT WILL BE UNSAVED
+        if create:
+            if extracted_parent and parent_kwargs:
+                raise ValueError('Cant pass a parent instance and attributes')
+
+            if not extracted_parent:
+                parent = ApplyHomePageFactory(**parent_kwargs)
+            else:
+                # Assume root node if no parent passed
+                parent = extracted_parent
+
+            parent.add_child(instance=self)
+
+    @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
             from opentech.apply.review.tests.factories.models import build_form as review_build_form, ReviewFormFactory
@@ -98,7 +114,7 @@ class AbstractRelatedFormFactory(factory.DjangoModelFactory):
 class ApplicationBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = ApplicationBaseForm
-    application = factory.SubFactory(FundTypeFactory, parent=None)
+    application = factory.SubFactory(FundTypeFactory)
 
 
 class ApplicationFormFactory(factory.DjangoModelFactory):
@@ -120,7 +136,7 @@ class RoundFactory(wagtail_factories.PageFactory):
         )
 
     title = factory.Sequence('Round {}'.format)
-    start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * n))
+    start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * n + 1))
     end_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * (n + 1)))
     lead = factory.SubFactory(StaffFactory)
 
@@ -149,7 +165,7 @@ class TodayRoundFactory(RoundFactory):
 class RoundBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = RoundBaseForm
-    round = factory.SubFactory(RoundFactory, parent=None)
+    round = factory.SubFactory(RoundFactory)
 
 
 class LabFactory(wagtail_factories.PageFactory):
@@ -179,7 +195,7 @@ class LabFactory(wagtail_factories.PageFactory):
 class LabBaseFormFactory(AbstractRelatedFormFactory):
     class Meta:
         model = LabBaseForm
-    lab = factory.SubFactory(LabFactory, parent=None)
+    lab = factory.SubFactory(LabFactory)
 
 
 class ApplicationFormDataFactory(FormDataFactory):

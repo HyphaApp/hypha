@@ -1,42 +1,18 @@
-from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.models import ACCEPTED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.utils.testing import BaseViewTestCase
 
 from .factories import DeterminationFactory
 
 
-class BaseTestCase(TestCase):
-    url_name = ''
-    user_factory = None
-
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.user = self.user_factory()
-        self.client.force_login(self.user)
-
-    def url(self, instance, view_name='detail'):
-        full_url_name = self.url_name.format(view_name)
-        url = reverse(full_url_name, kwargs=self.get_kwargs(instance))
-        request = self.factory.get(url, secure=True)
-        return request.build_absolute_uri()
-
-    def get_page(self, instance, view_name='detail'):
-        return self.client.get(self.url(instance, view_name), secure=True, follow=True)
-
-    def post_page(self, instance, data, view_name='detail'):
-        return self.client.post(self.url(instance, view_name), data, secure=True, follow=True)
-
-    def refresh(self, instance):
-        return instance.__class__.objects.get(id=instance.id)
-
-
-class StaffDeterminationsTestCase(BaseTestCase):
+class StaffDeterminationsTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'detail'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.submission.id}
@@ -60,9 +36,10 @@ class StaffDeterminationsTestCase(BaseTestCase):
         self.assertTrue(response.context['can_view_extended_data'])
 
 
-class DeterminationFormTestCase(BaseTestCase):
+class DeterminationFormTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'detail'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -141,9 +118,10 @@ class DeterminationFormTestCase(BaseTestCase):
         self.assertEqual(submission_next.status, 'draft_proposal')
 
 
-class UserDeterminationFormTestCase(BaseTestCase):
+class UserDeterminationFormTestCase(BaseViewTestCase):
     user_factory = UserFactory
     url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'detail'
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
