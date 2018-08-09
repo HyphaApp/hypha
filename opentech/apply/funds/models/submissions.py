@@ -39,7 +39,7 @@ from ..workflow import (
 )
 
 
-storage_settings = settings.get('APPLY_STORAGE_CONFIG', {})
+storage_settings = getattr(settings, 'APPLY_STORAGE_CONFIG', {})
 submission_storage = DefaultStorage(**storage_settings)
 
 
