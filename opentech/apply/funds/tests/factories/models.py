@@ -36,6 +36,7 @@ __all__ = [
     'RoundBaseFormFactory',
     'LabFactory',
     'LabBaseFormFactory',
+    'LabSubmissionFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
 ]
@@ -249,6 +250,11 @@ class SealedSubmissionFactory(ApplicationSubmissionFactory):
         lead=factory.SelfAttribute('..lead'),
         now=True,
     )
+
+
+class LabSubmissionFactory(ApplicationSubmissionFactory):
+    round = None
+    page = factory.SubFactory(LabFactory)
 
 
 class ApplicationRevisionFactory(factory.DjangoModelFactory):

@@ -208,7 +208,11 @@ class SubmissionSealedView(DetailView):
 
     @classmethod
     def round_is_sealed(cls, submission):
-        return submission.round.specific.is_sealed
+        try:
+            return submission.round.specific.is_sealed
+        except AttributeError:
+            # Its a lab - cant be sealed
+            return False
 
     @classmethod
     def has_peeked(cls, request, submission):
