@@ -144,6 +144,14 @@ if 'LOG_DIR' in env:
     LOGGING['loggers']['django.request']['handlers'].append('errors_file')
     LOGGING['loggers']['django.security']['handlers'].append('errors_file')
 
+# Social Auth
+
+if 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY' in env:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+
+if 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET' in env:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
+
 # Basic auth to stop access to other than primary hosts.
 
 MIDDLEWARE += [
