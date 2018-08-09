@@ -7,6 +7,9 @@ from django.urls import reverse
 import responses
 
 
+any_url = re.compile(".")
+
+
 class TestNewsletterView(TestCase):
     url = reverse('newsletter:subscribe')
 
@@ -19,7 +22,14 @@ class TestNewsletterView(TestCase):
         request = response.request
         self.assertRedirects(response, '{}://{}/'.format(request['wsgi.url_scheme'], request['SERVER_NAME']))
 
+    @override_settings(
+        MAILCHIMP_API_KEY='a' * 32,
+        MAILCHIMP_LIST_ID='12345'
+    )
+    @responses.activate
     def test_can_subscribe(self):
+        responses.add(responses.POST, any_url, json={'id': '1234'}, status=200)
+
         response = self.client.post(self.url, data={'email': 'email@email.com'}, secure=True, follow=True)
         self.assertRedirects(response, self.origin)
 
@@ -42,7 +52,6 @@ class TestNewsletterView(TestCase):
     @responses.activate
     @mock.patch('opentech.public.mailchimp.views.logging')
     def test_error_with_mailchimp(self, logging):
-        any_url = re.compile(".")
         # Copied from the mailchimp playground
         response_data = {
             "title": "Invalid Resource",

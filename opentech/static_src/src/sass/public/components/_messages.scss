@@ -18,7 +18,7 @@
             border-color: darken($color--mint, 20%);
         }
 
-        &--warning {
+        &--warning, &--error {
             font-weight: bold;
             color: $color--white;
             background: $color--error;

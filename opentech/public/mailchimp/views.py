@@ -28,7 +28,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, _('Sorry, there were errors with your form.') + str(form.errors))
+        self.error(form)
         return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
@@ -51,11 +51,29 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
                 'merge_fields': data,
             })
         except Exception as e:
-            messages.warning(self.request, _('Sorry, there has been an problem. Please try again later.'))
-            logging.info(e.args[0])
+            self.warning(e)
         else:
-            messages.success(self.request, _('Thank you for subscribing'))
+            if mailchimp_enabled:
+                self.success()
+            else:
+                self.warning(Exception(
+                    'Incorrect Mailchimp configuration: API_KEY: {}, LIST_ID: {}'.format(
+                        str(settings.MAILCHIMP_API_KEY),
+                        str(settings.MAILCHIMP_LIST_ID),
+                    )
+                ))
+
         return super().form_valid(form)
+
+    def error(self, form):
+        messages.error(self.request, _('Sorry, there were errors with your form.') + str(form.errors))
+
+    def warning(self, e):
+        messages.warning(self.request, _('Sorry, there has been an problem. Please try again later.'))
+        logging.info(e.args[0])
+
+    def success(self):
+        messages.success(self.request, _('Thank you for subscribing'))
 
     def get_success_url(self):
         # Go back to where you came from
