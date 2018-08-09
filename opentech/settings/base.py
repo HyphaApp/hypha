@@ -315,7 +315,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
-STAFF_EMAIL_DOMAINS = ['opentechfund.org']
+STAFF_EMAIL_DOMAINS = ['opentech.fund']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
