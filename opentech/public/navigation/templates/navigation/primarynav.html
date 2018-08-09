@@ -6,8 +6,5 @@
         {% endfor %}
     </ul>
 </nav>
-<a href="{% url 'users:login' %}" class="link link--button-transparent link--mobile-standout">
-    <svg class="icon"><use xlink:href="#person-icon"></use></svg>
-    My OTF
-</a>
-<a href="#" class="link link--button-secondary link--mobile-standout">Apply</a>
+{% include "utils/includes/login_button.html" with class="link--mobile-standout" %}
+<a href="{% pageurl APPLY_SITE.root_page %}" class="link link--button-secondary link--mobile-standout">Apply</a>

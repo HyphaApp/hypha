@@ -4,6 +4,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    LabSubmissionFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
@@ -26,6 +27,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_view_a_submission(self):
         submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertContains(response, submission.title)
+
+    def test_can_view_a_lab_submission(self):
+        submission = LabSubmissionFactory()
         response = self.get_page(submission)
         self.assertContains(response, submission.title)
 

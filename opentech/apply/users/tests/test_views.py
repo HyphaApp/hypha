@@ -1,9 +1,10 @@
-from django.test import TestCase
+from django.test import override_settings, TestCase
 from django.urls import reverse
 
 from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
 class BaseTestProfielView(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -19,7 +20,7 @@ class TestProfileView(BaseTestProfielView):
         self.client.logout()
         response = self.client.get(self.url, follow=True)
         # Initial redirect will be via to https through a 301
-        self.assertRedirects(response, reverse('users:login') + '?next=' + self.url, status_code=301)
+        self.assertRedirects(response, reverse('users_public:login') + '?next=' + self.url, status_code=301)
 
     def test_includes_change_password(self):
         response = self.client.get(self.url, follow=True)
@@ -43,7 +44,3 @@ class TestStaffProfileView(BaseTestProfielView):
     def test_can_set_slack_name(self):
         response = self.client.get(self.url, follow=True)
         self.assertContains(response, 'Slack name')
-
-    def test_can_not_set_email(self):
-        response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, 'Email')

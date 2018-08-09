@@ -1,8 +1,0 @@
-{% load wagtailcore_tags %}
-<nav role="navigation" aria-label="Tertiary">
-    <ul class="nav nav--tertiary">
-        {% for link in footerlinks %}
-            {% include_block link with class="footer" %}
-        {% endfor %}
-    </ul>
-</nav>

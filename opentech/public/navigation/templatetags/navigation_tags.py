@@ -11,7 +11,9 @@ register = template.Library()
 def primarynav(context):
     request = context['request']
     site = context.get('PUBLIC_SITE', request.site)
+    apply_site = context.get('APPLY_SITE', request.site)
     return {
         'primarynav': NavigationSettings.for_site(site).primary_navigation,
         'request': request,
+        'APPLY_SITE': apply_site,
     }
