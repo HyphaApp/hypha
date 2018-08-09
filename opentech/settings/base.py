@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'opentech.apply.determinations',
     'opentech.apply.stream_forms',
 
-    'opentech.public.esi',
     'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.navigation',
@@ -94,7 +93,6 @@ MIDDLEWARE = [
 
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-    'opentech.public.esi.middleware.ESIMiddleware',
 ]
 
 ROOT_URLCONF = 'opentech.urls'
