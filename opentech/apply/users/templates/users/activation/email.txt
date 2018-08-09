@@ -4,7 +4,7 @@ Dear {{ name|default:username }},
 
 An account on Open Technology Fund has been created. Activate your account by clicking this link or copying and pasting it to your browser:
 
-{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:activate' uidb64=uid token=token %}
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
 This link can be used once to log in and will lead you to a page where you can set your password.
 

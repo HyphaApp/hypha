@@ -1,1 +1,0 @@
-Account details for {{ username }} at Open Technology Fund
