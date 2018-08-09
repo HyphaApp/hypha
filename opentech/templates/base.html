@@ -153,34 +153,7 @@
         <footer class="footer">
             <div class="grid grid--two wrapper wrapper--large">
                 <div class="footer__inner">
-                    <h4>Get the latest internet freedom news</h4>
-                    <form class="form">
-                        <div>
-                            <div class="mailchimp-signup-subscribe-form-description"></div>
-                            <div id="mailchimp-newsletter-32632431e3-mergefields" class="mailchimp-newsletter-mergefields">
-                                <div class="form-item form-type-textfield form-item-mergevars-EMAIL">
-                                    <label for="edit-mergevars-email">Email Address <span class="form-required" title="This field is required.">*</span></label>
-                                    <input type="text" id="edit-mergevars-email" name="mergevars[EMAIL]" value="" size="25" maxlength="128" class="form-text required input--secondary">
-                                </div>
-
-                                <div class="form-item form-type-textfield form-item-mergevars-FNAME">
-                                    <label for="edit-mergevars-fname">First Name </label>
-                                    <input type="text" id="edit-mergevars-fname" name="mergevars[FNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
-                                </div>
-
-                                <div class="form-item form-type-textfield form-item-mergevars-LNAME">
-                                    <label for="edit-mergevars-lname">Last Name </label>
-                                    <input type="text" id="edit-mergevars-lname" name="mergevars[LNAME]" value="" size="25" maxlength="128" class="form-text input--secondary">
-                                </div>
-
-                            </div>
-                            <input type="hidden" name="form_build_id" value="form-2Dy9x5istHLUmufjcHabtyuZ_niL-RlfSoHBIq39hpI">
-                            <input type="hidden" name="form_id" value="mailchimp_signup_subscribe_block_otf_newsletter_form">
-                            <div class="form-actions form-wrapper" id="edit-actions--3">
-                                <input type="submit" id="edit-submit--3" name="op" value="Sign up" class="form-submit link link--button-transparent link--footer-signup">
-                            </div>
-                        </div>
-                    </form>
+                    {% include "mailchimp/newsletter_signup.html" %}
                 </div>
 
                 <div class="footer__inner">

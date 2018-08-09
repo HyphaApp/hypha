@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'opentech.public.esi',
     'opentech.public.funds',
     'opentech.public.home',
+    'opentech.public.mailchimp',
     'opentech.public.navigation',
     'opentech.public.news',
     'opentech.public.people',
@@ -371,3 +372,7 @@ if 'REDIS_URL' in env:
     CELERY_BROKER_URL = env.get('REDIS_URL')
 else:
     CELERY_TASK_ALWAYS_EAGER = True
+
+
+MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
+MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')

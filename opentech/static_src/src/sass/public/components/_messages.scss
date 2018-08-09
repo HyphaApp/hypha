@@ -1,0 +1,44 @@
+.messages {
+    position: relative;
+    right: 50%;
+    left: 50%;
+    width: 100vw;
+    margin-right: -50vw;
+    margin-left: -50vw;
+
+    &__text {
+        position: relative;
+        max-height: 1000px;
+        padding: 15px;
+        padding-right: 35px;
+        border: solid 1px;
+
+        &--info , &--success {
+            background: $color--mint;
+            border-color: darken($color--mint, 20%);
+        }
+
+        &--warning {
+            font-weight: bold;
+            color: $color--white;
+            background: $color--error;
+            border-color: darken($color--error, 20%);
+        }
+
+        &--hide {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border: 0 none;
+            transition: all $transition; // sass-lint:disable-line no-transition-all
+            transform-origin: top;
+        }
+    }
+
+    &__close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
+    }
+}
