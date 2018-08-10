@@ -1,3 +1,4 @@
+import json
 import random
 import factory
 
@@ -54,8 +55,50 @@ class ValueFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.ValueBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params=dict(), form=False):
         return random.randint(0, 1_000_000)
+
+
+class AddressFieldBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.AddressFieldBlock
+
+    @classmethod
+    def an_adress(cls):
+        return {
+            'country': 'GB',
+            'thoroughfare': 'bah',
+            'premise': 'baz',
+            'locality': {
+                'locality_name': 'bish',
+                'administrative_area': 'bosh',
+                'postal_code': 'SW1 4AQ',
+            }
+        }
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return json.dumps({
+            'country': 'GB',
+            'thoroughfare': 'bah',
+            'premise': 'baz',
+            'localityname': 'bish',
+            'administrativearea': 'bosh',
+            'postalcode': 'SW1 4AQ',
+        })
+
+    @classmethod
+    def make_form_answer(cls, params=dict()):
+        return {
+            'country': 'GB',
+            'thoroughfare': 'bah',
+            'premise': 'baz',
+            'locality': {
+                'locality_name': 'bish',
+                'administrative_area': 'bosh',
+                'postal_code': 'SW1 4AQ',
+            }
+        }
 
 
 CustomFormFieldsFactory = StreamFieldUUIDFactory({
@@ -63,6 +106,7 @@ CustomFormFieldsFactory = StreamFieldUUIDFactory({
     'title': TitleBlockFactory,
     'value': ValueFieldBlockFactory,
     'email': EmailBlockFactory,
+    'address': AddressFieldBlockFactory,
     'full_name': FullNameBlockFactory,
     'char': CharFieldBlockFactory,
     'number': NumberFieldBlockFactory,
