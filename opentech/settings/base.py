@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'opentech.apply.determinations',
     'opentech.apply.stream_forms',
 
-    'opentech.public.esi',
     'opentech.public.funds',
     'opentech.public.home',
     'opentech.public.mailchimp',
@@ -95,7 +94,6 @@ MIDDLEWARE = [
 
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-    'opentech.public.esi.middleware.ESIMiddleware',
 
     'opentech.apply.middleware.apply_url_conf_middleware',
 ]
