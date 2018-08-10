@@ -3,6 +3,7 @@ import textwrap
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import OuterRef, Subquery, F, Q
+from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
 import django_filters as filters
@@ -54,7 +55,7 @@ class SubmissionsTable(tables.Table):
         return value.get_full_name()
 
     def render_phase(self, value):
-        return mark_safe(f'<span>{ value }</span>')
+        return format_html('<span>{}</span>', value)
 
     def render_comments(self, value):
         request = self.context['request']
@@ -81,7 +82,7 @@ class AdminSubmissionsTable(SubmissionsTable):
         sequence = fields + ('comments',)
 
     def render_lead(self, value):
-        return mark_safe(f'<span>{ value }</span>')
+        return format_html('<span>{}</span>', value)
 
 
 def get_used_rounds(request):
