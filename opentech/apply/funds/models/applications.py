@@ -21,7 +21,6 @@ from ..admin_forms import WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 
 from .submissions import ApplicationSubmission
-from .forms import RoundBaseForm
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
 
 
@@ -173,7 +172,6 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
         new_form.save()
         new_class.objects.create(round=self, form=new_form)
-
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
