@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import factory
 
 from opentech.apply.funds.models.forms import ApplicationBaseReviewForm
@@ -13,27 +11,9 @@ from ...views import get_fields_for_stage
 
 from . import blocks
 
-__all__ = ['ReviewFactory', 'ReviewFormFactory', 'ApplicationBaseReviewFormFactory',
-           'ReviewFundTypeFactory', 'ReviewApplicationSubmissionFactory']
-
-
-def build_form(data, prefix=''):
-    if prefix:
-        prefix += '__'
-
-    extras = defaultdict(dict)
-    for key, value in data.items():
-        if 'form_fields' in key:
-            _, field, attr = key.split('__')
-            extras[field][attr] = value
-
-    form_fields = {}
-    for i, field in enumerate(blocks.ReviewFormFieldsFactory.factories):
-        form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
-        for attr, value in extras[field].items():
-            form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
-
-    return form_fields
+__all__ = ['ReviewFactory', 'ReviewFormFactory',
+           'ApplicationBaseReviewFormFactory', 'ReviewFundTypeFactory',
+           'ReviewApplicationSubmissionFactory']
 
 
 class ReviewFormDataFactory(factory.DictFactory, metaclass=AddFormFieldsMetaclass):
@@ -64,7 +44,11 @@ class ReviewFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     author = factory.SubFactory(StaffFactory)
     form_fields = blocks.ReviewFormFieldsFactory
-    form_data = factory.SubFactory(ReviewFormDataFactory, form_fields=factory.SelfAttribute('..form_fields'), submission=factory.SelfAttribute('..submission'))
+    form_data = factory.SubFactory(
+        ReviewFormDataFactory,
+        form_fields=factory.SelfAttribute('..form_fields'),
+        submission=factory.SelfAttribute('..submission'),
+    )
     is_draft = False
     recommendation = NO
     score = 0
@@ -89,12 +73,11 @@ class ReviewFundTypeFactory(FundTypeFactory):
     @factory.post_generation
     def review_forms(self, create, extracted, **kwargs):
         if create:
-            fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 ApplicationBaseReviewFormFactory(
                     application=self,
-                    **fields
+                    **kwargs
                 )
 
 

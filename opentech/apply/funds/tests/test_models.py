@@ -172,7 +172,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
         del self.round.parent_page
         form = self.round.forms.first().form
         # Not ideal, would prefer better way to create the stream values
-        new_field = CustomFormFieldsFactory.generate(None, {'0__email__': ''})
+        new_field = CustomFormFieldsFactory.generate(None, {})
         form.form_fields = new_field
         form.save()
         for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
@@ -204,7 +204,8 @@ class TestFormSubmission(TestCase):
 
         page = page or self.round_page
         fields = page.get_form_fields()
-        data = {k: v for k, v in zip(fields, ['project', 0, email, name])}
+        # This needs to match the order of the fields defined on the form factory
+        data = {k: v for k, v in zip(fields, [1, 'project', 0, email, name])}
         request = make_request(user, data, method='post', site=self.site)
 
         try:
@@ -419,3 +420,28 @@ class TestApplicationSubmission(TestCase):
         submission.form_data = {'title': title}
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
+
+
+class TestSubmissionRenderMethods(TestCase):
+    def test_must_include_not_included_in_answers(self):
+        submission = ApplicationSubmissionFactory()
+        answers = submission.render_answers()
+        for name in submission.must_include:
+            field = submission.field(name)
+            self.assertNotIn(field.value['field_label'], answers)
+
+    def test_normal_answers_included_in_answers(self):
+        submission = ApplicationSubmissionFactory()
+        answers = submission.render_answers()
+        for field_name in submission.question_field_ids:
+            if field_name not in submission.must_include:
+                field = submission.field(field_name)
+                self.assertIn(field.value['field_label'], answers)
+
+    def test_paragraph_not_rendered_in_answers(self):
+        rich_text_label = 'My rich text label!'
+        submission = ApplicationSubmissionFactory(
+            form_fields__text_markup__value=rich_text_label
+        )
+        answers = submission.render_answers()
+        self.assertNotIn(rich_text_label, answers)

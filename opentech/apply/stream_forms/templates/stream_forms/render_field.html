@@ -1,4 +1,10 @@
+{% if include_question %}
 <div>
     <h5>{{ value.field_label }}</h5>
-    <div>{% block data_display %}{{ data|default:"No response" }}{% endblock %}</div>
+{% endif %}
+
+    <div>{% block data_display %}{{ data }}{% endblock %}</div>
+
+{% if include_question %}
 </div>
+{% endif %}

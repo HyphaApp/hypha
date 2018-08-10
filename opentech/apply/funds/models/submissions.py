@@ -1,4 +1,5 @@
 import os
+from functools import partialmethod
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -20,7 +21,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.stream_forms.blocks import UploadableMediaBlock
+from opentech.apply.stream_forms.blocks import FormFieldBlock, UploadableMediaBlock
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
@@ -192,7 +193,44 @@ class AddTransitions(models.base.ModelBase):
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
 
-class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmission, metaclass=AddTransitions):
+class ApplicationSubmissionMetaclass(AddTransitions):
+    def __new__(cls, name, bases, attrs, **kwargs):
+        cls = super().__new__(cls, name, bases, attrs, **kwargs)
+
+        # We want to access the redered display of the required fields.
+        # Treat in similar way to django's get_FIELD_display
+        for required_name in REQUIRED_BLOCK_NAMES:
+            partial_method_name = f'_{required_name}_method'
+            # We need to generate the partial method and the wrap it in property so
+            # we can access the required fields like normal fields. e.g. self.title
+            # Partial method requires __get__ to be called in order to bind it to the
+            # class properly this is using the <name> -> _<name>_method -> _get_REQUIRED_value
+            # call chain which instantiates each method correctly at the cost of an extra
+            # lookup
+            setattr(
+                cls,
+                partial_method_name,
+                partialmethod(cls._get_REQUIRED_value, name=required_name),
+            )
+            setattr(
+                cls,
+                f'{required_name}',
+                property(getattr(cls, partial_method_name)),
+            )
+            setattr(
+                cls,
+                f'get_{required_name}_display',
+                partialmethod(cls._get_REQUIRED_display, name=required_name),
+            )
+        return cls
+
+
+class ApplicationSubmission(
+        WorkflowHelpers,
+        BaseStreamForm,
+        AbstractFormSubmission,
+        metaclass=ApplicationSubmissionMetaclass,
+):
     field_template = 'funds/includes/submission_field.html'
 
     form_data = JSONField(encoder=DjangoJSONEncoder)
@@ -386,14 +424,6 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         self.ensure_user_has_account()
         self.process_file_data()
 
-    @property
-    def must_include(self):
-        return {
-            field.block.name: field.id
-            for field in self.form_fields
-            if isinstance(field.block, MustIncludeFieldBlock)
-        }
-
     def process_form_data(self):
         for field_name, field_id in self.must_include.items():
             response = self.form_data.pop(field_id, None)
@@ -479,36 +509,11 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
     def can_have_determination(self):
         return self.in_determination_phase and not self.has_determination
 
-    @property
-    def raw_data(self):
-        data = self.form_data.copy()
-        for field_name, field_id in self.must_include.items():
-            response = data.pop(field_name)
-            data[field_id] = response
-        return data
-
-    def data_and_fields(self):
-        for stream_value in self.form_fields:
-            try:
-                data = self.form_data[stream_value.id]
-            except KeyError:
-                pass  # It was a named field or a paragraph
-            else:
-                yield data, stream_value
-
-    @property
-    def fields(self):
-        return [
-            field.render(context={'data': data})
-            for data, field in self.data_and_fields()
-        ]
-
-    def render_answers(self):
-        return mark_safe(''.join(self.fields))
-
     def prepare_search_values(self):
-        for data, stream in self.data_and_fields():
-            value = stream.block.get_searchable_content(stream.value, data)
+        for field_id in self.question_field_ids:
+            field = self.field(field_id)
+            data = self.data(field_id)
+            value = field.block.get_searchable_content(field.value, data)
             if value:
                 if isinstance(value, list):
                     yield ', '.join(value)
@@ -519,8 +524,19 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
         for field in ['email', 'title']:
             yield getattr(self, field)
 
+    def get_absolute_url(self):
+        return reverse('funds:submissions:detail', args=(self.id,))
+
+    def __str__(self):
+        return f'{self.title} from {self.full_name} for {self.page.title}'
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+    # Methods for accessing data on the submission
+
     def get_data(self):
-        # Updated for JSONField
+        # Updated for JSONField - Not used but base get_data will error
         form_data = self.form_data.copy()
         form_data.update({
             'submit_time': self.submit_time,
@@ -528,21 +544,89 @@ class ApplicationSubmission(WorkflowHelpers, BaseStreamForm, AbstractFormSubmiss
 
         return form_data
 
-    def get_absolute_url(self):
-        return reverse('funds:submissions:detail', args=(self.id,))
+    @property
+    def raw_data(self):
+        # Returns the data mapped by field id instead of the data stored using the must include
+        # values
+        data = self.form_data.copy()
+        for field_name, field_id in self.must_include.items():
+            response = data.pop(field_name)
+            data[field_id] = response
+        return data
 
-    def __getattribute__(self, item):
-        # __getattribute__ allows correct error handling from django compared to __getattr__
-        # fall back to values defined on the data
-        if item in REQUIRED_BLOCK_NAMES:
-            return self.get_data()[item]
-        return super().__getattribute__(item)
+    def field(self, id):
+        try:
+            return self.fields[id]
+        except KeyError as e:
+            try:
+                actual_id = self.must_include[id]
+            except KeyError:
+                raise e
+            else:
+                return self.fields[actual_id]
 
-    def __str__(self):
-        return f'{self.title} from {self.full_name} for {self.page.title}'
+    def data(self, id):
+        try:
+            return self.form_data[id]
+        except KeyError as e:
+            try:
+                transposed_must_include = {v: k for k, v in self.must_include.items()}
+                actual_id = transposed_must_include[id]
+            except KeyError:
+                # We have most likely progressed application forms so the data isnt in form_data
+                return None
+            else:
+                return self.form_data[actual_id]
 
-    def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+    @property
+    def question_field_ids(self):
+        for field_id, field in self.fields.items():
+            if isinstance(field.block, FormFieldBlock):
+                yield field_id
+
+    @property
+    def raw_fields(self):
+        # Field ids to field class mapping - similar to raw_data
+        return {
+            field.id: field
+            for field in self.form_fields
+        }
+
+    @property
+    def fields(self):
+        # ALl fields on the application
+        fields = self.raw_fields.copy()
+        for field_name, field_id in self.must_include.items():
+            response = fields.pop(field_id)
+            fields[field_name] = response
+        return fields
+
+    @property
+    def must_include(self):
+        return {
+            field.block.name: field.id
+            for field in self.form_fields
+            if isinstance(field.block, MustIncludeFieldBlock)
+        }
+
+    def render_answer(self, field_id, include_question=False):
+        field = self.field(field_id)
+        data = self.data(field_id)
+        return field.render(context={'data': data, 'include_question': include_question})
+
+    def render_answers(self):
+        answers = [
+            self.render_answer(field_id, include_question=True)
+            for field_id in self.question_field_ids
+            if field_id not in self.must_include
+        ]
+        return mark_safe(''.join(answers))
+
+    def _get_REQUIRED_display(self, name):
+        return self.render_answer(name)
+
+    def _get_REQUIRED_value(self, name):
+        return self.form_data[name]
 
 
 @receiver(post_transition, sender=ApplicationSubmission)

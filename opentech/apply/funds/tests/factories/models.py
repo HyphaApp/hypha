@@ -1,4 +1,3 @@
-from collections import defaultdict
 import datetime
 
 import factory
@@ -42,25 +41,6 @@ __all__ = [
 ]
 
 
-def build_form(data, prefix=''):
-    if prefix:
-        prefix += '__'
-
-    extras = defaultdict(dict)
-    for key, value in data.items():
-        if 'form_fields' in key:
-            _, field, attr = key.split('__')
-            extras[field][attr] = value
-
-    form_fields = {}
-    for i, field in enumerate(blocks.CustomFormFieldsFactory.factories):
-        form_fields[f'{prefix}form_fields__{i}__{field}__'] = ''
-        for attr, value in extras[field].items():
-            form_fields[f'{prefix}form_fields__{i}__{field}__{attr}'] = value
-
-    return form_fields
-
-
 class FundTypeFactory(wagtail_factories.PageFactory):
     class Meta:
         model = FundType
@@ -89,16 +69,14 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            from opentech.apply.review.tests.factories.models import build_form as review_build_form, ReviewFormFactory
-            fields = build_form(kwargs, prefix='form')
-            review_fields = review_build_form(kwargs)
+            from opentech.apply.review.tests.factories.models import ReviewFormFactory
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 ApplicationBaseFormFactory(
                     application=self,
-                    **fields,
+                    **kwargs,
                 )
-                ReviewFormFactory(**review_fields)
+                ReviewFormFactory(**kwargs)
 
 
 class RequestForPartnersFactory(FundTypeFactory):
@@ -144,12 +122,11 @@ class RoundFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 RoundBaseFormFactory(
                     round=self,
-                    **fields,
+                    **kwargs,
                 )
 
 
@@ -184,12 +161,11 @@ class LabFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            fields = build_form(kwargs, prefix='form')
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 LabBaseFormFactory(
                     lab=self,
-                    **fields,
+                    **kwargs,
                 )
 
 
@@ -235,11 +211,6 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
             self.reviewers.set(reviewers)
-
-    @classmethod
-    def _generate(cls, strat, params):
-        params.update(**build_form(params))
-        return super()._generate(strat, params)
 
 
 class SealedSubmissionFactory(ApplicationSubmissionFactory):

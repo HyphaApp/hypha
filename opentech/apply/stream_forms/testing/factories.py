@@ -5,14 +5,16 @@ import uuid
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 import factory
-from wagtail.core.blocks import CharBlock
+from wagtail.core.blocks import RichTextBlock
+from wagtail.core.rich_text import RichText
 import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 
-__all__ = ['CharBlockFactory', 'FormFieldBlockFactory', 'CharFieldBlockFactory', 'NumberFieldBlockFactory',
-           'RadioFieldBlockFactory', 'UploadableMediaFactory', 'ImageFieldBlockFactory', 'FileFieldBlockFactory',
-           'MultiFileFieldBlockFactory']
+__all__ = ['FormFieldBlockFactory', 'CharFieldBlockFactory',
+           'NumberFieldBlockFactory', 'RadioFieldBlockFactory',
+           'UploadableMediaFactory', 'ImageFieldBlockFactory',
+           'FileFieldBlockFactory', 'MultiFileFieldBlockFactory']
 
 
 class AnswerFactory(factory.Factory):
@@ -28,6 +30,7 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
             wrapped_factories = {
                 k: factory.SubFactory(AnswerFactory, sub_factory=v)
                 for k, v in field_factory.factories.items()
+                if issubclass(v, FormFieldBlockFactory)
             }
             attrs.update(wrapped_factories)
         return super().__new__(mcs, class_name, bases, attrs)
@@ -63,13 +66,20 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
         return form_data
 
 
-class CharBlockFactory(wagtail_factories.blocks.BlockFactory):
+class ParagraphBlockFactory(wagtail_factories.blocks.BlockFactory):
     class Meta:
-        model = CharBlock
+        model = RichTextBlock
+
+    @classmethod
+    def _create(cls, model_class, value):
+        value = RichText(value)
+        return super()._create(model_class, value)
 
 
 class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
-    default_value = factory.Faker('word')
+    default_value = factory.Faker('sentence')
+    field_label = factory.Faker('sentence')
+    help_text = factory.LazyAttribute(lambda o: str(o._Resolver__step.builder.factory_meta.model))
 
     class Meta:
         model = stream_blocks.FormFieldBlock
@@ -138,8 +148,7 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
 
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
     def generate(self, step, params):
-        if not params:
-            params = self.build_form(params)
+        params = self.build_form(params)
         blocks = super().generate(step, params)
         ret_val = list()
         # Convert to JSON so we can add id before create
@@ -151,10 +160,17 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
     def build_form(self, data):
         extras = defaultdict(dict)
+        for field, value in data.items():
+            # we dont care about position
+            name, attr = field.split('__')
+            extras[name] = {attr: value}
 
         form_fields = {}
         for i, field in enumerate(self.factories):
-            form_fields[f'{i}__{field}__'] = ''
+            if field == 'text_markup':
+                pass
+            else:
+                form_fields[f'{i}__{field}__'] = ''
             for attr, value in extras[field].items():
                 form_fields[f'{i}__{field}__{attr}'] = value
 

@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -14,6 +16,9 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = 'title'
     description = 'The title of the project'
+
+    class Meta:
+        icon = 'tag'
 
 
 class ValueBlock(ApplicationMustIncludeFieldBlock):
@@ -41,6 +46,18 @@ class AddressFieldBlock(ApplicationMustIncludeFieldBlock):
         label = _('Address')
         icon = 'home'
 
+    def format_data(self, data):
+        # Based on the fields listed in addressfields/widgets.py
+        order_fields = [
+            'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
+        ]
+        address = json.loads(data)
+        return ', '.join(
+            address[field]
+            for field in order_fields
+            if address[field]
+        )
+
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = 'full_name'
@@ -48,6 +65,40 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
 
     class Meta:
         icon = 'user'
+
+
+class DurationBlock(ApplicationMustIncludeFieldBlock):
+    name = 'duration'
+    description = 'Duration'
+
+    DURATION_OPTIONS = {
+        1: "1 month",
+        2: "2 months",
+        3: "3 months",
+        4: "4 months",
+        5: "5 months",
+        6: "6 months",
+        7: "7 months",
+        8: "8 months",
+        9: "9 months",
+        10: "10 months",
+        11: "11 months",
+        12: "12 months",
+        18: "18 months",
+        24: "24 months",
+    }
+    field_class = forms.ChoiceField
+
+    def get_field_kwargs(self, *args, **kwargs):
+        field_kwargs = super().get_field_kwargs(*args, **kwargs)
+        field_kwargs['choices'] = self.DURATION_OPTIONS.items()
+        return field_kwargs
+
+    def format_data(self, data):
+        return self.DURATION_OPTIONS[int(data)]
+
+    class Meta:
+        icon = 'date'
 
 
 class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
