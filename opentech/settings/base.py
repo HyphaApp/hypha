@@ -376,7 +376,7 @@ if 'REDIS_URL' in env:
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
-    
+
 # S3 configuration
 
 if 'AWS_STORAGE_BUCKET_NAME' in env:
@@ -409,7 +409,6 @@ if 'AWS_STORAGE_BUCKET_NAME' in env:
             'AWS_BUCKET_ACL': 'private',
         }
 
-        
+
 MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
-
