@@ -375,5 +375,38 @@ else:
     CELERY_TASK_ALWAYS_EAGER = True
 
 
+# S3 configuration
+
+if 'AWS_STORAGE_BUCKET_NAME' in env:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+
+    if 'AWS_S3_CUSTOM_DOMAIN' in env:
+        AWS_S3_CUSTOM_DOMAIN = env['AWS_S3_CUSTOM_DOMAIN']
+
+    if 'AWS_S3_SECURE_URLS' in env:
+        AWS_S3_SECURE_URLS = (
+            env['AWS_S3_SECURE_URLS'].strip().lower() == 'true'
+        )
+
+    INSTALLED_APPS += (
+        'storages',
+    )
+
+    if 'APPLY_AWS_BUCKET_NAME' in env:
+        # Provide settings to access a secure bucket for apply documents
+        # Uses defaults from above if not provided
+        APPLY_STORAGE_CONFIG = {
+            'AWS_STORAGE_BUCKET_NAME': env['APPLY_AWS_BUCKET_NAME'],
+            'AWS_S3_SECRET_ACCESS_KEY': env['AWS_S3_SECRET_ACCESS_KEY'],
+            'AWS_S3_ACCESS_KEY_ID': env['AWS_S3_ACCESS_KEY_ID'],
+            'AWS_QUERYSTRING_AUTH': True,
+            'AWS_DEFAULT_ACL': 'private',
+            'AWS_BUCKET_ACL': 'private',
+        }
+
+
 MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')

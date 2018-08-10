@@ -33,4 +33,5 @@ whitenoise==2.0.4
 uwsgi==2.0.15
 ConcurrentLogHandler==0.9.1
 raven==6.9.0
+django-storages==1.6.6
 mailchimp3==3.0.4
