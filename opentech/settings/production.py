@@ -74,9 +74,9 @@ if 'CLOUDFLARE_API_TOKEN' in env:
     WAGTAILFRONTENDCACHE = {
         'cloudflare': {
             'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
-            'EMAIL': 'blah@opentech.fund',
+            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
             'TOKEN': env['CLOUDFLARE_API_TOKEN'],
-            'ZONEID': '5f8c38d2059c775439b3b562fc51a636',
+            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
         },
     }
 
