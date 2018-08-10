@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import json
 
-from addressfield.widgets import AddressWidget
 from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -142,7 +141,6 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         }
         address = flatten_for_form(address, field, number=True)
         return address
-
 
     def test_create_revisions_on_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)

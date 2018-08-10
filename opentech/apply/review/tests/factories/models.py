@@ -6,7 +6,6 @@ from opentech.apply.users.tests.factories import StaffFactory
 
 from ...options import YES, NO, MAYBE
 from ...models import Review, ReviewForm
-from ...views import get_fields_for_stage
 
 from . import blocks
 
