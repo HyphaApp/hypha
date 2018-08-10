@@ -63,6 +63,9 @@ class LabBaseForm(AbstractRelatedForm):
 
 
 class AbstractRelatedReviewForm(Orderable):
+    class Meta(Orderable.Meta):
+        abstract = True
+
     form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
 
     panels = [
@@ -72,9 +75,6 @@ class AbstractRelatedReviewForm(Orderable):
     @property
     def fields(self):
         return self.form.form_fields
-
-    class Meta(Orderable.Meta):
-        abstract = True
 
     def __eq__(self, other):
         try:
@@ -88,6 +88,10 @@ class AbstractRelatedReviewForm(Orderable):
 
 class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey('ApplicationBase', related_name='review_forms')
+
+
+class RoundBaseReviewForm(AbstractRelatedReviewForm):
+    round = ParentalKey('RoundBase', related_name='review_forms')
 
 
 class LabBaseReviewForm(AbstractRelatedReviewForm):

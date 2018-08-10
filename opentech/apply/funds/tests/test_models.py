@@ -12,6 +12,7 @@ from django.test import TestCase, override_settings
 from wagtail.core.models import Site
 
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
 from opentech.apply.funds.workflow import Request
 from opentech.apply.utils.testing import make_request
 
@@ -26,6 +27,18 @@ from .factories import (
 
 def days_from_today(days):
     return date.today() + timedelta(days=days)
+
+
+def flatten_for_form(data, field_name='', number=False):
+    result = {}
+    for i, (field, value) in enumerate(data.items()):
+        if number:
+            field = f'{field_name}_{i}'
+        if isinstance(value, dict):
+            result.update(**flatten_for_form(value, field_name=field, number=True))
+        else:
+            result[field] = value
+    return result
 
 
 class TestFundModel(TestCase):
@@ -196,16 +209,24 @@ class TestFormSubmission(TestCase):
         self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
 
-    def submit_form(self, page=None, email=None, name=None, user=AnonymousUser()):
-        if email is None:
-            email = self.email
-        if name is None:
-            name = self.name
-
+    def submit_form(self, page=None, email=None, name=None, user=AnonymousUser(), ignore_errors=False):
         page = page or self.round_page
         fields = page.get_form_fields()
-        # This needs to match the order of the fields defined on the form factory
-        data = {k: v for k, v in zip(fields, [1, 'project', 0, email, name])}
+
+        data = {
+            field: factory.make_form_answer()
+            for field, factory in zip(fields, CustomFormFieldsFactory.factories.values())
+            if hasattr(factory, 'make_form_answer')
+        }
+
+        data = flatten_for_form(data)
+
+        for field in page.forms.first().fields:
+            if isinstance(field.block, EmailBlock):
+                data[field.id] = self.email if email is None else email
+            if isinstance(field.block, FullNameBlock):
+                data[field.id] = self.name if name is None else name
+
         request = make_request(user, data, method='post', site=self.site)
 
         try:
@@ -213,7 +234,9 @@ class TestFormSubmission(TestCase):
         except AttributeError:
             response = page.serve(request)
 
-        self.assertNotContains(response, 'There where some errors with your form')
+        if not ignore_errors:
+            # Check the data we submit is correct
+            self.assertNotContains(response, 'errors')
         return response
 
     def test_workflow_and_status_assigned(self):
@@ -287,7 +310,7 @@ class TestFormSubmission(TestCase):
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
 
-        response = self.submit_form(email='', name='', user=user)
+        response = self.submit_form(email='', name='', user=user, ignore_errors=True)
         self.assertContains(response, 'This field is required')
 
         # Lead + applicant

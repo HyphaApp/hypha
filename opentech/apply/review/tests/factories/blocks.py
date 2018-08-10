@@ -37,7 +37,7 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
 ReviewFormFieldsFactory = StreamFieldUUIDFactory({
     'char': CharFieldBlockFactory,
     'rich_text': RichTextFieldBlockFactory,
-    'scored_answer': ScoreFieldBlockFactory,
+    'score': ScoreFieldBlockFactory,
     'recommendation': RecommendationBlockFactory,
     'recommendation_comments': RecommendationCommentsBlockFactory,
 })

@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
@@ -12,6 +13,7 @@ from opentech.apply.users.tests.factories import UserFactory, StaffFactory, Supe
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision
+from .test_models import flatten_for_form
 
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
@@ -130,12 +132,29 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 class TestRevisionsView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
 
+    def prepare_address(self, address, field):
+        address = json.loads(address)
+        address['locality'] = {
+            'localityname': address.pop('localityname'),
+            'administrativearea': address.pop('administrativearea'),
+            'postalcode': address.pop('postalcode'),
+        }
+        address = flatten_for_form(address, field, number=True)
+        return address
+
     def test_create_revisions_on_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         old_data = submission.form_data.copy()
         new_data = submission.raw_data
         new_title = 'New title'
         new_data[submission.must_include['title']] = new_title
+
+        address_id = submission.must_include['address']
+
+        new_data.update(**self.prepare_address(
+            new_data[submission.must_include['address']],
+            address_id,
+        ))
 
         self.post_page(submission, {'submit': True, **new_data}, 'edit')
 
@@ -151,7 +170,16 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
     def test_dont_update_live_revision_on_save(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         old_data = submission.form_data.copy()
+
         new_data = submission.raw_data
+
+        address_id = submission.must_include['address']
+
+        new_data.update(**self.prepare_address(
+            new_data[submission.must_include['address']],
+            address_id,
+        ))
+
         new_data[submission.must_include['title']] = 'New title'
         self.post_page(submission, {'save': True, **new_data}, 'edit')
 
@@ -166,7 +194,16 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
     def test_existing_draft_edit_and_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         draft_data = submission.raw_data.copy()
+
+        address_id = submission.must_include['address']
+
+        draft_data.update(**self.prepare_address(
+            draft_data[submission.must_include['address']],
+            address_id,
+        ))
+
         draft_data[submission.must_include['title']] = 'New title'
+
         self.post_page(submission, {'save': True, **draft_data}, 'edit')
 
         submission = self.refresh(submission)

@@ -88,6 +88,10 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
     def make_answer(cls, params=dict()):
         return cls.default_value.generate(params)
 
+    @classmethod
+    def make_form_answer(cls, params=dict()):
+        return cls.make_answer(params)
+
 
 class CharFieldBlockFactory(FormFieldBlockFactory):
     default_value = factory.Faker('sentence')
@@ -123,11 +127,15 @@ class UploadableMediaFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_answer(cls, params=dict()):
+        params = params.copy()
+        params.setdefault('data', b'this is some content')
         file_name, file = cls.default_value()._make_content(params)
         return InMemoryUploadedFile(file, 'file', file_name, None, file.tell(), None)
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
+    default_value = factory.django.ImageField
+
     class Meta:
         model = stream_blocks.ImageFieldBlock
 

@@ -15,8 +15,11 @@ from opentech.apply.funds.models import (
 from opentech.apply.funds.models.forms import (
     ApplicationForm,
     ApplicationBaseForm,
+    ApplicationBaseReviewForm,
     LabBaseForm,
+    LabBaseReviewForm,
     RoundBaseForm,
+    RoundBaseReviewForm,
 )
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
@@ -69,14 +72,16 @@ class FundTypeFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            from opentech.apply.review.tests.factories.models import ReviewFormFactory
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 ApplicationBaseFormFactory(
                     application=self,
                     **kwargs,
                 )
-                ReviewFormFactory(**kwargs)
+                ApplicationBaseReviewForm(
+                    application=self,
+                    **kwargs,
+                )
 
 
 class RequestForPartnersFactory(FundTypeFactory):
@@ -128,6 +133,10 @@ class RoundFactory(wagtail_factories.PageFactory):
                     round=self,
                     **kwargs,
                 )
+                RoundBaseReviewFormFactory(
+                    round=self,
+                    **kwargs,
+                )
 
 
 class SealedRoundFactory(RoundFactory):
@@ -164,6 +173,10 @@ class LabFactory(wagtail_factories.PageFactory):
             for _ in self.workflow.stages:
                 # Generate a form based on all defined fields on the model
                 LabBaseFormFactory(
+                    lab=self,
+                    **kwargs,
+                )
+                LabBaseReviewFormFactory(
                     lab=self,
                     **kwargs,
                 )
@@ -239,3 +252,30 @@ class ApplicationRevisionFactory(factory.DjangoModelFactory):
         for_factory=ApplicationSubmissionFactory,
         clean=True,
     )
+
+
+class AbstractReviewFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        abstract = True
+    form = factory.SubFactory('opentech.apply.review.tests.factories.ReviewFormFactory')
+
+
+class ApplicationBaseReviewFormFactory(AbstractReviewFormFactory):
+    class Meta:
+        model = ApplicationBaseReviewForm
+
+    application = factory.SubFactory(FundTypeFactory)
+
+
+class RoundBaseReviewFormFactory(AbstractReviewFormFactory):
+    class Meta:
+        model = RoundBaseReviewForm
+
+    round = factory.SubFactory(RoundFactory)
+
+
+class LabBaseReviewFormFactory(AbstractReviewFormFactory):
+    class Meta:
+        model = LabBaseReviewForm
+
+    lab = factory.SubFactory(LabFactory)
