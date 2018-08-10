@@ -33,6 +33,12 @@ table {
 
             &.is-expanded {
                 border-bottom: 1px solid $color--light-mid-grey;
+
+                .lead {
+                    span {
+                        background-color: $color--mist;
+                    }
+                }
             }
 
             &:hover {
@@ -52,6 +58,24 @@ table {
             @include media-query($table-breakpoint) {
                 display: table-cell;
                 width: initial;
+            }
+
+            &.lead {
+                span {
+                    position: relative;
+                    z-index: 1;
+                    display: block;
+                    padding-right: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    background: $color--white;
+
+                    &:hover {
+                        display: inline-block;
+                        overflow: visible;
+                    }
+                }
+
             }
         }
     }

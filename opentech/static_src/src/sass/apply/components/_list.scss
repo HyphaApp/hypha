@@ -23,7 +23,7 @@
                 position: absolute;
                 max-width: initial;
                 overflow: visible;
-                background-color: #f3fafe;
+                background-color: $color--mist;
 
                 + #{$root}__item--reviewer-outcome {
                     width: 100%;
