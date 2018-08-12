@@ -24,6 +24,7 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import BaseStreamForm
 
+from opentech.storage_backends import PrivateMediaStorage
 
 from .mixins import AccessFormData
 from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
@@ -38,10 +39,6 @@ from ..workflow import (
     UserPermissions,
     WORKFLOWS,
 )
-
-
-storage_settings = getattr(settings, 'APPLY_STORAGE_CONFIG', {})
-submission_storage = DefaultStorage(**storage_settings)
 
 
 class JSONOrderable(models.QuerySet):
@@ -357,7 +354,7 @@ class ApplicationSubmission(
 
     def save_path(self, file_name):
         file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
-        return submission_storage.generate_filename(file_path)
+        return PrivateMediaStorage.generate_filename(file_path)
 
     def handle_file(self, file):
         # File is potentially optional
@@ -368,11 +365,11 @@ class ApplicationSubmission(
                 # file is not changed, it is still the dictionary
                 return file
 
-            saved_name = submission_storage.save(filename, file)
+            saved_name = PrivateMediaStorage.save(filename, file)
             return {
                 'name': file.name,
                 'path': saved_name,
-                'url': submission_storage.url(saved_name),
+                'url': PrivateMediaStorage.url(saved_name),
             }
 
     def handle_files(self, files):
