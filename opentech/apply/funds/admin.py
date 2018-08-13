@@ -81,7 +81,9 @@ class ApplicationFormAdmin(ModelAdmin):
     def used_by(self, obj):
         rows = list()
         for form, field in self.related_models:
-            rows.append(self._list_related(obj, form, field))
+            related = self._list_related(obj, form, field)
+            if related:
+                rows.append(related)
         return mark_safe('<br>'.join(rows))
 
 
