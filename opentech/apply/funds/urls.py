@@ -26,9 +26,11 @@ submission_urls = ([
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
     ])),
-    path('<int:submission_pk>/', include('opentech.apply.review.urls', namespace="reviews")),
-    path('<int:submission_pk>/', include('opentech.apply.determinations.urls', namespace="determinations")),
-    path('<int:submission_pk>/revisions/', include(revision_urls, namespace="revisions")),
+    path('<int:submission_pk>/', include([
+        path('', include('opentech.apply.review.urls', namespace="reviews")),
+        path('', include('opentech.apply.determinations.urls', namespace="determinations")),
+        path('revisions/', include(revision_urls, namespace="revisions")),
+    ])),
 ], 'submissions')
 
 
