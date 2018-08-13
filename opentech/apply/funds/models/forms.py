@@ -69,7 +69,9 @@ class AbstractRelatedReviewForm(Orderable):
     form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
 
     panels = [
-        FieldPanel('form')
+        FilteredFieldPanel('form', filter_query={
+            'roundbasereviewform__isnull': True,
+        })
     ]
 
     @property
