@@ -13,23 +13,25 @@ ACTIVITY_TYPES = {
     COMMENT: 'Comment',
     ACTION: 'Action',
 }
-
+PRIVATE = 'private'
 PUBLIC = 'public'
 REVIEWER = 'reviewers'
 INTERNAL = 'internal'
 
 
 VISIBILILTY_HELP_TEXT = {
-    PUBLIC: 'Visible to all users of application system.',
+    PRIVATE: 'Visible to applicant and staff.',
     REVIEWER: 'Visible to reviewers and staff.',
     INTERNAL: 'Visible only to staff.',
+    PUBLIC: 'Visible to all users of application system.',
 }
 
 
 VISIBILITY = {
-    PUBLIC: 'Public',
-    REVIEWER: 'Reviewers',
+    PRIVATE: 'Private',
+    REVIEWER: 'Reviewers and Staff',
     INTERNAL: 'Internal',
+    PUBLIC: 'Public',
 }
 
 
@@ -88,8 +90,9 @@ class Activity(models.Model):
         base_manager_name = 'objects'
 
     @property
-    def private(self):
-        return self.visibility != PUBLIC
+    def privaledged(self):
+        # Not visible to applicant
+        return self.visibility not in [PUBLIC, PRIVATE]
 
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)
@@ -97,10 +100,10 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return [PUBLIC, REVIEWER, INTERNAL]
+            return [PRIVATE, REVIEWER, INTERNAL, PUBLIC]
         if user.is_reviewer:
-            return [PUBLIC, REVIEWER]
-        return [PUBLIC]
+            return [REVIEWER, PUBLIC]
+        return [PRIVATE, PUBLIC]
 
     @classmethod
     def visibility_choices_for(cls, user):

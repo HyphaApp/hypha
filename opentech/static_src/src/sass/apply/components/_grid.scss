@@ -60,9 +60,9 @@
             }
 
             .wrapper--comments & {
-                max-width: 600px;
+                max-width: 800px;
                 margin-bottom: 0;
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: repeat(auto-fit,  200px 200px);
             }
 
             + br {

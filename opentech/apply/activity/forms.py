@@ -21,13 +21,15 @@ class CommentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.allowed_visibility = self._meta.model.visibility_for(user)
         self.visibility_choices = self._meta.model.visibility_choices_for(user)
+        visibility = self.fields['visibility']
+        visibility.initial = self.visibility_choices[0]
         if len(self.visibility_choices) > 1:
-            self.fields['visibility'].choices = self.visibility_choices
-            self.fields['visibility'].help_text = mark_safe('<br>'.join(
+            visibility.choices = self.visibility_choices
+            visibility.help_text = mark_safe('<br>'.join(
                 [VISIBILITY[choice] + ': ' + VISIBILILTY_HELP_TEXT[choice] for choice in self.allowed_visibility]
             ))
         else:
-            self.fields['visibility'].widget = forms.HiddenInput()
+            visibility.widget = forms.HiddenInput()
 
     def clean_visibility(self):
         choice = self.cleaned_data['visibility']
