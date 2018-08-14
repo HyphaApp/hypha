@@ -84,12 +84,13 @@
         }
     }
 
-    &--private-eye {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 35px;
-        height: 25px;
+    &--eye {
+        align-self: center;
+        height: 1em;
+        width: 1em;
+        stroke: black;
+        top: .25em;
+        position: relative;
     }
 
     &--pen {
