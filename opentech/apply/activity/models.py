@@ -94,6 +94,11 @@ class Activity(models.Model):
         # Not visible to applicant
         return self.visibility not in [PUBLIC, PRIVATE]
 
+    @property
+    def private(self):
+        # not visible to all
+        return self.visibility not in [PUBLIC]
+
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)
 
