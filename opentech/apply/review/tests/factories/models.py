@@ -26,8 +26,9 @@ class ReviewFactory(factory.DjangoModelFactory):
         draft = factory.Trait(is_draft=True)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
+    revision = factory.SelfAttribute('submission.live_revision')
     author = factory.SubFactory(StaffFactory)
-    form_fields = blocks.ReviewFormFieldsFactory
+    form_fields = factory.LazyAttribute(lambda o: o.submission.round.review_forms.first().fields)
     form_data = factory.SubFactory(
         ReviewFormDataFactory,
         form_fields=factory.SelfAttribute('..form_fields'),

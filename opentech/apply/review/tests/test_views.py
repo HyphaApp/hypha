@@ -3,6 +3,7 @@ from django.urls import reverse
 from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
+
 from .factories import ReviewFactory
 
 
@@ -78,6 +79,13 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         response = self.post_page(submission, {'data': 'value'}, 'form')
         self.assertEqual(response.context['has_submitted_review'], False)
         self.assertEqual(response.context['title'], 'Update Review draft')
+
+    def test_revision_captured_on_review(self):
+        submission = ApplicationSubmissionFactory(status='internal_review')
+        review_data = ReviewFactory.build(submission=submission)
+        review_answers = review_data.form_data
+        response = self.post_page(submission, review_answers, 'form')
+        review = submission.reviews.first()
 
 
 class UserReviewFormTestCase(BaseViewTestCase):

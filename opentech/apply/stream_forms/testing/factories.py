@@ -21,6 +21,9 @@ class AnswerFactory(factory.Factory):
     def _create(self, *args, sub_factory=None, **kwargs):
         return sub_factory.make_answer(kwargs)
 
+    def _build(self, *args, sub_factory=None, **kwargs):
+        return sub_factory.make_answer(kwargs)
+
 
 class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
     def __new__(mcs, class_name, bases, attrs):
