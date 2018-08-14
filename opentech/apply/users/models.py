@@ -93,6 +93,10 @@ class User(AbstractUser):
     def is_reviewer(self):
         return self.groups.filter(name=REVIEWER_GROUP_NAME).exists()
 
+    @property
+    def is_applicant(self):
+        return not self.groups.exists()
+
     class Meta:
         ordering = ('full_name', 'email')
 

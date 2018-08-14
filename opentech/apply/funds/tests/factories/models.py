@@ -202,6 +202,9 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
             status='draft_proposal',
             workflow_name='double',
         )
+        rejected = factory.Trait(
+            status='rejected'
+        )
 
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(

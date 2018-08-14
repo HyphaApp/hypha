@@ -61,7 +61,7 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
 
     def test_cant_access_wrong_status(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(rejected=True)
         response = self.get_page(submission, 'form')
         self.assertEqual(response.status_code, 403)
 
@@ -73,8 +73,6 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         self.assertEqual(response.context['title'], 'Update Review draft')
 
     def test_can_edit_draft_review(self):
-        # FIXME fix form generation issue in ReviewFundTypeFactory review_forms()
-        return
         submission = ApplicationSubmissionFactory(status='internal_review')
         ReviewFactory(submission=submission, author=self.user, is_draft=True)
         response = self.post_page(submission, {'data': 'value'}, 'form')
