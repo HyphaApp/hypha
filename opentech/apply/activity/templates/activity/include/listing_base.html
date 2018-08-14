@@ -9,7 +9,7 @@
             {% if activity.private %}
                 <p class="feed__meta-item feed__meta-item--right">
                     <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-                    <strong>{{ activity.visibility }}</strong>
+                    {{ activity.visibility }}
                 </p>
             {% endif %}
         </div>
