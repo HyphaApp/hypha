@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 
+from wagtail.core.blocks import RichTextBlock
+
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import ScoreFieldBlock, RecommendationBlock
@@ -15,7 +17,6 @@ from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
-from opentech.apply.utils.blocks import RichTextFieldBlock
 
 from .models import Review
 
@@ -146,7 +147,7 @@ class ReviewListView(ListView):
             for field_id in review.fields:
                 field = review.field(field_id)
                 data = review.data(field_id)
-                if not isinstance(field.block, (RecommendationBlock, RichTextFieldBlock)):
+                if not isinstance(field.block, (RecommendationBlock, RichTextBlock)):
                     question = field.value['field_label']
                     review_data.setdefault(field.id, {'question': question, 'answers': list()})
 
