@@ -13,7 +13,7 @@ from .views import (
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
-    path('compare/<int:to>/<int:from>', RevisionCompareView.as_view(), name='compare'),
+    path('compare/<int:to>/<int:from>/', RevisionCompareView.as_view(), name='compare'),
 ], 'revisions')
 
 

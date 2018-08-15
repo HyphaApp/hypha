@@ -18,6 +18,14 @@
         <h5>Score</h5>
         <p>{{ review.score }}</p>
     </div>
+    {% if review.revision != review.submission.live_revision %}
+        <div>
+            <h5>Review was not against the lasted version:</h5>
+            <p>
+                <a class="button button--primary" href="{% url "funds:submissions:revisions:compare" submission_pk=review.submission.id to=review.submission.live_revision.id from=review.revision.id %}">Compare</a>
+            </p>
+        </div>
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">
