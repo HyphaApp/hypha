@@ -333,17 +333,17 @@ class RevisionCompareView(DetailView):
             for field in to_data.form_data
         }
         self.object.form_data = from_data.form_data
-        from_fields = self.object.fields
+        from_fields = self.object.render_answers()
 
         self.object.form_data = to_data.form_data
-        to_fields = self.object.fields
+        to_fields = self.object.render_answers()
 
         diffed_answers = [
             compare(*fields, should_bleach=False)
             for fields in zip(from_fields, to_fields)
         ]
         self.object.form_data = diffed_form_data
-        self.object.render_answers = mark_safe(''.join(diffed_answers))
+        self.object.output_answers = mark_safe(''.join(diffed_answers))
 
     def get_context_data(self, **kwargs):
         from_revision = self.object.revisions.get(id=self.kwargs['from'])

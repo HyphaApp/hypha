@@ -615,12 +615,14 @@ class ApplicationSubmission(
         return field.render(context={'data': data, 'include_question': include_question})
 
     def render_answers(self):
-        answers = [
+        return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.question_field_ids
             if field_id not in self.must_include
         ]
-        return mark_safe(''.join(answers))
+
+    def output_answers(self):
+        return mark_safe(''.join(self.render_answers()))
 
     def _get_REQUIRED_display(self, name):
         return self.render_answer(name)
