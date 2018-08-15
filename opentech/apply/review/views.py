@@ -130,13 +130,21 @@ class ReviewListView(ListView):
         review_data['title'] = {'question': '', 'answers': list()}
         review_data['score'] = {'question': 'Overall Score', 'answers': list()}
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
+        review_data['revision'] = {'question': 'Revision', 'answers': list()}
 
         for review in self.object_list:
             review_data['title']['answers'].append(str(review.author))
             review_data['score']['answers'].append(str(review.score))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
+            if review.for_latest:
+                revision = 'Current'
+            else:
+                revision = '<a href="{}">Compare</a>'.format(review.get_compare_url())
+            review_data['revision']['answers'].append(revision)
 
-            for data, field in review.data_and_fields():
+            for field_id in review.fields:
+                field = review.field(field_id)
+                data = review.data(field_id)
                 if not isinstance(field.block, RecommendationBlock):
                     question = field.value['field_label']
                     review_data.setdefault(field.id, {'question': question, 'answers': list()})

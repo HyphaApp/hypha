@@ -102,6 +102,17 @@ class Review(BaseStreamForm, AccessFormData, models.Model):
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
 
+    @property
+    def for_latest(self):
+        return self.revision == self.submission.live_revision
+
+    def get_compare_url(self):
+        return reverse("funds:submissions:revisions:compare", kwargs={
+            'submission_pk': self.submission.id,
+            'to': self.submission.live_revision.id,
+            'from': self.revision.id,
+        })
+
 
 @receiver(post_save, sender=Review)
 def update_submission_reviewers_list(sender, **kwargs):
