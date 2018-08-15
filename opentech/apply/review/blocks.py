@@ -22,12 +22,12 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
         template = 'review/render_scored_answer_field.html'
 
     def render(self, value, context=None):
-        data = json.loads(context['data'])
+        comment, score = json.loads(context['data'])
         label = value['field_label']
-        context['data'] = {
-            label: data[0],
-            f'Score {label}': RATE_CHOICES_DICT.get(data[1], RATE_CHOICE_NA)
-        }
+        context.update(**{
+            'comment': comment,
+            'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
+        })
 
         return super().render(value, context)
 
