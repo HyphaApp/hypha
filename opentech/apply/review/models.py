@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
+from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
@@ -68,7 +69,7 @@ class ReviewQuerySet(models.QuerySet):
             return MAYBE
 
 
-class Review(BaseStreamForm, models.Model):
+class Review(BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     revision = models.ForeignKey('funds.ApplicationRevision', on_delete=models.SET_NULL, related_name='reviews', null=True)
     author = models.ForeignKey(
@@ -100,25 +101,6 @@ class Review(BaseStreamForm, models.Model):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
-
-    def data_and_fields(self):
-        for stream_value in self.form_fields:
-            try:
-                data = self.form_data[stream_value.id]
-            except KeyError:
-                pass  # It was a named field or a paragraph
-            else:
-                yield data, stream_value
-
-    @property
-    def fields(self):
-        return [
-            field.render(context={'data': data})
-            for data, field in self.data_and_fields()
-        ]
-
-    def render_answers(self):
-        return mark_safe(''.join(self.fields))
 
 
 @receiver(post_save, sender=Review)
