@@ -146,7 +146,15 @@
         }
 
         &--narrow {
-            max-width: 280px;
+            @include media-query(mob-landscape) {
+                max-width: 280px;
+            }
+            width: 100%;
+            max-width: none;
+        }
+
+        &--inline {
+            display: inline-block;
         }
     }
 
