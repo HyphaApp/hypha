@@ -40,6 +40,7 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
 
 
 class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
+    @classmethod
     def _create(self, *args, form_fields={}, for_factory=None, clean=False, **kwargs):
         if form_fields and isinstance(form_fields, str):
             form_fields = json.loads(form_fields)
@@ -67,6 +68,10 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
             return form_data
 
         return form_data
+
+    @classmethod
+    def _build(self, *args, **kwargs):
+        return self._create(*args, **kwargs)
 
 
 class ParagraphBlockFactory(wagtail_factories.blocks.BlockFactory):

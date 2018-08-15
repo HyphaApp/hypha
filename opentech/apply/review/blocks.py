@@ -37,7 +37,7 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
-    name = 'Recommendation'
+    name = 'recommendation'
     description = 'Overall recommendation'
     field_class = forms.ChoiceField
 
@@ -58,7 +58,7 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
 
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
-    name = 'Comments'
+    name = 'comments'
     description = 'Recommendation comments'
     widget = RICH_TEXT_WIDGET_SHORT
 

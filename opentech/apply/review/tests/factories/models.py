@@ -1,7 +1,7 @@
 import factory
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.stream_forms.testing.factories import AddFormFieldsMetaclass
+from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.users.tests.factories import StaffFactory
 
 from ...options import YES, NO, MAYBE
@@ -12,7 +12,7 @@ from . import blocks
 __all__ = ['ReviewFactory', 'ReviewFormFactory']
 
 
-class ReviewFormDataFactory(factory.DictFactory, metaclass=AddFormFieldsMetaclass):
+class ReviewFormDataFactory(FormDataFactory):
     field_factory = blocks.ReviewFormFieldsFactory
 
 
