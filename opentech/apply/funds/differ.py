@@ -38,7 +38,7 @@ def compare(answer_a, answer_b, should_bleach=True):
         else:
             answer_b = str(answer_b)
 
-    diff = SequenceMatcher(None, answer_a, answer_b)
+    diff = SequenceMatcher(lambda x: '\n' in x, answer_a, answer_b)
     output = []
     added = []
     deleted = []
