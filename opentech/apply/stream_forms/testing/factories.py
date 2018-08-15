@@ -191,3 +191,23 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
                 form_fields[f'{i}__{field}__{attr}'] = value
 
         return form_fields
+
+    def form_response(self, fields):
+        data = {
+            field: factory.make_form_answer()
+            for field, factory in zip(fields, self.factories.values())
+            if hasattr(factory, 'make_form_answer')
+        }
+        return flatten_for_form(data)
+
+
+def flatten_for_form(data, field_name='', number=False):
+    result = {}
+    for i, (field, value) in enumerate(data.items()):
+        if number:
+            field = f'{field_name}_{i}'
+        if isinstance(value, dict):
+            result.update(**flatten_for_form(value, field_name=field, number=True))
+        else:
+            result[field] = value
+    return result

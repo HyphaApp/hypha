@@ -81,8 +81,9 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
         self.instance.form_data = self.cleaned_data['form_data']
 
-        # Capture the revision against which the user was reviewing
-        self.instance.revision = self.instance.submission.live_revision
+        if not self.instance.is_draft:
+            # Capture the revision against which the user was reviewing
+            self.instance.revision = self.instance.submission.live_revision
 
         return super().save(commit)
 

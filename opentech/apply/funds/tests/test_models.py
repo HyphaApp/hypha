@@ -29,18 +29,6 @@ def days_from_today(days):
     return date.today() + timedelta(days=days)
 
 
-def flatten_for_form(data, field_name='', number=False):
-    result = {}
-    for i, (field, value) in enumerate(data.items()):
-        if number:
-            field = f'{field_name}_{i}'
-        if isinstance(value, dict):
-            result.update(**flatten_for_form(value, field_name=field, number=True))
-        else:
-            result[field] = value
-    return result
-
-
 class TestFundModel(TestCase):
     def setUp(self):
         self.fund = FundTypeFactory(parent=None)
@@ -213,14 +201,9 @@ class TestFormSubmission(TestCase):
         page = page or self.round_page
         fields = page.get_form_fields()
 
-        data = {
-            field: factory.make_form_answer()
-            for field, factory in zip(fields, CustomFormFieldsFactory.factories.values())
-            if hasattr(factory, 'make_form_answer')
-        }
+        data = CustomFormFieldsFactory.form_response(fields)
 
-        data = flatten_for_form(data)
-
+        # Add our own data
         for field in page.forms.first().fields:
             if isinstance(field.block, EmailBlock):
                 data[field.id] = self.email if email is None else email

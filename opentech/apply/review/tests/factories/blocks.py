@@ -31,7 +31,14 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_answer(cls, params=dict()):
-        return json.dumps([random.randint(0, 5), factory.Faker('paragraph').generate(params)])
+        return json.dumps([factory.Faker('paragraph').generate(params), random.randint(1, 5)])
+
+    @classmethod
+    def make_form_answer(cls, params=dict()):
+        return {
+            'description': factory.Faker('paragraph').generate(params),
+            'score': random.randint(1, 5),
+        }
 
 
 ReviewFormFieldsFactory = StreamFieldUUIDFactory({

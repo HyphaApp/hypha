@@ -4,7 +4,7 @@ from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFac
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
-from .factories import ReviewFactory
+from .factories import ReviewFactory, ReviewFormFieldsFactory
 
 
 class StaffReviewsTestCase(BaseViewTestCase):
@@ -82,10 +82,24 @@ class StaffReviewFormTestCase(BaseViewTestCase):
 
     def test_revision_captured_on_review(self):
         submission = ApplicationSubmissionFactory(status='internal_review')
-        review_data = ReviewFactory.build(submission=submission)
-        review_answers = review_data.form_data
-        response = self.post_page(submission, review_answers, 'form')
+        field_ids = [f.id for f in submission.round.review_forms.first().fields]
+
+        data = ReviewFormFieldsFactory.form_response(field_ids)
+
+        self.post_page(submission, data, 'form')
         review = submission.reviews.first()
+        self.assertEqual(review.revision, submission.live_revision)
+
+    def test_can_submit_draft_review(self):
+        submission = ApplicationSubmissionFactory(status='internal_review')
+        field_ids = [f.id for f in submission.round.review_forms.first().fields]
+
+        data = ReviewFormFieldsFactory.form_response(field_ids)
+        data['save_draft'] = True
+        self.post_page(submission, data, 'form')
+        review = submission.reviews.first()
+        self.assertTrue(review.is_draft)
+        self.assertIsNone(review.revision)
 
 
 class UserReviewFormTestCase(BaseViewTestCase):
