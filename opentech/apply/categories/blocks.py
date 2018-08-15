@@ -75,3 +75,6 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
 
     def get_searchable_content(self, value, data):
         return None
+
+    def no_response(self):
+        return None
