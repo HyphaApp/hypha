@@ -15,6 +15,7 @@ from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
+from opentech.apply.utils.blocks import RichTextFieldBlock
 
 from .models import Review
 
@@ -145,7 +146,7 @@ class ReviewListView(ListView):
             for field_id in review.fields:
                 field = review.field(field_id)
                 data = review.data(field_id)
-                if not isinstance(field.block, RecommendationBlock):
+                if not isinstance(field.block, (RecommendationBlock, RichTextFieldBlock)):
                     question = field.value['field_label']
                     review_data.setdefault(field.id, {'question': question, 'answers': list()})
 
