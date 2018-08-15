@@ -23,7 +23,6 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
 
     def render(self, value, context=None):
         comment, score = json.loads(context['data'])
-        label = value['field_label']
         context.update(**{
             'comment': comment,
             'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
