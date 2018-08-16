@@ -95,7 +95,7 @@ class User(AbstractUser):
 
     @property
     def is_applicant(self):
-        return not self.groups.exists()
+        return not self.is_apply_staff and not self.is_reviewer
 
     class Meta:
         ordering = ('full_name', 'email')
