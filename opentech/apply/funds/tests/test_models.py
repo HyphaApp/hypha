@@ -438,7 +438,7 @@ class TestSubmissionRenderMethods(TestCase):
 
     def test_normal_answers_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
-        answers = submission.render_answers()
+        answers = submission.output_answers()
         for field_name in submission.question_field_ids:
             if field_name not in submission.must_include:
                 field = submission.field(field_name)
