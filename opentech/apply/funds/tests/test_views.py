@@ -9,11 +9,11 @@ from opentech.apply.funds.tests.factories import (
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
+from opentech.apply.stream_forms.testing.factories import flatten_for_form
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory, SuperUserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision
-from .test_models import flatten_for_form
 
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
