@@ -41,13 +41,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         if not can_create_determination(request.user, self.submission):
             raise PermissionDenied()
 
-        try:
-            submitted = self.get_object().submitted
-        except Determination.DoesNotExist:
-            submitted = False
-
-        if self.request.POST and submitted:
-            return self.get(request, *args, **kwargs)
+        if self.submission.has_determination:
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:detail', args=(self.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -56,8 +51,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
         return super().get_context_data(
             submission=self.submission,
-            has_determination_response=self.submission.has_determination,
-            title="Update Determination draft" if self.object else 'Add Determination',
             message_templates=messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
