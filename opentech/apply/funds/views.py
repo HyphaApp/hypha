@@ -271,8 +271,8 @@ class SubmissionEditView(UpdateView):
         }
 
     def buttons(self):
-        yield ('save', 'Save')
-        yield from ((transition, transition.title) for transition in self.transitions)
+        yield ('save', 'white', 'Save')
+        yield ('submit', 'primary', 'Submit')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -293,12 +293,23 @@ class SubmissionEditView(UpdateView):
             self.object.create_revision(draft=True, by=self.request.user)
             return self.form_invalid(form)
 
-        action = set(self.request.POST.keys()) & set(self.transitions.keys())
+        if 'submit' in self.request.POST and self.request.user.is_staff:
+            self.object.create_revision(by=self.request.user)
+            messenger(
+                MESSAGES.EDIT,
+                request=self.request,
+                user=self.request.user,
+                submission=self.object,
+            )
+        else:
+            action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
-        transition = self.transitions[action.pop()]
-        self.object.perform_transition(transition.target, self.request.user, request=self.request)
+            transition = self.transitions[action.pop()]
+            self.object.perform_transition(transition.target, self.request.user, request=self.request)
 
         return HttpResponseRedirect(self.get_success_url())
+
+    # def get_success_url(self):
 
 
 @method_decorator(staff_required, name='dispatch')

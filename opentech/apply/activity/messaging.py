@@ -15,6 +15,7 @@ def link_to(target, request):
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'Update Lead'
+    EDIT = 'Edit'
     NEW_SUBMISSION = 'New Submission'
     TRANSITION = 'Transition'
     DETERMINATION_OUTCOME = 'Determination Outcome'
@@ -107,6 +108,7 @@ class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
+        MESSAGES.EDIT: '{user} edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
@@ -154,6 +156,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
+        MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {submission.determination.clean_outcome}',
@@ -226,6 +229,7 @@ class EmailAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
+        MESSAGES.EDIT: 'messages/email/edit.html',
         MESSAGES.TRANSITION: 'messages/email/transition.html',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
