@@ -401,6 +401,7 @@ class ApplicationSubmission(
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
+        # Will return True/False if the revision was created or not
         self.clean_submission()
         current_data = ApplicationSubmission.objects.get(id=self.id).form_data
         if current_data != self.form_data or force:
@@ -419,6 +420,8 @@ class ApplicationSubmission(
 
             self.draft_revision = revision
             self.save()
+            return True
+        return False
 
     def clean_submission(self):
         self.process_form_data()

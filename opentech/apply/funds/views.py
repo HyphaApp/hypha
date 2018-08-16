@@ -256,7 +256,7 @@ class SubmissionEditView(UpdateView):
     model = ApplicationSubmission
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user:
+        if request.user != self.get_object().user and not request.user.is_apply_staff:
             raise PermissionDenied
         if not self.get_object().phase.permissions.can_edit(request.user):
             raise PermissionDenied
@@ -294,13 +294,14 @@ class SubmissionEditView(UpdateView):
             return self.form_invalid(form)
 
         if 'submit' in self.request.POST and self.request.user.is_staff:
-            self.object.create_revision(by=self.request.user)
-            messenger(
-                MESSAGES.EDIT,
-                request=self.request,
-                user=self.request.user,
-                submission=self.object,
-            )
+            created = self.object.create_revision(by=self.request.user)
+            if created:
+                messenger(
+                    MESSAGES.EDIT,
+                    request=self.request,
+                    user=self.request.user,
+                    submission=self.object,
+                )
         else:
             action = set(self.request.POST.keys()) & set(self.transitions.keys())
 
@@ -308,8 +309,6 @@ class SubmissionEditView(UpdateView):
             self.object.perform_transition(transition.target, self.request.user, request=self.request)
 
         return HttpResponseRedirect(self.get_success_url())
-
-    # def get_success_url(self):
 
 
 @method_decorator(staff_required, name='dispatch')
