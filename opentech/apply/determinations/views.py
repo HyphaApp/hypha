@@ -9,7 +9,9 @@ from django.views.generic import DetailView
 from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.utils.views import CreateOrUpdateView
+from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
+from opentech.apply.users.decorators import staff_required
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
 from .models import Determination, TRANSITION_DETERMINATION, DeterminationMessageSettings, NEEDS_MORE_INFO
@@ -21,6 +23,11 @@ def get_form_for_stage(submission):
     return forms[index]
 
 
+def can_create_determination(user, submission):
+    return any(action[0] in DETERMINATION_OUTCOMES for action in submission.get_actions_for_user(user))
+
+
+@method_decorator(staff_required, name='dispatch')
 class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     model = Determination
     template_name = 'determinations/determination_form.html'
@@ -31,8 +38,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        if not self.submission.in_determination_phase \
-                or not self.submission.has_permission_to_add_determination(request.user):
+        if not can_create_determination(request.user, self.submission):
             raise PermissionDenied()
 
         try:
@@ -118,8 +124,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     return transition_name
 
 
-@method_decorator(login_required, name='dispatch')
-class DeterminationDetailView(DetailView):
+@method_decorator(staff_required, name='dispatch')
+class AdminDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
@@ -129,20 +135,32 @@ class DeterminationDetailView(DetailView):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         determination = self.get_object()
 
-        if request.user != self.submission.user and not request.user.is_apply_staff and not \
-                self.submission.has_permission_to_add_determination(request.user):
-            raise PermissionDenied
-
-        if determination.is_draft:
+        if determination.is_draft and can_create_determination(request.user, self.submission):
             return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(self.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
+
+@method_decorator(login_required, name='dispatch')
+class ApplicantDeterminationDetailView(DetailView):
+    model = Determination
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         determination = self.get_object()
 
-        return super().get_context_data(
-            can_view_extended_data=determination.submission.has_permission_to_add_determination(self.request.user),
-            determination_data=determination.detailed_data,
-            **kwargs
-        )
+        if request.user != self.submission.user:
+            raise PermissionDenied
+
+        if determination.is_draft:
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:detail', args=(self.submission.id,)))
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+class DeterminationDetailView(ViewDispatcher):
+    admin_view = AdminDeterminationDetailView
+    applicant_view = ApplicantDeterminationDetailView

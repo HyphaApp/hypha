@@ -16,15 +16,13 @@
     </div>
 </div>
 
-    {% if can_view_extended_data %}
-        <div class="rich-text rich-text--answers">
-            {% for group in determination_data.values %}
-                <h4>{{ group.title }}</h4>
-                {% for question, answer in group.questions %}
-                    <h5>{{ question }}</h5>
-                    {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
-                {% endfor %}
-            {% endfor %}
-        </div>
-    {% endif %}
+<div class="rich-text rich-text--answers">
+    {% for group in determination.detailed_data.values %}
+        <h4>{{ group.title }}</h4>
+        {% for question, answer in group.questions %}
+            <h5>{{ question }}</h5>
+            {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
+        {% endfor %}
+    {% endfor %}
+</div>
 {% endblock %}
