@@ -117,6 +117,9 @@ class DefaultPermissions(BasePermissions):
     def can_staff_review(self, user: 'User') -> bool:
         return True
 
+    def can_staff_edit(self, user: 'User') -> bool:
+        return True
+
 
 class ReviewerReviewPermissions(DefaultPermissions):
     def can_reviewer_review(self, user: 'User') -> bool:
@@ -126,6 +129,10 @@ class ReviewerReviewPermissions(DefaultPermissions):
 class CanEditPermissions(DefaultPermissions):
     def can_applicant_edit(self, user: 'User') -> bool:
         return True
+
+    def can_staff_edit(self, user: 'User') -> bool:
+        # Prevent staff editing whilst with the user for edits
+        return False
 
 
 Request = Stage('Request', False)
