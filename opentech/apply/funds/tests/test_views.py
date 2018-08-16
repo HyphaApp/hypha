@@ -109,6 +109,17 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
+    def test_can_submit_submission(self):
+        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
+        old_status = submission.status
+        response = self.post_page(submission, {'submit': True, **submission.raw_data}, 'edit')
+
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+
+        self.assertRedirects(response, url)
+        submission = self.refresh(submission)
+        self.assertNotEqual(old_status, submission.status)
+
     def test_gets_draft_on_edit_submission(self):
         submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
         draft_revision = ApplicationRevisionFactory(submission=submission)
