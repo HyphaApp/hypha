@@ -64,26 +64,13 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.AddressFieldBlock
 
     @classmethod
-    def an_adress(cls):
-        return {
-            'country': 'GB',
-            'thoroughfare': 'bah',
-            'premise': 'baz',
-            'locality': {
-                'locality_name': 'bish',
-                'administrative_area': 'bosh',
-                'postal_code': 'SW1 4AQ',
-            }
-        }
-
-    @classmethod
     def make_answer(cls, params=dict()):
         return json.dumps({
             'country': 'GB',
-            'thoroughfare': 'bah',
-            'premise': 'baz',
-            'localityname': 'bish',
-            'administrativearea': 'bosh',
+            'thoroughfare': factory.Faker('street_name').generate(params),
+            'premise': factory.Faker('building_number').generate(params),
+            'localityname': factory.Faker('city').generate(params),
+            'administrativearea': factory.Faker('city').generate(params),
             'postalcode': 'SW1 4AQ',
         })
 
@@ -91,11 +78,11 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
     def make_form_answer(cls, params=dict()):
         return {
             'country': 'GB',
-            'thoroughfare': 'bah',
-            'premise': 'baz',
+            'thoroughfare': factory.Faker('street_name').generate(params),
+            'premise': factory.Faker('building_number').generate(params),
             'locality': {
-                'locality_name': 'bish',
-                'administrative_area': 'bosh',
+                'localityname': factory.Faker('city').generate(params),
+                'administrativearea': factory.Faker('city').generate(params),
                 'postal_code': 'SW1 4AQ',
             }
         }

@@ -222,6 +222,29 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.title, new_title)
 
 
+class TestRevisionCompare(BaseSubmissionViewTestCase):
+    base_view_name = 'revisions:compare'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'submission_pk': instance.pk,
+            'to': instance.live_revision.id,
+            'from': instance.revisions.last().id,
+        }
+
+    def test_renders_with_all_the_diffs(self):
+        submission = ApplicationSubmissionFactory()
+        new_data = ApplicationSubmissionFactory(round=submission.round, form_fields=submission.form_fields).form_data
+
+        submission.form_data = new_data
+
+        submission.create_revision()
+
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+
 class TestRevisionList(BaseSubmissionViewTestCase):
     base_view_name = 'revisions:list'
     user_factory = StaffFactory

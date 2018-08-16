@@ -328,25 +328,38 @@ class RevisionCompareView(DetailView):
     pk_url_kwarg = 'submission_pk'
 
     def compare_revisions(self, from_data, to_data):
-        diffed_form_data = {
-            field: compare(from_data.form_data.get(field), to_data.form_data[field])
-            for field in to_data.form_data
-        }
         self.object.form_data = from_data.form_data
         from_fields = self.object.render_answers()
+        from_required = self.render_required()
 
         self.object.form_data = to_data.form_data
         to_fields = self.object.render_answers()
+        to_required = self.render_required()
 
+        # Compare all the required fields
+        diffed_required = [
+            compare(*fields, should_bleach=False)
+            for fields in zip(from_required, to_required)
+        ]
+        for field, diff in zip(self.object.must_include, diffed_required):
+            setattr(self.object, 'get_{}_display'.format(field), diff)
+
+        # Compare all the answers
         diffed_answers = [
             compare(*fields, should_bleach=False)
             for fields in zip(from_fields, to_fields)
         ]
-        self.object.form_data = diffed_form_data
+
         self.object.output_answers = mark_safe(''.join(diffed_answers))
+
+    def render_required(self):
+        return [
+            getattr(self.object, 'get_{}_display'.format(field))()
+            for field in self.object.must_include
+        ]
 
     def get_context_data(self, **kwargs):
         from_revision = self.object.revisions.get(id=self.kwargs['from'])
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
-        self.object = self.compare_revisions(from_revision, to_revision)
+        self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
