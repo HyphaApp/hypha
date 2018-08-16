@@ -30,7 +30,6 @@ from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from ..workflow import (
     active_statuses,
-    DETERMINATION_PHASES,
     DETERMINATION_RESPONSE_PHASES,
     get_review_statuses,
     INITIAL_STATE,
