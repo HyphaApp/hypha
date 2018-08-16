@@ -34,12 +34,6 @@ if 'SENTRY_DSN' in env:
     SENTRY_DSN = env['SENTRY_DSN']
 
 
-# On Torchbox servers, many environment variables are prefixed with "CFG_"
-for key, value in os.environ.items():
-    if key.startswith('CFG_'):
-        env[key[4:]] = value
-
-
 # Basic configuration
 
 APP_NAME = env.get('APP_NAME', 'opentech')
@@ -59,27 +53,6 @@ if 'ALLOWED_HOSTS' in env:
 if 'PRIMARY_HOST' in env:
     BASE_URL = 'https://%s/' % env['PRIMARY_HOST']
 
-if 'SERVER_EMAIL' in env:
-    SERVER_EMAIL = env['SERVER_EMAIL']
-    DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
-
-if 'EMAIL_HOST' in env:
-    EMAIL_HOST = env['EMAIL_HOST']
-
-if 'EMAIL_SUBJECT_PREFIX' in env:
-    EMAIL_SUBJECT_PREFIX = env['EMAIL_SUBJECT_PREFIX']
-
-if 'CLOUDFLARE_API_TOKEN' in env:
-    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
-    WAGTAILFRONTENDCACHE = {
-        'cloudflare': {
-            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
-            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
-            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
-            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
-        },
-    }
-
 if 'STATIC_URL' in env:
     STATIC_URL = env['STATIC_URL']
 
@@ -91,6 +64,59 @@ if 'MEDIA_URL' in env:
 
 if 'MEDIA_DIR' in env:
     MEDIA_ROOT = env['MEDIA_DIR']
+
+# Email config
+
+if 'SERVER_EMAIL' in env:
+    SERVER_EMAIL = env['SERVER_EMAIL']
+    DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
+
+if 'EMAIL_HOST' in env:
+    EMAIL_HOST = env['EMAIL_HOST']
+
+if 'MAILGUN_API_KEY' in env:
+    EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+    ANYMAIL = {
+        "MAILGUN_API_KEY": env['MAILGUN_API_KEY'],
+        "MAILGUN_SENDER_DOMAIN": env.get('EMAIL_HOST', None),
+        "WEBHOOK_SECRET": env.get('ANYMAIL_WEBHOOK_SECRET', None)
+    }
+
+# Social Auth
+
+if 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY' in env:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+
+if 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET' in env:
+    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
+
+# Basic auth to stop access to other than primary hosts.
+
+MIDDLEWARE += [
+    'baipw.middleware.BasicAuthIPWhitelistMiddleware'
+]
+
+if 'BASIC_AUTH_LOGIN' in env:
+    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
+
+if 'BASIC_AUTH_PASSWORD' in env:
+    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
+
+if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
+    BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
+
+# Cloudflare cache
+
+if 'CLOUDFLARE_API_TOKEN' in env:
+    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
+    WAGTAILFRONTENDCACHE = {
+        'cloudflare': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
+            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
+            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
+        },
+    }
 
 
 # Database
@@ -145,29 +171,6 @@ if 'LOG_DIR' in env:
     }
     LOGGING['loggers']['django.request']['handlers'].append('errors_file')
     LOGGING['loggers']['django.security']['handlers'].append('errors_file')
-
-# Social Auth
-
-if 'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY' in env:
-    SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
-
-if 'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET' in env:
-    SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
-
-# Basic auth to stop access to other than primary hosts.
-
-MIDDLEWARE += [
-    'baipw.middleware.BasicAuthIPWhitelistMiddleware'
-]
-
-if 'BASIC_AUTH_LOGIN' in env:
-    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
-
-if 'BASIC_AUTH_PASSWORD' in env:
-    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
-
-if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
-    BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
 
 django_heroku.settings(locals())
 
