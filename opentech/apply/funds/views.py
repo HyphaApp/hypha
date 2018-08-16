@@ -247,8 +247,7 @@ class SubmissionDetailView(ViewDispatcher):
         return super().admin_check(request)
 
 
-@method_decorator(login_required, name='dispatch')
-class SubmissionEditView(UpdateView):
+class BaseSubmissionEditView(UpdateView):
     """
     Converts the data held on the submission into an editable format and knows how to save
     that back to the object. Shortcuts the normal update view save approach
@@ -256,19 +255,9 @@ class SubmissionEditView(UpdateView):
     model = ApplicationSubmission
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user and not request.user.is_apply_staff:
-            raise PermissionDenied
         if not self.get_object().phase.permissions.can_edit(request.user):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
-
-    @property
-    def transitions(self):
-        transitions = self.object.get_available_user_status_transitions(self.request.user)
-        return {
-            transition.name: transition
-            for transition in transitions
-        }
 
     def buttons(self):
         yield ('save', 'white', 'Save')
@@ -286,6 +275,9 @@ class SubmissionEditView(UpdateView):
     def get_form_class(self):
         return self.object.get_form_class()
 
+
+@method_decorator(staff_required, name='dispatch')
+class AdminSubmissionEditView(BaseSubmissionEditView):
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
 
@@ -293,7 +285,7 @@ class SubmissionEditView(UpdateView):
             self.object.create_revision(draft=True, by=self.request.user)
             return self.form_invalid(form)
 
-        if 'submit' in self.request.POST and self.request.user.is_staff:
+        if 'submit' in self.request.POST:
             created = self.object.create_revision(by=self.request.user)
             if created:
                 messenger(
@@ -302,13 +294,43 @@ class SubmissionEditView(UpdateView):
                     user=self.request.user,
                     submission=self.object,
                 )
-        else:
-            action = set(self.request.POST.keys()) & set(self.transitions.keys())
-
-            transition = self.transitions[action.pop()]
-            self.object.perform_transition(transition.target, self.request.user, request=self.request)
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+@method_decorator(login_required, name='dispatch')
+class ApplicantSubmissionEditView(BaseSubmissionEditView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user != self.get_object().user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    @property
+    def transitions(self):
+        transitions = self.object.get_available_user_status_transitions(self.request.user)
+        return {
+            transition.name: transition
+            for transition in transitions
+        }
+
+    def form_valid(self, form):
+        self.object.new_data(form.cleaned_data)
+
+        if 'save' in self.request.POST:
+            self.object.create_revision(draft=True, by=self.request.user)
+            return self.form_invalid(form)
+
+        action = set(self.request.POST.keys()) & set(self.transitions.keys())
+
+        transition = self.transitions[action.pop()]
+        self.object.perform_transition(transition.target, self.request.user, request=self.request)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class SubmissionEditView(ViewDispatcher):
+    admin_view = AdminSubmissionEditView
+    applicant_view = ApplicantSubmissionEditView
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -332,6 +354,7 @@ class RevisionListView(ListView):
         )
 
 
+@method_decorator(staff_required, name='dispatch')
 class RevisionCompareView(DetailView):
     model = ApplicationSubmission
     template_name = 'funds/revisions_compare.html'
