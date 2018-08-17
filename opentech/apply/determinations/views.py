@@ -62,7 +62,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
-        import pudb; pudb.set_trace()
         if not can_create_determination(request.user, self.submission):
             raise PermissionDenied()
 
