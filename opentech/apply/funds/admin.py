@@ -1,9 +1,8 @@
-from django.utils.html import mark_safe
-
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from opentech.apply.review.admin import ReviewFormAdmin
+from opentech.apply.utils.admin import ListRelatedMixin
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
@@ -57,7 +56,7 @@ class NoDeletePermission(PermissionHelper):
         return False
 
 
-class ApplicationFormAdmin(ModelAdmin):
+class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ApplicationForm
     menu_icon = 'form'
     list_display = ('name', 'used_by')
@@ -70,22 +69,17 @@ class ApplicationFormAdmin(ModelAdmin):
         ('labbaseform', 'lab'),
     ]
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        related = [f'{form}_set__{field}' for form, field in self.related_models]
-        return qs.prefetch_related(*related)
-
-    def _list_related(self, obj, form, field):
-        return ', '.join(getattr(obj, f'{form}_set').values_list(f'{field}__title', flat=True))
-
-    def used_by(self, obj):
-        rows = list()
-        for form, field in self.related_models:
-            rows.append(self._list_related(obj, form, field))
-        return mark_safe('<br>'.join(rows))
-
 
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = 'Apply'
     menu_icon = 'folder-open-inverse'
-    items = (RoundAdmin, SealedRoundAdmin, FundAdmin, LabAdmin, RFPAdmin, ApplicationFormAdmin, ReviewFormAdmin, CategoryAdmin)
+    items = (
+        RoundAdmin,
+        SealedRoundAdmin,
+        FundAdmin,
+        LabAdmin,
+        RFPAdmin,
+        ApplicationFormAdmin,
+        ReviewFormAdmin,
+        CategoryAdmin,
+    )
