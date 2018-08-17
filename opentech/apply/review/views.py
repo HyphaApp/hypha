@@ -134,6 +134,8 @@ class ReviewListView(ListView):
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
         review_data['revision'] = {'question': 'Revision', 'answers': list()}
 
+        responses = self.object_list.count()
+
         for i, review in enumerate(self.object_list):
             review_data['title']['answers'].append(str(review.author))
             review_data['score']['answers'].append(str(review.score))
@@ -150,16 +152,8 @@ class ReviewListView(ListView):
                 if not isinstance(field.block, (RecommendationBlock, RichTextBlock)):
                     question = field.value['field_label']
                     # If we haven't see the question before we backfill with '-'
-                    review_data.setdefault(field.id, {'question': question, 'answers': [''] * i})
-
-                    if isinstance(field.block, ScoreFieldBlock):
-                        value = json.loads(data)
-                        rating_value = int(value[1])
-                        rating = RATE_CHOICES_DICT.get(rating_value, RATE_CHOICE_NA)
-                        comment = str(value[0])
-                        review_data[field.id]['answers'].append(rating + comment)
-                    else:
-                        review_data[field.id]['answers'].append(str(data))
+                    review_data.setdefault(field.id, {'question': question, 'answers': [''] * responses})
+                    review_data[field.id]['answers'][i] = field.block.render(None, {'data': data})
 
         return super().get_context_data(
             submission=self.submission,
