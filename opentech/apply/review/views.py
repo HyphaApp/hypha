@@ -1,5 +1,3 @@
-import json
-
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -11,9 +9,8 @@ from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.review.blocks import ScoreFieldBlock, RecommendationBlock
+from opentech.apply.review.blocks import RecommendationBlock
 from opentech.apply.review.forms import ReviewModelForm
-from opentech.apply.review.options import RATE_CHOICE_NA, RATE_CHOICES_DICT
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
