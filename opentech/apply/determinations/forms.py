@@ -1,13 +1,14 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
+from opentech.apply.utils.options import RICH_TEXT_WIDGET
+
 from .models import (
     Determination,
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
 )
-
-from opentech.apply.utils.options import RICH_TEXT_WIDGET
+from .utils import determination_actions
 
 
 class RichTextField(forms.CharField):
@@ -59,7 +60,7 @@ class BaseDeterminationForm(forms.ModelForm):
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
-        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission.phase)
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
@@ -78,7 +79,7 @@ class BaseDeterminationForm(forms.ModelForm):
 
         return super().save(commit)
 
-    def outcome_choices_for_phase(self, phase):
+    def outcome_choices_for_phase(self, submission, user):
         """
         Outcome choices correspond to Phase transitions.
         We need to filter out non-matching choices.
@@ -87,7 +88,7 @@ class BaseDeterminationForm(forms.ModelForm):
         available_choices = set()
         choices = dict(self.fields['outcome'].choices)
 
-        for transition_name in phase.transitions:
+        for transition_name in determination_actions(user, submission):
             try:
                 determination_type = TRANSITION_DETERMINATION[transition_name]
             except KeyError:
