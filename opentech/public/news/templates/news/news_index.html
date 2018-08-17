@@ -6,7 +6,7 @@
 <div class="wrapper wrapper--small wrapper--inner-space-medium">
 
         <form class="form" method="GET">
-            <div class="form__select form__select--narrow">
+            <div class="form__select form__select--narrow form__select--inline">
                 <select name="news_type">
                     <option value="">All</option>
                     {% for news_type in news_types %}
@@ -14,6 +14,7 @@
                     {% endfor %}
                 </select>
             </div>
+            <input class="link link--button link--button__stretch" type="submit" value="Filter">
         </form>
 
         {% if news %}

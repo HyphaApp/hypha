@@ -2,6 +2,15 @@
     &--button {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
+
+        &__stretch {
+            width: 100%;
+
+            @include media-query(mob-landscape) {
+                width: inherit;
+            }
+        }
+
     }
 
     &--button-secondary {
