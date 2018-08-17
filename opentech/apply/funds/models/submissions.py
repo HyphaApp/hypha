@@ -283,6 +283,8 @@ class ApplicationSubmission(
         editable=False,
     )
 
+    private_storage = PrivateMediaStorage()
+
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
@@ -354,7 +356,7 @@ class ApplicationSubmission(
 
     def save_path(self, file_name):
         file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
-        return PrivateMediaStorage.generate_filename(file_path)
+        return self.private_storage.generate_filename(file_path)
 
     def handle_file(self, file):
         # File is potentially optional
@@ -365,11 +367,11 @@ class ApplicationSubmission(
                 # file is not changed, it is still the dictionary
                 return file
 
-            saved_name = PrivateMediaStorage.save(filename, file)
+            saved_name = self.private_storage.save(filename, file)
             return {
                 'name': file.name,
                 'path': saved_name,
-                'url': PrivateMediaStorage.url(saved_name),
+                'url': self.private_storage.url(saved_name),
             }
 
     def handle_files(self, files):
