@@ -93,6 +93,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         self.assertNotContains(response, self.url(submission, 'edit', absolute=False))
 
+    def test_can_access_edit_button(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertContains(response, self.url(submission, 'edit', absolute=False))
+
     def test_can_access_edit(self):
         submission = ApplicationSubmissionFactory()
         response = self.get_page(submission, 'edit')
