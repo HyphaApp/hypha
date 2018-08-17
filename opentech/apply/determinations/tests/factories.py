@@ -28,10 +28,9 @@ class DeterminationFactory(factory.DjangoModelFactory):
         model = Determination
 
     class Params:
-        submitted = factory.Trait(outcome=ACCEPTED, is_draft=False)
         accepted = factory.Trait(outcome=ACCEPTED)
         rejected = factory.Trait(outcome=REJECTED)
-        not_draft = factory.Trait(is_draft=False)
+        submitted = factory.Trait(is_draft=False)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     author = factory.SelfAttribute('submission.lead')

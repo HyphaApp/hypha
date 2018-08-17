@@ -4,7 +4,7 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Determination</h2>
+        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% endif %}</h2>
         <h5>For <a href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a></h5>
     </div>
 </div>

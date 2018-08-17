@@ -19,7 +19,7 @@ class StaffDeterminationsTestCase(BaseViewTestCase):
 
     def test_can_access_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
-        determination = DeterminationFactory(submission=submission, author=self.user, not_draft=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
         response = self.get_page(determination)
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
@@ -27,7 +27,7 @@ class StaffDeterminationsTestCase(BaseViewTestCase):
 
     def test_lead_can_access_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
-        determination = DeterminationFactory(submission=submission, author=self.user, not_draft=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
         response = self.get_page(determination)
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
@@ -55,7 +55,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
-        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
         self.assertRedirects(response, self.url(submission))
 
@@ -71,6 +71,12 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertContains(response, '[Draft] Approved')
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))
         self.assertNotContains(response, 'Accepted determination draft message')
+
+    def test_can_edit_submitted_more_info(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        DeterminationFactory(submission=submission, author=self.user, submitted=True)
+        response = self.get_page(submission, 'form')
+        self.assertContains(response, 'Update ')
 
     def test_cannot_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')

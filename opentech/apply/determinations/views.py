@@ -43,7 +43,7 @@ def transition_from_outcome(outcome, submission):
 def can_edit_determination(user, determination, submission):
     outcome = transition_from_outcome(determination.outcome, submission)
     valid_outcomes = determination_actions(user, submission)
-    return outcome in valid_outcomes and determination.is_draft
+    return outcome in valid_outcomes
 
 
 def can_create_determination(user, submission):
@@ -62,6 +62,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
+        import pudb; pudb.set_trace()
         if not can_create_determination(request.user, self.submission):
             raise PermissionDenied()
 
@@ -152,7 +153,7 @@ class AdminDeterminationDetailView(DetailView):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
         determination = self.get_object()
 
-        if can_edit_determination(request.user, determination, self.submission):
+        if can_edit_determination(request.user, determination, self.submission) and determination.is_draft:
             return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:form', args=(self.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
