@@ -5,6 +5,8 @@
 
     tbody {
         tr {
+            border: 0;
+
             &:hover {
                 box-shadow: none;
             }
@@ -61,6 +63,7 @@
     }
 
     &__no-reviews {
+        width: 100%;
         color: $color--mid-grey;
     }
 }
