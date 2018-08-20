@@ -7,7 +7,7 @@
         "heroku-postbuild": "cd opentech/static_src && yarn install && npm run build:prod"
     },
     "engines": {
-        "node": "8.11.3",
-        "yarn": "1.7.0"
+        "node": ">=8.0.0 <9.0.0",
+        "yarn": "^1.7.0"
     }
 }
