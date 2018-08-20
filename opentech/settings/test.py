@@ -1,4 +1,5 @@
 import os
+import dj_database_url
 
 from .base import *  # noqa
 
@@ -25,6 +26,9 @@ env = os.environ.copy()
 APP_NAME = env.get('APP_NAME', 'opentech')
 
 SECURE_SSL_REDIRECT = False
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {'default': dj_database_url.config()}
 
 if 'SECRET_KEY' in env:
     SECRET_KEY = env['SECRET_KEY']
