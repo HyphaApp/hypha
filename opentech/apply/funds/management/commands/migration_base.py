@@ -11,7 +11,8 @@ from django_fsm import FSMField
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, RoundForm, LabType, LabForm
+from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
+from opentech.apply.funds.models.forms import RoundBaseForm, LabBaseForm
 from opentech.apply.funds.workflow import INITIAL_STATE
 
 
@@ -59,16 +60,16 @@ class MigrateCommand(BaseCommand):
             ROUND = Round.objects.get(title=self.ROUND_NAME)
             submission.round = ROUND
             if self.APPLICATION_TYPE == "request":
-                FORM = RoundForm.objects.get(round=ROUND)
+                FORM = RoundBaseForm.objects.get(round=ROUND)
             elif self.APPLICATION_TYPE == "concept":
-                FORM = RoundForm.objects.filter(round=ROUND)[0]
+                FORM = RoundBaseForm.objects.filter(round=ROUND)[0]
             elif self.APPLICATION_TYPE == "proposal":
-                FORM = RoundForm.objects.filter(round=ROUND)[1]
+                FORM = RoundBaseForm.objects.filter(round=ROUND)[1]
             submission.form_fields = FORM.form.form_fields
         elif self.CONTENT_TYPE == "lab":
             LAB = LabType.objects.get(title=self.LAB_NAME)
             submission.page = LAB
-            FORM = LabForm.objects.get(lab=LAB)
+            FORM = LabBaseForm.objects.get(lab=LAB)
             submission.form_fields = FORM.form.form_fields
 
         submission.status = self.get_workflow_state(node)

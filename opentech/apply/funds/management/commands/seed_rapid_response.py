@@ -7,7 +7,9 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from opentech.apply.categories.models import Category
-from opentech.apply.funds.models import ApplicationForm, FundForm, FundType, Round
+from opentech.apply.funds.models import ApplicationForm, FundType, Round
+from opentech.apply.funds.models.forms import ApplicationBaseForm
+
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -94,7 +96,7 @@ class Command(BaseCommand):
             fund = FundType(title='Rapid Response', workflow_name='single')
             apply_home.add_child(instance=fund)
 
-            fund_form = FundForm.objects.create(fund=fund, form=application_form)
+            fund_form = ApplicationBaseForm.objects.create(fund=fund, form=application_form)
             fund.forms = [fund_form]
             fund.save()
 
