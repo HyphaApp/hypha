@@ -14,7 +14,7 @@
             {% include 'funds/includes/review_table_row.html' with reviews=object.staff_not_reviewed missing=True %}
         {% endif %}
     {% else %}
-        <tr><td class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
+        <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 
     {% if object.stage.has_external_review %}
