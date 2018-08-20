@@ -283,7 +283,7 @@ class ApplicationSubmission(
         editable=False,
     )
 
-    if settings.DEBUG:
+    if settings.RUN_ENVIROMENT == 'development':
         submission_storage = DefaultStorage()
     else:
         submission_storage = PrivateMediaStorage()
