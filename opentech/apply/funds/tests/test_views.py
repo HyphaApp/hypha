@@ -16,6 +16,32 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 from ..models import ApplicationRevision
 
 
+def prepare_form_data(submission, **kwargs):
+    data = submission.raw_data
+
+    for field, value in kwargs.items():
+        # convert named fields into  id
+        field_id = submission.field(field).id
+        data[field_id] = value
+
+    address_field = submission.must_include['address']
+    address = data.pop(address_field)
+    data.update(**prepare_address(address, address_field))
+
+    return data
+
+
+def prepare_address(address, field):
+    address = json.loads(address)
+    address['locality'] = {
+        'localityname': address.pop('localityname'),
+        'administrativearea': address.pop('administrativearea'),
+        'postalcode': address.pop('postalcode'),
+    }
+    address = flatten_for_form(address, field, number=True)
+    return address
+
+
 class BaseSubmissionViewTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:{}'
     base_view_name = 'detail'
@@ -62,10 +88,36 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.status, 'concept_review_discussion')
         self.assertIsNone(submission.next)
 
-    def test_cant_access_edit_button_on_applicant_submission(self):
+    def test_cant_access_edit_button_when_applicant_editing(self):
         submission = ApplicationSubmissionFactory(status='more_info')
         response = self.get_page(submission)
         self.assertNotContains(response, self.url(submission, 'edit', absolute=False))
+
+    def test_can_access_edit_button(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertContains(response, self.url(submission, 'edit', absolute=False))
+
+    def test_can_access_edit(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission, 'edit')
+        self.assertContains(response, submission.title)
+
+    def test_can_edit_submission(self):
+        submission = ApplicationSubmissionFactory()
+        old_status = submission.status
+        new_title = 'A new Title'
+        data = prepare_form_data(submission, title=new_title)
+        response = self.post_page(submission, {'submit': True, **data}, 'edit')
+
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+
+        self.assertRedirects(response, url)
+        submission = self.refresh(submission)
+
+        # Staff edits don't affect the status
+        self.assertEqual(old_status, submission.status)
+        self.assertEqual(new_title, submission.title)
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
@@ -109,6 +161,20 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission, 'edit')
         self.assertContains(response, submission.title)
 
+    def test_can_submit_submission(self):
+        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
+        old_status = submission.status
+
+        data = prepare_form_data(submission, title='This is different')
+
+        response = self.post_page(submission, {'submit': True, **data}, 'edit')
+
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+
+        self.assertRedirects(response, url)
+        submission = self.refresh(submission)
+        self.assertNotEqual(old_status, submission.status)
+
     def test_gets_draft_on_edit_submission(self):
         submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
         draft_revision = ApplicationRevisionFactory(submission=submission)
@@ -132,29 +198,12 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 class TestRevisionsView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
 
-    def prepare_address(self, address, field):
-        address = json.loads(address)
-        address['locality'] = {
-            'localityname': address.pop('localityname'),
-            'administrativearea': address.pop('administrativearea'),
-            'postalcode': address.pop('postalcode'),
-        }
-        address = flatten_for_form(address, field, number=True)
-        return address
-
     def test_create_revisions_on_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         old_data = submission.form_data.copy()
-        new_data = submission.raw_data
+
         new_title = 'New title'
-        new_data[submission.must_include['title']] = new_title
-
-        address_id = submission.must_include['address']
-
-        new_data.update(**self.prepare_address(
-            new_data[submission.must_include['address']],
-            address_id,
-        ))
+        new_data = prepare_form_data(submission, title=new_title)
 
         self.post_page(submission, {'submit': True, **new_data}, 'edit')
 
@@ -171,16 +220,8 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
         old_data = submission.form_data.copy()
 
-        new_data = submission.raw_data
+        new_data = prepare_form_data(submission, title='New title')
 
-        address_id = submission.must_include['address']
-
-        new_data.update(**self.prepare_address(
-            new_data[submission.must_include['address']],
-            address_id,
-        ))
-
-        new_data[submission.must_include['title']] = 'New title'
         self.post_page(submission, {'save': True, **new_data}, 'edit')
 
         submission = self.refresh(submission)
@@ -193,23 +234,14 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
     def test_existing_draft_edit_and_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
-        draft_data = submission.raw_data.copy()
-
-        address_id = submission.must_include['address']
-
-        draft_data.update(**self.prepare_address(
-            draft_data[submission.must_include['address']],
-            address_id,
-        ))
-
-        draft_data[submission.must_include['title']] = 'New title'
+        draft_data = prepare_form_data(submission, title='A new title')
 
         self.post_page(submission, {'save': True, **draft_data}, 'edit')
 
         submission = self.refresh(submission)
 
-        new_title = 'Newer title'
-        draft_data[submission.must_include['title']] = new_title
+        newer_title = 'Newer title'
+        draft_data = prepare_form_data(submission, title=newer_title)
         self.post_page(submission, {'submit': True, **draft_data}, 'edit')
 
         submission = self.refresh(submission)
@@ -219,7 +251,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
 
-        self.assertEqual(submission.title, new_title)
+        self.assertEqual(submission.title, newer_title)
 
 
 class TestRevisionCompare(BaseSubmissionViewTestCase):
