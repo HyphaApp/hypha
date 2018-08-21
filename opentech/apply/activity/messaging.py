@@ -108,13 +108,13 @@ class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
-        MESSAGES.EDIT: '{user} edited',
+        MESSAGES.EDIT: 'Edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.NEW_REVIEW: '{user} submitted a review',
-        MESSAGES.OPENED_SEALED: '{user} opened the submission while still sealed',
+        MESSAGES.NEW_REVIEW: 'Submitted a review',
+        MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
     }
 
     def recipients(self, message_type, **kwargs):
