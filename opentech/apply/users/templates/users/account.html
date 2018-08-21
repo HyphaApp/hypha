@@ -36,7 +36,7 @@
                 {{ swappable_form.media }}
                 {% csrf_token %}
                 {% for field in swappable_form %}
-                    {% include "funds/includes/field.html" %}
+                    {% include "forms/includes/field.html" %}
                 {% endfor %}
                 <button class="button button--primary" type="submit">Become</button>
             </form>
