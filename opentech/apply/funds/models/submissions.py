@@ -30,7 +30,6 @@ from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
 from ..workflow import (
     active_statuses,
-    DETERMINATION_PHASES,
     DETERMINATION_RESPONSE_PHASES,
     get_review_statuses,
     INITIAL_STATE,
@@ -495,23 +494,12 @@ class ApplicationSubmission(
 
         return self.has_permission_to_review(user)
 
-    def has_permission_to_add_determination(self, user):
-        return user.is_superuser or self.lead == user
-
-    @property
-    def in_determination_phase(self):
-        return self.status in DETERMINATION_PHASES
-
     @property
     def has_determination(self):
         try:
             return self.determination.submitted
         except ObjectDoesNotExist:
             return False
-
-    @property
-    def can_have_determination(self):
-        return self.in_determination_phase and not self.has_determination
 
     def prepare_search_values(self):
         for field_id in self.question_field_ids:

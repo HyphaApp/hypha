@@ -1,15 +1,12 @@
 {% load determination_tags %}
+{% if object.has_determination %}
 <div class="sidebar__inner">
     <h5>Determination</h5>
     <p>
-    {% if object.determination %}
         <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id %}">
-            {% if object.determination.is_draft %}[Draft] {% endif %}{{ object.determination.get_outcome_display }}
+            {{ object.determination.get_outcome_display }}
         </a>
         - {{ object.determination.updated_at|date:"Y-m-d" }} by {{ object.determination.author }}
-    {% else %}
-        Awaiting determination
-    {% endif %}
     </p>
-    {% include 'determinations/includes/determination_button.html' with submission=object %}
 </div>
+{% endif %}

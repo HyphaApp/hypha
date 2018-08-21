@@ -19,21 +19,19 @@ class StaffDeterminationsTestCase(BaseViewTestCase):
 
     def test_can_access_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
-        determination = DeterminationFactory(submission=submission, author=self.user, not_draft=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
         response = self.get_page(determination)
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
-        self.assertFalse(response.context['can_view_extended_data'])
 
     def test_lead_can_access_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
-        determination = DeterminationFactory(submission=submission, author=self.user, not_draft=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
         response = self.get_page(determination)
         self.assertContains(response, determination.submission.title)
         self.assertContains(response, self.user.full_name)
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
-        self.assertTrue(response.context['can_view_extended_data'])
 
 
 class DeterminationFormTestCase(BaseViewTestCase):
@@ -50,22 +48,16 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertContains(response, submission.title)
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
 
-    def test_cannot_access_form_if_not_lead(self):
-        submission = ApplicationSubmissionFactory(status='in_discussion')
-        response = self.get_page(submission, 'form')
-        self.assertEqual(response.status_code, 403)
-
     def test_cant_access_wrong_status(self):
-        submission = ApplicationSubmissionFactory()
+        submission = ApplicationSubmissionFactory(status='more_info')
         response = self.get_page(submission, 'form')
         self.assertEqual(response.status_code, 403)
 
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
-        determination = DeterminationFactory(submission=submission, author=self.user, submitted=True)
+        determination = DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
-        self.assertTrue(response.context['has_determination_response'])
-        self.assertContains(response, 'You have already added a determination for this submission')
+        self.assertRedirects(response, self.url(submission))
 
     def test_can_edit_draft_determination(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion', lead=self.user)
@@ -80,11 +72,17 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertContains(response, reverse(self.url_name.format('form'), kwargs=self.get_kwargs(submission)))
         self.assertNotContains(response, 'Accepted determination draft message')
 
+    def test_can_edit_submitted_more_info(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
+        DeterminationFactory(submission=submission, author=self.user, submitted=True)
+        response = self.get_page(submission, 'form')
+        self.assertContains(response, 'Update ')
+
     def test_cannot_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
-        determination = DeterminationFactory(submission=submission, author=self.user)
+        determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, self.url(submission))
 
     def test_sends_message_if_requires_more_info(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
