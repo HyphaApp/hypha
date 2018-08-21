@@ -23,7 +23,7 @@ VISIBILILTY_HELP_TEXT = {
     PRIVATE: 'Visible to applicant and staff.',
     REVIEWER: 'Visible to reviewers and staff.',
     INTERNAL: 'Visible only to staff.',
-    PUBLIC: 'Visible to all users of application system.',
+    PUBLIC: 'Visible to all users of the application system.',
 }
 
 
@@ -90,7 +90,7 @@ class Activity(models.Model):
         base_manager_name = 'objects'
 
     @property
-    def privaledged(self):
+    def priviledged(self):
         # Not visible to applicant
         return self.visibility not in [PUBLIC, PRIVATE]
 
