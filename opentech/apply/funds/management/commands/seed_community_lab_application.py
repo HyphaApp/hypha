@@ -6,7 +6,9 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opentech.apply.funds.models import ApplicationForm, LabForm, LabType
+from opentech.apply.funds.models import ApplicationForm, LabType
+from opentech.apply.funds.models.forms import LabBaseForm
+
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -75,7 +77,7 @@ class Command(BaseCommand):
             lab = LabType(title='Community lab', lead=lead, workflow_name='single')
             apply_home.add_child(instance=lab)
 
-            lab_form = LabForm.objects.create(lab=lab, form=application_form)
+            lab_form = LabBaseForm.objects.create(lab=lab, form=application_form)
             lab.forms = [lab_form]
             lab.save()
 

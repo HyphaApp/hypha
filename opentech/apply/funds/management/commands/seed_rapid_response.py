@@ -96,7 +96,7 @@ class Command(BaseCommand):
             fund = FundType(title='Rapid Response', workflow_name='single')
             apply_home.add_child(instance=fund)
 
-            fund_form = ApplicationBaseForm.objects.create(fund=fund, form=application_form)
+            fund_form = ApplicationBaseForm.objects.create(application=fund, form=application_form)
             fund.forms = [fund_form]
             fund.save()
 
