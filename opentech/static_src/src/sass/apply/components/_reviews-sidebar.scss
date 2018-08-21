@@ -5,6 +5,8 @@
 
     tbody {
         tr {
+            border: 0;
+
             &:hover {
                 box-shadow: none;
             }

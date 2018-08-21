@@ -84,6 +84,18 @@ $table-breakpoint: 'tablet-landscape';
                 padding-top: 15px;
                 font-weight: $weight--bold;
 
+                @include media-query($table-breakpoint) {
+                    display: flex;
+                    align-items: center;
+                    padding-top: 20px;
+                    padding-left: 10px;
+                }
+
+                @include media-query(desktop) {
+                    display: table-cell;
+                    padding-left: 20px;
+                }
+
                 &.has-tooltip {
                     @include media-query($table-breakpoint) {
                         &::before {
@@ -110,11 +122,6 @@ $table-breakpoint: 'tablet-landscape';
                             }
                         }
                     }
-                }
-
-                @include media-query($table-breakpoint) {
-                    padding-top: 20px;
-                    padding-left: 20px;
                 }
 
                 a {
