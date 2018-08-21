@@ -33,5 +33,13 @@
         td {
             padding: 5px 10px;
         }
+
+        td {
+            &.lead {
+                span {
+                    background: $color--mist;
+                }
+            }
+        }
     }
 }
