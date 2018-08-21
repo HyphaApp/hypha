@@ -1,0 +1,87 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - heroku
+    docker:
+      - image: circleci/python:3.6.6-stretch-node
+        environment:
+          DATABASE_URL: postgresql://root@localhost/opentech?sslmode=disable
+          PGHOST: localhost
+          PGUSER: root
+          DJANGO_SETTINGS_MODULE: opentech.settings.test
+          NPM_CONFIG_PRODUCTION: false
+          SEND_MESSAGES: false
+
+      - image: circleci/postgres:10.5
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: opentech
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+            - v1-python-{{ .Branch }}-
+            - v1-python-
+
+
+      - restore_cache:
+          keys:
+            - v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-
+            - v1-yarn-
+
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt-get install rsync
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - run:
+          name: buils static assets
+          command: |
+            cd opentech/static_src
+            yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+            npm run build:prod
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+          key: v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
+
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python manage.py createcachetable
+            python manage.py collectstatic --no-input
+            python manage.py migrate
+            python manage.py test
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
+
