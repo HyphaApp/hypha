@@ -34,8 +34,8 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary" type="submit" value="Send Determination" name="submit" />
-        <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+        <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+        <input class="button button--submit button--top-space button--primary" type="submit" value="Send" name="submit" />
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">

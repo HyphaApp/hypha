@@ -35,7 +35,7 @@
                 {% endif %}
             {% endfor %}
             {% for button_name, button_type, button_value in buttons %}
-                <input class="button button--{{ button_type }}" type="submit" name="{{ button_name }}" value="{{ button_value }}" />
+                <input class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" value="{{ button_value }}" />
             {% endfor %}
         </form>
     </div>

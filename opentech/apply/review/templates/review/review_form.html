@@ -45,10 +45,10 @@
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary button--bottom-space" type="submit" value="Submit Review" name="submit" />
         {% if not object.id or object.is_draft %}
-            <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+            <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
         {% endif %}
+        <input class="button button--submit button--top-space button--primary" type="submit" value="Submit" name="submit" />
     </form>
 {% else %}
     <p>You have already posted a review for this submission</p>
