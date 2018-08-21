@@ -57,8 +57,9 @@
     }
 
     &__content {
+        width:100%;
+
         @include media-query(small-tablet) {
-            width: 80%;
             padding-left: 20px;
         }
     }
@@ -80,6 +81,10 @@
 
         @include media-query(small-tablet) {
             margin: 0 15px 0 0;
+        }
+
+        &--right {
+            margin-left: auto;
         }
 
         &--progress {
@@ -109,6 +114,7 @@
         margin-bottom: 0;
 
         @include media-query(small-tablet) {
+            width: 90%;
             font-size: 18px;
         }
 

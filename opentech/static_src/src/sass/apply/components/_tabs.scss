@@ -18,8 +18,7 @@
 .tab__item {
     @include responsive-font-sizes(12px, 15px);
     position: relative;
-    width: 33%;
-    padding: 7px;
+    padding: 10px;
     font-weight: $weight--bold;
     hyphens: auto;
     color: $color--mid-grey;
@@ -28,6 +27,7 @@
 
     @include media-query(mob-landscape) {
         padding: 15px;
+        width: 33%;
     }
 
     @include media-query(small-tablet) {
@@ -50,6 +50,11 @@
     }
 
     &--right {
-        margin-left: auto;
+        display:none;
+
+        @include media-query(small-tablet) {
+            margin-left: auto;
+            display: block;
+        }
     }
 }

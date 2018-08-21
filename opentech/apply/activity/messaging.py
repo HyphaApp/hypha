@@ -244,7 +244,7 @@ class EmailAdapter(AdapterBase):
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
         submission = kwargs['submission']
-        if not comment.private and not comment.user == submission.user:
+        if not comment.priviledged and not comment.user == submission.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
     def recipients(self, message_type, submission, **kwargs):
