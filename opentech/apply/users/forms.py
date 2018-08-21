@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from wagtail.users.forms import UserEditForm, UserCreationForm
 
+from django_select2.forms import Select2Widget
 
 User = get_user_model()
 
@@ -53,3 +54,13 @@ class ProfileForm(forms.ModelForm):
                 slack = '@' + slack
 
         return slack
+
+
+class BecomeUserForm(forms.Form):
+    user = forms.ModelChoiceField(
+        widget=Select2Widget,
+        help_text="Only includes active, non-superusers",
+        queryset=User.objects.filter(is_active=True, is_superuser=False),
+        label='',
+        required=False,
+    )
