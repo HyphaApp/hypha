@@ -148,7 +148,6 @@ class ReviewListView(ListView):
                 data = review.data(field_id)
                 if not isinstance(field.block, (RecommendationBlock, RichTextBlock)):
                     question = field.value['field_label']
-                    # If we haven't see the question before we backfill with '-'
                     review_data.setdefault(field.id, {'question': question, 'answers': [''] * responses})
                     review_data[field.id]['answers'][i] = field.block.render(None, {'data': data})
 
