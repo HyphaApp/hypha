@@ -106,11 +106,7 @@ class Review(BaseStreamForm, AccessFormData, models.Model):
         return self.revision == self.submission.live_revision
 
     def get_compare_url(self):
-        return reverse("funds:submissions:revisions:compare", kwargs={
-            'submission_pk': self.submission.id,
-            'to': self.submission.live_revision.id,
-            'from': self.revision.id,
-        })
+        return self.revision.get_compare_url_to_latest()
 
 
 @receiver(post_save, sender=Review)

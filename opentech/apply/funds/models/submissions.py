@@ -587,3 +587,10 @@ class ApplicationRevision(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    def get_compare_url_to_latest(self):
+        return reverse("funds:submissions:revisions:compare", kwargs={
+            'submission_pk': self.submission.id,
+            'to': self.submission.live_revision.id,
+            'from': self.id,
+        })
