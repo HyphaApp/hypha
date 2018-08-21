@@ -81,6 +81,10 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
         self.instance.form_data = self.cleaned_data['form_data']
 
+        if not self.instance.is_draft:
+            # Capture the revision against which the user was reviewing
+            self.instance.revision = self.instance.submission.live_revision
+
         return super().save(commit)
 
     def calculate_score(self, data):
@@ -91,10 +95,11 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
             try:
                 score = int(value[1])
-                if score != NA:
-                    scores.append(score)
             except TypeError:
                 pass
+            else:
+                if score != NA:
+                    scores.append(score)
 
         try:
             return sum(scores) / len(scores)

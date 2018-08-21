@@ -38,6 +38,9 @@ class RichTextFieldBlock(TextFieldBlock):
     def get_searchable_content(self, value, data):
         return bleach.clean(data or '', tags=[], strip=True)
 
+    def no_response(self):
+        return '<p>No response</p>'
+
 
 class CustomFormFieldsBlock(StreamBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))

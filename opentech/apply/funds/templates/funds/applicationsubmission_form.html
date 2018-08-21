@@ -25,12 +25,13 @@
     <div>
         <form class="form" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.media }}
 
             {% for field in form %}
                 {% if field.field %}
-                {% include "funds/includes/field.html" %}
+                    {% include "funds/includes/field.html" %}
                 {% else %}
-                {{ field }}
+                    {{ field }}
                 {% endif %}
             {% endfor %}
             {% for button_name, button_value in buttons %}
@@ -46,8 +47,4 @@
     </aside>
 </div>
 
-{% endblock %}
-
-{% block extra_js %}
-    {{ form.media }}
 {% endblock %}

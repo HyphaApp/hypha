@@ -137,7 +137,7 @@ class CheckboxFieldBlock(FormFieldBlock):
     def get_searchable_content(self, value, data):
         return None
 
-    def no_responose(self):
+    def no_response(self):
         return False
 
 

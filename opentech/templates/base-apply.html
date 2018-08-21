@@ -29,6 +29,8 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/apply/main.css' %}">
         {# Hijack styling #}
         <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
+
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -93,8 +95,6 @@
         </main>
 
         <footer class="footer"></footer>
-
-        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>

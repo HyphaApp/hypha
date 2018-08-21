@@ -18,9 +18,17 @@
         <h5>Score</h5>
         <p>{{ review.score }}</p>
     </div>
+    {% if not review.for_latest %}
+        <div>
+            <h5>Review was not against the latest version:</h5>
+            <p>
+                <a class="button button--primary" href="{{ review.get_compare_url }}">Compare</a>
+            </p>
+        </div>
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">
-    {{ object.render_answers }}
+    {{ object.output_answers }}
 </div>
 {% endblock %}

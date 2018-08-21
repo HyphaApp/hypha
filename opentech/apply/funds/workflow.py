@@ -79,32 +79,52 @@ class Stage:
         return self.name
 
 
-class Permission:
+class BasePermissions:
     def can_edit(self, user: 'User') -> bool:
+        if user.is_apply_staff:
+            return self.can_staff_edit(user)
+
+        if user.is_applicant:
+            return self.can_applicant_edit(user)
+
+    def can_staff_edit(self, user: 'User') -> bool:
         return False
 
-    def can_staff_review(self, user: 'User') -> bool:
-        return False
-
-    def can_reviewer_review(self, user: 'User') -> bool:
+    def can_applicant_edit(self, user: 'User') -> bool:
         return False
 
     def can_review(self, user: 'User') -> bool:
-        return self.can_staff_review(user) or self.can_reviewer_review(user)
+        if user.is_apply_staff:
+            return self.can_staff_review(user)
 
+        if user.is_reviewer:
+            return self.can_reviewer_review(user)
 
-class StaffReviewPermission(Permission):
     def can_staff_review(self, user: 'User') -> bool:
-        return user.is_apply_staff
+        return False
 
-
-class ReviewerReviewPermission(Permission):
     def can_reviewer_review(self, user: 'User') -> bool:
-        return user.is_reviewer
+        return False
 
 
-class CanEditPermission(Permission):
-    def can_edit(self, user: 'User') -> bool:
+class NoPermissions(BasePermissions):
+    pass
+
+
+class DefaultPermissions(BasePermissions):
+    # Other Permissions should inherit from this class
+    # Staff can review at any time
+    def can_staff_review(self, user: 'User') -> bool:
+        return True
+
+
+class ReviewerReviewPermissions(DefaultPermissions):
+    def can_reviewer_review(self, user: 'User') -> bool:
+        return True
+
+
+class CanEditPermissions(DefaultPermissions):
+    def can_applicant_edit(self, user: 'User') -> bool:
         return True
 
 
@@ -126,7 +146,7 @@ SingleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Request,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 0,
     },
     'more_info': {
@@ -135,7 +155,7 @@ SingleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Request,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 0,
     },
     'internal_review': {
@@ -144,7 +164,7 @@ SingleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Request,
-        'permissions': StaffReviewPermission(),
+        'permissions': DefaultPermissions(),
         'step': 1,
     },
     'post_review_discussion': {
@@ -155,7 +175,7 @@ SingleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Request,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 2,
     },
     'post_review_more_info': {
@@ -164,20 +184,20 @@ SingleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Request,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 2,
     },
 
     'accepted': {
         'display': 'Accepted',
         'stage': Request,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 3,
     },
     'rejected': {
         'display': 'Rejected',
         'stage': Request,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 3,
     },
 }
@@ -192,7 +212,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Concept,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 0,
     },
     'concept_more_info': {
@@ -201,7 +221,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Concept,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 0,
     },
     'concept_internal_review': {
@@ -210,7 +230,7 @@ DoubleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Concept,
-        'permissions': StaffReviewPermission(),
+        'permissions': DefaultPermissions(),
         'step': 1,
     },
     'concept_review_discussion': {
@@ -221,7 +241,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Concept,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 2,
     },
     'concept_review_more_info': {
@@ -230,7 +250,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Concept,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 2,
     },
     'invited_to_proposal': {
@@ -244,13 +264,13 @@ DoubleStageDefinition = {
             },
         },
         'stage': Concept,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 3,
     },
     'concept_rejected': {
         'display': 'Rejected',
         'stage': Concept,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 3,
     },
     'draft_proposal': {
@@ -259,7 +279,7 @@ DoubleStageDefinition = {
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 4,
     },
     'proposal_discussion': {
@@ -270,7 +290,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 5,
     },
     'proposal_more_info': {
@@ -279,7 +299,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 5,
     },
     'proposal_internal_review': {
@@ -288,7 +308,7 @@ DoubleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Proposal,
-        'permissions': StaffReviewPermission(),
+        'permissions': DefaultPermissions(),
         'step': 6,
     },
     'post_proposal_review_discussion': {
@@ -299,7 +319,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 7,
     },
     'post_proposal_review_more_info': {
@@ -308,7 +328,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 7,
     },
     'external_review': {
@@ -317,7 +337,7 @@ DoubleStageDefinition = {
         },
         'display': 'Advisory Council Review',
         'stage': Proposal,
-        'permissions': ReviewerReviewPermission(),
+        'permissions': ReviewerReviewPermissions(),
         'step': 8,
     },
     'post_external_review_discussion': {
@@ -328,7 +348,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': DefaultPermissions(),
         'step': 9,
     },
     'post_external_review_more_info': {
@@ -337,19 +357,19 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermission(),
+        'permissions': CanEditPermissions(),
         'step': 9,
     },
     'proposal_accepted': {
         'display': 'Accepted',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 10,
     },
     'proposal_rejected': {
         'display': 'Rejected',
         'stage': Proposal,
-        'permissions': Permission(),
+        'permissions': NoPermissions(),
         'step': 10,
     },
 

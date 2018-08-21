@@ -38,7 +38,7 @@ def compare(answer_a, answer_b, should_bleach=True):
         else:
             answer_b = str(answer_b)
 
-    diff = SequenceMatcher(None, answer_a, answer_b)
+    diff = SequenceMatcher(lambda x: '\n' in x, answer_a, answer_b)
     output = []
     added = []
     deleted = []
@@ -77,6 +77,8 @@ def compare(answer_a, answer_b, should_bleach=True):
     display = ''.join(output)
 
     if not should_bleach:
-        display = BeautifulSoup(display, "html5lib").prettify()
+        soup = BeautifulSoup(display, "html5lib")
+        soup.body.hidden = True
+        display = soup.body.prettify()
 
     return mark_safe(display)

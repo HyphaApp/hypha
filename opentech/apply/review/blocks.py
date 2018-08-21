@@ -22,12 +22,11 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
         template = 'review/render_scored_answer_field.html'
 
     def render(self, value, context=None):
-        data = json.loads(context['data'])
-        label = value['field_label']
-        context['data'] = {
-            label: data[0],
-            f'Score {label}': RATE_CHOICES_DICT.get(data[1], RATE_CHOICE_NA)
-        }
+        comment, score = json.loads(context['data'])
+        context.update(**{
+            'comment': comment,
+            'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
+        })
 
         return super().render(value, context)
 
@@ -37,7 +36,7 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
-    name = 'Recommendation'
+    name = 'recommendation'
     description = 'Overall recommendation'
     field_class = forms.ChoiceField
 
@@ -58,7 +57,7 @@ class RecommendationBlock(ReviewMustIncludeFieldBlock):
 
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
-    name = 'Comments'
+    name = 'comments'
     description = 'Recommendation comments'
     widget = RICH_TEXT_WIDGET_SHORT
 

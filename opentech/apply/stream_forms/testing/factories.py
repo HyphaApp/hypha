@@ -21,6 +21,9 @@ class AnswerFactory(factory.Factory):
     def _create(self, *args, sub_factory=None, **kwargs):
         return sub_factory.make_answer(kwargs)
 
+    def _build(self, *args, sub_factory=None, **kwargs):
+        return sub_factory.make_answer(kwargs)
+
 
 class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
     def __new__(mcs, class_name, bases, attrs):
@@ -37,6 +40,7 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
 
 
 class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
+    @classmethod
     def _create(self, *args, form_fields={}, for_factory=None, clean=False, **kwargs):
         if form_fields and isinstance(form_fields, str):
             form_fields = json.loads(form_fields)
@@ -64,6 +68,10 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
             return form_data
 
         return form_data
+
+    @classmethod
+    def _build(self, *args, **kwargs):
+        return self._create(*args, **kwargs)
 
 
 class ParagraphBlockFactory(wagtail_factories.blocks.BlockFactory):
@@ -183,3 +191,23 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
                 form_fields[f'{i}__{field}__{attr}'] = value
 
         return form_fields
+
+    def form_response(self, fields):
+        data = {
+            field: factory.make_form_answer()
+            for field, factory in zip(fields, self.factories.values())
+            if hasattr(factory, 'make_form_answer')
+        }
+        return flatten_for_form(data)
+
+
+def flatten_for_form(data, field_name='', number=False):
+    result = {}
+    for i, (field, value) in enumerate(data.items()):
+        if number:
+            field = f'{field_name}_{i}'
+        if isinstance(value, dict):
+            result.update(**flatten_for_form(value, field_name=field, number=True))
+        else:
+            result[field] = value
+    return result
