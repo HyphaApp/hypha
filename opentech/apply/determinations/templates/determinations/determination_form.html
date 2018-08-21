@@ -9,6 +9,8 @@
     </div>
 </div>
 
+{% include "forms/includes/form_errors.html" with form=form %}
+
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
     <form class="form form--with-p-tags" action="" method="post" novalidate>
         {{ form.media }}
@@ -29,7 +31,7 @@
             {% endifchanged %}
 
             {% if field.field %}
-                {% include "funds/includes/field.html" %}
+                {% include "forms/includes/field.html" %}
             {% else %}
                 {{ field }}
             {% endif %}

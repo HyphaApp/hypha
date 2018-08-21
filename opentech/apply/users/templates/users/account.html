@@ -16,7 +16,7 @@
         <form action="" method="post" class="form">
             {% csrf_token %}
             {% for field in form %}
-                {% include "funds/includes/field.html" %}
+                {% include "forms/includes/field.html" %}
             {% endfor %}
             <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
         </form>
