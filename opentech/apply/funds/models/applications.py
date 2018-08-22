@@ -115,8 +115,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         FieldPanel('reviewers'),
         ReadOnlyPanel('get_workflow_name_display', heading="Workflow"),
         # Forms comes from parental key in models/forms.py
-        ReadOnlyInlinePanel('forms', help_text="Are copied from the parent fund."),
-        ReadOnlyInlinePanel('review_forms', help_text="Are copied from the parent fund."),
+        ReadOnlyInlinePanel('forms', help_text="Copied from the fund."),
+        ReadOnlyInlinePanel('review_forms', help_text="Copied from the fund."),
     ]
 
     edit_handler = TabbedInterface([
