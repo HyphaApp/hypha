@@ -9,6 +9,8 @@
     </div>
 </div>
 
+{% include "forms/includes/form_errors.html" with form=form %}
+
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
     <form class="form form--with-p-tags" action="" method="post" novalidate>
         {{ form.media }}
@@ -29,13 +31,13 @@
             {% endifchanged %}
 
             {% if field.field %}
-                {% include "funds/includes/field.html" %}
+                {% include "forms/includes/field.html" %}
             {% else %}
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary" type="submit" value="Send Determination" name="submit" />
-        <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+        <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+        <input class="button button--submit button--top-space button--primary" type="submit" value="Send" name="submit" />
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">

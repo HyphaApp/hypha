@@ -1,4 +1,8 @@
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, ApplicationRevisionFactory
+from opentech.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    ApplicationRevisionFactory,
+    InvitedToProposalFactory,
+)
 from opentech.apply.users.tests.factories import UserFactory, StaffFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
@@ -31,7 +35,7 @@ class TestApplicantDashboard(BaseViewTestCase):
         self.assertNotContains(response, 'Submission history')
 
     def test_gets_invite_if_invited_to_proposal(self):
-        ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
+        InvitedToProposalFactory(user=self.user, draft=True)
         response = self.get_page()
         self.assertContains(response, 'Start your ')
 

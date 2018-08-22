@@ -34,6 +34,7 @@ __all__ = [
     'ApplicationFormFactory',
     'ApplicationRevisionFactory',
     'ApplicationSubmissionFactory',
+    'InvitedToProposalFactory',
     'RoundFactory',
     'RoundBaseFormFactory',
     'LabFactory',
@@ -198,10 +199,6 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
 
     class Params:
         workflow_stages = 1
-        draft_proposal = factory.Trait(
-            status='draft_proposal',
-            workflow_name='double',
-        )
         rejected = factory.Trait(
             status='rejected'
         )
@@ -227,6 +224,23 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
             self.reviewers.set(reviewers)
+
+
+class InvitedToProposalFactory(ApplicationSubmissionFactory):
+    class Params:
+        workflow_stages = 2
+        draft = factory.Trait(
+            status='draft_proposal',
+        )
+
+    status = 'proposal_discussion'
+    previous = factory.RelatedFactory(
+        ApplicationSubmissionFactory,
+        'next',
+        round=factory.SelfAttribute('..round'),
+        page=factory.SelfAttribute('..page'),
+        status='invited_to_proposal',
+    )
 
 
 class SealedSubmissionFactory(ApplicationSubmissionFactory):

@@ -8,22 +8,13 @@
     </div>
 </div>
 
+{% include "forms/includes/form_errors.html" with form=form %}
+
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
 {% if not has_submitted_review %}
     <form class="form form--with-p-tags form--scoreable" action="" method="post" novalidate>
         {{ form.media }}
         {% csrf_token %}
-
-        {% if form.non_field_errors %}
-            <div class="messages">
-                <ul>
-                    {% for error in form.non_field_errors %}
-                    <li class="error">{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-
 
         {% for hidden in form.hidden_fields %}
             {{ hidden }}
@@ -40,15 +31,15 @@
             {% endifchanged %}
 
             {% if field.field %}
-                {% include "funds/includes/field.html" %}
+                {% include "forms/includes/field.html" %}
             {% else %}
                 {{ field }}
             {% endif %}
         {% endfor %}
-        <input class="button button--primary button--bottom-space" type="submit" value="Submit Review" name="submit" />
         {% if not object.id or object.is_draft %}
-            <input class="button button--secondary button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+            <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
         {% endif %}
+        <input class="button button--submit button--top-space button--primary" type="submit" value="Submit" name="submit" />
     </form>
 {% else %}
     <p>You have already posted a review for this submission</p>

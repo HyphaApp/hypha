@@ -89,7 +89,7 @@
                 {% block reviews %}
                 {% endblock %}
 
-                {% if other_submissions or object.previous %}
+                {% if other_submissions or object.previous or object.next %}
                     <div class="sidebar__inner">
                         {% if object.previous %}
                             <h6><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">View linked {{ object.previous.stage }}</a></h6>
