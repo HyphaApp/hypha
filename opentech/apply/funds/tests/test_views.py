@@ -53,10 +53,16 @@ class BaseSubmissionViewTestCase(BaseViewTestCase):
 class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.submission = ApplicationSubmissionFactory()
+
+    def __setUp__(self):
+        self.refresh(self.submission)
+
     def test_can_view_a_submission(self):
-        submission = ApplicationSubmissionFactory()
-        response = self.get_page(submission)
-        self.assertContains(response, submission.title)
+        response = self.get_page(self.submission)
+        self.assertContains(response, self.submission.title)
 
     def test_can_view_a_lab_submission(self):
         submission = LabSubmissionFactory()
@@ -64,11 +70,10 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertContains(response, submission.title)
 
     def test_can_progress_phase(self):
-        submission = ApplicationSubmissionFactory()
-        next_status = list(submission.get_actions_for_user(self.user))[0][0]
-        self.post_page(submission, {'form-submitted-progress_form': '', 'action': next_status})
+        next_status = list(self.submission.get_actions_for_user(self.user))[0][0]
+        self.post_page(self.submission, {'form-submitted-progress_form': '', 'action': next_status})
 
-        submission = self.refresh(submission)
+        submission = self.refresh(self.submission)
         self.assertEqual(submission.status, next_status)
 
     def test_redirected_to_determination(self):
@@ -94,26 +99,23 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotContains(response, self.url(submission, 'edit', absolute=False))
 
     def test_can_access_edit_button(self):
-        submission = ApplicationSubmissionFactory()
-        response = self.get_page(submission)
-        self.assertContains(response, self.url(submission, 'edit', absolute=False))
+        response = self.get_page(self.submission)
+        self.assertContains(response, self.url(self.submission, 'edit', absolute=False))
 
     def test_can_access_edit(self):
-        submission = ApplicationSubmissionFactory()
-        response = self.get_page(submission, 'edit')
-        self.assertContains(response, submission.title)
+        response = self.get_page(self.submission, 'edit')
+        self.assertContains(response, self.submission.title)
 
     def test_can_edit_submission(self):
-        submission = ApplicationSubmissionFactory()
-        old_status = submission.status
+        old_status = self.submission.status
         new_title = 'A new Title'
-        data = prepare_form_data(submission, title=new_title)
-        response = self.post_page(submission, {'submit': True, **data}, 'edit')
+        data = prepare_form_data(self.submission, title=new_title)
+        response = self.post_page(self.submission, {'submit': True, **data}, 'edit')
 
-        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': self.submission.id})
 
         self.assertRedirects(response, url)
-        submission = self.refresh(submission)
+        submission = self.refresh(self.submission)
 
         # Staff edits don't affect the status
         self.assertEqual(old_status, submission.status)
