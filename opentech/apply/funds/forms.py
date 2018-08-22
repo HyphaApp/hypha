@@ -52,8 +52,11 @@ class UpdateReviewersForm(forms.ModelForm):
         model = ApplicationSubmission
         fields: list = []
 
+    def can_alter_reviewers(self, user):
+        return self.instance.stage.has_external_review and user == self.instance.lead
+
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
+        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
         self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
@@ -62,7 +65,7 @@ class UpdateReviewersForm(forms.ModelForm):
         staff_field.queryset = staff_field.queryset.exclude(id__in=self.submitted_reviewers)
         staff_field.initial = reviewers
 
-        if self.instance.stage.has_external_review and user == self.instance.lead:
+        if self.can_alter_reviewers(self.user):
             review_field = self.fields['reviewer_reviewers']
             review_field.queryset = review_field.queryset.exclude(id__in=self.submitted_reviewers)
             review_field.initial = reviewers
@@ -71,9 +74,14 @@ class UpdateReviewersForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
+        if self.can_alter_reviewers(self.user):
+            reviewers = self.cleaned_data.get('reviewer_reviewers')
+        else:
+            reviewers = instance.reviewers_not_reviewed
+
         instance.reviewers.set(
             self.cleaned_data['staff_reviewers'] |
-            self.cleaned_data.get('reviewer_reviewers', User.objects.none()) |
+            reviewers |
             self.submitted_reviewers
         )
         return instance
