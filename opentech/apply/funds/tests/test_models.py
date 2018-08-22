@@ -381,6 +381,7 @@ class TestApplicationSubmission(TestCase):
         submission = ApplicationSubmissionFactory()
         self.assertEqual(submission.revisions.count(), 1)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertEqual(submission.live_revision.author, submission.user)
 
     def test_create_revision_on_data_change(self):
         submission = ApplicationSubmissionFactory()

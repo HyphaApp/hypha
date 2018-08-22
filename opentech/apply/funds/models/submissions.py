@@ -459,7 +459,11 @@ class ApplicationSubmission(
 
         if creating:
             self.reviewers.set(self.get_from_parent('reviewers').all())
-            first_revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data)
+            first_revision = ApplicationRevision.objects.create(
+                submission=self,
+                form_data=self.form_data,
+                author=self.user,
+            )
             self.live_revision = first_revision
             self.draft_revision = first_revision
             self.save()
