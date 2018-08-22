@@ -8,12 +8,18 @@ from .factories import ApplicationFormFactory, FundTypeFactory, workflow_for_sta
 from opentech.apply.review.tests.factories import ReviewFormFactory
 
 
-def formset_base(field, total, delete, factory):
+def formset_base(field, total, delete, factory, same=False):
     base_data = {
         f'{field}-TOTAL_FORMS': total + delete,
         f'{field}-INITIAL_FORMS': 0,
     }
-    application_forms = factory.create_batch(total + delete)
+
+    required_forms = total + delete
+
+    if not same:
+        application_forms = factory.create_batch(required_forms)
+    else:
+        application_forms = [factory()] * required_forms
 
     deleted = 0
     for i, form in enumerate(application_forms):
@@ -28,9 +34,9 @@ def formset_base(field, total, delete, factory):
     return base_data
 
 
-def form_data(number_forms=0, delete=0, stages=None):
-    form_data = formset_base('forms', number_forms, delete, factory=ApplicationFormFactory)
-    review_form_data = formset_base('review_forms', number_forms, False, factory=ReviewFormFactory)
+def form_data(number_forms=0, delete=0, stages=None, same_forms=False):
+    form_data = formset_base('forms', number_forms, delete, same=same_forms, factory=ApplicationFormFactory)
+    review_form_data = formset_base('review_forms', number_forms, False, same=same_forms, factory=ReviewFormFactory)
     form_data.update(review_form_data)
 
     fund_data = factory.build(dict, FACTORY_CLASS=FundTypeFactory)

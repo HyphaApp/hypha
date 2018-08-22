@@ -13,11 +13,11 @@ class TestFundCreationView(TestCase):
         cls.user = SuperUserFactory()
         cls.home = ApplyHomePageFactory()
 
-    def create_page(self, forms=1):
+    def create_page(self, forms=1, same_forms=False):
         self.client.force_login(self.user)
         url = reverse('wagtailadmin_pages:add', args=('funds', 'fundtype', self.home.id))
 
-        data = form_data(forms)
+        data = form_data(forms, same_forms=same_forms)
         data['action-publish'] = True
 
         response = self.client.post(url, data=data, secure=True, follow=True)
@@ -35,5 +35,10 @@ class TestFundCreationView(TestCase):
 
     def test_can_create_multi_phase_fund(self):
         fund = self.create_page(2)
+        self.assertEqual(fund.forms.count(), 2)
+        self.assertEqual(fund.review_forms.count(), 2)
+
+    def test_can_create_multi_phase_fund_reuse_forms(self):
+        fund = self.create_page(2, same_forms=True)
         self.assertEqual(fund.forms.count(), 2)
         self.assertEqual(fund.review_forms.count(), 2)
