@@ -4,13 +4,12 @@
 {% block content %}
 <div>
     {% block header %}
-        {% include "modeladmin/includes/breadcrumb.html" %}
-        {% include "wagtailadmin/shared/header.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon %}
+        {% include "modeladmin/includes/header_with_breadcrumb.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon tabbed=True %}
     {% endblock %}
 
     <div class="nice-padding">
         <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
-        <p>{% blocktrans %}Rounds must be associated with a Fund. For which Fund are you creating a new Round for?{% endblocktrans %}</p>
+        <p>{% blocktrans %}Rounds must be associated with a Fund or RFP. What are you creating a new Round for?{% endblocktrans %}</p>
 
         <form action="" method="post" novalidate>
             {% csrf_token %}
