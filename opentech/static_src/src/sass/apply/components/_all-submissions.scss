@@ -164,6 +164,14 @@ $table-breakpoint: 'tablet-landscape';
                 }
             }
 
+            &.reviews_stats {
+                display: none;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
+                }
+            }
+
             // arrow to toggle project info - added via js
             @include media-query($table-breakpoint) {
                 .arrow {
@@ -177,6 +185,19 @@ $table-breakpoint: 'tablet-landscape';
                     &:hover {
                         cursor: pointer;
                     }
+                }
+            }
+
+            > span.mobile-label {
+                width: 90px;
+                display: inline-block;
+
+                &.phase, &.title {
+                    display: none;
+                }
+
+                @include media-query($table-breakpoint) {
+                    display: none;
                 }
             }
         }
