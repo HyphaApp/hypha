@@ -183,7 +183,6 @@ class TestRoundModelWorkflowAndForms(TestCase):
 @override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestFormSubmission(TestCase):
     def setUp(self):
-        self.site = Site.objects.first()
         self.User = get_user_model()
 
         self.email = 'test@test.com'
@@ -191,8 +190,7 @@ class TestFormSubmission(TestCase):
 
         fund = FundTypeFactory()
 
-        self.site.root_page = fund
-        self.site.save()
+        self.site = fund.get_site()
 
         self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
@@ -212,9 +210,10 @@ class TestFormSubmission(TestCase):
 
         request = make_request(user, data, method='post', site=self.site)
 
-        try:
+        if page.get_parent().id != self.site.root_page.id:
+            # Its a fund
             response = page.get_parent().serve(request)
-        except AttributeError:
+        else:
             response = page.serve(request)
 
         if not ignore_errors:
