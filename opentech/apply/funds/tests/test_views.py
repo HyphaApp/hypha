@@ -5,6 +5,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    InvitedToProposalFactory,
     LabSubmissionFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
@@ -56,6 +57,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.submission = ApplicationSubmissionFactory()
+        super().setUpTestData()
 
     def __setUp__(self):
         self.refresh(self.submission)
@@ -106,6 +108,14 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(self.submission, 'edit')
         self.assertContains(response, self.submission.title)
 
+    def test_previous_and_next_appears_on_page(self):
+        proposal = InvitedToProposalFactory()
+        response = self.get_page(proposal)
+        self.assertContains(response, self.url(proposal.previous, absolute=False))
+
+        response = self.get_page(proposal.previous)
+        self.assertContains(response, self.url(proposal, absolute=False))
+
     def test_can_edit_submission(self):
         old_status = self.submission.status
         new_title = 'A new Title'
@@ -125,19 +135,27 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(user=cls.user)
+        cls.draft_proposal_submission = InvitedToProposalFactory(user=cls.user, draft=True)
+
+    def __setUp__(self):
+        self.refresh(self.submission)
+        self.refresh(self.draft_proposal_submission)
+
     def test_can_view_own_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user)
-        response = self.get_page(submission)
-        self.assertContains(response, submission.title)
+        response = self.get_page(self.submission)
+        self.assertContains(response, self.submission.title)
 
     def test_sees_latest_draft_if_it_exists(self):
-        submission = ApplicationSubmissionFactory(user=self.user)
-        draft_revision = ApplicationRevisionFactory(submission=submission)
-        submission.draft_revision = draft_revision
-        submission.save()
+        draft_revision = ApplicationRevisionFactory(submission=self.submission)
+        self.submission.draft_revision = draft_revision
+        self.submission.save()
 
-        draft_submission = submission.from_draft()
-        response = self.get_page(submission)
+        draft_submission = self.submission.from_draft()
+        response = self.get_page(self.submission)
 
         self.assertContains(response, draft_submission.title)
 
@@ -154,45 +172,41 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotContains(response, 'Congratulations')
 
     def test_get_congratulations_draft_proposal(self):
-        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
-        response = self.get_page(submission)
+        response = self.get_page(self.draft_proposal_submission)
         self.assertContains(response, 'Congratulations')
 
     def test_can_edit_own_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
-        response = self.get_page(submission, 'edit')
-        self.assertContains(response, submission.title)
+        response = self.get_page(self.draft_proposal_submission, 'edit')
+        self.assertContains(response, self.draft_proposal_submission.title)
 
     def test_can_submit_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
-        old_status = submission.status
+        old_status = self.draft_proposal_submission.status
 
-        data = prepare_form_data(submission, title='This is different')
+        data = prepare_form_data(self.draft_proposal_submission, title='This is different')
 
-        response = self.post_page(submission, {'submit': True, **data}, 'edit')
+        response = self.post_page(self.draft_proposal_submission, {'submit': True, **data}, 'edit')
 
-        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': submission.id})
+        url = self.url_from_pattern('funds:submissions:detail', kwargs={'pk': self.draft_proposal_submission.id})
 
         self.assertRedirects(response, url)
-        submission = self.refresh(submission)
+        submission = self.refresh(self.draft_proposal_submission)
         self.assertNotEqual(old_status, submission.status)
 
     def test_gets_draft_on_edit_submission(self):
-        submission = ApplicationSubmissionFactory(user=self.user, draft_proposal=True)
-        draft_revision = ApplicationRevisionFactory(submission=submission)
-        submission.draft_revision = draft_revision
-        submission.save()
+        draft_revision = ApplicationRevisionFactory(submission=self.draft_proposal_submission)
+        self.draft_proposal_submission.draft_revision = draft_revision
+        self.draft_proposal_submission.save()
 
-        response = self.get_page(submission, 'edit')
+        response = self.get_page(self.draft_proposal_submission, 'edit')
         self.assertDictEqual(response.context['object'].form_data, draft_revision.form_data)
 
     def test_cant_edit_submission_incorrect_state(self):
-        submission = ApplicationSubmissionFactory(user=self.user, workflow_stages=2)
+        submission = InvitedToProposalFactory(user=self.user)
         response = self.get_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
 
     def test_cant_edit_other_submission(self):
-        submission = ApplicationSubmissionFactory(draft_proposal=True)
+        submission = InvitedToProposalFactory(draft=True)
         response = self.get_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
 

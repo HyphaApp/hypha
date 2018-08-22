@@ -23,10 +23,14 @@ class BaseViewTestCase(TestCase):
     base_view_name = ''
     user_factory = None
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = cls.user_factory()
+        super().setUpTestData()
+
     def setUp(self):
-        self.factory = RequestFactory()
-        self.user = self.user_factory()
         self.client.force_login(self.user)
+        self.factory = RequestFactory()
 
     def get_kwargs(self, instance):
         return {}
