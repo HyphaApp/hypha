@@ -259,7 +259,7 @@ class EmailAdapter(AdapterBase):
     def reviewers(self, submission):
         return [
             reviewer.email
-            for reviewer in submission.reviewers.all()
+            for reviewer in submission.missing_reviewers.all()
             if submission.phase.permissions.can_review(reviewer)
         ]
 
