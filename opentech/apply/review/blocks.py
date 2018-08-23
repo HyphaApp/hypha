@@ -8,7 +8,7 @@ from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.review.fields import ScoredAnswerField
 from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA
-from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock
+from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
 from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
 
@@ -75,5 +75,7 @@ class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
     text = TextFieldBlock(group=_('Fields'))
     text_markup = RichTextBlock(group=_('Fields'), label=_('Paragraph'))
     score = ScoreFieldBlock(group=_('Fields'))
+    checkbox = CheckboxFieldBlock(group=_('Fields'))
+    dropdown = DropdownFieldBlock(group=_('Fields'))
 
     required_blocks = ReviewMustIncludeFieldBlock.__subclasses__()
