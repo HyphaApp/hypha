@@ -17,7 +17,7 @@
 
     <div class="wrapper wrapper--listings">
     {% for child_page in page.get_children.public.live %}
-        {% include "apply_home/includes/apply_listing.html" with page=child_page %}
+        {% include "apply_home/includes/apply_listing.html" with page=child_page.specific %}
     {% endfor %}
     </div>
 
