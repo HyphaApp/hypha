@@ -47,6 +47,14 @@ class StaffReviewListingTestCase(BaseViewTestCase):
         for review in reviews:
             self.assertContains(response, review.author.full_name)
 
+    def test_draft_reviews_dont_appear(self):
+        submission = ApplicationSubmissionFactory()
+        review = ReviewFactory.create(submission=submission, is_draft=True)
+        response = self.get_page(submission, 'list')
+        self.assertContains(response, submission.title)
+        self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
+        self.assertNotContains(response, review.author.full_name)
+
 
 class StaffReviewFormTestCase(BaseViewTestCase):
     user_factory = StaffFactory

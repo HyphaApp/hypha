@@ -119,7 +119,7 @@ class ReviewListView(ListView):
 
     def get_queryset(self):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        self.queryset = self.model.objects.filter(submission=self.submission)
+        self.queryset = self.model.objects.filter(submission=self.submission, is_draft=False)
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):
