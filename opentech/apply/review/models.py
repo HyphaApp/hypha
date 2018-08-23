@@ -20,6 +20,7 @@ from .blocks import (
     ScoreFieldBlock,
 )
 
+
 class ReviewFormFieldsMixin(models.Model):
     class Meta:
         abstract = True
