@@ -320,10 +320,23 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             self.object.create_revision(draft=True, by=self.request.user)
             return self.form_invalid(form)
 
-        action = set(self.request.POST.keys()) & set(self.transitions.keys())
+        created = self.object.create_revision(by=self.request.user)
+        if created:
+            messenger(
+                MESSAGES.APPLICANT_EDIT,
+                request=self.request,
+                user=self.request.user,
+                submission=self.object,
+            )
 
+        action = set(self.request.POST.keys()) & set(self.transitions.keys())
         transition = self.transitions[action.pop()]
-        self.object.perform_transition(transition.target, self.request.user, request=self.request)
+
+        self.object.perform_transition(
+            transition.target,
+            self.request.user,
+            request=self.request,
+        )
 
         return HttpResponseRedirect(self.get_success_url())
 
