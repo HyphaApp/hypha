@@ -78,7 +78,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        super().form_valid(form)
 
         if not self.object.is_draft:
             messenger(
@@ -99,21 +99,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
             self.submission.perform_transition(transition, self.request.user, request=self.request)
 
-        return self.progress_stage(self.submission) or response
-
-    def progress_stage(self, instance):
-        try:
-            instance.perform_transition('draft_proposal', self.request.user, request=self.request)
-        except PermissionDenied:
-            pass
-        else:
-            messenger(
-                MESSAGES.INVITED_TO_PROPOSAL,
-                request=self.request,
-                user=self.request.user,
-                submission=instance,
-            )
-            return HttpResponseRedirect(instance.get_absolute_url())
+        return HttpResponseRedirect(self.submission.get_absolute_url())
 
 
 @method_decorator(staff_required, name='dispatch')

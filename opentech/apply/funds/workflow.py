@@ -404,6 +404,21 @@ WORKFLOWS = {
 PHASES = list(itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values()))
 
 
+def get_stage_change_actions():
+    changes = set()
+    for workflow in WORKFLOWS.values():
+        stage = None
+        for phase in workflow.values():
+            if phase.stage != stage and stage:
+                changes.add(phase.name)
+            stage = phase.stage
+
+    return changes
+
+
+STAGE_CHANGE_ACTIONS = get_stage_change_actions()
+
+
 STATUSES = defaultdict(set)
 
 for key, value in PHASES:
