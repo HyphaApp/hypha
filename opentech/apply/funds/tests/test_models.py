@@ -200,7 +200,8 @@ class TestFormSubmission(TestCase):
     def submit_form(self, page=None, email=None, name=None, user=AnonymousUser(), ignore_errors=False):
         page = page or self.round_page
 
-        data = CustomFormFieldsFactory.form_response(page.form_fields)
+        fields = page.forms.first().fields
+        data = CustomFormFieldsFactory.form_response(fields)
 
         # Add our own data
         for field in page.forms.first().fields:
