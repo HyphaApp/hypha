@@ -1,0 +1,102 @@
+.select2 {
+    &-container {
+        z-index: 99995; // to override any modals
+    }
+
+    .select2-container--default,
+    &.select2-container--default {
+        width: 100% !important; // sass-lint:disable-line no-important
+
+        .select2-selection--single {
+            height: 55px;
+            border: 1px solid $color--mid-grey;
+            border-radius: 0;
+
+            &.is-active {
+                font-weight: $weight--bold;
+                border-color: $color--primary;
+            }
+
+            .select2-selection__clear {
+                position: absolute;
+                right: 35px;
+                display: none;
+                float: none;
+
+                @include media-query(small-tablet) {
+                    display: block;
+                }
+            }
+
+            .select2-selection__rendered {
+                padding-left: 15px;
+                line-height: 55px;
+            }
+
+            .select2-selection__arrow {
+                right: 15px;
+                height: 53px;
+                pointer-events: none;
+                background: url('./../../images/dropdown.svg') transparent no-repeat 95% center;
+                background-size: 8px;
+
+                b[role='presentation'] {
+                    display: none;
+                }
+            }
+
+            .select2-selection__placeholder {
+                color: $color--default;
+            }
+        }
+    }
+}
+
+.select2-container {
+    &--default {
+        .select2-results__option--highlighted[aria-selected] {
+            color: $color--default !important; // sass-lint:disable-line no-important
+            background-color: transparentize($color--primary, 0.9) !important; // sass-lint:disable-line no-important
+        }
+    }
+
+    .select2-dropdown {
+        border: 0;
+        border-bottom: 1px solid $color--mid-grey;
+        border-radius: 0;
+
+        @include media-query(small-tablet) {
+            border: 1px solid $color--mid-grey;
+        }
+    }
+
+    .select2-results__option {
+        padding: 0;
+
+        &[aria-selected='true'] {
+            .wrap {
+                &::before {
+                    background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
+                    background-size: 12px;
+                    border: 1px solid $color--dark-blue;
+                    content: '';
+                }
+            }
+        }
+
+        .wrap {
+            display: flex;
+            align-items: center;
+            padding: 6px;
+
+            &::before {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                background: $color--white;
+                border: 1px solid $color--mid-grey;
+                content: '';
+            }
+        }
+    }
+}
