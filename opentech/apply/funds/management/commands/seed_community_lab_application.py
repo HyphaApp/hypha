@@ -30,6 +30,7 @@ class Command(BaseCommand):
             {"type": "email", "value": {"field_label": "E-mail", "help_text": "", "info": None}, "id": "02a6cd0e-7ff6-46cd-9bdb-bf5858fe2514"},
             {"type": "date", "value": {"field_label": "Date of event", "help_text": "", "required": "", "default_value": ""}, "id": "8c74af9c-6cc7-4558-9d72-0f2c9a87f22b"},
             {"type": "value", "value": {"field_label": "Amount requested", "help_text": "", "info": None}, "id": "dfa76e03-0148-421b-a0fb-67f6fa1edee0"},
+            {"type": "duration", "value": {"field_label": "Duration", "help_text": "", "info": None}, "id": "c61fbc9a-6da9-4293-9e21-3e20724bd36c"},
             {"type": "text_markup", "value": "<h3>More information about your product</h3>", "id": "d2090b37-11e0-4282-8f98-5edfb05918c0"},
             {"type": "rich_text", "value": {"field_label": "Please provide us a description of this event", "help_text": "", "required": "", "default_value": ""}, "id": "fe488e12-b5f4-491a-9ca9-d7aff0993884"},
             {"type": "rich_text", "value": {"field_label": "Please describe the target audience(s)", "help_text": "", "required": "", "default_value": ""}, "id": "e7a0bc56-ad5d-4be7-9709-eb823a0e6e3d"},
