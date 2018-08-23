@@ -3,23 +3,10 @@ import json
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.review.blocks import ScoredAnswerField
 from opentech.apply.review.options import NA
 from opentech.apply.stream_forms.forms import StreamBaseForm
 
-from .blocks import RecommendationBlock
 from .models import Review
-
-
-def get_recommendation_field(fields):
-    for field in fields:
-        try:
-            block = field.block
-        except AttributeError:
-            pass
-        else:
-            if isinstance(block, RecommendationBlock):
-                return field.id
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -76,7 +63,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score(self.cleaned_data)
-        self.instance.recommendation = int(self.cleaned_data[get_recommendation_field(self.instance.form_fields)])
+        self.instance.recommendation = int(self.cleaned_data[self.instance.reccomendation_field.id])
         self.instance.is_draft = self.draft_button_name in self.data
 
         self.instance.form_data = self.cleaned_data['form_data']
@@ -90,8 +77,8 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
     def calculate_score(self, data):
         scores = list()
 
-        for field in self.get_score_fields():
-            value = json.loads(data.get(field, '[null, null]'))
+        for field in self.instance.score_fields:
+            value = json.loads(data.get(field.id, '[null, null]'))
 
             try:
                 score = int(value[1])
@@ -104,7 +91,4 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         try:
             return sum(scores) / len(scores)
         except ZeroDivisionError:
-            return 0
-
-    def get_score_fields(self):
-        return [field_name for field_name, field in self.fields.items() if isinstance(field, ScoredAnswerField)]
+            return NA
