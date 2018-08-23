@@ -323,7 +323,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 MESSAGES.PROPOSAL_SUBMITTED,
                 request=self.request,
                 user=self.request.user,
-                submission=self.object.instance,
+                submission=self.object,
             )
         elif created:
             messenger(
