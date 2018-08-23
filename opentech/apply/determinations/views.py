@@ -97,7 +97,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     submission=self.submission,
                 )
 
-            self.submission.perform_transition(transition, self.request.user, request=self.request)
+            self.submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 

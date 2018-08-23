@@ -1,12 +1,14 @@
 from copy import copy
 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView, UpdateView
 
 from django_filters.views import FilterView
@@ -28,6 +30,7 @@ from .differ import compare
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
+from .workflow import STAGE_CHANGE_ACTIONS
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -82,18 +85,7 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
-        submitting_proposal = self.object.phase.name == 'proposal_draft' and action == 'proposal_discussion'
-
-        self.object.perform_transition(action, self.request.user, request=self.request, notify=not submitting_proposal)
-
-        if submitting_proposal:
-            messenger(
-                MESSAGES.PROPOSAL_SUBMITTED,
-                request=self.request,
-                user=self.request.user,
-                submission=self.object.instance,
-            )
-
+        self.object.perform_transition(action, self.request.user, request=self.request)
         return super().form_valid(form)
 
 
@@ -320,10 +312,20 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
 
         if 'save' in self.request.POST:
             self.object.create_revision(draft=True, by=self.request.user)
+            messages.success(self.request, _('Submission saved successfully'))
             return self.form_invalid(form)
 
         created = self.object.create_revision(by=self.request.user)
-        if created:
+        submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
+
+        if submitting_proposal:
+            messenger(
+                MESSAGES.PROPOSAL_SUBMITTED,
+                request=self.request,
+                user=self.request.user,
+                submission=self.object.instance,
+            )
+        elif created:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
@@ -338,7 +340,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             transition.target,
             self.request.user,
             request=self.request,
-            notify=not created,  # Use the APPLICANT_EDIT notification
+            notify=not (created or submitting_proposal),  # Use the other notification
         )
 
         return HttpResponseRedirect(self.get_success_url())
