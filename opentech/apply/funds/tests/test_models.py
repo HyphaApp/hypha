@@ -9,8 +9,6 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from wagtail.core.models import Site
-
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
 from opentech.apply.funds.workflow import Request
