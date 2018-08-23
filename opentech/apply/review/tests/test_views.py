@@ -87,7 +87,7 @@ class StaffReviewFormTestCase(BaseViewTestCase):
 
     def test_can_edit_draft_review(self):
         ReviewFactory(submission=self.submission, author=self.user, is_draft=True)
-        response = self.post_page(self.submission, {'data': 'value'}, 'form')
+        response = self.get_page(self.submission, 'form')
         self.assertEqual(response.context['has_submitted_review'], False)
         self.assertEqual(response.context['title'], 'Update Review draft')
 

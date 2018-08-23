@@ -4,7 +4,7 @@ from tinymce import TinyMCE
 from django.forms import widgets
 from django.utils.safestring import mark_safe
 
-from opentech.apply.review.options import RATE_CHOICES
+from opentech.apply.review.options import RATE_CHOICES, NA
 from opentech.apply.utils.options import MCE_ATTRIBUTES_SHORT
 
 
@@ -47,4 +47,7 @@ class ScoredAnswerField(forms.MultiValueField):
         super().__init__(fields=fields, *args, **kwargs)
 
     def compress(self, data_list):
-        return [data_list[0], int(data_list[1])]
+        if data_list:
+            return [data_list[0], int(data_list[1])]
+        else:
+            return ['', NA]
