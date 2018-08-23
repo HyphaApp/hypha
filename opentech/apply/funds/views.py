@@ -336,6 +336,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             transition.target,
             self.request.user,
             request=self.request,
+            notify=not created,  # Use the APPLICANT_EDIT notification
         )
 
         return HttpResponseRedirect(self.get_success_url())
