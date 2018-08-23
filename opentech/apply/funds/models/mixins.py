@@ -22,33 +22,27 @@ class AccessFormData:
         # values
         data = self.form_data.copy()
         for field_name, field_id in self.must_include.items():
-            response = data.pop(field_name)
-            data[field_id] = response
+            if field_id not in data:
+                response = data[field_name]
+                data[field_id] = response
         return data
 
+    def get_definitive_id(self, id):
+        if id in self.must_include:
+            return self.must_include[id]
+        return id
+
     def field(self, id):
-        try:
-            return self.fields[id]
-        except KeyError as e:
-            try:
-                actual_id = self.must_include[id]
-            except KeyError:
-                raise e
-            else:
-                return self.fields[actual_id]
+        definitive_id = self.get_definitive_id(id)
+        return self.raw_fields[definitive_id]
 
     def data(self, id):
+        definitive_id = self.get_definitive_id(id)
         try:
-            return self.form_data[id]
+            return self.raw_data[definitive_id]
         except KeyError as e:
-            try:
-                transposed_must_include = {v: k for k, v in self.must_include.items()}
-                actual_id = transposed_must_include[id]
-            except KeyError:
-                # We have most likely progressed application forms so the data isnt in form_data
-                return None
-            else:
-                return self.form_data[actual_id]
+            # We have most likely progressed application forms so the data isnt in form_data
+            return None
 
     @property
     def question_field_ids(self):

@@ -130,6 +130,7 @@ class ReviewListView(ListView):
         review_data['score'] = {'question': 'Overall Score', 'answers': list()}
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
         review_data['revision'] = {'question': 'Revision', 'answers': list()}
+        review_data['comments'] = {'question': 'Comments', 'answers': list()}
 
         responses = self.object_list.count()
 
@@ -137,6 +138,7 @@ class ReviewListView(ListView):
             review_data['title']['answers'].append(str(review.author))
             review_data['score']['answers'].append(str(review.score))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
+            review_data['comments']['answers'].append(review.get_comments_display(include_question=False))
             if review.for_latest:
                 revision = 'Current'
             else:

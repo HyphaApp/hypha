@@ -127,6 +127,9 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     def outcome(self):
         return self.get_recommendation_display()
 
+    def get_comments_display(self, include_question=True):
+        return self.render_answer(self.comment_field.id, include_question=include_question)
+
     def get_absolute_url(self):
         return reverse('apply:reviews:review', args=(self.id,))
 
