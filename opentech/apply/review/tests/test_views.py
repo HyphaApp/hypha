@@ -115,6 +115,23 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         review = self.submission.reviews.first()
         self.assertEqual(review.score, score)
 
+    def test_average_score_calculated(self):
+        form = ReviewFormFactory(form_fields__multiple__score=2)
+        review_form = self.submission.round.review_forms.first()
+        review_form.form = form
+        review_form.save()
+
+        score_1, score_2 = 1, 5
+
+        data = ReviewFormFieldsFactory.form_response(form.form_fields, {
+            field.id: {'score': score}
+            for field, score in zip(form.score_fields, [score_1, score_2])
+        })
+
+        self.post_page(self.submission, data, 'form')
+        review = self.submission.reviews.first()
+        self.assertEqual(review.score, (score_1 + score_2) / 2)
+
     def test_no_score_is_NA(self):
         form = ReviewFormFactory(form_fields__exclude__score=True)
         review_form = self.submission.round.review_forms.first()

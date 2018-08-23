@@ -177,29 +177,40 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
     def build_form(self, data):
         extras = defaultdict(dict)
         exclusions = []
+        multiples = dict()
         for field, value in data.items():
             # we dont care about position
             name, attr = field.split('__')
             if name == 'exclude':
                 exclusions.append(attr)
+            elif name == 'multiple':
+                multiples[attr] = value
             else:
                 extras[name] = {attr: value}
 
+        defined_both = set(exclusions) & set(multiples)
+        if defined_both:
+            raise ValueError(
+                'Cant exclude and provide multiple at the same time: {}'.format(', '.join(defined_both))
+            )
 
         form_fields = {}
-        for i, field in enumerate(self.factories):
+        field_count = 0
+        for field in self.factories:
             if field == 'text_markup' or field in exclusions:
                 pass
             else:
-                form_fields[f'{i}__{field}__'] = ''
+                for _ in range(multiples.get(field, 1)):
+                    form_fields[f'{field_count}__{field}__'] = ''
+                    field_count += 1
             for attr, value in extras[field].items():
-                form_fields[f'{i}__{field}__{attr}'] = value
+                form_fields[f'{field_count}__{field}__{attr}'] = value
 
         return form_fields
 
     def form_response(self, fields, field_values=dict()):
         data = {
-            field.id: self.factories[field.block.name].make_form_answer(field_values.get(field, {}))
+            field.id: self.factories[field.block.name].make_form_answer(field_values.get(field.id, {}))
             for field in fields
             if hasattr(self.factories[field.block.name], 'make_form_answer')
         }

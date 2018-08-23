@@ -78,15 +78,9 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         scores = list()
 
         for field in self.instance.score_fields:
-            value = json.loads(data.get(field.id, '[null, null]'))
-
-            try:
-                score = int(value[1])
-            except TypeError:
-                pass
-            else:
-                if score != NA:
-                    scores.append(score)
+            score = data.get(field.id)[1]
+            if score != NA:
+                scores.append(score)
 
         try:
             return sum(scores) / len(scores)
