@@ -82,9 +82,11 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
                 'apply:submissions:determinations:form',
                 args=(form.instance.id,)) + "?action=" + action)
 
-        self.object.perform_transition(action, self.request.user, request=self.request)
+        submitting_proposal = self.object.phase.name == 'proposal_draft' and action == 'proposal_discussion'
 
-        if self.object.phase.name == 'proposal_discussion' and action == 'proposal_discussion':
+        self.object.perform_transition(action, self.request.user, request=self.request, notify=not submitting_proposal)
+
+        if submitting_proposal:
             messenger(
                 MESSAGES.PROPOSAL_SUBMITTED,
                 request=self.request,
