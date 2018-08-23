@@ -8,7 +8,8 @@ from django.db import transaction
 
 from opentech.apply.categories.models import Category
 from opentech.apply.funds.models import ApplicationForm, FundType, Round
-from opentech.apply.funds.models.forms import ApplicationBaseForm
+from opentech.apply.funds.models.forms import ApplicationBaseForm, ApplicationBaseReviewForm
+from opentech.apply.review.models import ReviewForm
 
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -27,7 +28,8 @@ class Command(BaseCommand):
             return
 
         application_form = self.create_rapid_response_form()
-        fund = self.create_rapid_response_fund_type(application_form)
+        application_review_form = self.create_rapid_response_review_form()
+        fund = self.create_rapid_response_fund_type(application_form, application_review_form)
         self.create_rapid_response_round(fund)
 
     def create_rapid_response_form(self):
@@ -87,7 +89,24 @@ class Command(BaseCommand):
 
         return application_form
 
-    def create_rapid_response_fund_type(self, application_form):
+    def create_rapid_response_review_form(self):
+
+        data2 = [
+            {"type": "Recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "d350fbf9-e332-4d7f-b238-7f545cff927a"},
+            {"type": "rich_text", "value": {"field_label": "Things that you liked", "help_text": "", "required": "", "default_value": ""}, "id": "cec815a0-fab1-4142-9fc6-71319b054b2a"},
+            {"type": "rich_text", "value": {"field_label": "Things that concern you", "help_text": "", "required": "", "default_value": ""}, "id": "6915acf0-9a19-4e73-8d2b-d96e39e3b00e"},
+            {"type": "score", "value": {"field_label": "How appropriate are the proposed objectives for rapid response support?", "help_text": "", "required": ""}, "id": "71bfe95d-89c5-401b-ae7a-778e91d5c8c5"},
+            {"type": "score", "value": {"field_label": "How would you rate the applicant's capacity and knowledge to carry out this project?", "help_text": "", "required": ""}, "id": "3aa164c1-4386-4046-997a-a2778e1d894e"},
+            {"type": "score", "value": {"field_label": "Does the applicant provide sufficient justification for the amount of funding requested (is this cost effective)?", "help_text": "", "required": ""}, "id": "7cc12bb6-4c12-48aa-a269-1fd6d725abfe"},
+            {"type": "rich_text", "value": {"field_label": "Justification comments", "help_text": "", "required": "", "default_value": ""}, "id": "abc61bba-2a9e-4a9e-8c06-a1824ea2a998"},
+            {"type": "Comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "d94e51d3-026c-443f-a98a-a66b1f6c968c"}
+        ]
+
+        rapid_response_review_form, _ = ReviewForm.objects.get_or_create(name='Rapid response review', defaults={'form_fields': json.dumps(data2)})
+
+        return rapid_response_review_form
+
+    def create_rapid_response_fund_type(self, application_form, application_review_form):
         try:
             fund = FundType.objects.get(title='Rapid Response')
         except FundType.DoesNotExist:
@@ -98,6 +117,8 @@ class Command(BaseCommand):
 
             fund_form = ApplicationBaseForm.objects.create(application=fund, form=application_form)
             fund.forms = [fund_form]
+            fund_review_form = ApplicationBaseReviewForm.objects.create(application=fund, form=application_review_form)
+            fund.review_forms = [fund_review_form]
             fund.save()
 
         return fund

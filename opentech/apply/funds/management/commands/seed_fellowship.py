@@ -8,7 +8,8 @@ from django.db import transaction
 
 from opentech.apply.categories.models import Category
 from opentech.apply.funds.models import ApplicationForm, FundType, Round
-from opentech.apply.funds.models.forms import ApplicationBaseForm
+from opentech.apply.funds.models.forms import ApplicationBaseForm, ApplicationBaseReviewForm
+from opentech.apply.review.models import ReviewForm
 
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -29,7 +30,9 @@ class Command(BaseCommand):
 
         application_form = self.create_fellowship_application_form()
         proposal_form = self.create_fellowship_proposal_form()
-        fund = self.create_fellowship_fund_type(application_form, proposal_form)
+        application_review_form = self.create_fellowship_application_review_form()
+        proposal_review_form = self.create_fellowship_proposal_review_form()
+        fund = self.create_fellowship_fund_type(application_form, proposal_form, application_review_form, proposal_review_form)
         self.create_fellowship_round(fund)
 
     def create_fellowship_application_form(self):
@@ -107,7 +110,37 @@ class Command(BaseCommand):
 
         return proposal_form
 
-    def create_fellowship_fund_type(self, application_form, proposal_form):
+    def create_fellowship_application_review_form(self):
+
+        data3 = [
+            {"type": "Recommendation", "value": {"field_label": "Overall, do you think we should select this applicant and their project to be part of the fellowship program?", "help_text": "", "info": None}, "id": "56264b32-fa39-4c08-b41e-68e9c54b2712"},
+            {"type": "rich_text", "value": {"field_label": "If no, please select a reason why not.", "help_text": "", "required": "", "default_value": ""}, "id": "f0533950-57f5-4bb7-81ec-2d3813490c88"},
+            {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "ba789376-e3f9-434e-8da5-330811723b30"},
+            {"type": "Comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "e74e2581-d06c-43b1-9c0b-911407225834"}
+        ]
+
+        application_review_form, _ = ReviewForm.objects.get_or_create(name='Fellowship application review', defaults={'form_fields': json.dumps(data3)})
+
+        return application_review_form
+
+    def create_fellowship_proposal_review_form(self):
+
+        data4 = [
+            {"type": "Recommendation", "value": {"field_label": "Overall, do you think we should select this applicant and their project to be part of the fellowship program?", "help_text": "", "info": None}, "id": "e1ea4f9d-64e2-4f28-a68a-851ec0f2d9ad"},
+            {"type": "rich_text", "value": {"field_label": "If no, please select a reason why not.", "help_text": "", "required": "", "default_value": ""}, "id": "e68b6fe9-8b11-4cf0-8ae4-2ffed75e1e80"},
+            {"type": "rich_text", "value": {"field_label": "If yes, but you believe some changes need to be made to the proposed effort, please let us know.", "help_text": "", "required": "", "default_value": ""}, "id": "a413f3a2-b486-4bf3-9e2d-c48d19626876"},
+            {"type": "score", "value": {"field_label": "Goals and principles", "help_text": "", "required": ""}, "id": "d40e541c-ccc0-4ede-94d1-bd8680b47004"},
+            {"type": "score", "value": {"field_label": "Technical merit", "help_text": "", "required": ""}, "id": "4af1e000-25be-4cf1-a787-8e5fd91feba8"},
+            {"type": "score", "value": {"field_label": "Reasonable and realistic", "help_text": "", "required": ""}, "id": "f839ec7e-1136-4fcd-b59e-c04e02d5abf6"},
+            {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "536c963a-f183-45bc-b83f-458b46dc5542"},
+            {"type": "Comments", "value": {"field_label": "Anything else you'd like to give us feedback on?", "help_text": "", "info": None}, "id": "cc82ba7b-b55e-4309-85f0-f68ad6f43471"}
+        ]
+
+        proposal_review_form, _ = ReviewForm.objects.get_or_create(name='Fellowship proposal review', defaults={'form_fields': json.dumps(data4)})
+
+        return proposal_review_form
+
+    def create_fellowship_fund_type(self, application_form, proposal_form, application_review_form, proposal_review_form):
         try:
             fund = FundType.objects.get(title=FS_FUND_TITLE)
         except FundType.DoesNotExist:
@@ -119,6 +152,9 @@ class Command(BaseCommand):
             fund_form = ApplicationBaseForm.objects.create(application=fund, form=application_form)
             fund_form2 = ApplicationBaseForm.objects.create(application=fund, form=proposal_form)
             fund.forms = [fund_form, fund_form2]
+            fund_review_form = ApplicationBaseReviewForm.objects.create(application=fund, form=application_review_form)
+            fund_review_form2 = ApplicationBaseReviewForm.objects.create(application=fund, form=proposal_review_form)
+            fund.review_forms = [fund_review_form, fund_review_form2]
             fund.save()
 
         return fund

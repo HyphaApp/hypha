@@ -1,13 +1,12 @@
 import json
 
-from datetime import date
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from opentech.apply.funds.models import ApplicationForm, LabType
-from opentech.apply.funds.models.forms import LabBaseForm
+from opentech.apply.funds.models.forms import LabBaseForm, LabBaseReviewForm
+from opentech.apply.review.models import ReviewForm
 
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -19,7 +18,8 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         application_form = self.create_community_lab_form()
-        self.create_community_lab_fund_type(application_form)
+        application_review_form = self.create_community_lab_review_form()
+        self.create_community_lab_fund_type(application_form, application_review_form)
 
     def create_community_lab_form(self):
 
@@ -61,7 +61,26 @@ class Command(BaseCommand):
 
         return application_form
 
-    def create_community_lab_fund_type(self, application_form):
+    def create_community_lab_review_form(self):
+
+        data2 = [
+            {"type": "text_markup", "value": "<h3>Conflicts of Interest and Confidentialit</h3>", "id": "fe01dccb-87db-4dba-8cb8-f75e6f3448e6"},
+            {"type": "rich_text", "value": {"field_label": "Conflict(s) of interest disclosure", "help_text": "", "required": "", "default_value": ""}, "id": "f3c42cf1-e5ef-4674-bf6c-8e4640ee0d58"},
+            {"type": "Recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "caa6d522-4cfc-4f96-a29b-773a2de03e31"},
+            {"type": "score", "value": {"field_label": "How well do the goals and objectives fit OTF’s remit?", "help_text": "", "required": ""}, "id": "732fc004-3086-44e1-8508-e0f17c3732a8"},
+            {"type": "rich_text", "value": {"field_label": "What do you like about the proposed effort?", "help_text": "", "required": "", "default_value": ""}, "id": "f3c42cf1-e5ef-4674-bf6c-8e4640ee0d58"},
+            {"type": "rich_text", "value": {"field_label": "What do you not like about the proposed effort?", "help_text": "", "required": "", "default_value": ""}, "id": "e1e69628-c663-4cd2-a0ea-507ad01149de"},
+            {"type": "rich_text", "value": {"field_label": "What areas, if any, would you like more information?", "help_text": "", "required": "", "default_value": ""}, "id": "3033f228-58af-4944-b884-736fe6258bd6"},
+            {"type": "rich_text", "value": {"field_label": "How could they can improve collaboration or the inclusion of diverse voices?", "help_text": "", "required": "", "default_value": ""}, "id": "20ec1ed7-4e3e-433c-944a-7c20cd6245c8"},
+            {"type": "rich_text", "value": {"field_label": "Are there any individuals, communities, or networks they should reach out to?", "help_text": "", "required": "", "default_value": ""}, "id": "fd361c53-a263-4572-8403-74f6736d38fc"},
+            {"type": "Comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "d74e398e-6e64-43ae-b799-a3b79860c80e"}
+        ]
+
+        community_lab_review_form, _ = ReviewForm.objects.get_or_create(name='Community lab review', defaults={'form_fields': json.dumps(data2)})
+
+        return community_lab_review_form
+
+    def create_community_lab_fund_type(self, application_form, application_review_form):
         User = get_user_model()
 
         try:
@@ -79,6 +98,8 @@ class Command(BaseCommand):
 
             lab_form = LabBaseForm.objects.create(lab=lab, form=application_form)
             lab.forms = [lab_form]
+            lab_review_form = LabBaseReviewForm.objects.create(lab=lab, form=application_review_form)
+            lab.review_forms = [lab_review_form]
             lab.save()
 
         return lab

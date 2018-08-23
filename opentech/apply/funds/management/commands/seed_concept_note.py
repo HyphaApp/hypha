@@ -8,7 +8,9 @@ from django.db import transaction
 
 from opentech.apply.categories.models import Category
 from opentech.apply.funds.models import ApplicationForm, FundType, Round
-from opentech.apply.funds.models.forms import ApplicationBaseForm
+from opentech.apply.funds.models.forms import ApplicationBaseForm, ApplicationBaseReviewForm
+from opentech.apply.review.models import ReviewForm
+
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
@@ -28,7 +30,9 @@ class Command(BaseCommand):
 
         application_form = self.create_concept_note_form()
         proposal_form = self.create_proposal_form()
-        fund = self.create_concept_note_fund_type(application_form, proposal_form)
+        application_review_form = self.create_concept_review_form()
+        proposal_review_form = self.create_proposal_review_form()
+        fund = self.create_concept_note_fund_type(application_form, proposal_form, application_review_form, proposal_review_form)
         self.create_concept_note_round(fund)
 
     def create_concept_note_form(self):
@@ -144,7 +148,57 @@ class Command(BaseCommand):
 
         return proposal_form
 
-    def create_concept_note_fund_type(self, application_form, proposal_form):
+    def create_concept_review_form(self):
+
+        data3 = [
+            {"type": "text_markup", "value": "<h3>Conflicts of Interest and Confidentialit</h3>", "id": "4dc49d2f-a886-4244-b347-3614f8d1e399"},
+            {"type": "rich_text", "value": {"field_label": "Conflict(s) of interest disclosure", "help_text": "", "required": "", "default_value": ""}, "id": "f16be0b3-ef02-4876-b056-8a84238b1a52"},
+            {"type": "Recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "25d0d9b0-6e65-4fe3-906a-a1cd211def96"},
+            {"type": "score", "value": {"field_label": "Goals and principles", "help_text": "", "required": ""}, "id": "6dd8d5d2-09a5-4681-aebc-eb9ccd00395a"},
+            {"type": "score", "value": {"field_label": "Technical merit", "help_text": "", "required": ""}, "id": "52b1f53c-9656-4b0c-8b8b-a9c57869356d"},
+            {"type": "score", "value": {"field_label": "Reasonable and realistic", "help_text": "", "required": ""}, "id": "aedb27e7-6044-4e04-b2c7-358065c8fe5c"},
+            {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "84405ba2-f94e-4d4d-92e1-190bd802f858"},
+            {"type": "Comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "5028cac1-752f-4d47-b83a-4f766f19fb2d"}
+        ]
+
+        concept_review_form, _ = ReviewForm.objects.get_or_create(name='Concept review', defaults={'form_fields': json.dumps(data3)})
+
+        return concept_review_form
+
+    def create_proposal_review_form(self):
+
+        data4 = [
+            {"type": "text_markup", "value": "<h3>A. Conflicts of Interest and Confidentialit</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
+            {"type": "checkbox", "value": {"field_label": "I understand about confidentiality", "help_text": "", "default_value": ""}, "id": "65fb2c22-a0c5-4cde-94a7-feb27072bc3d"},
+            {"type": "dropdown", "value": {"field_label": "Do you have any conflicts of interest to report?", "help_text": "", "required": "", "choices": ["Yes", "No"]}, "id": "dd75ce49-e3c4-43da-b724-4cb8bb88dcf8"},
+            {"type": "text_markup", "value": "<h3>B. General thoughts</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
+            {"type": "rich_text", "value": {"field_label": "1. Positive aspects", "help_text": "", "required": "", "default_value": ""}, "id": "e91ed603-61ad-483e-be7b-21716d05a3bd"},
+            {"type": "rich_text", "value": {"field_label": "2. Concerns", "help_text": "", "required": "", "default_value": ""}, "id": "821fb071-7db7-4cc1-ac3a-34b9eee40c94"},
+            {"type": "rich_text", "value": {"field_label": "3. Items that must be ", "help_text": "", "required": "", "default_value": ""}, "id": "021624ac-6628-430d-ba86-e68fd518c87e"},
+            {"type": "text_markup", "value": "<h3>C. Specific aspects</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
+            {"type": "score", "value": {"field_label": "1. Project overview", "help_text": "", "required": ""}, "id": "9c5603d5-f897-42fa-8739-5935769c94bd"},
+            {"type": "score", "value": {"field_label": "2. Proposal objectives", "help_text": "", "required": ""}, "id": "6b748400-fad9-4b31-bb85-e3a53c99f4df"},
+            {"type": "score", "value": {"field_label": "3. Appropriate activities and strategy", "help_text": "", "required": ""}, "id": "a806a944-1d8a-4904-ace0-acfce5634a50"},
+            {"type": "score", "value": {"field_label": "4. Technical feasibility (where applicable)", "help_text": "", "required": ""}, "id": "512a86a5-ec5b-4d36-9630-90648b5b43e4"},
+            {"type": "score", "value": {"field_label": "5. Alternative analysis - red teaming", "help_text": "", "required": ""}, "id": "d9695d1d-3373-4acf-ada5-3b2593b3a634"},
+            {"type": "score", "value": {"field_label": "6. Usability", "help_text": "", "required": ""}, "id": "e43dd4dc-d2fa-493c-9f55-5a126d0e0579"},
+            {"type": "score", "value": {"field_label": "7. Sustainability", "help_text": "", "required": ""}, "id": "ee7009b8-ad18-46b5-a981-ccc52972c0a5"},
+            {"type": "score", "value": {"field_label": "8. Collaboration", "help_text": "", "required": ""}, "id": "dc5dc5e0-e4d6-462f-8296-a0e58933e701"},
+            {"type": "score", "value": {"field_label": "9. Cost realism", "help_text": "", "required": ""}, "id": "31e9b202-24b1-4993-80b7-9851624e2162"},
+            {"type": "score", "value": {"field_label": "10. Qualifications", "help_text": "", "required": ""}, "id": "d3f5479c-68da-41d9-a266-130d383bab6b"},
+            {"type": "score", "value": {"field_label": "11. Evaluation", "help_text": "", "required": ""}, "id": "2a61c71a-74f6-4963-8850-9289e852f604"},
+            {"type": "text_markup", "value": "<h3>D. Rationale and appropriateness consideration</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
+            {"type": "score", "value": {"field_label": "Rationale and appropriateness ", "help_text": "", "required": ""}, "id": "0d1bf533-968c-44b9-bb30-d437ae039474"},
+            {"type": "text_markup", "value": "<h3>E. General recommendation</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
+            {"type": "Recommendation", "value": {"field_label": "Recommendation", "help_text": "", "info": None}, "id": "4bf80578-1c8f-4515-9d6a-e52e87629e3e"},
+            {"type": "Comments", "value": {"field_label": "Recommendation comments", "help_text": "", "info": None}, "id": "a814d7ac-8291-4f3e-b733-4a9a4f1f8a49"}
+        ]
+
+        proposal_review_form, _ = ReviewForm.objects.get_or_create(name='Proposal review', defaults={'form_fields': json.dumps(data4)})
+
+        return proposal_review_form
+
+    def create_concept_note_fund_type(self, application_form, proposal_form, application_review_form, proposal_review_form):
         try:
             fund = FundType.objects.get(title=CN_FUND_TITLE)
         except FundType.DoesNotExist:
@@ -156,6 +210,9 @@ class Command(BaseCommand):
             fund_form = ApplicationBaseForm.objects.create(application=fund, form=application_form)
             fund_form2 = ApplicationBaseForm.objects.create(application=fund, form=proposal_form)
             fund.forms = [fund_form, fund_form2]
+            fund_review_form = ApplicationBaseReviewForm.objects.create(application=fund, form=application_review_form)
+            fund_review_form2 = ApplicationBaseReviewForm.objects.create(application=fund, form=proposal_review_form)
+            fund.review_forms = [fund_review_form, fund_review_form2]
             fund.save()
 
         return fund
