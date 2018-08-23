@@ -22,7 +22,11 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
         template = 'review/render_scored_answer_field.html'
 
     def render(self, value, context=None):
-        comment, score = context['data']
+        try:
+            comment, score = context['data']
+        except ValueError:
+            # TODO: Remove json load as data moved away from JSON
+            comment, score = json.loads(context['data'])
         context.update(**{
             'comment': comment,
             'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)

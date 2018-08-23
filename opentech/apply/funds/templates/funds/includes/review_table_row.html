@@ -6,7 +6,7 @@
             <td>-</td>
         {% else %}
             <td class="reviews-sidebar__author" colspan="2">
-                {% if request.user.is_apply_staff %}
+                {% if request.user.is_apply_staff or request.user == review.author %}
                     <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
                         <span>{{ review.author }}</span>
                     </a>
