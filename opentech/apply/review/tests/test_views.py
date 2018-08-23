@@ -52,14 +52,18 @@ class StaffReviewFormTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:reviews:{}'
     base_view_name = 'review'
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(status='internal_review')
+
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
 
     def test_can_access_form(self):
-        submission = ApplicationSubmissionFactory(status='internal_review')
-        response = self.get_page(submission, 'form')
-        self.assertContains(response, submission.title)
-        self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': submission.id}))
+        response = self.get_page(self.submission, 'form')
+        self.assertContains(response, self.submission.title)
+        self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': self.submission.id}))
 
     def test_cant_access_wrong_status(self):
         submission = ApplicationSubmissionFactory(rejected=True)
@@ -67,37 +71,33 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_resubmit_review(self):
-        submission = ApplicationSubmissionFactory(status='internal_review')
-        ReviewFactory(submission=submission, author=self.user)
-        response = self.post_page(submission, {'data': 'value'}, 'form')
+        ReviewFactory(submission=self.submission, author=self.user)
+        response = self.post_page(self.submission, {'data': 'value'}, 'form')
         self.assertEqual(response.context['has_submitted_review'], True)
         self.assertEqual(response.context['title'], 'Update Review draft')
 
     def test_can_edit_draft_review(self):
-        submission = ApplicationSubmissionFactory(status='internal_review')
-        ReviewFactory(submission=submission, author=self.user, is_draft=True)
-        response = self.post_page(submission, {'data': 'value'}, 'form')
+        ReviewFactory(submission=self.submission, author=self.user, is_draft=True)
+        response = self.post_page(self.submission, {'data': 'value'}, 'form')
         self.assertEqual(response.context['has_submitted_review'], False)
         self.assertEqual(response.context['title'], 'Update Review draft')
 
     def test_revision_captured_on_review(self):
-        submission = ApplicationSubmissionFactory(status='internal_review')
-        field_ids = [f.id for f in submission.round.review_forms.first().fields]
+        field_ids = [f.id for f in self.submission.round.review_forms.first().fields]
 
         data = ReviewFormFieldsFactory.form_response(field_ids)
 
-        self.post_page(submission, data, 'form')
-        review = submission.reviews.first()
-        self.assertEqual(review.revision, submission.live_revision)
+        self.post_page(self.submission, data, 'form')
+        review = self.submission.reviews.first()
+        self.assertEqual(review.revision, self.submission.live_revision)
 
     def test_can_submit_draft_review(self):
-        submission = ApplicationSubmissionFactory(status='internal_review')
-        field_ids = [f.id for f in submission.round.review_forms.first().fields]
+        field_ids = [f.id for f in self.submission.round.review_forms.first().fields]
 
         data = ReviewFormFieldsFactory.form_response(field_ids)
         data['save_draft'] = True
-        self.post_page(submission, data, 'form')
-        review = submission.reviews.first()
+        self.post_page(self.submission, data, 'form')
+        review = self.submission.reviews.first()
         self.assertTrue(review.is_draft)
         self.assertIsNone(review.revision)
 
