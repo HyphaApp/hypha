@@ -40,8 +40,12 @@ class MigrateCommand(BaseCommand):
         with options['source'] as json_data:
             self.data = json.load(json_data)
 
+            counter = 0
             for id in self.data:
                 self.process(id)
+                counter += 1
+
+            self.stdout.write(f"Imported {counter} submissions.")
 
     def process(self, id):
         node = self.data[id]
