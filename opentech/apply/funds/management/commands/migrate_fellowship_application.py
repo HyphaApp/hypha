@@ -57,15 +57,8 @@ class Command(MigrateCommand):
             "key": "safe_value",
         },
         "field_application_duration2": {
-            "id": "611dacd7-553a-4be8-9283-1d006099d0c9",
-            "type": "map",
-            "map": {
-                "3": "3 months",
-                "6": "6 months",
-                "9": "9 months",
-                "12": "12 months",
-                "18": "18 months",
-            },
+            "id": "duration",
+            "type": "value",
         },
         "field_application_host_text": {
             "id": "0afaf4e1-4556-4e79-aa3d-4990e33620da",

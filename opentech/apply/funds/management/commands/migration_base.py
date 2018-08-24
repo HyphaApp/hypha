@@ -75,6 +75,13 @@ class MigrateCommand(BaseCommand):
 
         submission.status = self.get_workflow_state(node)
 
+        if 'proposal_nid' in node:
+            try:
+                submission.next = ApplicationSubmission.objects.get(drupal_id=node['proposal_nid'])
+            except ApplicationSubmission.DoesNotExist:
+                self.stdout.write("No related proposal found, please import proposals before applications.")
+                pass
+
         form_data = {
             'skip_account_creation_notification': True,
         }
@@ -90,8 +97,8 @@ class MigrateCommand(BaseCommand):
         if "value" not in form_data:
             form_data["value"] = 0
 
-        if "duration" not in form_data:
-            form_data["duration"] = 0
+        if not form_data["duration"]:
+            form_data["duration"] = "1"
 
         submission.form_data = form_data
 
@@ -99,7 +106,7 @@ class MigrateCommand(BaseCommand):
             submission.save()
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
-            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+            self.stdout.write(f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
             pass
 
     def get_user(self, uid):
@@ -127,7 +134,10 @@ class MigrateCommand(BaseCommand):
         if mapping_type == "direct":
             value = source_value
         elif mapping_type == 'value':
-            value = self.nl2br(source_value[key]) if source_value else ''
+            if key in source_value:
+                value = self.nl2br(source_value[key]) if source_value else ''
+            else:
+                value = self.nl2br(source_value['value']) if source_value else ''
         elif mapping_type == 'map' and 'map' in 'mapping':
             value = mapping['map'].get(source_value[key])
         elif mapping_type == 'address' and 'map' in mapping:
@@ -136,6 +146,7 @@ class MigrateCommand(BaseCommand):
                 value = {}
                 for item in value_map:
                     value[value_map[item]] = source_value[item]
+                value = json.dumps(value)
             except TypeError:
                 value = {}
         elif mapping_type == 'boolean':

@@ -72,16 +72,8 @@ class Command(MigrateCommand):
             "key": "safe_value",
         },
         "field_application_duration3": {
-            "id": "806d401c-b52c-46f7-9e96-f36fa70f53d8",
-            "type": "map",
-            "map": {
-                "1": "1 month",
-                "2": "2 months",
-                "3": "3 months",
-                "4": "4 months",
-                "5": "5 months",
-                "6": "6 months",
-            },
+            "id": "duration",
+            "type": "value",
         },
         "field_application_who": {
             "id": "1ec16cdc-7a68-40be-b17b-9a218def4260",
@@ -162,10 +154,10 @@ class Command(MigrateCommand):
             "id": "bd29eb88-9754-4305-9b2d-406a875ec56a",
             "type": "address",
             "map": {
-                "administrative_area": "administrative_area",
+                "administrative_area": "administrativearea",
                 "country": "country",
-                "locality": "locality_name",
-                "postal_code": "postal_code",
+                "locality": "localityname",
+                "postal_code": "postalcode",
                 "thoroughfare": "thoroughfare",
                 "premise": "premise",
             }
