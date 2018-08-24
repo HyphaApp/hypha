@@ -189,7 +189,7 @@ class MigrateCommand(BaseCommand):
         workbench_moderation: {'current': {'state': STATE, 'timestamp': TS}}
         """
         states_request = {
-            "draft": "",
+            "draft": "in_discussion",
             "published": "in_discussion",
             "in_discussion": "in_discussion",
             "council_review": "internal_review",
@@ -203,7 +203,7 @@ class MigrateCommand(BaseCommand):
         }
 
         states_concept = {
-            "draft": "",
+            "draft": "in_discussion",
             "published": "in_discussion",
             "in_discussion": "in_discussion",
             "council_review": "concept_internal_review",
@@ -221,7 +221,7 @@ class MigrateCommand(BaseCommand):
             "published": "proposal_discussion",
             "in_discussion": "proposal_discussion",
             "council_review": "external_review",
-            "ready_for_reply": "post_external_review_discussion",
+            "ready_for_reply": "proposal_more_info",
             "contract_review": "post_external_review_discussion",
             "in_contract": "proposal_accepted",
             "invited_for_proposal": "proposal_accepted",
