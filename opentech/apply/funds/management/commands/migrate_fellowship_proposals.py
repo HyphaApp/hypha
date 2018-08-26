@@ -15,7 +15,6 @@ class Command(MigrateCommand):
         "field_proposal_common_name": {
             "id": "full_name",
             "type": "value",
-            # If no Drupal value key is specified, we default to 'value'
             "key": "safe_value",
         },
 

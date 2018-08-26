@@ -94,6 +94,8 @@ class Command(BaseCommand):
         data2 = [
             {"type": "text_markup", "value": "<h3>Proposal information</h3>", "id": ""},
             {"type": "title", "value": {"field_label": "Proposal title", "help_text": "", "info": None}, "id": ""},
+            {"type": "full_name", "value": {"field_label": "Your name", "help_text": "", "info": None}, "id": "c0c75948-b3c3-42be-8646-bc2a5d8521c3"},
+            {"type": "email", "value": {"field_label": "E-mail", "help_text": "", "info": None}, "id": "a607ec56-da2a-46d4-b0c9-7c8f3c351a6e"},
             {"type": "value", "value": {"field_label": "If you are applying for direct funding, how much do you need?", "help_text": "Amount requested should be less than 50000 USD.", "info": None}, "id": "cfae89dc-f327-45f4-80e9-f267c3bd1ec7"},
             {"type": "duration", "value": {"field_label": "How long do you want to work on this fellowship?", "help_text": "", "info": None}, "id": "08b9b5c3-e01d-41ac-95be-600a4fee7d87"},
             {"type": "char", "value": {"field_label": "Host organisation", "help_text": "", "required": "", "format": "", "default_value": ""}, "id": "bc03235e-3c78-4770-9fc2-97feb93c2c8c"},

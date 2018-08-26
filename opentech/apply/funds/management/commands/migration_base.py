@@ -101,7 +101,7 @@ class MigrateCommand(BaseCommand):
         if "value" not in form_data:
             form_data["value"] = 0
 
-        if not form_data["duration"]:
+        if "duration" not in form_data or not form_data["duration"]:
             form_data["duration"] = "1"
 
         submission.form_data = form_data
