@@ -28,10 +28,12 @@ class Command(BaseCommand):
                 user = users[uid]
 
                 full_name = self.get_full_name(user)
+                slack_name = self.get_slack_name(user)
                 user_object, created = User.objects.get_or_create(
                     email=self.get_email(user, options['anonymize']),
                     defaults={
                         'full_name': full_name,
+                        'slack': slack_name,
                         'drupal_id': uid,
                     }
                 )
@@ -55,6 +57,15 @@ class Command(BaseCommand):
             full_name = user['name']
 
         return full_name
+
+    def get_slack_name(self, user):
+        slack_name = user.get('field_otf_slack_name', None)
+        try:
+            slack_name = slack_name['safe_value']
+        except (KeyError, TypeError):
+            slack_name = ''
+
+        return slack_name
 
     def get_user_groups(self, user):
         groups = []
