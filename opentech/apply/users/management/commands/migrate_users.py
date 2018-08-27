@@ -50,9 +50,7 @@ class Command(BaseCommand):
     def get_full_name(self, user):
         full_name = user.get('field_otf_real_name', None)
         try:
-            # The Drupal data structure includes a language reference.
-            # The default is 'und' (undefined).
-            full_name = full_name['und'][0]['safe_value']
+            full_name = full_name['safe_value']
         except (KeyError, TypeError):
             full_name = user['name']
 
