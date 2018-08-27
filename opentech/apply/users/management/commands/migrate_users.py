@@ -63,7 +63,6 @@ class Command(BaseCommand):
         role_map = {
             'council': 'Reviewer',
             'administrator': 'Editors',
-            'dev': 'Administrator',
         }
 
         if self.is_staff(user['mail']):
