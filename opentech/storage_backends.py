@@ -6,6 +6,9 @@ class PublicMediaStorage(S3Boto3Storage):
     if hasattr(settings, 'AWS_PUBLIC_BUCKET_NAME'):
         bucket_name = settings.AWS_PUBLIC_BUCKET_NAME
 
+    if hasattr(settings, 'AWS_PUBLIC_CUSTOM_DOMAIN'):
+        custom_domain = settings.AWS_PUBLIC_CUSTOM_DOMAIN
+
     file_overwrite = False
     querystring_auth = False
     url_protocol = 'https:'
