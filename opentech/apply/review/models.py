@@ -19,6 +19,7 @@ from .blocks import (
     RecommendationCommentsBlock,
     ScoreFieldBlock,
 )
+from .options import NA
 
 
 class ReviewFormFieldsMixin(models.Model):
@@ -89,7 +90,7 @@ class ReviewQuerySet(models.QuerySet):
         return self.by_reviewers().recommendation()
 
     def score(self):
-        return self.aggregate(models.Avg('score'))['score__avg']
+        return self.exclude(score=NA).aggregate(models.Avg('score'))['score__avg']
 
     def recommendation(self):
         recommendations = self.values_list('recommendation', flat=True)
@@ -130,6 +131,9 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     def get_comments_display(self, include_question=True):
         return self.render_answer(self.comment_field.id, include_question=include_question)
+
+    def get_score_display(self):
+        return '{:.1f}'.format(self.score) if self.score != NA else 'NA'
 
     def get_absolute_url(self):
         return reverse('apply:reviews:review', args=(self.id,))

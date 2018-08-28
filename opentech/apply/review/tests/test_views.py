@@ -5,6 +5,7 @@ from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory
+from ..models import Review
 from ..options import NA
 
 
@@ -110,46 +111,71 @@ class StaffReviewFormTestCase(BaseViewTestCase):
         self.assertTrue(review.is_draft)
         self.assertIsNone(review.revision)
 
-    def test_score_calculated(self):
-        form = self.submission.round.review_forms.first()
-        score = 5
 
-        data = ReviewFormFieldsFactory.form_response(form.fields, {
-            field.id: {'score': score}
-            for field in form.form.score_fields
-        })
+class TestReviewScore(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
 
-        self.post_page(self.submission, data, 'form')
-        review = self.submission.reviews.first()
-        self.assertEqual(review.score, score)
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(status='internal_review')
 
-    def test_average_score_calculated(self):
-        form = ReviewFormFactory(form_fields__multiple__score=2)
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.id}
+
+    def submit_review_scores(self, *scores):
+        if scores:
+            form = ReviewFormFactory(form_fields__multiple__score=len(scores))
+        else:
+            form = ReviewFormFactory(form_fields__exclude__score=True)
         review_form = self.submission.round.review_forms.first()
         review_form.form = form
         review_form.save()
-
-        score_1, score_2 = 1, 5
 
         data = ReviewFormFieldsFactory.form_response(form.form_fields, {
             field.id: {'score': score}
-            for field, score in zip(form.score_fields, [score_1, score_2])
+            for field, score in zip(form.score_fields, scores)
         })
 
-        self.post_page(self.submission, data, 'form')
-        review = self.submission.reviews.first()
-        self.assertEqual(review.score, (score_1 + score_2) / 2)
+        # Make a new person for every review
+        self.client.force_login(self.user_factory())
+        response = self.post_page(self.submission, data, 'form')
+        self.assertIn(
+            'funds/applicationsubmission_admin_detail.html',
+            response.template_name,
+            msg='Failed to post the form correctly'
+        )
+        self.client.force_login(self.user)
+        return self.submission.reviews.first()
+
+    def test_score_calculated(self):
+        review = self.submit_review_scores(5)
+        self.assertEqual(review.score, 5)
+
+    def test_average_score_calculated(self):
+        review = self.submit_review_scores(1, 5)
+        self.assertEqual(review.score, (1 + 5) / 2)
 
     def test_no_score_is_NA(self):
-        form = ReviewFormFactory(form_fields__exclude__score=True)
-        review_form = self.submission.round.review_forms.first()
-        review_form.form = form
-        review_form.save()
-
-        data = ReviewFormFieldsFactory.form_response(form.form_fields)
-        self.post_page(self.submission, data, 'form')
-        review = self.submission.reviews.first()
+        review = self.submit_review_scores()
         self.assertEqual(review.score, NA)
+
+    def test_na_not_included_in_review_average(self):
+        review = self.submit_review_scores(NA, 5)
+        self.assertEqual(review.score, 5)
+
+    def test_na_not_included_reviews_average(self):
+        self.submit_review_scores(NA)
+        self.assertIsNone(Review.objects.score())
+
+    def test_na_not_included_multiple_reviews_average(self):
+        self.submit_review_scores(NA)
+        self.submit_review_scores(5)
+
+        self.assertEqual(Review.objects.count(), 2)
+        self.assertEqual(Review.objects.score(), 5)
 
 
 class UserReviewFormTestCase(BaseViewTestCase):

@@ -5,7 +5,7 @@
             <tr class="tr tr--subchild light-grey-bg">
                 <th colspan="2"></th>
                 <th>{{ object.reviews.submitted.recommendation|traffic_light }}</th>
-                <th>{{ object.reviews.submitted.score|floatformat|default_if_none:'-' }}</th>
+                <th>{{ object.reviews.submitted.get_score_display|default_if_none:'-' }}</th>
             </tr>
             {% include 'funds/includes/review_table_row.html' with reviews=staff_reviews %}
         {% endif %}
