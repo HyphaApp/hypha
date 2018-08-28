@@ -36,5 +36,5 @@ submission_urls = ([
 
 urlpatterns = [
     path('submissions/', include(submission_urls)),
-    path('search', SubmissionSearchView.as_view(), name="search"),
+    path('search/', SubmissionSearchView.as_view(), name="search"),
 ]
