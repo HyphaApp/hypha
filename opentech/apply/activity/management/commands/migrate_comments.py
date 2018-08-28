@@ -30,18 +30,22 @@ class Command(BaseCommand):
     def process(self, id):
         comment = self.data[id]
 
-        activity = Activity.objects.create(
-            timestamp=datetime.fromtimestamp(int(comment['created']), timezone.utc),
-            user=self.get_user(comment['uid']),
-            submission=self.get_submission(comment['nid']),
-            message=self.get_message(comment['subject'], comment['comment_body']['safe_value']),
-        )
-
         try:
-            activity.save()
-            self.stdout.write(f"Processed \"{comment['subject']}\" ({comment['cid']})")
-        except IntegrityError:
-            self.stdout.write(f"Skipped \"{comment['subject']}\" ({comment['cid']}) due to IntegrityError")
+            activity = Activity.objects.create(
+                timestamp=datetime.fromtimestamp(int(comment['created']), timezone.utc),
+                user=self.get_user(comment['uid']),
+                submission=self.get_submission(comment['nid']),
+                message=self.get_message(comment['subject'], comment['comment_body']['value']),
+                type='comment',
+                visibility='internal',
+            )
+            try:
+                activity.save()
+                self.stdout.write(f"Processed \"{comment['subject']}\" ({comment['cid']})")
+            except IntegrityError:
+                self.stdout.write(f"Skipped \"{comment['subject']}\" ({comment['cid']}) due to IntegrityError")
+                pass
+        except ValueError:
             pass
 
     def get_user(self, uid):
@@ -52,8 +56,8 @@ class Command(BaseCommand):
             return None
 
     def get_message(self, comment_subject, comment_body):
-        message = f"<p>{comment_subject}</p>{comment_body}"
-        return self.nl2br(message)
+        message = f"{comment_subject} – {comment_body}"
+        return message
 
     def get_submission(self, nid):
         try:
