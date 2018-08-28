@@ -5,16 +5,17 @@
 <div class="wrapper wrapper--small wrapper--inner-space-large">
     <div class="media-box media-box--reverse">
         {% include "utils/includes/media_box_icon.html" with page_icon=page.icon %}
+        {% if page.introduction %}
         <div class="media-box__content">
-            <h5 class="media-box__teaser">{{ page.body }}</h5>
+            <h4 class="media-box__teaser media-box__teaser--projectpage-introduction">{{ page.introduction }}</h4>
         </div>
+        {% endif %}
     </div>
 
     <div class="wrapper wrapper--sidebar wrapper--inner-space-small">
         <div>
-            {% include "utils/includes/funding.html" %}
+            {{ page.body }}
         </div>
-
         <div>
             {% with contact_details=page.contact_details.all %}
                 {% if contact_details %}
@@ -29,7 +30,17 @@
         </div>
     </div>
 
+
+
     {% include "projects/includes/project_status.html" %}
+
+    <div class="wrapper wrapper--inner-space-small">
+        <div>
+            {% include "utils/includes/funding.html" %}
+        </div>
+
+    </div>
+
 
     {% if page.category_options.all %}
         <div class="grid grid--two grid--small-gap">
