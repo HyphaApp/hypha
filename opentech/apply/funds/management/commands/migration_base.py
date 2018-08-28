@@ -13,7 +13,6 @@ from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
 from opentech.apply.funds.models.forms import RoundBaseForm, LabBaseForm
-from opentech.apply.review.models import ReviewForm
 from opentech.apply.funds.workflow import INITIAL_STATE
 
 
