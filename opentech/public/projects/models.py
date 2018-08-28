@@ -99,7 +99,6 @@ class ProjectPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['ProjectIndexPage']
 
-    introduction = models.TextField(blank=True)
     icon = models.ForeignKey(
         'images.CustomImage',
         null=True,
@@ -113,15 +112,13 @@ class ProjectPage(FundingMixin, BasePage):
     categories = models.TextField(default='{}', blank=True)
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('introduction'),
         index.SearchField('body'),
     ]
 
     content_panels = BasePage.content_panels + [
         ImageChooserPanel('icon'),
-        FieldPanel('status'),
-        FieldPanel('introduction'),
         StreamFieldPanel('body'),
+        FieldPanel('status'),
         InlinePanel('contact_details', label="Contact Details"),
     ] + FundingMixin.content_panels + [
         InlinePanel('related_pages', label="Related Projects"),
