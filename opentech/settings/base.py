@@ -393,6 +393,9 @@ if 'AWS_STORAGE_BUCKET_NAME' in env:
     if 'AWS_QUERYSTRING_EXPIRE' in env:
         AWS_QUERYSTRING_EXPIRE = env['AWS_QUERYSTRING_EXPIRE']
 
+    if 'AWS_PUBLIC_CUSTOM_DOMAIN' in env:
+        AWS_PUBLIC_CUSTOM_DOMAIN = env['AWS_PUBLIC_CUSTOM_DOMAIN']
+
     INSTALLED_APPS += (
         'storages',
     )
