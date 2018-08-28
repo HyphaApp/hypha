@@ -123,21 +123,24 @@ class Command(BaseCommand):
                 except TypeError:
                     pass
 
-        determination = Determination.objects.create(
-            created_at=datetime.fromtimestamp(int(node['created']), timezone.utc),
-            updated_at=datetime.fromtimestamp(int(node['changed']), timezone.utc),
-            author=self.get_user(node['uid']),
-            submission=self.get_submission(node['nid']),
-            outcome=self.get_workflow_state(node),
-            message=self.get_field_value('field_psr_determination_message', node),
-            data=form_data,
-        )
-
         try:
-            determination.save()
-            self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
-        except IntegrityError:
-            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+            determination = Determination.objects.create(
+                created_at=datetime.fromtimestamp(int(node['created']), timezone.utc),
+                updated_at=datetime.fromtimestamp(int(node['changed']), timezone.utc),
+                author=self.get_user(node['uid']),
+                submission=self.get_submission(node['field_submission_concept_note']['target_id']),
+                outcome=self.get_determination(node),
+                message=self.get_field_value('field_psr_determination_message', node),
+                data=form_data,
+            )
+            try:
+                determination.save()
+                self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
+            except IntegrityError:
+                self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+                pass
+        except ValueError:
+            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to ValueError")
             pass
 
     def get_field_value(self, field, node):
@@ -158,7 +161,10 @@ class Command(BaseCommand):
         if mapping_type == "direct":
             value = source_value
         elif mapping_type == 'value':
-            value = self.nl2br(source_value[key]) if source_value else ''
+            if key in source_value:
+                value = self.nl2br(source_value[key]) if source_value else ''
+            else:
+                value = self.nl2br(source_value['value']) if source_value else ''
         elif mapping_type == 'map' and 'map' in 'mapping':
             value = mapping['map'].get(source_value[key])
         elif mapping_type == 'address' and 'map' in mapping:
@@ -167,6 +173,7 @@ class Command(BaseCommand):
                 value = {}
                 for item in value_map:
                     value[value_map[item]] = source_value[item]
+                value = json.dumps(value)
             except TypeError:
                 value = {}
         elif mapping_type == 'boolean':
@@ -211,7 +218,12 @@ class Command(BaseCommand):
             "undetermined": 1
         }
 
-        return choices.get(node['field_psr_determination']['value'], 1)
+        try:
+            determination = choices.get(node['field_psr_determination']['value'], 1)
+        except TypeError:
+            determination = 1
+
+        return determination
 
     def nl2br(self, value):
         return value.replace('\r\n', '<br>\n')
