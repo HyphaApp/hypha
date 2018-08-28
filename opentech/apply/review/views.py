@@ -9,7 +9,7 @@ from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.review.blocks import RecommendationBlock
+from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
@@ -122,6 +122,9 @@ class ReviewListView(ListView):
         self.queryset = self.model.objects.filter(submission=self.submission, is_draft=False)
         return super().get_queryset()
 
+    def should_display(self, field):
+        return not isinstance(field.block, (RecommendationBlock, RecommendationCommentsBlock, RichTextBlock))
+
     def get_context_data(self, **kwargs):
         review_data = {}
 
@@ -148,7 +151,7 @@ class ReviewListView(ListView):
             for field_id in review.fields:
                 field = review.field(field_id)
                 data = review.data(field_id)
-                if not isinstance(field.block, (RecommendationBlock, RichTextBlock)):
+                if self.should_display(field):
                     question = field.value['field_label']
                     review_data.setdefault(field.id, {'question': question, 'answers': [''] * responses})
                     review_data[field.id]['answers'][i] = field.block.render(None, {'data': data})
