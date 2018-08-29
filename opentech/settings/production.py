@@ -1,6 +1,5 @@
 import os
 
-# import raven
 import django_heroku
 
 from .base import *  # noqa
