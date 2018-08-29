@@ -99,6 +99,8 @@ class ProjectPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['ProjectIndexPage']
 
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     introduction = models.TextField(blank=True)
     icon = models.ForeignKey(
         'images.CustomImage',
