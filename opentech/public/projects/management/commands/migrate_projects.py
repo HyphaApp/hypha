@@ -1,4 +1,5 @@
 import argparse
+import itertools
 import json
 import mimetypes
 
@@ -172,12 +173,28 @@ class Command(BaseCommand):
         amounts = self.ensure_iterable(node['field_project_funding_amount'])
         durations = self.ensure_iterable(node['field_project_term_time'])
         funds = self.ensure_iterable(node['field_project_funding_request'])
-        for year, amount, duration, fund in zip(years, amounts, durations, funds):
+        for year, amount, duration, fund in itertools.zip_longest(years, amounts, durations, funds):
+            try:
+                fund = self.funds[fund['target_id']]
+            except TypeError:
+                fund = None
+
+            try:
+                duration = duration['value']
+            except TypeError:
+                duration = 0
+
+            try:
+                amount = amount['value']
+            except TypeError:
+                # This is an error, don't give funding
+                continue
+
             project.funding.add(ProjectFunding(
-                value=amount['value'],
+                value=amount,
                 year=year['value'],
-                duration=duration['value'],
-                source=self.funds[fund['target_id']],
+                duration=duration,
+                source=fund,
             ))
 
         try:
@@ -201,7 +218,7 @@ class Command(BaseCommand):
             pass
         try:
             return node[field]['value']
-        except TypeError :
+        except TypeError:
             return ''
 
     def get_referenced_term(self, tid):
