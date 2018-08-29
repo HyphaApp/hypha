@@ -24,8 +24,6 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import BaseStreamForm
 
-from opentech.storage_backends import PrivateMediaStorage
-
 from .mixins import AccessFormData
 from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
