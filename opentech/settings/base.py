@@ -546,6 +546,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 if 'SECURE_HSTS_SECONDS' in env:
     try:
         SECURE_HSTS_SECONDS = int(env['SECURE_HSTS_SECONDS'])
+    except ValueError:
         pass
 
 if env.get('SECURE_BROWSER_XSS_FILTER', 'true').lower().strip() == 'true':

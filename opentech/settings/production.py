@@ -24,8 +24,3 @@ if 'MAILGUN_API_KEY' in env:
 
 
 django_heroku.settings(locals())
-
-try:
-    from .local import *  # noqa
-except ImportError:
-    pass
