@@ -14,7 +14,7 @@ jobs:
           DATABASE_URL: postgresql://root@localhost/opentech?sslmode=disable
           PGHOST: localhost
           PGUSER: root
-          DJANGO_SETTINGS_MODULE: opentech.settings.test
+          DJANGO_SETTINGS_MODULE: opentech.settings.production
           NPM_CONFIG_PRODUCTION: false
           SEND_MESSAGES: false
 
@@ -84,4 +84,3 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-
