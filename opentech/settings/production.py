@@ -22,20 +22,7 @@ CACHE_CONTROL_MAX_AGE = 600
 # Alternatively, you can set these in a local.py file on the server
 
 env = os.environ.copy()
-
-# Raven (sentry) configuration. See local settings for DSN
-
-if 'SENTRY_DSN' in env:
-    INSTALLED_APPS += (
-        'raven.contrib.django.raven_compat',
-    )
-
-    SENTRY_DSN = env['SENTRY_DSN']
-
-
 # Basic configuration
-
-APP_NAME = env.get('APP_NAME', 'opentech')
 
 if env.get('SECURE_SSL_REDIRECT', 'true') == 'true':
     SECURE_SSL_REDIRECT = True
@@ -52,17 +39,6 @@ if 'ALLOWED_HOSTS' in env:
 if 'PRIMARY_HOST' in env:
     BASE_URL = 'https://%s/' % env['PRIMARY_HOST']
 
-if 'STATIC_URL' in env:
-    STATIC_URL = env['STATIC_URL']
-
-if 'STATIC_DIR' in env:
-    STATIC_ROOT = env['STATIC_DIR']
-
-if 'MEDIA_URL' in env:
-    MEDIA_URL = env['MEDIA_URL']
-
-if 'MEDIA_DIR' in env:
-    MEDIA_ROOT = env['MEDIA_DIR']
 
 # Email config
 
@@ -116,60 +92,6 @@ if 'CLOUDFLARE_API_TOKEN' in env:
             'ZONEID': env['CLOUDFLARE_API_ZONEID'],
         },
     }
-
-
-# Database
-
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {'default': dj_database_url.config()}
-
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': env.get('PGDATABASE', APP_NAME),
-            # User, host and port can be configured by the PGUSER, PGHOST and
-            # PGPORT environment variables (these get picked up by libpq).
-        }
-    }
-
-
-# Logging
-
-if 'LOG_DIR' in env:
-    # opentech.fund log
-    LOGGING['handlers']['opentech_file'] = {
-        'level': 'INFO',
-        'class': 'cloghandler.ConcurrentRotatingFileHandler',
-        'formatter': 'verbose',
-        'filename': os.path.join(env['LOG_DIR'], 'opentech.log'),
-        'maxBytes': 5242880,  # 5MB
-        'backupCount': 5
-    }
-    LOGGING['loggers']['opentech']['handlers'].append('opentech_file')
-
-    # Wagtail log
-    LOGGING['handlers']['wagtail_file'] = {
-        'level': 'INFO',
-        'class': 'cloghandler.ConcurrentRotatingFileHandler',
-        'formatter': 'verbose',
-        'filename': os.path.join(env['LOG_DIR'], 'wagtail.log'),
-        'maxBytes': 5242880,  # 5MB
-        'backupCount': 5
-    }
-    LOGGING['loggers']['wagtail']['handlers'].append('wagtail_file')
-
-    # Error log
-    LOGGING['handlers']['errors_file'] = {
-        'level': 'ERROR',
-        'class': 'cloghandler.ConcurrentRotatingFileHandler',
-        'formatter': 'verbose',
-        'filename': os.path.join(env['LOG_DIR'], 'error.log'),
-        'maxBytes': 5242880,  # 5MB
-        'backupCount': 5
-    }
-    LOGGING['loggers']['django.request']['handlers'].append('errors_file')
-    LOGGING['loggers']['django.security']['handlers'].append('errors_file')
 
 django_heroku.settings(locals())
 
