@@ -34,6 +34,7 @@ from ..workflow import (
     get_review_statuses,
     INITIAL_STATE,
     review_statuses,
+    STAGE_CHANGE_ACTIONS,
     UserPermissions,
     WORKFLOWS,
 )
@@ -176,7 +177,7 @@ class AddTransitions(models.base.ModelBase):
 
         attrs['get_actions_for_user'] = get_actions_for_user
 
-        def perform_transition(self, action, user, request=None):
+        def perform_transition(self, action, user, request=None, **kwargs):
             transition = self.get_transition(action)
             if not transition:
                 raise PermissionDenied(f'Invalid "{ action }" transition')
@@ -184,10 +185,22 @@ class AddTransitions(models.base.ModelBase):
                 action = self.phase.transitions[action]
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
 
-            transition(by=user, request=request)
+            transition(by=user, request=request, **kwargs)
             self.save()
 
+            self.progress_stage_when_possible(user, request)
+
         attrs['perform_transition'] = perform_transition
+
+        def progress_stage_when_possible(self, user, request):
+            # Check to see if we can progress to a new stage from the current status
+            for stage_transition in STAGE_CHANGE_ACTIONS:
+                try:
+                    self.perform_transition(stage_transition, user, request=request, notify=False)
+                except PermissionDenied:
+                    pass
+
+        attrs['progress_stage_when_possible'] = progress_stage_when_possible
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
@@ -555,8 +568,9 @@ def log_status_update(sender, **kwargs):
 
     by = kwargs['method_kwargs']['by']
     request = kwargs['method_kwargs']['request']
+    notify = kwargs['method_kwargs'].get('notify', True)
 
-    if request:
+    if request and notify:
         messenger(
             MESSAGES.TRANSITION,
             user=by,
@@ -572,6 +586,14 @@ def log_status_update(sender, **kwargs):
                 request=request,
                 submission=instance,
             )
+
+    if instance.status in STAGE_CHANGE_ACTIONS:
+        messenger(
+            MESSAGES.INVITED_TO_PROPOSAL,
+            request=request,
+            user=by,
+            submission=instance,
+        )
 
 
 class ApplicationRevision(models.Model):

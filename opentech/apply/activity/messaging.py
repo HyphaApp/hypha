@@ -16,6 +16,7 @@ def link_to(target, request):
 class MESSAGES(Enum):
     UPDATE_LEAD = 'Update Lead'
     EDIT = 'Edit'
+    APPLICANT_EDIT = "Applicant Edit"
     NEW_SUBMISSION = 'New Submission'
     TRANSITION = 'Transition'
     DETERMINATION_OUTCOME = 'Determination Outcome'
@@ -109,6 +110,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
+        MESSAGES.APPLICANT_EDIT: 'Edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
@@ -157,12 +159,13 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
+        MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {submission.determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
-        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome} Score: {review.score}',
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>'
     }
@@ -259,7 +262,7 @@ class EmailAdapter(AdapterBase):
     def reviewers(self, submission):
         return [
             reviewer.email
-            for reviewer in submission.reviewers.all()
+            for reviewer in submission.missing_reviewers.all()
             if submission.phase.permissions.can_review(reviewer)
         ]
 

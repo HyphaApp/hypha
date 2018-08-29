@@ -4,6 +4,6 @@
 {% block content %}
 A new proposal has been added to your review list.
 
-Title: {submission.title}
+Title: {{ submission.title }}
 Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
 {% endblock %}
