@@ -16,12 +16,18 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
+from wagtail.core.models import Page
 from wagtail.core.rich_text import RichText
 from wagtail.images import get_image_model
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.public.projects.models import ProjectPage, ProjectIndexPage, ProjectContactDetails
+from opentech.public.projects.models import (
+    ProjectContactDetails,
+    ProjectFunding,
+    ProjectIndexPage,
+    ProjectPage,
+)
 
 
 WagtailImage = get_image_model()
@@ -71,6 +77,13 @@ class Command(BaseCommand):
 
         if not self.parent_page:
             raise ProjectIndexPage.DoesNotExist('Project Index Page must exist to import projects')
+
+        self.funds = {
+            '3625': Page.objects.get(title='Internet Freedom Fund'),
+            '3654': Page.objects.get(title='Rapid Response Fund'),
+            '3905': Page.objects.get(title='Core Infrastructure Fund'),
+            '7791': Page.objects.get(title='Community Lab'),
+        }
 
         with options['source'] as json_data:
             self.data = json.load(json_data)
@@ -152,6 +165,21 @@ class Command(BaseCommand):
             value=self.get_field(node, 'field_project_twitter')
         ))
 
+        # Funding
+        project.funding.clear()
+
+        years = self.ensure_iterable(node['field_project_funding_year'])
+        amounts = self.ensure_iterable(node['field_project_funding_amount'])
+        durations = self.ensure_iterable(node['field_project_term_time'])
+        funds = self.ensure_iterable(node['field_project_funding_request'])
+        for year, amount, duration, fund in zip(years, amounts, durations, funds):
+            project.funding.add(ProjectFunding(
+                value=amount['value'],
+                year=year['value'],
+                duration=duration['value'],
+                source=self.funds[fund['target_id']],
+            ))
+
         try:
             if not project.get_parent():
                 self.parent_page.add_child(instance=project)
@@ -161,6 +189,11 @@ class Command(BaseCommand):
             self.stdout.write(f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
             pass
 
+    def ensure_iterable(self, value):
+        if isinstance(value, dict):
+            value = [value]
+        return value
+
     def get_field(self, node, field):
         try:
             return node[field]['safe_value']
@@ -168,7 +201,7 @@ class Command(BaseCommand):
             pass
         try:
             return node[field]['value']
-        except TypeError:
+        except TypeError :
             return ''
 
     def get_referenced_term(self, tid):
