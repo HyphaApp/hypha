@@ -112,7 +112,7 @@ class Command(BaseCommand):
             {"type": "title", "value": {"field_label": "Proposal title", "help_text": "", "info": None}, "id": "6a83b04d-0909-4018-bc77-f8d72a019dd4"},
             {"type": "value", "value": {"field_label": "Requested funding", "help_text": "", "info": None}, "id": "0299f96f-3809-4f9e-a786-4af89547881b"},
             {"type": "duration", "value": {"field_label": "How long will it take?", "help_text": "", "info": None}, "id": "3ff602a1-642b-4742-a2c9-c9226af727ac"},
-            {"type": "full_name", "value": {"field_label": "Your nameLegal name", "help_text": "", "info": None}, "id": "739a413b-46cc-4936-82ce-e68c2dfa41ca"},
+            {"type": "full_name", "value": {"field_label": "Your name", "help_text": "", "info": None}, "id": "739a413b-46cc-4936-82ce-e68c2dfa41ca"},
             {"type": "char", "value": {"field_label": "Legal name", "help_text": "", "required": "", "format": "", "default_value": ""}, "id": "d5cd3d89-89ea-44c2-9772-0da658c36881"},
             {"type": "char", "value": {"field_label": "Primary point of contact", "help_text": "", "required": "", "format": "", "default_value": ""}, "id": "a3c9af86-d047-4663-864a-b6dd97a60c39"},
             {"type": "email", "value": {"field_label": "E-mail", "help_text": "", "info": None}, "id": "6c95d411-bd68-4374-8c2d-1b64dc03ed68"},
