@@ -97,6 +97,8 @@
 
     &__image {
         margin-bottom: 10px;
+        height: 180px;
+        width: 180px;
 
         @include media-query(tablet-portrait) {
             position: absolute;
@@ -108,8 +110,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 180px;
-            height: 180px;
             background-color: $color--light-blue;
 
             > svg {
