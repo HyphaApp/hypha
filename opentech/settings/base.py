@@ -10,9 +10,6 @@ env = os.environ.copy()
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-# Run enviroment, can be set to development/test/production.
-RUN_ENVIROMENT = 'development'
-
 # Application definition
 
 INSTALLED_APPS = [

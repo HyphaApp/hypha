@@ -7,7 +7,6 @@ from .base import *  # noqa
 # Instead, use environment variables or create a local.py file on the server.
 
 DEBUG = True
-# RUN_ENVIROMENT = 'test'
 
 
 # Cache everything for 10 minutes

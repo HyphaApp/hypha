@@ -11,8 +11,6 @@ from .base import *  # noqa
 
 # Disable debug mode
 DEBUG = False
-RUN_ENVIROMENT = 'production'
-
 
 # Cache everything for 10 minutes
 # This only applies to pages that do not have a more specific cache-control
