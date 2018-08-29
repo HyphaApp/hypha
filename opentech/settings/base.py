@@ -18,6 +18,45 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 APP_NAME = env.get('APP_NAME', 'opentech')
 
+DEBUG = False
+
+
+if 'SECRET_KEY' in env:
+    SECRET_KEY = env['SECRET_KEY']
+
+if 'ALLOWED_HOSTS' in env:
+    ALLOWED_HOSTS = env['ALLOWED_HOSTS'].split(',')
+
+
+# Email settings
+if 'EMAIL_HOST' in env:
+    EMAIL_HOST = env['EMAIL_HOST']
+
+if 'EMAIL_PORT' in env:
+    try:
+        EMAIL_PORT = int(env['EMAIL_PORT'])
+    except ValueError:
+        pass
+
+if 'EMAIL_HOST_USER' in env:
+    EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+
+if 'EMAIL_HOST_PASSWORD' in env:
+    EMAIL_HOST_PASSWORD = env['EMAIL_HOST_PASSWORD']
+
+if env.get('EMAIL_USE_TLS', 'false').lower().strip() == 'true':
+    EMAIL_USE_TLS = True
+
+if env.get('EMAIL_USE_SSL', 'false').lower().strip() == 'true':
+    EMAIL_USE_SSL = True
+
+if 'EMAIL_SUBJECT_PREFIX' in env:
+    EMAIL_SUBJECT_PREFIX = env['EMAIL_SUBJECT_PREFIX']
+
+if 'SERVER_EMAIL' in env:
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -148,14 +187,28 @@ DATABASES = {
 
 
 # Cache
-# Use database cache as the cache backend
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'database_cache',
+if 'REDIS_URL' in env:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": env['REDIS_URL'],
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'database_cache',
+        }
+    }
+
+
+# Set s-max-age header that is used by reverse proxy/front end cache. See
+# urls.py
+try:
+    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 600))
+except ValueError:
+    pass
 
 
 # Search
@@ -326,8 +379,8 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Make sure the Google+ API is enabled for your API project
 STAFF_EMAIL_DOMAINS = ['opentech.fund']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'users_public:login'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
@@ -450,3 +503,60 @@ if 'SENTRY_DSN' in env:
             RAVEN_CONFIG['release'] = env['GIT_REV']
         except KeyError:
             pass
+
+
+# Basic auth settings
+if env.get('BASIC_AUTH_ENABLED', 'false').lower().strip() == 'true':
+    MIDDLEWARE.insert(0, 'baipw.middleware.BasicAuthIPWhitelistMiddleware')
+    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
+    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
+    if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
+        BASIC_AUTH_WHITELISTED_HTTP_HOSTS = (
+            env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
+        )
+
+
+# Cloudflare cache
+if 'CLOUDFLARE_API_TOKEN' in env:
+    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
+    WAGTAILFRONTENDCACHE = {
+        'cloudflare': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
+            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
+            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
+        },
+    }
+
+
+if 'PRIMARY_HOST' in env:
+    # This is used by Wagtail's email notifications for constructing absolute
+    # URLs.
+    BASE_URL = 'https://{}'.format(env['PRIMARY_HOST'])
+
+
+# Security configuration
+# https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
+
+if env.get('SECURE_SSL_REDIRECT', 'true').strip().lower() == 'true':
+    SECURE_SSL_REDIRECT = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if 'SECURE_HSTS_SECONDS' in env:
+    try:
+        SECURE_HSTS_SECONDS = int(env['SECURE_HSTS_SECONDS'])
+        pass
+
+if env.get('SECURE_BROWSER_XSS_FILTER', 'true').lower().strip() == 'true':
+    SECURE_BROWSER_XSS_FILTER = True
+
+if env.get('SECURE_CONTENT_TYPE_NOSNIFF', 'true').lower().strip() == 'true':
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+# Referrer-policy header settings
+# https://django-referrer-policy.readthedocs.io/en/1.0/
+
+REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
+                          'no-referrer-when-downgrade').strip()
