@@ -197,6 +197,24 @@ class Command(BaseCommand):
                 source=fund,
             ))
 
+        category_fields = [
+            'field_term_region',
+            'field_term_country',
+            'field_technology_attribute',
+            'field_proposal_theme',
+            'field_proposal_focus',
+            'field_proposal_beneficiaries',
+        ]
+        categories = {}
+        for category in category_fields:
+            terms = self.ensure_iterable(node[category])
+            for term in terms:
+                option = self.get_referenced_term(term['tid'])
+                if option:
+                    categories.setdefault(option.category.id, []).append(option.id)
+
+        project.categories = json.dumps(categories)
+
         try:
             if not project.get_parent():
                 self.parent_page.add_child(instance=project)
@@ -223,8 +241,7 @@ class Command(BaseCommand):
 
     def get_referenced_term(self, tid):
         try:
-            term = self.terms[tid]
-            return term.id
+            return self.terms[tid]
         except KeyError:
             return None
 
