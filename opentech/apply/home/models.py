@@ -4,6 +4,8 @@ from wagtail.search import index
 
 from django.db import models
 
+from opentech.apply.funds.models import ApplicationBase, LabBase
+
 
 class ApplyHomePage(Page):
     # Only allow creating HomePages at the root level
@@ -19,3 +21,9 @@ class ApplyHomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('strapline'),
     ]
+
+    def get_context(self, *args, **kwargs):
+        context = super().get_context(*args, **kwargs)
+        context['open_funds'] = ApplicationBase.objects.order_by_end_date()
+        context['open_labs'] = LabBase.objects.public().live()
+        return context

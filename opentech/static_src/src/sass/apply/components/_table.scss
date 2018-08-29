@@ -20,7 +20,7 @@ table {
         }
     }
 
-    // tale rows
+    // table rows
     tr {
         border: 1px solid $color--light-mid-grey;
         transition: box-shadow 0.15s ease;
@@ -62,20 +62,21 @@ table {
 
             &.lead {
                 span {
-                    position: relative;
-                    z-index: 1;
-                    display: block;
-                    padding-right: 5px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    background: $color--white;
+                    @include media-query($table-breakpoint) {
+                        position: relative;
+                        z-index: 1;
+                        display: block;
+                        padding-right: 5px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        background: $color--white;
 
-                    &:hover {
-                        display: inline-block;
-                        overflow: visible;
+                        &:hover {
+                            display: inline-block;
+                            overflow: visible;
+                        }
                     }
                 }
-
             }
         }
     }

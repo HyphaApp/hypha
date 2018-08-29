@@ -3,7 +3,7 @@ from datetime import date
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import OuterRef, Q, Subquery
 from django.http import Http404
 from django.utils.text import mark_safe
 
@@ -16,12 +16,22 @@ from wagtail.admin.edit_handlers import (
     ObjectList,
     TabbedInterface,
 )
+from wagtail.core.models import PageManager, PageQuerySet
 
 from ..admin_forms import WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
+
+
+class ApplicationBaseManager(PageQuerySet):
+    def order_by_end_date(self):
+        # OutRef path__startswith with find all descendants of the parent
+        # We only have children, so no issues at this time
+        rounds = RoundBase.objects.open().filter(path__startswith=OuterRef('path'))
+        qs = self.public().live().annotate(end_date=Subquery(rounds.values('end_date')[:1]))
+        return qs.order_by('end_date')
 
 
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
@@ -37,6 +47,8 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
+    objects = PageManager.from_queryset(ApplicationBaseManager)()
+
     parent_page_types = ['apply_home.ApplyHomePage']
 
     def detail(self):
@@ -45,11 +57,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     @property
     def open_round(self):
-        rounds = RoundBase.objects.child_of(self).live().public().specific()
-        return rounds.filter(
-            Q(start_date__lte=date.today()) &
-            Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
-        ).first()
+        return RoundBase.objects.child_of(self).open().first()
 
     def next_deadline(self):
         try:
@@ -77,9 +85,21 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     ])
 
 
+class RoundBaseManager(PageQuerySet):
+    def open(self):
+        rounds = self.live().public().specific()
+        rounds = rounds.filter(
+            Q(start_date__lte=date.today()) &
+            Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
+        )
+        return rounds
+
+
 class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     is_creatable = False
     submission_class = ApplicationSubmission
+
+    objects = PageManager.from_queryset(RoundBaseManager)()
 
     subpage_types = []  # type: ignore
 

@@ -9,8 +9,9 @@
         {% block page_header %}
             <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
         {% endblock %}
-        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary {{ class }}}">
+        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
             Apply admin
+            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
     </div>
 </div>

@@ -158,7 +158,11 @@ SingleStageDefinition = {
     },
     'more_info': {
         'transitions': {
-            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            INITIAL_STATE: {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Request,
@@ -187,7 +191,11 @@ SingleStageDefinition = {
     },
     'post_review_more_info': {
         'transitions': {
-            'post_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'post_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Request,
@@ -224,7 +232,11 @@ DoubleStageDefinition = {
     },
     'concept_more_info': {
         'transitions': {
-            INITIAL_STATE: {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            INITIAL_STATE: {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Concept,
@@ -253,7 +265,11 @@ DoubleStageDefinition = {
     },
     'concept_review_more_info': {
         'transitions': {
-            'concept_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'concept_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Concept,
@@ -302,7 +318,11 @@ DoubleStageDefinition = {
     },
     'proposal_more_info': {
         'transitions': {
-            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'proposal_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -331,7 +351,11 @@ DoubleStageDefinition = {
     },
     'post_proposal_review_more_info': {
         'transitions': {
-            'post_proposal_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'post_proposal_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Proposal,
@@ -360,7 +384,11 @@ DoubleStageDefinition = {
     },
     'post_external_review_more_info': {
         'transitions': {
-            'post_external_review_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'post_external_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
         },
         'display': 'More information required',
         'stage': Proposal,

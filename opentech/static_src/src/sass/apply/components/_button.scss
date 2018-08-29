@@ -196,4 +196,16 @@
             border: 1px solid $color--light-blue;
         }
     }
+
+    &--arrow-pixels-white {
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 10px;
+            height: 14px;
+            margin-left: 10px;
+            fill: $color--white;
+        }
+    }
 }

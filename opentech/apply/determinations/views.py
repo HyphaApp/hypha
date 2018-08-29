@@ -134,6 +134,23 @@ class AdminDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name='dispatch')
+class ReviewerDeterminationDetailView(DetailView):
+    model = Determination
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        determination = self.get_object()
+
+        if not determination.submitted:
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:detail', args=(self.submission.id,)))
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
 class ApplicantDeterminationDetailView(DetailView):
     model = Determination
 
@@ -156,3 +173,4 @@ class ApplicantDeterminationDetailView(DetailView):
 class DeterminationDetailView(ViewDispatcher):
     admin_view = AdminDeterminationDetailView
     applicant_view = ApplicantDeterminationDetailView
+    reviewer_view = ReviewerDeterminationDetailView

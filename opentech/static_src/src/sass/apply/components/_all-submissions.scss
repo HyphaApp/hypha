@@ -164,10 +164,18 @@ $table-breakpoint: 'tablet-landscape';
                 }
             }
 
+            &.reviews_stats {
+                display: none;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
+                }
+            }
+
             // arrow to toggle project info - added via js
             @include media-query($table-breakpoint) {
                 .arrow {
-                    @include triangle(bottom, $color--primary, 6px);
+                    @include triangle(right, $color--primary, 6px);
                     position: relative;
                     display: inline-block;
                     margin-right: 15px;
@@ -177,6 +185,19 @@ $table-breakpoint: 'tablet-landscape';
                     &:hover {
                         cursor: pointer;
                     }
+                }
+            }
+
+            > span.mobile-label {
+                width: 90px;
+                display: inline-block;
+
+                &.phase, &.title {
+                    display: none;
+                }
+
+                @include media-query($table-breakpoint) {
+                    display: none;
                 }
             }
         }
@@ -197,8 +218,8 @@ $table-breakpoint: 'tablet-landscape';
             }
 
             .arrow {
-                border-top-color: darken($color--dark-blue, 10%);
-                transform: rotate(180deg);
+                border-right-color: darken($color--dark-blue, 10%);
+                transform: rotate(90deg);
             }
         }
     }
@@ -236,4 +257,3 @@ $table-breakpoint: 'tablet-landscape';
         padding: 5px 0 5px 5px;
     }
 }
-
