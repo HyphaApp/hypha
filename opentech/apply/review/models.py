@@ -120,6 +120,9 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     is_draft = models.BooleanField(default=False, verbose_name="Draft")
 
+    # Meta: used for migration purposes only
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     objects = ReviewQuerySet.as_manager()
 
     class Meta:
