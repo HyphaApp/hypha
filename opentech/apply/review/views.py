@@ -9,7 +9,7 @@ from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.review.blocks import RecommendationBlock
+from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
@@ -119,8 +119,11 @@ class ReviewListView(ListView):
 
     def get_queryset(self):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        self.queryset = self.model.objects.filter(submission=self.submission)
+        self.queryset = self.model.objects.filter(submission=self.submission, is_draft=False)
         return super().get_queryset()
+
+    def should_display(self, field):
+        return not isinstance(field.block, (RecommendationBlock, RecommendationCommentsBlock, RichTextBlock))
 
     def get_context_data(self, **kwargs):
         review_data = {}
@@ -130,13 +133,15 @@ class ReviewListView(ListView):
         review_data['score'] = {'question': 'Overall Score', 'answers': list()}
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
         review_data['revision'] = {'question': 'Revision', 'answers': list()}
+        review_data['comments'] = {'question': 'Comments', 'answers': list()}
 
         responses = self.object_list.count()
 
         for i, review in enumerate(self.object_list):
             review_data['title']['answers'].append(str(review.author))
-            review_data['score']['answers'].append(str(review.score))
+            review_data['score']['answers'].append(str(review.get_score_display()))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
+            review_data['comments']['answers'].append(review.get_comments_display(include_question=False))
             if review.for_latest:
                 revision = 'Current'
             else:
@@ -146,7 +151,7 @@ class ReviewListView(ListView):
             for field_id in review.fields:
                 field = review.field(field_id)
                 data = review.data(field_id)
-                if not isinstance(field.block, (RecommendationBlock, RichTextBlock)):
+                if self.should_display(field):
                     question = field.value['field_label']
                     review_data.setdefault(field.id, {'question': question, 'answers': [''] * responses})
                     review_data[field.id]['answers'][i] = field.block.render(None, {'data': data})

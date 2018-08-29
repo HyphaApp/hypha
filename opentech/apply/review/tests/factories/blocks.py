@@ -35,10 +35,12 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_form_answer(cls, params=dict()):
-        return {
-            'description': factory.Faker('paragraph').generate(params),
+        defaults = {
+            'description': factory.Faker('paragraph').generate({}),
             'score': random.randint(1, 5),
         }
+        defaults.update(params)
+        return defaults
 
 
 ReviewFormFieldsFactory = StreamFieldUUIDFactory({

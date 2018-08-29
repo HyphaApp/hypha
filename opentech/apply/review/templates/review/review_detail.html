@@ -29,6 +29,8 @@
 </div>
 
 <div class="rich-text rich-text--answers">
+    {{ object.get_comments_display }}
+
     {{ object.output_answers }}
 </div>
 {% endblock %}

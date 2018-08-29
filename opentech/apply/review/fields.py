@@ -1,12 +1,10 @@
-import json
-
 from django import forms
 from tinymce import TinyMCE
 
 from django.forms import widgets
 from django.utils.safestring import mark_safe
 
-from opentech.apply.review.options import RATE_CHOICES
+from opentech.apply.review.options import RATE_CHOICES, NA
 from opentech.apply.utils.options import MCE_ATTRIBUTES_SHORT
 
 
@@ -19,44 +17,22 @@ class ScoredAnswerWidget(forms.MultiWidget):
         super().__init__(_widgets, attrs)
 
     def decompress(self, value):
+        # We should only hit this on initialisation where we set the default to a list of None
         if value:
-            return json.loads(value)
+            return value
         return [None, None]
 
     def render(self, name, value, attrs=None, renderer=None):
-        """
-        Render the widget as an HTML string.
-        Required for the correct rendering of the TinyMCE widget.
-        """
-        if self.is_localized:
-            for widget in self.widgets:
-                widget.is_localized = self.is_localized
-        # value is a list of values, each corresponding to a widget
-        # in self.widgets.
-        if not isinstance(value, list):
-            value = self.decompress(value)
-
+        context = self.get_context(name, value, attrs)
         rendered = []
-        final_attrs = self.build_attrs(attrs)
-        input_type = final_attrs.pop('type', None)
-        id_ = final_attrs.get('id')
-        for i, widget in enumerate(self.widgets):
-            if input_type is not None:
-                widget.input_type = input_type
-            widget_name = '%s_%s' % (name, i)
-            try:
-                widget_value = value[i]
-            except IndexError:
-                widget_value = None
-            if id_:
-                widget_attrs = final_attrs.copy()
-                widget_attrs['id'] = '%s_%s' % (id_, i)
-            else:
-                widget_attrs = final_attrs
-
-            rendered.append(widget.render(widget_name, widget_value, widget_attrs, renderer))
-
-        return ''.join([mark_safe(item) for item in rendered])
+        # We need to explicitly call the render method on the tinymce widget
+        # MultiValueWidget just passes all the context into the template
+        for kwargs, widget in zip(context['widget']['subwidgets'], self.widgets):
+            name = kwargs['name']
+            value = kwargs['value']
+            attrs = kwargs['attrs']
+            rendered.append(widget.render(name, value, attrs, renderer))
+        return mark_safe(''.join([widget for widget in rendered]))
 
 
 class ScoredAnswerField(forms.MultiValueField):
@@ -71,4 +47,7 @@ class ScoredAnswerField(forms.MultiValueField):
         super().__init__(fields=fields, *args, **kwargs)
 
     def compress(self, data_list):
-        return json.dumps(data_list)
+        if data_list:
+            return [data_list[0], int(data_list[1])]
+        else:
+            return ['', NA]

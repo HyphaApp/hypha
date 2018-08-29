@@ -13,12 +13,50 @@ from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
-from .blocks import ReviewCustomFormFieldsBlock
+from .blocks import (
+    ReviewCustomFormFieldsBlock,
+    RecommendationBlock,
+    RecommendationCommentsBlock,
+    ScoreFieldBlock,
+)
+from .options import NA
 
 
-class ReviewForm(models.Model):
-    name = models.CharField(max_length=255)
+class ReviewFormFieldsMixin(models.Model):
+    class Meta:
+        abstract = True
+
     form_fields = StreamField(ReviewCustomFormFieldsBlock())
+
+    @property
+    def score_fields(self):
+        return self._get_field_type(ScoreFieldBlock, many=True)
+
+    @property
+    def reccomendation_field(self):
+        return self._get_field_type(RecommendationBlock)
+
+    @property
+    def comment_field(self):
+        return self._get_field_type(RecommendationCommentsBlock)
+
+    def _get_field_type(self, block_type, many=False):
+        fields = list()
+        for field in self.form_fields:
+            try:
+                if isinstance(field.block, block_type):
+                    if many:
+                        fields.append(field)
+                    else:
+                        return field
+            except AttributeError:
+                pass
+        if many:
+            return fields
+
+
+class ReviewForm(ReviewFormFieldsMixin, models.Model):
+    name = models.CharField(max_length=255)
 
     panels = [
         FieldPanel('name'),
@@ -52,7 +90,7 @@ class ReviewQuerySet(models.QuerySet):
         return self.by_reviewers().recommendation()
 
     def score(self):
-        return self.aggregate(models.Avg('score'))['score__avg']
+        return self.exclude(score=NA).aggregate(models.Avg('score'))['score__avg']
 
     def recommendation(self):
         recommendations = self.values_list('recommendation', flat=True)
@@ -68,7 +106,7 @@ class ReviewQuerySet(models.QuerySet):
             return MAYBE
 
 
-class Review(BaseStreamForm, AccessFormData, models.Model):
+class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     revision = models.ForeignKey('funds.ApplicationRevision', on_delete=models.SET_NULL, related_name='reviews', null=True)
     author = models.ForeignKey(
@@ -77,7 +115,6 @@ class Review(BaseStreamForm, AccessFormData, models.Model):
     )
 
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
-    form_fields = StreamField(ReviewCustomFormFieldsBlock())
 
     recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
@@ -91,6 +128,12 @@ class Review(BaseStreamForm, AccessFormData, models.Model):
     @property
     def outcome(self):
         return self.get_recommendation_display()
+
+    def get_comments_display(self, include_question=True):
+        return self.render_answer(self.comment_field.id, include_question=include_question)
+
+    def get_score_display(self):
+        return '{:.1f}'.format(self.score) if self.score != NA else 'NA'
 
     def get_absolute_url(self):
         return reverse('apply:reviews:review', args=(self.id,))
