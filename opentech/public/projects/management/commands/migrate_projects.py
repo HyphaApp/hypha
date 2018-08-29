@@ -21,7 +21,7 @@ from wagtail.images import get_image_model
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.public.projects.models import ProjectPage, ProjectIndexPage
+from opentech.public.projects.models import ProjectPage, ProjectIndexPage, ProjectContactDetails
 
 
 WagtailImage = get_image_model()
@@ -126,6 +126,31 @@ class Command(BaseCommand):
             '367': 'production',
         }
         project.status = status[node['field_proposal_status']['tid']]
+
+        project.contact_details.clear()
+
+        sites = node['field_project_url']
+
+        if isinstance(sites, dict):
+            sites = [sites]
+
+        for site in sites:
+            url = site['url']
+            if 'github' in url:
+                page_type = 'github'
+                url = urlsplit(url).path
+            else:
+                page_type = 'website'
+
+            project.contact_details.add(ProjectContactDetails(
+                service=page_type,
+                value=url,
+            ))
+
+        project.contact_details.add(ProjectContactDetails(
+            service='twitter',
+            value=self.get_field(node, 'field_project_twitter')
+        ))
 
         try:
             if not project.get_parent():
