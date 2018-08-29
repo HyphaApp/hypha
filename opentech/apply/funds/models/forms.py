@@ -42,7 +42,7 @@ class AbstractRelatedForm(Orderable):
 
     def __eq__(self, other):
         try:
-            return self.fields == other.fields
+            return self.fields == other.fields and self.sort_order == other.sort_order
         except AttributeError:
             return False
 
@@ -80,7 +80,7 @@ class AbstractRelatedReviewForm(Orderable):
 
     def __eq__(self, other):
         try:
-            return self.fields == other.fields
+            return self.fields == other.fields and self.sort_order == other.sort_order
         except AttributeError:
             return False
 

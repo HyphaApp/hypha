@@ -42,18 +42,25 @@ __all__ = [
     'LabSubmissionFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
+    'workflow_for_stages',
 ]
 
 
-class FundTypeFactory(wagtail_factories.PageFactory):
+def workflow_for_stages(stages):
+    return list(FundType.WORKFLOW_CHOICES.keys())[stages - 1]
+
+
+class AbstractApplicationFactory(wagtail_factories.PageFactory):
     class Meta:
-        model = FundType
+        abstract = True
 
     class Params:
         workflow_stages = 1
 
+    title = factory.Faker('sentence')
+
     # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
 
     @factory.post_generation
     def parent(self, create, extracted_parent, **parent_kwargs):
@@ -85,7 +92,12 @@ class FundTypeFactory(wagtail_factories.PageFactory):
                 )
 
 
-class RequestForPartnersFactory(FundTypeFactory):
+class FundTypeFactory(AbstractApplicationFactory):
+    class Meta:
+        model = FundType
+
+
+class RequestForPartnersFactory(AbstractApplicationFactory):
     class Meta:
         model = RequestForPartners
 
@@ -156,16 +168,10 @@ class RoundBaseFormFactory(AbstractRelatedFormFactory):
     round = factory.SubFactory(RoundFactory)
 
 
-class LabFactory(wagtail_factories.PageFactory):
+class LabFactory(AbstractApplicationFactory):
     class Meta:
         model = LabType
 
-    class Params:
-        workflow_stages = 1
-        number_forms = 1
-
-    # Will need to update how the stages are identified as Fund Page changes
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
     lead = factory.SubFactory(StaffFactory)
 
     @factory.post_generation
@@ -209,7 +215,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
         form_fields=factory.SelfAttribute('..form_fields'),
     )
     page = factory.SubFactory(FundTypeFactory)
-    workflow_name = factory.LazyAttribute(lambda o: list(FundType.WORKFLOW_CHOICES.keys())[o.workflow_stages - 1])
+    workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
     round = factory.SubFactory(
         RoundFactory,
         workflow_name=factory.SelfAttribute('..workflow_name'),
