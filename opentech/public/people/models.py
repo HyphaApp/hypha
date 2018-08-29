@@ -166,7 +166,7 @@ class PersonPage(FundingMixin, BasePage):
 
 class PersonIndexPage(BasePage):
     subpage_types = ['PersonPage']
-    parent_page_types = ['home.HomePage']
+    parent_page_types = ['standardpages.IndexPage']
 
     @cached_property
     def people(self):
