@@ -183,6 +183,12 @@ class ConceptDeterminationForm(BaseDeterminationForm):
     )
     sustainable.group = 1
 
+    comments = RichTextField(
+        label='Other comments',
+        help_text=''
+    )
+    comments.group = 1
+
     # TODO option to not send message, or resend
 
 
