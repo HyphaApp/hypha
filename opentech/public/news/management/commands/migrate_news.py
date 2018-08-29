@@ -12,10 +12,13 @@ from wagtail.core.rich_text import RichText
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
+from opentech.apply.users.models import User
+from opentech.public.people.models import PersonPage
 from opentech.public.projects.models import ProjectPage
 from opentech.public.news.models import (
     NewsIndex,
     NewsPage,
+    NewsPageAuthor,
     NewsType,
     NewsPageNewsType,
     NewsProjectRelatedPage,
@@ -96,6 +99,28 @@ class Command(BaseCommand):
                 news.related_projects.add(NewsProjectRelatedPage(
                     page=project_page,
                 ))
+
+        news.authors.clear()
+        for author in self.ensure_iterable(node['field_article_authors']):
+            user = User.objects.get(drupal_id=author['target_id'])
+            news.authors.add(NewsPageAuthor(
+                author=PersonPage.objects.get(title=user.full_name)
+            ))
+
+        try:
+            user = User.objects.get(drupal_id=node['uid'])
+        except User.DoesNotExist:
+            pass
+        else:
+            user_map = {'Dan Blah': 'Dan "Blah" Meredith'}
+            name = user_map.get(user.full_name, user.full_name)
+            # missing amin jobran
+            try:
+                news.authors.add(NewsPageAuthor(
+                    author=PersonPage.objects.get(title=name)
+                ))
+            except PersonPage.DoesNotExist:
+                print(f'missing person page: {name}')
 
         try:
             if not news.get_parent():
