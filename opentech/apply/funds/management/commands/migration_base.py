@@ -109,6 +109,9 @@ class MigrateCommand(BaseCommand):
             else:
                 form_data["email"] = f"user+{node['uid']}@exeample.com"
 
+        if "address" not in form_data:
+            form_data["address"] = json.dumps({"country": "GB", "thoroughfare": "This is not a real address!", "premise": "", "localityname": "London", "administrativearea": "", "postalcode": "123"})
+
         submission.form_data = form_data
 
         try:
