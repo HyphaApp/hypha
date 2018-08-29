@@ -69,7 +69,7 @@
     var oldConvertToText = $.fn.addressfield.convertToText;
     $.fn.addressfield.convertToText = function() {
         var $text = oldConvertToText.call(this);
-        $text.unwrap(selectWrap);
+        $text.unwrap();
         return $text;
     };
 
