@@ -126,8 +126,12 @@
         }
 
         .media-box--reverse & {
-            @extend %h5;
+            @include responsive-font-sizes(15px, map-get($font-sizes, epsilon));
             display: block;
+
+            &--projectpage-introduction {
+                @include responsive-font-sizes(18px, map-get($font-sizes, delta));
+            }
         }
 
         .media-box--reverse:hover & {
