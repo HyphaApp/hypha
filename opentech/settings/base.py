@@ -375,6 +375,8 @@ else:
 
 if 'AWS_STORAGE_BUCKET_NAME' in env:
     DEFAULT_FILE_STORAGE = 'opentech.storage_backends.PublicMediaStorage'
+    PRIVATE_FILE_STORAGE = 'opentech.storage_backends.PrivateMediaStorage'
+
     AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
 
     if 'AWS_PUBLIC_BUCKET_NAME' in env:

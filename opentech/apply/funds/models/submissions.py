@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import DefaultStorage
+from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import ObjectDoesNotExist
@@ -39,6 +39,9 @@ from ..workflow import (
     UserPermissions,
     WORKFLOWS,
 )
+
+
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class JSONOrderable(models.QuerySet):
@@ -283,11 +286,6 @@ class ApplicationSubmission(
         editable=False,
     )
 
-    if settings.RUN_ENVIROMENT == 'development':
-        submission_storage = DefaultStorage()
-    else:
-        submission_storage = PrivateMediaStorage()
-
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
@@ -359,7 +357,7 @@ class ApplicationSubmission(
 
     def save_path(self, file_name):
         file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
-        return self.submission_storage.generate_filename(file_path)
+        return submission_storage.generate_filename(file_path)
 
     def handle_file(self, file):
         # File is potentially optional
@@ -370,11 +368,11 @@ class ApplicationSubmission(
                 # file is not changed, it is still the dictionary
                 return file
 
-            saved_name = self.submission_storage.save(filename, file)
+            saved_name = submission_storage.save(filename, file)
             return {
                 'name': file.name,
                 'path': saved_name,
-                'url': self.submission_storage.url(saved_name),
+                'url': submission_storage.url(saved_name),
             }
 
     def handle_files(self, files):
