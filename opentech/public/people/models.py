@@ -80,7 +80,7 @@ class Funding(BaseFunding):
 class PersonContactInfomation(Orderable):
     methods = (
         ('irc', 'IRC'),
-        ('im_jabber_xmpp', 'IM/Jabber/XMPP'),
+        ('im', 'IM/Jabber/XMPP'),
         ('phone', 'Phone'),
         ('pgp', 'PGP fingerprint'),
         ('otr', 'OTR fingerprint'),
@@ -152,6 +152,7 @@ class PersonPage(FundingMixin, BasePage):
             FieldPanel('first_name'),
             FieldPanel('last_name'),
         ], heading="Name"),
+        FieldPanel('active'),
         ImageChooserPanel('photo'),
         FieldPanel('job_title'),
         InlinePanel('social_media_profile', label='Social accounts'),
@@ -171,13 +172,17 @@ class PersonIndexPage(BasePage):
     subpage_types = ['PersonPage']
     parent_page_types = ['standardpages.IndexPage']
 
-    @cached_property
-    def people(self):
-        return self.get_children().specific().live().public()
-
     def get_context(self, request, *args, **kwargs):
+        people = PersonPage.objects.live().public().descendant_of(self).order_by('title')
+
+        if request.GET.get('person_type'):
+            people = people.filter(person_types__person_type=request.GET.get('person_type'))
+
+        if not request.GET.get('include_inactive') == 'true':
+            people = people.filter(active=True)
+
         page_number = request.GET.get('page')
-        paginator = Paginator(self.people, settings.DEFAULT_PER_PAGE)
+        paginator = Paginator(people, settings.DEFAULT_PER_PAGE)
         try:
             people = paginator.page(page_number)
         except PageNotAnInteger:
@@ -186,6 +191,12 @@ class PersonIndexPage(BasePage):
             people = paginator.page(paginator.num_pages)
 
         context = super().get_context(request, *args, **kwargs)
-        context.update(people=people)
+        context.update(
+            people=people,
+            # Only show person types that have been used
+            person_types=PersonPagePersonType.objects.all().values_list(
+                'person_type__pk', 'person_type__title'
+            ).distinct()
+        )
 
         return context

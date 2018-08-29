@@ -25,10 +25,13 @@ from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.public.people.models import (
     Funding,
+    FundReviewers,
+    PersonContactInfomation,
     PersonPage,
     PersonIndexPage,
     PersonType,
     PersonPagePersonType,
+    SocialMediaProfile,
 )
 
 
@@ -96,6 +99,16 @@ class Command(BaseCommand):
             '3681': Page.objects.get(title='Digital Integrity Fellowship'),
         }
 
+        self.review_funds = {
+            '393': Page.objects.get(title='Internet Freedom Fund'),
+            '389': Page.objects.get(title='Rapid Response Fund'),
+            '391': Page.objects.get(title='Core Infrastructure Fund'),
+            '': Page.objects.get(title='Community Lab'),
+            '394': Page.objects.get(title='Information Controls Fellowship'),
+            '': None,
+            '390': Page.objects.get(title='Digital Integrity Fellowship'),
+        }
+
         with options['source'] as json_data:
             self.data = json.load(json_data)
 
@@ -127,7 +140,7 @@ class Command(BaseCommand):
 
         person.job_title = self.get_field(node, 'field_team_title')
 
-        person.active = bool(node['field_team_status']['value'])
+        person.active = bool(int(node['field_team_status']['value']))
 
         person.person_types.clear()
         for person_type in self.ensure_iterable(node['field_team_type']):
@@ -166,30 +179,27 @@ class Command(BaseCommand):
         body_without_intro = cleaned_body.replace(introduction, '').strip()
         person.biography = [('paragraph', RichText(body_without_intro))]
 
-        # person.contact_details.clear()
+        person.social_media_profile.clear()
 
-        # sites = node['field_project_url']
+        if self.get_field(node, 'field_team_twitter'):
+            person.social_media_profile.add(SocialMediaProfile(
+                service='twitter',
+                username=self.get_field(node, 'field_team_twitter')
+            ))
 
-        # if isinstance(sites, dict):
-        #     sites = [sites]
+        person.contact_details.clear()
+        for contact in ['im', 'otr', 'irc', 'pgp', 'phone']:
+            if self.get_field(node, f'field_team_{contact}'):
+                person.contact_details.add(PersonContactInfomation(
+                    contact_method=contact,
+                    contact_detail=self.get_field(node, f'field_team_{contact}')
+                ))
 
-        # for site in sites:
-        #     url = site['url']
-        #     if 'github' in url:
-        #         page_type = 'github'
-        #         url = urlsplit(url).path
-        #     else:
-        #         page_type = 'website'
-
-        #     person.contact_details.add(ProjectContactDetails(
-        #         service=page_type,
-        #         value=url,
-        #     ))
-
-        # person.contact_details.add(ProjectContactDetails(
-        #     service='twitter',
-        #     value=self.get_field(node, 'field_project_twitter')
-        # ))
+        person.funds_reviewed.clear()
+        for reviewer in self.ensure_iterable(node['field_team_review_panel']):
+            person.funds_reviewed.add(FundReviewers(
+                page=self.review_funds[reviewer['tid']],
+            ))
 
         # Funding
         person.funding.clear()
