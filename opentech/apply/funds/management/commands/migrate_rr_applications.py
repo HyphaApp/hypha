@@ -162,6 +162,11 @@ class Command(MigrateCommand):
                 "premise": "premise",
             }
         },
+        "field_application_questions": {
+            "id": "1889de86-0a0d-4abf-9916-4db87a499d35",
+            "type": "merge_value",
+            "key": "safe_value",
+        },
         "field_application_otf_mission": {
             "id": "e695f0d7-4c74-4cc6-853f-bd62ecd19d3d",
             "type": "boolean",
@@ -198,5 +203,31 @@ class Command(MigrateCommand):
             "id": "607daeba-1f33-4ad0-b135-eda743ba8e3a",
             "type": "file",
             # TODO: finish mapping
+        },
+    }
+
+    REQUEST_QUESTION_MAP = {
+        "3618": {
+            "0": "What will be the outcome(s) of your research?",
+            "1": "How will the results of your research be accessible to a non-technical audience?",
+            "2": "How will your work build on the existing research in your area of focus?",
+            "3": "Why is the organization chosen well suited to host your project?",
+            "4": "Please include a resume or CV (Feel free to attach a file at the bottom of the application)",
+        },
+        "3667": {
+            "0": "Does your fellowship project address an urgent and time-bound digital emergency? If so, how? ",
+            "1": "What steps will you take post-emergency to prevent a similar problem from occurring again in the future? ",
+        },
+        "3681": {
+            "0": "How does your fellowship project idea address the digital security threats the host organization(s) face?",
+            "1": "What are the anticipated results from your fellowship project?",
+            "2": "How will the results of your fellowship project be accessible to internet freedom technology developer community?",
+            "3": "Why is the organization(s) chosen well suited for your idea under the DIFP remit?",
+            "4": "Please include a resume or CV (Feel free to attach a file at the bottom of the application)",
+        },
+        "3861": {
+            "0": "Where are you located or would you like to be located during this fellowship?",
+            "1": "When would you ideally start and why?",
+            "2": "Please list any links to your portfolio or prior work",
         },
     }

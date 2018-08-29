@@ -141,6 +141,15 @@ class MigrateCommand(BaseCommand):
                 value = self.nl2br(source_value[key]) if source_value else ''
             else:
                 value = self.nl2br(source_value['value']) if source_value else ''
+        elif mapping_type == 'merge_value':
+            values = []
+            i = 0
+            for item in source_value:
+                question = self.REQUEST_QUESTION_MAP[node['field_application_request']['target_id']]
+                values.append(f"<strong>{question[i]}</strong>{item[key]}<br>\n")
+                i += 1
+            merged_values = ''.join(values)
+            value = self.nl2br(merged_values) if source_value else ''
         elif mapping_type == 'map' and 'map' in 'mapping':
             value = mapping['map'].get(source_value[key])
         elif mapping_type == 'address' and 'map' in mapping:

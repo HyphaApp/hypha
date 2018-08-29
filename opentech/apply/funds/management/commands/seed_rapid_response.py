@@ -70,6 +70,7 @@ class Command(BaseCommand):
             {"type": "char", "value": {"field_label": "Primary point of contact", "help_text": "", "required": "", "format": "", "default_value": ""}, "id": "13bb0d64-65f3-4340-8e7e-e5da80d706d5"},
             {"type": "char", "value": {"field_label": "Phone", "help_text": "", "required": "", "format": "", "default_value": ""}, "id": "2cb9fe4b-df45-4181-80e5-14382f853081"},
             {"type": "address", "value": {"field_label": "Address", "help_text": "", "info": None}, "id": "bd29eb88-9754-4305-9b2d-406a875ec56a"},
+            {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "1889de86-0a0d-4abf-9916-4db87a499d35"},
             {"type": "multi_file", "value": {"field_label": "Upload", "help_text": "", "required": ""}, "id": "607daeba-1f33-4ad0-b135-eda743ba8e3a"},
             {"type": "text_markup", "value": "<h3>I acknowledge</h3>", "id": "5688ddc7-0397-41e7-9e6b-2c0fe44f42aa"},
             {"type": "checkbox", "value": {"field_label": "My application will be dismissed if it does not fit within OTF\'s mission, values, principles statements.", "help_text": "", "required": "true", "default_value": ""}, "id": "e695f0d7-4c74-4cc6-853f-bd62ecd19d3d"},

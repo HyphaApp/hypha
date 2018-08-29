@@ -71,7 +71,7 @@ class Command(MigrateCommand):
         },
         "field_application_questions": {
             "id": "57cc52e2-b3ff-4e9f-a5fe-42e7735e16c2",
-            "type": "value",
+            "type": "merge_value",
             "key": "safe_value",
         },
         "field_application_status": {
@@ -140,5 +140,31 @@ class Command(MigrateCommand):
         "field_application_otf_newsletter": {
             "id": "4ca22ebb-daba-4fb6-a4a6-b130dc6311a8",
             "type": "boolean",
+        },
+    }
+
+    REQUEST_QUESTION_MAP = {
+        "3618": {
+            0: "What will be the outcome(s) of your research?",
+            1: "How will the results of your research be accessible to a non-technical audience?",
+            2: "How will your work build on the existing research in your area of focus?",
+            3: "Why is the organization chosen well suited to host your project?",
+            4: "Please include a resume or CV (Feel free to attach a file at the bottom of the application)",
+        },
+        "3667": {
+            0: "Does your fellowship project address an urgent and time-bound digital emergency? If so, how? ",
+            1: "What steps will you take post-emergency to prevent a similar problem from occurring again in the future? ",
+        },
+        "3681": {
+            0: "How does your fellowship project idea address the digital security threats the host organization(s) face?",
+            1: "What are the anticipated results from your fellowship project?",
+            2: "How will the results of your fellowship project be accessible to internet freedom technology developer community?",
+            3: "Why is the organization(s) chosen well suited for your idea under the DIFP remit?",
+            4: "Please include a resume or CV (Feel free to attach a file at the bottom of the application)",
+        },
+        "3861": {
+            0: "Where are you located or would you like to be located during this fellowship?",
+            1: "When would you ideally start and why?",
+            2: "Please list any links to your portfolio or prior work",
         },
     }
