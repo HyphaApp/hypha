@@ -103,6 +103,12 @@ class MigrateCommand(BaseCommand):
         if "duration" not in form_data or not form_data["duration"]:
             form_data["duration"] = "1"
 
+        if "email" not in form_data or not form_data["email"]:
+            if hasattr(submission.user, 'email'):
+                form_data["email"] = submission.user.email
+            else:
+                form_data["email"] = f"user+{node['uid']}@exeample.com"
+
         submission.form_data = form_data
 
         try:

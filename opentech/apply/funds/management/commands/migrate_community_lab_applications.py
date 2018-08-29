@@ -23,7 +23,7 @@ class Command(MigrateCommand):
             "key": "email",
         },
         "field_application_event_date": {
-            "id": "8c74af9c-6cc7-4558-9d72-0f2c9a87f22b",
+            "id": "d3364b5b-976b-4cd6-85d5-4ccc0bb9b560",
             "type": "value",
             "key": "value",
         },
@@ -31,96 +31,100 @@ class Command(MigrateCommand):
             "id": "value",
             "type": "value",
         },
+        "field_application_amount_text": {
+            "id": "value",
+            "type": "value",
+        },
         "field_application_describe": {
-            "id": "fe488e12-b5f4-491a-9ca9-d7aff0993884",
+            "id": "aeea7bd9-01b5-406e-bb30-1303ba0f550a",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_who": {
-            "id": "e7a0bc56-ad5d-4be7-9709-eb823a0e6e3d",
+            "id": "a5117396-0286-4937-91a3-be33a5944ac6",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_objective_text": {
-            "id": "43d52051-27f2-4d30-abf1-173a31f15072",
+            "id": "d90d2cd4-831e-46f5-8f2e-82ac94913784",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_strategy": {
-            "id": "4e1f46ad-12d7-40c3-a1e8-0793bb327961",
+            "id": "fc5ddac7-c7b5-4d07-9bc3-16902e9a7afb",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_how": {
-            "id": "e33e1415-6832-4ef3-8a10-ae6d3aef61c8",
+            "id": "ea6ceb76-882e-4739-94da-7b055a112d1c",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_collaboration": {
-            "id": "812792a3-edc5-4521-b5c7-e9c697122325",
+            "id": "afa7e16b-d31c-4016-af88-7939acc7b6e1",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_diverse": {
-            "id": "c367cae6-9fde-40fc-8c99-7ca2117bda6a",
+            "id": "55e23c45-72a7-4ab9-9940-764d00724de8",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_outreach": {
-            "id": "14ef1b53-ef85-4756-a13e-19d3c3be7d85",
+            "id": "737bd894-78b1-41ef-969c-2a57c843cd5b",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_needs": {
-            "id": "eb6474e1-2f69-4f69-9a9c-edf13c25455c",
+            "id": "56c84f40-f59e-4e82-80a1-2cd971717e9c",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_budget": {
-            "id": "de631da99f904f5f9c67e3a6e182f7c6",
+            "id": "6ca29ae0-780a-467a-a3e9-34195bcb0d79",
             "type": "value",
             "key": "safe_value",
         },
         "field_application_cod": {
-            "id": "4948cc0fd1d142eeb81dd10784fba0f2",
+            "id": "9db8b2ca-62b6-44c4-9d3d-70cb4a28e65f",
             "type": "boolean",
         },
-        "field_application_otf_mission": {
-            "id": "9b20aa6384d54f64b1fb846efed89a41",
-            "type": "boolean",
-        },
-        "field_application_otf_tos": {
-            "id": "b4a2f762f61c402aa8d22b58b3201263",
-            "type": "boolean",
-        },
-        "field_application_otf_represent": {
-            "id": "9409408f0cee4c97ac0517838eacdd9f",
-            "type": "boolean",
-        },
-        "field_application_otf_license": {
-            "id": "e0e6990db8744781afe9d42a105b8ff4",
-            "type": "boolean",
-        },
-        "field_application_otf_complete": {
-            "id": "966cd67f04a34c16b4e5892d4cd1e175",
-            "type": "boolean",
-        },
-        "field_application_otf_deadline": {
-            "id": "d5b982f829dd4ee4aab3eb5349e6b077",
-            "type": "boolean",
-        },
-        "field_application_otf_list": {
-            "id": "4a4feb4e6e5445bd83b42e9f39ca833c",
-            "type": "boolean",
-        },
-        "field_application_otf_newsletter": {
-            "id": "e011bd48613648d48263997f71656bfc",
-            "type": "boolean",
-        },
-
         "field_concept_upload": {
-            "id": "8c4f9cf13d624b64ab70e6cd342921f5",
+            "id": "b3af7aac-3439-45fa-9573-518f82f5cd6c",
             "type": "file",
             # TODO: finish mapping
         },
+        "field_application_otf_mission": {
+            "id": "1248f597-2f18-4b16-8f96-63912e5197c5",
+            "type": "boolean",
+        },
+        "field_application_otf_tos": {
+            "id": "5a676552-e189-417e-9901-05bfc973cfb5",
+            "type": "boolean",
+        },
+        "field_application_otf_represent": {
+            "id": "c4f54c3d-6b2a-4b32-b651-9121430aa06f",
+            "type": "boolean",
+        },
+        "field_application_otf_license": {
+            "id": "beb4d454-466d-43d5-823e-80dbccacbbb3",
+            "type": "boolean",
+        },
+        "field_application_otf_complete": {
+            "id": "fd6b034d-7cec-49fe-b4da-991c382283ef",
+            "type": "boolean",
+        },
+        "field_application_otf_deadline": {
+            "id": "d930a864-263d-4d0d-8ff1-553b13efda41",
+            "type": "boolean",
+        },
+        "field_application_otf_list": {
+            "id": "f75fd335-be7d-460d-b96a-53d7aa9a826f",
+            "type": "boolean",
+        },
+        "field_application_otf_newsletter": {
+            "id": "a1f03bca-9267-49cf-9880-444d6806065c",
+            "type": "boolean",
+        },
+
     }

@@ -154,12 +154,12 @@ class Command(BaseCommand):
         data3 = [
             {"type": "text_markup", "value": "<h3>Conflicts of Interest and Confidentialit</h3>", "id": "4dc49d2f-a886-4244-b347-3614f8d1e399"},
             {"type": "rich_text", "value": {"field_label": "Conflict(s) of interest disclosure", "help_text": "", "required": "", "default_value": ""}, "id": "f16be0b3-ef02-4876-b056-8a84238b1a52"},
-            {"type": "Recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "25d0d9b0-6e65-4fe3-906a-a1cd211def96"},
+            {"type": "recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "25d0d9b0-6e65-4fe3-906a-a1cd211def96"},
             {"type": "score", "value": {"field_label": "Goals and principles", "help_text": "", "required": ""}, "id": "6dd8d5d2-09a5-4681-aebc-eb9ccd00395a"},
             {"type": "score", "value": {"field_label": "Technical merit", "help_text": "", "required": ""}, "id": "52b1f53c-9656-4b0c-8b8b-a9c57869356d"},
             {"type": "score", "value": {"field_label": "Reasonable and realistic", "help_text": "", "required": ""}, "id": "aedb27e7-6044-4e04-b2c7-358065c8fe5c"},
             {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "84405ba2-f94e-4d4d-92e1-190bd802f858"},
-            {"type": "Comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "5028cac1-752f-4d47-b83a-4f766f19fb2d"}
+            {"type": "comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "5028cac1-752f-4d47-b83a-4f766f19fb2d"}
         ]
 
         concept_review_form, _ = ReviewForm.objects.get_or_create(name='Concept review', defaults={'form_fields': json.dumps(data3)})
@@ -191,8 +191,8 @@ class Command(BaseCommand):
             {"type": "text_markup", "value": "<h3>D. Rationale and appropriateness consideration</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
             {"type": "score", "value": {"field_label": "Rationale and appropriateness ", "help_text": "", "required": ""}, "id": "0d1bf533-968c-44b9-bb30-d437ae039474"},
             {"type": "text_markup", "value": "<h3>E. General recommendation</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
-            {"type": "Recommendation", "value": {"field_label": "Recommendation", "help_text": "", "info": None}, "id": "4bf80578-1c8f-4515-9d6a-e52e87629e3e"},
-            {"type": "Comments", "value": {"field_label": "Recommendation comments", "help_text": "", "info": None}, "id": "a814d7ac-8291-4f3e-b733-4a9a4f1f8a49"}
+            {"type": "recommendation", "value": {"field_label": "Recommendation", "help_text": "", "info": None}, "id": "4bf80578-1c8f-4515-9d6a-e52e87629e3e"},
+            {"type": "comments", "value": {"field_label": "Recommendation comments", "help_text": "", "info": None}, "id": "a814d7ac-8291-4f3e-b733-4a9a4f1f8a49"}
         ]
 
         proposal_review_form, _ = ReviewForm.objects.get_or_create(name='Proposal review', defaults={'form_fields': json.dumps(data4)})
