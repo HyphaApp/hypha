@@ -129,7 +129,9 @@ class PersonPage(FundingMixin, BasePage):
     subpage_types = []
     parent_page_types = ['PersonIndexPage']
 
-    first_name = models.CharField(max_length=255)
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
+    first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255)
     photo = models.ForeignKey(
         'images.CustomImage',
@@ -138,7 +140,8 @@ class PersonPage(FundingMixin, BasePage):
         related_name='+',
         on_delete=models.SET_NULL
     )
-    job_title = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+    job_title = models.CharField(max_length=255, blank=True)
     introduction = models.TextField(blank=True)
     website = models.URLField(blank=True, max_length=255)
     biography = StreamField(StoryBlock(), blank=True)

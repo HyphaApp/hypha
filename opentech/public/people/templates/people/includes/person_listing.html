@@ -8,6 +8,6 @@
     {% endfor %}
     <h4 class="listing__title">{{ person.first_name }} {{ person.last_name }}</h4>
     {% if person.listing_summary or person.introduction %}
-        <h6 class="listing__teaser">{{ person.listing_summary|default:person.introduction }}</h6>
+        <h6 class="listing__teaser">{{ person.listing_summary|default:person.introduction|truncatechars:235 }}</h6>
     {% endif %}
 </a>
