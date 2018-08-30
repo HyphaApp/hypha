@@ -38,3 +38,4 @@ raven==6.9.0
 django-storages==1.6.6
 boto3==1.7.75
 mailchimp3==3.0.4
+scout-apm==1.3.4

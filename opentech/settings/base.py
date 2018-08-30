@@ -60,6 +60,8 @@ if 'SERVER_EMAIL' in env:
 # Application definition
 
 INSTALLED_APPS = [
+    'scout_apm.django',
+
     'opentech.images',
 
     'opentech.apply.activity',
