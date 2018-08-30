@@ -28,6 +28,7 @@ class Command(BaseCommand):
             {"type": "title", "value": {"field_label": "What is your event name?", "help_text": "", "info": None}, "id": "690e7839-eedb-4c24-a438-91d09da88774"},
             {"type": "full_name", "value": {"field_label": "Your name", "help_text": "", "info": None}, "id": "4926d94b-7e57-494a-a2e2-2331a8ee04a2"},
             {"type": "email", "value": {"field_label": "E-mail", "help_text": "", "info": None}, "id": "f0b90755-dc11-4de7-89aa-7611bf698455"},
+            {"type": "address", "value": {"field_label": "Address", "help_text": "", "info": None}, "id": "64a2f72a-9e3b-4b97-b69a-d0b9dbdd1cc7"},
             {"type": "date", "value": {"field_label": "Date of event", "help_text": "", "required": "", "default_value": ""}, "id": "d3364b5b-976b-4cd6-85d5-4ccc0bb9b560"},
             {"type": "value", "value": {"field_label": "Amount requested", "help_text": "", "info": None}, "id": "eadbd266-c825-45ea-8de9-deaa2aaa677b"},
             {"type": "duration", "value": {"field_label": "Duration", "help_text": "", "info": None}, "id": "9af05779-8547-4a85-8f1c-3505d5778e94"},
