@@ -4,18 +4,64 @@ Django settings for opentech project.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
+import dj_database_url
+import raven
+from raven.exceptions import InvalidGitRepository
+
 
 env = os.environ.copy()
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-# Run enviroment, can be set to development/test/production.
-RUN_ENVIROMENT = 'development'
+APP_NAME = env.get('APP_NAME', 'opentech')
+
+DEBUG = False
+
+
+if 'SECRET_KEY' in env:
+    SECRET_KEY = env['SECRET_KEY']
+
+if 'ALLOWED_HOSTS' in env:
+    ALLOWED_HOSTS = env['ALLOWED_HOSTS'].split(',')
+
+
+# Email settings
+if 'EMAIL_HOST' in env:
+    EMAIL_HOST = env['EMAIL_HOST']
+
+if 'EMAIL_PORT' in env:
+    try:
+        EMAIL_PORT = int(env['EMAIL_PORT'])
+    except ValueError:
+        pass
+
+if 'EMAIL_HOST_USER' in env:
+    EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+
+if 'EMAIL_HOST_PASSWORD' in env:
+    EMAIL_HOST_PASSWORD = env['EMAIL_HOST_PASSWORD']
+
+if env.get('EMAIL_USE_TLS', 'false').lower().strip() == 'true':
+    EMAIL_USE_TLS = True
+
+if env.get('EMAIL_USE_SSL', 'false').lower().strip() == 'true':
+    EMAIL_USE_SSL = True
+
+if 'EMAIL_SUBJECT_PREFIX' in env:
+    EMAIL_SUBJECT_PREFIX = env['EMAIL_SUBJECT_PREFIX']
+
+if 'SERVER_EMAIL' in env:
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    'scout_apm.django',
+
     'opentech.images',
 
     'opentech.apply.activity',
@@ -85,6 +131,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -134,22 +181,36 @@ WSGI_APPLICATION = 'opentech.wsgi.application'
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'opentech',
-    }
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        default=f"postgres:///{APP_NAME}"
+    )
 }
 
 
 # Cache
-# Use database cache as the cache backend
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'database_cache',
+if 'REDIS_URL' in env:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": env['REDIS_URL'],
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'database_cache',
+        }
+    }
+
+
+# Set s-max-age header that is used by reverse proxy/front end cache. See
+# urls.py
+try:
+    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 600))
+except ValueError:
+    pass
 
 
 # Search
@@ -204,17 +265,18 @@ SHORT_DATETIME_FORMAT = 'Y-m-d\TH:i:s'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, 'static_compiled'),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_ROOT = env.get('STATIC_DIR', os.path.join(BASE_DIR, 'static'))
+STATIC_URL = env.get('STATIC_URL', '/static/')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = env.get('MEDIA_DIR', os.path.join(BASE_DIR, 'media'))
+MEDIA_URL = env.get('MEDIA_URL', '/media/')
+
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -232,46 +294,46 @@ AUTHENTICATION_BACKENDS = (
 
 
 # Logging
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'formatter': 'verbose',
-        },
+        # Send logs with at least INFO level to the console.
         'console': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
-        }
+        },
+        # Send logs with level of at least ERROR to Sentry.
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
     },
     'formatters': {
         'verbose': {
-            'format': '[%(asctime)s] (%(process)d/%(thread)d) %(name)s %(levelname)s: %(message)s'
+            'format': '[%(asctime)s][%(process)d][%(levelname)s][%(name)s] %(message)s'
         }
     },
     'loggers': {
         'opentech': {
-            'handlers': [],
+            'handlers': ['console', 'sentry'],
             'level': 'INFO',
             'propagate': False,
         },
         'wagtail': {
-            'handlers': [],
+            'handlers': ['console', 'sentry'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['mail_admins', 'console'],
-            'level': 'ERROR',
+            'handlers': ['console', 'sentry'],
+            'level': 'WARNING',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['console', 'sentry'],
+            'level': 'WARNING',
             'propagate': False,
         },
     },
@@ -319,8 +381,8 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Make sure the Google+ API is enabled for your API project
 STAFF_EMAIL_DOMAINS = ['opentech.fund']
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'users_public:login'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
@@ -375,6 +437,8 @@ else:
 
 if 'AWS_STORAGE_BUCKET_NAME' in env:
     DEFAULT_FILE_STORAGE = 'opentech.storage_backends.PublicMediaStorage'
+    PRIVATE_FILE_STORAGE = 'opentech.storage_backends.PrivateMediaStorage'
+
     AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
 
     if 'AWS_PUBLIC_BUCKET_NAME' in env:
@@ -403,3 +467,99 @@ if 'AWS_STORAGE_BUCKET_NAME' in env:
 
 MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
+
+
+# Raven (sentry) configuration.
+if 'SENTRY_DSN' in env:
+    INSTALLED_APPS += (
+        'raven.contrib.django.raven_compat',
+    )
+
+    RAVEN_CONFIG = {
+        'dsn': env['SENTRY_DSN'],
+        'tags': {},
+    }
+
+    # Specifying the programming language as a tag can be useful when
+    # e.g. javascript error logging is enabled within the same project,
+    # so that errors can be filtered by the programming language too.
+    # The 'lang' tag is just an arbitrarily chosen one; any other tags can be used as well.
+    # It has to overriden in javascript: Raven.setTagsContext({lang: 'javascript'});
+    RAVEN_CONFIG['tags']['lang'] = 'python'
+
+    # Prevent logging errors from the django shell.
+    # Errors from other managenent commands will be still logged.
+    if len(sys.argv) > 1 and sys.argv[1] in ['shell', 'shell_plus']:
+        RAVEN_CONFIG['ignore_exceptions'] = ['*']
+
+    # There's a chooser to toggle between environments at the top right corner on sentry.io
+    # Values are typically 'staging' or 'production' but can be set to anything else if needed.
+    # heroku config:set SENTRY_ENVIRONMENT=production
+    if 'SENTRY_ENVIRONMENT' in env:
+        RAVEN_CONFIG['environment'] = env['SENTRY_ENVIRONMENT']
+
+    try:
+        RAVEN_CONFIG['release'] = raven.fetch_git_sha(BASE_DIR)
+    except InvalidGitRepository:
+        try:
+            RAVEN_CONFIG['release'] = env['GIT_REV']
+        except KeyError:
+            pass
+
+
+# Basic auth settings
+if env.get('BASIC_AUTH_ENABLED', 'false').lower().strip() == 'true':
+    MIDDLEWARE.insert(0, 'baipw.middleware.BasicAuthIPWhitelistMiddleware')
+    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
+    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
+    if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
+        BASIC_AUTH_WHITELISTED_HTTP_HOSTS = (
+            env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
+        )
+
+
+# Cloudflare cache
+if 'CLOUDFLARE_API_TOKEN' in env:
+    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
+    WAGTAILFRONTENDCACHE = {
+        'cloudflare': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
+            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
+            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
+        },
+    }
+
+
+if 'PRIMARY_HOST' in env:
+    # This is used by Wagtail's email notifications for constructing absolute
+    # URLs.
+    BASE_URL = 'https://{}'.format(env['PRIMARY_HOST'])
+
+
+# Security configuration
+# https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
+
+if env.get('SECURE_SSL_REDIRECT', 'true').strip().lower() == 'true':
+    SECURE_SSL_REDIRECT = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if 'SECURE_HSTS_SECONDS' in env:
+    try:
+        SECURE_HSTS_SECONDS = int(env['SECURE_HSTS_SECONDS'])
+    except ValueError:
+        pass
+
+if env.get('SECURE_BROWSER_XSS_FILTER', 'true').lower().strip() == 'true':
+    SECURE_BROWSER_XSS_FILTER = True
+
+if env.get('SECURE_CONTENT_TYPE_NOSNIFF', 'true').lower().strip() == 'true':
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+
+# Referrer-policy header settings
+# https://django-referrer-policy.readthedocs.io/en/1.0/
+
+REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
+                          'no-referrer-when-downgrade').strip()

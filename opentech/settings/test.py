@@ -1,38 +1,9 @@
-import os
-import dj_database_url
+from .production import *  # noqa
 
-from .base import *  # noqa
+# Should only include explicit testing settings
 
-# Do not set SECRET_KEY, Postgres or LDAP password or any other sensitive data here.
-# Instead, use environment variables or create a local.py file on the server.
+SECRET_KEY = 'NOT A SECRET'
 
-DEBUG = True
-# RUN_ENVIROMENT = 'test'
-
-
-# Cache everything for 10 minutes
-# This only applies to pages that do not have a more specific cache-control
-# setting. See urls.py
-CACHE_CONTROL_MAX_AGE = 600
-
-
-# Configuration from environment variables
-# Alternatively, you can set these in a local.py file on the server
-
-env = os.environ.copy()
-
-# Basic configuration
-
-APP_NAME = env.get('APP_NAME', 'opentech')
-
-SECURE_SSL_REDIRECT = False
-
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {'default': dj_database_url.config()}
-
-if 'SECRET_KEY' in env:
-    SECRET_KEY = env['SECRET_KEY']
-
-# Email config
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Need this to ensure white noise doesn't kill the speed of testing
+# http://whitenoise.evans.io/en/latest/django.html#whitenoise-makes-my-tests-run-slow
+WHITENOISE_AUTOREFRESH = True
