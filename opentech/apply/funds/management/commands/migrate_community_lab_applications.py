@@ -2,7 +2,7 @@ from opentech.apply.funds.management.commands.migration_base import MigrateComma
 
 
 class Command(MigrateCommand):
-    LAB_NAME = "Community lab"
+    LAB_NAME = "Community lab (archive fund)"
     APPLICATION_TYPE = "request"
     CONTENT_TYPE = "lab"
 

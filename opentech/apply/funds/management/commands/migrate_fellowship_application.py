@@ -3,8 +3,8 @@ from opentech.apply.funds.management.commands.migration_base import MigrateComma
 
 class Command(MigrateCommand):
     CONTENT_TYPE = "fund"
-    FUND_NAME = "Fellowship archive fund"
-    ROUND_NAME = "Fellowship archive round"
+    FUND_NAME = "Fellowship (archive fund)"
+    ROUND_NAME = "Fellowship (archive round)"
     APPLICATION_TYPE = "concept"
 
     STREAMFIELD_MAP = {

@@ -3,8 +3,8 @@ from opentech.apply.funds.management.commands.migration_base import MigrateComma
 
 class Command(MigrateCommand):
     CONTENT_TYPE = "fund"
-    FUND_NAME = "Internet Freedom Fund"
-    ROUND_NAME = "Internet Freedom Fund"
+    FUND_NAME = "Internet Freedom Fund (archive fund)"
+    ROUND_NAME = "Internet Freedom Fund (archive round)"
     APPLICATION_TYPE = "proposal"
 
     STREAMFIELD_MAP = {
