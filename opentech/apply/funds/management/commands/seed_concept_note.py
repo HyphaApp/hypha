@@ -230,8 +230,8 @@ class Command(BaseCommand):
             title=CN_ROUND_TITLE,
             lead=lead,
             # The date of the original Internet Freedom Fund request type
-            start_date=date(2015, 8, 28),
-            end_date=None
+            start_date=date(2013, 1, 1),
+            end_date=date(2018, 8, 29)
         )
         round.parent_page = fund
         fund.add_child(instance=round)
