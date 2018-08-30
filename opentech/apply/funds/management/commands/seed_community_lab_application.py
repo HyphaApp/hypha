@@ -11,6 +11,8 @@ from opentech.apply.review.models import ReviewForm
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
+CL_FUND_TITLE = 'Community lab (archive fund)'
+
 
 class Command(BaseCommand):
     help = "Pre-seeds the Community lab application form and lab type. Depends on the categories seed being run first."
@@ -93,11 +95,11 @@ class Command(BaseCommand):
             lead = User.objects.filter(groups__name=STAFF_GROUP_NAME).first()
 
         try:
-            lab = LabType.objects.get(title='Community lab')
+            lab = LabType.objects.get(title=CL_FUND_TITLE)
         except LabType.DoesNotExist:
             apply_home = ApplyHomePage.objects.first()
 
-            lab = LabType(title='Community lab', lead=lead, workflow_name='single')
+            lab = LabType(title=CL_FUND_TITLE, lead=lead, workflow_name='single')
             apply_home.add_child(instance=lab)
 
             lab_form = LabBaseForm.objects.create(lab=lab, form=application_form)

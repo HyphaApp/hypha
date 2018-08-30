@@ -14,8 +14,8 @@ from opentech.apply.review.models import ReviewForm
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-FS_ROUND_TITLE = 'Fellowship archive round'
-FS_FUND_TITLE = 'Fellowship archive fund'
+FS_ROUND_TITLE = 'Fellowship (archive round)'
+FS_FUND_TITLE = 'Fellowship (archive fund)'
 
 
 class Command(BaseCommand):
@@ -176,8 +176,8 @@ class Command(BaseCommand):
             title=FS_ROUND_TITLE,
             lead=lead,
             # The date of the original Information Controls Fellowship request type
-            start_date=date(2015, 8, 28),
-            end_date=None
+            start_date=date(2013, 1, 1),
+            end_date=date(2018, 8, 29)
         )
         round.parent_page = fund
         fund.add_child(instance=round)

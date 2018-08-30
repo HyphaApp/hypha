@@ -14,7 +14,8 @@ from opentech.apply.review.models import ReviewForm
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-RR_ROUND_TITLE = 'Rapid Response open round'
+RR_ROUND_TITLE = 'Rapid Response (archive round)'
+RR_FUND_TITLE = 'Rapid Response (archive fund)'
 
 
 class Command(BaseCommand):
@@ -109,11 +110,11 @@ class Command(BaseCommand):
 
     def create_rapid_response_fund_type(self, application_form, application_review_form):
         try:
-            fund = FundType.objects.get(title='Rapid Response')
+            fund = FundType.objects.get(title=RR_FUND_TITLE)
         except FundType.DoesNotExist:
             apply_home = ApplyHomePage.objects.first()
 
-            fund = FundType(title='Rapid Response', workflow_name='single')
+            fund = FundType(title=RR_FUND_TITLE, workflow_name='single')
             apply_home.add_child(instance=fund)
 
             fund_form = ApplicationBaseForm.objects.create(application=fund, form=application_form)
@@ -136,8 +137,8 @@ class Command(BaseCommand):
             title=RR_ROUND_TITLE,
             lead=lead,
             # The date of the original RR request type
-            start_date=date(2015, 8, 28),
-            end_date=None
+            start_date=date(2013, 1, 1),
+            end_date=date(2018, 8, 29)
         )
         round.parent_page = fund
         fund.add_child(instance=round)

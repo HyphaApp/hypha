@@ -14,8 +14,8 @@ from opentech.apply.review.models import ReviewForm
 from opentech.apply.home.models import ApplyHomePage
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-CN_ROUND_TITLE = 'Internet Freedom Fund'
-CN_FUND_TITLE = 'Internet Freedom Fund'
+CN_ROUND_TITLE = 'Internet Freedom Fund (archive round)'
+CN_FUND_TITLE = 'Internet Freedom Fund (archive fund)'
 
 
 class Command(BaseCommand):
