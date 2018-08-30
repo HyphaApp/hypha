@@ -107,7 +107,7 @@ class MigrateCommand(BaseCommand):
             if hasattr(submission.user, 'email'):
                 form_data["email"] = submission.user.email
             else:
-                form_data["email"] = f"user+{node['uid']}@exeample.com"
+                form_data["email"] = f"user+{node['uid']}@example.com"
 
         if "address" not in form_data or not form_data["address"]:
             form_data["address"] = json.dumps({"country": "GB", "thoroughfare": "This is not a real address!", "premise": "", "localityname": "London", "administrativearea": "", "postalcode": "123"})

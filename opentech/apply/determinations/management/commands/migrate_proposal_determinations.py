@@ -128,7 +128,7 @@ class Command(BaseCommand):
                 created_at=datetime.fromtimestamp(int(node['created']), timezone.utc),
                 updated_at=datetime.fromtimestamp(int(node['changed']), timezone.utc),
                 author=self.get_user(node['uid']),
-                submission=self.get_submission(node['field_submission_concept_note']['target_id']),
+                submission=self.get_submission(node),
                 outcome=self.get_determination(node),
                 message=self.get_field_value('field_psr_determination_message', node),
                 data=form_data,
@@ -204,8 +204,9 @@ class Command(BaseCommand):
         except User.DoesNotExist:
             return None
 
-    def get_submission(self, nid):
+    def get_submission(self, node):
         try:
+            nid = node['field_submission_proposal']['target_id']
             return ApplicationSubmission.objects.get(drupal_id=nid)
         except ApplicationSubmission.DoesNotExist:
             return 'None'
