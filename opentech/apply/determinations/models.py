@@ -52,6 +52,9 @@ class Determination(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
 
+    # Meta: used for migration purposes only
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     @property
     def stripped_message(self):
         return bleach.clean(self.message, tags=[], strip=True)

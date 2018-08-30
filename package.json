@@ -1,0 +1,13 @@
+{
+    "name": "Opentech",
+    "version": "1.0.0",
+    "description": "Build the static_src assets.",
+    "cacheDirectories": ["opentech/static_src/node_modules"],
+    "scripts": {
+        "heroku-postbuild": "cd opentech/static_src && yarn install && npm run build:prod"
+    },
+    "engines": {
+        "node": ">=8.0.0 <9.0.0",
+        "yarn": "^1.7.0"
+    }
+}

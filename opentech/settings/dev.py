@@ -20,6 +20,8 @@ INSTALLED_APPS = INSTALLED_APPS + [
     'wagtail.contrib.styleguide',
 ]
 
+SECURE_SSL_REDIRECT = False
+
 try:
     from .local import *  # noqa
 except ImportError:

@@ -28,10 +28,12 @@ class Command(BaseCommand):
                 user = users[uid]
 
                 full_name = self.get_full_name(user)
+                slack_name = self.get_slack_name(user)
                 user_object, created = User.objects.get_or_create(
                     email=self.get_email(user, options['anonymize']),
                     defaults={
                         'full_name': full_name,
+                        'slack': slack_name,
                         'drupal_id': uid,
                     }
                 )
@@ -50,20 +52,26 @@ class Command(BaseCommand):
     def get_full_name(self, user):
         full_name = user.get('field_otf_real_name', None)
         try:
-            # The Drupal data structure includes a language reference.
-            # The default is 'und' (undefined).
-            full_name = full_name['und'][0]['safe_value']
+            full_name = full_name['safe_value']
         except (KeyError, TypeError):
             full_name = user['name']
 
         return full_name
+
+    def get_slack_name(self, user):
+        slack_name = user.get('field_otf_slack_name', None)
+        try:
+            slack_name = slack_name['safe_value']
+        except (KeyError, TypeError):
+            slack_name = ''
+
+        return slack_name
 
     def get_user_groups(self, user):
         groups = []
         role_map = {
             'council': 'Reviewer',
             'administrator': 'Editors',
-            'dev': 'Administrator',
         }
 
         if self.is_staff(user['mail']):

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import DefaultStorage
+from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import ObjectDoesNotExist
@@ -24,7 +24,6 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.models import BaseStreamForm
 
-
 from .mixins import AccessFormData
 from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
@@ -40,8 +39,7 @@ from ..workflow import (
 )
 
 
-storage_settings = getattr(settings, 'APPLY_STORAGE_CONFIG', {})
-submission_storage = DefaultStorage(**storage_settings)
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class JSONOrderable(models.QuerySet):

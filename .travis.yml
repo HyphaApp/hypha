@@ -19,10 +19,8 @@ addons:
 
 env:
   global:
-    - DJANGO_SETTINGS_MODULE=opentech.settings.production
+    - DJANGO_SETTINGS_MODULE=opentech.settings.test
     - DATABASE_URL=postgres://postgres@localhost/test_db
-    - CFG_SECRET_KEY=iamnotsosecret
-    - CFG_ALLOWED_HOSTS=localhost
 
 before_script:
   # Create a database
