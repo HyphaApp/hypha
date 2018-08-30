@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.functional import cached_property
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.conf import settings
 

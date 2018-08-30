@@ -103,9 +103,8 @@ class Command(BaseCommand):
             '393': Page.objects.get(title='Internet Freedom Fund'),
             '389': Page.objects.get(title='Rapid Response Fund'),
             '391': Page.objects.get(title='Core Infrastructure Fund'),
-            '': Page.objects.get(title='Community Lab'),
+            'NOT_USED': Page.objects.get(title='Community Lab'),
             '394': Page.objects.get(title='Information Controls Fellowship'),
-            '': None,
             '390': Page.objects.get(title='Digital Integrity Fellowship'),
         }
 
