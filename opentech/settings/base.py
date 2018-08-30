@@ -380,7 +380,7 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
 STAFF_EMAIL_DOMAINS = ['opentech.fund']
-SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS', '').split(',') or STAFF_EMAIL_DOMAINS
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 
@@ -515,6 +515,10 @@ if env.get('BASIC_AUTH_ENABLED', 'false').lower().strip() == 'true':
     if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
         BASIC_AUTH_WHITELISTED_HTTP_HOSTS = (
             env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
+        )
+    if 'BASIC_AUTH_WHITELISTED_IP_NETWORKS' in env:
+        BASIC_AUTH_WHITELISTED_IP_NETWORKS = (
+            env['BASIC_AUTH_WHITELISTED_IP_NETWORKS'].split(',')
         )
 
 
