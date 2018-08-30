@@ -74,7 +74,6 @@ class Command(BaseCommand):
         # TODO timezone?
         news.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
         news.publication_date = datetime.fromtimestamp(int(node['created']), timezone.utc)
-        print(news.publication_date)
 
         news.title = node['title']
 
@@ -120,7 +119,7 @@ class Command(BaseCommand):
                     author=PersonPage.objects.get(title=name)
                 ))
             except PersonPage.DoesNotExist:
-                print(f'missing person page: {name}')
+                self.stdout.write(f'Missing person page: {name}')
 
         try:
             if not news.get_parent():
