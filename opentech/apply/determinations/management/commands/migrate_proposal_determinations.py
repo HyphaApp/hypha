@@ -114,6 +114,19 @@ class Command(BaseCommand):
         node = self.data[id]
         form_data = {}
 
+        try:
+            determination = Determination.objects.get(drupal_id=node['nid'])
+        except Determination.DoesNotExist:
+            determination = Determination(drupal_id=node['nid'])
+
+        # TODO timezone?
+        determination.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
+        determination.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
+        determination.author = self.get_user(node['uid'])
+        determination.submission = self.get_submission(node)
+        determination.outcome = self.get_determination(node)
+        determination.message = self.get_field_value('field_psr_determination_message', node)
+
         for field in node:
             if field in self.STREAMFIELD_MAP:
                 try:
@@ -123,24 +136,15 @@ class Command(BaseCommand):
                 except TypeError:
                     pass
 
+        determination.data = form_data
+
         try:
-            determination = Determination.objects.create(
-                created_at=datetime.fromtimestamp(int(node['created']), timezone.utc),
-                updated_at=datetime.fromtimestamp(int(node['changed']), timezone.utc),
-                author=self.get_user(node['uid']),
-                submission=self.get_submission(node),
-                outcome=self.get_determination(node),
-                message=self.get_field_value('field_psr_determination_message', node),
-                data=form_data,
-            )
-            try:
-                determination.save()
-                self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
-            except IntegrityError:
-                self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
-                pass
-        except ValueError:
-            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to ValueError")
+            determination.save()
+            self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
+        except IntegrityError:
+            import pprint
+            pprint.pprint(determination.submission)
+            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
             pass
 
     def get_field_value(self, field, node):
@@ -216,6 +220,7 @@ class Command(BaseCommand):
             "invited": 2,
             "approved": 2,
             "dropped": 0,
+            "unapproved": 0,
             "undetermined": 1
         }
 

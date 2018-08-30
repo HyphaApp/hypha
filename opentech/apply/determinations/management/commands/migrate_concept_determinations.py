@@ -32,6 +32,11 @@ class Command(BaseCommand):
             "type": "value",
             "key": "safe_value",
         },
+        "field_cnr_comments": {
+            "id": "comments",
+            "type": "value",
+            "key": "safe_value",
+        },
         "field_cnsr_determination_message": {
             "id": "message",
             "type": "value",
@@ -47,8 +52,11 @@ class Command(BaseCommand):
         with options['source'] as json_data:
             self.data = json.load(json_data)
 
+            blacklist = {"8104"}
+
             for id in self.data:
-                self.process(id)
+                if id not in blacklist:
+                    self.process(id)
 
     def process(self, id):
         node = self.data[id]
@@ -77,10 +85,6 @@ class Command(BaseCommand):
                     pass
 
         determination.data = form_data
-
-        import pprint
-        pprint.pprint(f"{node['nid']}: {determination}")
-        pprint.pprint(determination.data)
 
         try:
             determination.save()
@@ -162,6 +166,7 @@ class Command(BaseCommand):
             "invited": 2,
             "approved": 2,
             "dropped": 0,
+            "unapproved": 0,
             "undetermined": 1
         }
 
