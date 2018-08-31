@@ -164,7 +164,7 @@ $table-breakpoint: 'tablet-landscape';
                 }
             }
 
-            &.reviews_stats {
+            &.reviews_stats { // sass-lint:disable-line class-name-format
                 display: none;
 
                 @include media-query($table-breakpoint) {
@@ -188,11 +188,12 @@ $table-breakpoint: 'tablet-landscape';
                 }
             }
 
-            > span.mobile-label {
-                width: 90px;
+            > span.mobile-label { // sass-lint:disable-line force-element-nesting
                 display: inline-block;
+                width: 90px;
 
-                &.phase, &.title {
+                &.phase,
+                &.title {
                     display: none;
                 }
 

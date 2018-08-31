@@ -85,12 +85,12 @@
     }
 
     &--eye {
-        align-self: center;
-        height: 1em;
-        width: 1em;
-        stroke: $color--black;
-        top: .25em;
         position: relative;
+        top: 0.25em;
+        align-self: center;
+        width: 1em;
+        height: 1em;
+        stroke: $color--black;
     }
 
     &--pen {

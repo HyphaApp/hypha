@@ -96,9 +96,9 @@
     }
 
     &__image {
-        margin-bottom: 10px;
-        height: 180px;
         width: 180px;
+        height: 180px;
+        margin-bottom: 10px;
 
         @include media-query(tablet-portrait) {
             position: absolute;

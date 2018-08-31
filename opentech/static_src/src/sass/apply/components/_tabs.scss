@@ -26,8 +26,8 @@
     transition: color, background-color, 0.1s ease-out;
 
     @include media-query(mob-landscape) {
-        padding: 15px;
         width: 33%;
+        padding: 15px;
     }
 
     @include media-query(small-tablet) {
@@ -50,11 +50,11 @@
     }
 
     &--right {
-        display:none;
+        display: none;
 
         @include media-query(small-tablet) {
-            margin-left: auto;
             display: block;
+            margin-left: auto;
         }
     }
 }

@@ -45,8 +45,9 @@
         }
     }
 
-    input{
-        &[type='text'], &[type='email'] {
+    input {
+        &[type='text'],
+        &[type='email'] {
             width: 100%;
             max-width: 390px;
             margin-bottom: 1rem;

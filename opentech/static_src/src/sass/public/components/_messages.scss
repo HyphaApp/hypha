@@ -13,12 +13,14 @@
         padding-right: 35px;
         border: solid 1px;
 
-        &--info , &--success {
+        &--info,
+        &--success {
             background: $color--mint;
             border-color: darken($color--mint, 20%);
         }
 
-        &--warning, &--error {
+        &--error,
+        &--warning {
             font-weight: bold;
             color: $color--white;
             background: $color--error;
