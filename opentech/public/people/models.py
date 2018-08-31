@@ -73,8 +73,15 @@ class PersonPagePersonType(models.Model):
         return self.person_type.title
 
 
+class FundingQueryset(models.QuerySet):
+    def unique(self):
+        return self.order_by().distinct('page')
+
+
 class Funding(BaseFunding):
     page = ParentalKey('PersonPage', related_name='funding')
+
+    objects = FundingQueryset.as_manager()
 
 
 class PersonContactInfomation(Orderable):
