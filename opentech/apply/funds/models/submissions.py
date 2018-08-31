@@ -42,6 +42,35 @@ from ..workflow import (
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
+def save_path(file_name, folder):
+    file_path = os.path.join(folder, file_name)
+    return submission_storage.generate_filename(file_path)
+
+
+def handle_file(file, folder):
+    # File is potentially optional
+    if file:
+        try:
+            filename = save_path(file.name, folder)
+        except AttributeError:
+            # file is not changed, it is still the dictionary
+            return file
+
+        saved_name = submission_storage.save(filename, file)
+        return {
+            'name': file.name,
+            'path': saved_name,
+            'url': submission_storage.url(saved_name),
+        }
+
+
+def handle_files(files, folder):
+    if isinstance(files, list):
+        return [handle_file(file, folder) for file in files]
+
+    return handle_file(files, folder)
+
+
 class JSONOrderable(models.QuerySet):
     json_field = ''
 
@@ -388,32 +417,6 @@ class ApplicationSubmission(
                     defaults={'full_name': full_name}
                 )
 
-    def save_path(self, file_name):
-        file_path = os.path.join('submissions', 'user', str(self.user.id), file_name)
-        return submission_storage.generate_filename(file_path)
-
-    def handle_file(self, file):
-        # File is potentially optional
-        if file:
-            try:
-                filename = self.save_path(file.name)
-            except AttributeError:
-                # file is not changed, it is still the dictionary
-                return file
-
-            saved_name = submission_storage.save(filename, file)
-            return {
-                'name': file.name,
-                'path': saved_name,
-                'url': submission_storage.url(saved_name),
-            }
-
-    def handle_files(self, files):
-        if isinstance(files, list):
-            return [self.handle_file(file) for file in files]
-
-        return self.handle_file(files)
-
     def get_from_parent(self, attribute):
         try:
 
@@ -483,7 +486,7 @@ class ApplicationSubmission(
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 file = self.form_data.get(field.id, {})
-                self.form_data[field.id] = self.handle_files(file)
+                self.form_data[field.id] = handle_files(file, os.path.join('submission', str(self.id), field.id))
 
     def save(self, *args, **kwargs):
         if self.is_draft:

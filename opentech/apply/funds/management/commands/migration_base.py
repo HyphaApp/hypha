@@ -3,17 +3,41 @@ import json
 
 from datetime import datetime, timezone
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 from django_fsm import FSMField
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
 from opentech.apply.funds.models.forms import RoundBaseForm, LabBaseForm
 from opentech.apply.funds.workflow import INITIAL_STATE
+
+
+class MigrationStorage(S3Boto3Storage):
+    if hasattr(settings, 'AWS_MIGRATION_BUCKET_NAME'):
+        bucket_name = settings.AWS_MIGRATION_BUCKET_NAME
+
+    if hasattr(settings, 'AWS_MIGRATION_ACCESS_KEY_ID'):
+        access_key = settings.AWS_MIGRATION_ACCESS_KEY_ID
+
+    if hasattr(settings, 'AWS_MIGRATION_SECRET_ACCESS_KEY_ID'):
+        secret_key = settings.AWS_MIGRATION_SECRET_ACCESS_KEY
+
+    bucket_acl = 'private'
+    custom_domain = False
+    default_acl = 'private'
+    encryption = True
+    file_overwrite = False
+    querystring_auth = True
+    url_protocol = 'https:'
+
+
+migration_storage = MigrationStorage()
 
 
 class MigrateCommand(BaseCommand):
@@ -186,8 +210,7 @@ class MigrateCommand(BaseCommand):
                         if option:
                             value.append(option)
         elif mapping_type == 'file':
-            # TODO finish mapping. Requires access to the files.
-            value = {}
+            value = self.process_file(source_value)
 
         return value
 
@@ -260,3 +283,17 @@ class MigrateCommand(BaseCommand):
 
     def nl2br(self, value):
         return value.replace('\r\n', '<br>\n')
+
+    def process_file(self, value):
+        if isinstance(value, dict):
+            value = [value]
+
+        files = []
+
+        for file_data in value:
+            file_path = 'files/private/application_upload/' + file_data['filename']
+            saved_file = migration_storage.open(file_path)
+            saved_file.name = file_data['filename']
+            files.append(saved_file)
+
+        return files
