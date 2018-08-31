@@ -1,0 +1,28 @@
+.show-more {
+    &--button {
+        cursor: pointer;
+        user-select: none;
+
+        @include media-query(tablet-portrait) {
+            grid-column: 1 / 3;
+        }
+    }
+
+    &--target {
+        display: none;
+    }
+
+    &--checkbox {
+        display: none;
+
+        &:checked {
+            & ~ .show-more--target {
+                display: flex;
+            }
+            & ~ .show-more--button {
+                display: none;
+            }
+        }
+    }
+
+}
