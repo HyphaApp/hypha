@@ -4,8 +4,6 @@ from django.shortcuts import render
 from wagtail.core.models import Page
 from wagtail.search.models import Query
 
-from opentech.public.home.models import HomePage
-
 
 def search(request):
     search_query = request.GET.get('query', None)
@@ -13,11 +11,12 @@ def search(request):
 
     # Search
     if search_query:
-        public_site = HomePage.objects.first()
+        public_site = request.site.root_page
+
         search_results = Page.objects.live().descendant_of(
             public_site,
             inclusive=True,
-        ).search(search_query, operator='and')
+        ).specific().search(search_query, operator='and')
         query = Query.get(search_query)
 
         # Record hit
