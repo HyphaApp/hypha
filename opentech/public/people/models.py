@@ -172,7 +172,13 @@ class PersonIndexPage(BasePage):
     parent_page_types = ['standardpages.IndexPage']
 
     def get_context(self, request, *args, **kwargs):
-        people = PersonPage.objects.live().public().descendant_of(self).order_by('title')
+        people = PersonPage.objects.live().public().descendant_of(self).order_by(
+            'title',
+        ).select_related(
+            'photo',
+        ).prefetch_related(
+            'person_types__person_type',
+        )
 
         if request.GET.get('person_type'):
             people = people.filter(person_types__person_type=request.GET.get('person_type'))

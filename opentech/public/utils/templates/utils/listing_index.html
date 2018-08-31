@@ -10,7 +10,7 @@
     <div class="wrapper wrapper--listings">
 
         {% if subpages.object_list.exists %}
-            {% for subpage in subpages.object_list.specific %}
+            {% for subpage in subpages.object_list %}
 
                 <a class="listing" href="{% pageurl subpage %}">
                     {% if subpage.icon %}

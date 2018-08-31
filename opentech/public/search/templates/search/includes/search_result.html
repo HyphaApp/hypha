@@ -2,20 +2,18 @@
 
 <a class="listing" href="{% pageurl result %}">
     {# breadcrumbs #}
-    {% if result.get_ancestors|length > 2 %}
-        <h6 class="listing__path">
-            {% for ancestor in result.get_ancestors %}
-                {% if not ancestor.is_root %}
-                    {% if ancestor.depth > 2 %}
-                        <span>{{ ancestor.title }}</span>
-                        {% if ancestor.depth|add:1 < result.depth %}
-                            <span class="nav__item--breadcrumb"></span>
-                        {% endif %}
-                    {% else %}<span class="nav__item--breadcrumb"></span>{% endif %} {# the first one #}
-                {% endif %}
-            {% endfor %}
-        </h6>
-    {% endif %}
+    <h6 class="listing__path">
+        {% for ancestor in result.get_ancestors %}
+            {% if not ancestor.is_root %}
+                {% if ancestor.depth > 2 %}
+                    <span>{{ ancestor.title }}</span>
+                    {% if ancestor.depth|add:1 < result.depth %}
+                        <span class="nav__item--breadcrumb"></span>
+                    {% endif %}
+                {% else %}<span class="nav__item--breadcrumb"></span>{% endif %} {# the first one #}
+            {% endif %}
+        {% endfor %}
+    </h6>
 
     {% if result.listing_image or result.icon %}
         {% image result.listing_image|default:result.icon fill-180x180 class="listing__image" %}
