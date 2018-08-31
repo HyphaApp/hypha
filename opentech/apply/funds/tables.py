@@ -36,7 +36,7 @@ class SubmissionsTable(tables.Table):
     phase = tables.Column(verbose_name="Status", order_by=('status',))
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
-    comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
+    comments = tables.Column(accessor='comment_count', verbose_name="Comments")
     last_update = tables.DateColumn(accessor="last_update", verbose_name="Last updated")
 
     class Meta:
@@ -56,10 +56,6 @@ class SubmissionsTable(tables.Table):
 
     def render_phase(self, value):
         return format_html('<span>{}</span>', value)
-
-    def render_comments(self, value):
-        request = self.context['request']
-        return str(value.visible_to(request.user).count())
 
     def order_last_update(self, qs, desc):
         update_order = getattr(F('last_update'), 'desc' if desc else 'asc')(nulls_last=True)
