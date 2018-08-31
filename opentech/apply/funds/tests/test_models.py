@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
 from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.models.submissions import save_path
 from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
 from opentech.apply.funds.workflow import Request
 from opentech.apply.utils.testing import make_request
