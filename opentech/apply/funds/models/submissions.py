@@ -324,12 +324,6 @@ class ApplicationSubmission(
     def active(self):
         return self.status in active_statuses
 
-    @property
-    def last_edit(self):
-        # Best estimate of last edit
-        # TODO update when we have revisioning included
-        return self.activities.first()
-
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
             self.form_data['email'] = self.user.email
