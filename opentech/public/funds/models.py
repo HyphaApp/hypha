@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.core import validators
 from django.db import models
+from django.utils.deconstruct import deconstructible
 
 from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import (
@@ -112,6 +114,19 @@ class LabPageRelatedPage(RelatedPage):
     source_page = ParentalKey('LabPage', related_name='related_pages')
 
 
+@deconstructible
+class MailToAndURLValidator:
+    email_validator = validators.EmailValidator()
+    url_validator = validators.URLValidator()
+
+    def __call__(self, value):
+        if value.startswith('mailto://'):
+            mail_to, email = value.rsplit('://', 1)
+            self.email_validator(email)
+        else:
+            self.url_validator(value)
+
+
 class LabPage(BasePage):
     subpage_types = ['RFPPage']
     parent_page_types = ['LabIndex']
@@ -131,7 +146,7 @@ class LabPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='lab_public',
     )
-    lab_link = models.URLField(blank=True, verbose_name='External link')
+    lab_link = models.CharField(blank=True, max_length=255, verbose_name='External link', validators=[MailToAndURLValidator()])
     link_text = models.CharField(max_length=255, help_text='Text to display on the button for external links', blank=True)
     body = StreamField(LabBlock())
 
