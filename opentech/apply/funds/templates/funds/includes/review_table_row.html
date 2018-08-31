@@ -15,7 +15,7 @@
                 {% endif %}
             </td>
             <td>{{ review.get_recommendation_display }}</td>
-            <td>{{ review.score }}</td>
+            <td>{{ review.get_score_display }}</td>
         {% endif %}
     </tr>
 {% endfor %}
