@@ -13,7 +13,7 @@ from mailchimp3 import MailChimp
 
 from .forms import NewsletterForm
 
-logging.getLogger('opentech')
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -70,7 +70,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def warning(self, e):
         messages.warning(self.request, _('Sorry, there has been an problem. Please try again later.'))
-        logging.info(e.args[0])
+        logger.error(e.args[0])
 
     def success(self):
         messages.success(self.request, _('Thank you for subscribing'))
