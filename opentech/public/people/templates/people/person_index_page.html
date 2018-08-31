@@ -3,8 +3,28 @@
 {% block body_class %}light-grey-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small wrapper--inner-space-medium">
-    <div class="wrapper wrapper--listings">
+        <form class="form" method="GET">
+            <div class="form__group form__group--checkbox">
+                <div class="form__select form__select--narrow form__select--inline">
+                    <select name="person_type">
+                        <option value="">All</option>
+                        {% for person_type in person_types %}
+                            <option value="{{ person_type.0 }}" {% if request.GET.person_type == person_type.0|slugify %}selected="selected"{% endif %}>{{ person_type.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form__group form__group--checkbox">
+                <label for="inactive" class="form__question form__question--boolean_field checkbox_input">Include Inactive</label>
+                <div class="form__item">
+                    <input type="checkbox" id="inactive" name="include_inactive" value="true" {% if request.GET.include_inactive %} checked {% endif %}>
+                    <label for="inactive"></label>
+                </div>
+            </div>
+            <input class="link link--button link--button__stretch" type="submit" value="Filter">
+        </form>
 
+    <div class="wrapper wrapper--listings">
         {% if people.paginator.count %}
             {% for person in people %}
                 {% include "people/includes/person_listing.html" with person=person %}

@@ -90,6 +90,8 @@ class NewsPage(BasePage):
     subpage_types = []
     parent_page_types = ['NewsIndex']
 
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     # It's datetime for easy comparison with first_published_at
     publication_date = models.DateTimeField(
         null=True, blank=True,

@@ -9,6 +9,8 @@ from wagtail.images.models import (
 # We define our own custom image class to replace wagtailimages.Image,
 # providing various additional data fields
 class CustomImage(AbstractImage):
+    drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
     alt = models.CharField(max_length=255, blank=True)
     credit = models.CharField(max_length=255, blank=True)
 

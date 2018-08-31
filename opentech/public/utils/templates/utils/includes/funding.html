@@ -1,15 +1,19 @@
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags humanize %}
 {% if page.total_funding %}
     <div class="fund-box {% if class %}{{class}}{% endif %}">
         <h4>Funding to date</h4>
         {% for funding in page.funding.all %}
             <div class="fund-box__row">
                 <span>{{ funding.year }}</span>
-                <span>${{ funding.value }}</span>
-                <span>{{ funding.duration }} months</span>
+                <span>${{ funding.value|intcomma }}</span>
+                {% if funding.duration %}
+                    <span>{{ funding.duration }} months</span>
+                {% endif %}
             </div>
+            {% if funding.source %}
             <a class="fund-box__link" href="{% pageurl funding.source %}">{{ funding.source }}</a>
+            {% endif %}
         {% endfor %}
-        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding }}</span></h4>
+        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding|intcomma }}</span></h4>
     </div>
 {% endif %}
