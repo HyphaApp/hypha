@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags static navigation_tags %}
+{% load cache wagtailcore_tags wagtailimages_tags static navigation_tags %}
 
 {% block header %}
     {% image page.header_image fill-1440x740 as header_image %}
@@ -26,7 +26,9 @@
             </div>
 
             <section class="header__menus header__menus--desktop">
-                {% primarynav %}
+                {% cache 3600 navigation__primary %}
+                    {% primarynav %}
+                {% endcache %}
 
                 <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
                     <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
@@ -48,7 +50,9 @@
                         </button>
                     </div>
                 </div>
-                {% primarynav %}
+                {% cache 3600 navigation__primary %}
+                    {% primarynav %}
+                {% endcache %}
             </section>
 
             <div class="header__button-container">
