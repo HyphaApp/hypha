@@ -14,6 +14,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.core.fields import StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 
 from opentech.public.utils.models import (
     BasePage,
@@ -42,6 +43,11 @@ class BaseApplicationPage(BasePage):
         related_name='application_public',
     )
     body = StreamField(FundBlock())
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+        index.SearchField('body')
+    ]
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
@@ -128,6 +134,11 @@ class LabPage(BasePage):
     lab_link = models.URLField(blank=True, verbose_name='External link')
     link_text = models.CharField(max_length=255, help_text='Text to display on the button for external links', blank=True)
     body = StreamField(LabBlock())
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+        index.SearchField('body')
+    ]
 
     content_panels = BasePage.content_panels + [
         ImageChooserPanel('icon'),
