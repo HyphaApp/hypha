@@ -184,6 +184,16 @@ class PersonIndexPage(BasePage):
     subpage_types = ['PersonPage']
     parent_page_types = ['standardpages.IndexPage']
 
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction'),
+    ]
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+    ]
+
     def get_context(self, request, *args, **kwargs):
         people = PersonPage.objects.live().public().descendant_of(self).order_by(
             'title',
