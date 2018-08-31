@@ -1,6 +1,8 @@
 {% extends "messages/email/applicant_base.html" %}
 {% load bleach_tags %}
 
+{% block title %}Determination for {{ object.title }}{% endblock %}
+
 {% block content %}
 Your application has been reviewed and the outcome is: {{ submission.determination.clean_outcome }}
 
