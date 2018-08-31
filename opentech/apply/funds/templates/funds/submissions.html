@@ -21,7 +21,7 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
-    {% if object_list|length > 0 or active_filters %}
+    {% if table.data or active_filters %}
         <div class="button button--filters button--contains-icons js-open-filters">Filter By</div>
 
         <div class="filters js-filter-wrapper">
