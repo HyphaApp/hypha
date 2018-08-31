@@ -124,10 +124,11 @@ class HomePage(BasePage):
     ]
 
     def get_related(self, page_type, base_list):
-        yield from self.pages_from_related(base_list)
-        selected = list(base_list.values_list('page', flat=True))
+        related = page_type.objects.filter(id__in=base_list.values_list('page')).live().public()
+        yield from related
+        selected = list(related.values_list('id', flat=True))
         extra_needed = self.NUM_RELATED - len(selected)
-        extra_qs = page_type.objects.exclude(id__in=selected)[:extra_needed]
+        extra_qs = page_type.objects.public().live().exclude(id__in=selected)[:extra_needed]
         yield from self.sorted_by_deadline(extra_qs)
 
     def sorted_by_deadline(self, qs):
@@ -141,11 +142,12 @@ class HomePage(BasePage):
 
     def pages_from_related(self, related):
         for related in related.all():
-            yield related.page.specific
+            if related.page.live and related.page.public:
+                yield related.page.specific
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
-        context['lab_list'] = self.get_related(LabPage, self.promoted_labs)
-        context['fund_list'] = self.get_related(FundPage, self.promoted_funds)
-        context['rfps_list'] = self.get_related(RFPPage, self.promoted_rfps)
+        context['lab_list'] = list(self.get_related(LabPage, self.promoted_labs))
+        context['fund_list'] = list(self.get_related(FundPage, self.promoted_funds))
+        context['rfps_list'] = list(self.get_related(RFPPage, self.promoted_rfps))
         return context
