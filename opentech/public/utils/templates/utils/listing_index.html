@@ -21,12 +21,18 @@
                         </div>
                     {% endif %}
 
-                    {% if subpage.deadline %}
                         <p class="listing__deadline">
-                            <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
-                            <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
+                            {% if subpage.is_open %}
+                                {% if subpage.deadline %}
+                                    <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                                    <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
+                                {% else %}
+                                    Open
+                                {% endif %}
+                             {% else %}
+                                Closed
+                            {% endif %}
                         </p>
-                    {% endif %}
 
                     <h4 class="listing__title">{{ subpage.listing_title|default:subpage.title }}</h4>
 
