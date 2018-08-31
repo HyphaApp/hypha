@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
@@ -85,15 +86,15 @@ class User(AbstractUser):
     def get_short_name(self):
         return self.email
 
-    @property
+    @cached_property
     def is_apply_staff(self):
         return self.groups.filter(name=STAFF_GROUP_NAME).exists() or self.is_superuser
 
-    @property
+    @cached_property
     def is_reviewer(self):
         return self.groups.filter(name=REVIEWER_GROUP_NAME).exists()
 
-    @property
+    @cached_property
     def is_applicant(self):
         return not self.is_apply_staff and not self.is_reviewer
 
