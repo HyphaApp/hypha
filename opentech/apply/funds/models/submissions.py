@@ -474,7 +474,7 @@ class ApplicationSubmission(
     def clean_submission(self):
         self.process_form_data()
         self.ensure_user_has_account()
-        self.process_file_data()
+        self.process_file_data(self.form_data)
 
     def process_form_data(self):
         for field_name, field_id in self.must_include.items():
@@ -482,24 +482,35 @@ class ApplicationSubmission(
             if response:
                 self.form_data[field_name] = response
 
-    def process_file_data(self):
+    def extract_files(self):
+        files = {}
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.form_data.get(field.id, {})
+                files[field.id] = self.form_data.pop(field.id, {})
+        return files
+
+    def process_file_data(self, data):
+        for field in self.form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                file = data.get(field.id, {})
                 self.form_data[field.id] = handle_files(file, os.path.join('submission', str(self.id), field.id))
 
     def save(self, *args, **kwargs):
         if self.is_draft:
             raise ValueError('Cannot save with draft data')
 
-        self.clean_submission()
-
         creating = not self.id
+
         if creating:
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             # Copy extra relevant information to the child
             self.lead = self.get_from_parent('lead')
+
+            # We need the submission id to correctly save the files
+            files = self.extract_files()
+
+        self.clean_submission()
 
         # add a denormed version of the answer for searching
         self.search_data = ' '.join(self.prepare_search_values())
@@ -507,6 +518,7 @@ class ApplicationSubmission(
         super().save(*args, **kwargs)
 
         if creating:
+            self.process_file_data(files)
             self.reviewers.set(self.get_from_parent('reviewers').all())
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
