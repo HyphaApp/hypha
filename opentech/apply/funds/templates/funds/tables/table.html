@@ -12,7 +12,7 @@
     </tr>
 
     {% with submission=row.record %}
-        <tr class="all-submissions__child" data-parent-id="{{ row.record.id }}">
+        <tr class="all-submissions__child" data-parent-id="{{ submission.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="submission-meta">
                     <tr class="submission-meta__row">
@@ -23,18 +23,16 @@
                     <tr class="submission-meta__row submission-meta__row--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
-                            {% with row.record.activities.last as last_update %}
-                                {% if last_update %}
-                                    <strong>by {{ last_update.user }}</strong><br/>
-                                    {{ last_update.timestamp|date:"Y-m-d \a\t H:i" }}
-                                {% else %}
-                                    &mdash;
-                                {% endif %}
-                            {% endwith %}
+                            {% if submission.last_update %}
+                                <strong>by {{ submission.last_user_update }}</strong><br/>
+                                {{ submissino.last_update|date:"Y-m-d \a\t H:i" }}
+                            {% else %}
+                                &mdash;
+                            {% endif %}
                         </td>
                         <td>
                             <ul class="list list--no-margin">
-                                {% for review in row.record.reviews.all %}
+                                {% for review in submission.reviews.all %}
                                     <li class="list__item list__item--reviewer">
                                         <span class="list__item--reviewer-name">{{ review.author }}</span>
                                         <span class="list__item list__item--reviewer-outcome">{{ review.get_recommendation_display }}</span>

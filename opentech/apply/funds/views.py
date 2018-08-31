@@ -3,6 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.db.models import OuterRef, Subquery
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -41,7 +42,15 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     filterset_class = SubmissionFilter
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        model = self.filterset_class._meta.model
+
+        activities = model.activities.field.model
+        latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
+
+        return self.filterset_class._meta.model.objects.current().select_related('previous').annotate(
+            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
+            last_update=Subquery(latest_activity.values('timestamp')[:1]),
+        )
 
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data

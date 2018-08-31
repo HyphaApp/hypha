@@ -37,7 +37,7 @@ class SubmissionsTable(tables.Table):
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
     comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-    last_update = tables.DateColumn(accessor="activities.first.timestamp", verbose_name="Last updated")
+    last_update = tables.DateColumn(accessor="last_update", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
@@ -64,10 +64,8 @@ class SubmissionsTable(tables.Table):
     def order_last_update(self, qs, desc):
         update_order = getattr(F('last_update'), 'desc' if desc else 'asc')(nulls_last=True)
 
-        related_actions = Activity.objects.filter(submission=OuterRef('id'))
-        qs = qs.annotate(
-            last_update=Subquery(related_actions.values('timestamp')[:1])
-        ).order_by(update_order, 'submit_time')
+        # related_actions = Activity.objects.filter(submission=OuterRef('id'))
+        qs = qs.order_by(update_order, 'submit_time')
 
         return qs, True
 
