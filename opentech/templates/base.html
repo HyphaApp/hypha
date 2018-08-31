@@ -1,4 +1,4 @@
-{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
+{% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
 <html class="no-js" lang="en">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
@@ -92,7 +92,9 @@
                     </div>
 
                     <section class="header__menus header__menus--desktop">
-                        {% primarynav %}
+                        {% cache 3600 navigation__primary %}
+                            {% primarynav %}
+                        {% endcache %}
 
                         <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
                             <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
@@ -114,7 +116,9 @@
                                 </button>
                             </div>
                         </div>
-                        {% primarynav %}
+                        {% cache 3600 navigation__primary %}
+                            {% primarynav %}
+                        {% endcache %}
                     </section>
 
                     <div class="header__button-container">
