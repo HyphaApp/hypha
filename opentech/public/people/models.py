@@ -16,6 +16,7 @@ from wagtail.admin.edit_handlers import (
     StreamFieldPanel
 )
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 
 from opentech.public.utils.blocks import StoryBlock
 from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin, RelatedPage
@@ -145,6 +146,11 @@ class PersonPage(FundingMixin, BasePage):
     website = models.URLField(blank=True, max_length=255)
     biography = StreamField(StoryBlock(), blank=True)
     email = models.EmailField(blank=True)
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+        index.SearchField('biography')
+    ]
 
     content_panels = BasePage.content_panels + [
         MultiFieldPanel([
