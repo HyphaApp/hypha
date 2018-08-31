@@ -2,7 +2,7 @@
 <nav role="navigation" aria-label="Pagination">
     <ul class="pagination">
         {% if paginator_page.has_previous %}
-            <li class="previous"><a href="?page={{ paginator_page.previous_page_number }}{% if search_query %}&amp;query={{ search_query|urlencode }}{% endif %}{% if extra_url_params %}&amp;{{ extra_url_params }}{% endif %}">previous</a></li>
+            <li class="previous"><a href="?page={{ paginator_page.previous_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">previous</a></li>
         {% endif %}
 
         <li class="cardinality">
@@ -10,7 +10,7 @@
         </li>
 
         {% if paginator_page.has_next %}
-            <li class="next"><a href="?page={{ paginator_page.next_page_number }}{% if search_query %}&amp;query={{ search_query|urlencode }}{% endif %}{% if extra_url_params %}&amp;{{ extra_url_params }}{% endif %}">next</a></li>
+            <li class="next"><a href="?page={{ paginator_page.next_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">next</a></li>
         {% endif %}
     </ul>
 </nav>{% endif %}
