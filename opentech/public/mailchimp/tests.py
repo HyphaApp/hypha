@@ -50,8 +50,8 @@ class TestNewsletterView(TestCase):
         MAILCHIMP_LIST_ID='12345'
     )
     @responses.activate
-    @mock.patch('opentech.public.mailchimp.views.logging')
-    def test_error_with_mailchimp(self, logging):
+    @mock.patch('opentech.public.mailchimp.views.logger')
+    def test_error_with_mailchimp(self, logger):
         # Copied from the mailchimp playground
         response_data = {
             "title": "Invalid Resource",
@@ -66,4 +66,4 @@ class TestNewsletterView(TestCase):
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertIn('problem', str(messages[0]))
-        logging.info.assert_called_once_with(response_data)
+        logger.error.assert_called_once_with(response_data)
