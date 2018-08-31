@@ -1,8 +1,13 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 <a class="listing" href="{% pageurl person %}">
-    {% if person.photo %}
-        {% image person.photo fill-180x180 class="listing__image" %}
-    {% endif %}
+    <div class="listing__image listing__image--default">
+        {% if person.photo %}
+            {% image person.photo fill-180x180 %}
+        {% else %}
+            <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
+        {% endif %}
+
+    </div>
     {% for type in person.person_types.all %}
         <h6 class="listing__category">{{ type }}</h6>
     {% endfor %}
