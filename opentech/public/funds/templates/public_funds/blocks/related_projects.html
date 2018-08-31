@@ -1,8 +1,8 @@
-{% if page.projectfunding_set.all %}
+{% if page.projectfunding_set.unique %}
     <div class="wrapper wrapper--breakout">
         <div class="wrapper--media-boxes">
             <div class="grid grid--two grid--medium-gap">
-                {% for funding in page.projectfunding_set.all %}
+                {% for funding in page.projectfunding_set.unique %}
                     {% include "public_funds/includes/project_listing.html" with project=funding.page %}
                 {% endfor %}
             </div>
