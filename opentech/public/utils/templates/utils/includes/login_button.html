@@ -1,4 +1,4 @@
-<a href="{{ request.scheme }}://{{ APPLY_SITE }}{% url 'users_public:login' %}" class="button button--transparent button--contains-icons {{ class }}">
+<a href="{{ APPLY_SITE.root_url }}{% url 'users_public:login' %}" class="button button--transparent button--contains-icons {{ class }}">
     <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
     My OTF
 </a>
