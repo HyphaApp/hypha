@@ -77,6 +77,13 @@
             text-shadow: none;
         }
 
+        .template-lab-page &,
+        .template-fund-page &,
+        .template-news-page &,
+        .template-project-page & {
+            @include responsive-font-sizes(40px, 48px);
+        }
+
         &--homepage {
             @include responsive-font-sizes(36px, 72px);
             max-width: 750px;
