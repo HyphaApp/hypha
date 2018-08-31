@@ -57,7 +57,7 @@
     }
 
     &__content {
-        width:100%;
+        width: 100%;
 
         @include media-query(small-tablet) {
             padding-left: 20px;

@@ -61,6 +61,7 @@
     }
 
     &__title {
+        z-index: 8;
         padding: 0 10px;
         margin: 0 0 20px;
         line-height: 1;
@@ -75,6 +76,13 @@
         .header--light-bg & {
             color: $color--dark-grey;
             text-shadow: none;
+        }
+
+        .template-lab-page &,
+        .template-fund-page &,
+        .template-news-page &,
+        .template-project-page & {
+            @include responsive-font-sizes(40px, 48px);
         }
 
         &--homepage {

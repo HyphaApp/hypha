@@ -88,7 +88,7 @@
         }
 
         &__cell {
-            &--span-two{
+            &--span-two {
                 @include media-query(mob-landscape) {
                     grid-column: auto / span 2;
                 }
