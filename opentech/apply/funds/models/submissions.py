@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models import ObjectDoesNotExist
+from django.db.models import Count, IntegerField, OuterRef, ObjectDoesNotExist, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
 from django.dispatch import receiver
 from django.urls import reverse
@@ -94,6 +94,47 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def current(self):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
+
+    def for_table(self, user):
+        activities = self.model.activities.field.model
+        latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
+        comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
+
+        reviews = self.model.reviews.field.model.objects.filter(submission=OuterRef('id'))
+
+        return self.annotate(
+            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
+            last_update=Subquery(latest_activity.values('timestamp')[:1]),
+            comment_count=Subquery(
+                comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
+            ),
+            review_count=Subquery(
+                reviews.values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
+            ),
+            review_staff_count=Subquery(
+                reviews.by_staff().values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
+            ),
+            review_submitted_count=Subquery(
+                reviews.submitted().values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
+            ),
+            review_reccomendation=Subquery(
+                reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
+                output_field=IntegerField(),
+            ),
+        ).prefetch_related(
+            'reviews__author'
+        ).select_related(
+            'page',
+            'round',
+            'lead',
+            'user',
+            'previous__page',
+            'previous__round',
+        )
 
 
 def make_permission_check(users):

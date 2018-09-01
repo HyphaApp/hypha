@@ -2,7 +2,7 @@ import textwrap
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import OuterRef, Subquery, F, Q
+from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
@@ -12,7 +12,6 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.activity.models import Activity
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -60,9 +59,7 @@ class SubmissionsTable(tables.Table):
     def order_last_update(self, qs, desc):
         update_order = getattr(F('last_update'), 'desc' if desc else 'asc')(nulls_last=True)
 
-        # related_actions = Activity.objects.filter(submission=OuterRef('id'))
         qs = qs.order_by(update_order, 'submit_time')
-
         return qs, True
 
 

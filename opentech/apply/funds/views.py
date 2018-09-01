@@ -3,7 +3,6 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -42,47 +41,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     filterset_class = SubmissionFilter
 
     def get_queryset(self):
-        model = self.filterset_class._meta.model
-
-        activities = model.activities.field.model
-        latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
-        comments = activities.comments.filter(submission=OuterRef('id')).visible_to(self.request.user)
-
-        reviews = model.reviews.field.model.objects.filter(submission=OuterRef('id'))
-
-        return self.filterset_class._meta.model.objects.current().select_related('previous').annotate(
-            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
-            last_update=Subquery(latest_activity.values('timestamp')[:1]),
-            comment_count=Subquery(
-                comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_count=Subquery(
-                reviews.values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_staff_count=Subquery(
-                reviews.by_staff().values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_submitted_count=Subquery(
-                reviews.submitted().values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_reccomendation=Subquery(
-                reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
-                output_field=IntegerField(),
-            ),
-        ).prefetch_related(
-            'reviews__author'
-        ).select_related(
-            'page',
-            'round',
-            'lead',
-            'user',
-            'previous__page',
-            'previous__round',
-        )
+        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data
@@ -97,7 +56,7 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
     filterset_class = SubmissionFilterAndSearch
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
