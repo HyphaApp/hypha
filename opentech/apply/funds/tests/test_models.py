@@ -138,7 +138,7 @@ class TestRoundModelDates(TestCase):
         new_round = RoundFactory.build(start_date=overlapping_start, end_date=None)
 
         # we add on the parent page which gets included from a pre_create_hook
-        new_round.parent_page = self.fund
+        new_round.parent_page = {new_round.__class__: {new_round.title: self.fund}}
 
         with self.assertRaises(ValidationError):
             new_round.clean()
@@ -153,7 +153,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
         self.round = RoundFactory.build(lead=lead, parent=None)
 
         # Assign parent_page like the init does
-        self.round.parent_page = self.fund
+        self.round.parent_page = {self.round.__class__: {self.round.title: self.fund}}
         self.fund.add_child(instance=self.round)
 
     def test_workflow_is_copied_to_new_rounds(self):
