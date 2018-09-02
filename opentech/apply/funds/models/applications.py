@@ -144,13 +144,6 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         ObjectList(SubmittableStreamForm.promote_panels, heading='Promote'),
     ])
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # We attached the parent page as part of the before_create_hook
-        if hasattr(self, 'parent_page'):
-            self.workflow_name = self.parent_page.workflow_name
-            self.reviewers = self.parent_page.reviewers.all()
-
     def get_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
         return 'funds/round.html'
@@ -169,19 +162,20 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def save(self, *args, **kwargs):
         is_new = not self.id
-        if is_new and hasattr(self, 'parent_page'):
-            # Ensure that the workflow hasn't changed
-            self.workflow_name = self.parent_page.workflow_name
+        if is_new:
+            parent_page = self.parent_page[self.__class__][self.title]
+            self.workflow_name = parent_page.workflow_name
+            self.reviewers = parent_page.reviewers.all()
 
         super().save(*args, **kwargs)
 
-        if is_new and hasattr(self, 'parent_page'):
+        if is_new:
             # Would be nice to do this using model clusters as part of the __init__
             self._copy_forms('forms')
             self._copy_forms('review_forms')
 
     def _copy_forms(self, field):
-        for form in getattr(self.parent_page, field).all():
+        for form in getattr(self.get_parent().specific, field).all():
             new_form = self._meta.get_field(field).related_model
             self._copy_form(form, new_form)
 
@@ -220,10 +214,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 Q(end_date__gte=self.start_date)
             )
 
-        if hasattr(self, 'parent_page'):
+        if not self.id:
             # Check if the create hook has added the parent page, we aren't an object yet.
             # Ensures we can access related objects during the clean phase instead of save.
-            base_query = RoundBase.objects.child_of(self.parent_page)
+            base_query = RoundBase.objects.child_of(self.parent_page[self.__class__][self.title])
         else:
             # don't need parent page, we are an actual object now.
             base_query = RoundBase.objects.sibling_of(self)
