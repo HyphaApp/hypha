@@ -21,6 +21,7 @@
                         </div>
                     {% endif %}
 
+                    {% if subpage.can_open %}
                         <p class="listing__deadline">
                             {% if subpage.is_open %}
                                 {% if subpage.deadline %}
@@ -29,10 +30,11 @@
                                 {% else %}
                                     Open
                                 {% endif %}
-                             {% else %}
+                            {% else %}
                                 Closed
                             {% endif %}
                         </p>
+                    {% endif %}
 
                     <h4 class="listing__title">{{ subpage.listing_title|default:subpage.title }}</h4>
 
