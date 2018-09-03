@@ -4,12 +4,12 @@
     <tr class="reviews-summary__tr">
         <td class="reviews-summary__td">
             {% if record.stage.has_external_review %}
-                {{ record.reviewers.count }}
+                {{ record.review_count|default:'0' }}
             {% else %}
-                {{ record.reviewers.staff.count }}
+                {{ record.review_staff_count|default:'0' }}
             {% endif %}
         </td>
-        <td class="reviews-summary__td">{{ record.reviews.submitted.count }}</td>
-        <td class="reviews-summary__td">{{ record.reviews.submitted.recommendation|traffic_light }}</td>
+        <td class="reviews-summary__td">{{ record.review_submitted_count|default:'0' }}</td>
+        <td class="reviews-summary__td">{{ record.review_reccomendation|traffic_light }}</td>
     </tr>
 </table>

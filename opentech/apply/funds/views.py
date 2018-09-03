@@ -41,7 +41,7 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
     filterset_class = SubmissionFilter
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         active_filters = self.filterset.data
@@ -56,7 +56,7 @@ class SubmissionSearchView(SingleTableMixin, FilterView):
     filterset_class = SubmissionFilterAndSearch
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')

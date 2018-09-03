@@ -11,7 +11,7 @@ from opentech.apply.utils.views import ViewDispatcher
 class AdminDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
-        qs = ApplicationSubmission.objects.all()
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
@@ -30,7 +30,7 @@ class AdminDashboardView(TemplateView):
 
 class ReviewerDashboardView(TemplateView):
     def get(self, request, *args, **kwargs):
-        qs = ApplicationSubmission.objects.all()
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         my_review_qs = qs.in_review_for(request.user)
         my_review = SubmissionsTable(my_review_qs, prefix='my-review-')
@@ -56,7 +56,7 @@ class ApplicantDashboardView(SingleTableView):
     def get_queryset(self):
         return self.model.objects.filter(
             user=self.request.user
-        ).inactive().current()
+        ).inactive().current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         my_active_submissions = self.model.objects.filter(

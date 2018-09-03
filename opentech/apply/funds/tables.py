@@ -2,7 +2,7 @@ import textwrap
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import OuterRef, Subquery, F, Q
+from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
@@ -12,7 +12,6 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.activity.models import Activity
 from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
@@ -36,8 +35,8 @@ class SubmissionsTable(tables.Table):
     phase = tables.Column(verbose_name="Status", order_by=('status',))
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     page = tables.Column(verbose_name="Fund")
-    comments = tables.Column(accessor='activities.comments.all', verbose_name="Comments")
-    last_update = tables.DateColumn(accessor="activities.first.timestamp", verbose_name="Last updated")
+    comments = tables.Column(accessor='comment_count', verbose_name="Comments")
+    last_update = tables.DateColumn(accessor="last_update", verbose_name="Last updated")
 
     class Meta:
         model = ApplicationSubmission
@@ -57,18 +56,10 @@ class SubmissionsTable(tables.Table):
     def render_phase(self, value):
         return format_html('<span>{}</span>', value)
 
-    def render_comments(self, value):
-        request = self.context['request']
-        return str(value.visible_to(request.user).count())
-
     def order_last_update(self, qs, desc):
         update_order = getattr(F('last_update'), 'desc' if desc else 'asc')(nulls_last=True)
 
-        related_actions = Activity.objects.filter(submission=OuterRef('id'))
-        qs = qs.annotate(
-            last_update=Subquery(related_actions.values('timestamp')[:1])
-        ).order_by(update_order, 'submit_time')
-
+        qs = qs.order_by(update_order, 'submit_time')
         return qs, True
 
 
