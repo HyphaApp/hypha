@@ -61,6 +61,8 @@ class BaseApplicationPage(BasePage):
         # Make sure all children use the shared template
         return 'public_funds/fund_page.html'
 
+    can_open = True
+
     @property
     def is_open(self):
         return self.application_type and bool(self.application_type.specific.open_round)
@@ -173,6 +175,8 @@ class LabPage(BasePage):
         context = super().get_context(request)
         context['rfps'] = self.get_children().live().public()
         return context
+
+    can_open = True
 
     @property
     def is_open(self):
