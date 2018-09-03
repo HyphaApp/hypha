@@ -3,6 +3,9 @@ from django.utils.text import mark_safe
 from opentech.apply.stream_forms.blocks import FormFieldBlock
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
+from opentech.apply.stream_forms.blocks import UploadableMediaBlock
+from opentech.apply.stream_forms.files import StreamFieldFile
+
 
 __all__ = ['AccessFormData']
 
@@ -27,6 +30,19 @@ class AccessFormData:
                 data[field_id] = response
         return data
 
+    @property
+    def deserialised_data(self):
+        # Converts the file dicts into actual file objects
+        data = self.raw_data.copy()
+        for field in self.form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                file = data.get(field.id, [])
+                try:
+                    data[field.id] = StreamFieldFile(file.file, name=file.name)
+                except AttributeError:
+                    data[field.id] = [StreamFieldFile(f.file, name=f.name) for f in file]
+        return data
+
     def get_definitive_id(self, id):
         if id in self.must_include:
             return self.must_include[id]
@@ -39,7 +55,7 @@ class AccessFormData:
     def data(self, id):
         definitive_id = self.get_definitive_id(id)
         try:
-            return self.raw_data[definitive_id]
+            return self.deserialised_data[definitive_id]
         except KeyError as e:
             # We have most likely progressed application forms so the data isnt in form_data
             return None
