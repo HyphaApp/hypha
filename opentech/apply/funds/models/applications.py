@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import OuterRef, Q, Subquery
 from django.http import Http404
+from django.utils.functional import cached_property
 from django.utils.text import mark_safe
 
 from modelcluster.fields import ParentalManyToManyField
@@ -55,7 +56,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         # The location to find out more information
         return self.application_public.first()
 
-    @property
+    @cached_property
     def open_round(self):
         return RoundBase.objects.child_of(self).open().first()
 
