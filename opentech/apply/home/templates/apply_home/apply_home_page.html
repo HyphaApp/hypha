@@ -17,10 +17,10 @@
 
     <div class="wrapper wrapper--listings">
     {% for fund in open_funds %}
-        {% include "apply_home/includes/apply_listing.html" with page=fund.specific %}
+        {% include "apply_home/includes/apply_listing.html" with page=fund %}
     {% endfor %}
     {% for lab in open_labs %}
-        {% include "apply_home/includes/apply_listing.html" with page=lab.specific %}
+        {% include "apply_home/includes/apply_listing.html" with page=lab %}
     {% endfor %}
     </div>
 

@@ -24,6 +24,6 @@ class ApplyHomePage(Page):
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
-        context['open_funds'] = ApplicationBase.objects.order_by_end_date()
-        context['open_labs'] = LabBase.objects.public().live()
+        context['open_funds'] = ApplicationBase.objects.order_by_end_date().specific()
+        context['open_labs'] = LabBase.objects.public().live().specific()
         return context
