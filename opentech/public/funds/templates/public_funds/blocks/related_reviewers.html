@@ -2,20 +2,16 @@
     <div class="wrapper wrapper--breakout">
         <div class="wrapper--media-boxes">
             <div class="grid grid--two grid--medium-gap">
-                {% for person in page.reviewers.all %}
-                {% with person_page=person.reviewer.specific %}
-                    {% if person_page.active and person_page.live %}
-                        {% if forloop.counter0 == 10 %}
-                            <input class="show-more--checkbox" type="checkbox" id="reviewers-toggle">
-                            <label class="link link--button link--button__center show-more--button" for="reviewers-toggle">Show more</label>
-                        {% endif %}
-                        {% if forloop.counter0 < 10 %}
-                            {% include "public_funds/includes/reviewer_listing.html" with person=person.reviewer.specific %}
-                        {% else %}
-                            {% include "public_funds/includes/reviewer_listing.html" with person=person.reviewer.specific  class="show-more--target" %}
-                        {% endif %}
+                {% for person in page.reviewers.people %}
+                    {% if forloop.counter0 == 10 %}
+                        <input class="show-more--checkbox" type="checkbox" id="reviewers-toggle">
+                        <label class="link link--button link--button__center show-more--button" for="reviewers-toggle">Show more</label>
                     {% endif %}
-                {% endwith %}
+                    {% if forloop.counter0 < 10 %}
+                        {% include "public_funds/includes/reviewer_listing.html" with person=person %}
+                    {% else %}
+                        {% include "public_funds/includes/reviewer_listing.html" with person=person class="show-more--target" %}
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
