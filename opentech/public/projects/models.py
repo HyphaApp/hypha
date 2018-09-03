@@ -85,8 +85,8 @@ class ProjectPageRelatedPage(RelatedPage):
 
 
 class ProjectFundingQueryset(models.QuerySet):
-    def unique(self):
-        return self.order_by().distinct('page')
+    def projects(self):
+        return ProjectPage.objects.filter(id__in=self.values_list('page__id')).live().public()
 
 
 class ProjectFunding(BaseFunding):

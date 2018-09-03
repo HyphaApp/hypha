@@ -5,7 +5,7 @@ from django.conf import settings
 
 from modelcluster.fields import ParentalKey
 
-from wagtail.core.models import Orderable
+from wagtail.core.models import Orderable, PageManager, PageQuerySet
 from wagtail.core.fields import StreamField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -73,15 +73,15 @@ class PersonPagePersonType(models.Model):
         return self.person_type.title
 
 
-class FundingQueryset(models.QuerySet):
-    def unique(self):
-        return self.order_by().distinct('page')
+class FundingQuerySet(models.QuerySet):
+    def people(self):
+        return PersonPage.objects.filter(id__in=self.values_list('page__id')).live().active().public()
 
 
 class Funding(BaseFunding):
     page = ParentalKey('PersonPage', related_name='funding')
 
-    objects = FundingQueryset.as_manager()
+    objects = FundingQuerySet.as_manager()
 
 
 class PersonContactInfomation(Orderable):
@@ -123,13 +123,25 @@ class PersonContactInfomation(Orderable):
             })
 
 
+class ReviewerQuerySet(models.QuerySet):
+    def people(self):
+        return PersonPage.objects.filter(id__in=self.values_list('reviewer__id')).live().active().public()
+
+
 class FundReviewers(RelatedPage):
     page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewers')
     reviewer = ParentalKey('PersonPage', related_name='funds_reviewed')
 
+    objects = ReviewerQuerySet.as_manager()
+
     panels = [
         PageChooserPanel('page', 'public_funds.FundPage'),
     ]
+
+
+class PersonQuerySet(PageQuerySet):
+    def active(self):
+        return self.filter(active=True)
 
 
 class PersonPage(FundingMixin, BasePage):
@@ -153,6 +165,8 @@ class PersonPage(FundingMixin, BasePage):
     website = models.URLField(blank=True, max_length=255)
     biography = StreamField(StoryBlock(), blank=True)
     email = models.EmailField(blank=True)
+
+    objects = PageManager.from_queryset(PersonQuerySet)()
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
