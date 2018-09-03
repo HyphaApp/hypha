@@ -43,6 +43,10 @@ class Command(BaseCommand):
                 groups = self.get_user_groups(user)
                 user_object.groups.set(groups)
 
+                # Allow for updating the slack user name.
+                if not created:
+                    user_object.slack = slack_name
+
                 # Ensure uid is set
                 user_object.drupal_id = uid
                 user_object.save()
@@ -61,7 +65,7 @@ class Command(BaseCommand):
     def get_slack_name(self, user):
         slack_name = user.get('field_otf_slack_name', None)
         try:
-            slack_name = slack_name['safe_value']
+            slack_name = f"@{slack_name['safe_value']}"
         except (KeyError, TypeError):
             slack_name = ''
 
