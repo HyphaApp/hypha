@@ -16,9 +16,10 @@
 
         <!-- see https://developers.facebook.com/docs/sharing/reference/feed-dialog/v2.5 -->
         <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+        {% if social_media_settings.facebook_app_id %}
         <a href="https://www.facebook.com/dialog/feed?app_id={{ social_media_settings.facebook_app_id }}&amp;link={{ page.full_url|urlencode }}&amp;picture={% if social_img %}{{ 'http://'|add:request.site.hostname|add:social_img.url|urlencode }}{% endif %}&amp;name={{ page.title|urlencode }}&amp;description={{ page|social_text:request.site|urlencode }}&amp;redirect_uri={{ page.full_url|urlencode }}" title="Share on Facebook">
             <svg class="icon icon--social-share icon--facebook-share"><use xlink:href="#facebook"></use></svg>
         </a>
+        {% endif %}
     {% endwith %}
 </section>
-
