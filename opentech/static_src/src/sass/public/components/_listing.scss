@@ -100,6 +100,11 @@
         height: 180px;
         margin-bottom: 10px;
 
+        > img {
+            min-height: 100%;
+            width: auto;
+        }
+
         @include media-query(tablet-portrait) {
             position: absolute;
             top: 0;

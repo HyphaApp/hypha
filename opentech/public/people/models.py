@@ -73,8 +73,15 @@ class PersonPagePersonType(models.Model):
         return self.person_type.title
 
 
+class FundingQueryset(models.QuerySet):
+    def unique(self):
+        return self.order_by().distinct('page')
+
+
 class Funding(BaseFunding):
     page = ParentalKey('PersonPage', related_name='funding')
+
+    objects = FundingQueryset.as_manager()
 
 
 class PersonContactInfomation(Orderable):
@@ -176,6 +183,16 @@ class PersonPage(FundingMixin, BasePage):
 class PersonIndexPage(BasePage):
     subpage_types = ['PersonPage']
     parent_page_types = ['standardpages.IndexPage']
+
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction'),
+    ]
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+    ]
 
     def get_context(self, request, *args, **kwargs):
         people = PersonPage.objects.live().public().descendant_of(self).order_by(

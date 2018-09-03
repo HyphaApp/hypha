@@ -58,7 +58,7 @@
                 <div>
                     <h6 class="heading heading--submission-meta">
                         <span>Submitted: <strong>{{ object.submit_time.date }} by {{ object.user.get_full_name }}</strong></span>
-                        <span>Last edited: <strong>{{ object.last_edit.timestamp.date }} by {{ object.last_edit.user.get_full_name }}</strong></span>
+                        <span>Last edited: <strong>{{ object.live_revision.timestamp.date }} by {{ object.live_revision.author }}</strong></span>
                         {% if request.user|has_edit_perm:object %}
                             <a class="link link--edit-submission is-active" href="{% url 'funds:submissions:edit' object.id %}">
                                 Edit

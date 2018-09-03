@@ -84,8 +84,15 @@ class ProjectPageRelatedPage(RelatedPage):
     ]
 
 
+class ProjectFundingQueryset(models.QuerySet):
+    def unique(self):
+        return self.order_by().distinct('page')
+
+
 class ProjectFunding(BaseFunding):
     page = ParentalKey('ProjectPage', related_name='funding')
+
+    objects = ProjectFundingQueryset.as_manager()
 
 
 class ProjectPage(FundingMixin, BasePage):
