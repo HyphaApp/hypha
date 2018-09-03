@@ -1,5 +1,7 @@
 import argparse
 import json
+import os
+from urllib.parse import urlsplit
 
 from datetime import datetime, timezone
 
@@ -143,7 +145,6 @@ class MigrateCommand(BaseCommand):
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
             self.stdout.write(f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
-            pass
 
     def get_user(self, uid):
         try:
@@ -291,7 +292,8 @@ class MigrateCommand(BaseCommand):
         files = []
 
         for file_data in value:
-            file_path = 'files/private/application_upload/' + file_data['filename']
+            parts = urlsplit(file_data['uri'])
+            file_path = os.path.join('files', 'private', parts.netloc, *parts.path.split('/'))
             saved_file = migration_storage.open(file_path)
             saved_file.name = file_data['filename']
             files.append(saved_file)
