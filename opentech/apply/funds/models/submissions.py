@@ -121,7 +121,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 reviews.submitted().values('submission').annotate(count=Count('pk')).values('count'),
                 output_field=IntegerField(),
             ),
-            review_reccomendation=Subquery(
+            review_recommendation=Subquery(
                 reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
                 output_field=IntegerField(),
             ),
