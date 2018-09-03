@@ -371,8 +371,17 @@ class TestApplicationSubmission(TestCase):
     def test_file_gets_uploaded(self):
         filename = 'file_name.png'
         submission = self.make_submission(form_data__image__filename=filename)
-        save_path = os.path.join(settings.MEDIA_ROOT, submission.save_path(filename))
-        self.assertTrue(os.path.isfile(save_path))
+        path = os.path.join(settings.MEDIA_ROOT, 'submission', str(submission.id))
+
+        # Check we created the top level folder
+        self.assertTrue(os.path.isdir(path))
+
+        found_files = []
+        for _, _, files in os.walk(path):
+            found_files.extend(files)
+
+        # Check we saved the file somewhere beneath it
+        self.assertIn(filename, found_files)
 
     def test_create_revision_on_create(self):
         submission = ApplicationSubmissionFactory()
