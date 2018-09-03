@@ -176,7 +176,10 @@ class LabPage(BasePage):
 
     @property
     def is_open(self):
-        return bool(self.lab_type.specific.open_round)
+        try:
+            return bool(self.lab_type.specific.open_round)
+        except AttributeError:
+            return bool(self.lab_link)
 
     def clean(self):
         if self.lab_type and self.lab_link:
