@@ -466,7 +466,7 @@ class ApplicationSubmission(
                 revision.save()
 
             if draft:
-                self.form_data = self.live_revision.form_data
+                self.form_data = current_data
             else:
                 self.live_revision = revision
 

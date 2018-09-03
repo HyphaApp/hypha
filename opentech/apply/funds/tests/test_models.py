@@ -391,8 +391,8 @@ class TestApplicationSubmission(TestCase):
 
     def test_create_revision_on_data_change(self):
         submission = ApplicationSubmissionFactory()
-        new_data = {'title': 'My Awesome Title'}
-        submission.form_data = new_data
+        submission.form_data['title'] = 'My Awesome Title'
+        new_data = submission.form_data.copy()
         submission.create_revision()
         submission = self.refresh(submission)
         self.assertEqual(submission.revisions.count(), 2)
@@ -407,7 +407,7 @@ class TestApplicationSubmission(TestCase):
     def test_can_get_draft_data(self):
         submission = ApplicationSubmissionFactory()
         title = 'My new title'
-        submission.form_data = {'title': title}
+        submission.form_data['title'] = title
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
@@ -425,12 +425,13 @@ class TestApplicationSubmission(TestCase):
     def test_draft_updated(self):
         submission = ApplicationSubmissionFactory()
         title = 'My new title'
-        submission.form_data = {'title': title}
+        submission.form_data['title'] = title
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
         title = 'My even newer title'
-        submission.form_data = {'title': title}
+        submission.form_data['title'] = title
+
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
