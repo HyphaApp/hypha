@@ -33,7 +33,7 @@ class ReviewFormFieldsMixin(models.Model):
         return self._get_field_type(ScoreFieldBlock, many=True)
 
     @property
-    def reccomendation_field(self):
+    def recommendation_field(self):
         return self._get_field_type(RecommendationBlock)
 
     @property
