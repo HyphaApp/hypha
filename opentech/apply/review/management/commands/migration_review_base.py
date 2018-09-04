@@ -135,6 +135,8 @@ class MigrateCommand(BaseCommand):
         if "comments" not in form_data or not form_data["comments"]:
             form_data["comments"] = "No comment."
 
+        form_data["recommendation"] = review.recommendation
+
         review.form_data = form_data
 
         try:
