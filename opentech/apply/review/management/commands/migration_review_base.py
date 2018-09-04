@@ -1,8 +1,6 @@
 import argparse
 import json
 
-from datetime import datetime, timezone
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -11,6 +9,7 @@ from django.db.utils import IntegrityError
 from opentech.apply.funds.models import ApplicationSubmission, Round, LabType
 from opentech.apply.funds.models.forms import RoundBaseReviewForm, LabBaseReviewForm
 from opentech.apply.review.models import Review
+from opentech.apply.review.options import NA
 
 
 class MigrateCommand(BaseCommand):
@@ -138,6 +137,12 @@ class MigrateCommand(BaseCommand):
         form_data["recommendation"] = review.recommendation
 
         review.form_data = form_data
+
+        scores = [review.data(field.id)[1] for field in review.score_fields if review.data(field.id)[1] != NA]
+        try:
+            review.score = sum(scores) / len(scores)
+        except ZeroDivisionError:
+            review.score = 0
 
         try:
             review.save()
