@@ -32,12 +32,11 @@ class AccessFormData:
         return data
 
     def deserialise_file(self, file):
-        print(file)
         if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
             return StreamFieldFile(file.file, name=file.name)
-        return StreamFieldFile(None, name=file['name'])
+        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'))
 
     @property
     def deserialised_data(self):
@@ -48,7 +47,7 @@ class AccessFormData:
                 file = data.get(field.id, [])
                 try:
                     data[field.id] = self.deserialise_file(file)
-                except AttributeError:
+                except TypeError:
                     data[field.id] = [self.deserialise_file(f) for f in file]
         return data
 

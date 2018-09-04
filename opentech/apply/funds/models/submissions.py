@@ -455,8 +455,9 @@ class ApplicationSubmission(
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
         # Will return True/False if the revision was created or not
         self.clean_submission()
-        current_data = ApplicationSubmission.objects.get(id=self.id).form_data
-        if current_data != self.form_data or force:
+        current_submission = ApplicationSubmission.objects.get(id=self.id)
+        current_data = current_submission.deserialised_data
+        if current_data != self.deserialised_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
             else:
@@ -466,7 +467,7 @@ class ApplicationSubmission(
                 revision.save()
 
             if draft:
-                self.form_data = current_data
+                self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
 

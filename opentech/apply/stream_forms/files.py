@@ -10,22 +10,20 @@ class StreamFieldDataEncoder(DjangoJSONEncoder):
         if isinstance(o, StreamFieldFile):
             return {
                 'name': o.name,
-                'path': o.path,
+                'filename': o.filename,
             }
         return super().default(o)
 
 
 class StreamFieldFile(File):
-    def __init__(self, *args, storage=default_storage, **kwargs):
+    def __init__(self, *args, filename=None, storage=default_storage, **kwargs):
         super().__init__(*args, **kwargs)
         self.storage = storage
+        self.filename = filename or os.path.basename(self.name)
         self._committed = True
 
     def __eq__(self, other):
-        return self.name == other.name
-
-    def __hash__(self):
-        return hash(self.name)
+        return self.filename == other.filename and self.size == other.size
 
     def _get_file(self):
         if getattr(self, '_file', None) is None:
