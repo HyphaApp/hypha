@@ -8,10 +8,6 @@ class Command(MigrateCommand):
     APPLICATION_TYPE = "request"
 
     STREAMFIELD_MAP = {
-        "field_rrr_recommend": {
-            "id": "recommendation",
-            "type": "value",
-        },
         "field_rrr_overall_yes": {
             "id": "cec815a0-fab1-4142-9fc6-71319b054b2a",
             "type": "value",

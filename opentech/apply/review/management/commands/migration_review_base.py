@@ -18,6 +18,14 @@ class MigrateCommand(BaseCommand):
     data = []
 
     REVIEWFIELD_MAP = {
+        "community_lab_review": {
+            "submission": "field_review_community_lab",
+            "recommendation": "field_clr_recommendation",
+            "rec_map": {
+                "1": 2,
+                "0": 0,
+            },
+        },
         "concept_note_review": {
             "submission": "field_review_concept_note",
             "recommendation": "field_pr_recommendation",
@@ -67,14 +75,6 @@ class MigrateCommand(BaseCommand):
                 "1": 0,
             },
         },
-        "community_lab_review": {
-            "submission": "field_review_community_lab",
-            "recommendation": "field_clr_recommendation",
-            "rec_map": {
-                "1": 2,
-                "0": 0,
-            },
-        },
     }
 
     def add_arguments(self, parser):
@@ -85,10 +85,13 @@ class MigrateCommand(BaseCommand):
         with options['source'] as json_data:
             self.data = json.load(json_data)
 
+            blacklist = {"7574", "7413", "7412", "5270", "6468", "6436", "5511", "3490", "2840", "2837", "2737"}
+
             counter = 0
             for id in self.data:
-                self.process(id)
-                counter += 1
+                if id not in blacklist:
+                    self.process(id)
+                    counter += 1
 
             self.stdout.write(f"Imported {counter} reviews.")
 
@@ -100,9 +103,7 @@ class MigrateCommand(BaseCommand):
         except Review.DoesNotExist:
             review = Review(drupal_id=node['nid'])
 
-        # TODO timezone?
-        review.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
-        review.user = self.get_user(node['uid'])
+        review.author = self.get_user(node['uid'])
         review.recommendation = self.get_recommendation(node)
         review.submission = self.get_submission(node)
 
@@ -129,6 +130,9 @@ class MigrateCommand(BaseCommand):
                     form_data[id] = self.get_field_value(field, node)
                 except TypeError:
                     pass
+
+        if "comments" not in form_data or not form_data["comments"]:
+            form_data["comments"] = "No comment."
 
         review.form_data = form_data
 
