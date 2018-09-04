@@ -502,7 +502,9 @@ class ApplicationSubmission(
                 try:
                     file.save(folder)
                 except AttributeError:
-                    [f.save(folder) for f in file]
+                    for f in file:
+                        f.save(folder)
+                self.form_data[field.id] = file
 
     def save(self, *args, **kwargs):
         if self.is_draft:
