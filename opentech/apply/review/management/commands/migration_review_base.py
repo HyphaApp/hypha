@@ -106,6 +106,7 @@ class MigrateCommand(BaseCommand):
         review.author = self.get_user(node['uid'])
         review.recommendation = self.get_recommendation(node)
         review.submission = self.get_submission(node)
+        review.revision = review.submission.live_revision
 
         if self.CONTENT_TYPE == "fund":
             ROUND = Round.objects.get(title=self.ROUND_NAME)
