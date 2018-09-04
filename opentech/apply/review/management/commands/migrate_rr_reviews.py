@@ -35,4 +35,16 @@ class Command(MigrateCommand):
             "type": "value",
             "key": "safe_value",
         },
+        "field_rrr_objectives": {
+            "id": "38339ef8-8b57-4098-afc8-c3956fdf8333",
+            "type": "placeholder",
+        },
+        "field_rrr_capacity": {
+            "id": "f88a4436-cad8-4131-8a32-595c55810606",
+            "type": "placeholder",
+        },
+        "field_rrr_justification": {
+            "id": "8d4c9191-ce68-4788-a7f6-66cef5a66288",
+            "type": "placeholder",
+        },
     }

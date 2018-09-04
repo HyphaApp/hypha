@@ -84,7 +84,8 @@ class MigrateCommand(BaseCommand):
         with options['source'] as json_data:
             self.data = json.load(json_data)
 
-            blacklist = {"7574", "7413", "7412", "5270", "6468", "6436", "5511", "3490", "2840", "2837", "2737"}
+            # A user can only submitt a single review in the new system so pick the latest one.
+            blacklist = {"7574", "7413", "7412", "5270", "6468", "6436", "5511", "3490", "2840", "2837", "2737", "9362", "9203", "8958", "13313", "4868", "4867", "5863", "5770", "3962", "3747"}
 
             counter = 0
             for id in self.data:
@@ -183,18 +184,24 @@ class MigrateCommand(BaseCommand):
             values = []
             i = 0
             for item in source_value:
-                question = self.REQUEST_QUESTION_MAP[node['field_application_request']['target_id']]
-                values.append(f"<strong>{question[i]}</strong>{item[key]}<br>\n")
+                question = self.REQUEST_QUESTION_MAP[node['request_nid']]
+                if i in question:
+                    values.append(f"<strong>{question[i]}</strong>{item[key]}<br>\n")
                 i += 1
             merged_values = ''.join(values)
             value = self.nl2br(merged_values) if source_value else ''
         elif mapping_type == 'score':
-            value_rate = int(source_value[key]) if source_value else None
+            value_rate = int(source_value[key]) if source_value else NA
             value_text = ''
             if "_rate" in field:
+                field = field.replace('field_field_', 'field_')
                 text_field = field[:-5]
                 if text_field in self.STREAMFIELD_MAP:
-                    value_text = self.nl2br(node[text_field]['safe_value'])
+                    value_text_field = node[text_field]
+                    if 'safe_value' in value_text_field:
+                        value_text = self.nl2br(value_text_field['safe_value']) if value_text_field else ''
+                    else:
+                        value_text = self.nl2br(value_text_field['value']) if value_text_field else ''
             value = [value_text, value_rate]
         elif mapping_type == 'map' and 'map' in 'mapping':
             value = mapping['map'].get(source_value[key])

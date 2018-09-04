@@ -100,7 +100,6 @@ class Command(BaseCommand):
             {"type": "score", "value": {"field_label": "How appropriate are the proposed objectives for rapid response support?", "help_text": "", "required": ""}, "id": "71bfe95d-89c5-401b-ae7a-778e91d5c8c5"},
             {"type": "score", "value": {"field_label": "How would you rate the applicant's capacity and knowledge to carry out this project?", "help_text": "", "required": ""}, "id": "3aa164c1-4386-4046-997a-a2778e1d894e"},
             {"type": "score", "value": {"field_label": "Does the applicant provide sufficient justification for the amount of funding requested (is this cost effective)?", "help_text": "", "required": ""}, "id": "7cc12bb6-4c12-48aa-a269-1fd6d725abfe"},
-            {"type": "rich_text", "value": {"field_label": "Justification comments", "help_text": "", "required": "", "default_value": ""}, "id": "abc61bba-2a9e-4a9e-8c06-a1824ea2a998"},
             {"type": "comments", "value": {"field_label": "Other comments", "help_text": "", "info": None}, "id": "d94e51d3-026c-443f-a98a-a66b1f6c968c"}
         ]
 

@@ -152,9 +152,8 @@ class Command(BaseCommand):
     def create_concept_review_form(self):
 
         data3 = [
-            {"type": "text_markup", "value": "<h3>Conflicts of Interest and Confidentialit</h3>", "id": "4dc49d2f-a886-4244-b347-3614f8d1e399"},
-            {"type": "rich_text", "value": {"field_label": "Conflict(s) of interest disclosure", "help_text": "", "required": "", "default_value": ""}, "id": "f16be0b3-ef02-4876-b056-8a84238b1a52"},
             {"type": "recommendation", "value": {"field_label": "Do you think we should support this request?", "help_text": "", "info": None}, "id": "25d0d9b0-6e65-4fe3-906a-a1cd211def96"},
+            {"type": "rich_text", "value": {"field_label": "Recommendation comments", "help_text": "", "required": "", "default_value": ""}, "id": "f16be0b3-ef02-4876-b056-8a84238b1a52"},
             {"type": "score", "value": {"field_label": "Goals and principles", "help_text": "", "required": ""}, "id": "6dd8d5d2-09a5-4681-aebc-eb9ccd00395a"},
             {"type": "score", "value": {"field_label": "Technical merit", "help_text": "", "required": ""}, "id": "52b1f53c-9656-4b0c-8b8b-a9c57869356d"},
             {"type": "score", "value": {"field_label": "Reasonable and realistic", "help_text": "", "required": ""}, "id": "aedb27e7-6044-4e04-b2c7-358065c8fe5c"},
@@ -172,10 +171,11 @@ class Command(BaseCommand):
             {"type": "text_markup", "value": "<h3>A. Conflicts of Interest and Confidentialit</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
             {"type": "checkbox", "value": {"field_label": "I understand about confidentiality", "help_text": "", "default_value": ""}, "id": "65fb2c22-a0c5-4cde-94a7-feb27072bc3d"},
             {"type": "dropdown", "value": {"field_label": "Do you have any conflicts of interest to report?", "help_text": "", "required": "", "choices": ["Yes", "No"]}, "id": "dd75ce49-e3c4-43da-b724-4cb8bb88dcf8"},
+            {"type": "rich_text", "value": {"field_label": "Conflict(s) of interest disclosure", "help_text": "", "required": "", "default_value": ""}, "id": "9f7fe70b-97b5-4263-98ac-a45bf97b59d0"},
             {"type": "text_markup", "value": "<h3>B. General thoughts</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
             {"type": "rich_text", "value": {"field_label": "1. Positive aspects", "help_text": "", "required": "", "default_value": ""}, "id": "e91ed603-61ad-483e-be7b-21716d05a3bd"},
             {"type": "rich_text", "value": {"field_label": "2. Concerns", "help_text": "", "required": "", "default_value": ""}, "id": "821fb071-7db7-4cc1-ac3a-34b9eee40c94"},
-            {"type": "rich_text", "value": {"field_label": "3. Items that must be ", "help_text": "", "required": "", "default_value": ""}, "id": "021624ac-6628-430d-ba86-e68fd518c87e"},
+            {"type": "rich_text", "value": {"field_label": "3. Items that must be addressed", "help_text": "", "required": "", "default_value": ""}, "id": "021624ac-6628-430d-ba86-e68fd518c87e"},
             {"type": "text_markup", "value": "<h3>C. Specific aspects</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
             {"type": "score", "value": {"field_label": "1. Project overview", "help_text": "", "required": ""}, "id": "9c5603d5-f897-42fa-8739-5935769c94bd"},
             {"type": "score", "value": {"field_label": "2. Proposal objectives", "help_text": "", "required": ""}, "id": "6b748400-fad9-4b31-bb85-e3a53c99f4df"},
@@ -189,7 +189,7 @@ class Command(BaseCommand):
             {"type": "score", "value": {"field_label": "10. Qualifications", "help_text": "", "required": ""}, "id": "d3f5479c-68da-41d9-a266-130d383bab6b"},
             {"type": "score", "value": {"field_label": "11. Evaluation", "help_text": "", "required": ""}, "id": "2a61c71a-74f6-4963-8850-9289e852f604"},
             {"type": "text_markup", "value": "<h3>D. Rationale and appropriateness consideration</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
-            {"type": "score", "value": {"field_label": "Rationale and appropriateness ", "help_text": "", "required": ""}, "id": "0d1bf533-968c-44b9-bb30-d437ae039474"},
+            {"type": "score", "value": {"field_label": "Rationale and appropriateness", "help_text": "", "required": ""}, "id": "0d1bf533-968c-44b9-bb30-d437ae039474"},
             {"type": "text_markup", "value": "<h3>E. General recommendation</h3>", "id": "976386e1-3a66-490f-9e82-bfbe1f134cf2"},
             {"type": "recommendation", "value": {"field_label": "Recommendation", "help_text": "", "info": None}, "id": "4bf80578-1c8f-4515-9d6a-e52e87629e3e"},
             {"type": "comments", "value": {"field_label": "Recommendation comments", "help_text": "", "info": None}, "id": "a814d7ac-8291-4f3e-b733-4a9a4f1f8a49"}

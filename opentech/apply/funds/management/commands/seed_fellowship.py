@@ -134,9 +134,6 @@ class Command(BaseCommand):
             {"type": "recommendation", "value": {"field_label": "Overall, do you think we should select this applicant and their project to be part of the fellowship program?", "help_text": "", "info": None}, "id": "e1ea4f9d-64e2-4f28-a68a-851ec0f2d9ad"},
             {"type": "rich_text", "value": {"field_label": "If no, please select a reason why not.", "help_text": "", "required": "", "default_value": ""}, "id": "e68b6fe9-8b11-4cf0-8ae4-2ffed75e1e80"},
             {"type": "rich_text", "value": {"field_label": "If yes, but you believe some changes need to be made to the proposed effort, please let us know.", "help_text": "", "required": "", "default_value": ""}, "id": "a413f3a2-b486-4bf3-9e2d-c48d19626876"},
-            {"type": "score", "value": {"field_label": "Goals and principles", "help_text": "", "required": ""}, "id": "d40e541c-ccc0-4ede-94d1-bd8680b47004"},
-            {"type": "score", "value": {"field_label": "Technical merit", "help_text": "", "required": ""}, "id": "4af1e000-25be-4cf1-a787-8e5fd91feba8"},
-            {"type": "score", "value": {"field_label": "Reasonable and realistic", "help_text": "", "required": ""}, "id": "f839ec7e-1136-4fcd-b59e-c04e02d5abf6"},
             {"type": "rich_text", "value": {"field_label": "Request specific questions", "help_text": "", "required": "", "default_value": ""}, "id": "536c963a-f183-45bc-b83f-458b46dc5542"},
             {"type": "comments", "value": {"field_label": "Anything else you'd like to give us feedback on?", "help_text": "", "info": None}, "id": "cc82ba7b-b55e-4309-85f0-f68ad6f43471"}
         ]
