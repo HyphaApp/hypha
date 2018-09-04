@@ -9,7 +9,8 @@ class StreamFieldDataEncoder(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, StreamFieldFile):
             return {
-                'path': o.name,
+                'name': o.name,
+                'path': o.path,
             }
         return super().default(o)
 
@@ -59,15 +60,14 @@ class StreamFieldFile(File):
         else:
             self.file.open(mode)
         return self
-    # open() doesn't alter the file's contents, but it does reset the pointer
-    open.alters_data = True
 
     def save(self, folder):
-        file_path = os.path.join(folder, self.name)
-        name = self.storage.generate_filename(file_path)
+        name = self.name
+        if not name.startswith(folder):
+            name = os.path.join(folder, name)
+        name = self.storage.generate_filename(name)
         self.name = self.storage.save(name, self.file)
         self._committed = True
-    save.alters_data = True
 
     def delete(self, save=True):
         if not self:
@@ -82,8 +82,6 @@ class StreamFieldFile(File):
 
         self.name = None
         self._committed = False
-
-    delete.alters_data = True
 
     @property
     def closed(self):

@@ -1,4 +1,5 @@
 from django.utils.text import mark_safe
+from django.core.files import File
 
 from opentech.apply.stream_forms.blocks import FormFieldBlock
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
@@ -30,6 +31,14 @@ class AccessFormData:
                 data[field_id] = response
         return data
 
+    def deserialise_file(self, file):
+        print(file)
+        if isinstance(file, StreamFieldFile):
+            return file
+        if isinstance(file, File):
+            return StreamFieldFile(file.file, name=file.name)
+        return StreamFieldFile(None, name=file['name'])
+
     @property
     def deserialised_data(self):
         # Converts the file dicts into actual file objects
@@ -38,9 +47,9 @@ class AccessFormData:
             if isinstance(field.block, UploadableMediaBlock):
                 file = data.get(field.id, [])
                 try:
-                    data[field.id] = StreamFieldFile(file.file, name=file.name)
+                    data[field.id] = self.deserialise_file(file)
                 except AttributeError:
-                    data[field.id] = [StreamFieldFile(f.file, name=f.name) for f in file]
+                    data[field.id] = [self.deserialise_file(f) for f in file]
         return data
 
     def get_definitive_id(self, id):
