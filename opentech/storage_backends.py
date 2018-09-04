@@ -1,4 +1,7 @@
+from urllib import parse
+
 from django.conf import settings
+from django.utils.encoding import filepath_to_uri
 from storages.backends.s3boto3 import S3Boto3Storage
 
 
@@ -25,3 +28,15 @@ class PrivateMediaStorage(S3Boto3Storage):
     file_overwrite = False
     querystring_auth = True
     url_protocol = 'https:'
+
+    def url(self, name, parameters=None, expire=None):
+        url = super().url(name, parameters, expire)
+
+        if hasattr(settings, 'AWS_PRIVATE_CUSTOM_DOMAIN'):
+            # Django storage doesn't handle custom domains with auth strings
+            custom_domain = settings.AWS_PRIVATE_CUSTOM_DOMAIN
+            parts = list(url.split(url))
+            parts[0:3] = self.url_protocol, custom_domain, filepath_to_uri(name)
+            return parse.urlunsplit(parts)
+
+        return url
