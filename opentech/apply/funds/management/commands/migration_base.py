@@ -211,7 +211,7 @@ class MigrateCommand(BaseCommand):
                         if option:
                             value.append(option)
         elif mapping_type == 'file':
-            value = self.process_file(source_value)
+            value = []  # self.process_file(source_value)
 
         return value
 
