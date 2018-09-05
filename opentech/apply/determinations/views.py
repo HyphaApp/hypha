@@ -17,7 +17,7 @@ from opentech.apply.users.decorators import staff_required
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
 from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO
 
-from .utils import can_create_determination, can_edit_determination, transition_from_outcome
+from .utils import can_create_determination, can_edit_determination, has_final_determination, transition_from_outcome
 
 
 def get_form_for_stage(submission):
@@ -32,28 +32,34 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     template_name = 'determinations/determination_form.html'
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission)
+        return self.model.objects.get(submission=self.submission, is_draft=True)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
         if not can_create_determination(request.user, self.submission):
-            raise PermissionDenied()
+            return self.back_to_submission(_('You do not have permission to create that determination.'))
 
-        if self.submission.has_determination:
-            messages.warning(request, _('A determination has already been submitted for that submission.'))
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:detail', args=(self.submission.id,)))
+        if has_final_determination(self.submission):
+            return self.back_to_submission(_('A final determination has already been submitted.'))
 
         try:
-            determination = self.get_object()
+            self.determination = self.get_object()
         except Determination.DoesNotExist:
             pass
         else:
-            if not can_edit_determination(request.user, determination, self.submission):
-                messages.warning(request, _('There is a draft determination you do not have permission to edit.'))
-                return HttpResponseRedirect(reverse_lazy('apply:submissions:determinations:detail', args=(self.submission.id,)))
+            if not can_edit_determination(request.user, self.determination, self.submission):
+                return self.back_to_detail(_('There is a draft determination you do not have permission to edit.'))
 
         return super().dispatch(request, *args, **kwargs)
+
+    def back_to_submission(self, message):
+        messages.warning(self.request, message)
+        return HttpResponseRedirect(self.submission.get_absolute_url())
+
+    def back_to_detail(self, message):
+        messages.warning(self.request, message)
+        return HttpResponseRedirect(self.determination.get_absolute_url())
 
     def get_context_data(self, **kwargs):
         determination_messages = DeterminationMessageSettings.for_site(self.request.site)
@@ -86,6 +92,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 request=self.request,
                 user=self.object.author,
                 submission=self.object.submission,
+                determination=self.object,
             )
             transition = transition_from_outcome(int(form.cleaned_data.get('outcome')), self.submission)
 
@@ -107,7 +114,7 @@ class AdminDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission)
+        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])

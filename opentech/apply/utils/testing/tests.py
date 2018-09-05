@@ -35,15 +35,25 @@ class BaseViewTestCase(TestCase):
     def get_kwargs(self, instance):
         return {}
 
-    def url(self, instance, view_name=None, absolute=True):
-        full_url_name = self.url_name.format(view_name or self.base_view_name)
-        return self.url_from_pattern(full_url_name, self.get_kwargs(instance), secure=True, absolute=absolute)
+    def url(self, instance, view_name=None, absolute=True, kwargs=dict()):
+        view = view_name or self.base_view_name
+        full_url_name = self.url_name.format(view)
+        kwargs_method = f'get_{view}_kwargs'
+        if hasattr(self, kwargs_method):
+            kwargs = getattr(self, kwargs_method)(instance)
+        else:
+            kwargs = self.get_kwargs(instance)
+        return self.url_from_pattern(full_url_name, kwargs, secure=True, absolute=absolute)
+
+    def absolute_url(self, location, secure=True):
+        request = self.factory.get(location, secure=secure)
+        return request.build_absolute_uri()
 
     def url_from_pattern(self, pattern, kwargs=None, secure=True, absolute=True):
         url = reverse(pattern, kwargs=kwargs)
-        request = self.factory.get(url, secure=secure)
         if absolute:
-            return request.build_absolute_uri()
+            return self.absolute_url(url)
+        request = self.factory.get(url, secure=secure)
         return request.path
 
     def get_page(self, instance=None, view_name=None):

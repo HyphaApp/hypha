@@ -559,13 +559,6 @@ class ApplicationSubmission(
 
         return self.has_permission_to_review(user)
 
-    @property
-    def has_determination(self):
-        try:
-            return self.determination.submitted
-        except ObjectDoesNotExist:
-            return False
-
     def prepare_search_values(self):
         for field_id in self.question_field_ids:
             field = self.field(field_id)

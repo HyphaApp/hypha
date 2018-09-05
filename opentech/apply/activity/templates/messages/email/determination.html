@@ -4,19 +4,7 @@
 {% block title %}Determination for {{ object.title }}{% endblock %}
 
 {% block content %}
-Your application has been reviewed and the outcome is: {{ submission.determination.clean_outcome }}
+Your application has been reviewed and the outcome is: {{ determination.clean_outcome }}
 
-{{ submission.determination.message|bleach }}
-{% endblock %}
-
-
-{% block post_signature_content %}
-{% if submission.determination.submitted %}
-    {% for group in submission.determination.detailed_data.values %}
-        {% for question, answer in group.questions %}
-            <h5>{{ question }}</h5>
-            {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
-        {% endfor %}
-    {% endfor %}
-{% endif %}
+{{ determination.message|bleach }}
 {% endblock %}
