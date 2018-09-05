@@ -52,7 +52,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
     def test_cant_access_wrong_status(self):
         submission = ApplicationSubmissionFactory(status='more_info')
         response = self.get_page(submission, 'form')
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
 
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)
