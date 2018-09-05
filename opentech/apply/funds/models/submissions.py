@@ -10,6 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Count, IntegerField, OuterRef, ObjectDoesNotExist, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
+from django.db.models.functions import Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
@@ -134,9 +135,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
             last_update=Subquery(latest_activity.values('timestamp')[:1]),
-            comment_count=Subquery(
-                comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
+            comment_count=Coalesce(
+                Subquery(
+                    comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
             ),
             review_count=Subquery(
                 reviews.values('submission').annotate(count=Count('pk')).values('count'),
