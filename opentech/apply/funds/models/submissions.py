@@ -492,7 +492,7 @@ class ApplicationSubmission(
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 files[field.id] = self.deserialised_data[field.id]
-                self.form_data.pop(field.id)
+                self.form_data.pop(field.id, None)
         return files
 
     def process_file_data(self, data):
@@ -649,7 +649,7 @@ def log_status_update(sender, **kwargs):
         )
 
 
-class ApplicationRevision(models.Model):
+class ApplicationRevision(models.Model, AccessFormData):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
     form_data = JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)
@@ -657,6 +657,10 @@ class ApplicationRevision(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    @property
+    def form_fields(self):
+        return self.submission.form_fields
 
     def get_compare_url_to_latest(self):
         return reverse("funds:submissions:revisions:compare", kwargs={

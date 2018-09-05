@@ -392,11 +392,11 @@ class TestApplicationSubmission(TestCase):
     def test_create_revision_on_data_change(self):
         submission = ApplicationSubmissionFactory()
         submission.form_data['title'] = 'My Awesome Title'
-        new_data = submission.form_data.copy()
+        new_data = submission.deserialised_data
         submission.create_revision()
         submission = self.refresh(submission)
         self.assertEqual(submission.revisions.count(), 2)
-        self.assertDictEqual(submission.live_revision.form_data, new_data)
+        self.assertDictEqual(submission.live_revision.deserialised_data, new_data)
 
     def test_dont_create_revision_on_data_same(self):
         submission = ApplicationSubmissionFactory()

@@ -303,7 +303,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.draft_proposal_submission.save()
 
         response = self.get_page(self.draft_proposal_submission, 'edit')
-        self.assertDictEqual(response.context['object'].form_data, draft_revision.form_data)
+        self.assertDictEqual(response.context['object'].deserialised_data, draft_revision.deserialised_data)
 
     def test_cant_edit_submission_incorrect_state(self):
         submission = InvitedToProposalFactory(user=self.user)
@@ -321,7 +321,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
     def test_create_revisions_on_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
-        old_data = submission.form_data.copy()
+        old_data = submission.deserialised_data.copy()
 
         new_title = 'New title'
         new_data = prepare_form_data(submission, title=new_title)
@@ -332,14 +332,14 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
-        self.assertDictEqual(submission.revisions.last().form_data, old_data)
-        self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertDictEqual(submission.revisions.last().deserialised_data, old_data)
+        self.assertDictEqual(submission.live_revision.deserialised_data, submission.deserialised_data)
         self.assertEqual(submission.live_revision.author, self.user)
         self.assertEqual(submission.title, new_title)
 
     def test_dont_update_live_revision_on_save(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)
-        old_data = submission.form_data.copy()
+        old_data = submission.deserialised_data.copy()
 
         new_data = prepare_form_data(submission, title='New title')
 
@@ -349,9 +349,9 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         self.assertEqual(submission.status, 'draft_proposal')
         self.assertEqual(submission.revisions.count(), 2)
-        self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
+        self.assertDictEqual(submission.draft_revision.deserialised_data, submission.from_draft().deserialised_data)
         self.assertEqual(submission.draft_revision.author, self.user)
-        self.assertDictEqual(submission.live_revision.form_data, old_data)
+        self.assertDictEqual(submission.live_revision.deserialised_data, old_data)
 
     def test_existing_draft_edit_and_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)

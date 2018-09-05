@@ -38,6 +38,10 @@ class StreamFieldFile(File):
 
     file = property(_get_file, _set_file, _del_file)
 
+    def read(self):
+        self.file.seek(0)
+        return super().read()
+
     @property
     def path(self):
         return self.storage.path(self.name)
