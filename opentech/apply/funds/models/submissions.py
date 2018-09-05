@@ -456,8 +456,8 @@ class ApplicationSubmission(
         # Will return True/False if the revision was created or not
         self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
-        current_data = current_submission.deserialised_data
-        if current_data != self.deserialised_data or force:
+        current_data = current_submission.form_data
+        if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
             else:
@@ -479,7 +479,7 @@ class ApplicationSubmission(
     def clean_submission(self):
         self.process_form_data()
         self.ensure_user_has_account()
-        self.process_file_data(self.deserialised_data)
+        self.process_file_data(self.form_data)
 
     def process_form_data(self):
         for field_name, field_id in self.must_include.items():
@@ -491,14 +491,14 @@ class ApplicationSubmission(
         files = {}
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                files[field.id] = self.deserialised_data[field.id]
+                files[field.id] = self.data(field.id) or []
                 self.form_data.pop(field.id, None)
         return files
 
     def process_file_data(self, data):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = data.get(field.id, [])
+                file = self.process_file(data.get(field.id, []))
                 folder = os.path.join('submission', str(self.id), field.id)
                 try:
                     file.save(folder)

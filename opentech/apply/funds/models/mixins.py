@@ -31,24 +31,37 @@ class AccessFormData:
                 data[field_id] = response
         return data
 
-    def deserialise_file(self, file):
+    @classmethod
+    def stream_file(cls, file):
         if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
             return StreamFieldFile(file.file, name=file.name)
         return StreamFieldFile(None, name=file['name'], filename=file.get('filename'))
 
-    @property
-    def deserialised_data(self):
+    @classmethod
+    def process_file(cls, file):
+        try:
+            return cls.stream_file(file)
+        except TypeError:
+            return [cls.stream_file(f) for f in file]
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if 'form_data' in field_names:
+            # When the form_data is loaded from the DB deserialise it
+            instance.form_data = cls.deserialised_data(instance.form_data, instance.form_fields)
+        return instance
+
+    @classmethod
+    def deserialised_data(cls, data, form_fields):
         # Converts the file dicts into actual file objects
-        data = self.raw_data.copy()
-        for field in self.form_fields:
+        data = data.copy()
+        for field in form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 file = data.get(field.id, [])
-                try:
-                    data[field.id] = self.deserialise_file(file)
-                except TypeError:
-                    data[field.id] = [self.deserialise_file(f) for f in file]
+                data[field.id] = cls.process_file(file)
         return data
 
     def get_definitive_id(self, id):
@@ -63,7 +76,7 @@ class AccessFormData:
     def data(self, id):
         definitive_id = self.get_definitive_id(id)
         try:
-            return self.deserialised_data[definitive_id]
+            return self.raw_data[definitive_id]
         except KeyError as e:
             # We have most likely progressed application forms so the data isnt in form_data
             return None
