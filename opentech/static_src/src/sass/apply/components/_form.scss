@@ -95,7 +95,7 @@
             @include button($color--light-blue, $color--dark-blue);
             max-width: 290px;
             text-align: center;
-            background: url('./../../images/upload.svg') $color--light-blue no-repeat 50px center;
+            background: url('./../../images/upload.svg') $color--light-blue no-repeat 40px center;
             border: 0;
 
             .no-js & {
@@ -103,7 +103,7 @@
             }
 
             &:hover {
-                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 50px center;
+                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 40px center;
 
                 .no-js & {
                     background: none;
