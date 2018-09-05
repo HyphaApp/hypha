@@ -27,7 +27,7 @@ class MigrationStorage(S3Boto3Storage):
     if hasattr(settings, 'AWS_MIGRATION_ACCESS_KEY_ID'):
         access_key = settings.AWS_MIGRATION_ACCESS_KEY_ID
 
-    if hasattr(settings, 'AWS_MIGRATION_SECRET_ACCESS_KEY_ID'):
+    if hasattr(settings, 'AWS_MIGRATION_SECRET_ACCESS_KEY'):
         secret_key = settings.AWS_MIGRATION_SECRET_ACCESS_KEY
 
     bucket_acl = 'private'
