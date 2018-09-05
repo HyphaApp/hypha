@@ -449,7 +449,7 @@ class ApplicationSubmission(
 
     def from_draft(self):
         self.is_draft = True
-        self.form_data = self.draft_revision.form_data
+        self.form_data = self.deserialised_data(self.draft_revision.form_data, self.form_fields)
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
@@ -649,7 +649,7 @@ def log_status_update(sender, **kwargs):
         )
 
 
-class ApplicationRevision(models.Model, AccessFormData):
+class ApplicationRevision(AccessFormData, models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
     form_data = JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)
