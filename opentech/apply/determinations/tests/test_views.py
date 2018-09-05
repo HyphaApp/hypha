@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.models import ACCEPTED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory

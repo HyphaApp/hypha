@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, ObjectDoesNotExist, Subquery, Sum
+from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
 from django.dispatch import receiver
 from django.urls import reverse
