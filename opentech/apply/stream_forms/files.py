@@ -38,9 +38,12 @@ class StreamFieldFile(File):
 
     file = property(_get_file, _set_file, _del_file)
 
-    def read(self, chunk_size):
+    def read(self, chunk_size=None):
         self.file.seek(0)
-        return super().read(chunk_size)
+        if chunk_size:
+            return super().read(chunk_size)
+        else:
+            return super().read()
 
     @property
     def path(self):
