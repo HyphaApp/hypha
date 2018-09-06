@@ -139,7 +139,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
         return '{:.1f}'.format(self.score) if self.score != NA else 'NA'
 
     def get_absolute_url(self):
-        return reverse('apply:reviews:review', args=(self.id,))
+        return reverse('apply:submissions:reviews:review', args=(self.submission.pk, self.id,))
 
     def __str__(self):
         return f'Review for {self.submission.title} by {self.author!s}'
