@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Case, When, Value
 from django.db.models.functions import Concat
 
-from .messaging import MESSAGES
+from .options import MESSAGES
 
 
 COMMENT = 'comment'

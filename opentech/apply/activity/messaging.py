@@ -1,39 +1,15 @@
-from enum import Enum
-
 import requests
 
 from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
+from .options import MESSAGES
 from .tasks import send_mail
 
 
 def link_to(target, request):
     return request.scheme + '://' + request.get_host() + target.get_absolute_url()
-
-
-class MESSAGES(Enum):
-    UPDATE_LEAD = 'Update Lead'
-    EDIT = 'Edit'
-    APPLICANT_EDIT = "Applicant Edit"
-    NEW_SUBMISSION = 'New Submission'
-    TRANSITION = 'Transition'
-    DETERMINATION_OUTCOME = 'Determination Outcome'
-    INVITED_TO_PROPOSAL = 'Invited To Proposal'
-    REVIEWERS_UPDATED = 'Reviewers Updated'
-    READY_FOR_REVIEW = 'Ready For Review'
-    NEW_REVIEW = 'New Review'
-    COMMENT = 'Comment'
-    PROPOSAL_SUBMITTED = 'Proposal Submitted'
-    OPENED_SEALED = 'Opened Sealed Submission'
-
-    @classmethod
-    def choices(cls):
-        return [
-            (choice.name, choice.value)
-            for choice in cls
-        ]
 
 
 class AdapterBase:
