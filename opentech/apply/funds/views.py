@@ -104,7 +104,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             submission=form.instance,
-            related=old,
+            related=old.lead,
         )
         return response
 

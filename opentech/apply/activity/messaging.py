@@ -15,7 +15,7 @@ def link_to(target, request):
 
 neat_related = {
     MESSAGES.DETERMINATION_OUTCOME: 'determination',
-    MESSAGES.UPDATE_LEAD: 'old',
+    MESSAGES.UPDATE_LEAD: 'old_lead',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
     MESSAGES.APPLICANT_EDIT: 'revision',
@@ -118,7 +118,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
-        MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
+        MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
@@ -171,7 +171,7 @@ class SlackAdapter(AdapterBase):
     always_send = True
     messages = {
         MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
-        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
+        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old_lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
