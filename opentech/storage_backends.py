@@ -35,7 +35,7 @@ class PrivateMediaStorage(S3Boto3Storage):
         if hasattr(settings, 'AWS_PRIVATE_CUSTOM_DOMAIN'):
             # Django storage doesn't handle custom domains with auth strings
             custom_domain = settings.AWS_PRIVATE_CUSTOM_DOMAIN
-            parts = list(url.split(url))
+            parts = list(parse.urlsplit(url))
             parts[0:3] = self.url_protocol, custom_domain, filepath_to_uri(name)
             return parse.urlunsplit(parts)
 
