@@ -67,6 +67,7 @@ class StreamFieldFile(File):
         name = self.name
         if not name.startswith(folder):
             name = os.path.join(folder, name)
+        self.open()
         name = self.storage.generate_filename(name)
         self.name = self.storage.save(name, self.file)
         self._committed = True
