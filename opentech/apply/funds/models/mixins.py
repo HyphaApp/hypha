@@ -41,7 +41,7 @@ class AccessFormData:
         if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
-            return StreamFieldFile(file.file, name=file.name, storage=submission_storage)
+            return StreamFieldFile(file, name=file.name, storage=submission_storage)
         return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
 
     @classmethod

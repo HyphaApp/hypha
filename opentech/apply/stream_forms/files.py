@@ -20,7 +20,7 @@ class StreamFieldFile(File):
         super().__init__(*args, **kwargs)
         self.storage = storage
         self.filename = filename or os.path.basename(self.name)
-        self._committed = True
+        self._committed = False
 
     def __eq__(self, other):
         return self.filename == other.filename and self.size == other.size
@@ -38,9 +38,9 @@ class StreamFieldFile(File):
 
     file = property(_get_file, _set_file, _del_file)
 
-    def read(self):
+    def read(self, chunk_size):
         self.file.seek(0)
-        return super().read()
+        return super().read(chunk_size)
 
     @property
     def path(self):
@@ -68,7 +68,8 @@ class StreamFieldFile(File):
         if not name.startswith(folder):
             name = os.path.join(folder, name)
         name = self.storage.generate_filename(name)
-        self.name = self.storage.save(name, self.file)
+        if not self._committed:
+            self.name = self.storage.save(name, self.file)
         self._committed = True
 
     def delete(self, save=True):
