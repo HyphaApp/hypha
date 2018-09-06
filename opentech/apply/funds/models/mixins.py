@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.utils.text import mark_safe
 from django.core.files import File
+from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import FormFieldBlock
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
@@ -9,6 +11,9 @@ from opentech.apply.stream_forms.files import StreamFieldFile
 
 
 __all__ = ['AccessFormData']
+
+
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class AccessFormData:
@@ -33,11 +38,11 @@ class AccessFormData:
 
     @classmethod
     def stream_file(cls, file):
-        if isinstance(file, StreamFieldFile):
+        if isinstance(file, StreamFieldFile, storage=submission_storage):
             return file
         if isinstance(file, File):
-            return StreamFieldFile(file.file, name=file.name)
-        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'))
+            return StreamFieldFile(file.file, name=file.name, storage=submission_storage)
+        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
 
     @classmethod
     def process_file(cls, file):

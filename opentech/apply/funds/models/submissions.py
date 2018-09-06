@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import get_storage_class
 from django.db import models
 from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
@@ -38,9 +37,6 @@ from ..workflow import (
     UserPermissions,
     WORKFLOWS,
 )
-
-
-submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class JSONOrderable(models.QuerySet):
