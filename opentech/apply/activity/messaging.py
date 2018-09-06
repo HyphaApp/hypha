@@ -151,7 +151,7 @@ class ActivityAdapter(AdapterBase):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
 
-        related =kwargs['related']
+        related = kwargs['related']
         if isinstance(related, models.Model):
             related_object = related
         else:
