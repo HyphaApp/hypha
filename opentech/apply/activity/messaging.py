@@ -18,6 +18,8 @@ neat_related = {
     MESSAGES.UPDATE_LEAD: 'old',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
+    MESSAGES.APPLICANT_EDIT: 'revision',
+    MESSAGES.EDIT: 'revision',
 }
 
 
