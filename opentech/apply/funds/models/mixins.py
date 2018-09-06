@@ -38,7 +38,7 @@ class AccessFormData:
 
     @classmethod
     def stream_file(cls, file):
-        if isinstance(file, StreamFieldFile, storage=submission_storage):
+        if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
             return StreamFieldFile(file.file, name=file.name, storage=submission_storage)
