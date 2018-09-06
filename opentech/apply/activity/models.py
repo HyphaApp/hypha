@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Case, When, Value
 from django.db.models.functions import Concat
@@ -80,6 +82,11 @@ class Activity(models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
     message = models.TextField()
     visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
+
+    # Fields for generic relations to other objects. related_object should implement `get_absolute_url`
+    content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    related_object = GenericForeignKey('content_type', 'object_id')
 
     objects = models.Manager.from_queryset(ActivityQuerySet)()
     comments = CommentManger.from_queryset(CommentQueryset)()

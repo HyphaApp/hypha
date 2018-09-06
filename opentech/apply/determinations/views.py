@@ -92,7 +92,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 request=self.request,
                 user=self.object.author,
                 submission=self.object.submission,
-                determination=self.object,
+                related=self.object,
             )
             transition = transition_from_outcome(int(form.cleaned_data.get('outcome')), self.submission)
 

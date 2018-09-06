@@ -12,6 +12,11 @@ def link_to(target, request):
     return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
+neat_related = {
+    MESSAGES.DETERMINATION_OUTCOME: 'determination',
+}
+
+
 class AdapterBase:
     messages = {}
     always_send = False
@@ -38,10 +43,29 @@ class AdapterBase:
     def extra_kwargs(self, message_type, **kwargs):
         return {}
 
+    def get_neat_related(self, message_type, related):
+        # We translate the related kwarg into something we can understand
+        try:
+            neat_name = neat_related[message_type]
+        except KeyError:
+            # Message type doesn't expect a related object
+            if related:
+                raise ValueError(f"Unexpected 'related' kwarg provided for {message_type}") from None
+
+        if not related:
+            raise ValueError(f"{message_type} expects a 'related' kwarg")
+        return {neat_name: related}
+
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, event, **kwargs):
+    def process(self, message_type, event, user, submission, related=None):
+        kwargs = {
+            'user': user,
+            'submission': submission,
+            'related': related,
+        }
+        kwargs.update(self.get_neat_related(message_type, related))
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         message = self.message(message_type, **kwargs)
@@ -124,6 +148,7 @@ class ActivityAdapter(AdapterBase):
             submission=submission,
             message=message,
             visibility=visibility,
+            related_object=kwargs['related']
         )
 
 
@@ -265,11 +290,11 @@ class MessengerBackend:
     def __call__(self, message_type, request, user, submission, **kwargs):
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
-    def send(self, message_type, user, submission, **kwargs):
+    def send(self, message_type, user, submission, related):
         from .models import Event
         event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, event, user=user, submission=submission, **kwargs)
+            adapter.process(message_type, event, user=user, submission=submission, related=related)
 
 
 adapters = [
