@@ -43,35 +43,6 @@ from ..workflow import (
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
-def save_path(file_name, folder):
-    file_path = os.path.join(folder, file_name)
-    return submission_storage.generate_filename(file_path)
-
-
-def handle_file(file, folder):
-    # File is potentially optional
-    if file:
-        try:
-            filename = save_path(file.name, folder)
-        except AttributeError:
-            # file is not changed, it is still the dictionary
-            return file
-
-        saved_name = submission_storage.save(filename, file)
-        return {
-            'name': file.name,
-            'path': saved_name,
-            'url': submission_storage.url(saved_name),
-        }
-
-
-def handle_files(files, folder):
-    if isinstance(files, list):
-        return [handle_file(file, folder) for file in files]
-
-    return handle_file(files, folder)
-
-
 class JSONOrderable(models.QuerySet):
     json_field = ''
 
