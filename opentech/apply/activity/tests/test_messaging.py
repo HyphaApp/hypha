@@ -19,6 +19,7 @@ from ..messaging import (
     ActivityAdapter,
     EmailAdapter,
     MessengerBackend,
+    neat_related,
     MESSAGES,
     SlackAdapter,
 )
@@ -46,18 +47,22 @@ class TestAdapter(AdapterBase):
 class AdapterMixin:
     adapter = None
 
-    def process_kwargs(self, **kwargs):
+    def process_kwargs(self, message_type, **kwargs):
         if 'user' not in kwargs:
             kwargs['user'] = UserFactory()
         if 'submission' not in kwargs:
             kwargs['submission'] = ApplicationSubmissionFactory()
         if 'request' not in kwargs:
             kwargs['request'] = make_request()
+        if message_type in neat_related:
+            kwargs['related'] = kwargs.get('related', 'a thing')
+        else:
+            kwargs['related'] = None
 
         return kwargs
 
     def adapter_process(self, message_type, **kwargs):
-        kwargs = self.process_kwargs(**kwargs)
+        kwargs = self.process_kwargs(message_type, **kwargs)
         self.adapter.process(message_type, event=EventFactory(submission=kwargs['submission']), **kwargs)
 
 
@@ -139,6 +144,7 @@ class TestMessageBackend(TestCase):
         self.mocked_adapter = Mock(AdapterBase)
         self.backend = MessengerBackend
         self.kwargs = {
+            'related': None,
             'request': None,
             'user': UserFactory(),
             'submission': ApplicationSubmissionFactory(),
@@ -185,7 +191,7 @@ class TestActivityAdapter(TestCase):
         user = UserFactory()
         submission = ApplicationSubmissionFactory()
 
-        self.adapter.send_message(message, user=user, submission=submission)
+        self.adapter.send_message(message, user=user, submission=submission, related=None)
 
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
@@ -318,14 +324,14 @@ class TestEmailAdapter(AdapterMixin, TestCase):
     def test_no_email_private_comment(self):
         comment = CommentFactory(internal=True)
 
-        self.adapter_process(MESSAGES.COMMENT, comment=comment, submission=comment.submission)
+        self.adapter_process(MESSAGES.COMMENT, related=comment, submission=comment.submission)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_no_email_own_comment(self):
         application = ApplicationSubmissionFactory()
         comment = CommentFactory(user=application.user, submission=application)
 
-        self.adapter_process(MESSAGES.COMMENT, comment=comment, user=comment.user, submission=comment.submission)
+        self.adapter_process(MESSAGES.COMMENT, related=comment, user=comment.user, submission=comment.submission)
         self.assertEqual(len(mail.outbox), 0)
 
     def test_reviewers_email(self):

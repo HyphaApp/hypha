@@ -20,6 +20,7 @@ neat_related = {
     MESSAGES.TRANSITION: 'old_phase',
     MESSAGES.APPLICANT_EDIT: 'revision',
     MESSAGES.EDIT: 'revision',
+    MESSAGES.COMMENT: 'comment',
 }
 
 
@@ -57,20 +58,22 @@ class AdapterBase:
             # Message type doesn't expect a related object
             if related:
                 raise ValueError(f"Unexpected 'related' kwarg provided for {message_type}") from None
-
-        if not related:
-            raise ValueError(f"{message_type} expects a 'related' kwarg")
-        return {neat_name: related}
+            return {}
+        else:
+            if not related:
+                raise ValueError(f"{message_type} expects a 'related' kwarg")
+            return {neat_name: related}
 
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, event, request, user, submission, related=None):
+    def process(self, message_type, event, request, user, submission, related=None, **kwargs):
         kwargs = {
             'request': request,
             'user': user,
             'submission': submission,
             'related': related,
+            **kwargs,
         }
         kwargs.update(self.get_neat_related(message_type, related))
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
@@ -301,14 +304,14 @@ class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
 
-    def __call__(self, message_type, request, user, submission, **kwargs):
-        return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
+    def __call__(self, message_type, request, user, submission, related=None, **kwargs):
+        return self.send(message_type, request=request, user=user, submission=submission, related=related, **kwargs)
 
-    def send(self, message_type, request, user, submission, related):
+    def send(self, message_type, request, user, submission, related, **kwargs):
         from .models import Event
         event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, event, request=request, user=user, submission=submission, related=related)
+            adapter.process(message_type, event, request=request, user=user, submission=submission, related=related, **kwargs)
 
 
 adapters = [

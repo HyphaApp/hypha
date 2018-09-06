@@ -61,7 +61,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
             request=self.request,
             user=self.request.user,
             submission=self.object.submission,
-            comment=self.object,
+            related=self.object,
         )
         return response
 
