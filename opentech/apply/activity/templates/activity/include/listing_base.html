@@ -23,7 +23,7 @@
 
             - {{ activity.message }}
 
-            {% if not submission_title and activity.related_object %}
+            {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}
                     {% if url %}
                     <a href="{{ url }}" class="feed__related-item">
