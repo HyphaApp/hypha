@@ -23,7 +23,7 @@
 
             - {{ activity.message }}
 
-            {% if activity.related_object %}
+            {% if not submission_title and activity.related_object %}
             <a href="{{ activity.related_object.get_absolute_url }}" class="feed__related-item">
                 <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
             </a>
