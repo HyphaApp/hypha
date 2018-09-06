@@ -2,7 +2,7 @@
 {% block data_display %}
     <div class="wrapper">
     {% for file in data %}
-        {% if data.name %}
+        {% if file.name %}
             {% include "stream_forms/includes/file_field.html" with file=file %}
         {% else %}
             {{ file }}
