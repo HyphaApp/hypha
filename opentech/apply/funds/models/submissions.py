@@ -596,7 +596,7 @@ def log_status_update(sender, **kwargs):
             user=by,
             request=request,
             submission=instance,
-            old_phase=old_phase,
+            related=old_phase,
         )
 
         if instance.status in review_statuses:

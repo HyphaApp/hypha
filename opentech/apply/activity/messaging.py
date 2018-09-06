@@ -1,5 +1,6 @@
 import requests
 
+from django.db import models
 from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
@@ -14,6 +15,9 @@ def link_to(target, request):
 
 neat_related = {
     MESSAGES.DETERMINATION_OUTCOME: 'determination',
+    MESSAGES.UPDATE_LEAD: 'old',
+    MESSAGES.NEW_REVIEW: 'review',
+    MESSAGES.TRANSITION: 'old_phase',
 }
 
 
@@ -59,8 +63,9 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, event, user, submission, related=None):
+    def process(self, message_type, event, request, user, submission, related=None):
         kwargs = {
+            'request': request,
             'user': user,
             'submission': submission,
             'related': related,
@@ -86,7 +91,7 @@ class AdapterBase:
                     message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
                 else:
                     message = '{}: {}'.format(self.adapter_type, message)
-                messages.add_message(kwargs['request'], messages.INFO, message)
+                messages.add_message(request, messages.INFO, message)
 
     def create_log(self, message, recipient, event):
         from .models import Message
@@ -115,7 +120,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.NEW_REVIEW: 'Submitted a review',
+        MESSAGES.NEW_REVIEW: MESSAGES.NEW_REVIEW.name,
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
     }
 
@@ -143,12 +148,19 @@ class ActivityAdapter(AdapterBase):
     def send_message(self, message, user, submission, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
+
+        related =kwargs['related']
+        if isinstance(related, models.Model):
+            related_object = related
+        else:
+            related_object = None
+
         Activity.actions.create(
             user=user,
             submission=submission,
             message=message,
             visibility=visibility,
-            related_object=kwargs['related']
+            related_object=related_object,
         )
 
 
@@ -290,11 +302,11 @@ class MessengerBackend:
     def __call__(self, message_type, request, user, submission, **kwargs):
         return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
 
-    def send(self, message_type, user, submission, related):
+    def send(self, message_type, request, user, submission, related):
         from .models import Event
         event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, event, user=user, submission=submission, related=related)
+            adapter.process(message_type, event, request=request, user=user, submission=submission, related=related)
 
 
 adapters = [
