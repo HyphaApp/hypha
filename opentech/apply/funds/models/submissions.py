@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, ObjectDoesNotExist, Subquery, Sum
+from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -562,13 +562,6 @@ class ApplicationSubmission(
             return False
 
         return self.has_permission_to_review(user)
-
-    @property
-    def has_determination(self):
-        try:
-            return self.determination.submitted
-        except ObjectDoesNotExist:
-            return False
 
     def prepare_search_values(self):
         for field_id in self.question_field_ids:

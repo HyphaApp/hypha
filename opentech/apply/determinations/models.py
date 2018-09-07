@@ -34,11 +34,23 @@ TRANSITION_DETERMINATION = {
 }
 
 
+class DeterminationQuerySet(models.QuerySet):
+    def active(self):
+        # Designed to be used with a queryset related to submissions
+        return self.get(is_draft=True)
+
+    def submitted(self):
+        return self.filter(is_draft=False)
+
+    def final(self):
+        return self.submitted().filter(outcome__in=[ACCEPTED, REJECTED])
+
+
 class Determination(models.Model):
-    submission = models.OneToOneField(
+    submission = models.ForeignKey(
         'funds.ApplicationSubmission',
         on_delete=models.CASCADE,
-        related_name='determination'
+        related_name='determinations'
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -55,6 +67,8 @@ class Determination(models.Model):
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
+    objects = DeterminationQuerySet.as_manager()
+
     @property
     def stripped_message(self):
         return bleach.clean(self.message, tags=[], strip=True)
@@ -64,11 +78,11 @@ class Determination(models.Model):
         return self.get_outcome_display()
 
     def get_absolute_url(self):
-        return reverse('apply:submissions:determinations:detail', args=(self.id,))
+        return reverse('apply:submissions:determinations:detail', args=(self.submission.id, self.id))
 
     @property
     def submitted(self):
-        return self.outcome != NEEDS_MORE_INFO and not self.is_draft
+        return not self.is_draft
 
     def __str__(self):
         return f'Determination for {self.submission.title} by {self.author!s}'

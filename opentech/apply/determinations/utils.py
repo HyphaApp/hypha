@@ -27,3 +27,7 @@ def can_edit_determination(user, determination, submission):
 def can_create_determination(user, submission):
     actions = determination_actions(user, submission)
     return any(action in DETERMINATION_OUTCOMES for action in actions)
+
+
+def has_final_determination(submission):
+    return submission.determinations.final().exists()
