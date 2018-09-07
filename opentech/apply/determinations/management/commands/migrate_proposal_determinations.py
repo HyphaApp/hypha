@@ -209,7 +209,8 @@ class Command(BaseCommand):
         return value
 
     def get_user(self, uid):
-        # Dan Blah hade one admin account uid 52, all should be set up uid 2 in new system.
+        # Dan Blah hade one extra admin account uid 52 in old system,
+        # all content should be set to uid 2 in the new system.
         if uid == '52':
             uid = '2'
         try:

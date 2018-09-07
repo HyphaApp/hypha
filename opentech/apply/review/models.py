@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
@@ -116,9 +117,11 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
 
-    recommendation = models.IntegerField(verbose_name="Recommendation", choices=RECOMMENDATION_CHOICES, default=0)
+    recommendation = models.IntegerField(verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
-    is_draft = models.BooleanField(default=False, verbose_name="Draft")
+    is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
+    created_at = models.DateTimeField(verbose_name=_("Creation time"), auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
