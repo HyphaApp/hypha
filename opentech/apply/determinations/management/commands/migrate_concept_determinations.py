@@ -67,6 +67,13 @@ class Command(BaseCommand):
         except Determination.DoesNotExist:
             determination = Determination(drupal_id=node['nid'])
 
+        # Disable auto_* on date fields so imported dates are used.
+        for field in determination._meta.local_fields:
+            if field.name == "created_at":
+                field.auto_now_add = False
+            elif field.name == "updated_at":
+                field.auto_now = False
+
         # TODO timezone?
         determination.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
         determination.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
