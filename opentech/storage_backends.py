@@ -27,7 +27,7 @@ class PrivateMediaStorage(S3Boto3Storage):
     encryption = True
     file_overwrite = False
     querystring_auth = True
-    secure_urls = True
+    url_protocol = 'https:'
 
     def url(self, name, parameters=None, expire=None):
         url = super().url(name, parameters, expire)
