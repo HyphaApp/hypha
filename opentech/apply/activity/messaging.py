@@ -125,7 +125,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.NEW_REVIEW: MESSAGES.NEW_REVIEW.name,
+        MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
     }
 
