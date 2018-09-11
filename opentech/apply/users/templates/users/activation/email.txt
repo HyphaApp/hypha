@@ -2,7 +2,7 @@
 {% base_url_setting as base_url %}
 Dear {{ name|default:username }},
 
-An account on Open Technology Fund has been created. Activate your account by clicking this link or copying and pasting it to your browser:
+An account on the Open Technology Fund web site has been created. Activate your account by clicking this link or copying and pasting it to your browser:
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
@@ -16,6 +16,6 @@ password: Your chosen password
 Thanks,
 The OTF Team
 
---
+-- 
 Open Technology Fund
 https://www.opentech.fund/
