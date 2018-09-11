@@ -69,6 +69,11 @@ class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
         icon = 'openquote'
         template = 'stream_forms/render_unsafe_field.html'
 
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['required'] = False
+        return kwargs
+
 
 class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
     char = CharFieldBlock(group=_('Fields'))
