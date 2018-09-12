@@ -110,6 +110,16 @@
         }
     }
 
+    &__related-item {
+        svg {
+            width: 10px;
+            height: 14px;
+            margin-left: 10px;
+            margin-top: 0.35em;
+            fill: $color--dark-blue;
+        }
+    }
+
     &__heading {
         margin-bottom: 0;
 

@@ -104,7 +104,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             submission=form.instance,
-            old=old,
+            related=old.lead,
         )
         return response
 
@@ -280,13 +280,14 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
             return self.form_invalid(form)
 
         if 'submit' in self.request.POST:
-            created = self.object.create_revision(by=self.request.user)
-            if created:
+            revision = self.object.create_revision(by=self.request.user)
+            if revision:
                 messenger(
                     MESSAGES.EDIT,
                     request=self.request,
                     user=self.request.user,
                     submission=self.object,
+                    related=revision,
                 )
 
         return HttpResponseRedirect(self.get_success_url())
@@ -315,7 +316,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             messages.success(self.request, _('Submission saved successfully'))
             return self.form_invalid(form)
 
-        created = self.object.create_revision(by=self.request.user)
+        revision = self.object.create_revision(by=self.request.user)
         submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
 
         if submitting_proposal:
@@ -325,12 +326,13 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 user=self.request.user,
                 submission=self.object,
             )
-        elif created:
+        elif revision:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
                 user=self.request.user,
                 submission=self.object,
+                related=revision,
             )
 
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
@@ -340,7 +342,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             transition.target,
             self.request.user,
             request=self.request,
-            notify=not (created or submitting_proposal),  # Use the other notification
+            notify=not (revision or submitting_proposal),  # Use the other notification
         )
 
         return HttpResponseRedirect(self.get_success_url())

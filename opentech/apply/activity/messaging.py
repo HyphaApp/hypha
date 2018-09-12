@@ -1,11 +1,11 @@
-from enum import Enum
-
 import requests
 
+from django.db import models
 from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
+from .options import MESSAGES
 from .tasks import send_mail
 
 
@@ -13,27 +13,15 @@ def link_to(target, request):
     return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
-class MESSAGES(Enum):
-    UPDATE_LEAD = 'Update Lead'
-    EDIT = 'Edit'
-    APPLICANT_EDIT = "Applicant Edit"
-    NEW_SUBMISSION = 'New Submission'
-    TRANSITION = 'Transition'
-    DETERMINATION_OUTCOME = 'Determination Outcome'
-    INVITED_TO_PROPOSAL = 'Invited To Proposal'
-    REVIEWERS_UPDATED = 'Reviewers Updated'
-    READY_FOR_REVIEW = 'Ready For Review'
-    NEW_REVIEW = 'New Review'
-    COMMENT = 'Comment'
-    PROPOSAL_SUBMITTED = 'Proposal Submitted'
-    OPENED_SEALED = 'Opened Sealed Submission'
-
-    @classmethod
-    def choices(cls):
-        return [
-            (choice.name, choice.value)
-            for choice in cls
-        ]
+neat_related = {
+    MESSAGES.DETERMINATION_OUTCOME: 'determination',
+    MESSAGES.UPDATE_LEAD: 'old_lead',
+    MESSAGES.NEW_REVIEW: 'review',
+    MESSAGES.TRANSITION: 'old_phase',
+    MESSAGES.APPLICANT_EDIT: 'revision',
+    MESSAGES.EDIT: 'revision',
+    MESSAGES.COMMENT: 'comment',
+}
 
 
 class AdapterBase:
@@ -62,10 +50,32 @@ class AdapterBase:
     def extra_kwargs(self, message_type, **kwargs):
         return {}
 
+    def get_neat_related(self, message_type, related):
+        # We translate the related kwarg into something we can understand
+        try:
+            neat_name = neat_related[message_type]
+        except KeyError:
+            # Message type doesn't expect a related object
+            if related:
+                raise ValueError(f"Unexpected 'related' kwarg provided for {message_type}") from None
+            return {}
+        else:
+            if not related:
+                raise ValueError(f"{message_type} expects a 'related' kwarg")
+            return {neat_name: related}
+
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def process(self, message_type, event, **kwargs):
+    def process(self, message_type, event, request, user, submission, related=None, **kwargs):
+        kwargs = {
+            'request': request,
+            'user': user,
+            'submission': submission,
+            'related': related,
+            **kwargs,
+        }
+        kwargs.update(self.get_neat_related(message_type, related))
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
         message = self.message(message_type, **kwargs)
@@ -86,7 +96,7 @@ class AdapterBase:
                     message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
                 else:
                     message = '{}: {}'.format(self.adapter_type, message)
-                messages.add_message(kwargs['request'], messages.INFO, message)
+                messages.add_message(request, messages.INFO, message)
 
     def create_log(self, message, recipient, event):
         from .models import Message
@@ -111,7 +121,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
-        MESSAGES.UPDATE_LEAD: 'Lead changed from {old.lead} to {submission.lead}',
+        MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
@@ -123,7 +133,7 @@ class ActivityAdapter(AdapterBase):
         return [None]
 
     def extra_kwargs(self, message_type, **kwargs):
-        if message_type == MESSAGES.OPENED_SEALED:
+        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED]:
             from .models import INTERNAL
             return {'visibility': INTERNAL}
         return {}
@@ -143,11 +153,19 @@ class ActivityAdapter(AdapterBase):
     def send_message(self, message, user, submission, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
+
+        related = kwargs['related']
+        if isinstance(related, models.Model):
+            related_object = related
+        else:
+            related_object = None
+
         Activity.actions.create(
             user=user,
             submission=submission,
             message=message,
             visibility=visibility,
+            related_object=related_object,
         )
 
 
@@ -156,7 +174,7 @@ class SlackAdapter(AdapterBase):
     always_send = True
     messages = {
         MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
-        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old.lead} to {submission.lead} by {user}',
+        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old_lead} to {submission.lead} by {user}',
         MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
@@ -286,14 +304,14 @@ class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
 
-    def __call__(self, message_type, request, user, submission, **kwargs):
-        return self.send(message_type, request=request, user=user, submission=submission, **kwargs)
+    def __call__(self, message_type, request, user, submission, related=None, **kwargs):
+        return self.send(message_type, request=request, user=user, submission=submission, related=related, **kwargs)
 
-    def send(self, message_type, user, submission, **kwargs):
+    def send(self, message_type, request, user, submission, related, **kwargs):
         from .models import Event
         event = Event.objects.create(type=message_type.name, by=user, submission=submission)
         for adapter in self.adapters:
-            adapter.process(message_type, event, user=user, submission=submission, **kwargs)
+            adapter.process(message_type, event, request=request, user=user, submission=submission, related=related, **kwargs)
 
 
 adapters = [

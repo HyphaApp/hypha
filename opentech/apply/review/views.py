@@ -89,7 +89,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 request=self.request,
                 user=self.object.author,
                 submission=self.submission,
-                review=self.object,
+                related=self.object,
             )
         return response
 

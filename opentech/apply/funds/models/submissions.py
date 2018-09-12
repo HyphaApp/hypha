@@ -440,8 +440,8 @@ class ApplicationSubmission(
 
             self.draft_revision = revision
             self.save()
-            return True
-        return False
+            return revision
+        return None
 
     def clean_submission(self):
         self.process_form_data()
@@ -596,7 +596,7 @@ def log_status_update(sender, **kwargs):
             user=by,
             request=request,
             submission=instance,
-            old_phase=old_phase,
+            related=old_phase,
         )
 
         if instance.status in review_statuses:
@@ -634,4 +634,13 @@ class ApplicationRevision(AccessFormData, models.Model):
             'submission_pk': self.submission.id,
             'to': self.submission.live_revision.id,
             'from': self.id,
+        })
+
+    def get_absolute_url(self):
+        # Compares against the previous revision
+        previous_revision = self.submission.revisions.filter(id__lt=self.id).first()
+        return reverse("funds:submissions:revisions:compare", kwargs={
+            'submission_pk': self.submission.id,
+            'to': self.id,
+            'from': previous_revision.id,
         })
