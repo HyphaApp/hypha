@@ -80,6 +80,11 @@ class MigrateCommand(BaseCommand):
         except ApplicationSubmission.DoesNotExist:
             submission = ApplicationSubmission(drupal_id=node['nid'])
 
+        # Disable auto_* on date fields so imported dates are used.
+        for field in submission._meta.local_fields:
+            if field.name == "submit_time":
+                field.auto_now_add = False
+
         # TODO timezone?
         submission.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
         submission.user = self.get_user(node['uid'])

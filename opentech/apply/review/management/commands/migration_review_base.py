@@ -1,6 +1,8 @@
 import argparse
 import json
 
+from datetime import datetime, timezone
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -103,6 +105,16 @@ class MigrateCommand(BaseCommand):
         except Review.DoesNotExist:
             review = Review(drupal_id=node['nid'])
 
+        # Disable auto_* on date fields so imported dates are used.
+        for field in review._meta.local_fields:
+            if field.name == "created_at":
+                field.auto_now_add = False
+            elif field.name == "updated_at":
+                field.auto_now = False
+
+        # TODO timezone?
+        review.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
+        review.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
         review.author = self.get_user(node['uid'])
         review.recommendation = self.get_recommendation(node)
         review.submission = self.get_submission(node)

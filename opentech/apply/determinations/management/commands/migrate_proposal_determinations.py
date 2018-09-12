@@ -119,6 +119,13 @@ class Command(BaseCommand):
         except Determination.DoesNotExist:
             determination = Determination(drupal_id=node['nid'])
 
+        # Disable auto_* on date fields so imported dates are used.
+        for field in determination._meta.local_fields:
+            if field.name == "created_at":
+                field.auto_now_add = False
+            elif field.name == "updated_at":
+                field.auto_now = False
+
         # TODO timezone?
         determination.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
         determination.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
@@ -202,6 +209,10 @@ class Command(BaseCommand):
         return value
 
     def get_user(self, uid):
+        # Dan Blah hade one extra admin account uid 52 in old system,
+        # all content should be set to uid 2 in the new system.
+        if uid == '52':
+            uid = '2'
         try:
             User = get_user_model()
             return User.objects.get(drupal_id=uid)

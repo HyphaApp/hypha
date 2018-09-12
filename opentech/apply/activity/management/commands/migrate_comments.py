@@ -39,6 +39,10 @@ class Command(BaseCommand):
                 type='comment',
                 visibility='internal',
             )
+            # Disable auto_* on date fields so imported dates are used.
+            for field in activity._meta.local_fields:
+                if field.name == "timestamp":
+                    field.auto_now_add = False
             try:
                 activity.save()
                 self.stdout.write(f"Processed \"{comment['subject']}\" ({comment['cid']})")
