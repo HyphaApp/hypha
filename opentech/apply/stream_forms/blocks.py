@@ -304,6 +304,9 @@ class MultiFileFieldBlock(UploadableMediaBlock):
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
 
+    def no_response(self):
+        return [super().no_response()]
+
 
 class FormFieldsBlock(StreamBlock):
     text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))

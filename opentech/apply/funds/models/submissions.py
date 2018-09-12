@@ -5,8 +5,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import get_storage_class
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
 from django.db.models.expressions import RawSQL, OrderBy
@@ -23,6 +21,7 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
+from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
@@ -38,38 +37,6 @@ from ..workflow import (
     UserPermissions,
     WORKFLOWS,
 )
-
-
-submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
-
-
-def save_path(file_name, folder):
-    file_path = os.path.join(folder, file_name)
-    return submission_storage.generate_filename(file_path)
-
-
-def handle_file(file, folder):
-    # File is potentially optional
-    if file:
-        try:
-            filename = save_path(file.name, folder)
-        except AttributeError:
-            # file is not changed, it is still the dictionary
-            return file
-
-        saved_name = submission_storage.save(filename, file)
-        return {
-            'name': file.name,
-            'path': saved_name,
-            'url': submission_storage.url(saved_name),
-        }
-
-
-def handle_files(files, folder):
-    if isinstance(files, list):
-        return [handle_file(file, folder) for file in files]
-
-    return handle_file(files, folder)
 
 
 class JSONOrderable(models.QuerySet):
@@ -318,7 +285,7 @@ class ApplicationSubmission(
 ):
     field_template = 'funds/includes/submission_field.html'
 
-    form_data = JSONField(encoder=DjangoJSONEncoder)
+    form_data = JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
@@ -449,13 +416,14 @@ class ApplicationSubmission(
 
     def from_draft(self):
         self.is_draft = True
-        self.form_data = self.draft_revision.form_data
+        self.form_data = self.deserialised_data(self.draft_revision.form_data, self.form_fields)
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
         # Will return True/False if the revision was created or not
         self.clean_submission()
-        current_data = ApplicationSubmission.objects.get(id=self.id).form_data
+        current_submission = ApplicationSubmission.objects.get(id=self.id)
+        current_data = current_submission.form_data
         if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
@@ -466,7 +434,7 @@ class ApplicationSubmission(
                 revision.save()
 
             if draft:
-                self.form_data = self.live_revision.form_data
+                self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
 
@@ -490,14 +458,21 @@ class ApplicationSubmission(
         files = {}
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                files[field.id] = self.form_data.pop(field.id, {})
+                files[field.id] = self.data(field.id) or []
+                self.form_data.pop(field.id, None)
         return files
 
     def process_file_data(self, data):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = data.get(field.id, {})
-                self.form_data[field.id] = handle_files(file, os.path.join('submission', str(self.id), field.id))
+                file = self.process_file(data.get(field.id, []))
+                folder = os.path.join('submission', str(self.id), field.id)
+                try:
+                    file.save(folder)
+                except AttributeError:
+                    for f in file:
+                        f.save(folder)
+                self.form_data[field.id] = file
 
     def save(self, *args, **kwargs):
         if self.is_draft:
@@ -641,14 +616,18 @@ def log_status_update(sender, **kwargs):
         )
 
 
-class ApplicationRevision(models.Model):
+class ApplicationRevision(AccessFormData, models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
-    form_data = JSONField(encoder=DjangoJSONEncoder)
+    form_data = JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ['-timestamp']
+
+    @property
+    def form_fields(self):
+        return self.submission.form_fields
 
     def get_compare_url_to_latest(self):
         return reverse("funds:submissions:revisions:compare", kwargs={

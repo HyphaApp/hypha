@@ -1,6 +1,6 @@
 {% extends "stream_forms/render_field.html" %}
 {% block data_display %}
-    {% if data %}
+    {% if data.name %}
         <div class="wrapper">
             {% include "stream_forms/includes/file_field.html" with file=data %}
         </div>

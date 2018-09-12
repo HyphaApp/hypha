@@ -1,10 +1,19 @@
+from django.conf import settings
 from django.utils.text import mark_safe
+from django.core.files import File
+from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import FormFieldBlock
 from opentech.apply.utils.blocks import MustIncludeFieldBlock
 
+from opentech.apply.stream_forms.blocks import UploadableMediaBlock
+from opentech.apply.stream_forms.files import StreamFieldFile
+
 
 __all__ = ['AccessFormData']
+
+
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class AccessFormData:
@@ -25,6 +34,39 @@ class AccessFormData:
             if field_id not in data:
                 response = data[field_name]
                 data[field_id] = response
+        return data
+
+    @classmethod
+    def stream_file(cls, file):
+        if isinstance(file, StreamFieldFile):
+            return file
+        if isinstance(file, File):
+            return StreamFieldFile(file, name=file.name, storage=submission_storage)
+        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
+
+    @classmethod
+    def process_file(cls, file):
+        try:
+            return cls.stream_file(file)
+        except TypeError:
+            return [cls.stream_file(f) for f in file]
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if 'form_data' in field_names:
+            # When the form_data is loaded from the DB deserialise it
+            instance.form_data = cls.deserialised_data(instance.form_data, instance.form_fields)
+        return instance
+
+    @classmethod
+    def deserialised_data(cls, data, form_fields):
+        # Converts the file dicts into actual file objects
+        data = data.copy()
+        for field in form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                file = data.get(field.id, [])
+                data[field.id] = cls.process_file(file)
         return data
 
     def get_definitive_id(self, id):

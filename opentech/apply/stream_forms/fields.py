@@ -20,4 +20,6 @@ class MultiFileField(FileField):
     widget = MultiFileInput
 
     def clean(self, value, initial):
+        if not value:
+            return initial
         return [FileField().clean(file, initial) for file in value]

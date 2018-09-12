@@ -2,7 +2,7 @@ from collections import defaultdict
 import json
 import uuid
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 import factory
 from wagtail.core.blocks import RichTextBlock
@@ -138,7 +138,7 @@ class UploadableMediaFactory(FormFieldBlockFactory):
         params = params.copy()
         params.setdefault('data', b'this is some content')
         file_name, file = cls.default_value()._make_content(params)
-        return InMemoryUploadedFile(file, 'file', file_name, None, file.tell(), None)
+        return SimpleUploadedFile(file_name, file.read())
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
