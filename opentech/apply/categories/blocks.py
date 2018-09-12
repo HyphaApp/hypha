@@ -6,6 +6,7 @@ from wagtail.core.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
 from wagtail.core.utils import resolve_model_string
 
 from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock
+from django_select2.forms import Select2MultipleWidget
 
 
 class ModelChooserBlock(ChooserBlock):
@@ -63,7 +64,13 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
 
     def get_widget(self, struct_value):
         if struct_value['multi']:
-            return forms.CheckboxSelectMultiple
+            category = struct_value['category']
+            category_size = category.options.count()
+            # Pick widget according to number of options to maintain good usability.
+            if category_size < 32:
+                return forms.CheckboxSelectMultiple
+            else:
+                return Select2MultipleWidget
         else:
             return forms.RadioSelect
 
