@@ -7,7 +7,8 @@
             {% if field.field.required %}
                 <span class="form__required">*</span>
             {% endif %}
-            {{ field }}
+        </label>
+        {{ field }}
         {% endfor %}
         <div class="form-actions form-wrapper">
             <input type="submit" value="Sign up" class="form-submit link link--button-transparent link--footer-signup">
