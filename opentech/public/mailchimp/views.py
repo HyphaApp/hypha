@@ -77,7 +77,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def get_success_url(self):
         # Go back to where you came from
-        return self.request.META['HTTP_ORIGIN']
+        return self.request.META['HTTP_REFERER']
 
     def get_redirect_url(self):
         # We don't know where you came from, go home
