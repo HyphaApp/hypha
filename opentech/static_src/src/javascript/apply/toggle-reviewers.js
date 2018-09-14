@@ -1,6 +1,7 @@
-import $ from './../globals';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     // get all the reviewers that are missing
     const reviewers = Array.prototype.slice.call($('.js-reviews-sidebar').find('tr.hidden.no-response'));
 
@@ -21,4 +22,8 @@ export default () => {
             $(reviewer).toggleClass('hidden');
         }));
     }
-};
+
+    // Toggle all reviewers in the sidebar
+    toggleReviewers();
+
+})(jQuery);

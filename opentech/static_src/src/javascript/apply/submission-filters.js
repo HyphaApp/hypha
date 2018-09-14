@@ -1,7 +1,7 @@
-import $ from './../globals';
-import mobileFilterPadding from './mobile-filter-padding';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     const $openButton = $('.js-open-filters');
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
@@ -51,7 +51,9 @@ export default () => {
         dropdowns.forEach(dropdown => {
             $(dropdown).val(null).trigger('change');
             $('.select2-selection.is-active').removeClass('is-active');
-            mobileFilterPadding(dropdown);
+            mobileFilterPadding(dropdown); // eslint-disable-line no-undef
         });
     });
-};
+
+})(jQuery);
+

@@ -1,6 +1,7 @@
-import $ from './../globals';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     // Open the activity feed
     $('.js-open-feed').click((e) => {
         e.preventDefault();
@@ -22,4 +23,5 @@ export default () => {
 
     // Scroll to the top of the activity feed
     $('.js-to-top').click(() => $('.js-activity-feed').animate({ scrollTop: 0 }, 250));
-};
+
+})(jQuery);

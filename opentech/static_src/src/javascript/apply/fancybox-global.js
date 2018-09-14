@@ -1,7 +1,7 @@
-import $ from './../globals';
-import '@fancyapps/fancybox';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     $('[data-fancybox]').fancybox({
         animationDuration : 350,
         animationEffect : 'fade',
@@ -12,7 +12,8 @@ export default () => {
 
     // Close any open select2 dropdowns when inside a modal
     $('.modal').click((e) => {
-        if(e.target.classList.contains('select2-selection__rendered')) return;
+        if (e.target.classList.contains('select2-selection__rendered')) return;
         $('.django-select2-checkboxes').select2('close');
     });
-};
+
+})(jQuery);

@@ -1,6 +1,7 @@
-import $ from './../globals';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     // add the toggle arrow before the submission titles
     $('.all-submissions__parent td.title').prepend('<span class="all-submissions__toggle js-toggle-submission"><span class="arrow"></span></span>');
 
@@ -15,4 +16,5 @@ export default () => {
             $(e.target).closest('.all-submissions__parent').toggleClass('is-expanded');
         });
     });
-};
+
+})(jQuery);

@@ -25,12 +25,13 @@
         <meta name="theme-color" content="#ffffff">
         <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
 
-        {% block extra_css %}{% endblock %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/apply/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+        <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
         {# Hijack styling #}
-        <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
+        <link rel="stylesheet" href="{% static 'hijack/hijack-styles.css' %}" />
+        {% block extra_css %}{% endblock %}
 
-        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -95,6 +96,7 @@
         </main>
 
         <footer class="footer"></footer>
+        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>
