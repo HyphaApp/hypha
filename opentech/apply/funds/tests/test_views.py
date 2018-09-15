@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 
 from opentech.apply.activity.models import Activity
+from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
@@ -99,6 +100,26 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         self.assertEqual(submission.status, 'concept_review_discussion')
         self.assertIsNone(submission.next)
+
+    def test_not_redirected_if_determination_submitted(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        DeterminationFactory(submission=submission, rejected=True, submitted=True)
+
+        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
+
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, 'rejected')
+
+    def test_not_redirected_if_wrong_determination_selected(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        DeterminationFactory(submission=submission, accepted=True, submitted=True)
+
+        response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
+        self.assertContains(response, 'you tried to progress')
+
+        submission = self.refresh(submission)
+        self.assertNotEqual(submission.status, 'accepted')
+        self.assertNotEqual(submission.status, 'rejected')
 
     def test_cant_access_edit_button_when_applicant_editing(self):
         submission = ApplicationSubmissionFactory(status='more_info')

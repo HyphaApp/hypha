@@ -11,11 +11,12 @@ from django.views.generic import DetailView
 from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
 
 from .forms import ConceptDeterminationForm, ProposalDeterminationForm
-from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO
+from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
 
 from .utils import can_create_determination, can_edit_determination, has_final_determination, transition_from_outcome
 
@@ -108,6 +109,28 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             self.submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
+
+    @classmethod
+    def should_redirect(cls, request, submission, action):
+        if has_final_determination(submission):
+            determination = submission.determinations.final().first()
+            if determination.outcome == TRANSITION_DETERMINATION[action]:
+                # We want to progress as normal so don't redirect through form
+                return False
+            else:
+                # Add a helpful message to prompt them to select the correct option
+                messages.warning(
+                    request,
+                    _('A determination of "{current}" exists but you tried to progress as "{target}"').format(
+                        current=determination.get_outcome_display(),
+                        target=action,
+                    )
+                )
+
+        if action in DETERMINATION_OUTCOMES:
+            return HttpResponseRedirect(reverse_lazy(
+                'apply:submissions:determinations:form',
+                args=(submission.id,)) + "?action=" + action)
 
 
 @method_decorator(staff_required, name='dispatch')
