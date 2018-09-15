@@ -38,21 +38,24 @@ class AccessFormData:
 
     @classmethod
     def stream_file(cls, file):
-        if 'path' in file:
-            file['filename'] = file['name']
-            file['name'] = file['path']
         if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
             return StreamFieldFile(file, name=file.name, storage=submission_storage)
+
+        # This fixes a backwards compatibility issue with #507
+        # Once every application has been re-saved it should be possible to remove it
+        if 'path' in file:
+            file['filename'] = file['name']
+            file['name'] = file['path']
         return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
 
     @classmethod
     def process_file(cls, file):
-        try:
-            return cls.stream_file(file)
-        except TypeError:
+        if isinstance(file, list):
             return [cls.stream_file(f) for f in file]
+        else:
+            return cls.stream_file(file)
 
     @classmethod
     def from_db(cls, db, field_names, values):
