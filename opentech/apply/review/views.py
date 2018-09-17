@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -38,6 +39,7 @@ def get_fields_for_stage(submission):
         return forms[0].form.form_fields
 
 
+@method_decorator(login_required, name='dispatch')
 class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     submission_form_class = ReviewModelForm
     model = Review
@@ -97,6 +99,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
+@method_decorator(login_required, name='dispatch')
 class ReviewDetailView(DetailView):
     model = Review
 
@@ -104,7 +107,7 @@ class ReviewDetailView(DetailView):
         review = self.get_object()
         author = review.author
 
-        if request.user != author and not request.user.is_superuser and request.user != review.submission.lead:
+        if request.user != author and not request.user.is_superuser and not request.user.is_apply_staff:
             raise PermissionDenied
 
         if review.is_draft:

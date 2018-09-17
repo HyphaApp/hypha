@@ -24,11 +24,11 @@ class StaffReviewsTestCase(BaseViewTestCase):
         self.assertContains(response, self.user.full_name)
         self.assertContains(response, reverse('funds:submissions:detail', kwargs={'pk': review.submission.id}))
 
-    def test_cant_access_other_review(self):
+    def test_can_access_other_review(self):
         submission = ApplicationSubmissionFactory()
         review = ReviewFactory(submission=submission)
         response = self.get_page(review)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
 
 
 class StaffReviewListingTestCase(BaseViewTestCase):
