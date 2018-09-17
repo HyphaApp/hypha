@@ -1,5 +1,7 @@
 import logging
 
+from time import time
+
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -76,8 +78,15 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
         messages.success(self.request, _('Thank you for subscribing'))
 
     def get_success_url(self):
-        # Go back to where you came from
-        return self.request.META['HTTP_REFERER']
+        # Go back to where you came from, default to front page.
+        origin = '/'
+        if 'HTTP_ORIGIN' in self.request.META:
+            origin = self.request.META['HTTP_ORIGIN']
+        elif 'HTTP_REFERER' in self.request.META:
+            origin = self.request.META['HTTP_REFERER']
+
+        # Add cache busting query string.
+        return origin + '?newsletter-' + str(time.time())
 
     def get_redirect_url(self):
         # We don't know where you came from, go home
