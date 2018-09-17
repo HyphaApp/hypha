@@ -21,7 +21,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
@@ -80,10 +80,9 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         action = form.cleaned_data.get('action')
         # Defer to the determination form for any of the determination transitions
-        if action in DETERMINATION_OUTCOMES:
-            return HttpResponseRedirect(reverse_lazy(
-                'apply:submissions:determinations:form',
-                args=(form.instance.id,)) + "?action=" + action)
+        redirect = DeterminationCreateOrUpdateView.should_redirect(self.request, self.object, action)
+        if redirect:
+            return redirect
 
         self.object.perform_transition(action, self.request.user, request=self.request)
         return super().form_valid(form)

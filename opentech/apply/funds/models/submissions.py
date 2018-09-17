@@ -225,7 +225,7 @@ class AddTransitions(models.base.ModelBase):
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
 
             transition(by=user, request=request, **kwargs)
-            self.save()
+            self.save(update_fields=['status'])
 
             self.progress_stage_when_possible(user, request)
 
@@ -474,7 +474,11 @@ class ApplicationSubmission(
                         f.save(folder)
                 self.form_data[field.id] = file
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, update_fields=list(), **kwargs):
+        if update_fields and 'form_data' not in update_fields:
+            # We don't want to use this approach if the user is sending data
+            return super().save(*args, update_fields=update_fields, **kwargs)
+
         if self.is_draft:
             raise ValueError('Cannot save with draft data')
 
