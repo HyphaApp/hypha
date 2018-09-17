@@ -1,6 +1,6 @@
 {% load determination_tags workflow_tags %}
 {% if request.user|show_determination_button:submission %}
-    <a href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width">
+    <a target="_blank" href="{% url 'apply:submissions:determinations:form' submission_pk=submission.id %}" class="button button--primary button--full-width">
         {% if submission.determination.is_draft %}Update draft{% else %}Add determination{% endif %}
     </a>
 {% endif %}
