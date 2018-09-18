@@ -119,6 +119,13 @@
         new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
     });
 
+    // Close the message
+    $('.js-close-message').click((e) => {
+        e.preventDefault();
+        var message = e.target.closest('.js-message');
+        message.classList.add('messages__text--hide');
+    });
+
     // Add active class to select2 checkboxes after page has been filtered
     document.addEventListener('DOMContentLoaded', () => {
         // If there are clear buttons in the dom, it means the filters have been applied

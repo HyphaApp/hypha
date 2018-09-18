@@ -23,7 +23,4 @@
         }));
     }
 
-    // Toggle all reviewers in the sidebar
-    toggleReviewers();
-
 })(jQuery);

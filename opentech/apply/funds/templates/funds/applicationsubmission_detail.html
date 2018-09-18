@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load workflow_tags %}
+{% load static workflow_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -128,3 +128,8 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}
+

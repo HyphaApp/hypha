@@ -1,5 +1,10 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load workflow_tags review_tags determination_tags %}
+{% load static workflow_tags review_tags determination_tags %}
+
+{% block extra_css %}
+        <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+        {{ reviewer_form.media.css }}
+{% endblock %}
 
 {% block admin_actions %}
     {% include "funds/includes/actions.html" with mobile=True %}
@@ -32,5 +37,10 @@
 {% endblock %}
 
 {% block extra_js %}
-    {{ reviewer_form.media }}
+    {{ reviewer_form.media.js }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-actions-panel.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-reviewers.js' %}"></script>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
+{% load static %}
 
 {% block title %}Dashboard{% endblock %}
 
@@ -36,4 +37,8 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
 {% endblock %}

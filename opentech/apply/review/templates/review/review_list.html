@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags review_tags workflow_tags %}
+{% load static bleach_tags review_tags workflow_tags %}
 
 {% block title %}Reviews{% endblock %}
 
@@ -29,4 +29,8 @@
     {% endfor %}
     </table>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/all-reviews-table.js' %}"></script>
 {% endblock %}

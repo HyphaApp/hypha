@@ -1,7 +1,3 @@
-{% load static %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
-{% endblock %}
 {% if mobile %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
 {% endif %}
@@ -18,8 +14,3 @@
 
     <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">Revisions</a>
 </div>
-
-{% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
-<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-{% endblock %}
