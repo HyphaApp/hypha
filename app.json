@@ -18,9 +18,6 @@
     "NPM_CONFIG_PRODUCTION": {
       "required": true
     },
-    "PRIMARY_HOST": {
-      "required": true
-    },
     "SECRET_KEY": {
       "required": true
     },
@@ -31,6 +28,9 @@
       "required": true
     },
     "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": {
+      "required": true
+    },
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS": {
       "required": true
     }
   },
