@@ -1,0 +1,53 @@
+{
+  "name": "opentech.fund",
+  "scripts": {
+  },
+  "env": {
+    "BASIC_AUTH_ENABLED": {
+      "required": true
+    },
+    "BASIC_AUTH_LOGIN": {
+      "required": true
+    },
+    "BASIC_AUTH_PASSWORD": {
+      "required": true
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "required": true
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "required": true
+    },
+    "PRIMARY_HOST": {
+      "required": true
+    },
+    "SECRET_KEY": {
+      "required": true
+    },
+    "SEND_MESSAGES": {
+      "required": true
+    },
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": {
+      "required": true
+    },
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "addons": [
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
