@@ -141,7 +141,7 @@ class ReviewListView(ListView):
         responses = self.object_list.count()
 
         for i, review in enumerate(self.object_list):
-            review_data['title']['answers'].append(str(review.author))
+            review_data['title']['answers'].append('<a href="{}">{}</a>'.format(review.get_absolute_url(), review.author))
             review_data['score']['answers'].append(str(review.get_score_display()))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
             review_data['comments']['answers'].append(review.get_comments_display(include_question=False))

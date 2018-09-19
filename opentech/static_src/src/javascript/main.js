@@ -63,7 +63,7 @@ import toggleReviewers from './components/toggle-reviewers';
         allSubmissions();
 
         // All reviews table logic
-        allReviews();
+        // allReviews();
 
         // Submission filters logic
         submissionFilters();
