@@ -37,9 +37,9 @@ import toggleReviewers from './components/toggle-reviewers';
             new Tabs($(el));
         });
 
-        $(DeterminationCopy.selector()).each((index, el) => {
-            new DeterminationCopy($(el));
-        });
+        // $(DeterminationCopy.selector()).each((index, el) => {
+        //     new DeterminationCopy($(el));
+        // });
 
         // Add tooltips to truncated titles on submissions overview table
         generateTooltips();
