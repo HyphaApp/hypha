@@ -59,7 +59,8 @@ var gulp      = require('gulp'),
   del         = require('del'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-sass'),
-  cleanCSS    = require('gulp-clean-css');
+  cleanCSS    = require('gulp-clean-css'),
+  touch       = require('gulp-touch-cmd');
 
 // The sass files to process.
 var sassFiles = [
@@ -127,7 +128,8 @@ gulp.task('styles', gulp.series('clean:css', function css () {
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe($.size({showFiles: true}))
     .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest(options.theme.css));
+    .pipe(gulp.dest(options.theme.css))
+    .pipe(touch());
 }));
 
 gulp.task('styles:production', gulp.series('clean:css', function css () {
@@ -135,7 +137,8 @@ gulp.task('styles:production', gulp.series('clean:css', function css () {
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe(cleanCSS({rebase: false}))
     .pipe($.size({showFiles: true}))
-    .pipe(gulp.dest(options.theme.css));
+    .pipe(gulp.dest(options.theme.css))
+    .pipe(touch());
 }));
 
 // Build JavaScript.
@@ -167,6 +170,11 @@ gulp.task('fonts', function copy () {
   return gulp.src(options.theme.font + '**/*.*').pipe(gulp.dest(options.theme.font_dest));
 });
 
+// Run Djangos collectstatic command.
+gulp.task('collectstatic', function exec () {
+  return gulp.src(options.theme.font + '**/*.*').pipe($.exec('python manage.py  collectstatic --noinput -v0'));
+});
+
 // Watch for changes and rebuild.
 gulp.task('watch:css', gulp.series('styles', function watch () {
   return gulp.watch(options.theme.sass + '**/*.scss', options.gulpWatchOptions, gulp.series('styles'));
@@ -192,8 +200,11 @@ gulp.task('watch:fonts', gulp.series('fonts', function watch () {
   return gulp.watch(options.theme.font + '**/*.*', options.gulpWatchOptions, gulp.series('fonts'));
 }));
 
+gulp.task('watch:static', gulp.series('collectstatic', function watch () {
+  return gulp.watch(options.theme.dest + '**/*.*', options.gulpWatchOptions, gulp.series('collectstatic'));
+}));
 
-gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts'));
+gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
 // Build everything.
 gulp.task('build', gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts', 'lint'));

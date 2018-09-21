@@ -102,9 +102,9 @@
                 height: 30px;
                 margin-left: 30px;
                 font-size: 30px;
-                line-height: 0.9;
+                line-height: .9;
                 text-align: center;
-                border: 2px solid white;
+                border: 2px solid $color--white;
                 border-radius: 50%;
                 content: '+';
             }
@@ -135,9 +135,9 @@
             height: 30px;
             margin-left: 10px;
             font-size: 30px;
-            line-height: 0.1;
+            line-height: .1;
             text-align: center;
-            border: 2px solid white;
+            border: 2px solid $color--white;
             border-radius: 50%;
             content: '_';
 

@@ -1,3 +1,5 @@
+// sass-lint:disable no-color-keywords; no-color-hex
+
 // Default
 $color--white: #fff;
 $color--black: #141414;
@@ -32,12 +34,12 @@ $color--linkedin: #137ab8;
 $color--facebook: #396ab5;
 
 // Transparent
-$color--black-50: rgba(0, 0, 0, 0.5);
-$color--black-40: rgba(0, 0, 0, 0.4);
-$color--black-20: rgba(0, 0, 0, 0.2);
-$color--black-10: rgba(0, 0, 0, 0.1);
+$color--black-50: rgba(0, 0, 0, .5);
+$color--black-40: rgba(0, 0, 0, .4);
+$color--black-20: rgba(0, 0, 0, .2);
+$color--black-10: rgba(0, 0, 0, .1);
 
-$color--light-blue-90: transparentize($color--light-blue, 0.9);
+$color--light-blue-90: transparentize($color--light-blue, .9);
 
 // Assignment
 $color--default: $color--dark-grey;
@@ -85,8 +87,8 @@ $breakpoints: (
 );
 
 // Transition
-$transition: 0.25s ease-out;
-$quick-transition: 0.15s ease;
+$transition: .25s ease-out;
+$quick-transition: .15s ease;
 
 // Spacing
 $mobile-gutter: 20px;

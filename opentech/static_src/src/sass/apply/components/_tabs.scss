@@ -23,7 +23,7 @@
     hyphens: auto;
     color: $color--mid-grey;
     text-transform: uppercase;
-    transition: color, background-color, 0.1s ease-out;
+    transition: color, background-color, .1s ease-out;
 
     @include media-query(mob-landscape) {
         width: 33%;

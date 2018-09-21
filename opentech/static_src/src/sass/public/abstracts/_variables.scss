@@ -1,3 +1,5 @@
+// sass-lint:disable no-color-keywords; no-color-hex
+
 // Default
 $color--white: #fff;
 $color--black: #141414;
@@ -23,8 +25,8 @@ $color--linkedin: #137ab8;
 $color--facebook: #396ab5;
 
 // Transparent
-$color--black-10: rgba(0, 0, 0, 0.1);
-$color--black-25: rgba(0, 0, 0, 0.25);
+$color--black-10: rgba(0, 0, 0, .1);
+$color--black-25: rgba(0, 0, 0, .25);
 
 // Assignment
 $color--default: $color--dark-grey;
@@ -72,4 +74,4 @@ $breakpoints: (
 );
 
 // Transition
-$transition: 0.25s ease-out;
+$transition: .25s ease-out;

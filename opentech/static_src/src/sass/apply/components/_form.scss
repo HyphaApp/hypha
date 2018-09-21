@@ -142,7 +142,7 @@
 
                 &.is-active {
                     font-weight: $weight--normal;
-                    background-color: transparentize($color--primary, 0.9);
+                    background-color: transparentize($color--primary, .9);
                     border-color: $color--mid-grey;
                 }
             }
@@ -301,7 +301,7 @@
     textarea {
         width: 100%;
         padding: 10px;
-        border: 1px solid lightgrey;
+        border: 1px solid $color--light-grey;
     }
 
     // Radio + Checkbox

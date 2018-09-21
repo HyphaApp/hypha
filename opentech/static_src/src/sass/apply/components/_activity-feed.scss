@@ -3,7 +3,7 @@
     top: 100vh;
     right: 0;
     left: 0;
-    transition: top 0.3s cubic-bezier(0, 0.52, 0.58, 1);
+    transition: top .3s cubic-bezier(0, .52, .58, 1);
 
     &.is-open {
         top: 0;
