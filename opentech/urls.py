@@ -61,3 +61,9 @@ if cache_length:
         urlpatterns,
         cache_control(max_age=cache_length)
     )
+
+if settings.DEBUG and settings.DEBUGTOOLBAR:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
