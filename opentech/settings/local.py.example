@@ -4,10 +4,21 @@ CACHES = {
     }
 }
 
+# Use the Django debug toolbar. First install via pip.
+# pip install django-debug-toolbar
+# DEBUGTOOLBAR = True
+
+# Write log to local file.
+# LOCAL_FILE_LOGGING = True
+
+# Write e-mails to local files.
+# LOCAL_FILE_EMAIL = True
+
 # On staging, uncomment the following to enable the styleguide
 # ENABLE_STYLEGUIDE = True
 
-# DO NOT use on production
-RECAPTCHA_PUBLIC_KEY = '6LelrggUAAAAANL1b4NcQpJxjgoWQEugpoGqeq2q'
-RECAPTCHA_PRIVATE_KEY = '6LelrggUAAAAAD2gDgs43P9NSa9ScvkU6ZmBAW_F'
-NOCAPTCHA = True
+# ALLOWED_HOSTS = ['apply.otf.test', 'otf.test', '127.0.0.1']
+
+# BASE_URL = 'http://otf.test'
+
+# SECRET_KEY = 'CHANGEME!!!'

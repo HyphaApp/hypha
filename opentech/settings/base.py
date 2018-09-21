@@ -375,6 +375,7 @@ ESI_ENABLED = False
 # Custom settings
 
 ENABLE_STYLEGUIDE = False
+DEBUGTOOLBAR = False
 
 # Social Auth
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
