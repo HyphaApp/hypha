@@ -27,7 +27,6 @@
     },
     "devDependencies": {
         "gulp-eslint": "^5.0.0",
-        "gulp-exec": "^3.0.2",
         "gulp-sass-lint": "^1.4.0",
         "gulp-sourcemaps": "^2.6.4"
     },
