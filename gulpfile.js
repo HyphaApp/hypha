@@ -60,7 +60,8 @@ var gulp      = require('gulp'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-sass'),
   cleanCSS    = require('gulp-clean-css'),
-  touch       = require('gulp-touch-cmd');
+  touch       = require('gulp-touch-cmd'),
+  exec        = require('child_process').exec;
 
 // The sass files to process.
 var sassFiles = [
@@ -171,8 +172,10 @@ gulp.task('fonts', function copy () {
 });
 
 // Run Djangos collectstatic command.
-gulp.task('collectstatic', function exec () {
-  return gulp.src(options.theme.font + '**/*.*').pipe($.exec('python manage.py  collectstatic --noinput -v0'));
+gulp.task('collectstatic', function (collect) {
+  exec('python manage.py collectstatic --no-post-process --noinput -v0', function (err, stdout, stderr) {
+    collect(err);
+  });
 });
 
 // Watch for changes and rebuild.
