@@ -22,6 +22,9 @@ class StreamFieldFile(File):
         self.filename = filename or os.path.basename(self.name)
         self._committed = False
 
+    def __str__(self):
+        return self.filename
+
     def __eq__(self, other):
         return self.filename == other.filename and self.size == other.size
 

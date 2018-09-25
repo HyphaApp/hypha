@@ -6,7 +6,7 @@
 <p>
 <input type="checkbox" name="{{ widget.checkbox_name }}-{{ forloop.counter }}" id="{{ widget.checkbox_id }}-{{ forloop.counter }}">
 <label for="{{ widget.checkbox_id }}-{{ forloop.counter }}"></label>
-<a href="{{ file.url }}">{{ file.filename }}</a>
+<a href="{{ file.url }}">{{ file }}</a>
 </p>
 {% endfor %}
 {{ widget.input_text }}{% endif %}
