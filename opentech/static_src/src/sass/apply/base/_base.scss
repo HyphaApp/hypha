@@ -80,6 +80,20 @@ ol {
     display: none;
 }
 
+.js-hidden,
+%js-hidden {
+    html.js & {
+        @extend %is-hidden;
+    }
+}
+
+.no-js-hidden,
+%no-js-hidden {
+    html.nojs & {
+        @extend %is-hidden;
+    }
+}
+
 .is-unhidden,
 %is-unhidden {
     display: block;

@@ -104,8 +104,8 @@
         }
     };
 
-    // remove no-js class if js is enabled
-    document.querySelector('html').classList.remove('no-js');
+    // Replace no-js with js class if js is enabled.
+    document.querySelector('html').classList.replace('no-js', 'js');
 
     $(MobileMenu.selector()).each((index, el) => {
         new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
