@@ -22,7 +22,7 @@ class MultiFileInput(ClearableFileInput):
             is_initial(file) for file in value
         )
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=dict()):
         if self.multiple:
             attrs['multiple'] = 'multiple'
 
