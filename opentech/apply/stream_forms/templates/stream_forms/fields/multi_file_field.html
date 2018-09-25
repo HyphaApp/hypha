@@ -1,0 +1,13 @@
+{% if widget.is_initial %}{{ widget.initial_text }}:
+<p>
+{{ widget.clear_checkbox_label }}
+</p>
+{% for file in widget.value %}
+<p>
+<input type="checkbox" name="{{ widget.checkbox_name }}-{{ forloop.counter }}" id="{{ widget.checkbox_id }}-{{ forloop.counter }}">
+<label for="{{ widget.checkbox_id }}-{{ forloop.counter }}"></label>
+<a href="{{ file.url }}">{{ file.filename }}</a>
+</p>
+{% endfor %}
+{{ widget.input_text }}{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
