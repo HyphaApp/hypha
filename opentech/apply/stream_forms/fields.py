@@ -59,6 +59,9 @@ class MultiFileField(FileField):
             return initial
         new = [FileField().clean(file, initial) for file in files]
 
-        old = [file for i, file in enumerate(initial) if i not in cleared]
+        if initial:
+            old = [file for i, file in enumerate(initial) if i not in cleared]
+        else:
+            old = []
 
         return old + new
