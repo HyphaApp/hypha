@@ -8,6 +8,7 @@ from .fields import MultiFileField, MultiFileInput
 
 fake = Faker()
 
+
 def make_files(number):
     file_names = [f'{fake.word()}_{i}' for i in range(3)]
     files = [
