@@ -69,10 +69,12 @@ class AccessFormData:
     def deserialised_data(cls, data, form_fields):
         # Converts the file dicts into actual file objects
         data = data.copy()
-        for field in form_fields:
-            if isinstance(field.block, UploadableMediaBlock):
-                file = data.get(field.id, [])
-                data[field.id] = cls.process_file(file)
+        for field in form_fields.stream_data:
+            block = form_fields.stream_block.child_blocks[field['type']]
+            if isinstance(block, UploadableMediaBlock):
+                field_id = field.get('id')
+                file = data.get(field_id, [])
+                data[field_id] = cls.process_file(file)
         return data
 
     def get_definitive_id(self, id):
