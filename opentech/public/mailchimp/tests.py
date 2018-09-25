@@ -15,7 +15,9 @@ class TestNewsletterView(TestCase):
 
     def setUp(self):
         self.origin = 'https://testserver/'
-        self.client.defaults = {'HTTP_ORIGIN': self.origin}
+        self.client.defaults = {
+            'HTTP_REFERER': self.origin,
+        }
 
     def test_redirected_home_if_get(self):
         response = self.client.get(self.url, secure=True, follow=True)
