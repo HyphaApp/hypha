@@ -1,6 +1,6 @@
 import logging
 
-from time import time
+import uuid
 
 from django.conf import settings
 from django.contrib import messages
@@ -86,7 +86,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
             origin = self.request.META['HTTP_REFERER']
 
         # Add cache busting query string.
-        return origin + '?newsletter-' + str(time.time())
+        return origin + '?newsletter-' + uuid.uuid4().hex
 
     def get_redirect_url(self):
         # We don't know where you came from, go home
