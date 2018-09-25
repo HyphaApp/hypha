@@ -79,11 +79,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def get_success_url(self):
         # Go back to where you came from, default to front page.
-        origin = '/'
-        if 'HTTP_ORIGIN' in self.request.META:
-            origin = self.request.META['HTTP_ORIGIN']
-        elif 'HTTP_REFERER' in self.request.META:
-            origin = self.request.META['HTTP_REFERER']
+        origin = self.request.META.get('HTTP_ORIGIN') or self.request.META.get('HTTP_REFERER') or '/'
 
         # Add cache busting query string.
         return origin + '?newsletter-' + uuid.uuid4().hex
