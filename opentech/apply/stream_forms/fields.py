@@ -36,10 +36,10 @@ class MultiFileInput(ClearableFileInput):
             if not isinstance(upload, list):
                 upload = [upload]
 
-        checkbox_name = self.clear_checkbox_name(name)
+        checkbox_name = self.clear_checkbox_name(name) + '-'
         checkboxes = {k for k in data if checkbox_name in k}
         cleared = {
-            i for i, checkbox in enumerate(checkboxes)
+            int(checkbox.replace(checkbox_name, '')) for checkbox in checkboxes
             if CheckboxInput().value_from_datadict(data, files, checkbox)
         }
 

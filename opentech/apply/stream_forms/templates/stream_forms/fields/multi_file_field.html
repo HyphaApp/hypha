@@ -4,9 +4,13 @@
 </p>
 {% for file in widget.value %}
 <p>
-<input type="checkbox" name="{{ widget.checkbox_name }}-{{ forloop.counter }}" id="{{ widget.checkbox_id }}-{{ forloop.counter }}">
-<label for="{{ widget.checkbox_id }}-{{ forloop.counter }}"></label>
-<a href="{{ file.url }}">{{ file }}</a>
+    {% with y=forloop.counter0|stringformat:"s" %}
+    {% with file_id=widget.checkbox_name|add:'-'|add:y %}
+        <input type="checkbox" name="{{ file_id }}" id="{{ file_id }}">
+        <label for="{{ file_id }}"></label>
+    {% endwith %}
+    {% endwith %}
+    <a href="{{ file.url }}">{{ file }}</a>
 </p>
 {% endfor %}
 {{ widget.input_text }}{% endif %}
