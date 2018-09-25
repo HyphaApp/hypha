@@ -31,7 +31,7 @@
         "gulp-sourcemaps": "^2.6.4"
     },
     "scripts": {
-        "test": "gulp",
+        "test": "gulp deploy",
         "heroku-postbuild": "gulp deploy"
     },
     "engines": {
