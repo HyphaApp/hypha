@@ -8,7 +8,7 @@ from django.utils.text import mark_safe
 
 from wagtail.core.blocks import StaticBlock, StreamValue, StreamBlock
 
-from opentech.apply.stream_forms.blocks import FormFieldBlock, TextFieldBlock
+from opentech.apply.stream_forms.blocks import FormFieldBlock, OptionalFormFieldBlock, TextFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
 
@@ -45,10 +45,13 @@ class RichTextFieldBlock(TextFieldBlock):
 class CustomFormFieldsBlock(StreamBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))
     required_blocks = []
+    single_blocks = []
 
     def __init__(self, *args, **kwargs):
         child_blocks = [(block.name, block(group=_('Required'))) for block in self.required_blocks]
+        child_blocks += [(block.name, block(group=_('Custom'))) for block in self.single_blocks]
         self.required_block_names = [block.name for block in self.required_blocks]
+        self.single_block_names = [block.name for block in self.single_blocks] + self.required_block_names
 
         super().__init__(child_blocks, *args, **kwargs)
 
@@ -65,7 +68,7 @@ class CustomFormFieldsBlock(StreamBlock):
 
         duplicates = [
             name for name in find_duplicates(block_types)
-            if name in self.required_block_names
+            if name in self.single_block_names
         ]
 
         all_errors = list()
@@ -76,7 +79,7 @@ class CustomFormFieldsBlock(StreamBlock):
 
         if duplicates:
             all_errors.append(
-                'You have duplicates of the following required fields: {}'.format(', '.join(prettify_names(duplicates)))
+                'You have duplicates of the following non duplicate fields: {}'.format(', '.join(prettify_names(duplicates)))
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
@@ -110,7 +113,7 @@ class CustomFormFieldsBlock(StreamBlock):
         return StreamValue(self, value, is_lazy=True)
 
 
-class MustIncludeStatic(StaticBlock):
+class SingleIncludeStatic(StaticBlock):
     """Helper block which displays additional information about the must include block and
     helps display the error in a noticeable way.
     """
@@ -137,15 +140,21 @@ class MustIncludeStatic(StaticBlock):
         return ('wagtail.core.blocks.static_block.StaticBlock', (), {})
 
 
-class MustIncludeFieldBlock(FormFieldBlock):
+class SingleIncludeMixin:
+    def __init__(self, *args, **kwargs):
+        info_name = f'{self.name.title()} Field'
+        child_blocks = [('info', SingleIncludeStatic(label=info_name, description=self.description))]
+        super().__init__(child_blocks, *args, **kwargs)
+
+
+class SingleIncludeBlock(SingleIncludeMixin, OptionalFormFieldBlock):
+    """A block that is only allowed to be included once in the form, but is optional"""
+
+
+class MustIncludeFieldBlock(SingleIncludeMixin, FormFieldBlock):
     """Any block inheriting from this will need to be included in the application forms
     This data will also be available to query on the submission object
     """
-    def __init__(self, *args, **kwargs):
-        info_name = f'{self.name.title()} Field'
-        child_blocks = [('info', MustIncludeStatic(label=info_name, description=self.description))]
-        super().__init__(child_blocks, *args, **kwargs)
-
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
         kwargs['required'] = True
