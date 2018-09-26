@@ -2,7 +2,7 @@
 {% load bleach_tags %}
 {% block data_display %}
     {% if data %}
-        {{ data|bleach }}
+        {{ data|bleach|linebreaks }}
     {% else %}
         {{ block.super }}
     {% endif %}
