@@ -175,6 +175,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(old_status, submission.status)
         self.assertEqual(new_title, submission.title)
 
+    def test_not_included_fields_render(self):
+        submission = ApplicationSubmissionFactory(form_fields__exclude__value=True)
+        response = self.get_page(submission)
+        self.assertNotContains(response, 'Value')
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory

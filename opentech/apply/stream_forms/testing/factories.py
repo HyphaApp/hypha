@@ -56,7 +56,13 @@ class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
 
         form_data = {}
         for name, answer in kwargs.items():
-            form_data[form_definition[name]] = answer
+            try:
+                key = form_definition[name]
+            except KeyError:
+                # We are not using that field - don't add the submission data
+                pass
+            else:
+                form_data[key] = answer
 
         if clean:
             clean_object = for_factory()

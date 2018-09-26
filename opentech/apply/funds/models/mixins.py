@@ -4,7 +4,7 @@ from django.core.files import File
 from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import FormFieldBlock
-from opentech.apply.utils.blocks import MustIncludeFieldBlock
+from opentech.apply.utils.blocks import SingleIncludeMixin
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldFile
@@ -14,6 +14,10 @@ __all__ = ['AccessFormData']
 
 
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
+
+
+class UnusedFieldException(Exception):
+    pass
 
 
 class AccessFormData:
@@ -84,7 +88,10 @@ class AccessFormData:
 
     def field(self, id):
         definitive_id = self.get_definitive_id(id)
-        return self.raw_fields[definitive_id]
+        try:
+            return self.raw_fields[definitive_id]
+        except KeyError:
+            raise UnusedFieldException(id) from None
 
     def data(self, id):
         definitive_id = self.get_definitive_id(id)
@@ -126,7 +133,10 @@ class AccessFormData:
         }
 
     def render_answer(self, field_id, include_question=False):
-        field = self.field(field_id)
+        try:
+            field = self.field(field_id)
+        except UnusedFieldException:
+            return None
         data = self.data(field_id)
         return field.render(context={'data': data, 'include_question': include_question})
 
