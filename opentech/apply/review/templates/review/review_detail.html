@@ -5,7 +5,7 @@
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">Review</h1>
-        <h5>For <a href="{% url "funds:submissions:detail" review.submission.id %}">{{ review.submission.title }}</a></h5>
+        <h5>For <a href="{% url "funds:submissions:detail" review.submission.id %}">{{ review.submission.title }}</a> by {{ review.author }}</h5>
     </div>
 </div>
 
