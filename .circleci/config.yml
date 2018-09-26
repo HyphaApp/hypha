@@ -15,7 +15,6 @@ jobs:
           PGHOST: localhost
           PGUSER: root
           DJANGO_SETTINGS_MODULE: opentech.settings.test
-          NPM_CONFIG_PRODUCTION: false
           SEND_MESSAGES: false
 
       - image: circleci/postgres:10.5
@@ -38,14 +37,13 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
+            - v1-yarn-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - v1-yarn-{{ .Branch }}-
             - v1-yarn-
 
       - run:
           name: install dependencies
           command: |
-            sudo apt-get install rsync
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
@@ -53,9 +51,9 @@ jobs:
       - run:
           name: buils static assets
           command: |
-            cd opentech/static_src
-            yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
-            npm run build:prod
+            npm install --quiet
+            npm install -g gulp-cli
+            gulp deploy
 
       - save_cache:
           paths:
@@ -64,7 +62,7 @@ jobs:
 
       - save_cache:
           paths:
-            - ~/.cache/yarn
+            - ./node_modules
           key: v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
 
       # run tests!
@@ -76,9 +74,10 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py createcachetable
-            python manage.py collectstatic --no-input
-            python manage.py migrate
+            flake8
+            python manage.py collectstatic --noinput --verbosity=0
+            python manage.py check
+            python manage.py makemigrations --check --noinput --verbosity=0
             python manage.py test
 
       - store_artifacts:
