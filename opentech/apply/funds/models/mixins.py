@@ -136,7 +136,7 @@ class AccessFormData:
         try:
             field = self.field(field_id)
         except UnusedFieldException:
-            return None
+            return '-'
         data = self.data(field_id)
         return field.render(context={'data': data, 'include_question': include_question})
 
