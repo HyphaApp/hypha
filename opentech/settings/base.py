@@ -114,6 +114,7 @@ INSTALLED_APPS = [
     'addressfield',
     'django_bleach',
     'django_fsm',
+    'django_pwned_passwords',
 
     'hijack',
     'compat',
@@ -128,7 +129,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'django.forms',
-    'django_pwnedpasswords_validator',
 ]
 
 MIDDLEWARE = [
@@ -239,7 +239,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django_pwnedpasswords_validator.validation.PwnedPasswordValidator',
+        'NAME': 'django_pwned_passwords.password_validation.PWNEDPasswordValidator',
     },
 ]
 
