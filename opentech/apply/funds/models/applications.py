@@ -37,7 +37,6 @@ class ApplicationBaseManager(PageQuerySet):
 
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     is_createable = False
-    template = 'funds/application_base.html'
 
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
@@ -52,6 +51,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
     parent_page_types = ['apply_home.ApplyHomePage']
+
+    def get_template(self, request, *args, **kwargs):
+        # We want to force children to use our base template
+        # template attribute is ignored by children
+        return 'funds/application_base.html'
 
     def detail(self):
         # The location to find out more information

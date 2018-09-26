@@ -19,6 +19,7 @@ from .factories import (
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
+    RequestForPartnersFactory,
     RoundFactory,
 )
 
@@ -465,3 +466,11 @@ class TestSubmissionRenderMethods(TestCase):
         )
         answers = submission.render_answers()
         self.assertNotIn(rich_text_label, answers)
+
+
+class TestRequestForPartners(TestCase):
+    def test_message_when_no_round(self):
+        rfp = RequestForPartnersFactory()
+        request = make_request(site=rfp.get_site())
+        response = rfp.serve(request)
+        self.assertContains(response, 'not accepting')
