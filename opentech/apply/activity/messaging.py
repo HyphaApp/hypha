@@ -175,7 +175,7 @@ class SlackAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old_lead} to {submission.lead} by {user}',
-        MESSAGES.COMMENT: 'A new comment has been posted on <{link}|{submission.title}>',
+        MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{submission.title}> by {user}',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
