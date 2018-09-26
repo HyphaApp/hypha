@@ -37,6 +37,7 @@ class ApplicationBaseManager(PageQuerySet):
 
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     is_createable = False
+    template = 'funds/application_base.html'
 
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
