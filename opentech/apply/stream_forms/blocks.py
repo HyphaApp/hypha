@@ -125,7 +125,7 @@ class NumberFieldBlock(OptionalFormFieldBlock):
         return None
 
 
-class CheckboxFieldBlock(FormFieldBlock):
+class CheckboxFieldBlock(OptionalFormFieldBlock):
     default_value = BooleanBlock(required=False)
 
     field_class = forms.BooleanField
