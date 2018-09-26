@@ -32,7 +32,7 @@ def prepare_form_data(submission, **kwargs):
         field_id = submission.field(field).id
         data[field_id] = value
 
-    address_field = submission.must_include['address']
+    address_field = submission.named_blocks['address']
     address = data.pop(address_field)
     data.update(**prepare_address(address, address_field))
 

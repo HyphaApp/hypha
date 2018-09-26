@@ -120,3 +120,5 @@ class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
 REQUIRED_BLOCK_NAMES = [block.name for block in ApplicationMustIncludeFieldBlock.__subclasses__()]
 
 SINGLE_BLOCK_NAMES = [block.name for block in ApplicationSingleIncludeFieldBlock.__subclasses__()]
+
+NAMED_BLOCKS = REQUIRED_BLOCK_NAMES + SINGLE_BLOCK_NAMES

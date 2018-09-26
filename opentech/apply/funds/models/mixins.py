@@ -30,7 +30,7 @@ class AccessFormData:
         # Returns the data mapped by field id instead of the data stored using the must include
         # values
         data = self.form_data.copy()
-        for field_name, field_id in self.must_include.items():
+        for field_name, field_id in self.named_blocks.items():
             if field_id not in data:
                 response = data[field_name]
                 data[field_id] = response
@@ -78,8 +78,8 @@ class AccessFormData:
         return data
 
     def get_definitive_id(self, id):
-        if id in self.must_include:
-            return self.must_include[id]
+        if id in self.named_blocks:
+            return self.named_blocks[id]
         return id
 
     def field(self, id):
@@ -112,17 +112,17 @@ class AccessFormData:
     def fields(self):
         # ALl fields on the application
         fields = self.raw_fields.copy()
-        for field_name, field_id in self.must_include.items():
+        for field_name, field_id in self.named_blocks.items():
             response = fields.pop(field_id)
             fields[field_name] = response
         return fields
 
     @property
-    def must_include(self):
+    def named_blocks(self):
         return {
             field.block.name: field.id
             for field in self.form_fields
-            if isinstance(field.block, MustIncludeFieldBlock)
+            if isinstance(field.block, SingleIncludeMixin)
         }
 
     def render_answer(self, field_id, include_question=False):
@@ -135,7 +135,7 @@ class AccessFormData:
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.question_field_ids
-            if field_id not in self.must_include
+            if field_id not in self.named_blocks
         ]
 
     def output_answers(self):
