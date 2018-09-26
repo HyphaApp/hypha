@@ -30,7 +30,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
         icon = 'tag'
 
 
-class ValueBlock(ApplicationMustIncludeFieldBlock):
+class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
     widget = forms.NumberInput
