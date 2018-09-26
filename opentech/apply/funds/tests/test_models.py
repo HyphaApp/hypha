@@ -244,6 +244,12 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, new_user)
 
+    def test_doesnt_mess_with_name(self):
+        full_name = "I have; <a> wei'rd name"
+        self.submit_form(name=full_name)
+        submission = ApplicationSubmission.objects.first()
+        self.assertEqual(submission.user.full_name, full_name)
+
     def test_associated_if_not_new(self):
         self.submit_form()
         self.submit_form()
