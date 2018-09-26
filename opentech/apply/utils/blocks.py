@@ -47,7 +47,7 @@ class CustomFormFieldsBlock(StreamBlock):
     required_blocks = []
 
     def __init__(self, *args, **kwargs):
-        child_blocks = [(block.name, block(group=_('Required'))) for block in self.required_blocks]
+        child_blocks = [(block.name, block(group=_('Required for most applications'))) for block in self.required_blocks]
         self.required_block_names = [block.name for block in self.required_blocks]
 
         super().__init__(child_blocks, *args, **kwargs)
@@ -61,7 +61,8 @@ class CustomFormFieldsBlock(StreamBlock):
             error_dict = dict()
 
         block_types = [block.block_type for block in value]
-        missing = set(self.required_block_names) - set(block_types)
+        # Labs do not need these fields so disable the checking for now.
+        # missing = set(self.required_block_names) - set(block_types)
 
         duplicates = [
             name for name in find_duplicates(block_types)
@@ -69,10 +70,10 @@ class CustomFormFieldsBlock(StreamBlock):
         ]
 
         all_errors = list()
-        if missing:
-            all_errors.append(
-                'You are missing the following required fields: {}'.format(', '.join(prettify_names(missing)))
-            )
+        # if missing:
+        #     all_errors.append(
+        #         'You are missing the following required fields: {}'.format(', '.join(prettify_names(missing)))
+        #     )
 
         if duplicates:
             all_errors.append(
@@ -114,6 +115,7 @@ class MustIncludeStatic(StaticBlock):
     """Helper block which displays additional information about the must include block and
     helps display the error in a noticeable way.
     """
+
     def __init__(self, *args, description='', **kwargs):
         self.description = description
         super().__init__(*args, **kwargs)
@@ -141,6 +143,7 @@ class MustIncludeFieldBlock(FormFieldBlock):
     """Any block inheriting from this will need to be included in the application forms
     This data will also be available to query on the submission object
     """
+
     def __init__(self, *args, **kwargs):
         info_name = f'{self.name.title()} Field'
         child_blocks = [('info', MustIncludeStatic(label=info_name, description=self.description))]
