@@ -22,8 +22,15 @@ class StreamFieldFile(File):
         self.filename = filename or os.path.basename(self.name)
         self._committed = False
 
+    def __str__(self):
+        return self.filename
+
     def __eq__(self, other):
-        return self.filename == other.filename and self.size == other.size
+        if isinstance(other, File):
+            return self.filename == other.filename and self.size == other.size
+        # Rely on the other object to know how to check equality
+        # Could cause infinite loop if the other object is unsure how to compare
+        return other.__eq__(self)
 
     def _get_file(self):
         if getattr(self, '_file', None) is None:
