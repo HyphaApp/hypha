@@ -43,6 +43,7 @@ __all__ = [
     'RequestForPartnersFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
+    'TodayRoundFactory',
     'workflow_for_stages',
 ]
 

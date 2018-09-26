@@ -21,6 +21,7 @@ from .factories import (
     LabFactory,
     RequestForPartnersFactory,
     RoundFactory,
+    TodayRoundFactory,
 )
 
 
@@ -474,3 +475,12 @@ class TestRequestForPartners(TestCase):
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
         self.assertContains(response, 'not accepting')
+        self.assertNotContains(response, 'Submit')
+
+    def test_form_when_round(self):
+        rfp = RequestForPartnersFactory()
+        open_round = TodayRoundFactory(parent=rfp)
+        request = make_request(site=rfp.get_site())
+        response = rfp.serve(request)
+        self.assertNotContains(response, 'not accepting')
+        self.assertContains(response, 'Submit')
