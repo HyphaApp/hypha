@@ -479,7 +479,7 @@ class TestRequestForPartners(TestCase):
 
     def test_form_when_round(self):
         rfp = RequestForPartnersFactory()
-        open_round = TodayRoundFactory(parent=rfp)
+        TodayRoundFactory(parent=rfp)
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
         self.assertNotContains(response, 'not accepting')
