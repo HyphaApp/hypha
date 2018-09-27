@@ -5,9 +5,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - heroku
     docker:
       - image: circleci/python:3.6.6-stretch-node
         environment:
@@ -27,59 +24,57 @@ jobs:
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
-            - v1-python-{{ .Branch }}-
-            - v1-python-
-
+      - run:
+          name: set owner on /usr/local
+          command: sudo chown -R circleci:circleci /usr/local
 
       - restore_cache:
           keys:
-            - v1-yarn-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v1-yarn-{{ .Branch }}-
-            - v1-yarn-
+            - v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+            - v2-python-{{ .Branch }}-
+            - v2-python-
+
+      - restore_cache:
+          keys:
+            - v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-npm-{{ .Branch }}-
+            - v2-npm-
 
       - run:
-          name: install dependencies
+          name: install python dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
 
       - run:
-          name: buils static assets
+          name: install node dependencies
           command: |
             npm install --quiet
             npm install -g gulp-cli
-            gulp deploy
 
       - save_cache:
           paths:
             - ./venv
-          key: v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          key: v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
 
       - save_cache:
           paths:
             - ./node_modules
-          key: v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
+            - /usr/local/lib/node_modules
+            - /usr/local/bin
+          key: v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
 
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+      - run:
+          name: buils static assets
+          command: gulp deploy
+
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            flake8
+            flake8 ./opentech
             python manage.py collectstatic --noinput --verbosity=0
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=0
             python manage.py test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports

@@ -1,4 +1,4 @@
-from .production import *  # noqa
+from .base import *  # noqa
 
 # Should only include explicit testing settings
 
