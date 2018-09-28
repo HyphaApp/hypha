@@ -54,7 +54,5 @@ class TestCategoryQuestionBlock(TestCase):
         )
 
     def test_can_render_if_no_response(self):
-        context = self.block.get_context(None, {'data': None})
-        self.assertEqual(context['data'], self.block.no_response())
-        display = self.block.render({'category': self.category}, context)
+        display = self.block.render({'category': self.category}, {'data': None})
         self.assertIn(self.block.no_response()[0], display)

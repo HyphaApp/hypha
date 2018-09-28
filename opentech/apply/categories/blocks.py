@@ -77,7 +77,7 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
     def render(self, value, context):
         data = context['data']
         category = value['category']
-        if data != self.no_response():
+        if data:
             context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
         return super().render(value, context)
 
