@@ -1,6 +1,8 @@
+from django.core import mail
 from django.test import override_settings, TestCase
 from django.urls import reverse
 
+from opentech.apply.utils.testing.tests import BaseViewTestCase
 from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 
@@ -44,3 +46,15 @@ class TestStaffProfileView(BaseTestProfielView):
     def test_can_set_slack_name(self):
         response = self.client.get(self.url, follow=True)
         self.assertContains(response, 'Slack name')
+
+
+class TestPasswordReset(BaseViewTestCase):
+    user_factory = UserFactory
+    url_name = 'users:{}'
+    base_view_name = 'password_reset'
+
+    def test_recieves_email(self):
+        response = self.post_page(None, data={'email': self.user.email})
+        self.assertRedirects(response, self.url(None, view_name='password_reset_done'))
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('https://testserver/account/password/reset/confirm', mail.outbox[0].body)
