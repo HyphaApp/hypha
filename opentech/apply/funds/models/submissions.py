@@ -402,7 +402,9 @@ class ApplicationSubmission(
         for phase in STAGE_CHANGE_ACTIONS:
             transition = self.get_transition(phase)
             if can_proceed(transition):
-                target = PHASES[phase].stage
+                # We convert to dict as not concerned about transitions from the first phase
+                # See note in workflow.py
+                target = dict(PHASES)[phase].stage
         if not target:
             raise ValueError('Incorrect State for transition')
 
