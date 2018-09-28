@@ -429,7 +429,7 @@ WORKFLOWS = {
 }
 
 
-PHASES = list(itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values()))
+PHASES = dict(itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values()))
 
 
 def get_stage_change_actions():
@@ -449,11 +449,12 @@ STAGE_CHANGE_ACTIONS = get_stage_change_actions()
 
 STATUSES = defaultdict(set)
 
-for key, value in PHASES:
+for key, value in PHASES.items():
     STATUSES[value.display_name].add(key)
 
+
 active_statuses = [
-    status for status, _ in PHASES
+    status for status in PHASES
     if 'accepted' not in status and 'rejected' not in status and 'invited' not in status
 ]
 
@@ -461,7 +462,7 @@ active_statuses = [
 def get_review_statuses(user=None):
     reviews = set()
 
-    for phase_name, phase in PHASES:
+    for phase_name, phase in PHASES.items():
         if 'review' in phase_name and 'discussion' not in phase_name:
             if user is None:
                 reviews.add(phase_name)
@@ -472,7 +473,7 @@ def get_review_statuses(user=None):
 
 review_statuses = get_review_statuses()
 
-DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
+DETERMINATION_PHASES = list(phase_name for phase_name in PHASES if '_discussion' in phase_name)
 DETERMINATION_RESPONSE_PHASES = [
     'post_review_discussion',
     'concept_review_discussion',
@@ -482,7 +483,7 @@ DETERMINATION_RESPONSE_PHASES = [
 
 def get_determination_transitions():
     transitions = {}
-    for phase_name, phase in PHASES:
+    for phase_name, phase in PHASES.items():
         for transition_name in phase.transitions:
             if 'accepted' in transition_name:
                 transitions[transition_name] = 'accepted'

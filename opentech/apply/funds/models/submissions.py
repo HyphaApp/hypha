@@ -32,6 +32,7 @@ from ..workflow import (
     DETERMINATION_RESPONSE_PHASES,
     get_review_statuses,
     INITIAL_STATE,
+    PHASES,
     review_statuses,
     STAGE_CHANGE_ACTIONS,
     UserPermissions,
@@ -397,10 +398,18 @@ class ApplicationSubmission(
             return getattr(self.page.specific, attribute)
 
     def progress_application(self, **kwargs):
+        target = None
+        for phase in STAGE_CHANGE_ACTIONS:
+            transition = self.get_transition(phase)
+            if can_proceed(transition):
+                target = PHASES[phase].stage
+        if not target:
+            raise ValueError('Incorrect State for transition')
+
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
 
         self.id = None
-        self.form_fields = self.get_from_parent('get_defined_fields')(self.stage)
+        self.form_fields = self.get_from_parent('get_defined_fields')(target)
 
         self.live_revision = None
         self.draft_revision = None
