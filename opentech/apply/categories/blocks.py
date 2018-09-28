@@ -77,11 +77,12 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
     def render(self, value, context):
         data = context['data']
         category = value['category']
-        context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
+        if data != self.no_response():
+            context['data'] = category.options.filter(id__in=data).values_list('value', flat=True)
         return super().render(value, context)
 
     def get_searchable_content(self, value, data):
         return None
 
     def no_response(self):
-        return None
+        return ['No Response']

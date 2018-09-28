@@ -52,3 +52,9 @@ class TestCategoryQuestionBlock(TestCase):
             field.choices,
             [(option.id, option.value) for option in self.category.options.all()]
         )
+
+    def test_can_render_if_no_response(self):
+        context = self.block.get_context(None, {'data': None})
+        self.assertEqual(context['data'], self.block.no_response())
+        display = self.block.render({'category': self.category}, context)
+        self.assertIn(self.block.no_response()[0], display)
