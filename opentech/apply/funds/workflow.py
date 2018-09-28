@@ -429,6 +429,8 @@ WORKFLOWS = {
 }
 
 
+# This is not a dictionary as the keys will clash for the first phase of each workflow
+# We cannot find the transitions for the first stage in this instance
 PHASES = list(itertools.chain.from_iterable(workflow.items() for workflow in WORKFLOWS.values()))
 
 

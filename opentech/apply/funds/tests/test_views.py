@@ -18,6 +18,7 @@ from opentech.apply.users.tests.factories import (
     SuperUserFactory,
     UserFactory,
 )
+from opentech.apply.utils.testing import make_request
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision
@@ -91,6 +92,23 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         # Invited for proposal is a a determination, so this will redirect to the determination form.
         url = self.url_from_pattern('funds:submissions:determinations:form', kwargs={'submission_pk': submission.id})
         self.assertRedirects(response, f"{url}?action=invited_to_proposal")
+
+    def test_new_form_after_progress(self):
+        submission = ApplicationSubmissionFactory(status='invited_to_proposal', workflow_stages=2, lead=self.user)
+        stage = submission.stage
+        DeterminationFactory(submission=submission, accepted=True)
+
+        request = make_request(self.user, method='get', site=submission.page.get_site())
+        submission.progress_stage_when_possible(self.user, request)
+
+        submission = self.refresh(submission)
+        new_stage = submission.stage
+
+        self.assertNotEqual(stage, new_stage)
+
+        get_forms = submission.get_from_parent('get_defined_fields')
+        self.assertEqual(submission.form_fields, get_forms(new_stage))
+        self.assertNotEqual(submission.form_fields, get_forms(stage))
 
     def test_cant_progress_stage_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2)
