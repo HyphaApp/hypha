@@ -52,6 +52,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     parent_page_types = ['apply_home.ApplyHomePage']
 
+    def get_template(self, request, *args, **kwargs):
+        # We want to force children to use our base template
+        # template attribute is ignored by children
+        return 'funds/application_base.html'
+
     def detail(self):
         # The location to find out more information
         return self.application_public.first()

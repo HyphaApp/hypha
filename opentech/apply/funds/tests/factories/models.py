@@ -40,8 +40,10 @@ __all__ = [
     'LabFactory',
     'LabBaseFormFactory',
     'LabSubmissionFactory',
+    'RequestForPartnersFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
+    'TodayRoundFactory',
     'workflow_for_stages',
 ]
 

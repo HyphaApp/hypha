@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags static i18n %}
+{% load wagtailcore_tags static i18n util_tags %}
 {# Dont include fixed apply button on this page #}
 {% block apply_button %}{% endblock %}
 {% block header_modifier %}header--light-bg{% endblock %}
@@ -23,8 +23,8 @@
 
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     {% if not page.open_round and not page.start_date and not request.is_preview %}
-        {# the fund has no open rounds and we arent on a round page #}
-        <h3>{% trans "Sorry this fund is not accepting applications at the moment" %}</h3>
+        {# the page has no open rounds and we arent on a round page #}
+        <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
     {% else%}
         <form class="form" action="" method="POST" enctype="multipart/form-data">
             {{ form.media }}
