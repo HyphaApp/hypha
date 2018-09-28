@@ -9,6 +9,11 @@ VIRTUALENV_DIR=/home/vagrant/.virtualenvs/$PROJECT_NAME
 PYTHON=$VIRTUALENV_DIR/bin/python
 PIP=$VIRTUALENV_DIR/bin/pip
 
+# Upgrade to postgres 10
+apt-get update -y
+apt-get remove -y --purge postgresql-*
+apt-get install -y postgresql-10 postgresql-client-10 postgresql-contrib-10
+su - postgres -c "createuser -s vagrant"
 
 # Create database
 
