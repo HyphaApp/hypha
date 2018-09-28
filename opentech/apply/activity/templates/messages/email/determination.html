@@ -7,4 +7,6 @@
 Your application has been reviewed and the outcome is: {{ determination.clean_outcome }}
 
 {{ determination.message|bleach }}
+
+Read the complete determination here: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}
 {% endblock %}
