@@ -378,16 +378,22 @@ class ApplicationSubmission(
             User = get_user_model()
             if 'skip_account_creation_notification' in self.form_data:
                 self.form_data.pop('skip_account_creation_notification', None)
-                self.user, _ = User.objects.get_or_create(
+                self.user, created = User.objects.get_or_create(
                     email=email,
                     defaults={'full_name': full_name}
                 )
             else:
-                self.user, _ = User.objects.get_or_create_and_notify(
+                self.user, created = User.objects.get_or_create_and_notify(
                     email=email,
                     site=self.page.get_site(),
                     defaults={'full_name': full_name}
                 )
+
+            # Set random password on new accounts.
+            if created:
+                password = User.objects.make_random_password(length=16)
+                self.user.set_password(password)
+                self.user.save()
 
     def get_from_parent(self, attribute):
         try:

@@ -47,6 +47,11 @@ class Command(BaseCommand):
                 if not created:
                     user_object.slack = slack_name
 
+                # Set random password on new accounts.
+                if created:
+                    password = User.objects.make_random_password(length=16)
+                    user_object.set_password(password)
+
                 # Ensure uid is set
                 user_object.drupal_id = uid
                 user_object.save()
