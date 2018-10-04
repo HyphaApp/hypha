@@ -79,7 +79,7 @@ class CustomFormFieldsBlock(StreamBlock):
 
         if duplicates:
             all_errors.append(
-                'You have duplicates of the following non duplicate fields: {}'.format(', '.join(prettify_names(duplicates)))
+                'The following fields must be included only once: {}'.format(', '.join(prettify_names(duplicates)))
             )
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
@@ -117,6 +117,7 @@ class SingleIncludeStatic(StaticBlock):
     """Helper block which displays additional information about the must include block and
     helps display the error in a noticeable way.
     """
+
     def __init__(self, *args, description='', **kwargs):
         self.description = description
         super().__init__(*args, **kwargs)
@@ -155,6 +156,7 @@ class MustIncludeFieldBlock(SingleIncludeMixin, FormFieldBlock):
     """Any block inheriting from this will need to be included in the application forms
     This data will also be available to query on the submission object
     """
+
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
         kwargs['required'] = True
