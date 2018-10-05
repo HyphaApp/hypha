@@ -3,9 +3,10 @@
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
         <!-- favicons -->
         {% comment %}
@@ -25,7 +26,7 @@
         <meta name="theme-color" content="#ffffff">
         <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
 
-        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
         <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
         {# Hijack styling #}
         <link rel="stylesheet" href="{% static 'hijack/hijack-styles.css' %}" />
