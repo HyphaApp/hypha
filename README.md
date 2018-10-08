@@ -37,16 +37,25 @@ This will make the site available on the host machine at: http://127.0.0.1:8000/
 
 # Updating front-end files
 
-Any changes made to sass or js files will need to be recompiled using:
+Any changes to sass and js files need to be made within the `opentech/static_src` directory. They then need to be compiled with the  help of "gulp".
+
+Start a vagrant SSH session and go to the project root directory.
 
 ``` bash
-yarn build
+vagrant ssh
+cd /vagrant
 ```
 
-Alternatively you can run the watcher that will rebuild on change to files:
+Here you can run a number of different "gulp" commands. The two most useful are likely:
 
 ``` bash
-yarn start
+gulp watch
 ```
 
-Both commands should be run from within the `opentech/static_src` folder in the vagrant box.
+That will watch all fles for changes and build them with maps etc., perfect for development. (It will also run the "collecstatic" command, useful when running the site with a production server and not the built in dev server.)
+
+``` bash
+gulp build
+```
+
+This will build all the files for production. For more command see the `gulpfile.js` file.
