@@ -69,7 +69,6 @@
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        text-transform: uppercase;
 
         @include media-query(small-tablet) {
             margin-bottom: 10px;
@@ -78,6 +77,10 @@
 
     &__meta-item {
         margin: 0 10px 0 0;
+
+        span {
+            font-weight: $weight--bold;
+        }
 
         @include media-query(small-tablet) {
             margin: 0 15px 0 0;
@@ -128,9 +131,6 @@
             font-size: 18px;
         }
 
-        span {
-            font-weight: $weight--bold;
-        }
     }
 
     &__heading-status {
