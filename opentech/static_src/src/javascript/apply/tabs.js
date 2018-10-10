@@ -53,14 +53,14 @@
             this.updateUrl(tab);
         }
 
-        stripTabClasses(){
+        stripTabClasses() {
             // remove active classes from all tabs and tab contents
             this.tabItems.forEach(tabItem => tabItem.classList.remove(this.tabActiveClass));
             this.tabsContents.forEach(tabsContent => tabsContent.classList.remove(this.tabContentActiveClass));
         }
 
-        addTabClasses(tab){
-            if(tab === null) {
+        addTabClasses(tab) {
+            if (tab === null) {
                 tab = document.querySelector(`[data-tab=${this.defaultSelectedTab}]`);
             }
 
@@ -71,7 +71,7 @@
             document.querySelector(`#${tabId}`).classList.add(this.tabContentActiveClass);
         }
 
-        updateUrl(tab){
+        updateUrl(tab) {
             window.location.hash = tab.getAttribute('href');
         }
     };

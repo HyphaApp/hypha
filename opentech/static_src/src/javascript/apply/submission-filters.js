@@ -18,9 +18,10 @@
         let match = $(`.select2-selection[aria-owns="${selectId}"]`);
 
         // if the dropdown contains a clear class, the filters are active
-        if($(match[0]).find('span.select2-selection__clear').length !== 0) {
+        if ($(match[0]).find('span.select2-selection__clear').length !== 0) {
             match[0].classList.add('is-active');
-        } else {
+        }
+        else {
             match[0].classList.remove('is-active');
         }
     });
@@ -28,7 +29,9 @@
     // remove active class on clearing select2
     $('.select2').on('select2:unselecting', (e) => {
         const dropdown = e.target.nextElementSibling.firstChild.firstChild;
-        (dropdown.classList.contains('is-active')) ? dropdown.classList.remove('is-active') : null;
+        if (dropdown.classList.contains('is-active')) {
+            dropdown.classList.remove('is-active');
+        }
     });
 
     // open mobile filters

@@ -3,7 +3,7 @@
     'use strict';
 
     function listInputFiles() {
-        $('input[type=file]').change(function() {
+        $('input[type=file]').change(function () {
             // remove any existing files first
             $(this).siblings('.form__file').remove();
             for (let i = 0; i < $(this)[0].files.length; ++i) {

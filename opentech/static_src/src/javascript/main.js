@@ -57,14 +57,14 @@
             // check if search exists
             if (document.body.contains(this.search[0])) {
                 // reset the search whenever the mobile menu is toggled
-                if(this.search[0].classList.contains('is-visible')){
+                if (this.search[0].classList.contains('is-visible')) {
                     this.search[0].classList.toggle('is-visible');
                     document.querySelector('.header__inner--menu-open').classList.toggle('header__inner--search-open');
                 }
             }
 
             // reset the search show/hide icons
-            if(this.mobileMenu[0].classList.contains('is-visible') && document.body.contains(this.search[0])){
+            if (this.mobileMenu[0].classList.contains('is-visible') && document.body.contains(this.search[0])) {
                 document.querySelector('.header__icon--open-search-menu-closed').classList.remove('is-hidden');
                 document.querySelector('.header__icon--close-search-menu-closed').classList.remove('is-unhidden');
             }
@@ -141,7 +141,8 @@
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
             });
-        } else {
+        }
+        else {
             $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
@@ -161,7 +162,7 @@
             // reset the margin of the select we previously worked
             openDropdown.removeClass(expanded);
             // store the offset to adjust the new select box (elements above the old dropdown unaffected)
-            if (dropdown.position().top > openDropdown.position().top ){
+            if (dropdown.position().top > openDropdown.position().top) {
                 dropdownMargin = parseInt(openDropdown.css('marginBottom'));
             }
             openDropdown.css('margin-bottom', '0px');

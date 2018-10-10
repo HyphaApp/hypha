@@ -3,7 +3,7 @@
     'use strict';
 
     let DeterminationCopy = class {
-        static selector(){
+        static selector() {
             return '#id_outcome';
         }
 
@@ -12,18 +12,20 @@
             this.bindEventListeners();
         }
 
-        bindEventListeners(){
+        bindEventListeners() {
             this.node.addEventListener('change', (e) => {
                 this.getMatchingCopy(e.target.value);
             }, false);
         }
 
         getMatchingCopy(value) {
-            if (value === '0'){
+            if (value === '0') {
                 this.text = document.querySelector('div[data-type="rejected"]').textContent;
-            } else if (value === '1') {
+            }
+            else if (value === '1') {
                 this.text = document.querySelector('div[data-type="more_info"]').textContent;
-            } else {
+            }
+            else {
                 this.text = document.querySelector('div[data-type="accepted"]').textContent;
             }
             this.updateTextArea(this.text);

@@ -8,7 +8,7 @@
         const titles = Array.prototype.slice.call(document.querySelectorAll('.js-title'));
 
         // if the tile has been truncated...
-        titles.forEach(function(title) {
+        titles.forEach(function (title) {
             if (title.textContent.indexOf('...') >= 0) {
                 addToolTip(title);
             }
