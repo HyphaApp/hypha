@@ -1,10 +1,11 @@
 {
   "extends": "eslint:recommended",
   "env": {
-    "browser": true
+    "browser": true,
+    "commonjs": true,
+    "es6": true
   },
   "globals": {
-    "Drupal": true,
     "jQuery": true
   },
   "rules": {
@@ -20,7 +21,7 @@
     "eol-last": 2,
     "eqeqeq": [2, "smart"],
     "guard-for-in": 2,
-    "indent": [2, 2, {"SwitchCase": 1}],
+    "indent": [2, 4, {"SwitchCase": 1}],
     "key-spacing": [2, {"beforeColon": false, "afterColon": true}],
     "keyword-spacing": [2, {"before": true, "after": true}],
     "linebreak-style": [2, "unix"],
@@ -72,7 +73,7 @@
     "space-infix-ops": 2,
     "space-unary-ops": [2, { "words": true, "nonwords": false }],
     "spaced-comment": [2, "always"],
-    "strict": 2,
+    "strict": [2, "function"],
     "yoda": [2, "never"],
     // Warnings.
     "max-nested-callbacks": [1, 3],
