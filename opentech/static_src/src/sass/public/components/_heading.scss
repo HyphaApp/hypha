@@ -15,6 +15,11 @@
         line-height: 1;
     }
 
+    &--small-margin {
+        margin: 0;
+        line-height: 1.2;
+    }
+
     &--regular {
         font-weight: $weight--normal;
     }

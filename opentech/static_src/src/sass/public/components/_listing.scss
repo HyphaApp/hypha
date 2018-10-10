@@ -54,7 +54,7 @@
 
     &__title {
         margin-bottom: 5px;
-        line-height: 1;
+        line-height: 1.2;
         transition: color $transition;
 
         #{$root}:hover & {
