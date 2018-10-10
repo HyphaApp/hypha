@@ -9,6 +9,12 @@
         &:last-child {
             border-bottom: 0;
         }
+
+        &--collaps {
+            position: relative;
+            max-height: 300px;
+            overflow: hidden;
+        }
     }
 
     &__label {
@@ -145,5 +151,16 @@
 
     &__company {
         @extend %h6;
+    }
+
+    &__show-button {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        padding: 3em 0 .5em;
+        background-image: linear-gradient(to bottom, $color--white-10, $color--white);
     }
 }

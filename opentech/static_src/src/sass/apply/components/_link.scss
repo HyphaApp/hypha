@@ -1,4 +1,13 @@
 .link {
+    &--button {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+
+        &--narrow {
+            @include button--narrow;
+        }
+    }
+
     &--underlined {
         text-decoration: underline;
     }
