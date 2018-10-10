@@ -173,7 +173,7 @@ gulp.task('fonts', function copy () {
 
 // Run Djangos collectstatic command.
 gulp.task('collectstatic', function (collect) {
-  exec('python manage.py collectstatic --no-post-process --noinput -v0', function (err, stdout, stderr) {
+  exec('python manage.py collectstatic --no-post-process --noinput --verbosity 0', function (err, stdout, stderr) {
     collect(err);
   });
 });
