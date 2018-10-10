@@ -175,6 +175,8 @@ gulp.task('fonts', function copy () {
 gulp.task('collectstatic', function (collect) {
   exec('python manage.py collectstatic --no-post-process --noinput --verbosity 0', function (err, stdout, stderr) {
     collect(err);
+    // console.log(stdout);
+    // console.log(stderr);
   });
 });
 
@@ -203,9 +205,9 @@ gulp.task('watch:fonts', gulp.series('fonts', function watch () {
   return gulp.watch(options.theme.font + '**/*.*', options.gulpWatchOptions, gulp.series('fonts'));
 }));
 
-gulp.task('watch:static', gulp.series('collectstatic', function watch () {
+gulp.task('watch:static', function watch () {
   return gulp.watch(options.theme.dest + '**/*.*', options.gulpWatchOptions, gulp.series('collectstatic'));
-}));
+});
 
 gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
