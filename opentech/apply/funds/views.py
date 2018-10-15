@@ -253,8 +253,7 @@ class BaseSubmissionEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        # See #643 we are getting errors on save draft
-        # yield ('save', 'white', 'Save Draft')
+        yield ('save', 'white', 'Save Draft')
         yield ('submit', 'primary', 'Submit')
 
     def get_form_kwargs(self):
