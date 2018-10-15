@@ -1,7 +1,6 @@
 'use strict';
 
-var importOnce = require('node-sass-import-once'),
-  path = require('path');
+var importOnce = require('node-sass-import-once');
 
 var options = {};
 
