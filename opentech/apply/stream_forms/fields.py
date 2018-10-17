@@ -18,9 +18,12 @@ class MultiFileInput(ClearableFileInput):
 
     def is_initial(self, value):
         is_initial = super().is_initial
-        return all(
-            is_initial(file) for file in value
-        )
+        try:
+            return all(
+                is_initial(file) for file in value
+            )
+        except TypeError:
+            return is_initial(value)
 
     def render(self, name, value, attrs=dict()):
         if self.multiple:
