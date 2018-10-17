@@ -114,6 +114,7 @@ INSTALLED_APPS = [
     'addressfield',
     'django_bleach',
     'django_fsm',
+    'django_pwned_passwords',
 
     'hijack',
     'compat',
@@ -229,16 +230,16 @@ WAGTAILSEARCH_BACKENDS = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,
+        }
+    },
+    {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django_pwned_passwords.password_validation.PWNEDPasswordValidator',
     },
 ]
 

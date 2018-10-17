@@ -31,7 +31,7 @@
 
         {{ field }}
 
-        {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text }}</h6>{% endif %}
+        {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
         <label for="{{ field.id_for_label }}"></label>
         {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             </div>
