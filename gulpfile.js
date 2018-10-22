@@ -211,15 +211,10 @@ gulp.task('watch:static', function watch () {
 gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
 // Build everything.
-gulp.task('build', gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts', 'lint'));
+gulp.task('build', gulp.series(gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts', 'lint'), 'collectstatic'));
 
 // Deploy everything.
 gulp.task('deploy', gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts'));
 
 // The default task.
 gulp.task('default', gulp.series('build'));
-
-
-// Resources used to create this gulpfile.js:
-// - https://github.com/google/web-starter-kit/blob/master/gulpfile.babel.js
-// - https://github.com/dlmanning/gulp-sass/blob/master/README.md
