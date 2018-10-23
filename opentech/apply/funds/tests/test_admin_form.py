@@ -34,13 +34,13 @@ def formset_base(field, total, delete, factory, same=False):
     return base_data
 
 
-def form_data(number_forms=0, delete=0, stages=None, same_forms=False):
+def form_data(number_forms=0, delete=0, stages=1, same_forms=False):
     form_data = formset_base('forms', number_forms, delete, same=same_forms, factory=ApplicationFormFactory)
     review_form_data = formset_base('review_forms', number_forms, False, same=same_forms, factory=ReviewFormFactory)
     form_data.update(review_form_data)
 
     fund_data = factory.build(dict, FACTORY_CLASS=FundTypeFactory)
-    fund_data['workflow_name'] = workflow_for_stages(stages or number_forms)
+    fund_data['workflow_name'] = workflow_for_stages(stages)
 
     form_data.update(fund_data)
     return form_data
