@@ -16,14 +16,14 @@ table {
 
         a {
             color: $color--mid-dark-grey;
-            transition: color 0.25s ease-out;
+            transition: color .25s ease-out;
         }
     }
 
     // table rows
     tr {
         border: 1px solid $color--light-mid-grey;
-        transition: box-shadow 0.15s ease;
+        transition: box-shadow .15s ease;
 
         @include media-query($table-breakpoint) {
             border-top: 0;

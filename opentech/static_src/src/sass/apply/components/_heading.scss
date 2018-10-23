@@ -31,7 +31,7 @@
         flex-direction: column;
         margin-top: 20px;
         font-weight: $weight--normal;
-        color: transparentize($color--dark-grey, 0.5);
+        color: transparentize($color--dark-grey, .5);
 
         @include media-query(tablet-landscape) {
             flex-direction: row;
@@ -50,7 +50,7 @@
     }
 
     &--light-grey {
-        color: transparentize($color--dark-grey, 0.5);
+        color: transparentize($color--dark-grey, .5);
     }
 
     &--uppercase {

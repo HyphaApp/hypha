@@ -141,7 +141,7 @@
             -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
 
             option {
-                background-color: white;
+                background-color: $color--white;
             }
         }
 
@@ -235,7 +235,7 @@
     textarea {
         width: 100%;
         padding: 10px;
-        border: 1px solid lightgrey;
+        border: 1px solid $color--light-grey;
     }
 
     // Radio + Checkbox
@@ -251,6 +251,7 @@
 
     [type='radio'] + label,
     [type='checkbox'] + label {
+        display: block;
         position: relative;
         padding-left: 30px;
         cursor: pointer;
@@ -304,10 +305,6 @@
 
     // Checkbox specific
     input[type='checkbox'] {
-        & + label {
-            display: block;
-        }
-
         & + label::before {
             transition: background-color $transition;
         }

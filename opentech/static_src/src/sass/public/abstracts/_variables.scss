@@ -1,3 +1,5 @@
+// sass-lint:disable no-color-keywords; no-color-hex
+
 // Default
 $color--white: #fff;
 $color--black: #141414;
@@ -5,6 +7,8 @@ $color--dark-grey: #404041;
 $color--light-grey: #f7f7f7;
 $color--light-mid-grey: #e8e8e8;
 $color--mid-grey: #cfcfcf;
+$color--mid-dark-grey: #919191;
+$color--dark-grey: #404041;
 
 // Brand
 $color--light-blue: #0d7db0;
@@ -16,6 +20,14 @@ $color--pink: #e35ca6;
 $color--light-pink: #ffe1df;
 $color--tomato: #f05e54;
 $color--mint: #40c2ad;
+$color--grass: #7dc588;
+$color--ocean: #1888b1;
+$color--sky-blue: #e7f2f6;
+$color--marine: #177da8;
+$color--mist: #f3fafe;
+$color--green: #7dc558;
+$color--pastel-red: #f1a9a9;
+$color--pastel-green: #afe6af;
 
 // Social
 $color--twitter: #1da6f6;
@@ -23,8 +35,18 @@ $color--linkedin: #137ab8;
 $color--facebook: #396ab5;
 
 // Transparent
-$color--black-10: rgba(0, 0, 0, 0.1);
-$color--black-25: rgba(0, 0, 0, 0.25);
+$color--black-50: rgba(0, 0, 0, .5);
+$color--black-40: rgba(0, 0, 0, .4);
+$color--black-25: rgba(0, 0, 0, .25);
+$color--black-20: rgba(0, 0, 0, .2);
+$color--black-10: rgba(0, 0, 0, .1);
+$color--white-50: rgba(255, 255, 255, .5);
+$color--white-40: rgba(255, 255, 255, .4);
+$color--white-25: rgba(255, 255, 255, .25);
+$color--white-20: rgba(255, 255, 255, .2);
+$color--white-10: rgba(255, 255, 255, .1);
+
+$color--light-blue-90: transparentize($color--light-blue, .9);
 
 // Assignment
 $color--default: $color--dark-grey;
@@ -67,9 +89,13 @@ $breakpoints: (
     'small-tablet'      '(min-width: 600px)',
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
-    'desktop'           '(min-width: 1280px)',
+    'desktop'           '(min-width: 1320px)',
     'deskop-wide'       '(min-width: 2556px)'
 );
 
 // Transition
-$transition: 0.25s ease-out;
+$transition: .25s ease-out;
+$quick-transition: .15s ease;
+
+// Spacing
+$mobile-gutter: 20px;

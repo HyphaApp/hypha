@@ -3,9 +3,9 @@
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <!-- favicons -->
         {% comment %}
@@ -51,11 +51,12 @@
         <meta property="og:description" content="{{ page|social_text:request.site }}" />
         <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
 
-        <link rel="stylesheet" type="text/css" href="{% static 'css/public/main.css' %}">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+        <link rel="stylesheet" href="{% static 'css/public/main.css' %}">
 
         {% block extra_css %}{% endblock %}
 
-        <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     </head>
 
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -180,7 +181,7 @@
 
                         <p>Test the OTF website for censorship</p>
 
-                        <a class="link link--button link--button-transparent" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
+                        <a class="button button--transparent--wide" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
 
                         <div class="footer__credits">
                             <a href="https://www.bbg.gov/" aria-label="Link to the Broadcasting Board of Governors website">
@@ -196,12 +197,13 @@
 
         </footer>
 
-        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-        <script type="text/javascript">
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <script>
             function googleTranslateElementInit() {
               new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
             }
         </script>
+        <script src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>

@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load static %}
 {% block title %}Editing: {{object.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
@@ -29,4 +30,8 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/list-input-files.js' %}"></script>
 {% endblock %}

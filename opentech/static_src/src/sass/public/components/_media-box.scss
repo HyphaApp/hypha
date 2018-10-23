@@ -46,7 +46,7 @@
             display: block;
             width: 100%;
             height: 100%;
-            background-color: rgba(27, 27, 27, 0.8);
+            background-color: rgba(27, 27, 27, .8); // sass-lint:disable-line no-color-literals
             content: '';
         }
     }

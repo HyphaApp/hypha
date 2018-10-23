@@ -65,7 +65,7 @@
                 background-color: $color--dark-blue;
                 content: '';
                 opacity: 0;
-                transition: opacity 0.5s cubic-bezier(0.2, 1.4, 0.67, 1.13);
+                transition: opacity .5s cubic-bezier(.2, 1.4, .67, 1.13);
             }
         }
 

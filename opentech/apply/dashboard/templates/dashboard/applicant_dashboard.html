@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load wagtailcore_tags workflow_tags %}
+{% load static wagtailcore_tags workflow_tags %}
 
 {% block title %}Submission Dashboard{% endblock %}
 
@@ -50,4 +50,8 @@
         {% render_table table %}
     </div>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
 {% endblock %}

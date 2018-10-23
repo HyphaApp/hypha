@@ -22,9 +22,9 @@
         }
     }
 
-    &--transparent {
+    &--transparent,
+    &--transparent--wide {
         @include button(transparent, $color--white);
-        @include button--narrow;
 
         .header--light-bg & {
             @include button(transparent, $color--black);
@@ -40,6 +40,10 @@
                 color: $color--white;
             }
         }
+    }
+
+    &--transparent {
+        @include button--narrow;
     }
 
     // cannot conform to BEM here in order to be able to override google button styles

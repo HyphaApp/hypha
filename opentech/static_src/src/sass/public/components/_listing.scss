@@ -7,7 +7,7 @@
 
     @include media-query(tablet-portrait) {
         position: relative;
-        height: 180px;
+        min-height: 180px;
         padding: 30px 210px 30px 30px;
     }
 
@@ -54,7 +54,7 @@
 
     &__title {
         margin-bottom: 5px;
-        line-height: 1;
+        line-height: 1.2;
         transition: color $transition;
 
         #{$root}:hover & {

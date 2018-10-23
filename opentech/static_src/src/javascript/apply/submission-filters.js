@@ -1,7 +1,7 @@
-import $ from './../globals';
-import mobileFilterPadding from './mobile-filter-padding';
+(function ($) {
 
-export default () => {
+    'use strict';
+
     const $openButton = $('.js-open-filters');
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
@@ -18,9 +18,10 @@ export default () => {
         let match = $(`.select2-selection[aria-owns="${selectId}"]`);
 
         // if the dropdown contains a clear class, the filters are active
-        if($(match[0]).find('span.select2-selection__clear').length !== 0) {
+        if ($(match[0]).find('span.select2-selection__clear').length !== 0) {
             match[0].classList.add('is-active');
-        } else {
+        }
+        else {
             match[0].classList.remove('is-active');
         }
     });
@@ -28,7 +29,9 @@ export default () => {
     // remove active class on clearing select2
     $('.select2').on('select2:unselecting', (e) => {
         const dropdown = e.target.nextElementSibling.firstChild.firstChild;
-        (dropdown.classList.contains('is-active')) ? dropdown.classList.remove('is-active') : null;
+        if (dropdown.classList.contains('is-active')) {
+            dropdown.classList.remove('is-active');
+        }
     });
 
     // open mobile filters
@@ -51,7 +54,9 @@ export default () => {
         dropdowns.forEach(dropdown => {
             $(dropdown).val(null).trigger('change');
             $('.select2-selection.is-active').removeClass('is-active');
-            mobileFilterPadding(dropdown);
+            mobileFilterPadding(dropdown); // eslint-disable-line no-undef
         });
     });
-};
+
+})(jQuery);
+

@@ -5,9 +5,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - heroku
     docker:
       - image: circleci/python:3.6.6-stretch-node
         environment:
@@ -15,7 +12,6 @@ jobs:
           PGHOST: localhost
           PGUSER: root
           DJANGO_SETTINGS_MODULE: opentech.settings.test
-          NPM_CONFIG_PRODUCTION: false
           SEND_MESSAGES: false
 
       - image: circleci/postgres:10.5
@@ -28,59 +24,57 @@ jobs:
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
-            - v1-python-{{ .Branch }}-
-            - v1-python-
-
+      - run:
+          name: set owner on /usr/local
+          command: sudo chown -R circleci:circleci /usr/local
 
       - restore_cache:
           keys:
-            - v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
-            - v1-yarn-{{ .Branch }}-
-            - v1-yarn-
+            - v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+            - v2-python-{{ .Branch }}-
+            - v2-python-
+
+      - restore_cache:
+          keys:
+            - v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-npm-{{ .Branch }}-
+            - v2-npm-
 
       - run:
-          name: install dependencies
+          name: install python dependencies
           command: |
-            sudo apt-get install rsync
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
 
       - run:
-          name: buils static assets
+          name: install node dependencies
           command: |
-            cd opentech/static_src
-            yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
-            npm run build:prod
+            npm install --quiet
+            npm install -g gulp-cli
 
       - save_cache:
           paths:
             - ./venv
-          key: v1-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          key: v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
 
       - save_cache:
           paths:
-            - ~/.cache/yarn
-          key: v1-yarn-{{ .Branch }}-{{ checksum "opentech/static_src/yarn.lock" }}
+            - ./node_modules
+            - /usr/local/lib/node_modules
+            - /usr/local/bin
+          key: v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
 
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+      - run:
+          name: buils static assets
+          command: gulp deploy
+
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py createcachetable
-            python manage.py collectstatic --no-input
-            python manage.py migrate
+            flake8 ./opentech
+            python manage.py collectstatic --noinput --verbosity=0
+            python manage.py check
+            python manage.py makemigrations --check --noinput --verbosity=0
             python manage.py test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports

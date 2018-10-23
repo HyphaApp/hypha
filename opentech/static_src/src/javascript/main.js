@@ -1,75 +1,129 @@
-import jQuery from './globals';
-import MobileMenu from './components/mobile-menu';
-import Search from './components/search';
-import MobileSearch from './components/mobile-search';
-import Tabs from './components/tabs';
-import listInputFiles from './components/list-input-files';
-import toggleActionsPanel from './components/toggle-actions-panel';
-import activityFeed from './components/activity-feed';
-import messages from './components/messages';
-import fancyboxGlobal from './components/fancybox-global';
-import allSubmissions from './components/all-submissions-table';
-import allReviews from './components/all-reviews-table';
-import submissionFilters from './components/submission-filters';
-import mobileFilterPadding from './components/mobile-filter-padding';
-import generateTooltips from './components/submission-tooltips';
-import DeterminationCopy from './components/determination-template';
-import toggleReviewers from './components/toggle-reviewers';
 
 (function ($) {
-    $(document).ready(function(){
-        // remove no-js class if js is enabled
-        document.querySelector('html').classList.remove('no-js');
 
-        $(MobileMenu.selector()).each((index, el) => {
-            new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
-        });
+    'use strict';
 
-        $(Search.selector()).each((index, el) => {
-            new Search($(el), $('.header__search'));
-        });
+    let Search = class {
+        static selector() {
+            return '.js-search-toggle';
+        }
 
-        $(MobileSearch.selector()).each((index, el) => {
-            new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
-        });
+        constructor(node, searchForm) {
+            this.node = node;
+            this.searchForm = searchForm;
+            this.bindEventListeners();
+        }
 
-        $(Tabs.selector()).each((index, el) => {
-            new Tabs($(el));
-        });
+        bindEventListeners() {
+            this.node.click(this.toggle.bind(this));
+        }
 
-        // $(DeterminationCopy.selector()).each((index, el) => {
-        //     new DeterminationCopy($(el));
-        // });
+        toggle() {
+            // show the search
+            this.searchForm[0].classList.toggle('is-visible');
 
-        // Add tooltips to truncated titles on submissions overview table
-        generateTooltips();
+            // swap the icons
+            this.node[0].querySelector('.header__icon--open-search').classList.toggle('is-hidden');
+            this.node[0].querySelector('.header__icon--close-search').classList.toggle('is-unhidden');
 
-        // Show list of selected files for upload on input[type=file]
-        listInputFiles();
+            // add modifier to header to be able to change header icon colours
+            document.querySelector('.header').classList.toggle('search-open');
+        }
+    };
 
-        // Show actions sidebar on mobile
-        toggleActionsPanel();
+    let MobileMenu = class {
+        static selector() {
+            return '.js-mobile-menu-toggle';
+        }
 
-        // Global fancybox options
-        fancyboxGlobal();
+        constructor(node, closeButton, mobileMenu, search) {
+            this.node = node;
+            this.closeButton = closeButton;
+            this.mobileMenu = mobileMenu;
+            this.search = search;
 
-        // Activity feed logic
-        activityFeed();
+            this.bindEventListeners();
+        }
 
-        // messages logic
-        messages();
+        bindEventListeners() {
+            this.node.click(this.toggle.bind(this));
+            this.closeButton.click(this.toggle.bind(this));
+        }
 
-        // Submissions overview table logic
-        allSubmissions();
+        toggle() {
+            // toggle mobile menu
+            this.mobileMenu[0].classList.toggle('is-visible');
 
-        // All reviews table logic
-        // allReviews();
+            // check if search exists
+            if (document.body.contains(this.search[0])) {
+                // reset the search whenever the mobile menu is toggled
+                if (this.search[0].classList.contains('is-visible')) {
+                    this.search[0].classList.toggle('is-visible');
+                    document.querySelector('.header__inner--menu-open').classList.toggle('header__inner--search-open');
+                }
+            }
 
-        // Submission filters logic
-        submissionFilters();
+            // reset the search show/hide icons
+            if (this.mobileMenu[0].classList.contains('is-visible') && document.body.contains(this.search[0])) {
+                document.querySelector('.header__icon--open-search-menu-closed').classList.remove('is-hidden');
+                document.querySelector('.header__icon--close-search-menu-closed').classList.remove('is-unhidden');
+            }
+        }
+    };
 
-        // Toggle all reviewers in the sidebar
-        toggleReviewers();
+    let MobileSearch = class {
+        static selector() {
+            return '.js-mobile-search-toggle';
+        }
+
+        constructor(node, mobileMenu, searchForm, searchToggleButton) {
+            this.node = node;
+            this.mobileMenu = mobileMenu[0];
+            this.searchForm = searchForm[0];
+            this.searchToggleButton = searchToggleButton[0];
+            this.bindEventListeners();
+        }
+
+        bindEventListeners() {
+            this.node.click(this.toggle.bind(this));
+        }
+
+        toggle() {
+            // hide the mobile menu
+            this.mobileMenu.classList.remove('is-visible');
+
+            // wait for the mobile menu to close
+            setTimeout(() => {
+                // open the search
+                this.searchForm.classList.add('is-visible');
+
+                // swap the icons
+                this.searchToggleButton.querySelector('.header__icon--open-search').classList.add('is-hidden');
+                this.searchToggleButton.querySelector('.header__icon--close-search').classList.add('is-unhidden');
+            }, 250);
+        }
+    };
+
+    // Replace no-js with js class if js is enabled.
+    document.querySelector('html').classList.replace('no-js', 'js');
+
+    $(MobileMenu.selector()).each((index, el) => {
+        new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
+    });
+
+    $(Search.selector()).each((index, el) => {
+        new Search($(el), $('.header__search'));
+    });
+
+    $(MobileSearch.selector()).each((index, el) => {
+        new MobileSearch($(el), $('.header__menus--mobile'), $('.header__search'), $('.js-search-toggle'));
+    });
+
+    // Close the message
+    $('.js-close-message').click((e) => {
+        e.preventDefault();
+        var message = e.target.closest('.js-message');
+        message.classList.add('messages__text--hide');
     });
 
     // Add active class to select2 checkboxes after page has been filtered
@@ -82,12 +136,13 @@ import toggleReviewers from './components/toggle-reviewers';
     });
 
     // reset mobile filters if they're open past the tablet breakpoint
-    $(window).resize(function resize(){
+    $(window).resize(function resize() {
         if ($(window).width() < 768) {
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
             });
-        } else {
+        }
+        else {
             $('body').removeClass('no-scroll');
             $('.js-filter-wrapper').removeClass('is-open');
             $('.js-filter-list').removeClass('form__filters--mobile');
@@ -96,4 +151,39 @@ import toggleReviewers from './components/toggle-reviewers';
             $('.tr--parent.is-expanded').removeClass('is-expanded');
         }
     }).trigger('resize');
+
+    function mobileFilterPadding(element) {
+        const expanded = 'expanded-filter-element';
+        const dropdown = $(element).closest('.select2');
+        const openDropdown = $('.select2 .' + expanded);
+        let dropdownMargin = 0;
+
+        if (openDropdown.length > 0 && !openDropdown.hasClass('select2-container--open')) {
+            // reset the margin of the select we previously worked
+            openDropdown.removeClass(expanded);
+            // store the offset to adjust the new select box (elements above the old dropdown unaffected)
+            if (dropdown.position().top > openDropdown.position().top) {
+                dropdownMargin = parseInt(openDropdown.css('marginBottom'));
+            }
+            openDropdown.css('margin-bottom', '0px');
+        }
+
+        if (dropdown.hasClass('select2-container--open')) {
+            dropdown.addClass(expanded);
+            const dropdownID = $(element).closest('.select2-selection').attr('aria-owns');
+            // Element which has the height of the select dropdown
+            const match = $(`ul#${dropdownID}`);
+            const dropdownHeight = match.outerHeight(true);
+
+            // Element which has the position of the dropdown
+            const positionalMatch = match.closest('.select2-container');
+
+            // Pad the bottom of the select box
+            dropdown.css('margin-bottom', `${dropdownHeight}px`);
+
+            // bump up the dropdown options by height of closed elements
+            positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
+        }
+    }
+
 })(jQuery);

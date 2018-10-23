@@ -70,7 +70,7 @@ small, .milli { @include font-size(milli); }
     font-family: 'proxima-nova';
     font-style: normal;
     font-weight: 200;
-    src: url('./../../fonts/proxima-nova/proxima-nova-thin.woff') format('woff');
+    src: url('../../fonts/proxima-nova/proxima-nova-thin.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
@@ -79,7 +79,7 @@ small, .milli { @include font-size(milli); }
     font-family: 'proxima-nova';
     font-style: normal;
     font-weight: 400;
-    src: url('./../../fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
+    src: url('../../fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
@@ -88,7 +88,7 @@ small, .milli { @include font-size(milli); }
     font-family: 'proxima-nova';
     font-style: normal;
     font-weight: 600;
-    src: url('./../../fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
+    src: url('../../fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
@@ -97,7 +97,7 @@ small, .milli { @include font-size(milli); }
     font-family: 'proxima-nova';
     font-style: normal;
     font-weight: 700;
-    src: url('./../../fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
+    src: url('../../fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
@@ -106,6 +106,6 @@ small, .milli { @include font-size(milli); }
     font-family: 'proxima-nova';
     font-style: normal;
     font-weight: 800;
-    src: url('./../../fonts/proxima-nova/proxima-nova-black.woff') format('woff');
+    src: url('../../fonts/proxima-nova/proxima-nova-black.woff') format('woff');
     text-rendering: optimizeLegibility;
 }

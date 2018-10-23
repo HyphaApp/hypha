@@ -14,7 +14,7 @@
     a {
         font-weight: $weight--bold;
         border-bottom: 1px solid transparent;
-        transition: border, color, 0.15s ease-in-out;
+        transition: border, color, .15s ease-in-out;
 
         &:hover {
             border-bottom: 1px solid $color--primary;

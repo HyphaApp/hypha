@@ -14,7 +14,7 @@
                         <a class="card-slim" href="{% pageurl subpage %}">
                             <div class="card-slim__contents">
                                 <div>
-                                    <h3 class="heading heading--no-margin">{{ subpage.listing_title|default:subpage.title }}</h3>
+                                    <h3 class="heading heading--small-margin">{{ subpage.listing_title|default:subpage.title }}</h3>
                                     {% if subpage.listing_summary or subpage.introduction %}
                                         <p class="card-slim__summary">{{ subpage.listing_summary|default:subpage.introduction }}</p>
                                     {% endif %}

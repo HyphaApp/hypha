@@ -58,10 +58,9 @@ cd $PROJECT_DIR
 EOF
 
 # Install node.js and npm
-su - vagrant -c "curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -"
+su - vagrant -c "curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -"
 su - vagrant -c "sudo apt-get install -y nodejs"
 
 # Build the static files
-su - vagrant -c "sudo npm install -g yarn"
-su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn install"
-su - vagrant -c "cd $PROJECT_DIR/$MODULE_NAME/static_src; yarn build"
+su - vagrant -c "sudo npm install -g gulp-cli"
+su - vagrant -c "cd $PROJECT_DIR; gulp deploy"

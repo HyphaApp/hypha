@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags %}
+{% load static bleach_tags %}
 {% block title %}Create a determination{% endblock %}
 {% block content %}
 <div class="admin-bar">
@@ -46,3 +46,9 @@
     {% endfor %}
 </div>
 {% endblock %}
+
+{# Skip this until the script is improved.
+{% block extra_js %}
+    <script src="{% static 'js/apply/determination-template.js' %}"></script>
+{% endblock %}
+#}

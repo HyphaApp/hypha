@@ -74,9 +74,24 @@ ol {
     transition: opacity, z-index, $transition;
 }
 
+.hidden,
 .is-hidden,
 %is-hidden {
     display: none;
+}
+
+.js-hidden,
+%js-hidden {
+    html.js & {
+        @extend %is-hidden;
+    }
+}
+
+.no-js-hidden,
+%no-js-hidden {
+    html.nojs & {
+        @extend %is-hidden;
+    }
 }
 
 .is-unhidden,
@@ -103,9 +118,9 @@ ol {
     left: 0;
     z-index: 5;
     width: 100%;
-    background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0.72) 0%, rgba(116, 116, 118, 0) 96%);
+    background-image: linear-gradient(-180deg, rgba(0, 0, 0, .72) 0%, rgba(116, 116, 118, 0) 96%); // sass-lint:disable-line no-color-literals
     content: '';
-    opacity: 0.5;
+    opacity: .5;
 }
 
 .light-grey-bg {
