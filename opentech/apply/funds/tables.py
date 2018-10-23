@@ -87,6 +87,12 @@ class SubmissionsTable(tables.Table):
         qs = qs.order_by(update_order, 'submit_time')
         return qs, True
 
+    # For when we update to Django Tables2 2.x.
+    # def get_column_class_names(self, classes_set, bound_column):
+    #     classes_set = super(SubmissionsTable, self).get_column_class_names(classes_set, bound_column)
+    #     classes_set.add(bound_column.name)
+    #     return classes_set
+
 
 class ReviewerSubmissionsTable(SubmissionsTable):
     class Meta(SubmissionsTable.Meta):
@@ -303,6 +309,12 @@ class RoundsTable(tables.Table):
 
     def order_progress(self, qs, desc):
         return qs.order_by(self._field_order('progress', desc)), True
+
+    # For when we update to Django Tables2 2.x.
+    # def get_column_class_names(self, classes_set, bound_column):
+    #     classes_set = super(SubmissionsTable, self).get_column_class_names(classes_set, bound_column)
+    #     classes_set.add(bound_column.name)
+    #     return classes_set
 
 
 class ActiveRoundFilter(Select2MultipleChoiceFilter):
