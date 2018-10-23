@@ -21,6 +21,8 @@ from opentech.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
+from opentech.apply.funds.workflow import ConceptProposal, Request
+
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.home.factories import ApplyHomePageFactory
@@ -49,7 +51,10 @@ __all__ = [
 
 
 def workflow_for_stages(stages):
-    return list(FundType.WORKFLOW_CHOICES.keys())[stages - 1]
+    return {
+        1: Request.admin_name,
+        2: ConceptProposal.admin_name,
+    }[stages]
 
 
 class AbstractApplicationFactory(wagtail_factories.PageFactory):
