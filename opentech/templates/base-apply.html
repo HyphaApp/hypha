@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
-        <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 
         <!-- favicons -->
         {% comment %}
