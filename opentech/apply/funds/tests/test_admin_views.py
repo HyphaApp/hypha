@@ -17,7 +17,7 @@ class TestFundCreationView(TestCase):
         self.client.force_login(self.user)
         url = reverse('wagtailadmin_pages:add', args=('funds', 'fundtype', self.home.id))
 
-        data = form_data(forms, same_forms=same_forms)
+        data = form_data(forms, same_forms=same_forms, stages=forms)
         data['action-publish'] = True
 
         response = self.client.post(url, data=data, secure=True, follow=True)

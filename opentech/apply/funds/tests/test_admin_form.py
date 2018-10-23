@@ -66,7 +66,7 @@ class TestWorkflowFormAdminForm(TestCase):
         self.assertTrue(form.is_valid(), form.errors.as_text())
 
     def test_doesnt_validates_with_two_forms_one_stage(self):
-        form = self.submit_data(form_data(2, stages=1))
+        form = self.submit_data(form_data(2))
         self.assertFalse(form.is_valid())
         self.assertTrue(form.errors['__all__'])
         formset_errors = form.formsets['forms'].errors
@@ -76,5 +76,5 @@ class TestWorkflowFormAdminForm(TestCase):
         self.assertTrue(formset_errors[1]['form'])
 
     def test_can_save_two_forms(self):
-        form = self.submit_data(form_data(2))
+        form = self.submit_data(form_data(2, stages=2))
         self.assertTrue(form.is_valid())
