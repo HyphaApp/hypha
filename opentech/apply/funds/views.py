@@ -393,7 +393,7 @@ class RevisionCompareView(DetailView):
             compare(*fields, should_bleach=False)
             for fields in zip(from_required, to_required)
         ]
-        for field, diff in zip(self.object.must_include, diffed_required):
+        for field, diff in zip(self.object.named_blocks, diffed_required):
             setattr(self.object, 'get_{}_display'.format(field), diff)
 
         # Compare all the answers
@@ -407,7 +407,7 @@ class RevisionCompareView(DetailView):
     def render_required(self):
         return [
             getattr(self.object, 'get_{}_display'.format(field))()
-            for field in self.object.must_include
+            for field in self.object.named_blocks
         ]
 
     def get_context_data(self, **kwargs):

@@ -6,7 +6,16 @@ from django.utils.translation import ugettext_lazy as _
 from addressfield.fields import AddressField
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 from opentech.apply.stream_forms.blocks import FormFieldsBlock
-from opentech.apply.utils.blocks import MustIncludeFieldBlock, CustomFormFieldsBlock, RichTextFieldBlock
+from opentech.apply.utils.blocks import (
+    CustomFormFieldsBlock,
+    MustIncludeFieldBlock,
+    RichTextFieldBlock,
+    SingleIncludeBlock,
+)
+
+
+class ApplicationSingleIncludeFieldBlock(SingleIncludeBlock):
+    pass
 
 
 class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
@@ -21,7 +30,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
         icon = 'tag'
 
 
-class ValueBlock(ApplicationMustIncludeFieldBlock):
+class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
     widget = forms.NumberInput
@@ -36,7 +45,7 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
         icon = 'mail'
 
 
-class AddressFieldBlock(ApplicationMustIncludeFieldBlock):
+class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
     name = 'address'
     description = 'The postal address of the user'
 
@@ -105,6 +114,11 @@ class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
     category = CategoryQuestionBlock(group=_('Custom'))
     rich_text = RichTextFieldBlock(group=_('Fields'))
     required_blocks = ApplicationMustIncludeFieldBlock.__subclasses__()
+    single_blocks = ApplicationSingleIncludeFieldBlock.__subclasses__()
 
 
 REQUIRED_BLOCK_NAMES = [block.name for block in ApplicationMustIncludeFieldBlock.__subclasses__()]
+
+SINGLE_BLOCK_NAMES = [block.name for block in ApplicationSingleIncludeFieldBlock.__subclasses__()]
+
+NAMED_BLOCKS = REQUIRED_BLOCK_NAMES + SINGLE_BLOCK_NAMES

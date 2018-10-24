@@ -445,10 +445,10 @@ class TestApplicationSubmission(TestCase):
 
 
 class TestSubmissionRenderMethods(TestCase):
-    def test_must_include_not_included_in_answers(self):
+    def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
         answers = submission.render_answers()
-        for name in submission.must_include:
+        for name in submission.named_blocks:
             field = submission.field(name)
             self.assertNotIn(field.value['field_label'], answers)
 
@@ -456,7 +456,7 @@ class TestSubmissionRenderMethods(TestCase):
         submission = ApplicationSubmissionFactory()
         answers = submission.output_answers()
         for field_name in submission.question_field_ids:
-            if field_name not in submission.must_include:
+            if field_name not in submission.named_blocks:
                 field = submission.field(field_name)
                 self.assertIn(field.value['field_label'], answers)
 

@@ -26,7 +26,7 @@ from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
 from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
-from ..blocks import ApplicationCustomFormFieldsBlock, REQUIRED_BLOCK_NAMES
+from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
     DETERMINATION_RESPONSE_PHASES,
@@ -51,7 +51,7 @@ class JSONOrderable(models.QuerySet):
 
         def build_json_order_by(field):
             try:
-                if field.replace('-', '') not in REQUIRED_BLOCK_NAMES:
+                if field.replace('-', '') not in NAMED_BLOCKS:
                     return field
             except AttributeError:
                 return field
@@ -61,7 +61,7 @@ class JSONOrderable(models.QuerySet):
                 field = field[1:]
             else:
                 descending = False
-            return OrderBy(RawSQL(f'LOWER({self.json_field}->>%s)', (field,)), descending=descending)
+            return OrderBy(RawSQL(f'LOWER({self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
 
         field_ordering = [build_json_order_by(field) for field in field_names]
         return super().order_by(*field_ordering)
@@ -251,8 +251,8 @@ class ApplicationSubmissionMetaclass(AddTransitions):
 
         # We want to access the redered display of the required fields.
         # Treat in similar way to django's get_FIELD_display
-        for required_name in REQUIRED_BLOCK_NAMES:
-            partial_method_name = f'_{required_name}_method'
+        for block_name in NAMED_BLOCKS:
+            partial_method_name = f'_{block_name}_method'
             # We need to generate the partial method and the wrap it in property so
             # we can access the required fields like normal fields. e.g. self.title
             # Partial method requires __get__ to be called in order to bind it to the
@@ -262,17 +262,17 @@ class ApplicationSubmissionMetaclass(AddTransitions):
             setattr(
                 cls,
                 partial_method_name,
-                partialmethod(cls._get_REQUIRED_value, name=required_name),
+                partialmethod(cls._get_REQUIRED_value, name=block_name),
             )
             setattr(
                 cls,
-                f'{required_name}',
+                f'{block_name}',
                 property(getattr(cls, partial_method_name)),
             )
             setattr(
                 cls,
-                f'get_{required_name}_display',
-                partialmethod(cls._get_REQUIRED_display, name=required_name),
+                f'get_{block_name}_display',
+                partialmethod(cls._get_REQUIRED_display, name=block_name),
             )
         return cls
 
@@ -460,7 +460,7 @@ class ApplicationSubmission(
         self.process_file_data(self.form_data)
 
     def process_form_data(self):
-        for field_name, field_id in self.must_include.items():
+        for field_name, field_id in self.named_blocks.items():
             response = self.form_data.pop(field_id, None)
             if response:
                 self.form_data[field_name] = response

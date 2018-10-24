@@ -68,9 +68,6 @@ class FormFieldBlock(StructBlock):
 class OptionalFormFieldBlock(FormFieldBlock):
     required = BooleanBlock(label=_('Required'), required=False)
 
-    def get_searchable_content(self, value, data):
-        return data
-
 
 CHARFIELD_FORMATS = [
     ('email', _('Email')),

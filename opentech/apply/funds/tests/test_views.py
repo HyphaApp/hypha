@@ -32,7 +32,7 @@ def prepare_form_data(submission, **kwargs):
         field_id = submission.field(field).id
         data[field_id] = value
 
-    address_field = submission.must_include['address']
+    address_field = submission.named_blocks['address']
     address = data.pop(address_field)
     data.update(**prepare_address(address, address_field))
 
@@ -174,6 +174,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         # Staff edits don't affect the status
         self.assertEqual(old_status, submission.status)
         self.assertEqual(new_title, submission.title)
+
+    def test_not_included_fields_render(self):
+        submission = ApplicationSubmissionFactory(form_fields__exclude__value=True)
+        response = self.get_page(submission)
+        self.assertNotContains(response, 'Value')
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
