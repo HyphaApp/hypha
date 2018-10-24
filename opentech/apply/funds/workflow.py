@@ -137,7 +137,7 @@ class CanEditPermissions(DefaultPermissions):
 
 Request = Stage('Request', False)
 
-RequestExt = Stage('RequestExt', True)
+RequestExt = Stage('Request', True)
 
 Concept = Stage('Concept', False)
 
