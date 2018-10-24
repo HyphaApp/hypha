@@ -48,7 +48,7 @@ install:
 # Run the tests
 script:
   # Run python code style checks
-  - flake8
+  - flake8 ./opentech
 
   # Collect static
   - python manage.py collectstatic --noinput --verbosity=0
