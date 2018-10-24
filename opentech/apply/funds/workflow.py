@@ -255,7 +255,7 @@ SingleStageExternalDefinition = {
     },
     'ext_post_review_discussion': {
         'transitions': {
-            'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'ext_external_review': 'Open AC review',
             'ext_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_post_review_more_info': 'Request More Information',
         },
