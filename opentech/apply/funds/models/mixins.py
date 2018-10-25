@@ -97,7 +97,7 @@ class AccessFormData:
         definitive_id = self.get_definitive_id(id)
         try:
             return self.raw_data[definitive_id]
-        except KeyError as e:
+        except KeyError:
             # We have most likely progressed application forms so the data isnt in form_data
             return None
 
