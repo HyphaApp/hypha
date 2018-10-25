@@ -75,7 +75,6 @@ class Command(BaseCommand):
         groups = []
         role_map = {
             'council': 'Reviewer',
-            'administrator': 'Editors',
         }
 
         if self.is_staff(user['mail']):
