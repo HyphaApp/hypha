@@ -165,6 +165,7 @@ SingleStageDefinition = {
                 'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
                 'method': 'create_revision',
             },
+            'rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'More information required',
         'stage': Request,
@@ -345,6 +346,7 @@ DoubleStageDefinition = {
                 'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
                 'method': 'create_revision',
             },
+            'concept_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'More information required',
         'stage': Concept,
@@ -407,6 +409,7 @@ DoubleStageDefinition = {
     'draft_proposal': {
         'transitions': {
             'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
@@ -431,6 +434,7 @@ DoubleStageDefinition = {
                 'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
                 'method': 'create_revision',
             },
+            'proposal_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'More information required',
         'stage': Proposal,
