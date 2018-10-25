@@ -137,6 +137,8 @@ class CanEditPermissions(DefaultPermissions):
 
 Request = Stage('Request', False)
 
+RequestExt = Stage('RequestExt', True)
+
 Concept = Stage('Concept', False)
 
 Proposal = Stage('Proposal', True)
@@ -214,6 +216,112 @@ SingleStageDefinition = {
         'stage': Request,
         'permissions': NoPermissions(),
         'step': 3,
+    },
+}
+
+SingleStageExternalDefinition = {
+    INITIAL_STATE: {
+        'transitions': {
+            'ext_internal_review': 'Open Review',
+            'ext_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'ext_more_info': 'Request More Information',
+        },
+        'display': 'Under Discussion',
+        'stage': RequestExt,
+        'permissions': DefaultPermissions(),
+        'step': 0,
+    },
+    'ext_more_info': {
+        'transitions': {
+            INITIAL_STATE: {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
+        },
+        'display': 'More information required',
+        'stage': RequestExt,
+        'permissions': CanEditPermissions(),
+        'step': 0,
+    },
+    'ext_internal_review': {
+        'transitions': {
+            'ext_post_review_discussion': 'Close Review',
+        },
+        'display': 'Internal Review',
+        'stage': RequestExt,
+        'permissions': DefaultPermissions(),
+        'step': 1,
+    },
+    'ext_post_review_discussion': {
+        'transitions': {
+            'ext_external_review': 'Open AC review',
+            'ext_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'ext_post_review_more_info': 'Request More Information',
+        },
+        'display': 'Under Discussion',
+        'stage': RequestExt,
+        'permissions': DefaultPermissions(),
+        'step': 2,
+    },
+    'ext_post_review_more_info': {
+        'transitions': {
+            'ext_post_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
+        },
+        'display': 'More information required',
+        'stage': RequestExt,
+        'permissions': CanEditPermissions(),
+        'step': 2,
+    },
+    'ext_external_review': {
+        'transitions': {
+            'ext_post_external_review_discussion': 'Close Review',
+        },
+        'display': 'Advisory Council Review',
+        'stage': RequestExt,
+        'permissions': ReviewerReviewPermissions(),
+        'step': 3,
+    },
+    'ext_post_external_review_discussion': {
+        'transitions': {
+            'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'ext_rejected': {'display': 'Reject', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'ext_post_external_review_more_info': 'Request More Information',
+        },
+        'display': 'Under Discussion',
+        'stage': RequestExt,
+        'permissions': DefaultPermissions(),
+        'step': 4,
+    },
+    'ext_post_external_review_more_info': {
+        'transitions': {
+            'ext_post_external_review_discussion': {
+                'display': 'Submit',
+                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                'method': 'create_revision',
+            },
+        },
+        'display': 'More information required',
+        'stage': RequestExt,
+        'permissions': CanEditPermissions(),
+        'step': 4,
+    },
+
+    'ext_accepted': {
+        'display': 'Accepted',
+        'stage': RequestExt,
+        'permissions': NoPermissions(),
+        'step': 5,
+    },
+    'ext_rejected': {
+        'display': 'Rejected',
+        'stage': RequestExt,
+        'permissions': NoPermissions(),
+        'step': 5,
     },
 }
 
@@ -416,6 +524,10 @@ Request = Workflow('Request', 'single', **{
     for phase_name, phase_data in SingleStageDefinition.items()
 })
 
+RequestExternal = Workflow('Request with external review', 'single_ext', **{
+    phase_name: Phase(phase_name, **phase_data)
+    for phase_name, phase_data in SingleStageExternalDefinition.items()
+})
 
 ConceptProposal = Workflow('Concept & Proposal', 'double', **{
     phase_name: Phase(phase_name, **phase_data)
@@ -425,6 +537,7 @@ ConceptProposal = Workflow('Concept & Proposal', 'double', **{
 
 WORKFLOWS = {
     Request.admin_name: Request,
+    RequestExternal.admin_name: RequestExternal,
     ConceptProposal.admin_name: ConceptProposal,
 }
 
@@ -479,6 +592,7 @@ DETERMINATION_RESPONSE_PHASES = [
     'post_review_discussion',
     'concept_review_discussion',
     'post_external_review_discussion',
+    'ext_post_external_review_discussion',
 ]
 
 
