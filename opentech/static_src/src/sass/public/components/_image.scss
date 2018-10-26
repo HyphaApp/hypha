@@ -15,4 +15,14 @@
             margin-bottom: 20px;
         }
     }
+
+    &--float-small {
+        display: block;
+        margin: 0 auto 10px auto;
+
+        @include media-query(small-tablet) {
+            float: right;
+            margin:  10px 0 10px 10px;
+        }
+    }
 }
