@@ -27,6 +27,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
     description = 'The title of the project'
 
     class Meta:
+        label = _('Application title')
         icon = 'tag'
 
 
@@ -34,6 +35,9 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
     widget = forms.NumberInput
+
+    class Meta:
+        label = _('Requested amount')
 
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):

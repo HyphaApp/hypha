@@ -306,7 +306,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 
 
 class FormFieldsBlock(StreamBlock):
-    text_markup = RichTextBlock(group=_('Other'), label=_('Paragraph'))
+    text_markup = RichTextBlock(group=_('Custom'), label=_('Section text/header'))
     char = CharFieldBlock(group=_('Fields'))
     text = TextFieldBlock(group=_('Fields'))
     number = NumberFieldBlock(group=_('Fields'))
