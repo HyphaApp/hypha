@@ -2,23 +2,15 @@
 {% block header_modifier %}header--grey-pixels{% endblock %}
 {# Dont include fixed apply button on this page #}
 {% block apply_button %}{% endblock %}
-{% load wagtailcore_tags navigation_tags static %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
 
 {% block content %}
     {% include "public_funds/includes/lab_apply_cta.html" %}
     <div class="wrapper">
         <section class="section section--main section--top-bottom-space">
-            <div class="media-box media-box--reverse media-box--bottom-space">
-                {% include "utils/includes/media_box_icon.html" with page_icon=page.icon %}
-
-                <div class="media-box__content">
-                    <h4>{{ page.title }}</h4>
-                    {% if page.introduction %}
-                        <p class="media-box__teaser">{{ page.introduction }}</p>
-                    {% endif %}
-                </div>
-            </div>
-
+            {% if page.icon %}
+                {% image page.icon fill-100x100 class="image--float-small" %}
+            {% endif %}
             {% include_block page.body %}
         </section>
     </div>
