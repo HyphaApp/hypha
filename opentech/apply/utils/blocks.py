@@ -48,6 +48,7 @@ class CustomFormFieldsBlock(StreamBlock):
     single_blocks = []
 
     def __init__(self, *args, **kwargs):
+        # The space before " Required" is to make the group sort first. Ugly but easy, and it works.
         child_blocks = [(block.name, block(group=_(' Required'))) for block in self.required_blocks]
         child_blocks += [(block.name, block(group=_('Custom'))) for block in self.single_blocks]
         self.required_block_names = [block.name for block in self.required_blocks]
