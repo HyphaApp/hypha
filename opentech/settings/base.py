@@ -378,14 +378,19 @@ ESI_ENABLED = False
 ENABLE_STYLEGUIDE = False
 DEBUGTOOLBAR = False
 
+# Staff e-mail domain
+
+if 'STAFF_EMAIL_DOMAINS' in env:
+    STAFF_EMAIL_DOMAINS = env['STAFF_EMAIL_DOMAINS'].split(',')
+else:
+    STAFF_EMAIL_DOMAINS = ['opentech.fund']
+
 # Social Auth
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
-STAFF_EMAIL_DOMAINS = ['opentech.fund']
-
 if 'SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS' in env:
     SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env['SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS'].split(',')
 else:
