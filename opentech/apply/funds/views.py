@@ -25,6 +25,7 @@ from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
+from opentech.public.funds.models import BaseApplicationPage, LabPage
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
@@ -148,13 +149,27 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
+    def get_public_page(self, page_id):
+        try:
+            return BaseApplicationPage.objects.get(application_type_id=page_id)
+        except BaseApplicationPage.DoesNotExist:
+            pass
+        try:
+            return LabPage.objects.get(lab_type_id=page_id)
+        except LabPage.DoesNotExist:
+            pass
+        return False
+
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
+        public_page = self.get_public_page(self.object.page.id)
+
         return super().get_context_data(
             other_submissions=other_submissions,
+            public_page=public_page,
             **kwargs,
         )
 

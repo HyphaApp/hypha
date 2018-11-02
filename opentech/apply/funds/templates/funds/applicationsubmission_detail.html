@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load static workflow_tags %}
+{% load static workflow_tags wagtailcore_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -13,7 +13,7 @@
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
-            <span>{{ object.page }}</span>
+            <span>{% if public_page %}<a class="link--transparent link--underlined" href="{% pageurl public_page %}" >{{ object.page }}</a>{% else %}{{ object.page }}{% endif %}</span>
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
