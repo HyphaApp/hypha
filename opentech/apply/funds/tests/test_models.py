@@ -468,6 +468,13 @@ class TestSubmissionRenderMethods(TestCase):
         answers = submission.render_answers()
         self.assertNotIn(rich_text_label, answers)
 
+    def test_named_blocks_dont_break_if_no_response(self):
+        submission = ApplicationSubmissionFactory()
+        # the user didn't respond
+        del submission.form_data['value']
+        self.assertTrue('value' not in submission.raw_data)
+        self.assertTrue('duration' in submission.raw_data)
+
 
 class TestRequestForPartners(TestCase):
     def test_message_when_no_round(self):
