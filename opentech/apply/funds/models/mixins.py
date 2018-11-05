@@ -36,8 +36,13 @@ class AccessFormData:
         data = self.form_data.copy()
         for field_name, field_id in self.named_blocks.items():
             if field_id not in data:
-                response = data[field_name]
-                data[field_id] = response
+                try:
+                    response = data[field_name]
+                except KeyError:
+                    # There was no value supplied for the named field
+                    pass
+                else:
+                    data[field_id] = response
         return data
 
     @classmethod
