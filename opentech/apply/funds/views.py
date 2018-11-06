@@ -153,8 +153,11 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
+        public_page = self.object.get_from_parent('detail')()
+
         return super().get_context_data(
             other_submissions=other_submissions,
+            public_page=public_page,
             **kwargs,
         )
 
