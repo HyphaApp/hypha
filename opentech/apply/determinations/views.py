@@ -172,7 +172,7 @@ class ApplicantDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission)
+        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
