@@ -565,7 +565,7 @@ class ApplicationSubmission(
                     yield value
 
         # Add named fields into the search index
-        for field in ['email', 'title']:
+        for field in ['full_name', 'email', 'title']:
             yield getattr(self, field)
 
     def get_absolute_url(self):
