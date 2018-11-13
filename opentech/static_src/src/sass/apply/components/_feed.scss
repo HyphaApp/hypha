@@ -15,6 +15,15 @@
             max-height: 300px;
             overflow: hidden;
         }
+
+        ul {
+            padding-left: 20px;
+            list-style: outside disc;
+        }
+
+        ol {
+            list-style: inside decimal;
+        }
     }
 
     &__label {

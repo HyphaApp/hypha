@@ -1,14 +1,26 @@
 .wmd-panel {
 }
 
-.wmd-button-bar {
-}
-
 .wmd-input {
 }
 
 .wmd-preview {
     background-color: $color--sky-blue;
+    padding: .1px 10px;
+    width:  100%;
+
+    ul {
+        padding-left: 20px;
+        list-style: outside disc;
+    }
+
+    ol {
+        list-style: inside decimal;
+    }
+
+    @include media-query(tablet-portrait) {
+        max-width: 70%;
+    }
 }
 
 .wmd-button-row {
