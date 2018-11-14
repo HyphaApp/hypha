@@ -18,10 +18,6 @@
     ol {
         list-style: inside decimal;
     }
-
-    @include media-query(tablet-portrait) {
-        max-width: 70%;
-    }
 }
 
 .wmd-button-row {

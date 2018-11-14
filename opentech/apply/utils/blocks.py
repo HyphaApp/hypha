@@ -1,6 +1,8 @@
 from collections import Counter
+from pagedown.widgets import PagedownWidget
 
 import bleach
+
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
@@ -42,8 +44,25 @@ class RichTextFieldBlock(TextFieldBlock):
         return '<p>No response</p>'
 
 
+class MarkdownTextFieldBlock(TextFieldBlock):
+    widget = PagedownWidget()
+    template = ''
+
+    class Meta:
+        label = _('Markdown text field')
+        icon = 'form'
+        template = 'stream_forms/render_markdown_field.html'
+
+    def get_searchable_content(self, value, data):
+        return bleach.clean(data or '', tags=[], strip=True)
+
+    def no_response(self):
+        return '<p>No response</p>'
+
+
 class CustomFormFieldsBlock(StreamBlock):
     rich_text = RichTextFieldBlock(group=_('Fields'))
+    markdown_text = MarkdownTextFieldBlock(group=_('Fields'))
     required_blocks = []
     single_blocks = []
 
