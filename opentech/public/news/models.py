@@ -128,6 +128,12 @@ class NewsIndex(BasePage):
     subpage_types = ['NewsPage']
     parent_page_types = ['home.HomePage']
 
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction')
+    ]
+
     def get_context(self, request, *args, **kwargs):
         news = NewsPage.objects.live().public().descendant_of(self).annotate(
             date=Coalesce('publication_date', 'first_published_at')
