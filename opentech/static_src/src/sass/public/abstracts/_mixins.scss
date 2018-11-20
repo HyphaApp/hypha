@@ -6,7 +6,7 @@
             $declaration: nth($breakpoint, 2);
 
             @if $query == $name and $declaration {
-                @media only screen and #{$declaration} {
+                @media #{$declaration} {
                     @content;
                 }
             }
