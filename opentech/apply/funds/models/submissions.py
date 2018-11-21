@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum
+from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum, Q
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -81,7 +81,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_statuses(user)
-        qs = self.filter(status__in=user_review_statuses).exclude(reviews__author=user)
+        qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
         return qs
