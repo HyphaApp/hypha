@@ -1,4 +1,4 @@
-{% load workflow_tags %}
+{% load wagtailusers_tags workflow_tags %}
 <h3>Proposal Information</h3>
 <div class="grid grid--proposal-info">
     <div>
@@ -13,7 +13,7 @@
 
     <div>
         <h5>Legal Name</h5>
-        <p>{{ object.get_full_name_display }}</p>
+        <p>{{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">Edit account</a>){% endif %}</p>
     </div>
 
     <div>
