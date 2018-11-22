@@ -11,7 +11,7 @@
 {% include "forms/includes/form_errors.html" with form=form %}
 
 <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-    <div>
+    <div class="wrapper--sidebar--inner">
         <form class="form" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.media }}

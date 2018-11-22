@@ -4,7 +4,7 @@
 {% block content %}
 
     <div class="wrapper wrapper--flex">
-        <section class="section section--main">
+        <article class="section section--main">
             {% if page.introduction %}
                 <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
             {% endif %}
@@ -12,7 +12,7 @@
             {% include_block page.body %}
             {% include "includes/share.html" %}
 
-        </section>
+        </article>
     </div>
 
     {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all %}

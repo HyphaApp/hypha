@@ -3,26 +3,26 @@
 <div class="grid grid--proposal-info">
     <div>
         <h5>Requested Funding</h5>
-        <p>{{ object.get_value_display }}</p>
+        {{ object.get_value_display }}
     </div>
 
     <div>
         <h5>Project Duration</h5>
-        <p>{{ object.get_duration_display }}</p>
+        {{ object.get_duration_display }}
     </div>
 
     <div>
         <h5>Legal Name</h5>
-        <p>{{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">Edit account</a>){% endif %}</p>
+        {{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">Edit account</a>){% endif %}
     </div>
 
     <div>
         <h5>Email</h5>
-        <p>{{ object.get_email_display }}</p>
+        {{ object.get_email_display }}
     </div>
     <div class="grid__cell--span-two">
         <h5>Address</h5>
-        <p>{{ object.get_address_display }}</p>
+        {{ object.get_address_display }}
     </div>
 </div>
 <div class="rich-text rich-text--answers">
