@@ -1,0 +1,102 @@
+// sass-lint:disable no-color-hex, no-color-literals, no-important, no-vendor-prefixes
+* {
+    background: transparent !important;
+    color: #000 !important; // Black prints faster: h5bp.com/s
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    -ms-filter: none !important;
+    font-family: 'Garamond Premier Pro', serif !important;
+    font-style: normal !important;
+    letter-spacing: normal !important;
+    text-align: left !important;
+}
+
+html {
+    font-size: 100% !important;
+}
+
+@page {
+    margin: 1cm !important;
+}
+
+body {
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    margin: 1cm !important;
+}
+
+
+// Underline all links.
+:link,
+:visited {
+    text-decoration: none !important;
+    border: 0 !important;
+    color: #000 !important;
+}
+
+// Add visible URL after links.
+a[href^='http:']::after,
+a[href^='https:']::after {
+    content: ' (' attr(href) ')';
+}
+
+abbr[title] {
+    // Add visible title after abbreviations.
+    &::after {
+        content: ' (' attr(title) ')';
+    }
+}
+
+p,
+h2,
+h3 {
+    orphans: 3;
+    widows: 3;
+}
+
+h2,
+h3 {
+    page-break-after: avoid;
+}
+
+.header__logo {
+    fill: #000;
+}
+
+.header {
+    height: auto;
+    padding: 0;
+
+    &::after {
+        background: transparent !important;
+    }
+}
+
+.admin-bar {
+    position: static;
+    right: auto;
+    left: auto;
+    width: auto;
+    padding: 0;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+nav,
+aside,
+footer,
+.icon,
+.card__icon,
+.header__icon,
+.header__menus,
+.header__button-container,
+.status-bar,
+.tabs__container,
+.js-actions-toggle,
+.js-actions-sidebar,
+.link--edit-submission,
+.section--share,
+.link--fixed-apply {
+    display: none !important;
+}
