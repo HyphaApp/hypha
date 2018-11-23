@@ -9,9 +9,8 @@
             margin: 0 0 10px;
 
             label {
-                @extend %h4;
                 display: block;
-                margin-bottom: 10px;
+                margin-bottom: .5em;
                 font-weight: $weight--bold;
             }
         }
@@ -24,10 +23,6 @@
     &__group {
         position: relative;
         margin: 1rem 0;
-
-        @include media-query(tablet-portrait) {
-            margin: 2rem 0;
-        }
 
         &:nth-of-type(1) {
             margin-top: 0;
@@ -72,9 +67,8 @@
     }
 
     &__question {
-        @extend %h4;
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: .5em;
         font-weight: $weight--bold;
 
         // sass-lint:disable class-name-format
@@ -106,17 +100,11 @@
         // sass-lint:enddisable
     }
 
-    &__label {
-        @extend %h5;
-        font-weight: $weight--bold;
-    }
-
     &__required {
         color: $color--purple;
     }
 
     &__help {
-        @extend %h6;
     }
 
     &__item {
@@ -169,7 +157,7 @@
     input[type='datetime-local'] {
         width: 100%;
         max-width: 385px;
-        padding: 10px;
+        padding: .4em;
         border: 1px solid $color--mid-grey;
     }
 
@@ -234,8 +222,9 @@
 
     textarea {
         width: 100%;
-        padding: 10px;
-        border: 1px solid $color--light-grey;
+        padding: .4em;
+        border: 1px solid $color--mid-grey;
+        line-height: $base-line-height / $base-font-size;
     }
 
     // Radio + Checkbox
@@ -318,8 +307,14 @@
 
     .errorlist {
         padding: 5px;
-        margin-bottom: 5px;
+        margin-bottom: .2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
+    }
+
+    .address {
+        padding: .4em;
+        border: 1px solid $color--mid-grey;
+        max-width: 410px;
     }
 }

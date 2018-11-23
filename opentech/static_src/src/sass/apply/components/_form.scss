@@ -6,9 +6,8 @@
             margin: 0 0 10px;
 
             label {
-                @extend %h4;
                 display: block;
-                margin-bottom: 10px;
+                margin-bottom: .5em;
                 font-weight: $weight--bold;
             }
         }
@@ -30,15 +29,6 @@
     &__group {
         position: relative;
         margin: 1rem 0;
-
-        @include media-query(tablet-portrait) {
-            margin: 2rem 0;
-
-            // reduce spacing on the profile page
-            .profile & {
-                margin: 1rem 0;
-            }
-        }
 
         &:nth-of-type(1) {
             margin-top: 0;
@@ -83,9 +73,8 @@
     }
 
     &__question {
-        @extend %h4;
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: .5em;
         font-weight: $weight--bold;
 
         // sass-lint:disable class-name-format
@@ -118,7 +107,6 @@
     }
 
     &__filters {
-        @extend %h6;
         display: flex;
         padding: 10px 0 30px;
 
@@ -156,9 +144,6 @@
     }
 
     &__label {
-        @extend %h5;
-        font-weight: $weight--bold;
-
         .wrapper--comments & {
             font-size: 15px;
         }
@@ -169,8 +154,6 @@
     }
 
     &__help {
-        @extend %h6;
-
         .profile & {
             margin-top: 0;
         }
@@ -182,7 +165,7 @@
 
         > label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: .5em;
         }
     }
 
@@ -231,7 +214,7 @@
     input[type='datetime-local'] {
         width: 100%;
         max-width: 385px;
-        padding: 10px;
+        padding: .4em;
         border: 1px solid $color--mid-grey;
 
         &:disabled {
@@ -298,10 +281,18 @@
         }
     }
 
-    textarea {
+    textarea,
+    &__textarea {
+        display: block;
         width: 100%;
-        padding: 10px;
-        border: 1px solid $color--light-grey;
+        padding: .4em;
+        margin-bottom: 1em;
+        border: 1px solid $color--mid-grey;
+        line-height: $base-line-height / $base-font-size;
+
+        @include media-query(tablet-portrait) {
+            max-width: 70%;
+        }
     }
 
     // Radio + Checkbox
@@ -383,23 +374,15 @@
 
     .errorlist {
         padding: 5px;
-        margin-bottom: 5px;
+        margin-bottom: .2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
     }
 
-    textarea,
-    &__textarea {
-        display: block;
-        width: 100%;
-        height: 100px;
-        padding: 10px;
-        margin-bottom: 20px;
+    .address {
+        padding: .4em;
         border: 1px solid $color--mid-grey;
-
-        @include media-query(tablet-portrait) {
-            max-width: 70%;
-        }
+        max-width: 410px;
     }
 }
 

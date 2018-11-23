@@ -32,9 +32,8 @@ h1, h2, h3, h4, h5, h6,
 }
 // sass-lint:enddisable
 
-html,
 .body-text {
-    font-size: 16px;
+    @include responsive-font-sizes($base-font-size, $base-font-size-large);
 }
 
 // Default sizes
@@ -60,10 +59,12 @@ h5, %h5, .epsilon {
 }
 
 h6, %h6, .zeta    {
-    font-size: 15px;
+    @include font-size(zeta);
 }
 
-small, .milli { @include font-size(milli); }
+small, .milli {
+    @include font-size(milli);
+}
 
 // thin
 @font-face {

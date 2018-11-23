@@ -41,26 +41,20 @@
     -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-misspelled-properties
 }
 
-// Output a rem and px fallback value for the given property
+// Output a rem value for the given property
 @mixin rem($property, $values) {
 
-    $px:  ();
     $rem: ();
 
     @each $value in $values {
         @if $value == 0 or $value == auto or $value == inherit {
-            $px:  append($px, $value);
             $rem: append($rem, $value);
         }
         @else {
-            $px:  append($px, $value);
             $rem: append($rem, rem(strip-unit($value)));
         }
     }
-    // sass-lint:disable no-duplicate-properties
-    #{$property}: $px;
     #{$property}: $rem;
-    // sass-lint:enddisable
 }
 
 // Output a `font-size: [x]rem;` declaration for the given px value
@@ -82,7 +76,7 @@
 
 // Button mixin
 @mixin button($bg, $hover-bg) {
-    padding: 10px 60px;
+    padding: .5em 60px;
     font-weight: $weight--bold;
     color: $color--white;
     background: $bg;
