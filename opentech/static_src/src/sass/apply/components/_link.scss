@@ -30,10 +30,6 @@
         background: $color--light-blue;
         transition: background-color, $transition;
 
-        @include media-query(mob-landscape) {
-            max-width: 300px;
-        }
-
         &:focus,
         &:hover {
             background-color: $color--dark-blue;

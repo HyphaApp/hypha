@@ -3,11 +3,19 @@
     word-break: break-word;
 
     &--answers {
-        > div {
+        > section {
             margin: 0 0 1rem;
+
+            p:first-of-type {
+                margin-top: 0;
+            }
+
+            p:empty {
+                margin: 0;
+            }
         }
 
-        h5 {
+        h4 {
             margin: 0;
         }
     }

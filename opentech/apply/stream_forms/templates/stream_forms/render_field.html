@@ -1,10 +1,10 @@
 {% if include_question %}
-<div>
-    <h5>{{ value.field_label }}</h5>
+<section>
+    <h4>{{ value.field_label }}</h4>
 {% endif %}
 
-    <div>{% block data_display %}{{ data }}{% endblock %}</div>
+    {% block data_display %}<span>{{ data }}</span>{% endblock %}
 
 {% if include_question %}
-</div>
+</section>
 {% endif %}

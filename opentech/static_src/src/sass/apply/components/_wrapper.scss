@@ -167,7 +167,7 @@
             }
         }
 
-        > div:first-child {
+        &--inner {
             flex: 1;
 
             @include media-query(tablet-portrait) {

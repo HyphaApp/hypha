@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="wrapper wrapper--small wrapper--inner-space-large wrapper--sidebar">
-    <div>
+    <div class="wrapper--sidebar--inner">
         {% for person_type in page.person_types.all %}
             <h5 class="heading heading--no-margin">{{ person_type }}</h5>
         {% endfor %}

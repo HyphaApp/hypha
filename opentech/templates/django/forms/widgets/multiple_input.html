@@ -1,5 +1,5 @@
 {% with id=widget.attrs.id %}
-  <ul{% if id %} id="{{ id }}"{% endif %} class="grid grid--two{% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}">
+  <ul{% if id %} id="{{ id }}"{% endif %} class="grid grid--no-margin grid--two{% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}">
     {% for group, options, index in widget.optgroups %}
       {% if group %}
         <li>{{ group }}<ul{% if id %} id="{{ id }}_{{ index }}"{% endif %}>

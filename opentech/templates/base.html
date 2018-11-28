@@ -9,7 +9,7 @@
 
         <!-- favicons -->
         {% comment %}
-            Generate favicons by http://realfavicongenerator.net using the following path: settings.STATIC_URL + img/favicons.
+            Generate favicons by https://realfavicongenerator.net using the following path: settings.STATIC_URL + img/favicons.
             Then favicon.ico should be copied to a directory called "public" in the application root and puppet does some magic to serve it up at the site root.
         {% endcomment %}
         <link rel="icon" sizes="144x144" href="{% static 'images/favicons/android-chrome-144.png' %}">
@@ -32,10 +32,10 @@
         <meta name="twitter:title" content="{{ page.title }}" />
         <meta name="twitter:description" content="{{ page|social_text:request.site }}">
         {% if page.social_image  %}
-            {% image page.social_image width-320 as social_img %}
-            <meta name="twitter:image" content="{{ request.site.root_url }}{{ social_img.url }}">
+        {% image page.social_image width-320 as social_img %}
+        <meta name="twitter:image" content="{{ request.site.root_url }}{{ social_img.url }}">
         {% else %}
-            <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+        <meta name="twitter:image" content="{{ request.site.root_url }}{% static 'images/otf_social.jpg' %}">
         {% endif %}
 
         <!--facebook opengraph tags-->
@@ -44,9 +44,9 @@
         <meta property="og:url" content="{{ page.url }}" />
         <meta property="og:title" content="{{ page.title }}" />
         {% if page.social_image %}
-            <meta property="og:image" content="http://{{ request.site.hostname }}{{ social_img.url }}" />
+        <meta property="og:image" content="{{ request.site.root_url }}{{ social_img.url }}" />
         {% else %}
-            <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
+        <meta property="og:image" content="{{ request.site.root_url }}{% static 'images/otf_social.jpg' %}" />
         {% endif %}
         <meta property="og:description" content="{{ page|social_text:request.site }}" />
         <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />

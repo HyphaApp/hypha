@@ -71,12 +71,10 @@
         }
 
         &--primary {
-            @include font-size(epsilon);
             margin: 0;
             letter-spacing: 1px;
 
             @include media-query(tablet-landscape) {
-                @include font-size(zeta);
                 margin: 0 18px;
             }
         }

@@ -2,25 +2,25 @@
 {% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block content %}
-<div class="wrapper wrapper--small">
+<article class="wrapper wrapper--small">
 
-    <h5 class="heading heading--author">
-        {{ page.display_date|date:"D, Y-m-d H:i" }}
+    <header class="heading heading--author heading-text epsilon">
+        <time datetime="{{ page.display_date|date:"c" }}">{{ page.display_date|date:"D, Y-m-d H:i" }}</time>
         {% if page.authors.all %}
             | By:
             {% for author in page.authors.all %}
                 <a href="{% pageurl author.author %}">{{ author.author }}</a>
             {% endfor %}
         {% endif %}
-    </h5>
+    </header>
 
     {% if page.introduction %}
         <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
     {% endif %}
 
-    <section class="main-body">
+    <div class="main-body">
         {% include_block page.body %}
-    </section>
+    </div>
 
     {% if page.news_types.all %}
         <ul class="list list--flex">
@@ -40,7 +40,7 @@
     {% endif %}
 
     {% include "includes/share.html" %}
-</div>
+</article>
 
 {% include "includes/relatedcontent.html" with related_documents=page.related_documents.all related_pages=page.related_pages.all %}
 
