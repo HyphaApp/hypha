@@ -306,6 +306,11 @@ class TestFormSubmission(TestCase):
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
 
+    def test_valid_email(self):
+        email = 'not_a_valid_email@'
+        response = self.submit_form(email=email, ignore_errors=True)
+        self.assertContains(response, 'Enter a valid email address')
+
     @override_settings(SEND_MESSAGES=True)
     def test_email_sent_to_user_on_submission_fund(self):
         self.submit_form()
