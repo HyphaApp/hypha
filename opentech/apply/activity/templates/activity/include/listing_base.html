@@ -1,4 +1,4 @@
-{% load activity_tags %}
+{% load activity_tags bleach_tags markdown_tags %}
 <div class="feed__item feed__item--{{ activity.type }}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
@@ -19,13 +19,13 @@
                 updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
 
-            {{ activity.message|linebreaksbr }}
+            {{ activity.message|markdown|bleach }}
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}
                     {% if url %}
                     <a href="{{ url }}" class="feed__related-item">
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                        {{ activity.related_object }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                     {% endif %}
                 {% endwith %}

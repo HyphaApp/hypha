@@ -118,6 +118,7 @@ INSTALLED_APPS = [
 
     'hijack',
     'compat',
+    'pagedown',
 
     'django.contrib.admin',
     'django.contrib.auth',

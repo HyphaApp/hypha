@@ -130,6 +130,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ comment_form.media.js }}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
 {% endblock %}
