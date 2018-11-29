@@ -44,6 +44,7 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = 'email'
     description = 'The applicant email address'
     widget = forms.EmailInput
+    field_class = forms.EmailField
 
     class Meta:
         icon = 'mail'
