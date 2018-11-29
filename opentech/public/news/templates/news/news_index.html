@@ -5,6 +5,10 @@
 {% block content %}
 <div class="wrapper wrapper--small wrapper--inner-space-medium">
 
+        {% if page.introduction %}
+            <h4 class="heading heading--listings-introduction">{{ page.introduction }}</h4>
+        {% endif %}
+
         <form class="form" method="GET">
             <div class="form__select form__select--narrow form__select--inline">
                 <select name="news_type">
