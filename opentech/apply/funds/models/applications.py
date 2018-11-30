@@ -7,6 +7,7 @@ from django.db.models import OuterRef, Q, Subquery
 from django.http import Http404
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalManyToManyField
 
@@ -48,6 +49,8 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
+    slack_channel = models.TextField(blank=True, help_text=_('The slack #channel for notifications. Default channel is {slack_default}').format(slack_default=settings.SLACK_DESTINATION_ROOM))
+
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -82,6 +85,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('reviewers'),
+        FieldPanel('slack_channel'),
     ]
 
     edit_handler = TabbedInterface([
@@ -280,12 +284,15 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         blank=True,
     )
 
+    slack_channel = models.TextField(blank=True, help_text=_('The slack #channel for notifications. Default channel is {slack_default}').format(slack_default=settings.SLACK_DESTINATION_ROOM))
+
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('lead'),
         FieldPanel('reviewers'),
+        FieldPanel('slack_channel'),
     ]
 
     edit_handler = TabbedInterface([
