@@ -270,7 +270,7 @@ class TestActivityAdapter(TestCase):
 
 class TestSlackAdapter(AdapterMixin, TestCase):
     target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
-    target_room = '<ROOM ID>'
+    target_room = '#<ROOM ID>'
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
