@@ -140,4 +140,4 @@ class SubmissionFilter(filters.FilterSet):
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
-    query = filters.CharFilter(name='search_data', lookup_expr="search", widget=forms.HiddenInput)
+    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
