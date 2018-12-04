@@ -3,18 +3,13 @@
 
 {% block title %}Determination for {{ object.title }}{% endblock %}
 
-{% block content %}
-Your application has been reviewed and the outcome is: {{ determination.clean_outcome }}
+{% block content %}Your application has been reviewed and the outcome is: {{ determination.clean_outcome }}
 
 {{ determination.message|bleach|striptags }}
 
-{% for group in determination.detailed_data.values %}
-{{ group.title }}
+{% for group in determination.detailed_data.values %}{{ group.title }}
 {% for question, answer in group.questions %}
 {% if answer %}{{ question }}:
-{{ answer|bleach|striptags }}{% endif %}
-{% endfor %}
-{% endfor %}
+{{ answer|bleach|striptags }}{% endif %}{% endfor %}{% endfor %}
 
-Read the determination here: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}
-{% endblock %}
+Read the determination here: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}
