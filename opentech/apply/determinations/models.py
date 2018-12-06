@@ -15,16 +15,19 @@ from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 REJECTED = 0
 NEEDS_MORE_INFO = 1
 ACCEPTED = 2
+INVITED = 3
 
 DETERMINATION_CHOICES = (
     (REJECTED, _('Dismissed')),
     (NEEDS_MORE_INFO, _('Needs more info')),
     (ACCEPTED, _('Approved')),
+    (INVITED, _('Invited to proposal')),
 )
 
 DETRMINATION_TO_OUTCOME = {
     'rejected': REJECTED,
     'accepted': ACCEPTED,
+    'invited_to_proposal': INVITED,
     'more_info': NEEDS_MORE_INFO,
 }
 
@@ -43,7 +46,7 @@ class DeterminationQuerySet(models.QuerySet):
         return self.filter(is_draft=False)
 
     def final(self):
-        return self.submitted().filter(outcome__in=[ACCEPTED, REJECTED])
+        return self.submitted().filter(outcome__in=[ACCEPTED, INVITED, REJECTED])
 
 
 class Determination(models.Model):

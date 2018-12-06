@@ -727,7 +727,7 @@ def get_determination_transitions():
             elif 'more_info' in transition_name:
                 transitions[transition_name] = 'more_info'
             elif 'invited_to_proposal' in transition_name:
-                transitions[transition_name] = 'accepted'
+                transitions[transition_name] = 'invited_to_proposal'
 
     return transitions
 

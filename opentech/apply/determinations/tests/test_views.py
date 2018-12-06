@@ -1,5 +1,5 @@
 from opentech.apply.activity.models import Activity
-from opentech.apply.determinations.models import ACCEPTED
+from opentech.apply.determinations.models import ACCEPTED, INVITED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.utils.testing import BaseViewTestCase
@@ -102,7 +102,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
         response = self.post_page(submission, {
             'data': 'value',
-            'outcome': ACCEPTED,
+            'outcome': INVITED,
             'message': 'You are invited to submit a proposal',
         }, 'form')
 

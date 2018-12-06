@@ -2,7 +2,7 @@ import factory
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 
-from ..models import Determination, ACCEPTED, NEEDS_MORE_INFO, REJECTED
+from ..models import Determination, ACCEPTED, NEEDS_MORE_INFO, REJECTED, INVITED
 from ..views import get_form_for_stage
 
 
@@ -30,6 +30,7 @@ class DeterminationFactory(factory.DjangoModelFactory):
     class Params:
         accepted = factory.Trait(outcome=ACCEPTED)
         rejected = factory.Trait(outcome=REJECTED)
+        invited = factory.Trait(outcome=INVITED)
         submitted = factory.Trait(is_draft=False)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
