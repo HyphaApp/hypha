@@ -10,18 +10,15 @@ register = template.Library()
 
 @register.filter
 def submission_links(value):
-    regex = re.compile('[^\w]\#(\d+)[^\w]')
+    # Match tags in the format #123 that is not preceeded and/or followed by a word character.
+    matches = re.findall('(?<!\w)\#(\d+)(?!\w)', value)
     links = {}
-    for match in regex.finditer(value):
-        try:
-            submission = ApplicationSubmission.objects.get(id=match[1])
-        except ApplicationSubmission.DoesNotExist:
-            pass
-        else:
-            links[f'#{submission.id}'] = f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="mid-grey-text">#{submission.id}</span></a>'
+    if matches:
+        for submission in ApplicationSubmission.objects.filter(id__in=matches):
+            links[f'\#{submission.id}'] = f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="mid-grey-text">#{submission.id}</span></a>'
 
     if links:
         for sid, link in links.items():
-            value = value.replace(sid, link)
+            value = re.sub(f'(?<!\w){sid}(?!\w)', link, value)
 
     return mark_safe(value)
