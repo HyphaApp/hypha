@@ -3,7 +3,7 @@ import random
 import factory
 
 from opentech.apply.review import blocks
-from opentech.apply.review.options import YES, MAYBE, NO
+from opentech.apply.review.options import YES, MAYBE, NO, PRIVATE, REVIEWER
 from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
     StreamFieldUUIDFactory
 from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
@@ -23,6 +23,15 @@ class RecommendationBlockFactory(FormFieldBlockFactory):
 class RecommendationCommentsBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = blocks.RecommendationCommentsBlock
+
+
+class VisibilityBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.VisibilityBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return random.choices([PRIVATE, REVIEWER])
 
 
 class ScoreFieldBlockFactory(FormFieldBlockFactory):
@@ -49,4 +58,5 @@ ReviewFormFieldsFactory = StreamFieldUUIDFactory({
     'score': ScoreFieldBlockFactory,
     'recommendation': RecommendationBlockFactory,
     'comments': RecommendationCommentsBlockFactory,
+    'visibility': VisibilityBlockFactory,
 })
