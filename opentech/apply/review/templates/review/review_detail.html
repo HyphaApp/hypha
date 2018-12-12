@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags %}
+{% load bleach_tags submission_tags %}
 
 {% block content %}
 <div class="admin-bar">
@@ -29,8 +29,8 @@
 </div>
 
 <div class="rich-text rich-text--answers">
-    {{ object.get_comments_display }}
+    {{ object.get_comments_display|submission_links }}
 
-    {{ object.output_answers }}
+    {{ object.output_answers|submission_links }}
 </div>
 {% endblock %}

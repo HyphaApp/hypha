@@ -419,11 +419,11 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Bleach Settings
-BLEACH_ALLOWED_TAGS = ['h2', 'h3', 'p', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'br']
+BLEACH_ALLOWED_TAGS = ['h2', 'h3', 'p', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'br', 'span']
 
-BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'style']
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'class']
 
-BLEACH_ALLOWED_STYLES = ['font-family', 'font-weight', 'text-decoration', 'font-variant']
+BLEACH_ALLOWED_STYLES = []
 
 BLEACH_STRIP_TAGS = True
 
