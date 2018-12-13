@@ -169,9 +169,10 @@ class ReviewDisplay(DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         review = self.get_object()
+        user = request.user
         author = review.author
 
-        if request.user != author and not request.user.is_superuser and not request.user.is_apply_staff:
+        if user != author and not (user.is_reviewer and review.reviewer_visibility) and not user.is_apply_staff:
             raise PermissionDenied
 
         if review.is_draft:
