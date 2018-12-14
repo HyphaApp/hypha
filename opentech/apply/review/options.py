@@ -34,8 +34,8 @@ PRIVATE = 'private'
 REVIEWER = 'reviewers'
 
 VISIBILILTY_HELP_TEXT = {
-    PRIVATE: 'Visible to applicant and staff.',
-    REVIEWER: 'Visible to reviewers and staff.',
+    PRIVATE: 'Visible only to staff.',
+    REVIEWER: 'Visible to other reviewers and staff.',
 }
 
 VISIBILITY = {

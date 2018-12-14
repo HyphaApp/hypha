@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.review.fields import ScoredAnswerField
-from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, VISIBILITY, VISIBILILTY_HELP_TEXT
+from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
 from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
 from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
@@ -88,6 +88,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
         kwargs['choices'] = VISIBILITY.items()
+        kwargs['initial'] = PRIVATE
         kwargs['help_text'] = mark_safe('<br>'.join(
             [VISIBILITY[choice] + ': ' + VISIBILILTY_HELP_TEXT[choice] for choice in VISIBILITY]
         ))
