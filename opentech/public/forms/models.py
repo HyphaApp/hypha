@@ -26,7 +26,7 @@ class FormPage(AbstractEmailForm, BasePage):
         index.SearchField('intro'),
     ]
 
-    content_panels = AbstractEmailForm.content_panels + [
+    content_panels = BasePage.content_panels + [
         FieldPanel('intro', classname="full"),
         InlinePanel('form_fields', label="Form fields"),
         FieldPanel('thank_you_text', classname="full"),
