@@ -22,9 +22,3 @@ class TaxonomiesModelAdminGroup(ModelAdminGroup):
 
 
 modeladmin_register(TaxonomiesModelAdminGroup)
-
-
-# Hide forms from the side menu, remove if adding public.forms back in
-@hooks.register('construct_main_menu')
-def hide_snippets_menu_item(request, menu_items):
-    menu_items[:] = [item for item in menu_items if item.name != 'forms']

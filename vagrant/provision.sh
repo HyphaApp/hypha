@@ -63,4 +63,5 @@ su - vagrant -c "sudo apt-get install -y nodejs"
 
 # Build the static files
 su - vagrant -c "sudo npm install -g gulp-cli"
+su - vagrant -c "cd $PROJECT_DIR; npm install"
 su - vagrant -c "cd $PROJECT_DIR; gulp deploy"
