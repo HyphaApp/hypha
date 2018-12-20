@@ -14,6 +14,7 @@ uwsgidecorators==1.1.0
 django-hijack==2.1.9
 django-anymail==3.0
 celery==4.2.1
+django-webpack-loader==0.6.0
 
 factory_boy==2.9.2
 # wagtail_factories - waiting on merge and release form master branch

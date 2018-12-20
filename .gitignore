@@ -35,3 +35,6 @@ wheels/
 
 # Cache
 .mypy_cache/
+
+# Webpack
+webpack-stats.json

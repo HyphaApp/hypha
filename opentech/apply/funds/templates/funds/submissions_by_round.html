@@ -1,4 +1,6 @@
 {% extends "base-apply.html" %}
+{% load render_bundle from webpack_loader %}
+
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
@@ -16,7 +18,9 @@
     <div>
         <h2>THERE WILL BE A TABLE HERE</h2>
     </div>
-
 </div>
+
+<div id="react-app"></div>
+{% render_bundle 'main' %}
 
 {% endblock %}

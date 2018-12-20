@@ -1,14 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
-const App = <div><h2>THIS IS REACT</h2></div>
-
+import App from './App'
 
 const render = Component => {
     ReactDOM.render(
         <Component />,
-        document.getElementById('root')
+        document.getElementById('react-app')
     );
 }
 
@@ -17,8 +15,8 @@ render(App)
 
 
 if (module.hot) {
-    module.hot.accept(App, () => {
-        const NextApp = App;
+    module.hot.accept('./App', () => {
+        const NextApp = require('./App').default;
         render(NextApp);
     });
 }

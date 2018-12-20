@@ -119,6 +119,7 @@ INSTALLED_APPS = [
     'hijack',
     'compat',
     'pagedown',
+    'webpack_loader',
 
     'django.contrib.admin',
     'django.contrib.auth',

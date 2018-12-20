@@ -4,15 +4,9 @@ var BundleTracker = require('webpack-bundle-tracker')
 
 var config = require('./base.config.js')
 
-// Use webpack dev server
-// config.entry = [
-    // 'webpack-dev-server/client?http://localhost:3000',
-    // 'webpack/hot/only-dev-server',
-    // './assets/js/index'
-// ]
 
 // override django's STATIC_URL for webpack bundles
-config.output.publicPath = 'http://localhost:3000/assets/bundles/'
+config.output.publicPath = 'http://localhost:3000/app/'
 
 // Add HotModuleReplacementPlugin and BundleTracker plugins
 config.plugins = config.plugins.concat([
@@ -24,8 +18,14 @@ config.plugins = config.plugins.concat([
 // Add a loader for JSX files with react-hot enabled
 
 config.devServer = {
-    hot: true
+    contentBase: path.join(__dirname, '../../../../static_compiled/app'),
+    disableHostCheck: true,
+    hot: true,
+    port: 3000,
+    host: '0.0.0.0'
 }
+
+config.devtool = 'source-map'
 
 config.mode = "development"
 
