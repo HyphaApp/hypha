@@ -76,11 +76,7 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
             if extracted_parent and parent_kwargs:
                 raise ValueError('Cant pass a parent instance and attributes')
 
-            if not extracted_parent:
-                parent = ApplyHomePageFactory(**parent_kwargs)
-            else:
-                # Assume root node if no parent passed
-                parent = extracted_parent
+            parent = extracted_parent or ApplyHomePageFactory(**parent_kwargs)
 
             parent.add_child(instance=self)
 
@@ -143,6 +139,11 @@ class RoundFactory(wagtail_factories.PageFactory):
     start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * n + 1))
     end_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * (n + 1)))
     lead = factory.SubFactory(StaffFactory)
+
+    @factory.post_generation
+    def parent(self, create, extracted_parent, **parent_kwargs):
+        parent = extracted_parent or FundTypeFactory(**parent_kwargs)
+        parent.add_child(instance=self)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):

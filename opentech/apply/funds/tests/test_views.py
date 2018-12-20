@@ -572,6 +572,12 @@ class TestStaffSubmissionByRound(ByRoundTestCase):
         response = self.get_page(new_lab)
         self.assertContains(response, new_lab.title)
 
+    def test_cant_access_normal_page(self):
+        new_round = RoundFactory()
+        page = new_round.get_site().root_page
+        response = self.get_page(page)
+        self.assertEqual(response.status_code, 404)
+
 
 class TestApplicantSubmissionByRound(ByRoundTestCase):
     user_factory = UserFactory
@@ -584,4 +590,10 @@ class TestApplicantSubmissionByRound(ByRoundTestCase):
     def test_cant_access_lab_page(self):
         new_lab = LabFactory()
         response = self.get_page(new_lab)
+        self.assertEqual(response.status_code, 403)
+
+    def test_cant_access_normal_page(self):
+        new_round = RoundFactory()
+        page = new_round.get_site().root_page
+        response = self.get_page(page)
         self.assertEqual(response.status_code, 403)
