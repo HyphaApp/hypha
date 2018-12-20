@@ -142,8 +142,9 @@ class RoundFactory(wagtail_factories.PageFactory):
 
     @factory.post_generation
     def parent(self, create, extracted_parent, **parent_kwargs):
-        parent = extracted_parent or FundTypeFactory(**parent_kwargs)
-        parent.add_child(instance=self)
+        if create:
+            parent = extracted_parent or FundTypeFactory(**parent_kwargs)
+            parent.add_child(instance=self)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
