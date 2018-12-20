@@ -25,7 +25,7 @@ from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
+from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, LIMIT_TO_PARTNERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -302,6 +302,12 @@ class ApplicationSubmission(
         settings.AUTH_USER_MODEL,
         related_name='submissions_reviewer',
         limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        blank=True,
+    )
+    partners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='submissions_partner',
+        limit_choices_to=LIMIT_TO_PARTNERS,
         blank=True,
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)

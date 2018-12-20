@@ -12,7 +12,7 @@ from wagtail.contrib.forms.models import AbstractEmailForm
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.stream_forms.models import AbstractStreamForm
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME
 
 from ..workflow import WORKFLOWS
 
@@ -20,6 +20,7 @@ from ..workflow import WORKFLOWS
 LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
 LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
 LIMIT_TO_STAFF_AND_REVIEWERS = {'groups__name__in': [STAFF_GROUP_NAME, REVIEWER_GROUP_NAME]}
+LIMIT_TO_PARTNERS = {'groups__name': PARTNER_GROUP_NAME}
 
 
 def admin_url(page):
