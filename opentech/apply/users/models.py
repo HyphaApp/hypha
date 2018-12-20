@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME
 from .utils import send_activation_email
 
 
@@ -13,6 +13,9 @@ class UserQuerySet(models.QuerySet):
 
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME)
+
+    def partners(self):
+        return self.filter(groups__name=PARTNER_GROUP_NAME)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -93,6 +96,10 @@ class User(AbstractUser):
     @cached_property
     def is_reviewer(self):
         return self.groups.filter(name=REVIEWER_GROUP_NAME).exists()
+
+    @cached_property
+    def is_partner(self):
+        return self.groups.filter(name=PARTNER_GROUP_NAME).exists()
 
     @cached_property
     def is_applicant(self):
