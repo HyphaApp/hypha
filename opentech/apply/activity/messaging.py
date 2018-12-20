@@ -171,6 +171,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
+        MESSAGES.PARTNERS_UPDATED: 'partners_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}'
@@ -181,7 +182,7 @@ class ActivityAdapter(AdapterBase):
 
     def extra_kwargs(self, message_type, submission, **kwargs):
         from .models import INTERNAL
-        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
+        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING, MESSAGES.PARTNERS_UPDATED]:
             return {'visibility': INTERNAL}
         if message_type == MESSAGES.TRANSITION and not submission.phase.permissions.can_view(submission.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
@@ -230,6 +231,18 @@ class ActivityAdapter(AdapterBase):
 
         return staff_message
 
+    def partners_updated(self, added, removed, **kwargs):
+        message = ['Partners updated.']
+        if added:
+            message.append('Added:')
+            message.append(', '.join([str(user) for user in added]) + '.')
+
+        if removed:
+            message.append('Removed:')
+            message.append(', '.join([str(user) for user in removed]) + '.')
+
+        return ' '.join(message)
+
     def send_message(self, message, user, submission, submissions, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
@@ -267,6 +280,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
+        MESSAGES.PARTNERS_UPDATED: '{user} has updated the partners on <{link}|{submission.title}>',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
