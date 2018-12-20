@@ -20,11 +20,13 @@ options.theme = {
   root      : options.rootPath.theme,
   sass      : options.rootPath.theme + 'src/sass/',
   js        : options.rootPath.theme + 'src/javascript/',
+  app       : options.rootPath.theme + 'src/app/',
   img       : options.rootPath.theme + 'src/images/',
   font      : options.rootPath.theme + 'src/fonts/',
   dest      : options.rootPath.app   + 'static_compiled/',
   css       : options.rootPath.app   + 'static_compiled/css/',
   js_dest   : options.rootPath.app   + 'static_compiled/js/',
+  app_dest  : options.rootPath.app   + 'static_compiled/app/',
   img_dest  : options.rootPath.app   + 'static_compiled/images/',
   font_dest : options.rootPath.app   + 'static_compiled/fonts/'
 };
@@ -60,6 +62,7 @@ var gulp      = require('gulp'),
   sass        = require('gulp-sass'),
   cleanCSS    = require('gulp-clean-css'),
   touch       = require('gulp-touch-cmd'),
+  webpack     = require('webpack-stream'),
   exec        = require('child_process').exec;
 
 // The sass files to process.
@@ -159,6 +162,13 @@ gulp.task('scripts:production', gulp.series('clean:js', function js () {
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.theme.js_dest));
 }));
+
+// Build App.
+gulp.task('app', function() {
+    return gulp.src(options.theme.app + 'src/')
+        .pipe(webpack( require(options.theme.app + 'webpack/dev.config.js') ))
+        .pipe(gulp.dest(options.theme.app_dest));
+})
 
 // Copy images.
 gulp.task('images', function copy () {
