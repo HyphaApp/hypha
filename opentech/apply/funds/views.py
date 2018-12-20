@@ -37,6 +37,7 @@ from .forms import (
     ScreeningSubmissionForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
+    UpdatePartnersForm,
 )
 from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
 from .tables import (
@@ -285,6 +286,31 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             removed=removed,
         )
 
+        return response
+
+
+@method_decorator(staff_required, name='dispatch')
+class UpdatePartnersView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UpdatePartnersForm
+    context_name = 'partner_form'
+
+    def form_valid(self, form):
+        old_partners = set(self.get_object().partners.all())
+        response = super().form_valid(form)
+        new_partners = set(form.instance.partners.all())
+
+        added = new_partners - old_partners
+        removed = old_partners - new_partners
+
+        messenger(
+            MESSAGES.PARTNERS_UPDATED,
+            request=self.request,
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            added=added,
+            removed=removed,
+        )
         return response
 
 

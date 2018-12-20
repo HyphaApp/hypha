@@ -101,6 +101,7 @@ class UpdateReviewersForm(forms.ModelForm):
         return instance
 
 
+<<<<<<< HEAD
 class BatchUpdateReviewersForm(forms.Form):
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
@@ -111,3 +112,23 @@ class BatchUpdateReviewersForm(forms.Form):
     def clean_submission_ids(self):
         value = self.cleaned_data['submission_ids']
         return [int(submission) for submission in value.split(',')]
+=======
+class UpdatePartnersForm(forms.ModelForm):
+    partner_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.partners(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Partners'}),
+        label='Partners',
+        required=False,
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        partners = self.instance.partners.all()
+        partner_field = self.fields['partner_reviewers']
+        partner_field.initial = partners
+>>>>>>> Add update partners form to submission pages.
