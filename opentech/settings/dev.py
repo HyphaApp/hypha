@@ -114,6 +114,6 @@ if DEBUGTOOLBAR:
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'app/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_src/src/app/webpack-stats.json'),
     }
 }

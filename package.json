@@ -24,19 +24,20 @@
         "node-sass": "^4.11.0",
         "node-sass-import-once": "^1.2.0",
         "react": "^16.7.0",
-        "react-dom": "^16.7.0",
-        "webpack-bundle-tracker": "^0.4.2-beta"
+        "react-dom": "^16.7.0"
     },
     "devDependencies": {
         "@babel/core": "^7.2.2",
+        "@babel/plugin-proposal-class-properties": "^7.2.3",
         "@babel/preset-env": "^7.2.3",
         "@babel/preset-react": "^7.0.0",
         "babel-loader": "^8.0.4",
         "gulp-eslint": "^5.0.0",
         "gulp-sass-lint": "^1.4.0",
         "gulp-sourcemaps": "^2.6.4",
-        "react-dev-server": "^0.6.2",
+        "react-hot-loader": "^4.6.3",
         "webpack": "^4.28.0",
+        "webpack-bundle-tracker": "^0.4.2-beta",
         "webpack-cli": "^3.1.2",
         "webpack-dev-server": "^3.1.10",
         "webpack-stream": "^5.2.1"

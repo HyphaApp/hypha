@@ -1,11 +1,9 @@
 var path = require("path")
-var webpack = require('webpack')
-var BundleTracker = require('webpack-bundle-tracker')
 
 module.exports = {
     context: __dirname,
 
-    entry: '../src/',
+    entry: './src/index',
 
     output: {
         filename: "[name]-[hash].js"
@@ -19,9 +17,13 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',
-                include: [path.resolve(__dirname, '../src')],
+                include: [path.resolve(__dirname, './src')],
                 query: {
-                    presets: ['@babel/preset-react']
+                    presets: ['@babel/preset-react'],
+                    plugins: [
+                        'react-hot-loader/babel',
+                        '@babel/plugin-proposal-class-properties'
+                    ]
                 }
             }
         ]
