@@ -166,7 +166,14 @@ gulp.task('scripts:production', gulp.series('clean:js', function js () {
 // Build App.
 gulp.task('app', function() {
     return gulp.src(options.theme.app + 'src/')
-        .pipe(webpack( require(options.theme.app + 'webpack/dev.config.js') ))
+        .pipe(webpack( require(options.theme.app + 'webpack.dev.config.js') ))
+        .pipe(gulp.dest(options.theme.app_dest));
+})
+
+// Build Prod App
+gulp.task('app:production', function() {
+    return gulp.src(options.theme.app + 'src/')
+        .pipe(webpack( require(options.theme.app + 'webpack.prod.config.js') ))
         .pipe(gulp.dest(options.theme.app_dest));
 })
 
@@ -221,10 +228,10 @@ gulp.task('watch:static', function watch () {
 gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
 // Build everything.
-gulp.task('build', gulp.series(gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts', 'lint'), 'collectstatic'));
+gulp.task('build', gulp.series(gulp.parallel('styles:production', 'scripts:production', 'app:production', 'images', 'fonts', 'lint'), 'collectstatic'));
 
 // Deploy everything.
-gulp.task('deploy', gulp.parallel('styles:production', 'scripts:production', 'images', 'fonts'));
+gulp.task('deploy', gulp.parallel('styles:production', 'scripts:production', 'app:production', 'images', 'fonts'));
 
 // The default task.
 gulp.task('default', gulp.series('build'));

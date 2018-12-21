@@ -11,7 +11,7 @@ config.output.publicPath = 'http://localhost:3000/app/'
 config.plugins = config.plugins.concat([
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new BundleTracker({filename: './webpack-stats.json'}),
+    new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
 ])
 
 // Add a loader for JSX files with react-hot enabled
