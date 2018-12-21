@@ -596,6 +596,6 @@ REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'app/',
-        'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats.json'),
+        'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
     }
 }

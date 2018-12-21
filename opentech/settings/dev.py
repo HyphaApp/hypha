@@ -109,3 +109,8 @@ if DEBUGTOOLBAR:
     MIDDLEWARE = [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
     ] + MIDDLEWARE
+
+
+WEBPACK_LOADER['DEFAULT'].update({
+    'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats.json'),
+})

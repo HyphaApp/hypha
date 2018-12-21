@@ -21,8 +21,4 @@ if 'MAILGUN_API_KEY' in env:
         "WEBHOOK_SECRET": env.get('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
-WEBPACK_LOADER['DEFAULT'].update({
-    'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
-})
-
 django_heroku.settings(locals())
