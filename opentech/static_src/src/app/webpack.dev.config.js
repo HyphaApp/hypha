@@ -17,6 +17,10 @@ config.plugins = config.plugins.concat([
 // Add a loader for JSX files with react-hot enabled
 
 config.devServer = {
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*',
+    },
     hotOnly: true,
     port: 3000
 }
