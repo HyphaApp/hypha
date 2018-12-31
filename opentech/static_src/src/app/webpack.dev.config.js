@@ -17,12 +17,8 @@ config.plugins = config.plugins.concat([
 // Add a loader for JSX files with react-hot enabled
 
 config.devServer = {
-    allowedHosts: [
-        '.localhost',
-    ],
     hotOnly: true,
-    port: 3000,
-    host: '0.0.0.0'
+    port: 3000
 }
 
 config.devtool = 'source-map'

@@ -62,8 +62,15 @@ var gulp      = require('gulp'),
   sass        = require('gulp-sass'),
   cleanCSS    = require('gulp-clean-css'),
   touch       = require('gulp-touch-cmd'),
-  webpack     = require('webpack-stream'),
+  webpack     = require('webpack'),
+  webpackStrm = require('webpack-stream'),
+  DevServer   = require('webpack-dev-server'),
   exec        = require('child_process').exec;
+
+
+// Load webpack config
+var webpackDev = () => require(options.theme.app + 'webpack.dev.config.js');
+var webpackProd = () => require(options.theme.app + 'webpack.prod.config.js');
 
 // The sass files to process.
 var sassFiles = [
@@ -166,14 +173,14 @@ gulp.task('scripts:production', gulp.series('clean:js', function js () {
 // Build App.
 gulp.task('app', function() {
     return gulp.src(options.theme.app + 'src/')
-        .pipe(webpack( require(options.theme.app + 'webpack.dev.config.js') ))
+        .pipe(webpackStrm( webpackDev() ))
         .pipe(gulp.dest(options.theme.app_dest));
 })
 
 // Build Prod App
 gulp.task('app:production', function() {
     return gulp.src(options.theme.app + 'src/')
-        .pipe(webpack( require(options.theme.app + 'webpack.prod.config.js') ))
+        .pipe(webpackStrm( webpackProd() ))
         .pipe(gulp.dest(options.theme.app_dest));
 })
 
@@ -224,6 +231,37 @@ gulp.task('watch:fonts', gulp.series('fonts', function watch () {
 gulp.task('watch:static', function watch () {
   return gulp.watch(options.theme.dest + '**/*.*', options.gulpWatchOptions, gulp.series('collectstatic'));
 });
+
+gulp.task('watch:app', function watch (callback) {
+    var webpackOptions = webpackDev();
+
+    webpackOptions.entry.unshift(
+        `webpack-dev-server/client?http://localhost:${webpackOptions.devServer.port}/`,
+        `webpack/hot/dev-server`
+    );
+
+    var serverOptions = Object.assign(
+        {}, webpackOptions.devServer, {
+            publicPath: '/app/',
+            stats: {
+                colors: true,
+                cached: false,
+                cachedAssets: false
+            }
+        }
+    );
+
+    var server = new DevServer(
+        webpack( webpackOptions ),
+        serverOptions
+    )
+
+    server.listen(3000, "localhost", function(err) {
+        if(err) throw new console.PluginError("webpack-dev-server", err);
+        // Server listening
+        console.log("[webpack-dev-server]", "Running");
+    });
+})
 
 gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
