@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { hot } from 'react-hot-loader'
 
+import './App.scss';
+
 class App extends React.Component {
     constructor(props){
         super(props);
@@ -16,7 +18,7 @@ class App extends React.Component {
         return (
             <div>
                 <div>
-                    <button onClick={() => this.detailOpen(true)}>Detail View</button>
+                    <button className="red-button" onClick={() => this.detailOpen(true)}>Detail View</button>
                     |
                     <button onClick={() => this.detailOpen(false)}>List View</button>
                 </div>
