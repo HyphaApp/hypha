@@ -54,8 +54,21 @@ gulp watch
 
 That will watch all fles for changes and build them with maps etc., perfect for development. (It will also run the "collecstatic" command, useful when running the site with a production server and not the built in dev server.)
 
+If you are working on the React components then it may be worth just using one of the two following commands. They should do the same thing, but the npm command calls Webpack direct.
+
+| WARNING: You cannot use Webpack watch and Hot Module Reload within vagrant, it must be run from your own installation of node. All other commands will work. |
+| --- |
+
+``` bash
+gulp watch:app
+# OR
+npm run webpack-watch
+```
+
+To build the assets which get deployed, use the following. The deployment scripts will handle this, and the files do not need to be committed.
+
 ``` bash
 gulp build
 ```
 
-This will build all the files for production. For more command see the `gulpfile.js` file.
+For more command see the `gulpfile.js` file.
