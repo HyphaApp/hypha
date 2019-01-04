@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'opentech.public.projects',
     'opentech.public.search',
     'opentech.public.standardpages',
+    'opentech.public.forms',
     'opentech.public.utils',
 
     'social_django',
