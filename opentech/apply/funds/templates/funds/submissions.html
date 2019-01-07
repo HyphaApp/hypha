@@ -1,10 +1,6 @@
-{% extends "base-apply.html" %}
+{% extends "funds/base_submissions_table.html" %}
 {% load static %}
 {% block title %}Submissions{% endblock %}
-
-{% block extra_css %}
-    {{ filter.form.media.css }}
-{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
@@ -15,27 +11,24 @@
                 <h5>Track and explore recent submissions</h5>
             </div>
         {% endblock %}
-        {% include "funds/includes/search.html" %}
     </div>
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% include "funds/includes/submissions_table.html" with table=table filter=filter active_filters=active_filters %}
+    {% block table %}
+        {{ block.super }}
+    {% endblock %}
 </div>
 
 <a href="#" class="js-open-feed link link--open-feed">
     <h4 class="heading heading--no-margin heading--activity-feed">Activity Feed</h4>
 </a>
-
+|
 {% include "funds/includes/activity-feed.html" %}
 
 {% endblock %}
 
 {% block extra_js %}
-    {{ filter.form.media.js }}
-    <script src="{% static 'js/apply/tabs.js' %}"></script>
-    <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
-    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
-    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+    {{ block.super }}
     <script src="{% static 'js/apply/activity-feed.js' %}"></script>
 {% endblock %}
