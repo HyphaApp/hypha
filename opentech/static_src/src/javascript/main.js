@@ -137,15 +137,13 @@
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize() {
-        if ($(window).width() < 768) {
+        if ($(window).width() < 1024) {
+            $('body').removeClass('filters-open');
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
             });
         }
         else {
-            $('body').removeClass('no-scroll');
-            $('.js-filter-wrapper').removeClass('is-open');
-            $('.js-filter-list').removeClass('form__filters--mobile');
             $('.js-actions-toggle').removeClass('is-active');
             $('.js-actions-sidebar').removeClass('is-visible');
             $('.tr--parent.is-expanded').removeClass('is-expanded');

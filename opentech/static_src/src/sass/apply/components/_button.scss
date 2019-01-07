@@ -84,10 +84,6 @@
         &:hover {
             background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
         }
-
-        @include media-query(tablet-landscape) {
-            display: none;
-        }
     }
 
     &--filters-header {

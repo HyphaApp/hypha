@@ -2,11 +2,10 @@
 
     'use strict';
 
-    const $openButton = $('.js-open-filters');
+    const $toggleButton = $('.js-toggle-filters');
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
-    const $filterList = $('.js-filter-list');
-    const $filterWrapper = $('.js-filter-wrapper');
+    const activeClass = 'filters-open';
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
     // so we have to listen for the event higher up
@@ -34,18 +33,14 @@
         }
     });
 
-    // open mobile filters
-    $openButton.on('click', (e) => {
-        $('body').addClass('no-scroll');
-        $(e.target).next($filterWrapper).addClass('is-open');
-        $filterList.addClass('form__filters--mobile');
+    // toggle filters
+    $toggleButton.on('click', (e) => {
+        $('body').toggleClass(activeClass);
     });
 
-    // close mobile filters
+    // close filters on mobile
     $closeButton.on('click', (e) => {
-        $('body').removeClass('no-scroll');
-        $(e.target).closest($filterWrapper).removeClass('is-open');
-        $filterList.removeClass('form__filters--mobile');
+        $('body').removeClass(activeClass);
     });
 
     // clear all filters
