@@ -20,18 +20,12 @@ $dropdown-height: 45px;
             }
 
             .select2-selection__clear {
-                position: absolute;
-                right: 35px;
                 display: none;
-                float: none;
-
-                @include media-query(small-tablet) {
-                    display: block;
-                }
             }
 
             .select2-selection__rendered {
                 padding-left: 15px;
+                padding-right: 30px;
                 line-height: $dropdown-height;
             }
 
@@ -41,6 +35,7 @@ $dropdown-height: 45px;
                 pointer-events: none;
                 background: url('./../../images/dropdown.svg') transparent no-repeat 95% center;
                 background-size: 8px;
+                width: 8px;
 
                 b[role='presentation'] {
                     display: none;
@@ -92,7 +87,7 @@ $dropdown-height: 45px;
             padding: 6px;
 
             &::before {
-                width: 20px;
+                min-width: 20px;
                 height: 20px;
                 margin-right: 10px;
                 background: $color--white;
