@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     'hijack',
     'compat',
     'pagedown',
+    'webpack_loader',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -592,3 +593,10 @@ if env.get('SECURE_CONTENT_TYPE_NOSNIFF', 'true').lower().strip() == 'true':
 
 REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
                           'no-referrer-when-downgrade').strip()
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'app/',
+        'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
+    }
+}

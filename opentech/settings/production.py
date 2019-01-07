@@ -21,5 +21,4 @@ if 'MAILGUN_API_KEY' in env:
         "WEBHOOK_SECRET": env.get('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
-
 django_heroku.settings(locals())

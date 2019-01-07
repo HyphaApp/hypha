@@ -3,6 +3,7 @@ from django.urls import include, path
 from .views import (
     RevisionCompareView,
     RevisionListView,
+    SubmissionsByRound,
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
@@ -31,6 +32,7 @@ submission_urls = ([
         path('', include('opentech.apply.determinations.urls', namespace="determinations")),
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
+    path('rounds/<int:pk>/', SubmissionsByRound.as_view(), name="by_round"),
 ], 'submissions')
 
 

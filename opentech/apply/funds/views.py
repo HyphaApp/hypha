@@ -3,7 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -13,6 +13,8 @@ from django.views.generic import DetailView, ListView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+
+from wagtail.core.models import Page
 
 from opentech.apply.activity.views import (
     AllActivityContextMixin,
@@ -28,7 +30,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision
+from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
@@ -418,3 +420,17 @@ class RevisionCompareView(DetailView):
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
         self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
+
+
+@method_decorator(staff_required, name='dispatch')
+class SubmissionsByRound(DetailView):
+    model = Page
+    template_name = 'funds/submissions_by_round.html'
+
+    def get_object(self):
+        # We want to only show lab or Rounds in this view, their base class is Page
+        obj = super().get_object()
+        obj = obj.specific
+        if not isinstance(obj, (LabBase, RoundBase)):
+            raise Http404(_("No Round or Lab found matching the query"))
+        return obj

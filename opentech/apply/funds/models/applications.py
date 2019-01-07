@@ -158,6 +158,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # Make sure all children use the shared template
         return 'funds/round_landing.html'
 
+    @cached_property
+    def fund(self):
+        return self.get_parent()
+
     @property
     def is_sealed(self):
         return self.sealed and self.is_open

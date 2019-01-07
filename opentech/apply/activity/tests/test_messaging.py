@@ -44,7 +44,8 @@ class TestAdapter(AdapterBase):
         pass
 
 
-class AdapterMixin:
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class AdapterMixin(TestCase):
     adapter = None
 
     def process_kwargs(self, message_type, **kwargs):
