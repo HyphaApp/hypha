@@ -124,6 +124,7 @@
 
         @include media-query(tablet-landscape) {
             display: flex;
+            align-items: flex-start;
             padding: 10px 0 30px;
             opacity: 0;
             transition: opacity $transition;
