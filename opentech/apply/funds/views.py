@@ -41,6 +41,22 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilter
 
+    excluded_fields = []
+
+    @property
+    def excluded(self):
+        return {
+            'exclude': self.excluded_fields
+        }
+
+    def get_table_kwargs(self):
+        return self.excluded
+
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super().get_filterset_kwargs(filterset_class)
+        kwargs.update(self.excluded)
+        return kwargs
+
     def get_queryset(self):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
@@ -56,10 +72,7 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
 class SubmissionsByRound(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_round.html'
 
-    def get_table_kwargs(self):
-        return {
-            'exclude': ('round', 'lead', 'page')
-        }
+    excluded_fields = ('round', 'lead', 'fund')
 
     def get_queryset(self):
         # We want to only show lab or Rounds in this view, their base class is Page
