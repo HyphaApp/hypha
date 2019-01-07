@@ -1,5 +1,4 @@
 {% extends "base-apply.html" %}
-{% load render_table from django_tables2 %}
 {% load static %}
 {% block title %}Submissions{% endblock %}
 
@@ -21,29 +20,7 @@
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-
-    {% if table.data or active_filters %}
-        <div class="button button--filters button--contains-icons js-open-filters">Filter By</div>
-
-        <div class="filters js-filter-wrapper">
-            <div class="filters__header">
-                <div class="js-clear-filters">Clear</div>
-                <div>Filter by</div>
-                <div class="js-close-filters">Close</div>
-            </div>
-
-            <form action="" method="get" class="form form--filters">
-                <ul class="form__filters select2 js-filter-list">
-                    {{ filter.form.as_ul }}
-                    <li>
-                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
-                    </li>
-                </ul>
-            </form>
-        </div>
-    {% endif %}
-
-    {% render_table table %}
+    {% include "funds/includes/submissions_table.html" with table=table filter=filter active_filters=active_filters %}
 </div>
 
 <a href="#" class="js-open-feed link link--open-feed">
