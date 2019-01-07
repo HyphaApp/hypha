@@ -53,5 +53,13 @@
         });
     });
 
+    $(function () {
+        // Add active class to select2 checkboxes after page has been filtered
+        const clearButtons = document.querySelectorAll('.select2-selection__clear');
+        clearButtons.forEach(clearButton => {
+            clearButton.parentElement.parentElement.classList.add('is-active');
+        });
+    });
+
 })(jQuery);
 
