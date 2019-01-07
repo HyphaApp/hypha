@@ -129,7 +129,12 @@
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize() {
         if ($(window).width() < 1024) {
+            // close the filters if open when reducing the window size
             $('body').removeClass('filters-open');
+
+            // update filter button text
+            $('.js-toggle-filters').text('Filters');
+
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
             });
