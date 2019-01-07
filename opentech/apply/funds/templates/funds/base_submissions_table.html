@@ -8,25 +8,29 @@
 
 {% block content %}
     {% block table %}
+    <div class="wrapper wrapper--table-actions">
         {% if table.data or active_filters %}
-        <div class="button button--filters button--contains-icons js-toggle-filters">Filter By</div>
+            <div class="button button--filters button--contains-icons js-toggle-filters">Filters</div>
+        {% endif %}
+    </div>
 
-        <div class="filters">
-            <div class="filters__header">
-                <div class="js-clear-filters">Clear</div>
-                <div>Filter by</div>
-                <div class="js-close-filters">Close</div>
+        {% if table.data or active_filters %}
+            <div class="filters">
+                <div class="filters__header">
+                    <div class="js-clear-filters">Clear</div>
+                    <div>Filter by</div>
+                    <div class="js-close-filters">Close</div>
+                </div>
+
+                <form action="" method="get" class="form form--filters">
+                    <ul class="form__filters select2">
+                        {{ filter.form.as_ul }}
+                        <li>
+                            <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                        </li>
+                    </ul>
+                </form>
             </div>
-
-            <form action="" method="get" class="form form--filters">
-                <ul class="form__filters select2">
-                    {{ filter.form.as_ul }}
-                    <li>
-                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
-                    </li>
-                </ul>
-            </form>
-        </div>
         {% endif %}
 
         {% render_table table %}

@@ -265,4 +265,11 @@
     &--reviews-table {
         overflow-x: scroll;
     }
+
+    &--table-actions {
+        @include media-query(tablet-landscape) {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
 }

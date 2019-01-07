@@ -79,10 +79,26 @@
         border: 1px solid $color--light-mid-grey;
         transition: none;
 
-        &:focus,
-        &:active,
-        &:hover {
-            background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        @include media-query(tablet-landscape) {
+            background: none;
+            padding: 0;
+            border: 0;
+            align-items: center;
+            justify-content: flex-start;
+            max-width: initial;
+
+            &::before {
+                content: '';
+                background-image: url('./../../images/filters.svg');
+                background-color: transparent;
+                background-position: left center;
+                transform: rotate(90deg);
+                background-size: 20px;
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+                margin-right: 10px;
+            }
         }
     }
 
