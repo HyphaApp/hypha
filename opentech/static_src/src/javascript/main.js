@@ -128,58 +128,12 @@
 
     // reset mobile filters if they're open past the tablet breakpoint
     $(window).resize(function resize() {
-        if ($(window).width() < 1024) {
-            // close the filters if open when reducing the window size
-            $('body').removeClass('filters-open');
-
-            // update filter button text
-            $('.js-toggle-filters').text('Filters');
-
-            $('.select2').on('click', (e) => {
-                mobileFilterPadding(e.target);
-            });
-        }
-        else {
+        if ($(window).width() > 1024) {
             $('.js-actions-toggle').removeClass('is-active');
             $('.js-actions-sidebar').removeClass('is-visible');
             $('.tr--parent.is-expanded').removeClass('is-expanded');
         }
     }).trigger('resize');
-
-    function mobileFilterPadding(element) {
-        const expanded = 'expanded-filter-element';
-        const dropdown = $(element).closest('.select2');
-        const openDropdown = $('.select2 .' + expanded);
-        let dropdownMargin = 0;
-
-        if (openDropdown.length > 0 && !openDropdown.hasClass('select2-container--open')) {
-            // reset the margin of the select we previously worked
-            openDropdown.removeClass(expanded);
-            // store the offset to adjust the new select box (elements above the old dropdown unaffected)
-            if (dropdown.position().top > openDropdown.position().top) {
-                dropdownMargin = parseInt(openDropdown.css('marginBottom'));
-            }
-            openDropdown.css('margin-bottom', '0px');
-        }
-
-        if (dropdown.hasClass('select2-container--open')) {
-            dropdown.addClass(expanded);
-            const dropdownID = $(element).closest('.select2-selection').attr('aria-owns');
-            // Element which has the height of the select dropdown
-            const match = $(`ul#${dropdownID}`);
-            const dropdownHeight = match.outerHeight(true);
-
-            // Element which has the position of the dropdown
-            const positionalMatch = match.closest('.select2-container');
-
-            // Pad the bottom of the select box
-            dropdown.css('margin-bottom', `${dropdownHeight}px`);
-
-            // bump up the dropdown options by height of closed elements
-            positionalMatch.css('top', positionalMatch.position().top - dropdownMargin);
-        }
-    }
-
 
     $('form').filter('.form__comments').submit(function (e) {
         var $form = $(this);
