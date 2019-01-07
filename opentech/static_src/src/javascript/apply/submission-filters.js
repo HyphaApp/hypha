@@ -6,6 +6,11 @@
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
     const activeClass = 'filters-open';
+    // check if the page has a query string and keep filters open if so on desktop
+    if (window.location.href.indexOf('?') > -1 && $(window).width() > 1024) {
+        $body.addClass(filterOpenClass);
+        updateButtonText();
+    }
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
     // so we have to listen for the event higher up
@@ -43,6 +48,20 @@
         $('body').removeClass(activeClass);
     });
 
+    // redirect to submissions home to clear filters
+    function handleClearFilters() {
+        window.location.href = submissionsUrl;
+    }
+
+    // toggle filters button wording
+    function updateButtonText() {
+        if ($body.hasClass(filterOpenClass)) {
+            $toggleButton.text('Clear filters');
+        }
+        else {
+            $toggleButton.text('Filters');
+        }
+    }
     // clear all filters
     $clearButton.on('click', () => {
         const dropdowns = document.querySelectorAll('.form__filters--mobile select');
