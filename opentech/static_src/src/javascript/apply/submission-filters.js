@@ -48,8 +48,10 @@
         if ($body.hasClass(filterOpenClass)) {
             handleClearFilters();
         }
+        else {
+            $body.addClass(filterOpenClass);
+        }
 
-        $body.toggleClass(filterOpenClass);
         updateButtonText();
     });
 
