@@ -8,7 +8,6 @@
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
     const filterOpenClass = 'filters-open';
-    const submissionsUrl = '/apply/submissions/';
     const filterActiveClass = 'is-active';
 
     // check if the page has a query string and keep filters open if so on desktop
@@ -62,7 +61,7 @@
 
     // redirect to submissions home to clear filters
     function handleClearFilters() {
-        window.location.href = submissionsUrl;
+        window.location.href = window.location.href.split('?')[0];
     }
 
     // toggle filters button wording
