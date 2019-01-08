@@ -50,9 +50,8 @@
         }
         else {
             $body.addClass(filterOpenClass);
+            updateButtonText();
         }
-
-        updateButtonText();
     });
 
     // close filters on mobile
