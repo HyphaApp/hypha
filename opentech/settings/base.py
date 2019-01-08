@@ -600,3 +600,8 @@ WEBPACK_LOADER = {
         'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
     }
 }
+
+# Django countries package provides ISO 3166-1 countries which does not contain Kosovo.
+COUNTRIES_OVERRIDE = {
+    'KV': 'Kosovo',
+}
