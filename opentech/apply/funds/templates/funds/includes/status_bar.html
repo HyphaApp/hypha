@@ -1,24 +1,22 @@
 <div class="status-bar {{ class }}">
-    {% for phase_name, phase in phases.items %}
-        {% if not same_stage or current_phase.stage == phase.stage %}
-            {% ifchanged phase.step %}
-                <div class="status-bar__item
-                            {% if phase.step == current_phase.step %}
-                                status-bar__item--is-current
-                            {% elif current_phase.step > phase.step %}
-                                status-bar__item--is-complete
-                            {% endif %}">
-                    <span class="status-bar__tooltip"
-                    {% if phase.step != current_phase.step %}
-                        data-title="{{ phase }}" aria-label="{{ phase }}"
-                    {% else %}
-                        data-title="{{ current_phase }}" aria-label="{{ current_phase }}"
-                    {% endif %}
-                    ></span>
-                    <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
-                </div>
-                {% endifchanged %}
-        {% endif %}
+    {% for phase in phases %}
+        {% ifchanged phase.step %}
+            <div class="status-bar__item
+                        {% if phase.step == current_phase.step %}
+                            status-bar__item--is-current
+                        {% elif current_phase.step > phase.step %}
+                            status-bar__item--is-complete
+                        {% endif %}">
+                <span class="status-bar__tooltip"
+                {% if phase.step != current_phase.step %}
+                    data-title="{{ phase }}" aria-label="{{ phase }}"
+                {% else %}
+                    data-title="{{ current_phase }}" aria-label="{{ current_phase }}"
+                {% endif %}
+                ></span>
+                <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
+            </div>
+        {% endifchanged %}
     {% endfor %}
 </div>
 <div class="status-bar--mobile">

@@ -104,7 +104,7 @@ applicant_can = lambda user: user.is_applicant
 reviewer_can = lambda user: user.is_reviewer
 
 
-def make_permissions(edit=list(), review=list(), view=list()):
+def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
     return {
         'edit': edit,
         'review': review,
@@ -115,6 +115,8 @@ def make_permissions(edit=list(), review=list(), view=list()):
 no_permissions = make_permissions()
 
 default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
+
+hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can])
 
 reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can])
 
@@ -166,7 +168,7 @@ SingleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Request,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 1,
     },
     'post_review_discussion': {
@@ -177,7 +179,7 @@ SingleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Request,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'post_review_more_info': {
@@ -352,7 +354,7 @@ DoubleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Concept,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 1,
     },
     'concept_review_discussion': {
@@ -363,7 +365,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Concept,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'concept_review_more_info': {
@@ -444,7 +446,7 @@ DoubleStageDefinition = {
         },
         'display': 'Internal Review',
         'stage': Proposal,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 6,
     },
     'post_proposal_review_discussion': {
@@ -455,7 +457,7 @@ DoubleStageDefinition = {
         },
         'display': 'Under Discussion',
         'stage': Proposal,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 7,
     },
     'post_proposal_review_more_info': {
