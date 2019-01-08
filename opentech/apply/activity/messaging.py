@@ -302,6 +302,11 @@ class EmailAdapter(AdapterBase):
     def recipients(self, message_type, submission, **kwargs):
         if message_type == MESSAGES.READY_FOR_REVIEW:
             return self.reviewers(submission)
+
+        if message_type == MESSAGES.TRANSITION:
+            # Only notify the applicant if the new phase can be seen within the workflow
+            if not submission.phase.permissions.can_view(submission.user):
+                return []
         return [submission.user.email]
 
     def reviewers(self, submission):
