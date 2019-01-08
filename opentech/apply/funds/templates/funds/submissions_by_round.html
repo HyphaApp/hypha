@@ -4,7 +4,6 @@
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-<div id="react-app">
     <div class="admin-bar">
         <div class="admin-bar__inner admin-bar__inner--with-button">
             <div>
@@ -16,13 +15,13 @@
         </div>
     </div>
 
-    <div id="react-original-content" class="wrapper wrapper--large">
-        {% block table %}
-            {{ block.super }}
-        {% endblock %}
+    <div id="react-app">
+        <div class="wrapper wrapper--large">
+            {% block table %}
+                {{ block.super }}
+            {% endblock %}
+        </div>
     </div>
-
-</div>
 {% render_bundle 'main' %}
 
 {% endblock %}

@@ -8,6 +8,6 @@ const container = document.getElementById('react-app');
 
 
 ReactDOM.render(
-    <App pageContent={container.innerHTML} originalContent={document.getElementById('react-original-content')} />,
+    <App pageContent={container.innerHTML} />,
     container
 );
