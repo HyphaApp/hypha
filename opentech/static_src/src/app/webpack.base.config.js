@@ -1,4 +1,4 @@
-var path = require("path")
+var path = require('path');
 
 module.exports = {
     context: __dirname,
@@ -6,7 +6,7 @@ module.exports = {
     entry: ['./src/index'],
 
     output: {
-        filename: "[name]-[hash].js"
+        filename: '[name]-[hash].js'
     },
 
     plugins: [
@@ -33,6 +33,10 @@ module.exports = {
                     'css-loader',
                     'sass-loader'
                 ]
+            },
+            {
+                test: /\.svg$/,
+                use: ['@svgr/webpack']
             }
         ]
     },
@@ -40,5 +44,5 @@ module.exports = {
     resolve: {
         modules: ['node_modules'],
         extensions: ['.js', '.jsx']
-    },
-}
+    }
+};
