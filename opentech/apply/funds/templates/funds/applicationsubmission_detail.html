@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load static workflow_tags wagtailcore_tags %}
+{% load static workflow_tags wagtailcore_tags statusbar_tags %}
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -17,7 +17,7 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with phases=object.workflow current_phase=object.phase same_stage=True%}
+        {% status_bar object.workflow object.phase request.user same_stage=True%}
 
         <div class="tabs js-tabs">
             <div class="tabs__container">
@@ -138,4 +138,3 @@
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
 {% endblock %}
-
