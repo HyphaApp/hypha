@@ -87,26 +87,25 @@ class SubmissionsByRound(BaseAdminSubmissionsTable):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionSearchView(SingleTableMixin, FilterView):
+class SubmissionSearchView(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_search.html'
-    table_class = AdminSubmissionsTable
 
     filterset_class = SubmissionFilterAndSearch
 
-    def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-
     def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs,)
+
         search_term = self.request.GET.get('query')
 
         # We have more data than just 'query'
         active_filters = len(self.filterset.data) > 1
 
-        return super().get_context_data(
+        kwargs.update(
             search_term=search_term,
             active_filters=active_filters,
-            **kwargs,
         )
+
+        return kwargs
 
 
 @method_decorator(staff_required, name='dispatch')
