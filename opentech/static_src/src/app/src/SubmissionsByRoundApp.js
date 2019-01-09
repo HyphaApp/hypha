@@ -34,9 +34,7 @@ class SubmissionsByRoundApp extends React.Component {
     }
 
   renderSubmissionsByRound() {
-    return <div>
-        <SubmissionsByRoundContainer />
-    </div>;
+    return <SubmissionsByRoundContainer />;
   }
 }
 
