@@ -11,7 +11,7 @@ register = template.Library()
 @register.filter
 def submission_links(value):
     # Match tags in the format #123 that is not preceeded and/or followed by a word character.
-    matches = re.findall('(?<!\w)\#(\d+)(?!\w)', value)
+    matches = re.findall('(?<![\w\&])\#(\d+)(?!\w)', value)
     links = {}
     if matches:
         for submission in ApplicationSubmission.objects.filter(id__in=matches):
