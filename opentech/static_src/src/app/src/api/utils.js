@@ -7,7 +7,9 @@ export async function apiFetch(path, method = 'GET', params, options) {
     url.pathname = path;
 
     if (params !== undefined) {
-        url.searchParams = new URLSearchParams(params);
+        for (const [paramKey, paramValue] of Object.entries(params)) {
+            url.searchParams.set(paramKey, paramValue);
+        }
     }
 
     return fetch(url, {
