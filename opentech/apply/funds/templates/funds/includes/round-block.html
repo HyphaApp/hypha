@@ -1,0 +1,69 @@
+<div>
+    <section class="section section--with-options">
+        <h4 class="heading heading--normal heading--no-margin">All Rounds and Labs</h4>
+        <div class="js-tabs">
+            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-1">Closed</a>
+            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-2">Open</a>
+        </div>
+    </section>
+
+    {# Closed rounds/labs tab #}
+    <div class="tabs__content" id="tab-1">
+        <ul class="round-block">
+            <li class="round-block__item">
+                <h4>IFFund-2018-01</h4>
+                <p>Internet Freedom Fund</p>
+                <p class="round-block__date">Closed 2018-01-01</p>
+                <p class="round-block__determination">33% Determined</p>
+                <p class="round-block__reviewer">Reviewer</p>
+                <a class="round-block__view" href="#">View</a>
+            </li>
+
+            <li class="round-block__item">
+                <h4>IFFund-2018-01</h4>
+                <p>Internet Freedom Fund</p>
+                <p class="round-block__date">Closed 2018-01-01</p>
+                <p class="round-block__determination">33% Determined</p>
+                <p class="round-block__reviewer">Reviewer</p>
+                <a class="round-block__view" href="#">View</a>
+            </li>
+            {% if 10 >= 10 %}
+                {# If count of rounds/labs >= 10 #}
+                <li class="round-block__item round-block__item--more">
+                    {# href required #}
+                    <a href="#">Show more</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    {# Open rounds/labs tab #}
+    <div class="tabs__content" id="tab-2">
+        <ul class="round-block">
+            <li class="round-block__item">
+                <h4>IFFund-2018-01</h4>
+                <p>Internet Freedom Fund</p>
+                <p class="round-block__date">Open until 2020-01-01</p>
+                <p class="round-block__determination">33% Determined</p>
+                <p class="round-block__reviewer">Reviewer</p>
+                <a class="round-block__view" href="#">View</a>
+            </li>
+
+            <li class="round-block__item">
+                <h4>IFFund-2018-01</h4>
+                <p>Internet Freedom Fund</p>
+                <p class="round-block__date">Open</p>
+                <p class="round-block__determination">33% Determined</p>
+                <p class="round-block__reviewer">Reviewer</p>
+                <a class="round-block__view" href="#">View</a>
+            </li>
+            {% if 10 >= 10 %}
+                {# If count of rounds/labs >= 10 #}
+                <li class="round-block__item round-block__item--more">
+                    {# href required #}
+                    <a href="#">Show more</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
