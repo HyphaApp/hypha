@@ -1,10 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
 import SubmissionsByRoundList from '@components/SubmissionsByRoundList';
+import { getCurrentRoundSubmissions } from '@selectors/submissions';
+import { setCurrentSubmissionRound } from '@actions/submissions';
 
 
 class SubmissionsByRoundContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        props.dispatch(setCurrentSubmissionRound(props.roundId));
+    }
+
     render() {
         return (
             <>
@@ -17,16 +25,14 @@ class SubmissionsByRoundContainer extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        items: state.submissions.items,
-    }
-}
+        items: getCurrentRoundSubmissions(state),
+    };
+};
 
-const mapDispatchToProps = dispatch => {
-    return {};
-}
+SubmissionsByRoundContainer.propTypes = {
+    roundId: PropTypes.number,
+};
 
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SubmissionsByRoundContainer);
+
+export default connect(mapStateToProps)(SubmissionsByRoundContainer);

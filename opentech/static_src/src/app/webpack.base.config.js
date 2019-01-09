@@ -61,6 +61,8 @@ module.exports = {
             '@containers': path.resolve(__dirname, 'src/containers'),
             '@redux': path.resolve(__dirname, 'src/redux'),
             '@reducers': path.resolve(__dirname, 'src/redux/reducers'),
+            '@selectors': path.resolve(__dirname, 'src/redux/selectors'),
+            '@actions': path.resolve(__dirname, 'src/redux/actions'),
         }
     }
 };
