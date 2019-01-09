@@ -208,4 +208,27 @@
             fill: $color--white;
         }
     }
+
+    &--switcher {
+        fill: transparentize($color--white, .5);
+        transition: fill $transition;
+
+        &:hover,
+        &:focus {
+            fill: transparentize($color--white, .25);
+        }
+
+        &:first-child {
+            margin-right: 10px;
+        }
+
+        &.is-active {
+            fill: $color--white;
+        }
+
+        svg {
+            width: 45px;
+            height: 45px;
+        }
+    }
 }
