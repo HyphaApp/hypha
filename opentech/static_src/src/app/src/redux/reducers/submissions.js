@@ -1,19 +1,8 @@
-import { SET_CURRENT_SUBMISSION_ROUND } from '@actions/submissions';
+import { SET_CURRENT_SUBMISSION_ROUND, UPDATE_SUBMISSIONS_BY_ROUND } from '@actions/submissions';
 
 const initialState = {
     currentRound: null,
-    itemsByRound: {
-        796: [
-            {
-                title: "Test stage 1",
-                applications: [],
-            },
-            {
-                title: "Test stage 2 blabla",
-                applications: [],
-            },
-        ]
-    }
+    itemsByRound: {}
 };
 
 export default function submissions(state = initialState, action) {
@@ -22,6 +11,17 @@ export default function submissions(state = initialState, action) {
             return {
                 ...state,
                 currentRound: action.id,
+            };
+        case UPDATE_SUBMISSIONS_BY_ROUND:
+            const newData = {};
+            newData[action.roundId] = action.data.results;
+
+            return {
+                ...state,
+                itemsByRound: {
+                    ...state.itemsByRound,
+                    ...newData,
+                },
             };
         default:
             return state;

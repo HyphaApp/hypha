@@ -10,7 +10,6 @@ const container = document.getElementById('submissions-by-round-react-app');
 
 const store = createStore();
 
-console.log(container.dataset);
 ReactDOM.render(
     <Provider store={store}>
         <SubmissionsByRoundApp pageContent={container.innerHTML} roundId={parseInt(container.dataset.roundId)} />

@@ -9,6 +9,18 @@ const getCurrentRoundSubmissions = createSelector(
   (submissionsByRound, currentRound) => submissionsByRound[currentRound] || []
 );
 
+const getCurrentRoundSubmissionsByStatus = createSelector(
+    [getCurrentRoundSubmissions] ,
+    currentRoundSubmissions => {
+        const submissionsByStatus = [{
+            title: 'Test stage',
+            applications: currentRoundSubmissions,
+        }];
+        return submissionsByStatus;
+    }
+);
+
 export {
     getCurrentRoundSubmissions,
+    getCurrentRoundSubmissionsByStatus,
 };

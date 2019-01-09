@@ -6,7 +6,7 @@ export default class SubmissionsByRoundListHeading extends React.Component {
     render() {
         return (
             <li>
-                <h2>{this.props.title}</h2>
+                <h2>{this.props.title} ({this.props.count})</h2>
             </li>
         );
     }
