@@ -55,6 +55,10 @@ module.exports = {
 
     resolve: {
         modules: ['node_modules', './src'],
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@containers': path.resolve(__dirname, 'src/containers'),
+        }
     }
 };

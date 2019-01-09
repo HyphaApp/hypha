@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './App'
+import SubmissionsByRoundApp from './SubmissionsByRoundApp'
 
 
-const container = document.getElementById('react-app');
+const container = document.getElementById('submissions-by-round-react-app');
 
 
 ReactDOM.render(
-    <App pageContent={container.innerHTML} />,
+    <SubmissionsByRoundApp pageContent={container.innerHTML} />,
     container
 );

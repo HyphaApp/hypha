@@ -1,10 +1,10 @@
 import React from 'react';
 import { hot } from 'react-hot-loader'
-import Switcher from './components/Switcher'
-import './App.scss';
+import Switcher from '@components/Switcher'
+import SubmissionsByRoundContainer from '@containers/SubmissionsByRoundContainer';
 
 
-class App extends React.Component {
+class SubmissionsByRoundApp extends React.Component {
     constructor(props) {
         super(props);
 
@@ -26,13 +26,19 @@ class App extends React.Component {
     render() {
         return (
             <>
-                <Switcher selector='react-switcher' open={this.state.detailOpen} handleOpen={this.detailOpen} handleClose={this.detailClose} />
+                <Switcher selector='submissions-by-round-app-react-switcher' open={this.state.detailOpen} handleOpen={this.detailOpen} handleClose={this.detailClose} />
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
-                {this.state.detailOpen && <div><h2>THIS IS REACT</h2></div>}
+                {this.state.detailOpen && this.renderSubmissionsByRound()}
             </>
         )
     }
+
+  renderSubmissionsByRound() {
+    return <div>
+        <SubmissionsByRoundContainer />
+    </div>;
+  }
 }
 
 
-export default hot(module)(App)
+export default hot(module)(SubmissionsByRoundApp)
