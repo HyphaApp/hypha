@@ -11,13 +11,10 @@ export const setCurrentSubmissionRound = id => ({
 });
 
 export const fetchSubmissionsByRound = id => {
-    console.log('fetch submissions by round');
     return async function(dispatch) {
         //dispatch(fetchSubmissionsByRoundBegin());
         try {
-            console.log('before api call');
             const response = await api.fetchSubmissionsByRound(id);
-            console.log('response', response);
             const json = await response.json();
             if (!response.ok) {
                 // handle error

@@ -3,7 +3,6 @@ const getBaseUrl = () => {
 };
 
 export async function apiFetch(path, method = 'GET', params, options) {
-    console.log('apifetch');
     const url = new URL(getBaseUrl());
     url.pathname = path;
 
