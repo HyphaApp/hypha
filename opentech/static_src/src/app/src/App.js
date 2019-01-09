@@ -25,11 +25,11 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
+            <>
                 <Switcher selector='react-switcher' open={this.state.detailOpen} handleOpen={this.detailOpen} handleClose={this.detailClose} />
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
                 {this.state.detailOpen && <div><h2>THIS IS REACT</h2></div>}
-            </div>
+            </>
         )
     }
 }
