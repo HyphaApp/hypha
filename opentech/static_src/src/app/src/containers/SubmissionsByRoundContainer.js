@@ -1,22 +1,32 @@
 import React from 'react';
+import { connect } from 'react-redux'
+
 import SubmissionsByRoundList from '@components/SubmissionsByRoundList';
 
-export default class SubmissionsByRoundContainer extends React.Component {
+
+class SubmissionsByRoundContainer extends React.Component {
     render() {
-        const mockItems = [
-            {
-                title: "Test stage 1",
-                applications: [],
-            },
-            {
-                title: "Test stage 2 blabla",
-                applications: [],
-            },
-        ];
         return (
             <>
-                <SubmissionsByRoundList items={mockItems} />
+                <SubmissionsByRoundList items={this.props.items} />
             </>
         );
     }
 }
+
+
+const mapStateToProps = state => {
+    return {
+        items: state.submissions.items,
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {};
+}
+
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SubmissionsByRoundContainer);
