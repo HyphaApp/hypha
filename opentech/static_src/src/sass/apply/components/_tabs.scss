@@ -11,11 +11,12 @@
         &--current {
             display: inherit;
         }
-
     }
 }
 
 .tab__item {
+    $root: &;
+
     @include responsive-font-sizes(12px, 15px);
     position: relative;
     padding: 10px;
@@ -37,6 +38,29 @@
 
     &:hover {
         color: $color--light-blue;
+    }
+
+    &--alt {
+        font-weight: $weight--semibold;
+        padding: 20px 15px;
+        text-transform: none;
+        display: inline-block;
+        margin-right: 20px;
+        border-bottom: 3px solid transparent;
+
+        &:hover {
+            color: $color--default;
+        }
+
+        &#{$root}--active {
+            background-color: transparent;
+            border-bottom: 3px solid $color--primary;
+
+            &:hover {
+                color: $color--default;
+                background-color: transparent;
+            }
+        }
     }
 
     &--active {
