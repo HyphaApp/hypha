@@ -35,12 +35,14 @@ class ActivityContextMixin:
             'actions': Activity.actions.filter(submission=self.object).select_related(
                 'user',
             ).prefetch_related(
-                'related_object',
+                'related_object__author',
+                'related_object__submission',
             ).visible_to(self.request.user),
             'comments': Activity.comments.filter(submission=self.object).select_related(
                 'user',
             ).prefetch_related(
-                'related_object',
+                'related_object__author',
+                'related_object__submission',
             ).visible_to(self.request.user),
         }
 

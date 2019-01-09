@@ -649,6 +649,9 @@ class ApplicationRevision(AccessFormData, models.Model):
     class Meta:
         ordering = ['-timestamp']
 
+    def __str__(self):
+        return f'Revision for {self.submission.title} by {self.author} '
+
     @property
     def form_fields(self):
         return self.submission.form_fields
