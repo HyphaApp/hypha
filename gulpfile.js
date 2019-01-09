@@ -256,7 +256,7 @@ gulp.task('watch:app', function watch (callback) {
         serverOptions
     )
 
-    server.listen(3000, "0.0.0.0", function(err) {
+    server.listen(3000, "localhost", function(err) {
         if(err) throw new console.PluginError("webpack-dev-server", err);
         // Server listening
         console.log("[webpack-dev-server]", "Running");
