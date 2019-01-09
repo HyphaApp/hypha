@@ -23,6 +23,7 @@ neat_related = {
     MESSAGES.APPLICANT_EDIT: 'revision',
     MESSAGES.EDIT: 'revision',
     MESSAGES.COMMENT: 'comment',
+    MESSAGES.SCREENING: 'old_status',
 }
 
 
@@ -129,6 +130,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
+        MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}'
     }
 
     def recipients(self, message_type, **kwargs):

@@ -14,9 +14,11 @@ class PersonTypeModelAdmin(ModelAdmin):
     model = PersonType
     menu_icon = 'tag'
 
+
 class ScreeningStatusModelAdmin(ModelAdmin):
-	model = ScreeningStatus
-	menu_icon = 'tag'
+    model = ScreeningStatus
+    menu_icon = 'tag'
+
 
 class TaxonomiesModelAdminGroup(ModelAdminGroup):
     menu_label = "Taxonomies"

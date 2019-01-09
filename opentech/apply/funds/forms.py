@@ -2,7 +2,7 @@ from django import forms
 
 from opentech.apply.users.models import User
 
-from .models import ApplicationSubmission
+from .models import ApplicationSubmission, ScreeningStatus
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -19,6 +19,25 @@ class ProgressSubmissionForm(forms.ModelForm):
         choices = list(self.instance.get_actions_for_user(self.user))
         action_field = self.fields['action']
         action_field.choices = choices
+        self.should_show = bool(choices)
+
+
+class ScreeningSubmissionForm(forms.ModelForm):
+    action = forms.ChoiceField(label='Update screening status')
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        # statuses defined in taxonomy ScreeningStatus
+        choices = [ ( status.pk, status.title) for status in ScreeningStatus.objects.all() ]
+        action_field = self.fields['action']
+        action_field.choices = choices
+        # TODO: should_show should be calculated such that screening cannot be changed,
+        # except by admin if the submission has received a final determination
         self.should_show = bool(choices)
 
 
