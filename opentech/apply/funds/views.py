@@ -29,8 +29,8 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
-from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
+from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
+from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase, ScreeningStatus
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
@@ -91,6 +91,29 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = ScreeningSubmissionForm
+    context_name = 'screening_form'
+
+    def form_valid(self, form):
+        action = form.cleaned_data.get('action')
+        # Set status to selected option
+        old_status = copy(self.get_object()).screening_status
+        self.object.screening_status = ScreeningStatus.objects.get(pk=action)
+        self.object.save(update_fields=['screening_status'])
+        # Record activity
+        messenger(
+            MESSAGES.SCREENING,
+            request=self.request,
+            user=self.request.user,
+            submission=self.object,
+            related=old_status,
+        )
+        return super().form_valid(form)
+
+
+@method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
@@ -140,6 +163,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
+        ScreeningSubmissionView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
