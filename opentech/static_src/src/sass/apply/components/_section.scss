@@ -11,6 +11,12 @@
 
     &--with-options {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+
+        @include media-query(small-tablet) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
     }
 }
