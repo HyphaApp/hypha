@@ -21,7 +21,7 @@
 
             // item spacing
             > * {
-                margin: 0 20px 0 0;
+                margin: 0 30px 0 0;
                 flex-basis: 200px;
             }
         }
@@ -67,8 +67,7 @@
         color: $color--primary;
     }
 
-    &__view,
-    &__reviewer {
+    &__view {
         font-weight: $weight--bold;
         text-transform: uppercase;
     }
