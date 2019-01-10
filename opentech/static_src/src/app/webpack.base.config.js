@@ -28,11 +28,23 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'sass-loader'
-                ]
+                use: [{
+                    loader: 'style-loader'
+                }, {
+                    loader: 'css-loader',
+                    options: {
+                        sourceMap: true
+                    }
+                }, {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: true,
+                        data: '@import "main.scss";',
+                        includePaths: [
+                            path.join(__dirname, 'src')
+                        ]
+                    }
+                }]
             },
             {
                 test: /\.svg$/,
