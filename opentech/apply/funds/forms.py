@@ -32,13 +32,12 @@ class ScreeningSubmissionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        # statuses defined in taxonomy ScreeningStatus
         choices = [(status.pk, status.title) for status in ScreeningStatus.objects.all()]
         action_field = self.fields['action']
         action_field.choices = choices
-        # TODO: should_show should be calculated such that screening cannot be changed,
-        # except by admin if the submission has received a final determination
-        self.should_show = bool(choices)
+        self.should_show = False
+        if (self.instance.active and self.user.is_apply_staff) or self.user.is_superuser:
+            self.should_show = True
 
 
 class UpdateSubmissionLeadForm(forms.ModelForm):
