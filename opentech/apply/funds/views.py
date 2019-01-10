@@ -119,14 +119,13 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'screening_form'
 
     def form_valid(self, form):
-        action = form.cleaned_data.get('action')
-        # Set status to selected option
+        screening_status = form.cleaned_data.get('screening_status')
         old_status = copy(self.get_object()).screening_status
         if old_status:
             old_status = f'set from {old_status}'
         else:
             old_status = 'set'
-        self.object.screening_status = ScreeningStatus.objects.get(pk=action)
+        self.object.screening_status = screening_status
         self.object.save(update_fields=['screening_status'])
         # Record activity
         messenger(
