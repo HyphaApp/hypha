@@ -119,7 +119,6 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'screening_form'
 
     def form_valid(self, form):
-        screening_status = form.cleaned_data.get('screening_status')
         old = copy(self.get_object())
         response = super().form_valid(form)
         # Record activity
