@@ -40,9 +40,10 @@ class Workflow(dict):
 
 
 class Phase:
-    def __init__(self, name, display, stage, permissions, step, transitions=dict()):
+    def __init__(self, name, display, stage, permissions, step, public=None, transitions=dict()):
         self.name = name
         self.display_name = display
+        self.public_name = public or self.display_name
         self.stage = stage
         self.permissions = Permissions(permissions)
         self.step = step
@@ -143,6 +144,7 @@ SingleStageDefinition = {
             'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Under Discussion',
+        'public': 'Internal Review',
         'stage': Request,
         'permissions': default_permissions,
         'step': 0,
@@ -220,6 +222,7 @@ SingleStageExternalDefinition = {
             'ext_more_info': 'Request More Information',
         },
         'display': 'Under Discussion',
+        'public': 'Internal Review',
         'stage': RequestExt,
         'permissions': default_permissions,
         'step': 0,
@@ -243,7 +246,7 @@ SingleStageExternalDefinition = {
         },
         'display': 'Internal Review',
         'stage': RequestExt,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 1,
     },
     'ext_post_review_discussion': {
@@ -254,7 +257,7 @@ SingleStageExternalDefinition = {
         },
         'display': 'Under Discussion',
         'stage': RequestExt,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'ext_post_review_more_info': {
@@ -285,7 +288,8 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_post_external_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
+        'public': 'Internal Review',
         'stage': RequestExt,
         'permissions': default_permissions,
         'step': 4,
@@ -328,6 +332,7 @@ DoubleStageDefinition = {
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Under Discussion',
+        'public': 'Internal Review',
         'stage': Concept,
         'permissions': default_permissions,
         'step': 0,
@@ -363,7 +368,7 @@ DoubleStageDefinition = {
             'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': Concept,
         'permissions': hidden_from_applicant_permissions,
         'step': 2,
@@ -421,6 +426,7 @@ DoubleStageDefinition = {
             'external_review': 'Open AC review',
         },
         'display': 'Under Discussion',
+        'public': 'Internal Review',
         'stage': Proposal,
         'permissions': default_permissions,
         'step': 5,
@@ -455,7 +461,7 @@ DoubleStageDefinition = {
             'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_proposal_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': Proposal,
         'permissions': hidden_from_applicant_permissions,
         'step': 7,
@@ -489,7 +495,8 @@ DoubleStageDefinition = {
             'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_external_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
+        'public': 'Internal Review',
         'stage': Proposal,
         'permissions': default_permissions,
         'step': 9,
