@@ -48,6 +48,8 @@
     &__view {
         margin: 0 0 0 auto;
         transition: color $quick-transition;
+        font-weight: $weight--bold;
+        text-transform: uppercase;
 
         @include media-query(tablet-landscape) {
             color: transparent;
@@ -65,11 +67,6 @@
     &__date,
     &__determination {
         color: $color--primary;
-    }
-
-    &__view {
-        font-weight: $weight--bold;
-        text-transform: uppercase;
     }
 
     &__title {
