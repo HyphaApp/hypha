@@ -38,6 +38,29 @@ class Workflow(dict):
                 stages.append(phase.stage)
         return stages
 
+    @property
+    def stepped_phases(self):
+        phases = defaultdict(list)
+        for phase in list(workflow.values()):
+            all_phases[phase.step].append(phase)
+        return phases
+
+    def phases_for(self, user):
+        # Grab the first phase for each step - visible only, the display phase
+        phases = [
+            phase for phase, *_ in self.stepped_phases.values()
+            if phase.permissions.can_view(user)
+        ]
+
+    def previous_visible(self, current, user):
+        """Find the latest phase that the user has view permissions for"""
+        display_phase = self.stepped_phases[current.step][0]
+        phases = self.phases_for(user)
+        index = phases.index(current)
+        for phase in phases[index - 1::-1]:
+            if phase.permission.can_view(user):
+                return phase
+
 
 class Phase:
     def __init__(self, name, display, stage, permissions, step, public=None, transitions=dict()):
