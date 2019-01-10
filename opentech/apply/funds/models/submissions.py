@@ -312,7 +312,7 @@ class ApplicationSubmission(
     screening_status = models.ForeignKey(
         'funds.ScreeningStatus',
         related_name='+',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         verbose_name='screening status',
         null=True,
     )
