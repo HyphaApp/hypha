@@ -30,7 +30,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase, ScreeningStatus
+from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
