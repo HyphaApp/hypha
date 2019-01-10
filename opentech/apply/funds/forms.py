@@ -2,7 +2,7 @@ from django import forms
 
 from opentech.apply.users.models import User
 
-from .models import ApplicationSubmission, ScreeningStatus
+from .models import ApplicationSubmission
 from .widgets import Select2MultiCheckboxesWidget
 
 
