@@ -23,18 +23,14 @@ class ProgressSubmissionForm(forms.ModelForm):
 
 
 class ScreeningSubmissionForm(forms.ModelForm):
-    action = forms.ChoiceField(label='Update screening status')
 
     class Meta:
         model = ApplicationSubmission
-        fields: list = []
+        fields = ('screening_status',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        choices = [(status.pk, status.title) for status in ScreeningStatus.objects.all()]
-        action_field = self.fields['action']
-        action_field.choices = choices
         self.should_show = False
         if (self.instance.active and self.user.is_apply_staff) or self.user.is_superuser:
             self.should_show = True
