@@ -33,7 +33,7 @@ class ScreeningSubmissionForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         # statuses defined in taxonomy ScreeningStatus
-        choices = [ ( status.pk, status.title) for status in ScreeningStatus.objects.all() ]
+        choices = [(status.pk, status.title) for status in ScreeningStatus.objects.all()]
         action_field = self.fields['action']
         action_field.choices = choices
         # TODO: should_show should be calculated such that screening cannot be changed,
