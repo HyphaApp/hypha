@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
+from .models import INTERNAL, PUBLIC
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -117,7 +118,7 @@ class ActivityAdapter(AdapterBase):
     adapter_type = "Activity Feed"
     always_send = True
     messages = {
-        MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
+        MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
@@ -152,6 +153,31 @@ class ActivityAdapter(AdapterBase):
             message.append(', '.join([str(user) for user in removed]) + '.')
 
         return ' '.join(message)
+
+    def handle_transition(self, message, old_phase, submission, **kwargs):
+        base_message = 'Progressed from {old_display} to {new_display}'
+
+        new_phase = submission.phase
+
+        staff_message = base_message.format(
+            old_display=old_phase.display_name,
+            new_display=new_phase.display_name,
+        )
+
+        if new_phase.permissions.can_view(submission.user):
+            # we need to provide a different message to the applicant
+            last_visible_phase = submission.workflow.previous_visisble(old_phase, submission.user)
+            applicant_message = base_message.format(
+                old_display=last_visible_phase.public_name,
+                new_display=new_phase.public_name,
+            )
+
+            return {
+                INTERNAL: staff_message,
+                PUBLIC: applicant_message,
+            }
+
+        return staff_message
 
     def send_message(self, message, user, submission, **kwargs):
         from .models import Activity, PUBLIC
