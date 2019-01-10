@@ -122,6 +122,10 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
         action = form.cleaned_data.get('action')
         # Set status to selected option
         old_status = copy(self.get_object()).screening_status
+        if old_status:
+            old_status = f'set from {old_status}'
+        else:
+            old_status = 'set'
         self.object.screening_status = ScreeningStatus.objects.get(pk=action)
         self.object.save(update_fields=['screening_status'])
         # Record activity
