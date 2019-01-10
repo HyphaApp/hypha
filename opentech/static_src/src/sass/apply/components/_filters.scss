@@ -50,4 +50,12 @@
             }
         }
     }
+
+    &__button {
+        appearance: none;
+        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        border: 0;
+        color: $color--primary;
+        background: transparent;
+    }
 }

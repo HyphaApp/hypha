@@ -10,16 +10,16 @@
     {% block table %}
     <div class="wrapper wrapper--table-actions">
         {% if table.data or active_filters %}
-            <div class="button button--filters button--contains-icons js-toggle-filters">Filters</div>
+            <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
         {% endif %}
     </div>
 
         {% if table.data or active_filters %}
             <div class="filters">
                 <div class="filters__header">
-                    <div class="js-clear-filters">Clear</div>
+                    <button class="filters__button js-clear-filters">Clear</button>
                     <div>Filter by</div>
-                    <div class="js-close-filters">Close</div>
+                    <button class="filters__button js-close-filters">Close</button>
                 </div>
 
                 <form action="" method="get" class="form form--filters">

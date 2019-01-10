@@ -78,6 +78,7 @@
         background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
         border: 1px solid $color--light-mid-grey;
         transition: none;
+        width: 100%;
 
         @include media-query(tablet-landscape) {
             background: none;
@@ -86,6 +87,7 @@
             align-items: center;
             justify-content: flex-start;
             max-width: initial;
+            width: auto;
 
             &::before {
                 content: '';
