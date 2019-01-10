@@ -98,22 +98,17 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         screening_status = form.cleaned_data.get('screening_status')
-        old_status = copy(self.get_object()).screening_status
-        if old_status:
-            old_status = f'set from {old_status}'
-        else:
-            old_status = 'set'
-        self.object.screening_status = screening_status
-        self.object.save(update_fields=['screening_status'])
+        old = copy(self.get_object())
+        response = super().form_valid(form)
         # Record activity
         messenger(
             MESSAGES.SCREENING,
             request=self.request,
             user=self.request.user,
             submission=self.object,
-            related=old_status,
+            related=old.screening_status or '-',
         )
-        return super().form_valid(form)
+        return response
 
 
 @method_decorator(staff_required, name='dispatch')
