@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import ArrayIcon from 'images/icon-array.svg'
 import GridIcon from 'images/icon-grid.svg';
 
+import './styles.scss';
+
 class Switcher extends React.Component {
     constructor(props) {
         super(props);
