@@ -1,3 +1,4 @@
+import json
 import requests
 
 from django.db import models
@@ -156,7 +157,7 @@ class ActivityAdapter(AdapterBase):
 
         return ' '.join(message)
 
-    def handle_transition(self, message, old_phase, submission, **kwargs):
+    def handle_transition(self, old_phase, submission, **kwargs):
         base_message = 'Progressed from {old_display} to {new_display}'
 
         new_phase = submission.phase
@@ -168,16 +169,18 @@ class ActivityAdapter(AdapterBase):
 
         if new_phase.permissions.can_view(submission.user):
             # we need to provide a different message to the applicant
-            last_visible_phase = submission.workflow.previous_visisble(old_phase, submission.user)
+            if not old_phase.permissions.can_view(submission.user):
+                old_phase = submission.workflow.previous_visible(old_phase, submission.user)
+
             applicant_message = base_message.format(
-                old_display=last_visible_phase.public_name,
+                old_display=old_phase.public_name,
                 new_display=new_phase.public_name,
             )
 
-            return {
+            return json.dumps({
                 INTERNAL: staff_message,
                 PUBLIC: applicant_message,
-            }
+            })
 
         return staff_message
 
