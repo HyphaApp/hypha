@@ -8,29 +8,33 @@
 
 {% block content %}
     {% block table %}
-    <div class="wrapper wrapper--table-actions">
-        <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
-        {% include "funds/includes/search.html" %}
-    </div>
+        <div class="wrapper wrapper--table-actions">
+            <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
 
-        {% if table.data or active_filters %}
-            <div class="filters">
-                <div class="filters__header">
-                    <button class="filters__button js-clear-filters">Clear</button>
-                    <div>Filter by</div>
-                    <button class="filters__button js-close-filters">Close</button>
-                </div>
+            <form method="get" role="search" class="form form--search-desktop js-search-form">
+                <button class="button button--search" type="submit" aria-label="Search">
+                    <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
+                </button>
+                <input class="input input--search js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
+            </form>
+        </div>
 
-                <form action="" method="get" class="form form--filters">
-                    <ul class="form__filters select2">
-                        {{ filter.form.as_ul }}
-                        <li>
-                            <button class="button button--primary" type="submit" value="Filter">Filter</button>
-                        </li>
-                    </ul>
-                </form>
+        <div class="filters">
+            <div class="filters__header">
+                <button class="filters__button js-clear-filters">Clear</button>
+                <div>Filter by</div>
+                <button class="filters__button js-close-filters">Close</button>
             </div>
-        {% endif %}
+
+            <form action="" method="get" class="form form--filters js-filter-form">
+                <ul class="form__filters select2">
+                    {{ filter.form.as_ul }}
+                    <li>
+                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
 
         {% render_table table %}
     {% endblock %}
@@ -39,6 +43,7 @@
 {% block extra_js %}
     {{ filter.form.media.js }}
     <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
     <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
 {% endblock %}
