@@ -22,9 +22,18 @@ export default class SubmissionsByRoundList extends React.Component {
 
     render() {
         return (
-            <ul>
-                {this.renderListItems()}
-            </ul>
+            <>
+                <div className="submissions-grid__header">
+                    <select>
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </div>
+                <ul className="submissions-grid__list">
+                    {this.renderListItems()}
+                </ul>
+            </>
         );
     }
 }

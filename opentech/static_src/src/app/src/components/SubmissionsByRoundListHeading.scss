@@ -1,0 +1,59 @@
+.submission-list-item {
+    @include submission-list-item;
+
+    &.is-active {
+        border-right: 0;
+        border-left: 0;
+    }
+
+    &--heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: $color--fog;
+        padding: 15px 20px;
+    }
+
+    &__title {
+        margin: 0;
+    }
+
+    &__count {
+        background-color: $color--white;
+        padding: 0 8px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    &__link {
+        display: block;
+        padding: 30px;
+        background-color: transparent;
+        transition: background-color $quick-transition;
+        position: relative;
+        color: $color--default;
+
+        &::before {
+            content: '';
+            height: 100%;
+            width: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: $color--dark-blue;
+            transition: width $transition;
+        }
+
+        &:hover {
+            background-color: $color--white;
+        }
+
+        .is-active & {
+            background-color: $color--white;
+
+            &::before {
+                width: 8px;
+            }
+        }
+    }
+}
