@@ -98,6 +98,13 @@ $breakpoints: (
 // Transition
 $transition: .25s ease-out;
 $quick-transition: .15s ease;
+$medium-transition: .5s ease;
+
+// Delays
+$base-delay: 30ms;
 
 // Spacing
 $mobile-gutter: 20px;
+
+// Filters
+$filter-dropdown: '.select2 .select2-selection.select2-selection--single';

@@ -1,3 +1,5 @@
+$dropdown-height: 45px;
+
 .select2 {
     &-container {
         z-index: 99995; // to override any modals
@@ -8,7 +10,7 @@
         width: 100% !important; // sass-lint:disable-line no-important
 
         .select2-selection--single {
-            height: 55px;
+            height: $dropdown-height;
             border: 1px solid $color--mid-grey;
             border-radius: 0;
 
@@ -18,27 +20,22 @@
             }
 
             .select2-selection__clear {
-                position: absolute;
-                right: 35px;
                 display: none;
-                float: none;
-
-                @include media-query(small-tablet) {
-                    display: block;
-                }
             }
 
             .select2-selection__rendered {
                 padding-left: 15px;
-                line-height: 55px;
+                padding-right: 30px;
+                line-height: $dropdown-height;
             }
 
             .select2-selection__arrow {
                 right: 15px;
-                height: 53px;
+                height: $dropdown-height;
                 pointer-events: none;
                 background: url('./../../images/dropdown.svg') transparent no-repeat 95% center;
                 background-size: 8px;
+                width: 8px;
 
                 b[role='presentation'] {
                     display: none;
@@ -90,7 +87,7 @@
             padding: 6px;
 
             &::before {
-                width: 20px;
+                min-width: 20px;
                 height: 20px;
                 margin-right: 10px;
                 background: $color--white;
