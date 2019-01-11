@@ -19,7 +19,7 @@ module.exports = {
                 loader: 'babel-loader',
                 include: [path.resolve(__dirname, './src')],
                 query: {
-                    presets: ['@babel/preset-react'],
+                    presets: ['@babel/preset-react', '@babel/preset-env'],
                     plugins: [
                         'react-hot-loader/babel',
                         '@babel/plugin-proposal-class-properties'
