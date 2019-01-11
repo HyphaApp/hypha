@@ -76,8 +76,11 @@ class SubmissionsByRound(BaseAdminSubmissionsTable):
 
     def get_queryset(self):
         # We want to only show lab or Rounds in this view, their base class is Page
-        self.obj = Page.objects.get(pk=self.kwargs.get('pk'))
-        self.obj = self.obj.specific
+        try:
+            self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
+        except Page.DoesNotExist:
+            raise Http404(_("No Round or Lab found matching the query"))
+
         if not isinstance(self.obj, (LabBase, RoundBase)):
             raise Http404(_("No Round or Lab found matching the query"))
         return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
