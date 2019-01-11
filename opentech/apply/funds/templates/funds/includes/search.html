@@ -1,6 +1,6 @@
-<form action="{% url 'funds:search' %}" method="get" role="search" class="form form--search-desktop">
+<form action="" method="get" role="search" class="form form--search-desktop">
     <button class="button button--search" type="submit" aria-label="Search">
         <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
     </button>
-    <input class="input input--search" type="text" placeholder="Search submissions" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
+    <input class="input input--search" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
 </form>

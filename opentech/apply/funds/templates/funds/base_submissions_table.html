@@ -9,10 +9,8 @@
 {% block content %}
     {% block table %}
     <div class="wrapper wrapper--table-actions">
-        {% if table.data or active_filters %}
-            <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
-            {% include "funds/includes/search.html" %}
-        {% endif %}
+        <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
+        {% include "funds/includes/search.html" %}
     </div>
 
         {% if table.data or active_filters %}
