@@ -63,10 +63,17 @@ class Workflow(dict):
 
 
 class Phase:
-    def __init__(self, name, display, stage, permissions, step, public=None, transitions=dict()):
+    """
+    Phase Names:
+    display_name = phase name displayed to staff members in the system
+    public_name = phase name displayed to applicants in the system
+    future_name = phase_name displayed to applicants if they haven't passed this stage
+    """
+    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
         self.name = name
         self.display_name = display
         self.public_name = public or self.display_name
+        self.future_name = future or self.public_name
         self.stage = stage
         self.permissions = Permissions(permissions)
         self.step = step
@@ -169,8 +176,8 @@ SingleStageDefinition = {
             'more_info': 'Request More Information',
             'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
-        'display': 'Under Discussion',
-        'public': 'Internal Review',
+        'display': 'Screening',
+        'public': 'Application Received',
         'stage': Request,
         'permissions': default_permissions,
         'step': 0,
@@ -195,8 +202,9 @@ SingleStageDefinition = {
             'post_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Request,
-        'permissions': hidden_from_applicant_permissions,
+        'permissions': default_permissions,
         'step': 1,
     },
     'post_review_discussion': {
@@ -205,7 +213,7 @@ SingleStageDefinition = {
             'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready For Discussion',
         'stage': Request,
         'permissions': hidden_from_applicant_permissions,
         'step': 2,
@@ -228,6 +236,7 @@ SingleStageDefinition = {
 
     'accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': Request,
         'permissions': no_permissions,
         'step': 3,
@@ -247,8 +256,8 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
-        'public': 'Internal Review',
+        'display': 'Screening',
+        'public': 'Application Received',
         'stage': RequestExt,
         'permissions': default_permissions,
         'step': 0,
@@ -271,8 +280,9 @@ SingleStageExternalDefinition = {
             'ext_post_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': RequestExt,
-        'permissions': hidden_from_applicant_permissions,
+        'permissions': default_permissions,
         'step': 1,
     },
     'ext_post_review_discussion': {
@@ -281,7 +291,7 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_post_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready For Discussion',
         'stage': RequestExt,
         'permissions': hidden_from_applicant_permissions,
         'step': 2,
@@ -315,9 +325,8 @@ SingleStageExternalDefinition = {
             'ext_post_external_review_more_info': 'Request More Information',
         },
         'display': 'Ready for Discussion',
-        'public': 'Internal Review',
         'stage': RequestExt,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 4,
     },
     'ext_post_external_review_more_info': {
@@ -336,6 +345,7 @@ SingleStageExternalDefinition = {
 
     'ext_accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': RequestExt,
         'permissions': no_permissions,
         'step': 5,
@@ -358,7 +368,7 @@ DoubleStageDefinition = {
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Under Discussion',
-        'public': 'Internal Review',
+        'public': 'Concept Note Received',
         'stage': Concept,
         'permissions': default_permissions,
         'step': 0,
@@ -384,8 +394,9 @@ DoubleStageDefinition = {
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Concept,
-        'permissions': hidden_from_applicant_permissions,
+        'permissions': default_permissions,
         'step': 1,
     },
     'concept_review_discussion': {
@@ -415,6 +426,7 @@ DoubleStageDefinition = {
     },
     'invited_to_proposal': {
         'display': 'Concept Accepted',
+        'future': 'Preliminary Decision',
         'transitions': {
             'draft_proposal': {
                 'display': 'Progress',
@@ -451,8 +463,8 @@ DoubleStageDefinition = {
             'proposal_more_info': 'Request More Information',
             'external_review': 'Open AC review',
         },
-        'display': 'Under Discussion',
-        'public': 'Internal Review',
+        'display': 'Ready For Discussion',
+        'public': 'Proposal Received',
         'stage': Proposal,
         'permissions': default_permissions,
         'step': 5,
@@ -477,8 +489,9 @@ DoubleStageDefinition = {
             'post_proposal_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Proposal,
-        'permissions': hidden_from_applicant_permissions,
+        'permissions': default_permissions,
         'step': 6,
     },
     'post_proposal_review_discussion': {
@@ -522,9 +535,8 @@ DoubleStageDefinition = {
             'post_external_review_more_info': 'Request More Information',
         },
         'display': 'Ready for Discussion',
-        'public': 'Internal Review',
         'stage': Proposal,
-        'permissions': default_permissions,
+        'permissions': hidden_from_applicant_permissions,
         'step': 9,
     },
     'post_external_review_more_info': {
@@ -542,6 +554,7 @@ DoubleStageDefinition = {
     },
     'proposal_accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': Proposal,
         'permissions': no_permissions,
         'step': 10,
