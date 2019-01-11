@@ -12,21 +12,26 @@ class App extends React.Component {
         }
     }
 
-    detailOpen = (state) => {this.setState({detailOpen: state})}
+    detailOpen = (state) => {
+        this.setState({style: {display: 'None'}})
+        this.setState({detailOpen: true})
+    }
+
+    detailClose = () => {
+        this.setState({style: {}})
+        this.setState({detailOpen: false})
+    }
 
     render () {
         return (
             <div>
                 <div>
-                    <button className="red-button" onClick={() => this.detailOpen(true)}>Detail View</button>
+                    <button className="red-button" onClick={this.detailOpen}>Detail View</button>
                     |
-                    <button onClick={() => this.detailOpen(false)}>List View</button>
+                    <button onClick={this.detailClose}>List View</button>
                 </div>
-                {this.state.detailOpen ? (
-                    <div><h2>THIS IS REACT</h2></div>
-                ) : (
-                    <div dangerouslySetInnerHTML={ {__html: this.props.originalContent} } />
-                )}
+                {this.state.detailOpen && <div><h2>THIS IS REACT</h2></div>}
+                <div style={this.state.style} dangerouslySetInnerHTML={ {__html: this.props.originalContent} } />
             </div>
     )}
 }

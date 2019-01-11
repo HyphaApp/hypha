@@ -1,4 +1,4 @@
-{% extends "base-apply.html" %}
+{% extends "funds/base_submissions_table.html" %}
 {% load render_bundle from webpack_loader %}
 
 {% block title %}{{ object }}{% endblock %}
@@ -16,7 +16,9 @@
 
 <div class="wrapper wrapper--large">
     <div id="react-app">
-        <h2>THERE WILL BE A TABLE HERE</h2>
+        {% block table %}
+            {{ block.super }}
+        {% endblock %}
     </div>
 </div>
 
