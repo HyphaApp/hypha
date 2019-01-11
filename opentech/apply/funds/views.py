@@ -61,14 +61,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs,)
+        kwargs = super().get_context_data(**kwargs)
 
         search_term = self.request.GET.get('query')
-        active_filters = self.filterset.data
-        active_filters = len(self.filterset.data) > 1
         kwargs.update(
             search_term=search_term,
-            active_filters=active_filters,
         )
 
         return kwargs
