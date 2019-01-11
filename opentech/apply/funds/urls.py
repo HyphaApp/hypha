@@ -8,8 +8,8 @@ from .views import (
     SubmissionEditView,
     SubmissionListView,
     SubmissionSealedView,
-    SubmissionSearchView,
 )
+from .api_views import SubmissionList, SubmissionDetail
 
 
 revision_urls = ([
@@ -35,8 +35,13 @@ submission_urls = ([
     path('rounds/<int:pk>/', SubmissionsByRound.as_view(), name="by_round"),
 ], 'submissions')
 
+submission_api_urls = ([
+    path('', SubmissionList.as_view(), name='list'),
+    path('<int:pk>/', SubmissionDetail.as_view(), name='detail'),
+], 'submissions-api')
+
 
 urlpatterns = [
     path('submissions/', include(submission_urls)),
-    path('search/', SubmissionSearchView.as_view(), name="search"),
+    path('api/submissions/', include(submission_api_urls)),
 ]

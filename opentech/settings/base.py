@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'rest_framework',
 
     'hijack',
     'compat',
@@ -599,4 +600,22 @@ WEBPACK_LOADER = {
         'BUNDLE_DIR_NAME': 'app/',
         'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
     }
+}
+
+# Django countries package provides ISO 3166-1 countries which does not contain Kosovo.
+COUNTRIES_OVERRIDE = {
+    'KV': 'Kosovo',
+}
+
+# Rest Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }

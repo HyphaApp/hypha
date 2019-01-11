@@ -10,11 +10,27 @@
     const filterOpenClass = 'filters-open';
     const filterActiveClass = 'is-active';
 
+    const $searchInput = $('.js-search-input');
+    const $queryInput = $('#id_query');
+    const $searchForm = $('.js-search-form');
+
+    const $filterForm = $('.js-filter-form');
+
+    const urlParams = new URLSearchParams(window.location.search);
+
     // check if the page has a query string and keep filters open if so on desktop
-    if (window.location.href.indexOf('?') > -1 && $(window).width() > 1024) {
+    const minimumNumberParams = 1 + urlParams.has('query') ? 1 : 0;
+
+    if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {
         $body.addClass(filterOpenClass);
         updateButtonText();
     }
+
+    $searchForm.submit((e) => {
+        e.preventDefault();
+        $queryInput.val($searchInput.val());
+        $filterForm.submit();
+    });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
     // so we have to listen for the event higher up
@@ -61,7 +77,7 @@
 
     // redirect to submissions home to clear filters
     function handleClearFilters() {
-        window.location.href = window.location.href.split('?')[0];
+        window.location.href = window.location.href.split('?')[0] + '?query=' + urlParams.get('query');
     }
 
     // toggle filters button wording
@@ -144,4 +160,3 @@
     }).trigger('resize');
 
 })(jQuery);
-
