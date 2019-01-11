@@ -97,6 +97,7 @@ $breakpoints: (
     'tablet-landscape'  '(min-width: 1024px)',
     'laptop-short'      '(min-width: 1024px) and (max-height: 1280px)',
     'desktop'           '(min-width: 1320px)',
+    'desktop-medium'    '(min-width: 1920px)',
     'desktop-wide'      '(min-width: 2556px)'
 );
 

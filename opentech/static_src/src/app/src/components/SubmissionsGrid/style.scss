@@ -1,6 +1,11 @@
 .submissions-grid {
     margin: 0 -20px;
 
+    // temporary to visualise middle column
+    > div:nth-child(2) {
+        background-color: white;
+    }
+
     @include media-query(tablet-landscape) {
         display: grid;
         grid-template-columns: 28% 1fr 28%;
@@ -15,6 +20,10 @@
         margin-left: -50vw;
         margin-right: -50vw;
         grid-template-columns: 20% 1fr 28%;
+    }
+
+    @include media-query(desktop-medium) {
+        grid-template-columns: 1fr 1280px 1fr;
     }
 
     &__header {
