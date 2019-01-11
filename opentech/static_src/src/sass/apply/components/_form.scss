@@ -139,7 +139,10 @@
         > * {
             @include media-query(tablet-landscape) {
                 flex-basis: 225px;
-                margin-right: 10px;
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
             }
         }
 
