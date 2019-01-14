@@ -10,6 +10,7 @@ from opentech.apply.funds.tests.factories import (
     LabFactory,
     LabSubmissionFactory,
     RoundFactory,
+    ScreeningStatusFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
@@ -181,6 +182,12 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(form_fields__exclude__value=True)
         response = self.get_page(submission)
         self.assertNotContains(response, 'Value')
+
+    def test_can_screen_submission(self):
+        screening_outcome = ScreeningStatusFactory()
+        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        submission = self.refresh(self.submission)
+        self.assertEqual(submission.screening_status, screening_outcome)
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
