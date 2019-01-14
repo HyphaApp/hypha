@@ -1,7 +1,11 @@
+import json
+
 from django import template
 
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import Review
+
+from ..models import INTERNAL, PUBLIC, REVIEWER
 
 register = template.Library()
 
@@ -25,3 +29,18 @@ def user_can_see_related(activity, user):
         return True
 
     return False
+
+
+@register.filter
+def display_for(activity, user):
+    try:
+        message_data = json.loads(activity.message)
+    except json.JSONDecodeError:
+        return activity.message
+
+    visibile_for_user = activity.visibility_for(user)
+
+    if set(visibile_for_user) & set([INTERNAL, REVIEWER]):
+        return message_data[INTERNAL]
+
+    return visible_message[PUBLIC]

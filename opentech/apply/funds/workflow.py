@@ -38,13 +38,44 @@ class Workflow(dict):
                 stages.append(phase.stage)
         return stages
 
+    @property
+    def stepped_phases(self):
+        phases = defaultdict(list)
+        for phase in list(self.values()):
+            phases[phase.step].append(phase)
+        return phases
+
+    def phases_for(self, user=None):
+        # Grab the first phase for each step - visible only, the display phase
+        return [
+            phase for phase, *_ in self.stepped_phases.values()
+            if not user or phase.permissions.can_view(user)
+        ]
+
+    def previous_visible(self, current, user):
+        """Find the latest phase that the user has view permissions for"""
+        display_phase = self.stepped_phases[current.step][0]
+        phases = self.phases_for()
+        index = phases.index(display_phase)
+        for phase in phases[index - 1::-1]:
+            if phase.permissions.can_view(user):
+                return phase
+
 
 class Phase:
-    def __init__(self, name, display, stage, permissions, step, transitions=dict()):
+    """
+    Phase Names:
+    display_name = phase name displayed to staff members in the system
+    public_name = phase name displayed to applicants in the system
+    future_name = phase_name displayed to applicants if they haven't passed this stage
+    """
+    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
         self.name = name
         self.display_name = display
+        self.public_name = public or self.display_name
+        self.future_name = future or self.public_name
         self.stage = stage
-        self.permissions = permissions
+        self.permissions = Permissions(permissions)
         self.step = step
 
         # For building transition methods on the parent
@@ -69,6 +100,9 @@ class Phase:
     def __str__(self):
         return self.display_name
 
+    def __repr__(self):
+        return f'<Phase {self.display_name} ({self.public_name})>'
+
 
 class Stage:
     def __init__(self, name, has_external_review=False):
@@ -79,60 +113,48 @@ class Stage:
         return self.name
 
 
-class BasePermissions:
-    def can_edit(self, user: 'User') -> bool:
-        if user.is_apply_staff:
-            return self.can_staff_edit(user)
+class Permissions:
+    def __init__(self, permissions):
+        self.permissions = permissions
 
-        if user.is_applicant:
-            return self.can_applicant_edit(user)
+    def can_do(self, user, action):
+        checks = self.permissions.get(action, list())
+        return any(check(user) for check in checks)
 
-    def can_staff_edit(self, user: 'User') -> bool:
-        return False
+    def can_edit(self, user):
+        return self.can_do(user, 'edit')
 
-    def can_applicant_edit(self, user: 'User') -> bool:
-        return False
+    def can_review(self, user):
+        return self.can_do(user, 'review')
 
-    def can_review(self, user: 'User') -> bool:
-        if user.is_apply_staff:
-            return self.can_staff_review(user)
-
-        if user.is_reviewer:
-            return self.can_reviewer_review(user)
-
-    def can_staff_review(self, user: 'User') -> bool:
-        return False
-
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return False
+    def can_view(self, user):
+        return self.can_do(user, 'view')
 
 
-class NoPermissions(BasePermissions):
-    pass
+staff_can = lambda user: user.is_apply_staff  # NOQA
+
+applicant_can = lambda user: user.is_applicant  # NOQA
+
+reviewer_can = lambda user: user.is_reviewer  # NOQA
 
 
-class DefaultPermissions(BasePermissions):
-    # Other Permissions should inherit from this class
-    # Staff can review at any time
-    def can_staff_review(self, user: 'User') -> bool:
-        return True
-
-    def can_staff_edit(self, user: 'User') -> bool:
-        return True
+def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
+    return {
+        'edit': edit,
+        'review': review,
+        'view': view,
+    }
 
 
-class ReviewerReviewPermissions(DefaultPermissions):
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return True
+no_permissions = make_permissions()
 
+default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
 
-class CanEditPermissions(DefaultPermissions):
-    def can_applicant_edit(self, user: 'User') -> bool:
-        return True
+hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can])
 
-    def can_staff_edit(self, user: 'User') -> bool:
-        # Prevent staff editing whilst with the user for edits
-        return False
+reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can])
+
+applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
 
 Request = Stage('Request', False)
@@ -154,9 +176,10 @@ SingleStageDefinition = {
             'more_info': 'Request More Information',
             'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
-        'display': 'Under Discussion',
+        'display': 'Screening',
+        'public': 'Application Received',
         'stage': Request,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 0,
     },
     'more_info': {
@@ -171,7 +194,7 @@ SingleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Request,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 0,
     },
     'internal_review': {
@@ -179,8 +202,9 @@ SingleStageDefinition = {
             'post_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Request,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 1,
     },
     'post_review_discussion': {
@@ -189,9 +213,9 @@ SingleStageDefinition = {
             'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready For Discussion',
         'stage': Request,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'post_review_more_info': {
@@ -206,20 +230,21 @@ SingleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Request,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 2,
     },
 
     'accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': Request,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 3,
     },
     'rejected': {
         'display': 'Dismissed',
         'stage': Request,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 3,
     },
 }
@@ -231,9 +256,10 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Screening',
+        'public': 'Application Received',
         'stage': RequestExt,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 0,
     },
     'ext_more_info': {
@@ -246,7 +272,7 @@ SingleStageExternalDefinition = {
         },
         'display': 'More information required',
         'stage': RequestExt,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 0,
     },
     'ext_internal_review': {
@@ -254,8 +280,9 @@ SingleStageExternalDefinition = {
             'ext_post_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': RequestExt,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 1,
     },
     'ext_post_review_discussion': {
@@ -264,9 +291,9 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_post_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready For Discussion',
         'stage': RequestExt,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'ext_post_review_more_info': {
@@ -279,7 +306,7 @@ SingleStageExternalDefinition = {
         },
         'display': 'More information required',
         'stage': RequestExt,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 2,
     },
     'ext_external_review': {
@@ -288,7 +315,7 @@ SingleStageExternalDefinition = {
         },
         'display': 'Advisory Council Review',
         'stage': RequestExt,
-        'permissions': ReviewerReviewPermissions(),
+        'permissions': reviewer_review_permissions,
         'step': 3,
     },
     'ext_post_external_review_discussion': {
@@ -297,9 +324,9 @@ SingleStageExternalDefinition = {
             'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'ext_post_external_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': RequestExt,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 4,
     },
     'ext_post_external_review_more_info': {
@@ -312,20 +339,21 @@ SingleStageExternalDefinition = {
         },
         'display': 'More information required',
         'stage': RequestExt,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 4,
     },
 
     'ext_accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': RequestExt,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 5,
     },
     'ext_rejected': {
         'display': 'Dismissed',
         'stage': RequestExt,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 5,
     },
 }
@@ -340,8 +368,9 @@ DoubleStageDefinition = {
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Under Discussion',
+        'public': 'Concept Note Received',
         'stage': Concept,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 0,
     },
     'concept_more_info': {
@@ -356,7 +385,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Concept,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 0,
     },
     'concept_internal_review': {
@@ -365,8 +394,9 @@ DoubleStageDefinition = {
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Concept,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 1,
     },
     'concept_review_discussion': {
@@ -375,9 +405,9 @@ DoubleStageDefinition = {
             'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'concept_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': Concept,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 2,
     },
     'concept_review_more_info': {
@@ -391,11 +421,12 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Concept,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 2,
     },
     'invited_to_proposal': {
         'display': 'Concept Accepted',
+        'future': 'Preliminary Decision',
         'transitions': {
             'draft_proposal': {
                 'display': 'Progress',
@@ -405,13 +436,13 @@ DoubleStageDefinition = {
             },
         },
         'stage': Concept,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 3,
     },
     'concept_rejected': {
         'display': 'Dismissed',
         'stage': Concept,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 3,
     },
     'draft_proposal': {
@@ -422,7 +453,7 @@ DoubleStageDefinition = {
         },
         'display': 'Invited for Proposal',
         'stage': Proposal,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 4,
     },
     'proposal_discussion': {
@@ -432,9 +463,10 @@ DoubleStageDefinition = {
             'proposal_more_info': 'Request More Information',
             'external_review': 'Open AC review',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready For Discussion',
+        'public': 'Proposal Received',
         'stage': Proposal,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 5,
     },
     'proposal_more_info': {
@@ -449,7 +481,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 5,
     },
     'proposal_internal_review': {
@@ -457,8 +489,9 @@ DoubleStageDefinition = {
             'post_proposal_review_discussion': 'Close Review',
         },
         'display': 'Internal Review',
+        'public': 'OTF Review',
         'stage': Proposal,
-        'permissions': DefaultPermissions(),
+        'permissions': default_permissions,
         'step': 6,
     },
     'post_proposal_review_discussion': {
@@ -467,9 +500,9 @@ DoubleStageDefinition = {
             'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_proposal_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': Proposal,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 7,
     },
     'post_proposal_review_more_info': {
@@ -483,7 +516,7 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 7,
     },
     'external_review': {
@@ -492,7 +525,7 @@ DoubleStageDefinition = {
         },
         'display': 'Advisory Council Review',
         'stage': Proposal,
-        'permissions': ReviewerReviewPermissions(),
+        'permissions': reviewer_review_permissions,
         'step': 8,
     },
     'post_external_review_discussion': {
@@ -501,9 +534,9 @@ DoubleStageDefinition = {
             'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             'post_external_review_more_info': 'Request More Information',
         },
-        'display': 'Under Discussion',
+        'display': 'Ready for Discussion',
         'stage': Proposal,
-        'permissions': DefaultPermissions(),
+        'permissions': hidden_from_applicant_permissions,
         'step': 9,
     },
     'post_external_review_more_info': {
@@ -516,19 +549,20 @@ DoubleStageDefinition = {
         },
         'display': 'More information required',
         'stage': Proposal,
-        'permissions': CanEditPermissions(),
+        'permissions': applicant_edit_permissions,
         'step': 9,
     },
     'proposal_accepted': {
         'display': 'Accepted',
+        'future': 'Application Outcome',
         'stage': Proposal,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 10,
     },
     'proposal_rejected': {
         'display': 'Dismissed',
         'stage': Proposal,
-        'permissions': NoPermissions(),
+        'permissions': no_permissions,
         'step': 10,
     },
 
