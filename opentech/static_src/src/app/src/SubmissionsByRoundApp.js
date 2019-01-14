@@ -2,18 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { hot } from 'react-hot-loader'
 import Switcher from '@components/Switcher'
-import DetailView from '@components/DetailView';
-import DisplayPanel from '@components/DisplayPanel';
-import SubmissionsByRoundContainer from '@containers/SubmissionsByRoundContainer';
+import GroupByStatusDetailView from '@containers/GroupByStatusDetailView';
 
 
 class SubmissionsByRoundApp extends React.Component {
+    state = {
+        detailOpen: false,
+    };
+
     constructor(props) {
         super(props);
-
-        this.state = {
-            detailOpen: false
-        }
     }
 
     detailOpen = (state) => {
@@ -34,10 +32,7 @@ class SubmissionsByRoundApp extends React.Component {
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
 
                 {this.state.detailOpen &&
-                    <DetailView>
-                        <SubmissionsByRoundContainer roundId={this.props.roundId} />
-                        <DisplayPanel />
-                    </DetailView>
+                    <GroupByStatusDetailView roundId={this.props.roundId} />
                 }
             </>
         )
@@ -46,7 +41,7 @@ class SubmissionsByRoundApp extends React.Component {
 
 SubmissionsByRoundApp.propTypes = {
     roundId: PropTypes.number,
-}
+};
 
 
-export default hot(module)(SubmissionsByRoundApp)
+export default hot(module)(SubmissionsByRoundApp);

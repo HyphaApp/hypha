@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class SubmissionsByRoundListHeading extends React.Component {
+export default class ListingHeading extends React.Component {
     render() {
         return (
             <li className="listing__item listing__item--heading">
@@ -12,7 +12,7 @@ export default class SubmissionsByRoundListHeading extends React.Component {
     }
 }
 
-SubmissionsByRoundListHeading.propTypes = {
+ListingHeading.propTypes = {
     title: PropTypes.string,
     count: PropTypes.oneOfType([
         PropTypes.string,

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 
-export default class SubmissionsByRoundListItem extends React.Component {
+export default class ListingItem extends React.Component {
     render() {
         return (
             <li className="listing__item">
@@ -12,6 +12,6 @@ export default class SubmissionsByRoundListItem extends React.Component {
     }
 }
 
-SubmissionsByRoundListItem.propTypes = {
+ListingItem.propTypes = {
     title: PropTypes.string,
 };

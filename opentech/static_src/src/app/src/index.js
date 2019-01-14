@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
-import SubmissionsByRoundApp from './SubmissionsByRoundApp'
+import SubmissionsByRoundApp from './SubmissionsByRoundApp';
 import createStore from '@redux/store';
 
 

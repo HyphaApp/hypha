@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './style.scss';
 
-const DetailView = ({ children }) => (
+const DetailView = ({ listing, display }) => (
     <div className="detail-view">
-        {children}
+        {listing}
+        {display}
     </div>
 );
 
 DetailView.propTypes = {
-    children: PropTypes.node.isRequired,
+    listing: PropTypes.node.isRequired,
+    display: PropTypes.node.isRequired,
 };
 
 export default DetailView;
