@@ -26,8 +26,8 @@ $listing-header-height: 75px;
         @include submission-list-item;
 
         &.is-active {
-            border-right: 0;
-            border-left: 0;
+            border-right: 2px solid $color--white;
+            transition: border $transition;
         }
 
         &--heading {
