@@ -1,7 +1,8 @@
 import React from 'react';
 import { hot } from 'react-hot-loader'
 import Switcher from '@components/Switcher'
-import SubmissionsGrid from '@components/SubmissionsGrid';
+import DetailView from '@components/DetailView';
+import DisplayPanel from '@components/DisplayPanel';
 import SubmissionsByRoundContainer from '@containers/SubmissionsByRoundContainer';
 
 
@@ -28,27 +29,22 @@ class SubmissionsByRoundApp extends React.Component {
         return (
             <>
                 <Switcher selector='submissions-by-round-app-react-switcher' open={this.state.detailOpen} handleOpen={this.detailOpen} handleClose={this.detailClose} />
+
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
+
                 {this.state.detailOpen &&
-                    <SubmissionsGrid>
-                        <div>
-                            {this.renderSubmissionsByRound()}
-                        </div>
-                        <div>
-                            <h4>Column 2</h4>
-                        </div>
-                        <div>
-                            <h4>Column 3</h4>
-                        </div>
-                    </SubmissionsGrid>
+                    <DetailView>
+                        {this.renderSubmissionsByRound()}
+                        <DisplayPanel />
+                    </DetailView>
                 }
             </>
         )
     }
 
-  renderSubmissionsByRound() {
-    return <SubmissionsByRoundContainer roundId={this.props.roundId} />;
-  }
+    renderSubmissionsByRound() {
+        return <SubmissionsByRoundContainer roundId={this.props.roundId} />;
+    }
 }
 
 

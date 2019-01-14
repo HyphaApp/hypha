@@ -1,0 +1,19 @@
+.detail-view {
+    margin: 0 -20px;
+
+    @include media-query(tablet-landscape) {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+    }
+
+    @include media-query(desktop) {
+        // breakout of the wrapper
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        grid-template-columns: 390px 1fr;
+    }
+}

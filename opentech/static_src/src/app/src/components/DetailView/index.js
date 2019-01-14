@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './style.scss';
 
-const SubmissionsGrid = ({ children }) => (
-    <div className="submissions-grid">
+const DetailView = ({ children }) => (
+    <div className="detail-view">
         {children}
     </div>
 );
 
-SubmissionsGrid.propTypes = {
+DetailView.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export default SubmissionsGrid;
+export default DetailView;
