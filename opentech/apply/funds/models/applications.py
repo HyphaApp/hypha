@@ -49,7 +49,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
-    slack_channel = models.TextField(blank=True, help_text=_('The slack #channel for notifications. Default channel is {slack_default}').format(slack_default=settings.SLACK_DESTINATION_ROOM))
+    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
@@ -284,7 +284,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         blank=True,
     )
 
-    slack_channel = models.TextField(blank=True, help_text=_('The slack #channel for notifications. Default channel is {slack_default}').format(slack_default=settings.SLACK_DESTINATION_ROOM))
+    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
