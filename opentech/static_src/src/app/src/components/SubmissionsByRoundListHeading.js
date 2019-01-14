@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 export default class SubmissionsByRoundListHeading extends React.Component {
     render() {
         return (
-            <li>
-                <h2>{this.props.title} ({this.props.count})</h2>
+            <li className="listing__item listing__item--heading">
+                <h5 className="listing__title">{this.props.title}</h5>
+                <span className="listing__count">{this.props.count}</span>
             </li>
         );
     }

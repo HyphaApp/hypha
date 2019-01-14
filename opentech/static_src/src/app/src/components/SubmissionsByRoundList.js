@@ -2,6 +2,7 @@ import React from 'react';
 import SubmissionsByRoundListHeading from '@components/SubmissionsByRoundListHeading';
 import SubmissionsByRoundListItem from '@components/SubmissionsByRoundListItem';
 
+import './SubmissionsByRoundList.scss'
 
 export default class SubmissionsByRoundList extends React.Component {
     renderListItems() {
@@ -22,9 +23,20 @@ export default class SubmissionsByRoundList extends React.Component {
 
     render() {
         return (
-            <ul>
-                {this.renderListItems()}
-            </ul>
+            <div className="listing">
+                <div className="listing__header">
+                <form className="form form__select">
+                    <select>
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </form>
+                </div>
+                <ul className="listing__list">
+                    {this.renderListItems()}
+                </ul>
+            </div>
         );
     }
 }
