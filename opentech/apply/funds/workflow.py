@@ -131,11 +131,11 @@ class Permissions:
         return self.can_do(user, 'view')
 
 
-staff_can = lambda user: user.is_apply_staff
+staff_can = lambda user: user.is_apply_staff  # NOQA
 
-applicant_can = lambda user: user.is_applicant
+applicant_can = lambda user: user.is_applicant  # NOQA
 
-reviewer_can = lambda user: user.is_reviewer
+reviewer_can = lambda user: user.is_reviewer  # NOQA
 
 
 def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):

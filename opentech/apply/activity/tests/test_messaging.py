@@ -11,7 +11,7 @@ from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory, StaffFactory
+from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
 from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
