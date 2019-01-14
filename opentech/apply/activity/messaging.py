@@ -225,19 +225,44 @@ class SlackAdapter(AdapterBase):
             return f'<{user.slack}>'
         return ''
 
+    def slack_channel(self, submission):
+        try:
+            target_room = submission.get_from_parent('slack_channel')
+        except AttributeError:
+            # If not a submission object, set room to default.
+            target_room = self.target_room
+        else:
+            if not target_room:
+                # If no custom room, set to default.
+                target_room = self.target_room
+
+        # Make sure the channel name starts with a "#".
+        if target_room and not target_room.startswith('#'):
+            target_room = f"#{target_room}"
+
+        return target_room
+
     def send_message(self, message, recipient, **kwargs):
-        if not self.destination or not self.target_room:
+        try:
+            submission = kwargs['submission']
+        except Exception:
+            # If no submission, set room to default.
+            target_room = self.target_room
+        else:
+            target_room = self.slack_channel(submission)
+
+        if not self.destination or not target_room:
             errors = list()
             if not self.destination:
                 errors.append('Destination URL')
-            if not self.target_room:
+            if not target_room:
                 errors.append('Room ID')
             return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
 
         data = {
-            "room": self.target_room,
+            "room": target_room,
             "message": message,
         }
         response = requests.post(self.destination, json=data)
