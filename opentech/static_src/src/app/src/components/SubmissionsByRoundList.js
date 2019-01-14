@@ -2,23 +2,31 @@ import React from 'react';
 import SubmissionsByRoundListHeading from '@components/SubmissionsByRoundListHeading';
 import SubmissionsByRoundListItem from '@components/SubmissionsByRoundListItem';
 
-import './SubmissionsByRoundList.scss'
+import './SubmissionsByRoundList.scss';
 
 export default class SubmissionsByRoundList extends React.Component {
     renderListItems() {
-        return this.props.items.map(v => {
-            const submissions = v.submissions.map(v => {
-               return <SubmissionsByRoundListItem key={`submission-${v.id}`} title={v.title} />;
-            });
-            return (
-                <>
-                    <SubmissionsByRoundListHeading key="status-{v.title}" title={v.title} count={v.submissions.length} />
-                    <ul>
-                        {submissions}
-                    </ul>
-                </>
+        const listItems = [];
+        for (const item of this.props.items) {
+            listItems.push(
+                <SubmissionsByRoundListHeading key={`status-${item.id}`} title={item.title} count={item.submissions.length} />
             );
-        });
+
+            const submissions = [];
+            for (const submission of item.submissions) {
+
+                submissions.push(
+                    <SubmissionsByRoundListItem key={`submission-${submission.id}`} title={submission.title} />
+                );
+            }
+
+            listItems.push(
+                <ul key={`submissions-list-${item.id}`}>
+                    {submissions}
+                </ul>
+            );
+        }
+        return listItems;
     }
 
     render() {

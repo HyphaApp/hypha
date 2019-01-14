@@ -22,6 +22,7 @@ const getCurrentRoundSubmissionsByStatus = createSelector(
         const formattedSubmissionsByStatus = [];
         for (const [submissionStatus, statusSubmissions] of Object.entries(submissionsByStatus)) {
             formattedSubmissionsByStatus.push({
+                id: submissionStatus,
                 title: submissionStatus,
                 submissions: statusSubmissions,
             });
