@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import ListingHeading from '@components/ListingHeading';
 import ListingItem from '@components/ListingItem';
 
@@ -47,3 +49,14 @@ export default class Listing extends React.Component {
         );
     }
 }
+
+Listing.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        subitems: PropTypes.arrayOf(PropTypes.shape({
+            title: PropTypes.string,
+            id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        })),
+    })),
+};

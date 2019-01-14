@@ -6,32 +6,34 @@ import GroupByStatusDetailView from '@containers/GroupByStatusDetailView';
 
 
 class SubmissionsByRoundApp extends React.Component {
-    state = {
-        detailOpen: false,
-    };
+    state = { detailOpened: false };
 
-    constructor(props) {
-        super(props);
+    openDetail = () => {
+        this.setState(state => ({
+            style: { ...state.style, display: 'none' } ,
+            detailOpened: true,
+        }));
     }
 
-    detailOpen = (state) => {
-        this.setState({ style: { display: 'none' } })
-        this.setState({ detailOpen: true })
-    }
-
-    detailClose = () => {
-        this.setState({ style: {} })
-        this.setState({ detailOpen: false })
+    closeDetail = () => {
+        this.setState(state => {
+            const newStyle = { ...state.style };
+            delete newStyle.display;
+            return {
+                style: newStyle,
+                detailOpened: false,
+            };
+        });
     }
 
     render() {
         return (
             <>
-                <Switcher selector='submissions-by-round-app-react-switcher' open={this.state.detailOpen} handleOpen={this.detailOpen} handleClose={this.detailClose} />
+                <Switcher selector='submissions-by-round-app-react-switcher' open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
 
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
 
-                {this.state.detailOpen &&
+                {this.state.detailOpened &&
                     <GroupByStatusDetailView roundId={this.props.roundId} />
                 }
             </>

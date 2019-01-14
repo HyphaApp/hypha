@@ -32,9 +32,10 @@ class ByStatusListing extends React.Component {
         return this.props.items.map(v => ({
             id: v.id,
             title: v.title,
-            subitems: [
-                ...v.submissions
-            ]
+            subitems: v.submissions.map(v => ({
+                title: v.title,
+                id: v.id,
+            })),
         }));
     }
 }
