@@ -185,9 +185,23 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_screen_submission(self):
         screening_outcome = ScreeningStatusFactory()
-        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
+
+    def test_cannot_screen_submission(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        DeterminationFactory(submission=submission, rejected=True, submitted=True)
+        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, 'rejected')
+
+        # Now that the submission has been rejected (final determination),
+        # we cannot screen it as staff
+        screening_outcome = ScreeningStatusFactory()
+        response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        import ipdb; ipdb.set_trace();
+        self.assertEqual(response.context_data['screening_form'].should_show, False)
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
