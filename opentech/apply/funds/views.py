@@ -3,6 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -36,11 +37,25 @@ from .workflow import STAGE_CHANGE_ACTIONS
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
-    template_name = 'funds/submissions.html'
+class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
-
     filterset_class = SubmissionFilter
+
+    excluded_fields = []
+
+    @property
+    def excluded(self):
+        return {
+            'exclude': self.excluded_fields
+        }
+
+    def get_table_kwargs(self):
+        return self.excluded
+
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super().get_filterset_kwargs(filterset_class)
+        kwargs.update(self.excluded)
+        return kwargs
 
     def get_queryset(self):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
@@ -50,27 +65,50 @@ class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
         return super().get_context_data(active_filters=active_filters, **kwargs)
 
 
+class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions.html'
+
+
+class SubmissionsByRound(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_by_round.html'
+
+    excluded_fields = ('round', 'lead', 'fund')
+
+    def get_queryset(self):
+        # We want to only show lab or Rounds in this view, their base class is Page
+        try:
+            self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
+        except Page.DoesNotExist:
+            raise Http404(_("No Round or Lab found matching the query"))
+
+        if not isinstance(self.obj, (LabBase, RoundBase)):
+            raise Http404(_("No Round or Lab found matching the query"))
+        return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(object=self.obj, **kwargs)
+
+
 @method_decorator(staff_required, name='dispatch')
-class SubmissionSearchView(SingleTableMixin, FilterView):
+class SubmissionSearchView(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_search.html'
-    table_class = AdminSubmissionsTable
 
     filterset_class = SubmissionFilterAndSearch
 
-    def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-
     def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs,)
+
         search_term = self.request.GET.get('query')
 
         # We have more data than just 'query'
         active_filters = len(self.filterset.data) > 1
 
-        return super().get_context_data(
+        kwargs.update(
             search_term=search_term,
             active_filters=active_filters,
-            **kwargs,
         )
+
+        return kwargs
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -441,17 +479,3 @@ class RevisionCompareView(DetailView):
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
         self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
-
-
-@method_decorator(staff_required, name='dispatch')
-class SubmissionsByRound(DetailView):
-    model = Page
-    template_name = 'funds/submissions_by_round.html'
-
-    def get_object(self):
-        # We want to only show lab or Rounds in this view, their base class is Page
-        obj = super().get_object()
-        obj = obj.specific
-        if not isinstance(obj, (LabBase, RoundBase)):
-            raise Http404(_("No Round or Lab found matching the query"))
-        return obj

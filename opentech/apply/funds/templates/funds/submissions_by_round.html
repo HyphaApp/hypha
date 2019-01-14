@@ -1,25 +1,27 @@
-{% extends "base-apply.html" %}
+{% extends "funds/base_submissions_table.html" %}
 {% load render_bundle from webpack_loader %}
 
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <div>
-            <h5><a href="{% url "apply:submissions:list" %}">< Submissions</a></h5>
-            <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
-            <h5>{% if object.fund %}{{ object.fund }} | {% endif %}Lead: {{ object.lead }}</h5>
+    <div class="admin-bar">
+        <div class="admin-bar__inner admin-bar__inner--with-button">
+            <div>
+                <h5><a href="{% url "apply:submissions:list" %}">< Submissions</a></h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
+                <h5>{% if object.fund %}{{ object.fund }} | {% endif %}Lead: {{ object.lead }}</h5>
+            </div>
+            <div id="react-switcher"></div>
         </div>
     </div>
-</div>
 
-<div class="wrapper wrapper--large">
     <div id="react-app">
-        <h2>THERE WILL BE A TABLE HERE</h2>
+        <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            {% block table %}
+                {{ block.super }}
+            {% endblock %}
+        </div>
     </div>
-</div>
-
 {% render_bundle 'main' %}
 
 {% endblock %}

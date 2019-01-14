@@ -580,7 +580,10 @@ class ByRoundTestCase(BaseViewTestCase):
     base_view_name = 'by_round'
 
     def get_kwargs(self, instance):
-        return {'pk': instance.id}
+        try:
+            return {'pk': instance.id}
+        except AttributeError:
+            return {'pk': instance['id']}
 
 
 class TestStaffSubmissionByRound(ByRoundTestCase):
@@ -602,6 +605,10 @@ class TestStaffSubmissionByRound(ByRoundTestCase):
         response = self.get_page(page)
         self.assertEqual(response.status_code, 404)
 
+    def test_cant_access_non_existing_page(self):
+        response = self.get_page({'id': 555})
+        self.assertEqual(response.status_code, 404)
+
 
 class TestApplicantSubmissionByRound(ByRoundTestCase):
     user_factory = UserFactory
@@ -620,6 +627,10 @@ class TestApplicantSubmissionByRound(ByRoundTestCase):
         new_round = RoundFactory()
         page = new_round.get_site().root_page
         response = self.get_page(page)
+        self.assertEqual(response.status_code, 403)
+
+    def test_cant_access_non_existing_page(self):
+        response = self.get_page({'id': 555})
         self.assertEqual(response.status_code, 403)
 
 
