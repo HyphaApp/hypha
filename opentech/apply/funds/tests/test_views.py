@@ -185,7 +185,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_screen_submission(self):
         screening_outcome = ScreeningStatusFactory()
-        response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
 
@@ -636,7 +636,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
 
     def test_can_screen_submission(self):
         screening_outcome = ScreeningStatusFactory()
-        response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
 
