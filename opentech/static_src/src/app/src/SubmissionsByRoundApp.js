@@ -34,16 +34,12 @@ class SubmissionsByRoundApp extends React.Component {
 
                 {this.state.detailOpen &&
                     <DetailView>
-                        {this.renderSubmissionsByRound()}
+                        <SubmissionsByRoundContainer roundId={this.props.roundId} />
                         <DisplayPanel />
                     </DetailView>
                 }
             </>
         )
-    }
-
-    renderSubmissionsByRound() {
-        return <SubmissionsByRoundContainer roundId={this.props.roundId} />;
     }
 }
 
