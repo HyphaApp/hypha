@@ -12,6 +12,7 @@
         "last 2 versions"
     ],
     "dependencies": {
+        "@babel/polyfill": "^7.2.5",
         "@svgr/webpack": "^4.1.0",
         "del": "^3.0.0",
         "gulp": "^4.0.0",
