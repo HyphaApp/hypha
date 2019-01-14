@@ -10,6 +10,7 @@ from opentech.apply.funds.models import (
     LabType,
     RequestForPartners,
     Round,
+    ScreeningStatus,
     SealedRound,
 )
 from opentech.apply.funds.models.forms import (
@@ -43,6 +44,7 @@ __all__ = [
     'LabBaseFormFactory',
     'LabSubmissionFactory',
     'RequestForPartnersFactory',
+    'ScreeningStatusFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
     'TodayRoundFactory',
@@ -311,3 +313,10 @@ class LabBaseReviewFormFactory(AbstractReviewFormFactory):
         model = LabBaseReviewForm
 
     lab = factory.SubFactory(LabFactory)
+
+
+class ScreeningStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ScreeningStatus
+
+    title = factory.Iterator(["Bad", "Good"])
