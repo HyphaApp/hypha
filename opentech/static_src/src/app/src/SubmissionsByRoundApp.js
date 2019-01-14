@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { hot } from 'react-hot-loader'
 import Switcher from '@components/Switcher'
 import DetailView from '@components/DetailView';
@@ -41,6 +42,10 @@ class SubmissionsByRoundApp extends React.Component {
             </>
         )
     }
+}
+
+SubmissionsByRoundApp.propTypes = {
+    roundId: PropTypes.number,
 }
 
 
