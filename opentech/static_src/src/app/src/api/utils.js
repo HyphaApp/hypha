@@ -11,7 +11,6 @@ export async function apiFetch(path, method = 'GET', params, options) {
             url.searchParams.set(paramKey, paramValue);
         }
     }
-    console.log(url);
     return fetch(url, {
         ...options,
         method,
