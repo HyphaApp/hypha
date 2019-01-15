@@ -26,7 +26,7 @@ export default function submissions(state = initialState, action) {
                 items: {
                     ...state.items,
                     ...action.data.results.reduce((newItems, v) => {
-                        newItems[v.id] = v;
+                        newItems[v.id] = { ...v };
                         return newItems;
                     }, {}),
                 },

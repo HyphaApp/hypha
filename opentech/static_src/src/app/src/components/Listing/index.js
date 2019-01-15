@@ -2,40 +2,54 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListingHeading from '@components/ListingHeading';
+import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
 
 import './style.scss';
 
 export default class Listing extends React.Component {
     renderListItems() {
-        if (this.props.isLoading) {
+        const { isLoading, isError, items } = this.props;
+
+        if (isLoading) {
             return <ListingItem title={"Loading..."} />;
-        } else if (this.props.isError) {
+        } else if (isError) {
             return <ListingItem title={"Something went wrong. Please try again later."} />;
-        } else if (this.props.items.length === 0) {
+        } else if (items.length === 0) {
             return <ListingItem title={"No results found."} />;
         }
 
-        const listItems = [];
-        for (const item of this.props.items) {
-            listItems.push(
-                <ListingHeading key={`item-${item.id}`} title={item.title} count={item.subitems.length} />
-            );
+        return this.getOrderedItems().filter(v => v.items.length !== 0).map(v =>
+            <ListingGroup key={`listing-group-${v.group}`} item={v.group}>
+                {v.items.map(item =>
+                    <ListingItem key={`listing-item-${item.id}`} title={item.title}/>
+                )}
+            </ListingGroup>
+        );
+    }
 
-            const subitems = [];
-            for (const subitem of item.subitems) {
+    getGroupedItems() {
+        const { groupBy, items } = this.props;
 
-                subitems.push(
-                    <ListingItem key={`subitem-${subitem.id}`} title={subitem.title} />
-                );
+        return items.reduce((tmpItems, v) => {
+            const groupByValue = v[groupBy];
+            if (!(groupByValue in tmpItems)) {
+                tmpItems[groupByValue] = [];
             }
-            listItems.push(
-                <ul key={`subitems-listing-${item.id}`}>
-                    {subitems}
-                </ul>
-            );
-        }
-        return listItems;
+            tmpItems[groupByValue].push({...v});
+            return tmpItems;
+        }, {});
+    }
+
+    getOrderedItems() {
+        const groupedItems = this.getGroupedItems();
+        const { order = [] } = this.props;
+        const orderedItems = [];
+        const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
+        return order.concat(leftOverKeys).map(key => ({
+            group: key,
+            items: groupedItems[key] || []
+        }));
     }
 
     render() {
@@ -52,7 +66,7 @@ export default class Listing extends React.Component {
                 </form>
                 </div>
                 <ul className="listing__list">
-                {this.renderListItems()}
+                    {this.renderListItems()}
                 </ul>
             </div>
         );
@@ -60,14 +74,9 @@ export default class Listing extends React.Component {
 }
 
 Listing.propTypes = {
-    items: PropTypes.arrayOf(PropTypes.shape({
-        title: PropTypes.string,
-        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        subitems: PropTypes.arrayOf(PropTypes.shape({
-            title: PropTypes.string,
-            id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        })),
-    })),
+    items: PropTypes.array,
     isLoading: PropTypes.bool,
     isError: PropTypes.bool,
+    groupBy: PropTypes.string,
+    order: PropTypes.arrayOf(PropTypes.string),
 };

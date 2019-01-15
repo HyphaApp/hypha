@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Listing from '@components/Listing';
 import {
     getCurrentRound,
-    getCurrentRoundSubmissionsByStatus,
+    getCurrentRoundSubmissions,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,
 } from '@selectors/submissions';
@@ -31,23 +31,26 @@ class ByStatusListing extends React.Component {
 
     render() {
         const { isLoading, isError } = this.props;
-        return <Listing isLoading={isLoading} isError={isError} items={this.getListingItems()} />;
-    }
-
-    getListingItems() {
-        return this.props.items.map(v => ({
-            id: v.id,
-            title: v.title,
-            subitems: v.submissions.map(v => ({
-                title: v.title,
-                id: v.id,
-            })),
-        }));
+        return <Listing
+                    isLoading={isLoading}
+                    isError={isError}
+                    items={this.props.items}
+                    groupBy={'status'}
+                    order={[
+                        'in_discussion',
+                        'more_info',
+                        'internal_review',
+                        'post_review_discussion',
+                        'post_review_more_info',
+                        'accepted',
+                        'rejected',
+                    ]}
+            />;
     }
 }
 
 const mapStateToProps = state => ({
-    items: getCurrentRoundSubmissionsByStatus(state),
+    items: getCurrentRoundSubmissions(state),
     roundId: getCurrentRound(state),
     isError: getSubmissionsByRoundErrorState(state),
     isLoading: getSubmissionsByRoundLoadingState(state),
