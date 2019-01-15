@@ -32,14 +32,14 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
-from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
+from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
 @method_decorator(staff_required, name='dispatch')
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
-    filterset_class = SubmissionFilter
+    filterset_class = SubmissionFilterAndSearch
 
     excluded_fields = []
 
@@ -61,8 +61,14 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        active_filters = self.filterset.data
-        return super().get_context_data(active_filters=active_filters, **kwargs)
+        kwargs = super().get_context_data(**kwargs)
+
+        search_term = self.request.GET.get('query')
+        kwargs.update(
+            search_term=search_term,
+        )
+
+        return kwargs
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
@@ -87,28 +93,6 @@ class SubmissionsByRound(BaseAdminSubmissionsTable):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(object=self.obj, **kwargs)
-
-
-@method_decorator(staff_required, name='dispatch')
-class SubmissionSearchView(BaseAdminSubmissionsTable):
-    template_name = 'funds/submissions_search.html'
-
-    filterset_class = SubmissionFilterAndSearch
-
-    def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs,)
-
-        search_term = self.request.GET.get('query')
-
-        # We have more data than just 'query'
-        active_filters = len(self.filterset.data) > 1
-
-        kwargs.update(
-            search_term=search_term,
-            active_filters=active_filters,
-        )
-
-        return kwargs
 
 
 @method_decorator(staff_required, name='dispatch')

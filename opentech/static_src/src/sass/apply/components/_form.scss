@@ -17,13 +17,9 @@
         }
     }
 
-    &--header-search-desktop {
+    &--search-desktop {
         position: relative;
         width: 280px;
-
-        @include media-query(small-tablet) {
-            margin-top: 15px;
-        }
     }
 
     &__group {
@@ -143,7 +139,10 @@
         > * {
             @include media-query(tablet-landscape) {
                 flex-basis: 225px;
-                margin-right: 10px;
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
             }
         }
 
@@ -402,4 +401,3 @@
         max-width: 410px;
     }
 }
-

@@ -190,14 +190,10 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.screening_status, screening_outcome)
 
     def test_cant_screen_submission(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
-        DeterminationFactory(submission=submission, rejected=True, submitted=True)
-        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
-        submission = self.refresh(submission)
-        self.assertEqual(submission.status, 'rejected')
-
-        # Now that the submission has been rejected (final determination),
-        # we cannot screen it as staff
+        """
+        Now that the submission has been rejected, we cannot screen it as staff
+        """
+        submission = ApplicationSubmissionFactory(rejected=True)
         screening_outcome = ScreeningStatusFactory()
         response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         self.assertEqual(response.context_data['screening_form'].should_show, False)
@@ -382,8 +378,15 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_screen_submission(self):
-        response = self.post_page(self.submission)
+        """
+        Test that an applicant cannot set the screening status
+        and that they don't see the screening status form.
+        """
+        screening_outcome = ScreeningStatusFactory()
+        response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         self.assertNotIn('screening_form', response.context_data)
+        submission = self.refresh(self.submission)
+        self.assertNotEqual(submission.screening_status, screening_outcome)
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
@@ -651,15 +654,12 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
 
-    def test_cant_screen_submission(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
-        DeterminationFactory(submission=submission, rejected=True, submitted=True)
-        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
-        submission = self.refresh(submission)
-        self.assertEqual(submission.status, 'rejected')
-
-        # Now that the submission has been rejected (final determination),
-        # we can still screen it because we are super user
+    def test_can_screen_applications_in_final_status(self):
+        """
+        Now that the submission has been rejected (final determination),
+        we can still screen it because we are super user
+        """
+        submission = ApplicationSubmissionFactory(rejected=True)
         screening_outcome = ScreeningStatusFactory()
         response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         submission = self.refresh(submission)
