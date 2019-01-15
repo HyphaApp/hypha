@@ -51,7 +51,7 @@ export default class ApplicationDisplay extends Component {
         const { metaResponses, responses } = this.props.submissionData;
 
         return (
-            <div className="application-display">
+            <div>
                 <h3>Proposal Information</h3>
 
                 <div className="grid grid--proposal-info">

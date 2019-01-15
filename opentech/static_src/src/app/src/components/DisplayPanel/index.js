@@ -1,6 +1,7 @@
 import React from 'react';
 import ApplicationDisplay from '@components/ApplicationDisplay'
 import Tabber from '@components/Tabber'
+import {Tab} from '@components/Tabber'
 import './style.scss';
 
 const DisplayPanel = () => {
@@ -31,10 +32,17 @@ const DisplayPanel = () => {
     }
 
     return (
-        <div className="display-panel">
-            <ApplicationDisplay submissionData={data} />
-            <Tabber />
-        </div>
+        <Tabber className="display-panel">
+            <Tab name="Application">
+                <ApplicationDisplay submissionData={data} />
+            </Tab>
+            <Tab name="Notes">
+                <p>Notes</p>
+            </Tab>
+            <Tab name="Status">
+                <p>Status</p>
+            </Tab>
+        </Tabber>
     )
 };
 
