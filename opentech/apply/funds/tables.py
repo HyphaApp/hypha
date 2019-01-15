@@ -96,6 +96,7 @@ def get_reviewers(request):
     User = get_user_model()
     return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
 
+
 def get_screening_statuses(request):
     return ScreeningStatus.objects.filter(
         id__in=ApplicationSubmission.objects.all().values('screening_status__id').distinct('screening_status__id'))
