@@ -27,6 +27,7 @@ class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
 
+
 class ScreeningStatusPermissionHelper(PermissionHelper):
     def user_can_edit_obj(self, user, obj):
         """
