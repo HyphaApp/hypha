@@ -19,6 +19,7 @@
         max-height: 0;
         transition: max-height $medium-transition;
         transition-delay: $base-delay;
+        pointer-events: none;
 
         .filters-open & {
             position: relative;
@@ -29,6 +30,7 @@
             height: auto;
             background: transparent;
             max-height: 85px;
+            pointer-events: all;
         }
     }
 
