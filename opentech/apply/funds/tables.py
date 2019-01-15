@@ -12,7 +12,7 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.funds.models import ApplicationSubmission, Round
+from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
@@ -67,9 +67,10 @@ class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
+    screening_status = tables.Column(verbose_name="Screening")
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'reviews_stats')  # type: ignore
+        fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
         sequence = fields + ('comments',)
 
     def render_lead(self, value):
@@ -94,6 +95,10 @@ def get_reviewers(request):
     """ All assigned reviewers, staff or admin """
     User = get_user_model()
     return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
+
+def get_screening_statuses(request):
+    return ScreeningStatus.objects.filter(
+        id__in=ApplicationSubmission.objects.all().values('screening_status__id').distinct('screening_status__id'))
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):
@@ -133,6 +138,7 @@ class SubmissionFilter(filters.FilterSet):
     status = StatusMultipleChoiceFilter()
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
+    screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
 
     class Meta:
         model = ApplicationSubmission
