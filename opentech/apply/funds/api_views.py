@@ -9,7 +9,7 @@ from .permissions import IsApplyStaffUser
 
 
 class SubmissionList(generics.ListAPIView):
-    queryset = ApplicationSubmission.objects.all()
+    queryset = ApplicationSubmission.objects.current()
     serializer_class = SubmissionListSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
