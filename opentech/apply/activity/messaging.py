@@ -135,7 +135,7 @@ class ActivityAdapter(AdapterBase):
         return [None]
 
     def extra_kwargs(self, message_type, **kwargs):
-        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED]:
+        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
             from .models import INTERNAL
             return {'visibility': INTERNAL}
         return {}
