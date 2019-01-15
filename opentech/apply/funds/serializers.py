@@ -6,7 +6,7 @@ from .models import ApplicationSubmission
 class SubmissionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationSubmission
-        fields = ('id',)
+        fields = ('id', 'title', 'status')
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):

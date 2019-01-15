@@ -1,6 +1,7 @@
 var path = require("path")
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
+var Dotenv = require('dotenv-webpack');
 
 var config = require('./webpack.base.config')
 
@@ -12,6 +13,9 @@ config.plugins = config.plugins.concat([
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
+    new Dotenv({
+        path: '.dev-env',
+    }),
 ])
 
 // Add a loader for JSX files with react-hot enabled
