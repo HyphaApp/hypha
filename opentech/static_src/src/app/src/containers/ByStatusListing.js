@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Listing from '@components/Listing';
 import {
-    getCurrentRound,
+    getCurrentRoundID,
     getCurrentRoundSubmissions,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,
@@ -37,6 +37,8 @@ class ByStatusListing extends React.Component {
                     items={this.props.items}
                     groupBy={'status'}
                     order={[
+                        // TODO: Set the proper order of statuses.
+                        'post_external_review_discussion',
                         'in_discussion',
                         'more_info',
                         'internal_review',
@@ -51,7 +53,7 @@ class ByStatusListing extends React.Component {
 
 const mapStateToProps = state => ({
     items: getCurrentRoundSubmissions(state),
-    roundId: getCurrentRound(state),
+    roundId: getCurrentRoundID(state),
     isError: getSubmissionsByRoundErrorState(state),
     isLoading: getSubmissionsByRoundLoadingState(state),
 });

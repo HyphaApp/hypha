@@ -1,25 +1,25 @@
 import { createSelector } from 'reselect';
 
-const getSubmissions = state => state.submissions.items;
+const getSubmissions = state => state.submissions.submissionsByID;
 
-const getSubmissionIDsByRound = state => state.submissions.itemsByRound;
+const getSubmissionIDsByRound = state => state.submissions.submissionsByRoundID;
 
-const getCurrentRound = state => state.submissions.currentRound;
+const getCurrentRoundID = state => state.submissions.currentRound;
 
 
 const getCurrentRoundSubmissions = createSelector(
-    [ getSubmissionIDsByRound, getCurrentRound , getSubmissions],
-    (submissionsByRound, currentRound, submissions) => {
-        return (submissionsByRound[currentRound] || []).map(v => submissions[v])
+    [ getSubmissionIDsByRound, getCurrentRoundID , getSubmissions],
+    (submissionsByRound, currentRoundID, submissions) => {
+        return (submissionsByRound[currentRoundID] || []).map(roundID => submissions[roundID]);
     }
 );
 
-const getSubmissionsByRoundErrorState = state => state.submissions.itemsByRoundLoadingError;
+const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError;
 
-const getSubmissionsByRoundLoadingState = state => state.submissions.itemsByRoundLoading;
+const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading;
 
 export {
-    getCurrentRound,
+    getCurrentRoundID,
     getCurrentRoundSubmissions,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,

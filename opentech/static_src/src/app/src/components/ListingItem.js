@@ -6,12 +6,14 @@ export default class ListingItem extends React.Component {
     render() {
         return (
             <li className="listing__item">
-                <a className="listing__link">{this.props.title}</a>
+                <a className="listing__link">{this.props.item.title}</a>
             </li>
         );
     }
 }
 
 ListingItem.propTypes = {
-    title: PropTypes.string,
+    item: PropTypes.shape({
+        title: PropTypes.string,
+    }),
 };

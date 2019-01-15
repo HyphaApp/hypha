@@ -12,19 +12,25 @@ export default class Listing extends React.Component {
         const { isLoading, isError, items } = this.props;
 
         if (isLoading) {
-            return <ListingItem title={"Loading..."} />;
+            return <p>Loading...</p>;
         } else if (isError) {
-            return <ListingItem title={"Something went wrong. Please try again later."} />;
+            return <p>Something went wrong. Please try again later.</p>;
         } else if (items.length === 0) {
-            return <ListingItem title={"No results found."} />;
+            return <p>No results found.</p>;
         }
 
-        return this.getOrderedItems().filter(v => v.items.length !== 0).map(v =>
-            <ListingGroup key={`listing-group-${v.group}`} item={v.group}>
-                {v.items.map(item =>
-                    <ListingItem key={`listing-item-${item.id}`} title={item.title}/>
-                )}
-            </ListingGroup>
+        return (
+            <ul className="listing__list">
+                {this.getOrderedItems().filter(v => v.items.length !== 0).map(v => {
+                    return (
+                        <ListingGroup key={`listing-group-${v.group}`} item={v}>
+                            {v.items.map(item => {
+                                return <ListingItem key={`listing-item-${item.id}`} item={item}/>;
+                            })}
+                        </ListingGroup>
+                    );
+                })}
+            </ul>
         );
     }
 
@@ -65,9 +71,7 @@ export default class Listing extends React.Component {
                     </select>
                 </form>
                 </div>
-                <ul className="listing__list">
-                    {this.renderListItems()}
-                </ul>
+                {this.renderListItems()}
             </div>
         );
     }
