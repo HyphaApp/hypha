@@ -15,7 +15,7 @@ def status_bar(workflow, current_phase, user, css_class='', same_stage=False):
         ]
 
     if not current_phase.permissions.can_view(user):
-        current_phase = workflow.latest_visible(current_phase, user)
+        current_phase = workflow.previous_visible(current_phase, user)
 
     # Current step not shown for user, move current phase to last good location
     elif not workflow.stepped_phases[current_phase.step][0].permissions.can_view(user):
