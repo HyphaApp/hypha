@@ -10,9 +10,7 @@ module.exports = {
         filename: '[name]-[hash].js'
     },
 
-    plugins: [
-        new Dotenv(),
-    ],
+    plugins: [],
 
     module: {
         rules: [

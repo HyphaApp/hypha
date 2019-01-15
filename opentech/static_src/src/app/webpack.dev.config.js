@@ -13,8 +13,8 @@ config.plugins = config.plugins.concat([
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
-    new Dotenv({
-        path: '.dev-env',
+    new webpack.EnvironmentPlugin({
+        API_BASE_URL: 'http://apply.localhost:8000/',
     }),
 ])
 
