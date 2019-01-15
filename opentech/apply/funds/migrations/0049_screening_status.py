@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0047_add_markdown'),
+        ('funds', '0048_add_field_slack_channel'),
     ]
 
     operations = [
