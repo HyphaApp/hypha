@@ -61,7 +61,8 @@ class JSONOrderable(models.QuerySet):
                 field = field[1:]
             else:
                 descending = False
-            return OrderBy(RawSQL(f'LOWER({self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
+            db_table = self.model._meta.db_table
+            return OrderBy(RawSQL(f'LOWER({db_table}.{self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
 
         field_ordering = [build_json_order_by(field) for field in field_names]
         return super().order_by(*field_ordering)
