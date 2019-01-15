@@ -5,15 +5,20 @@ import logger from 'redux-logger'
 
 import rootReducer from '@reducers';
 
+const MIDDLEWARE = [
+    ReduxThunk,
+];
+
+if (process.env.NODE_ENV === 'development') {
+    MIDDLEWARE.push(logger);
+}
+
 
 export default initialState => {
     const store = createStore(
         rootReducer,
         composeWithDevTools(
-            applyMiddleware(
-                ReduxThunk,
-                logger,
-            )
+            applyMiddleware(...MIDDLEWARE)
         )
     )
     return store;

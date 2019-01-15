@@ -31,7 +31,7 @@ export const fetchSubmissionsByRound = roundId => {
 };
 
 
-export const updateSubmissionsByRound = (roundId, data) => ({
+const updateSubmissionsByRound = (roundId, data) => ({
     type: UPDATE_SUBMISSIONS_BY_ROUND,
     roundId,
     data,
