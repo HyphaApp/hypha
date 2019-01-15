@@ -12,6 +12,8 @@ export default class Listing extends React.Component {
             return <ListingItem title={"Loading..."} />;
         } else if (this.props.isError) {
             return <ListingItem title={"Something went wrong. Please try again later."} />;
+        } else if (this.props.items.length === 0) {
+            return <ListingItem title={"No results found."} />;
         }
 
         const listItems = [];
