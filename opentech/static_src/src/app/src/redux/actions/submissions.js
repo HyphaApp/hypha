@@ -21,6 +21,7 @@ export const fetchSubmissionsByRound = roundId => {
             const json = await response.json();
             if (!response.ok) {
                 dispatch(failLoadingSubmissionsByRound(roundId));
+                return;
             }
             dispatch(updateSubmissionsByRound(roundId, json));
         } catch (e) {
