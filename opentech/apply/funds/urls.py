@@ -8,7 +8,6 @@ from .views import (
     SubmissionEditView,
     SubmissionListView,
     SubmissionSealedView,
-    SubmissionSearchView,
 )
 from .api_views import SubmissionList, SubmissionDetail
 
@@ -45,5 +44,4 @@ submission_api_urls = ([
 urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('api/submissions/', include(submission_api_urls)),
-    path('search/', SubmissionSearchView.as_view(), name="search"),
 ]
