@@ -1,7 +1,6 @@
 var path = require("path")
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
-var Dotenv = require('dotenv-webpack');
 
 var config = require('./webpack.base.config')
 

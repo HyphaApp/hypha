@@ -1,5 +1,4 @@
 var path = require('path');
-var Dotenv = require('dotenv-webpack');
 
 module.exports = {
     context: __dirname,
