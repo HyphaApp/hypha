@@ -1,6 +1,7 @@
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
+from opentech.apply.funds.models import ScreeningStatus
 from opentech.apply.review.admin import ReviewFormAdmin
 from opentech.apply.utils.admin import ListRelatedMixin
 from .admin_helpers import (
@@ -25,6 +26,28 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
+
+
+class ScreeningStatusPermissionHelper(PermissionHelper):
+    def user_can_edit_obj(self, user, obj):
+        """
+        Return a boolean to indicate whether `user` is permitted to 'change'
+        a specific `self.model` instance.
+        """
+        return user.is_superuser
+
+    def user_can_delete_obj(self, user, obj):
+        """
+        Return a boolean to indicate whether `user` is permitted to 'delete'
+        a specific `self.model` instance.
+        """
+        return user.is_superuser
+
+
+class ScreeningStatusAdmin(ModelAdmin):
+    model = ScreeningStatus
+    menu_icon = 'tag'
+    permission_helper_class = ScreeningStatusPermissionHelper
 
 
 class SealedRoundAdmin(BaseRoundAdmin):
@@ -75,6 +98,7 @@ class ApplyAdminGroup(ModelAdminGroup):
     menu_icon = 'folder-open-inverse'
     items = (
         RoundAdmin,
+        ScreeningStatusAdmin,
         SealedRoundAdmin,
         FundAdmin,
         LabAdmin,
