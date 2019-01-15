@@ -10,7 +10,7 @@ const getCurrentRoundID = state => state.submissions.currentRound;
 const getCurrentRoundSubmissions = createSelector(
     [ getSubmissionIDsByRound, getCurrentRoundID , getSubmissions],
     (submissionsByRound, currentRoundID, submissions) => {
-        return (submissionsByRound[currentRoundID] || []).map(roundID => submissions[roundID]);
+        return (submissionsByRound[currentRoundID] || []).map(submissionID => submissions[submissionID]);
     }
 );
 
