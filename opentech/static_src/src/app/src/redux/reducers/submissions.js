@@ -1,8 +1,15 @@
-import { SET_CURRENT_SUBMISSION_ROUND, UPDATE_SUBMISSIONS_BY_ROUND } from '@actions/submissions';
+import {
+    FAIL_LOADING_SUBMISSIONS_BY_ROUND,
+    SET_CURRENT_SUBMISSION_ROUND,
+    START_LOADING_SUBMISSIONS_BY_ROUND,
+    UPDATE_SUBMISSIONS_BY_ROUND,
+} from '@actions/submissions';
 
 const initialState = {
     currentRound: null,
-    itemsByRound: {}
+    itemsByRound: {},
+    itemsByRoundLoadingError: false,
+    itemsByRoundLoading: false,
 };
 
 export default function submissions(state = initialState, action) {
@@ -22,6 +29,20 @@ export default function submissions(state = initialState, action) {
                     ...state.itemsByRound,
                     ...newData,
                 },
+                itemsByRoundLoading: false,
+                itemsByRoundLoadingError: false,
+            };
+        case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
+            return {
+                ...state,
+                itemsByRoundLoading: false,
+                itemsByRoundLoadingError: true,
+            };
+        case START_LOADING_SUBMISSIONS_BY_ROUND:
+            return {
+                ...state,
+                itemsByRoundLoading: true,
+                itemsByRoundLoadingError: false,
             };
         default:
             return state;

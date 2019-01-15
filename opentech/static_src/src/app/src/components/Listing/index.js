@@ -8,6 +8,12 @@ import './style.scss';
 
 export default class Listing extends React.Component {
     renderListItems() {
+        if (this.props.isLoading) {
+            return <ListingItem title={"Loading..."} />;
+        } else if (this.props.isError) {
+            return <ListingItem title={"Something went wrong. Please try again later."} />;
+        }
+
         const listItems = [];
         for (const item of this.props.items) {
             listItems.push(
@@ -31,6 +37,7 @@ export default class Listing extends React.Component {
     }
 
     render() {
+        const { isLoading, isError } = this.props;
         return (
             <div className="listing">
                 <div className="listing__header">
@@ -43,7 +50,7 @@ export default class Listing extends React.Component {
                 </form>
                 </div>
                 <ul className="listing__list">
-                    {this.renderListItems()}
+                {this.renderListItems()}
                 </ul>
             </div>
         );
@@ -59,4 +66,6 @@ Listing.propTypes = {
             id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         })),
     })),
+    isLoading: PropTypes.bool,
+    isError: PropTypes.bool,
 };

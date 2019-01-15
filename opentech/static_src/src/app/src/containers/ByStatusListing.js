@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
 import Listing from '@components/Listing';
-import { getCurrentRound, getCurrentRoundSubmissionsByStatus } from '@selectors/submissions';
+import {
+    getCurrentRound,
+    getCurrentRoundSubmissionsByStatus,
+    getSubmissionsByRoundErrorState,
+    getSubmissionsByRoundLoadingState,
+} from '@selectors/submissions';
 import { setCurrentSubmissionRound, fetchSubmissionsByRound } from '@actions/submissions';
 
 
@@ -25,7 +30,8 @@ class ByStatusListing extends React.Component {
     }
 
     render() {
-        return <Listing items={this.getListingItems()} />;
+        const { isLoading, isError } = this.props;
+        return <Listing isLoading={isLoading} isError={isError} items={this.getListingItems()} />;
     }
 
     getListingItems() {
@@ -43,6 +49,8 @@ class ByStatusListing extends React.Component {
 const mapStateToProps = state => ({
     items: getCurrentRoundSubmissionsByStatus(state),
     roundId: getCurrentRound(state),
+    isError: getSubmissionsByRoundErrorState(state),
+    isLoading: getSubmissionsByRoundLoadingState(state),
 });
 
 const mapDispatchToProps = dispatch => ({

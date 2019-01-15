@@ -31,8 +31,14 @@ const getCurrentRoundSubmissionsByStatus = createSelector(
     }
 );
 
+const getSubmissionsByRoundErrorState = state => state.submissions.itemsByRoundLoadingError;
+
+const getSubmissionsByRoundLoadingState = state => state.submissions.itemsByRoundLoading;
+
 export {
     getCurrentRound,
     getCurrentRoundSubmissions,
     getCurrentRoundSubmissionsByStatus,
+    getSubmissionsByRoundErrorState,
+    getSubmissionsByRoundLoadingState,
 };
