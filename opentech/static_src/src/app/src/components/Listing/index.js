@@ -14,16 +14,16 @@ export default class Listing extends React.Component {
                 <ListingHeading key={`item-${item.id}`} title={item.title} count={item.subitems.length} />
             );
 
-            const submissions = [];
+            const subitems = [];
             for (const subitem of item.subitems) {
 
-                submissions.push(
+                subitems.push(
                     <ListingItem key={`subitem-${subitem.id}`} title={subitem.title} />
                 );
             }
             listItems.push(
                 <ul key={`subitems-listing-${item.id}`}>
-                    {submissions}
+                    {subitems}
                 </ul>
             );
         }
