@@ -1,4 +1,5 @@
 var path = require('path');
+var Dotenv = require('dotenv-webpack');
 
 module.exports = {
     context: __dirname,
@@ -10,7 +11,8 @@ module.exports = {
     },
 
     plugins: [
-    ], // add all common plugins here
+        new Dotenv(),
+    ],
 
     module: {
         rules: [

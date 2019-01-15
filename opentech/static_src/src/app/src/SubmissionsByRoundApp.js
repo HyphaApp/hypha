@@ -1,12 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { hot } from 'react-hot-loader'
-import Switcher from '@components/Switcher'
+import { hot } from 'react-hot-loader';
+import { connect } from 'react-redux'
+
+import Switcher from '@components/Switcher';
 import GroupByStatusDetailView from '@containers/GroupByStatusDetailView';
+import { setCurrentSubmissionRound } from '@actions/submissions';
 
 
 class SubmissionsByRoundApp extends React.Component {
     state = { detailOpened: false };
+
+    componentDidMount() {
+        this.props.setSubmissionRound(this.props.roundId);
+    }
 
     openDetail = () => {
         this.setState(state => ({
@@ -43,7 +50,17 @@ class SubmissionsByRoundApp extends React.Component {
 
 SubmissionsByRoundApp.propTypes = {
     roundId: PropTypes.number,
+    setSubmissionRound: PropTypes.func,
 };
 
+const mapDispatchToProps = dispatch => {
+    return {
+        setSubmissionRound: id => {
+            dispatch(setCurrentSubmissionRound(id));
+        },
+    }
+};
 
-export default hot(module)(SubmissionsByRoundApp);
+export default hot(module)(
+    connect(null, mapDispatchToProps)(SubmissionsByRoundApp)
+);

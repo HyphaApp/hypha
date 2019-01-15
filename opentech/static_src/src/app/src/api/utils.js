@@ -1,5 +1,5 @@
 const getBaseUrl = () => {
-    return 'http://apply.localhost:8000/';
+    return process.env.API_BASE_URL;
 };
 
 export async function apiFetch(path, method = 'GET', params, options) {

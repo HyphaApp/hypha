@@ -7,6 +7,7 @@ import {
 
 const initialState = {
     currentRound: null,
+    items: {},
     itemsByRound: {},
     itemsByRoundLoadingError: false,
     itemsByRoundLoading: false,
@@ -20,14 +21,18 @@ export default function submissions(state = initialState, action) {
                 currentRound: action.id,
             };
         case UPDATE_SUBMISSIONS_BY_ROUND:
-            const newData = {};
-            newData[action.roundId] = action.data.results;
-
             return {
                 ...state,
+                items: {
+                    ...state.items,
+                    ...action.data.results.reduce((newItems, v) => {
+                        newItems[v.id] = v;
+                        return newItems;
+                    }, {}),
+                },
                 itemsByRound: {
                     ...state.itemsByRound,
-                    ...newData,
+                    [action.roundId]: action.data.results.map(v => v.id),
                 },
                 itemsByRoundLoading: false,
                 itemsByRoundLoadingError: false,
