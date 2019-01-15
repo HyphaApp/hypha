@@ -267,9 +267,15 @@
     }
 
     &--table-actions {
+        margin-bottom: 20px;
+
         @include media-query(tablet-landscape) {
             display: flex;
             justify-content: flex-end;
+
+            & > * {
+                padding-left: 20px;
+            }
         }
     }
 }
