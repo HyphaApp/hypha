@@ -26,7 +26,7 @@ const DisplayPanel = () => {
             answer: ['One', 'Two', 'Three', 'Four', 'Five']
         }, {
             question: 'Have you ever applied to or received funding as an OTF project?',
-            answer: ['<p>One</p>', '<b>Two</b>']
+            answer: ['<p>One</p>', '<p><b>Two</b></p>', '<p>Three</p>']
         }]
     }
 

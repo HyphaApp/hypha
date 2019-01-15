@@ -6,16 +6,35 @@ const Meta = ({ question, answer }) => {
     return (
         <div>
             <h5>{question}</h5>
-            <p>{answer}</p>
+            <p dangerouslySetInnerHTML={{ __html: answer }} />
         </div>
     )
 }
 
 const Response = ({question, answer}) => {
+    // array that doesn't contain HTML
+    if (Array.isArray(answer) && !answer[0].startsWith('<')) {
+        return  (
+            <section>
+                <h4>{question}</h4>
+                <ul>{answer.map((a) => <li key={a}>{a}</li>)}</ul>
+            </section>
+        )
+    // array that contains HTML
+    } else if (Array.isArray(answer)) {
+        return (
+            <section>
+                <h4>{question}</h4>
+                {answer.map(a => <div dangerouslySetInnerHTML={{ __html: a }} />)}
+            </section>
+        )
+    }
+
+    // strings with and without HTML
     return (
         <section>
             <h4>{question}</h4>
-            <p>{answer}</p>
+            <p dangerouslySetInnerHTML={{ __html: answer }} />
         </section>
     )
 }
@@ -35,8 +54,8 @@ export default class ApplicationDisplay extends Component {
                 </div>
 
                 <div className="rich-text rich-text--answers">
-                {responses.map(response => (
-                    <Response question={response.question} answer={response.answer} />
+                    {responses.map(response => (
+                        <Response question={response.question} answer={response.answer} />
                     ))}
                 </div>
             </div>
