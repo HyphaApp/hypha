@@ -12,29 +12,36 @@ const Meta = ({ question, answer }) => {
 }
 
 const Response = ({question, answer}) => {
-    // array that doesn't contain HTML
-    if (Array.isArray(answer) && !answer[0].startsWith('<')) {
-        return  (
-            <section>
-                <h4>{question}</h4>
-                <ul>{answer.map((a) => <li key={a}>{a}</li>)}</ul>
-            </section>
-        )
-    // array that contains HTML
-    } else if (Array.isArray(answer)) {
-        return (
-            <section>
-                <h4>{question}</h4>
-                {answer.map(a => <div dangerouslySetInnerHTML={{ __html: a }} />)}
-            </section>
-        )
+    const containsHtml = (text) => {
+        return text.startsWith('<');
     }
 
-    // strings with and without HTML
+    const renderAnswer = () => {
+        // handle arrays with and without html
+        if (Array.isArray(answer)) {
+            return <ul>
+                {answer.map((a, i) => {
+                    if (containsHtml(a)) {
+                        return <li key={i} dangerouslySetInnerHTML={{ __html: a }} />
+                    } else {
+                        return <li key={i}>{a}</li>
+                    }
+                })}
+            </ul>
+        }
+
+        // handle strings with and without html
+        if (containsHtml(answer)) {
+            return <div dangerouslySetInnerHTML={{ __html: answer }} />
+        } else {
+            return <div><p>{answer}</p></div>
+        }
+    }
+
     return (
         <section>
             <h4>{question}</h4>
-            <p dangerouslySetInnerHTML={{ __html: answer }} />
+            {renderAnswer()}
         </section>
     )
 }
@@ -48,14 +55,14 @@ export default class ApplicationDisplay extends Component {
                 <h3>Proposal Information</h3>
 
                 <div className="grid grid--proposal-info">
-                    {metaResponses.map(response => (
-                        <Meta question={response.question} answer={response.answer} />
+                    {metaResponses.map((response, index) => (
+                        <Meta key={index} question={response.question} answer={response.answer} />
                     ))}
                 </div>
 
                 <div className="rich-text rich-text--answers">
-                    {responses.map(response => (
-                        <Response question={response.question} answer={response.answer} />
+                    {responses.map((response, index) => (
+                        <Response key={index} question={response.question} answer={response.answer} />
                     ))}
                 </div>
             </div>
