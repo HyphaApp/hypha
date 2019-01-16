@@ -28,6 +28,7 @@
         "react": "^16.7.0",
         "react-dom": "^16.7.0",
         "react-redux": "^6.0.0",
+        "react-transition-group": "^2.5.3",
         "redux": "^4.0.1",
         "redux-logger": "^3.0.6",
         "redux-thunk": "^2.3.0",
