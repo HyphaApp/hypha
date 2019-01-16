@@ -155,3 +155,7 @@
     }
   }
 
+@mixin submission-list-item {
+    border-bottom: 2px solid $color--light-mid-grey;
+    border-right: 2px solid $color--light-mid-grey;
+}

@@ -98,7 +98,6 @@ class ApplyAdminGroup(ModelAdminGroup):
     menu_icon = 'folder-open-inverse'
     items = (
         RoundAdmin,
-        ScreeningStatusAdmin,
         SealedRoundAdmin,
         FundAdmin,
         LabAdmin,
@@ -106,4 +105,5 @@ class ApplyAdminGroup(ModelAdminGroup):
         ApplicationFormAdmin,
         ReviewFormAdmin,
         CategoryAdmin,
+        ScreeningStatusAdmin,
     )

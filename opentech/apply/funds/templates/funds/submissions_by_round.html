@@ -11,11 +11,11 @@
                 <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
                 <h5>{% if object.fund %}{{ object.fund }} | {% endif %}Lead: {{ object.lead }}</h5>
             </div>
-            <div id="react-switcher"></div>
+            <div id="submissions-by-round-app-react-switcher"></div>
         </div>
     </div>
 
-    <div id="react-app">
+    <div id="submissions-by-round-react-app" data-round-id="{{ object.id }}">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
             {% block table %}
                 {{ block.super }}

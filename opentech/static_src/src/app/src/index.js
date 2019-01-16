@@ -1,13 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
-import App from './App'
+import SubmissionsByRoundApp from './SubmissionsByRoundApp';
+import createStore from '@redux/store';
 
 
-const container = document.getElementById('react-app');
+const container = document.getElementById('submissions-by-round-react-app');
 
+const store = createStore();
 
 ReactDOM.render(
-    <App pageContent={container.innerHTML} />,
+    <Provider store={store}>
+        <SubmissionsByRoundApp pageContent={container.innerHTML} roundId={parseInt(container.dataset.roundId)} />
+    </Provider>,
     container
 );
