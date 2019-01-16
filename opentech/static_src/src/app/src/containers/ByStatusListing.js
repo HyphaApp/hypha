@@ -4,12 +4,16 @@ import { connect } from 'react-redux'
 
 import Listing from '@components/Listing';
 import {
+    fetchSubmissionsByRound,
+    setCurrentSubmission,
+    setCurrentSubmissionRound,
+} from '@actions/submissions';
+import {
     getCurrentRoundID,
     getCurrentRoundSubmissions,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,
 } from '@selectors/submissions';
-import { setCurrentSubmissionRound, fetchSubmissionsByRound } from '@actions/submissions';
 
 
 class ByStatusListing extends React.Component {
@@ -30,11 +34,12 @@ class ByStatusListing extends React.Component {
     }
 
     render() {
-        const { isLoading, isError } = this.props;
+        const { isLoading, isError, items, setCurrentItem } = this.props;
         return <Listing
                     isLoading={isLoading}
                     isError={isError}
-                    items={this.props.items}
+                    items={items}
+                    onItemSelection={setCurrentItem}
                     groupBy={'status'}
                     order={[
                         // TODO: Set the proper order of statuses.
@@ -60,6 +65,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     loadSubmissions: id => dispatch(fetchSubmissionsByRound(id)),
+    setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });
 
 ByStatusListing.propTypes = {

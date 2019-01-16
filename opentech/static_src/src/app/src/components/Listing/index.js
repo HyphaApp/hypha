@@ -9,7 +9,7 @@ import './style.scss';
 
 export default class Listing extends React.Component {
     renderListItems() {
-        const { isLoading, isError, items } = this.props;
+        const { isLoading, isError, items, onItemSelection } = this.props;
 
         if (isLoading) {
             return <p>Loading...</p>;
@@ -25,7 +25,7 @@ export default class Listing extends React.Component {
                     return (
                         <ListingGroup key={`listing-group-${v.group}`} item={v}>
                             {v.items.map(item => {
-                                return <ListingItem key={`listing-item-${item.id}`} item={item}/>;
+                                return <ListingItem onClick={onItemSelection} key={`listing-item-${item.id}`} item={item}/>;
                             })}
                         </ListingGroup>
                     );
@@ -75,4 +75,5 @@ Listing.propTypes = {
     isError: PropTypes.bool,
     groupBy: PropTypes.string,
     order: PropTypes.arrayOf(PropTypes.string),
+    onItemSelection: PropTypes.func,
 };

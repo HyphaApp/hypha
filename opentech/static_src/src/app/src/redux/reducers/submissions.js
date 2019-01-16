@@ -1,5 +1,6 @@
 import {
     FAIL_LOADING_SUBMISSIONS_BY_ROUND,
+    SET_CURRENT_SUBMISSION,
     SET_CURRENT_SUBMISSION_ROUND,
     START_LOADING_SUBMISSIONS_BY_ROUND,
     UPDATE_SUBMISSIONS_BY_ROUND,
@@ -7,6 +8,7 @@ import {
 
 const initialState = {
     currentRound: null,
+    currenSubmission: null,
     submissionsByID: {},
     submissionsByRoundID: {},
     itemsLoadingError: false,
@@ -15,6 +17,11 @@ const initialState = {
 
 export default function submissions(state = initialState, action) {
     switch(action.type) {
+        case SET_CURRENT_SUBMISSION:
+            return {
+                ...state,
+                currentSubmission: action.id,
+            };
         case SET_CURRENT_SUBMISSION_ROUND:
             return {
                 ...state,
