@@ -234,6 +234,16 @@ SingleStageDefinition = [
             'permissions': applicant_edit_permissions,
         },
     },
+    {
+        'determination': {
+            'transitions': {
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Request,
+        },
     },
     {
         'accepted': {
@@ -345,6 +355,16 @@ SingleStageExternalDefinition = [
             'permissions': applicant_edit_permissions,
         },
     },
+    {
+        'ext_determination': {
+            'transitions': {
+                'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': RequestExt,
+        },
     },
     {
         'ext_accepted': {
@@ -428,6 +448,16 @@ DoubleStageDefinition = [
             'permissions': applicant_edit_permissions,
         },
     },
+    {
+        'concept_determination': {
+            'transitions': {
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Concept,
+        },
     },
     {
         'invited_to_proposal': {
@@ -560,6 +590,16 @@ DoubleStageDefinition = [
             'permissions': applicant_edit_permissions,
         },
     },
+    {
+        'proposal_determination': {
+            'transitions': {
+                'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Proposal,
+        },
     },
     {
         'proposal_accepted': {
