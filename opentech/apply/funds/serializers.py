@@ -23,7 +23,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         questions = collections.OrderedDict()
         for field_id in obj.question_field_ids:
             if filter_func is not None:
-                if filter_func(field_id):
+                if not filter_func(field_id):
                     continue
             field = obj.field(field_id)
             # TODO: Check field to see if answer can be serialized
@@ -38,11 +38,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     def get_meta_questions(self, obj):
         return self.get_all_questions(
             obj,
-            filter_func=lambda field_id: field_id not in obj.named_blocks
+            filter_func=lambda field_id: field_id in obj.named_blocks
         )
 
     def get_questions(self, obj):
         return self.get_all_questions(
             obj,
-            filter_func=lambda field_id: field_id in obj.named_blocks
+            filter_func=lambda field_id: field_id not in obj.named_blocks
         )
