@@ -20,7 +20,7 @@ class ByStatusListing extends React.Component {
     componentDidMount() {
         const { roundId } = this.props;
         // Update items if round ID is defined.
-        if (roundId !== null && roundId !== undefined) {
+        if (roundId !== null) {
             this.props.loadSubmissions(roundId);
         }
     }
@@ -28,7 +28,7 @@ class ByStatusListing extends React.Component {
     componentDidUpdate(prevProps) {
         const { roundId } = this.props;
         // Update entries if round ID is changed or is not null.
-        if (roundId !== null && roundId !== undefined && prevProps.roundId !== roundId) {
+        if (roundId !== null && prevProps.roundId !== roundId) {
             this.props.loadSubmissions(roundId);
         }
     }
@@ -39,6 +39,7 @@ class ByStatusListing extends React.Component {
                     isLoading={isLoading}
                     isError={isError}
                     items={items}
+                    updateFirstItem={setCurrentItem}
                     onItemSelection={setCurrentItem}
                     groupBy={'status'}
                     order={[

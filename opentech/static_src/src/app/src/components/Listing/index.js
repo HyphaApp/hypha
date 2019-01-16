@@ -8,6 +8,32 @@ import ListingItem from '@components/ListingItem';
 import './style.scss';
 
 export default class Listing extends React.Component {
+    state = { orderedItems: [] };
+
+    componentDidUpdate(prevProps, prevState) {
+        // Order items
+        if (this.props.items !== prevProps.items) {
+            this.orderItems();
+        }
+
+        // Update the first item.
+        const getFirstItem = items => {
+            for (const group of items) {
+                for (const item of group.items) {
+                    return item;
+                }
+            }
+            return null;
+        };
+
+        const prevFirstItem = getFirstItem(prevState.orderedItems);
+        const firstItem = getFirstItem(this.state.orderedItems);
+
+        if (firstItem !== null && (prevFirstItem === null || firstItem.id !== prevFirstItem.id)) {
+            this.props.updateFirstItem(firstItem.id);
+        }
+    }
+
     renderListItems() {
         const { isLoading, isError, items, onItemSelection } = this.props;
 
@@ -15,13 +41,13 @@ export default class Listing extends React.Component {
             return <p>Loading...</p>;
         } else if (isError) {
             return <p>Something went wrong. Please try again later.</p>;
-        } else if (items.length === 0) {
+        } else if (this.props.items.length === 0) {
             return <p>No results found.</p>;
         }
 
         return (
             <ul className="listing__list">
-                {this.getOrderedItems().filter(v => v.items.length !== 0).map(v => {
+                {this.state.orderedItems.filter(v => v.items.length !== 0).map(v => {
                     return (
                         <ListingGroup key={`listing-group-${v.group}`} item={v}>
                             {v.items.map(item => {
@@ -50,15 +76,17 @@ export default class Listing extends React.Component {
         }, {});
     }
 
-    getOrderedItems() {
+    orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
         const orderedItems = [];
         const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
-        return order.concat(leftOverKeys).map(key => ({
-            group: key,
-            items: groupedItems[key] || []
-        }));
+        this.setState({
+            orderedItems: order.concat(leftOverKeys).map(key => ({
+                group: key,
+                items: groupedItems[key] || []
+            })),
+        });
     }
 
     render() {
@@ -79,4 +107,5 @@ Listing.propTypes = {
     groupBy: PropTypes.string,
     order: PropTypes.arrayOf(PropTypes.string),
     onItemSelection: PropTypes.func,
+    updateFirstItem: PropTypes.func,
 };

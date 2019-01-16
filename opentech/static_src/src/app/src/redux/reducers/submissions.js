@@ -1,4 +1,5 @@
 import {
+    CLEAR_CURRENT_SUBMISSION,
     FAIL_LOADING_SUBMISSION,
     START_LOADING_SUBMISSION,
     UPDATE_SUBMISSION,
@@ -11,7 +12,7 @@ import {
 
 const initialState = {
     currentRound: null,
-    currenSubmission: null,
+    currentSubmission: null,
     submissionsByID: {},
     submissionsByRoundID: {},
     itemsLoadingError: false,

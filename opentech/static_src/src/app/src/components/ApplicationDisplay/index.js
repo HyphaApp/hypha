@@ -52,10 +52,12 @@ const Response = ({question, answer}) => {
 
 export default class ApplicationDisplay extends Component {
     render() {
-        if (this.props.isLoading || this.props.submission === undefined) {
+        if (this.props.isLoading) {
             return <div>Loading...</div>;
         } else if (this.props.isError) {
             return <div>Error occured...</div>;
+        } else if (this.props.submission === undefined) {
+            return <div>Not selected</div>;
         }
         const { meta_questions = [], questions = [] } = this.props.submission;
 

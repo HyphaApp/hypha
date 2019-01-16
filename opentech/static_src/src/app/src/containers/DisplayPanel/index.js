@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { fetchSubmission } from '@actions/submissions';
+import { clearCurrentSubmission, fetchSubmission } from '@actions/submissions';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
@@ -19,7 +19,7 @@ import './style.scss';
 class DisplayPanel extends React.Component  {
     componentDidUpdate(prevProps) {
         const { submissionID } = this.props;
-        if (submissionID !== undefined && (
+        if (submissionID !== null && (
              prevProps.submissionID === undefined || submissionID !== prevProps.submissionID
         )) {
             this.props.loadSubmission(submissionID);
@@ -27,10 +27,11 @@ class DisplayPanel extends React.Component  {
     }
 
     render() {
-        const { isError, isLoading, submission } = this.props;
+        const { clearCurrentSubmission, isError, isLoading, submission } = this.props;
 
         return (
             <Tabber className="display-panel">
+                <button onClick={clearCurrentSubmission}>Back</button>
                 <Tab name="Application">
                     <ApplicationDisplay isLoading={isLoading} isError={isError} submission={submission} />
                 </Tab>
@@ -55,6 +56,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     loadSubmission: id => dispatch(fetchSubmission(id)),
+    clearCurrentSubmission: () => dispatch(clearCurrentSubmission()),
 });
 
 
