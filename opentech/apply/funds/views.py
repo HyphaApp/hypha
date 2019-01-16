@@ -30,7 +30,7 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
-from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
+from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
@@ -113,6 +113,26 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = ScreeningSubmissionForm
+    context_name = 'screening_form'
+
+    def form_valid(self, form):
+        old = copy(self.get_object())
+        response = super().form_valid(form)
+        # Record activity
+        messenger(
+            MESSAGES.SCREENING,
+            request=self.request,
+            user=self.request.user,
+            submission=self.object,
+            related=old.screening_status or '-',
+        )
+        return response
+
+
+@method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
@@ -162,6 +182,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
+        ScreeningSubmissionView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
