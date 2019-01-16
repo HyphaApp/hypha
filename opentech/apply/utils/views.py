@@ -8,7 +8,7 @@ from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
     if not request.user.is_authenticated:
-        template_name='404.html'
+        template_name = '404.html'
     return defaults.page_not_found(request, exception, template_name)
 
 
