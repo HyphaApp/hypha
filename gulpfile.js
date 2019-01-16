@@ -266,10 +266,10 @@ gulp.task('watch:app', function watch (callback) {
 gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
 // Build everything.
-gulp.task('build', gulp.series(gulp.parallel('styles:production', 'scripts:production', 'app:production', 'images', 'fonts', 'lint'), 'collectstatic'));
+gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'lint'), 'collectstatic'));
 
 // Deploy everything.
-gulp.task('deploy', gulp.parallel('styles:production', 'scripts:production', 'app:production', 'images', 'fonts'));
+gulp.task('deploy', gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts'));
 
 // The default task.
 gulp.task('default', gulp.series('build'));
