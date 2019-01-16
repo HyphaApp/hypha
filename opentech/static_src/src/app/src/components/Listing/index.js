@@ -62,15 +62,7 @@ export default class Listing extends React.Component {
         const { isLoading, isError } = this.props;
         return (
             <div className="listing">
-                <div className="listing__header">
-                <form className="form form__select">
-                    <select>
-                        <option>Option 1</option>
-                        <option>Option 2</option>
-                        <option>Option 3</option>
-                    </select>
-                </form>
-                </div>
+                <div className="listing__header"></div>
                 {this.renderListItems()}
             </div>
         );
