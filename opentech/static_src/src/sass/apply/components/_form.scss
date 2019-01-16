@@ -17,9 +17,16 @@
         }
     }
 
-    &--search-desktop {
+    &--search {
         position: relative;
-        width: 280px;
+        max-width: 300px;
+        margin-top: $mobile-gutter;
+        width: 100%;
+
+        @include media-query(tablet-landscape) {
+            max-width: 280px;
+            margin: 0 0 0 30px;
+        }
     }
 
     &__group {
