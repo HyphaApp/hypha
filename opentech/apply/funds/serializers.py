@@ -20,7 +20,6 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'questions', 'meta_questions')
 
     def get_all_questions(self, obj, filter_func=None):
-        questions = collections.OrderedDict()
         for field_id in obj.question_field_ids:
             if filter_func is not None:
                 if not filter_func(field_id):
@@ -29,11 +28,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             # TODO: Check field to see if answer can be serialized
             data = obj.data(field_id)
 
-            questions[field_id] = {
+            yield {
+                'id': field_id,
                 'question': field.value['field_label'],
                 'answer': data,
             }
-        return questions
 
     def get_meta_questions(self, obj):
         return self.get_all_questions(

@@ -18,8 +18,14 @@ const getCurrentRoundSubmissions = createSelector(
 
 const getCurrentSubmission = createSelector(
     [ getCurrentSubmissionID, getSubmissions ],
-    (id, submissions) => submissions[id]
+    (id, submissions) => {
+        return submissions[id];
+    }
 );
+
+const getSubmissionLoadingState = state => state.submissions.itemLoading;
+
+const getSubmissionErrorState = state => state.submissions.itemLoadingError;
 
 const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError;
 
@@ -32,4 +38,6 @@ export {
     getCurrentSubmissionID,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,
+    getSubmissionLoadingState,
+    getSubmissionErrorState,
 };

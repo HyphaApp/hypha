@@ -88,7 +88,9 @@ export default function submissions(state = initialState, action) {
                         ...state.submissionsByID[action.submissionID],
                         ...action.data,
                     }
-                }
+                },
+                itemLoading: false,
+                itemLoadingError: false,
             };
         default:
             return state;

@@ -12,6 +12,7 @@ const Meta = ({ question, answer }) => {
 }
 
 const Response = ({question, answer}) => {
+    console.log(question, answer);
     const containsHtml = (text) => {
         return text.startsWith('<');
     }
@@ -28,6 +29,10 @@ const Response = ({question, answer}) => {
                     }
                 })}
             </ul>
+        }
+
+        if (answer === true || answer === false) {
+            return <div>{answer ? 'Yes' : 'No'}</div>;
         }
 
         // handle strings with and without html
@@ -48,20 +53,25 @@ const Response = ({question, answer}) => {
 
 export default class ApplicationDisplay extends Component {
     render() {
-        const { metaResponses, responses } = this.props.submissionData;
+        if (this.props.isLoading || this.props.submission === undefined) {
+            return <div>Loading...</div>;
+        } else if (this.props.isError) {
+            return <div>Error occured...</div>;
+        }
+        const { meta_questions = [], questions = [] } = this.props.submission;
 
         return (
             <div>
                 <h3>Proposal Information</h3>
 
                 <div className="grid grid--proposal-info">
-                    {metaResponses.map((response, index) => (
+                    {meta_questions.map((response, index) => (
                         <Meta key={index} question={response.question} answer={response.answer} />
                     ))}
                 </div>
 
                 <div className="rich-text rich-text--answers">
-                    {responses.map((response, index) => (
+                    {questions.map((response, index) => (
                         <Response key={index} question={response.question} answer={response.answer} />
                     ))}
                 </div>
