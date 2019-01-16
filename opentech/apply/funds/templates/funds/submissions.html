@@ -15,7 +15,8 @@
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% include "funds/includes/round-block.html" %}
+
+    {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds %}
 
     {% block table %}
         {{ block.super }}

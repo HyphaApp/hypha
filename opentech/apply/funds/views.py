@@ -44,7 +44,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationBase, ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
+from .models import ApplicationBase, ApplicationSubmission, ApplicationRevision, Round, RoundBase, LabBase
 from .models.utils import SubmittableStreamForm
 from .tables import (
     AdminSubmissionsTable,
@@ -87,7 +87,18 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
         )
 
-        return kwargs
+        open_round_count = Round.objects.open().count()
+        open_rounds = Round.objects.open().order_by('-end_date')[:10]
+        closed_round_count = Round.objects.closed().count()
+        closed_rounds = Round.objects.closed().order_by('-end_date')[:10]
+
+        return super().get_context_data(
+            open_rounds=open_rounds,
+            open_round_count=open_round_count,
+            closed_rounds=closed_rounds,
+            closed_round_count=closed_round_count,
+            **kwargs,
+        )
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):

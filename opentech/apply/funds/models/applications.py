@@ -104,6 +104,11 @@ class RoundBaseManager(PageQuerySet):
         )
         return rounds
 
+    def closed(self):
+        rounds = self.live().public().specific()
+        rounds = rounds.filter(end_date__lt=date.today())
+        return rounds
+
 
 class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     is_creatable = False

@@ -8,58 +8,49 @@
     </section>
 
     {# Closed rounds/labs tab #}
-    <div class="tabs__content" id="tab-1">
+    <div class="tabs__content-nm" id="tab-1">
         <ul class="round-block">
-            <li class="round-block__item">
-                <h4 class="round-block__title">IFFund-2018-01</h4>
-                <p>Internet Freedom Fund</p>
-                <p class="round-block__date">Closed 2018-01-01</p>
-                <p class="round-block__determination">33% Determined</p>
-                <a class="round-block__view" href="#">View</a>
-            </li>
+            {% for round in closed_rounds %}
+                <li class="round-block__item">
+                    <h4 class="round-block__title">{{ round }}</h4>
+                    <p> {{ round.fund }} </p>
+                    <p class="round-block__date">Closed {{ round.end_date|date:"Y-m-d" }}</p>
+                    <p class="round-block__determination">TODO: 33% Determined</p>
+                    <a class="round-block__view" href="#">View</a>
+                </li>
+            {% endfor %}
 
-            <li class="round-block__item">
-                <h4 class="round-block__title">IFFund-2018-01</h4>
-                <p>Rapid Response Fund</p>
-                <p class="round-block__date">Closed 2018-01-01</p>
-                <p class="round-block__determination">50% Determined</p>
-                <a class="round-block__view" href="#">View</a>
-            </li>
-            {% if 10 >= 10 %}
+            {% if closed_round_count > 10 %}
                 {# If count of rounds/labs >= 10 #}
                 <li class="round-block__item round-block__item--more">
                     {# href required #}
-                    <a href="#">Show more</a>
+                    <a href="#">Show all</a>
                 </li>
             {% endif %}
         </ul>
     </div>
 
     {# Open rounds/labs tab #}
-    <div class="tabs__content" id="tab-2">
+    <div class="tabs__content-nm" id="tab-2">
         <ul class="round-block">
-            <li class="round-block__item">
-                <h4 class="round-block__title">IFFund-2018-01</h4>
-                <p>Internet Freedom Fund (archive fund)</p>
-                <p class="round-block__date">Open until 2020-01-01</p>
-                <p class="round-block__determination">25% Determined</p>
-                <a class="round-block__view" href="#">View</a>
-            </li>
+            {% for round in open_rounds %}
+                <li class="round-block__item">
+                    <h4 class="round-block__title">{{ round }}</h4>
+                    <p> {{ round.fund }} </p>
+                    <p class="round-block__date">Open until {{ round.end_date|date:"Y-m-d" }}</p>
+                    <p class="round-block__determination">TODO: 33% Determined</p>
+                    <a class="round-block__view" href="#">View</a>
+                </li>
+            {% endfor %}
 
-            <li class="round-block__item">
-                <h4 class="round-block__title">IFFund-2018-01</h4>
-                <p>Communit Lab</p>
-                <p class="round-block__date">Open</p>
-                <p class="round-block__determination">33% Determined</p>
-                <a class="round-block__view" href="#">View</a>
-            </li>
-            {% if 10 >= 10 %}
+            {% if open_round_count > 10 %}
                 {# If count of rounds/labs >= 10 #}
                 <li class="round-block__item round-block__item--more">
                     {# href required #}
-                    <a href="#">Show more</a>
+                    <a href="#">Show all</a>
                 </li>
             {% endif %}
         </ul>
     </div>
+
 </div>
