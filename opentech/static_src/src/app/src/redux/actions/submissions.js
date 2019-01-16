@@ -1,13 +1,18 @@
 import api from '@api';
+import { getCurrentSubmissionID } from '@selectors/submissions';
 
 
 // Submissions by round
 export const SET_CURRENT_SUBMISSION_ROUND = 'SET_CURRENT_SUBMISSION_ROUND';
-export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
 export const UPDATE_SUBMISSIONS_BY_ROUND = 'UPDATE_SUBMISSIONS_BY_ROUND';
 export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_ROUND';
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
 
+// Submissions
+export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
+export const START_LOADING_SUBMISSION = 'START_LOADING_SUBMISSION';
+export const FAIL_LOADING_SUBMISSION = 'FAIL_LOADING_SUBMISSION';
+export const UPDATE_SUBMISSION = 'UPDATE_SUBMISSION';
 
 export const setCurrentSubmissionRound = id => ({
     type: SET_CURRENT_SUBMISSION_ROUND,
@@ -26,7 +31,7 @@ export const fetchSubmissionsByRound = roundId => {
             const response = await api.fetchSubmissionsByRound(roundId);
             const json = await response.json();
             if (!response.ok) {
-                dispatch(failLoadingSubmissionsByRound());
+                dispatch(failLoadingSubmissionsByRound(submissionID, data));
                 return;
             }
             dispatch(updateSubmissionsByRound(roundId, json));
@@ -53,4 +58,37 @@ const startLoadingSubmissionsByRound = () => ({
 
 const failLoadingSubmissionsByRound = () => ({
     type: FAIL_LOADING_SUBMISSIONS_BY_ROUND,
+});
+
+
+export const fetchSubmission = submissionID => {
+    return async function(dispatch) {
+
+        dispatch(startLoadingSubmission());
+        try {
+            const response = await api.fetchSubmission(submissionID);
+            const json = await response.json();
+            if (!response.ok) {
+                dispatch(failLoadingSubmission());
+            }
+            dispatch(updateSubmission(submissionID, json));
+        } catch(e) {
+            console.error(e);
+            dispatch(failLoadingSubmission());
+        }
+    };
+};
+
+const startLoadingSubmission = () => ({
+    type: START_LOADING_SUBMISSION,
+});
+
+const failLoadingSubmission = () => ({
+    type: FAIL_LOADING_SUBMISSION,
+});
+
+const updateSubmission = (submissionID, data) => ({
+    type: UPDATE_SUBMISSION,
+    submissionID,
+    data,
 });

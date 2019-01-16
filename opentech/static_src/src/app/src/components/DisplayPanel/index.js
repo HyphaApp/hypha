@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import ApplicationDisplay from '@components/ApplicationDisplay'
 import Tabber from '@components/Tabber'
 import {Tab} from '@components/Tabber'
@@ -45,5 +47,9 @@ const DisplayPanel = () => {
         </Tabber>
     )
 };
+
+DisplayPanel.propTypes = {
+    submission: PropTypes.object,
+}
 
 export default DisplayPanel;

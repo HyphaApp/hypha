@@ -6,3 +6,8 @@ export async function fetchSubmissionsByRound(id) {
         'page_size': 1000,
     });
 }
+
+
+export async function fetchSubmission(id) {
+    return apiFetch(`/apply/api/submissions/${id}/`, 'GET');
+}

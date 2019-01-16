@@ -1,5 +1,6 @@
-import { fetchSubmissionsByRound } from '@api/submissions';
+import { fetchSubmission, fetchSubmissionsByRound } from '@api/submissions';
 
 export default {
     fetchSubmissionsByRound,
+    fetchSubmission,
 };

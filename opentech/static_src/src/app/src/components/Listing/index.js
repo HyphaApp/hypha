@@ -25,7 +25,10 @@ export default class Listing extends React.Component {
                     return (
                         <ListingGroup key={`listing-group-${v.group}`} item={v}>
                             {v.items.map(item => {
-                                return <ListingItem onClick={onItemSelection} key={`listing-item-${item.id}`} item={item}/>;
+                                return <ListingItem
+                                    onClick={onItemSelection}
+                                    key={`listing-item-${item.id}`}
+                                    item={item}/>;
                             })}
                         </ListingGroup>
                     );

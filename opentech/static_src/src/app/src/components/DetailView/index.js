@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
-import DisplayPanel from '@components/DisplayPanel';
+import DisplayPanelContainer from '@containers/DisplayPanelContainer';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
 
@@ -39,7 +39,7 @@ class DetailView extends Component {
             return (
                 <div className="detail-view">
                     <SlideInRight in={!hasActiveApplication}>
-                        <DisplayPanel />
+                        <DisplayPanelContainer />
                     </SlideInRight>
                     <SlideOutLeft in={hasActiveApplication}>
                         {listing}
@@ -50,7 +50,7 @@ class DetailView extends Component {
             return (
                 <div className="detail-view">
                     {listing}
-                    <DisplayPanel />
+                    <DisplayPanelContainer />
                 </div>
             )
         }
