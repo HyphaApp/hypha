@@ -77,7 +77,12 @@
 
     // redirect to submissions home to clear filters
     function handleClearFilters() {
-        window.location.href = window.location.href.split('?')[0] + '?query=' + urlParams.get('query');
+        if (!urlParams.get('query')) {
+            window.location.href = window.location.href.split('?')[0];
+        }
+        else {
+            window.location.href = window.location.href.split('?')[0] + '?query=' + urlParams.get('query');
+        }
     }
 
     // toggle filters button wording
