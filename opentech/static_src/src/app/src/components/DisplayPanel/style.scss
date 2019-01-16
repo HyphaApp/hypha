@@ -1,0 +1,19 @@
+.display-panel {
+    // temporary to visualise middle column
+    > div:first-child {
+        background-color: $color--white;
+    }
+
+    @include media-query(tablet-landscape) {
+        display: grid;
+        grid-template-columns: 1fr 250px;
+    }
+
+    @include media-query(desktop) {
+        grid-template-columns: 1fr 390px;
+    @include target-ie11 {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    }
+}

@@ -17,13 +17,9 @@
         }
     }
 
-    &--header-search-desktop {
+    &--search-desktop {
         position: relative;
         width: 280px;
-
-        @include media-query(small-tablet) {
-            margin-top: 15px;
-        }
     }
 
     &__group {
@@ -107,8 +103,33 @@
     }
 
     &__filters {
-        display: flex;
-        padding: 10px 0 30px;
+        #{$filter-dropdown} {
+            border: 0;
+            border-top: 1px solid $color--mid-grey;
+
+            &.is-active {
+                font-weight: $weight--normal;
+                background-color: transparentize($color--primary, .9);
+                border-color: $color--mid-grey;
+            }
+
+            @include media-query(tablet-landscape) {
+                border: 1px solid $color--mid-grey;
+            }
+        }
+
+        @include media-query(tablet-landscape) {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 0 30px;
+            opacity: 0;
+            transition: opacity $transition;
+
+            .filters-open & {
+                opacity: 1;
+                transition-delay: $base-delay * 10;
+            }
+        }
 
         label {
             display: none;
@@ -116,24 +137,18 @@
 
         // so the form can be output in any tag
         > * {
-            flex-basis: 225px;
-            margin-right: 10px;
+            @include media-query(tablet-landscape) {
+                flex-basis: 225px;
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
         }
 
         &--mobile {
             flex-direction: column;
             padding: 0;
-
-            .select2 .select2-selection.select2-selection--single { // sass-lint:disable-line force-element-nesting
-                border: 0;
-                border-top: 1px solid $color--mid-grey;
-
-                &.is-active {
-                    font-weight: $weight--normal;
-                    background-color: transparentize($color--primary, .9);
-                    border-color: $color--mid-grey;
-                }
-            }
 
             // so the form can be output in any tag
             > * {
@@ -179,6 +194,7 @@
         }
 
         .form__filters & {
+            background: $color--white;
             max-width: 100%;
         }
 
@@ -385,4 +401,3 @@
         max-width: 410px;
     }
 }
-

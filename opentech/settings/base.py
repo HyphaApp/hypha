@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'opentech.apply.review',
     'opentech.apply.determinations',
     'opentech.apply.stream_forms',
+    'opentech.apply.utils',
 
     'opentech.public.funds',
     'opentech.public.home',
@@ -612,7 +613,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (

@@ -1,4 +1,7 @@
 // sass-lint:disable no-color-keywords; no-color-hex
+:root {
+    --header-admin-height: 0;
+}
 
 // Default
 $color--white: #fff;
@@ -28,6 +31,7 @@ $color--mist: #f3fafe;
 $color--green: #7dc558;
 $color--pastel-red: #f1a9a9;
 $color--pastel-green: #afe6af;
+$color--fog: #eff2f5;
 
 // Social
 $color--twitter: #1da6f6;
@@ -91,13 +95,22 @@ $breakpoints: (
     'small-tablet'      '(min-width: 600px)',
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
+    'laptop-short'      '(min-width: 1024px) and (max-height: 1280px)',
     'desktop'           '(min-width: 1320px)',
-    'deskop-wide'       '(min-width: 2556px)'
+    'desktop-medium'    '(min-width: 1920px)',
+    'desktop-wide'      '(min-width: 2556px)'
 );
 
 // Transition
 $transition: .25s ease-out;
 $quick-transition: .15s ease;
+$medium-transition: .5s ease;
+
+// Delays
+$base-delay: 30ms;
 
 // Spacing
 $mobile-gutter: 20px;
+
+// Filters
+$filter-dropdown: '.select2 .select2-selection.select2-selection--single';
