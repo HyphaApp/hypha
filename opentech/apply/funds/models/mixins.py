@@ -152,7 +152,6 @@ class AccessFormData:
             for field_id in self.question_field_ids
             if field_id not in self.named_blocks
         ]
-
     def output_answers(self):
         # Returns a safe string of the rendered answers
         return mark_safe(''.join(self.render_answers()))
