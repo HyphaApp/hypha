@@ -129,7 +129,7 @@
                 </div>
 
                 <div class="header__search">
-                    <form action="{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
+                    <form action="{{ PUBLIC_SITE.root_url }}{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
                         <button class="button" type="submit" aria-label="Search">
                             <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                         </button>

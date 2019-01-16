@@ -14,14 +14,27 @@ from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
 
 
+def apply_cache_control(*patterns):
+    # Cache-control
+    cache_length = getattr(settings, 'CACHE_CONTROL_MAX_AGE', None)
+
+    if cache_length:
+        patterns = decorate_urlpatterns(
+            patterns,
+            cache_control(max_age=cache_length)
+        )
+
+    return list(patterns)
+
+
 urlpatterns = [
     path('django-admin/', admin.site.urls),
     path('admin/', include(wagtailadmin_urls)),
 
     path('documents/', include(wagtaildocs_urls)),
     path('sitemap.xml', sitemap),
-    path('', include(public_urls)),
     path('', include((user_urls, 'users_public'))),
+    path('', include(public_urls)),
     path('', include('social_django.urls', namespace='social')),
     path('tinymce/', include('tinymce.urls')),
     path('select2/', include('django_select2.urls')),
@@ -52,18 +65,14 @@ urlpatterns += [
     path('', include(wagtail_urls)),
 ]
 
+urlpatterns = apply_cache_control(*urlpatterns)
 
-# Cache-control
-cache_length = getattr(settings, 'CACHE_CONTROL_MAX_AGE', None)
-
-if cache_length:
-    urlpatterns = decorate_urlpatterns(
-        urlpatterns,
-        cache_control(max_age=cache_length)
-    )
 
 if settings.DEBUG and settings.DEBUGTOOLBAR:
     import debug_toolbar
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
+
+
+base_urlpatterns = [*urlpatterns]
