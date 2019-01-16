@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0047_add_markdown'),
+        ('funds', '0048_add_field_slack_channel'),
     ]
 
     operations = [

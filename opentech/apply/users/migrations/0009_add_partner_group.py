@@ -34,7 +34,7 @@ def remove_groups(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0007_user_slack'),
+        ('users', '0008_add_staff_permissions'),
     ]
 
     operations = [
