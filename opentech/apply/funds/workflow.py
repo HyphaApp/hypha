@@ -367,7 +367,7 @@ DoubleStageDefinition = {
             'concept_more_info': 'Request More Information',
             'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
         },
-        'display': 'Under Discussion',
+        'display': 'Screening',
         'public': 'Concept Note Received',
         'stage': Concept,
         'permissions': default_permissions,
