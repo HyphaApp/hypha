@@ -421,7 +421,7 @@ class SubmissionDetailView(ViewDispatcher):
     applicant_view = ApplicantSubmissionDetailView
 
     def admin_check(self, request):
-        if request.user.is_reviewer:
+        if request.user.is_reviewer or request.user.is_partner:
             return True
         return super().admin_check(request)
 

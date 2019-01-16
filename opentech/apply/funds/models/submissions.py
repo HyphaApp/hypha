@@ -540,7 +540,10 @@ class ApplicationSubmission(
 
     @property
     def missing_reviewers(self):
-        return self.reviewers.exclude(id__in=self.reviews.submitted().values('author'))
+        reviews_submitted = self.reviews.submitted().values('author')
+        reviewers = self.reviewers.exclude(id__in=reviews_submitted)
+        partners = self.partners.exclude(id__in=reviews_submitted)
+        return reviewers | partners
 
     @property
     def staff_not_reviewed(self):
