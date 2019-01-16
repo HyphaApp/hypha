@@ -34,6 +34,7 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
     path('sitemap.xml', sitemap),
     path('', include((user_urls, 'users_public'))),
+    path('', include(public_urls)),
     path('', include('social_django.urls', namespace='social')),
     path('tinymce/', include('tinymce.urls')),
     path('select2/', include('django_select2.urls')),
@@ -75,11 +76,3 @@ if settings.DEBUG and settings.DEBUGTOOLBAR:
 
 
 base_urlpatterns = [*urlpatterns]
-
-
-# Add in URLs only available to the public site
-# Place before the wagtail urls without mutating the object
-urlpatterns.insert(
-    -1,
-    *apply_cache_control(path('', include(public_urls)))
-)
