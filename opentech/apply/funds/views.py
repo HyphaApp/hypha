@@ -32,6 +32,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
+from .models.utils import SubmittableStreamForm
 from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
@@ -463,3 +464,11 @@ class RevisionCompareView(DetailView):
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
         self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
+
+
+@method_decorator(staff_required, name='dispatch')
+class RoundListView(ListView):
+    template_name = 'funds/rounds.html'
+
+    def get_queryset(self):
+        return Page.objects.type(SubmittableStreamForm)
