@@ -8,33 +8,8 @@
 
 {% block content %}
     {% block table %}
-        <div class="wrapper wrapper--table-actions">
-            <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
 
-            <form method="get" role="search" class="form form--search-desktop js-search-form">
-                <button class="button button--search" type="submit" aria-label="Search">
-                    <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-                </button>
-                <input class="input input--search js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
-            </form>
-        </div>
-
-        <div class="filters">
-            <div class="filters__header">
-                <button class="filters__button js-clear-filters">Clear</button>
-                <div>Filter by</div>
-                <button class="filters__button js-close-filters">Close</button>
-            </div>
-
-            <form action="" method="get" class="form form--filters js-filter-form">
-                <ul class="form__filters select2">
-                    {{ filter.form.as_ul }}
-                    <li>
-                        <button class="button button--primary" type="submit" value="Filter">Filter</button>
-                    </li>
-                </ul>
-            </form>
-        </div>
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term %}
 
         {% render_table table %}
     {% endblock %}

@@ -1,2 +1,34 @@
 {% extends "base-apply.html" %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
 {% block title %}Rounds{% endblock %}
+
+{% block extra_css %}
+{{ filter.form.media.css }}
+{% endblock %}
+
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <div>
+            <h1 class="gamma heading heading--no-margin heading--bold">Rounds</h1>
+            <h5>Explore current and past rounds</h5>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term %}
+    {% render_table table %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{{ filter.form.media.js }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
+<script src="{% static 'js/apply/submission-filters.js' %}"></script>
+<script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+{% endblock %}

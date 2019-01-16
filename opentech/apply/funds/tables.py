@@ -150,3 +150,17 @@ class SubmissionFilter(filters.FilterSet):
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
+
+class RoundsTable(tables.Table):
+    title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
+    fund = tables.Column()
+    lead = tables.Column(order_by=('lead.full_name',))
+    start_date = tables.Column()
+    end_date = tables.Column()
+
+    class Meta:
+        fields = ('title', 'fund', 'lead', 'start_date', 'end_date')
+
+    def render_lead(self, value):
+        return format_html('<span>{}</span>', value)

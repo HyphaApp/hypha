@@ -33,7 +33,7 @@ from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .models.utils import SubmittableStreamForm
-from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
+from .tables import AdminSubmissionsTable, RoundsTable, SubmissionFilterAndSearch
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -467,8 +467,9 @@ class RevisionCompareView(DetailView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class RoundListView(ListView):
+class RoundListView(SingleTableMixin, ListView):
     template_name = 'funds/rounds.html'
+    table_class = RoundsTable
 
     def get_queryset(self):
-        return Page.objects.type(SubmittableStreamForm)
+        return Page.objects.type(SubmittableStreamForm).specific()
