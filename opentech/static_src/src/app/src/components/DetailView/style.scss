@@ -16,4 +16,8 @@
         margin-right: -50vw;
         grid-template-columns: 390px 1fr;
     }
+
+    @include target-ie11 {
+        display: flex;
+    }
 }
