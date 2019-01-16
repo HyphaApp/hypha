@@ -1,6 +1,10 @@
 $listing-header-height: 75px;
 
 .listing {
+    @include target-ie11 {
+        max-width: 390px;
+    }
+
     &__header {
         @include submission-list-item;
         height: $listing-header-height;
