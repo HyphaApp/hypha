@@ -12,7 +12,6 @@ const Meta = ({ question, answer }) => {
 }
 
 const Response = ({question, answer}) => {
-    console.log(question, answer);
     const containsHtml = (text) => {
         return text.startsWith('<');
     }

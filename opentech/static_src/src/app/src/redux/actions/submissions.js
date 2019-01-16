@@ -13,6 +13,7 @@ export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
 export const START_LOADING_SUBMISSION = 'START_LOADING_SUBMISSION';
 export const FAIL_LOADING_SUBMISSION = 'FAIL_LOADING_SUBMISSION';
 export const UPDATE_SUBMISSION = 'UPDATE_SUBMISSION';
+export const CLEAR_CURRENT_SUBMISSION = 'CLEAR_CURRENT_SUBMISSION';
 
 export const setCurrentSubmissionRound = id => ({
     type: SET_CURRENT_SUBMISSION_ROUND,
@@ -91,4 +92,8 @@ const updateSubmission = (submissionID, data) => ({
     type: UPDATE_SUBMISSION,
     submissionID,
     data,
+});
+
+export const clearCurrentSubmission = () => ({
+    type: CLEAR_CURRENT_SUBMISSION,
 });

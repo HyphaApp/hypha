@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
+import { getCurrentSubmissionID } from '@selectors/submissions';
 
 import './style.scss';
 
@@ -27,19 +29,19 @@ class DetailView extends Component {
     handleWindowSizeChange = () => {
         this.setState({
             width: window.innerWidth
-        })
+        });
     }
 
     render() {
-        const { listing } = this.props;
-        const { width, hasActiveApplication } = this.state;
+        const { listing, hasActiveApplication } = this.props;
+        const { width  } = this.state;
         const isMobile = width < 1024;
 
         if (isMobile) {
             return (
                 <div className="detail-view">
                     <SlideInRight in={!hasActiveApplication}>
-                        <DisplayPanelContainer />
+                        <DisplayPanel />
                     </SlideInRight>
                     <SlideOutLeft in={hasActiveApplication}>
                         {listing}
@@ -60,7 +62,13 @@ class DetailView extends Component {
 
 DetailView.propTypes = {
     listing: PropTypes.node.isRequired,
+    hasActiveApplication: PropTypes.bool,
 };
 
-export default DetailView;
+const mapStateToProps = state => ({
+    hasActiveApplication: !!getCurrentSubmissionID(state),
+});
+
+
+export default connect(mapStateToProps)(DetailView);
 

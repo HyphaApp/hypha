@@ -23,13 +23,13 @@ const getCurrentSubmission = createSelector(
     }
 );
 
-const getSubmissionLoadingState = state => state.submissions.itemLoading;
+const getSubmissionLoadingState = state => state.submissions.itemLoading === true;
 
-const getSubmissionErrorState = state => state.submissions.itemLoadingError;
+const getSubmissionErrorState = state => state.submissions.itemLoadingError === true;
 
-const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError;
+const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError === true;
 
-const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading;
+const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading === true;
 
 export {
     getCurrentRoundID,

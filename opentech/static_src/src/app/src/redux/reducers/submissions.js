@@ -92,6 +92,11 @@ export default function submissions(state = initialState, action) {
                 itemLoading: false,
                 itemLoadingError: false,
             };
+        case CLEAR_CURRENT_SUBMISSION:
+            return {
+                ...state,
+                currentSubmission: null,
+            }
         default:
             return state;
     }
