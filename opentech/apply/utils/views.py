@@ -1,8 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views import defaults
 from django.views.generic import DetailView, View
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
+
+
+def page_not_found(request, exception=None, template_name='apply/404.html'):
+    return defaults.page_not_found(request, exception, template_name)
 
 
 @method_decorator(login_required, name='dispatch')
