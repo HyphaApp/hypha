@@ -323,6 +323,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
+        UpdatePartnersView,
     ]
 
     def dispatch(self, request, *args, **kwargs):
