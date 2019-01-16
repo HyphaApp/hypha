@@ -3,7 +3,7 @@ from django.urls import include, path
 from .users import urls as users_urls
 from .dashboard import urls as dashboard_urls
 
-from opentech.urls import urlpatterns as base_urlpatterns
+from opentech.urls import base_urlpatterns
 
 
 urlpatterns = [
