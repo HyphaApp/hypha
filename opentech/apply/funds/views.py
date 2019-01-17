@@ -87,22 +87,22 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
         )
 
-        open_round_count = Round.objects.open().count()
-        open_rounds = Round.objects.open().order_by('-end_date')[:10]
-        closed_round_count = Round.objects.closed().count()
-        closed_rounds = Round.objects.closed().order_by('-end_date')[:10]
-
-        return super().get_context_data(
-            open_rounds=open_rounds,
-            open_round_count=open_round_count,
-            closed_rounds=closed_rounds,
-            closed_round_count=closed_round_count,
-            **kwargs,
-        )
+        return super().get_context_data(**kwargs)
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
+
+    def get_context_data(self, **kwargs):
+        open_rounds = Round.objects.open().order_by('-end_date')[:11]
+        closed_rounds = Round.objects.closed().order_by('-end_date')[:11]
+
+        return super().get_context_data(
+            open_rounds=open_rounds,
+            closed_rounds=closed_rounds,
+            **kwargs,
+        )
+
 
 
 class SubmissionsByRound(BaseAdminSubmissionsTable):
