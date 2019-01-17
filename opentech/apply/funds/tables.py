@@ -168,17 +168,22 @@ class RoundsTable(tables.Table):
         return format_html('<span>{}</span>', value)
 
     def render_progress(self, record):
-        if record.progress < 0:
-            return '-'
         return f'{record.progress}%'
 
-    def _order(self, qs, desc, field):
+    def _order(self, qs, desc, field, round=True, lab=True):
         annotated_name = field.split('__')[0]
+        fields = [
+            f_field
+            for f_field, show in [(F(f'roundbase__{field}'), round), (F(f'labbase__{field}'), lab)]
+            if show
+        ]
+        if lab and round:
+            lookup = Coalesce(*fields)
+        else:
+            lookup = fields[0]
+
         qs = qs.annotate(
-            **{annotated_name: Coalesce(
-                F(f'roundbase__{field}'),
-                F(f'labbase__{field}'),
-            )}
+            **{annotated_name: lookup}
         )
 
         new_order = getattr(F(f'{annotated_name}'), 'desc' if desc else 'asc')(nulls_last=True)
@@ -189,10 +194,10 @@ class RoundsTable(tables.Table):
         return self._order(qs, desc, 'lead__full_name')
 
     def order_start_date(self, qs, desc):
-        return self._order(qs, desc, 'start_date')
+        return self._order(qs, desc, 'start_date', lab=False)
 
     def order_end_date(self, qs, desc):
-        return self._order(qs, desc, 'end_date')
+        return self._order(qs, desc, 'end_date', lab=False)
 
     def order_fund(self, qs, desc):
         funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
@@ -201,6 +206,10 @@ class RoundsTable(tables.Table):
             fund=Subquery(funds.values('title')[:1]),
         )
         new_order = getattr(F('fund'), 'desc' if desc else 'asc')(nulls_last=True)
+        return qs.order_by(new_order), True
+
+    def order_progress(self, qs, desc):
+        new_order = getattr(F('progress'), 'desc' if desc else 'asc')(nulls_last=True)
         return qs.order_by(new_order), True
 
 

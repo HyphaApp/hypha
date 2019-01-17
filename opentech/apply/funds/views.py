@@ -493,7 +493,7 @@ class RoundListView(SingleTableMixin, ListView):
             ),
         ).annotate(
             progress=Case(
-                When(total_submissions=0, then=-1),
+                When(total_submissions=0, then=None),
                 default=(F('closed_submissions') * 100) / F('total_submissions'),
                 output_fields=FloatField(),
             )
