@@ -170,6 +170,9 @@ class RoundsTable(tables.Table):
     def render_progress(self, record):
         return f'{record.progress}%'
 
+    def _order_by(self, field, desc):
+        return getattr(F(f'{field}'), 'desc' if desc else 'asc')(nulls_last=True)
+
     def _order(self, qs, desc, field, round=True, lab=True):
         annotated_name = field.split('__')[0]
         fields = [
@@ -186,12 +189,11 @@ class RoundsTable(tables.Table):
             **{annotated_name: lookup}
         )
 
-        new_order = getattr(F(f'{annotated_name}'), 'desc' if desc else 'asc')(nulls_last=True)
-        qs = qs.order_by(new_order)
+        qs = qs.order_by(self._order_by(annotated_name, desc))
         return qs, True
 
     def order_lead(self, qs, desc):
-        return self._order(qs, desc, 'lead__full_name')
+        return qs.order_by(self._order_by('lead', desc)), True
 
     def order_start_date(self, qs, desc):
         return self._order(qs, desc, 'start_date', lab=False)
@@ -205,12 +207,10 @@ class RoundsTable(tables.Table):
             parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
             fund=Subquery(funds.values('title')[:1]),
         )
-        new_order = getattr(F('fund'), 'desc' if desc else 'asc')(nulls_last=True)
-        return qs.order_by(new_order), True
+        return qs.order_by(self._order_by('fund', desc)), True
 
     def order_progress(self, qs, desc):
-        new_order = getattr(F('progress'), 'desc' if desc else 'asc')(nulls_last=True)
-        return qs.order_by(new_order), True
+        return qs.order_by(self._order_by('progress', desc)), True
 
 
 # TODO remove in django 2.1 where this is fixed
@@ -234,3 +234,23 @@ class Left(Func):
 
     def get_substr(self):
         return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])
+
+
+class ActiveRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('active', 'Active'), ('inactive', 'Inactive')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) > 1:
+            return qs
+
+        value = value[0]
+        if value == 'active':
+            return qs.filter(Q(progress__lt=100) | Q(progress__isnull=True))
+        else:
+            return qs.filter(progress=100)
+
+
+class RoundsFilter(filters.FilterSet):
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
+    active = ActiveRoundFilter(label='Active')

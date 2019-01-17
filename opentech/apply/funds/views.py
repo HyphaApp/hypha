@@ -34,7 +34,12 @@ from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .models.utils import SubmittableStreamForm
-from .tables import AdminSubmissionsTable, RoundsTable, SubmissionFilterAndSearch
+from .tables import (
+    AdminSubmissionsTable,
+    RoundsTable,
+    RoundsFilter,
+    SubmissionFilterAndSearch,
+)
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -468,9 +473,10 @@ class RevisionCompareView(DetailView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class RoundListView(SingleTableMixin, ListView):
+class RoundListView(SingleTableMixin, FilterView):
     template_name = 'funds/rounds.html'
     table_class = RoundsTable
+    filterset_class = RoundsFilter
 
     def get_queryset(self):
         submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
@@ -491,6 +497,10 @@ class RoundListView(SingleTableMixin, ListView):
                 ),
                 0,
             ),
+            lead=Coalesce(
+                F('roundbase__lead__full_name'),
+                F('labbase__lead__full_name'),
+            )
         ).annotate(
             progress=Case(
                 When(total_submissions=0, then=None),
