@@ -4,7 +4,13 @@
             <li class="round-block__item">
                 <h4 class="round-block__title">{{ round }}</h4>
                 <p> {{ round.fund }} </p>
-                <p class="round-block__date">Closed {{ round.end_date|date:"Y-m-d" }}</p>
+                <p class="round-block__date">
+                    {% if round.end_date %}
+                        {{display_text }} {{ round.end_date|date:"Y-m-d" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                    </p>
                 <p class="round-block__determination">TODO: 33% Determined</p>
                 <a class="round-block__view" href="{% url 'apply:rounds:detail' pk=round.pk %}">View</a>
             </li>
