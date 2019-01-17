@@ -3,7 +3,8 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Count, FloatField, IntegerField, F, OuterRef, Subquery, Q, When, Case
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -472,4 +473,31 @@ class RoundListView(SingleTableMixin, ListView):
     table_class = RoundsTable
 
     def get_queryset(self):
-        return Page.objects.type(SubmittableStreamForm).specific()
+        submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
+        closed_submissions = submissions.inactive()
+
+        queryset = Page.objects.type(SubmittableStreamForm).annotate(
+            total_submissions=Coalesce(
+                Subquery(
+                    submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+            closed_submissions=Coalesce(
+                Subquery(
+                    closed_submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+        ).annotate(
+            progress=Case(
+                When(total_submissions=0, then=-1),
+                default=(F('closed_submissions') * 100) / F('total_submissions'),
+                output_fields=FloatField(),
+            )
+
+        )
+
+        return queryset

@@ -154,13 +154,19 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 
 class RoundsTable(tables.Table):
     title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
-    fund = tables.Column()
-    lead = tables.Column(order_by=('lead.full_name',))
-    start_date = tables.Column()
-    end_date = tables.Column()
+    fund = tables.Column(accessor=A('specific.fund'))
+    lead = tables.Column(accessor=A('specific.lead'), order_by=('lead.full_name',))
+    start_date = tables.Column(accessor=A('specific.start_date'))
+    end_date = tables.Column(accessor=A('specific.end_date'))
+    progress = tables.Column()
 
     class Meta:
-        fields = ('title', 'fund', 'lead', 'start_date', 'end_date')
+        fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
 
     def render_lead(self, value):
         return format_html('<span>{}</span>', value)
+
+    def render_progress(self, record):
+        if record.progress < 0:
+            return '-'
+        return f'{record.progress}%'
