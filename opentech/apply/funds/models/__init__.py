@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from .applications import ApplicationBase, RoundBase, LabBase
+from .applications import ApplicationBase, RoundBase, LabBase, RoundsAndLabs
 from .forms import ApplicationForm
 from .screening import ScreeningStatus
 from .submissions import ApplicationSubmission, ApplicationRevision

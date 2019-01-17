@@ -1,4 +1,3 @@
-from datetime import date
 import textwrap
 
 from django import forms
@@ -196,9 +195,9 @@ class ActiveRoundFilter(Select2MultipleChoiceFilter):
 
         value = value[0]
         if value == 'active':
-            return qs.filter(Q(progress__lt=100) | Q(progress__isnull=True))
+            return qs.active()
         else:
-            return qs.filter(progress=100)
+            return qs.inactive()
 
 
 class OpenRoundFilter(Select2MultipleChoiceFilter):
@@ -211,11 +210,11 @@ class OpenRoundFilter(Select2MultipleChoiceFilter):
 
         value = value[0]
         if value == 'closed':
-            return qs.filter(end_date__lt=date.today())
+            return qs.closed()
         if value == 'new':
-            return qs.filter(start_date__gt=date.today())
+            return qs.new()
 
-        return qs.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+        return qs.open()
 
 
 class RoundsFilter(filters.FilterSet):
