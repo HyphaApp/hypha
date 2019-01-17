@@ -286,6 +286,8 @@ MEDIA_ROOT = env.get('MEDIA_DIR', os.path.join(BASE_DIR, 'media'))
 MEDIA_URL = env.get('MEDIA_URL', '/media/')
 
 
+API_VERSION_URL = 'api/v1/'
+
 AUTH_USER_MODEL = 'users.User'
 
 WAGTAIL_USER_EDIT_FORM = 'opentech.apply.users.forms.CustomUserEditForm'

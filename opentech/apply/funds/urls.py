@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.conf import settings
 
 from .views import (
     RevisionCompareView,
@@ -10,8 +11,7 @@ from .views import (
     SubmissionSealedView,
     SubmissionSearchView,
 )
-from .api_views import SubmissionList, SubmissionDetail
-
+from .api_views import SubmissionList, SubmissionDetail, RoundDetail, RoundList
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
@@ -41,9 +41,15 @@ submission_api_urls = ([
     path('<int:pk>/', SubmissionDetail.as_view(), name='detail'),
 ], 'submissions-api')
 
+rounds_api_urls = ([
+    path('', RoundList.as_view(), name='list'),
+    path('<int:pk>/', RoundDetail.as_view(), name='detail'),
+], 'rounds-api')
+
 
 urlpatterns = [
     path('submissions/', include(submission_urls)),
-    path('api/submissions/', include(submission_api_urls)),
+    path(settings.API_VERSION_URL+'submissions/', include(submission_api_urls)),
+    path(settings.API_VERSION_URL+'rounds/', include(rounds_api_urls)),
     path('search/', SubmissionSearchView.as_view(), name="search"),
 ]
