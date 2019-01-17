@@ -3,8 +3,20 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, FloatField, IntegerField, F, OuterRef, Subquery, Q, When, Case
-from django.db.models.functions import Coalesce
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    F,
+    FloatField,
+    Func,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    When,
+)
+from django.db.models.functions import Coalesce, Length
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -32,7 +44,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
+from .models import ApplicationBase, ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
 from .models.utils import SubmittableStreamForm
 from .tables import (
     AdminSubmissionsTable,
@@ -480,6 +492,7 @@ class RoundListView(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
+        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
         closed_submissions = submissions.inactive()
 
         queryset = Page.objects.type(SubmittableStreamForm).annotate(
@@ -503,6 +516,8 @@ class RoundListView(SingleTableMixin, FilterView):
             ),
             start_date=F('roundbase__start_date'),
             end_date=F('roundbase__end_date'),
+            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
+            fund=Subquery(funds.values('title')[:1]),
         ).annotate(
             progress=Case(
                 When(total_submissions=0, then=None),
@@ -513,3 +528,26 @@ class RoundListView(SingleTableMixin, FilterView):
         )
 
         return queryset
+
+
+# TODO remove in django 2.1 where this is fixed
+F.relabeled_clone = lambda self, relabels: self
+
+
+# TODO remove in django 2.1 where this is added
+class Left(Func):
+    function = 'LEFT'
+    arity = 2
+
+    def __init__(self, expression, length, **extra):
+        """
+        expression: the name of a field, or an expression returning a string
+        length: the number of characters to return from the start of the string
+        """
+        if not hasattr(length, 'resolve_expression'):
+            if length < 1:
+                raise ValueError("'length' must be greater than 0.")
+        super().__init__(expression, length, **extra)
+
+    def get_substr(self):
+        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])
