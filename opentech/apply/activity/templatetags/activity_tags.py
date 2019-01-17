@@ -43,4 +43,4 @@ def display_for(activity, user):
     if set(visibile_for_user) & set([INTERNAL, REVIEWER]):
         return message_data[INTERNAL]
 
-    return visible_message[PUBLIC]
+    return message_data[PUBLIC]
