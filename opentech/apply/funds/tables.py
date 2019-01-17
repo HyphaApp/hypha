@@ -174,25 +174,6 @@ class RoundsTable(tables.Table):
     def _field_order(self, field, desc):
         return getattr(F(f'{field}'), 'desc' if desc else 'asc')(nulls_last=True)
 
-    def _order(self, qs, desc, field, round=True, lab=True):
-        annotated_name = field.split('__')[0]
-        fields = [
-            f_field
-            for f_field, show in [(F(f'roundbase__{field}'), round), (F(f'labbase__{field}'), lab)]
-            if show
-        ]
-        if lab and round:
-            lookup = Coalesce(*fields)
-        else:
-            lookup = fields[0]
-
-        qs = qs.annotate(
-            **{annotated_name: lookup}
-        )
-
-        qs = qs.order_by(self._field_order(annotated_name, desc))
-        return qs, True
-
     def order_start_date(self, qs, desc):
         return qs.order_by(self._field_order('start_date', desc)), True
 
