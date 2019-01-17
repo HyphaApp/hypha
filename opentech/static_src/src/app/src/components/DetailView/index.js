@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withWindowSizeListener } from 'react-window-size-listener';
 
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
@@ -13,28 +14,12 @@ class DetailView extends Component {
     constructor() {
         super();
         this.state = {
-            width: window.innerWidth,
             hasActiveApplication: false
         }
     }
 
-    componentWillMount() {
-        window.addEventListener('resize', this.handleWindowSizeChange.bind(this));
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleWindowSizeChange.bind(this));
-    }
-
-    handleWindowSizeChange = () => {
-        this.setState({
-            width: window.innerWidth
-        });
-    }
-
     render() {
-        const { listing, hasActiveApplication } = this.props;
-        const { width  } = this.state;
+        const { listing, hasActiveApplication, windowSize: {windowWidth: width}} = this.props;
         const isMobile = width < 1024;
 
         if (isMobile) {
@@ -70,5 +55,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps)(DetailView);
-
+export default connect(mapStateToProps)(withWindowSizeListener(DetailView));
