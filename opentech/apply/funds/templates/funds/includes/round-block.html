@@ -9,47 +9,12 @@
 
     {# Closed rounds/labs tab #}
     <div class="tabs__content" id="tab-1">
-        <ul class="round-block">
-            {% for round in closed_rounds %}
-                {% if forloop.counter0 < 10 %}
-                    <li class="round-block__item">
-                        <h4 class="round-block__title">{{ round }}</h4>
-                        <p> {{ round.fund }} </p>
-                        <p class="round-block__date">Closed {{ round.end_date|date:"Y-m-d" }}</p>
-                        <p class="round-block__determination">TODO: 33% Determined</p>
-                        <a class="round-block__view" href="#TODO">View</a>
-                    </li>
-                {% else %}
-                    <li class="round-block__item round-block__item--more">
-                        {# href required #}
-                        <a href="#TODO">Show all</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-        </ul>
+        {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds %}
     </div>
 
     {# Open rounds/labs tab #}
     <div class="tabs__content" id="tab-2">
-        <ul class="round-block">
-            {% for round in open_rounds %}
-                {% if forloop.counter0 < 10 %}
-                    <li class="round-block__item">
-                        <h4 class="round-block__title">{{ round }}</h4>
-                        <p> {{ round.fund }} </p>
-                        <p class="round-block__date">Open until {{ round.end_date|date:"Y-m-d" }}</p>
-                        <p class="round-block__determination">TODO: 33% Determined</p>
-                        <a class="round-block__view" href="#TODO">View</a>
-                    </li>
-                {% else %}
-                    <li class="round-block__item round-block__item--more">
-                        {# href required #}
-                        <a href="#TODO">Show all</a>
-                    </li>
-                {% endif %}
-
-            {% endfor %}
-        </ul>
+        {% include "funds/includes/round-block-listing.html" with rounds=open_rounds %}
     </div>
 
 </div>

@@ -1,0 +1,17 @@
+<ul class="round-block">
+    {% for round in rounds %}
+        {% if forloop.counter0 < 10 %}
+            <li class="round-block__item">
+                <h4 class="round-block__title">{{ round }}</h4>
+                <p> {{ round.fund }} </p>
+                <p class="round-block__date">Closed {{ round.end_date|date:"Y-m-d" }}</p>
+                <p class="round-block__determination">TODO: 33% Determined</p>
+                <a class="round-block__view" href="{% url 'apply:rounds:detail' pk=round.pk %}">View</a>
+            </li>
+        {% else %}
+            <li class="round-block__item round-block__item--more">
+                <a href="{% url 'apply:rounds:list' %} ">Show all</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
