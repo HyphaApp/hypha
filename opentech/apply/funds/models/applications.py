@@ -406,6 +406,9 @@ class RoundsAndLabs(Page):
 
     objects = RoundsAndLabsManager()
 
+    def save(self, *args, **kwargs):
+        raise NotImplementedError('Do not save through this model')
+
 
 # TODO remove in django 2.1 where this is fixed
 F.relabeled_clone = lambda self, relabels: self
