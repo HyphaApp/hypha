@@ -221,4 +221,4 @@ class RoundsFilter(filters.FilterSet):
     fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     active = ActiveRoundFilter(label='Active')
-    open_rouds = OpenRoundFilter(label='Open')
+    round_state = OpenRoundFilter(label='Open')
