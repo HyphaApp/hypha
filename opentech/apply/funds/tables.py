@@ -4,7 +4,7 @@ import textwrap
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import CharField, F, Func, OuterRef, Q, Subquery
-from django.db.models.functions import Coalesce, Length
+from django.db.models.functions import Length
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
