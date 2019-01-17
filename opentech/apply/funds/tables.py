@@ -3,8 +3,7 @@ import textwrap
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import CharField, F, Func, OuterRef, Q, Subquery
-from django.db.models.functions import Length
+from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
@@ -14,7 +13,7 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.funds.models import ApplicationBase, ApplicationSubmission, Round
+from opentech.apply.funds.models import ApplicationSubmission, Round
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
@@ -181,38 +180,10 @@ class RoundsTable(tables.Table):
         return qs.order_by(self._field_order('end_date', desc)), True
 
     def order_fund(self, qs, desc):
-        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
-        qs = qs.annotate(
-            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
-            fund=Subquery(funds.values('title')[:1]),
-        )
         return qs.order_by(self._field_order('fund', desc)), True
 
     def order_progress(self, qs, desc):
         return qs.order_by(self._field_order('progress', desc)), True
-
-
-# TODO remove in django 2.1 where this is fixed
-F.relabeled_clone = lambda self, relabels: self
-
-
-# TODO remove in django 2.1 where this is added
-class Left(Func):
-    function = 'LEFT'
-    arity = 2
-
-    def __init__(self, expression, length, **extra):
-        """
-        expression: the name of a field, or an expression returning a string
-        length: the number of characters to return from the start of the string
-        """
-        if not hasattr(length, 'resolve_expression'):
-            if length < 1:
-                raise ValueError("'length' must be greater than 0.")
-        super().__init__(expression, length, **extra)
-
-    def get_substr(self):
-        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])
 
 
 class ActiveRoundFilter(Select2MultipleChoiceFilter):
@@ -248,6 +219,7 @@ class OpenRoundFilter(Select2MultipleChoiceFilter):
 
 
 class RoundsFilter(filters.FilterSet):
+    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     active = ActiveRoundFilter(label='Active')
     open_rouds = OpenRoundFilter(label='Open')
