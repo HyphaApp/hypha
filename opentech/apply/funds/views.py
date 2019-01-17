@@ -82,9 +82,9 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     def get_context_data(self, **kwargs):
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
         open_rounds = base_query.open()[:11]
-        open_query = '?round_state=open'
+        open_query = '?round_state=open&active=active'
         closed_rounds = base_query.closed()[:11]
-        closed_query = '?round_state=closed'
+        closed_query = '?round_state=closed&active=active'
 
         return super().get_context_data(
             open_rounds=open_rounds,
