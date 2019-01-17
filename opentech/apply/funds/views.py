@@ -500,7 +500,9 @@ class RoundListView(SingleTableMixin, FilterView):
             lead=Coalesce(
                 F('roundbase__lead__full_name'),
                 F('labbase__lead__full_name'),
-            )
+            ),
+            start_date=F('roundbase__start_date'),
+            end_date=F('roundbase__end_date'),
         ).annotate(
             progress=Case(
                 When(total_submissions=0, then=None),

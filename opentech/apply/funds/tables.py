@@ -1,3 +1,4 @@
+from datetime import date
 import textwrap
 
 from django import forms
@@ -156,9 +157,9 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 class RoundsTable(tables.Table):
     title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
     fund = tables.Column(accessor=A('specific.fund'))
-    lead = tables.Column(accessor=A('specific.lead'), order_by=('lead.full_name',))
-    start_date = tables.Column(accessor=A('specific.start_date'))
-    end_date = tables.Column(accessor=A('specific.end_date'))
+    lead = tables.Column()
+    start_date = tables.Column()
+    end_date = tables.Column()
     progress = tables.Column()
 
     class Meta:
@@ -170,7 +171,7 @@ class RoundsTable(tables.Table):
     def render_progress(self, record):
         return f'{record.progress}%'
 
-    def _order_by(self, field, desc):
+    def _field_order(self, field, desc):
         return getattr(F(f'{field}'), 'desc' if desc else 'asc')(nulls_last=True)
 
     def _order(self, qs, desc, field, round=True, lab=True):
@@ -189,17 +190,14 @@ class RoundsTable(tables.Table):
             **{annotated_name: lookup}
         )
 
-        qs = qs.order_by(self._order_by(annotated_name, desc))
+        qs = qs.order_by(self._field_order(annotated_name, desc))
         return qs, True
 
-    def order_lead(self, qs, desc):
-        return qs.order_by(self._order_by('lead', desc)), True
-
     def order_start_date(self, qs, desc):
-        return self._order(qs, desc, 'start_date', lab=False)
+        return qs.order_by(self._field_order('start_date', desc)), True
 
     def order_end_date(self, qs, desc):
-        return self._order(qs, desc, 'end_date', lab=False)
+        return qs.order_by(self._field_order('end_date', desc)), True
 
     def order_fund(self, qs, desc):
         funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
@@ -207,10 +205,10 @@ class RoundsTable(tables.Table):
             parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
             fund=Subquery(funds.values('title')[:1]),
         )
-        return qs.order_by(self._order_by('fund', desc)), True
+        return qs.order_by(self._field_order('fund', desc)), True
 
     def order_progress(self, qs, desc):
-        return qs.order_by(self._order_by('progress', desc)), True
+        return qs.order_by(self._field_order('progress', desc)), True
 
 
 # TODO remove in django 2.1 where this is fixed
@@ -241,7 +239,7 @@ class ActiveRoundFilter(Select2MultipleChoiceFilter):
         super().__init__(self, *args, choices=[('active', 'Active'), ('inactive', 'Inactive')], **kwargs)
 
     def filter(self, qs, value):
-        if value is None or len(value) > 1:
+        if value is None or len(value) != 1:
             return qs
 
         value = value[0]
@@ -251,6 +249,24 @@ class ActiveRoundFilter(Select2MultipleChoiceFilter):
             return qs.filter(progress=100)
 
 
+class OpenRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('open', 'Open'), ('closed', 'Closed'), ('new', 'Not Started')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) != 1:
+            return qs
+
+        value = value[0]
+        if value == 'closed':
+            return qs.filter(end_date__lt=date.today())
+        if value == 'new':
+            return qs.filter(start_date__gt=date.today())
+
+        return qs.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+
+
 class RoundsFilter(filters.FilterSet):
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     active = ActiveRoundFilter(label='Active')
+    open_rouds = OpenRoundFilter(label='Open')
