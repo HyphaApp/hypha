@@ -86,6 +86,11 @@
                     {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
                 {% endblock %}
 
+                {% if request.user.is_apply_staff %}
+                    {% block screening_status %}
+                    {% endblock %}
+                {% endif %}
+
                 {% block reviews %}
                 {% endblock %}
 

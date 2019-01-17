@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import json
 
-from opentech.apply.activity.models import Activity
+from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -196,6 +196,10 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         self.assertEqual(response.context_data['screening_form'].should_show, False)
 
+    def test_can_view_submission_screening_block(self):
+        response = self.get_page(self.submission)
+        self.assertContains(response, 'Screening Status')
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
@@ -385,6 +389,10 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotIn('screening_form', response.context_data)
         submission = self.refresh(self.submission)
         self.assertNotEqual(submission.screening_status, screening_outcome)
+
+    def test_cant_see_screening_status_block(self):
+        response = self.get_page(self.submission)
+        self.assertNotContains(response, 'Screening Status')
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
@@ -604,3 +612,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         submission = self.refresh(submission)
         self.assertEqual(response.context_data['screening_form'].should_show, True)
         self.assertEqual(submission.screening_status, screening_outcome)
+
+        # Check that an activity was created that should only be viewable internally
+        activity = Activity.objects.filter(message__contains='Screening status').first()
+        self.assertEqual(activity.visibility, INTERNAL)
