@@ -1,0 +1,29 @@
+<ul class="round-block">
+    {% for round in rounds %}
+        {% if forloop.counter0 < 10 %}
+            <li class="round-block__item">
+                <h4 class="round-block__title">{{ round }}</h4>
+                <p> {{ round.fund|default_if_none:"-" }} </p>
+                <p class="round-block__date">
+                    {% if round.end_date %}
+                        {{display_text }} {{ round.end_date|date:"Y-m-d" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                    </p>
+                    <p class="round-block__determination">
+                        {% if round.progress is None%}
+                            -
+                        {% else %}
+                            {{ round.progress }}% Determined
+                        {% endif %}
+                    </p>
+                <a class="round-block__view" href="{% url 'apply:rounds:detail' pk=round.pk %}">View</a>
+            </li>
+        {% else %}
+            <li class="round-block__item round-block__item--more">
+                <a href="{% url 'apply:rounds:list' %}{{ query }}">Show all</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>

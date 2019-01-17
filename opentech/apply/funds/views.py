@@ -3,20 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import (
-    Case,
-    CharField,
-    Count,
-    F,
-    FloatField,
-    Func,
-    IntegerField,
-    OuterRef,
-    Q,
-    Subquery,
-    When,
-)
-from django.db.models.functions import Coalesce, Length
+from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -44,8 +31,7 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationBase, ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
-from .models.utils import SubmittableStreamForm
+from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
 from .tables import (
     AdminSubmissionsTable,
     RoundsTable,
@@ -87,11 +73,26 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
         )
 
-        return kwargs
+        return super().get_context_data(**kwargs)
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
+
+    def get_context_data(self, **kwargs):
+        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
+        open_rounds = base_query.open()[:11]
+        open_query = '?round_state=open&active=active'
+        closed_rounds = base_query.closed()[:11]
+        closed_query = '?round_state=closed&active=active'
+
+        return super().get_context_data(
+            open_rounds=open_rounds,
+            open_query=open_query,
+            closed_rounds=closed_rounds,
+            closed_query=closed_query,
+            **kwargs,
+        )
 
 
 class SubmissionsByRound(BaseAdminSubmissionsTable):
@@ -491,63 +492,4 @@ class RoundListView(SingleTableMixin, FilterView):
     filterset_class = RoundsFilter
 
     def get_queryset(self):
-        submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
-        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
-        closed_submissions = submissions.inactive()
-
-        queryset = Page.objects.type(SubmittableStreamForm).annotate(
-            total_submissions=Coalesce(
-                Subquery(
-                    submissions.values('round').annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
-                ),
-                0,
-            ),
-            closed_submissions=Coalesce(
-                Subquery(
-                    closed_submissions.values('round').annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
-                ),
-                0,
-            ),
-            lead=Coalesce(
-                F('roundbase__lead__full_name'),
-                F('labbase__lead__full_name'),
-            ),
-            start_date=F('roundbase__start_date'),
-            end_date=F('roundbase__end_date'),
-            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
-            fund=Subquery(funds.values('title')[:1]),
-        ).annotate(
-            progress=Case(
-                When(total_submissions=0, then=None),
-                default=(F('closed_submissions') * 100) / F('total_submissions'),
-                output_fields=FloatField(),
-            )
-
-        )
-
-        return queryset
-
-
-# TODO remove in django 2.1 where this is fixed
-F.relabeled_clone = lambda self, relabels: self
-
-
-# TODO remove in django 2.1 where this is added
-class Left(Func):
-    function = 'LEFT'
-    arity = 2
-
-    def __init__(self, expression, length, **extra):
-        """
-        expression: the name of a field, or an expression returning a string
-        length: the number of characters to return from the start of the string
-        """
-        if not hasattr(length, 'resolve_expression'):
-            if length < 1:
-                raise ValueError("'length' must be greater than 0.")
-        super().__init__(expression, length, **extra)
-
-    def get_substr(self):
-        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])
+        return RoundsAndLabs.objects.with_progress()
