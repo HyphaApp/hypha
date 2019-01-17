@@ -3,6 +3,7 @@ from django.urls import include, path
 from .views import (
     RevisionCompareView,
     RevisionListView,
+    RoundListView,
     SubmissionsByRound,
     SubmissionDetailView,
     SubmissionEditView,
@@ -32,8 +33,8 @@ submission_urls = ([
         path('', include('opentech.apply.determinations.urls', namespace="determinations")),
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
-    path('rounds/<int:pk>/', SubmissionsByRound.as_view(), name="by_round"),
 ], 'submissions')
+
 
 submission_api_urls = ([
     path('', SubmissionList.as_view(), name='list'),
@@ -41,7 +42,14 @@ submission_api_urls = ([
 ], 'submissions-api')
 
 
+rounds_urls = ([
+    path('', RoundListView.as_view(), name="list"),
+    path('<int:pk>/', SubmissionsByRound.as_view(), name="detail"),
+], 'rounds')
+
+
 urlpatterns = [
     path('submissions/', include(submission_urls)),
+    path('rounds/', include(rounds_urls)),
     path('api/submissions/', include(submission_api_urls)),
 ]

@@ -1,8 +1,10 @@
+from datetime import date
 import textwrap
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import F, Q
+from django.db.models import CharField, F, Func, OuterRef, Q, Subquery
+from django.db.models.functions import Coalesce, Length
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
 
@@ -12,7 +14,7 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.funds.models import ApplicationSubmission, Round
+from opentech.apply.funds.models import ApplicationBase, ApplicationSubmission, Round
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .widgets import Select2MultiCheckboxesWidget
@@ -150,3 +152,121 @@ class SubmissionFilter(filters.FilterSet):
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
+
+class RoundsTable(tables.Table):
+    title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
+    fund = tables.Column(accessor=A('specific.fund'))
+    lead = tables.Column()
+    start_date = tables.Column()
+    end_date = tables.Column()
+    progress = tables.Column()
+
+    class Meta:
+        fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
+
+    def render_lead(self, value):
+        return format_html('<span>{}</span>', value)
+
+    def render_progress(self, record):
+        return f'{record.progress}%'
+
+    def _field_order(self, field, desc):
+        return getattr(F(f'{field}'), 'desc' if desc else 'asc')(nulls_last=True)
+
+    def _order(self, qs, desc, field, round=True, lab=True):
+        annotated_name = field.split('__')[0]
+        fields = [
+            f_field
+            for f_field, show in [(F(f'roundbase__{field}'), round), (F(f'labbase__{field}'), lab)]
+            if show
+        ]
+        if lab and round:
+            lookup = Coalesce(*fields)
+        else:
+            lookup = fields[0]
+
+        qs = qs.annotate(
+            **{annotated_name: lookup}
+        )
+
+        qs = qs.order_by(self._field_order(annotated_name, desc))
+        return qs, True
+
+    def order_start_date(self, qs, desc):
+        return qs.order_by(self._field_order('start_date', desc)), True
+
+    def order_end_date(self, qs, desc):
+        return qs.order_by(self._field_order('end_date', desc)), True
+
+    def order_fund(self, qs, desc):
+        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
+        qs = qs.annotate(
+            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
+            fund=Subquery(funds.values('title')[:1]),
+        )
+        return qs.order_by(self._field_order('fund', desc)), True
+
+    def order_progress(self, qs, desc):
+        return qs.order_by(self._field_order('progress', desc)), True
+
+
+# TODO remove in django 2.1 where this is fixed
+F.relabeled_clone = lambda self, relabels: self
+
+
+# TODO remove in django 2.1 where this is added
+class Left(Func):
+    function = 'LEFT'
+    arity = 2
+
+    def __init__(self, expression, length, **extra):
+        """
+        expression: the name of a field, or an expression returning a string
+        length: the number of characters to return from the start of the string
+        """
+        if not hasattr(length, 'resolve_expression'):
+            if length < 1:
+                raise ValueError("'length' must be greater than 0.")
+        super().__init__(expression, length, **extra)
+
+    def get_substr(self):
+        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])
+
+
+class ActiveRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('active', 'Active'), ('inactive', 'Inactive')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) != 1:
+            return qs
+
+        value = value[0]
+        if value == 'active':
+            return qs.filter(Q(progress__lt=100) | Q(progress__isnull=True))
+        else:
+            return qs.filter(progress=100)
+
+
+class OpenRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('open', 'Open'), ('closed', 'Closed'), ('new', 'Not Started')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) != 1:
+            return qs
+
+        value = value[0]
+        if value == 'closed':
+            return qs.filter(end_date__lt=date.today())
+        if value == 'new':
+            return qs.filter(start_date__gt=date.today())
+
+        return qs.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+
+
+class RoundsFilter(filters.FilterSet):
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
+    active = ActiveRoundFilter(label='Active')
+    open_rouds = OpenRoundFilter(label='Open')

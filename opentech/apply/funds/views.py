@@ -3,7 +3,8 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Count, FloatField, IntegerField, F, OuterRef, Subquery, Q, When, Case
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -32,7 +33,13 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
 from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
-from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
+from .models.utils import SubmittableStreamForm
+from .tables import (
+    AdminSubmissionsTable,
+    RoundsTable,
+    RoundsFilter,
+    SubmissionFilterAndSearch,
+)
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -463,3 +470,46 @@ class RevisionCompareView(DetailView):
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
         self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
+
+
+@method_decorator(staff_required, name='dispatch')
+class RoundListView(SingleTableMixin, FilterView):
+    template_name = 'funds/rounds.html'
+    table_class = RoundsTable
+    filterset_class = RoundsFilter
+
+    def get_queryset(self):
+        submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
+        closed_submissions = submissions.inactive()
+
+        queryset = Page.objects.type(SubmittableStreamForm).annotate(
+            total_submissions=Coalesce(
+                Subquery(
+                    submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+            closed_submissions=Coalesce(
+                Subquery(
+                    closed_submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+            lead=Coalesce(
+                F('roundbase__lead__full_name'),
+                F('labbase__lead__full_name'),
+            ),
+            start_date=F('roundbase__start_date'),
+            end_date=F('roundbase__end_date'),
+        ).annotate(
+            progress=Case(
+                When(total_submissions=0, then=None),
+                default=(F('closed_submissions') * 100) / F('total_submissions'),
+                output_fields=FloatField(),
+            )
+
+        )
+
+        return queryset
