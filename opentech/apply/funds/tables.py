@@ -159,7 +159,7 @@ class RoundsTable(tables.Table):
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
-    progress = tables.Column()
+    progress = tables.Column(verbose_name="Determined")
 
     class Meta:
         fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
