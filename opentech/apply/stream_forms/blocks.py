@@ -290,6 +290,13 @@ class UploadableMediaBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         return None
 
+    def prepare_data(self, value, context):
+        data = context.get('data')
+        if context.get('serialize'):
+            return context.get('data').serialize()
+
+        return data
+
 
 class ImageFieldBlock(UploadableMediaBlock):
     field_class = forms.ImageField
@@ -317,6 +324,12 @@ class MultiFileFieldBlock(UploadableMediaBlock):
     class Meta:
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
+
+    def prepare_data(self, value, context):
+        data = context.get('data')
+        if context.get('serialize'):
+            return [file.serialize() for file in context.get('data')]
+        return data
 
     def no_response(self):
         return [super().no_response()]

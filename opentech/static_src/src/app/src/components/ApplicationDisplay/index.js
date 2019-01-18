@@ -21,7 +21,9 @@ const Response = ({question, answer}) => {
         if (Array.isArray(answer)) {
             return <ul>
                 {answer.map((a, i) => {
-                    if (containsHtml(a)) {
+                    if (typeof a === 'object') {
+                        return <li key={i}><a href={a.url}>{a.filename}</a></li>
+                    } else if (containsHtml(a)) {
                         return <li key={i} dangerouslySetInnerHTML={{ __html: a }} />
                     } else {
                         return <li key={i}>{a}</li>
