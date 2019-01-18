@@ -21,7 +21,14 @@
     // check if the page has a query string and keep filters open if so on desktop
     const minimumNumberParams = 1 + urlParams.has('query') ? 1 : 0;
 
-    if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {
+    // check for a search query param
+    if (urlParams.has('query')) {
+        if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {
+            $body.addClass(filterOpenClass);
+            updateButtonText();
+        }
+    }
+    else if ([...urlParams].length >= 1 && $(window).width() > 1024) {
         $body.addClass(filterOpenClass);
         updateButtonText();
     }
