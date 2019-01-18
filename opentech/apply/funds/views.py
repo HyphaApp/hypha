@@ -127,7 +127,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             submission=self.object,
-            related=old.screening_status or '-',
+            related=str(old.screening_status),
         )
         return response
 

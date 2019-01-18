@@ -33,6 +33,10 @@
     </div>
 {% endblock %}
 
+{% block screening_status %}
+    {% include 'funds/includes/screening_status_block.html' %}
+{% endblock %}
+
 {% block determination %}
     {% include 'determinations/includes/determination_block.html' with submission=object %}
 {% endblock %}
