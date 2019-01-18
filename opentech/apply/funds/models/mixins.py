@@ -137,6 +137,15 @@ class AccessFormData:
             if isinstance(field.block, SingleIncludeMixin)
         }
 
+    def serialize(self, field_id):
+        field = self.field(field_id)
+        data = self.data(field_id)
+        return field.render(context={
+            'serialize': True,
+            'data': data,
+        })
+
+
     def render_answer(self, field_id, include_question=False):
         try:
             field = self.field(field_id)

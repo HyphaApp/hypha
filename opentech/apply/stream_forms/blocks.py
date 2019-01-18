@@ -55,6 +55,23 @@ class FormFieldBlock(StructBlock):
         parent_context['data'] = self.format_data(parent_context['data']) or self.no_response()
         return context
 
+    def serialize(self, value, context):
+        return {
+            'question': value['field_label'],
+            'answer': context.get('data'),
+        }
+
+    def prepare_data(self, value, context):
+        return context.get('data')
+
+    def render(self, value, context):
+        data = self.prepare_data(value, context)
+        context.update(data=data)
+        if context.get('serialize'):
+            return self.serialize(value, context)
+
+        return super().render(value, context)
+
     def get_searchable_content(self, value, data):
         return str(data)
 

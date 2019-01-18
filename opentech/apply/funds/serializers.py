@@ -24,15 +24,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             if filter_func is not None:
                 if not filter_func(field_id):
                     continue
-            field = obj.field(field_id)
-            # TODO: Check field to see if answer can be serialized
-            data = obj.data(field_id)
-
-            yield {
-                'id': field_id,
-                'question': field.value['field_label'],
-                'answer': data,
-            }
+            yield obj.serialize(field_id)
 
     def get_meta_questions(self, obj):
         return self.get_all_questions(
