@@ -25,6 +25,7 @@
     &__header {
         &--spacer {
             display: none;
+            min-height: 75px;
 
             @include media-query(tablet-landscape) {
                 display: block;
