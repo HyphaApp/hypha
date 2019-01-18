@@ -19,7 +19,7 @@ from .widgets import Select2MultiCheckboxesWidget
 
 
 def make_row_class(record):
-    css_class = 'submission-meta__row' if record.next else 'all-submissions__parent'
+    css_class = 'submission-meta__row' if record.next else 'all-submissions-table__parent'
     css_class += '' if record.active else ' is-inactive'
     return css_class
 
@@ -48,7 +48,7 @@ class SubmissionsTable(tables.Table):
             'class': make_row_class,
             'data-record-id': lambda record: record.id,
         }
-        attrs = {'class': 'all-submissions'}
+        attrs = {'class': 'all-submissions-table'}
 
     def render_user(self, value):
         return value.get_full_name()
