@@ -1,5 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 import bleach
+from django_bleach.templatetags.bleach_tags import bleach_value
 
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
@@ -62,7 +63,7 @@ class FormFieldBlock(StructBlock):
         }
 
     def prepare_data(self, value, context):
-        return context.get('data')
+        return bleach_value(str(context.get('data')))
 
     def render(self, value, context):
         data = self.prepare_data(value, context)
