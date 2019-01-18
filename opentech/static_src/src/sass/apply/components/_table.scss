@@ -78,6 +78,12 @@ table {
                     }
                 }
             }
+
+            &.title {
+                a {
+                    font-weight: $weight--bold;
+                }
+            }
         }
     }
 
@@ -87,6 +93,10 @@ table {
 
         @include media-query($table-breakpoint) {
             padding: 15px 10px;
+        }
+
+        &.title {
+            padding-left: 20px;
         }
     }
 }
