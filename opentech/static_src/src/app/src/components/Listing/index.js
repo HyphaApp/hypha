@@ -15,23 +15,6 @@ export default class Listing extends React.Component {
         if (this.props.items !== prevProps.items) {
             this.orderItems();
         }
-
-        // Update the first item.
-        const getFirstItem = items => {
-            for (const group of items) {
-                for (const item of group.items) {
-                    return item;
-                }
-            }
-            return null;
-        };
-
-        const prevFirstItem = getFirstItem(prevState.orderedItems);
-        const firstItem = getFirstItem(this.state.orderedItems);
-
-        if (firstItem !== null && (prevFirstItem === null || firstItem.id !== prevFirstItem.id)) {
-            this.props.updateFirstItem(firstItem.id);
-        }
     }
 
     renderListItems() {
@@ -52,7 +35,7 @@ export default class Listing extends React.Component {
                         <ListingGroup key={`listing-group-${v.group}`} item={v}>
                             {v.items.map(item => {
                                 return <ListingItem
-                                    onClick={onItemSelection}
+                                    onClick={() => onItemSelection(item.id)}
                                     key={`listing-item-${item.id}`}
                                     item={item}/>;
                             })}
@@ -107,5 +90,4 @@ Listing.propTypes = {
     groupBy: PropTypes.string,
     order: PropTypes.arrayOf(PropTypes.string),
     onItemSelection: PropTypes.func,
-    updateFirstItem: PropTypes.func,
 };

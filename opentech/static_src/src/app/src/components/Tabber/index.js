@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export const Tab = ({name, children}) => <div>{children}</div>
+export const Tab = ({button, children}) => <div>{children}</div>
 
 class Tabber extends Component {
     constructor() {
@@ -11,30 +11,29 @@ class Tabber extends Component {
         }
     }
 
-    handleClick = (e) => {
-        e.preventDefault();
+    componentDidUpdate(prevProps, prevState) {
+        const { children } = this.props;
+        if ( !children[prevState.activeTab].props.children ) {
+            this.setState({activeTab: children.findIndex(child => child.props.children)})
+        }
+    }
+
+    handleClick = (child) => {
         this.setState({
-            activeTab: event.target.getAttribute('data-tab')
+            activeTab: child
         })
     }
 
     render() {
-
-        const { children, className, goBack } = this.props;
-        const [ mainDisplay, ...other ] = children;
+        const { children } = this.props;
 
         return (
-            <div className={className}>
-                <div className="display-panel__header display-panel__header--spacer"></div>
-                <div className="display-panel__header display-panel__links">
-                    <a data-tab="0" onClick={this.handleClick} className="display-panel__link">{mainDisplay.props.name}</a>
-                    {other.map((child, i) => <a data-tab={i + 1} onClick={this.handleClick} className="display-panel__link" key={child.props.name}>{child.props.name}</a>)}
+            <div className="tabber">
+                <div className="tabber__navigation">
+                    {children.map((child, i) => <a onClick={() => this.handleClick(i)} className="display-panel__link" key={child.key}>{child.props.button}</a>)}
                 </div>
-                <div className="display-panel__body">
-                    {mainDisplay}
-                </div>
-                <div className="display-panel__body">
-                    {other[0]}
+                <div className="tabber-tab__active">
+                    { children[this.state.activeTab] }
                 </div>
             </div>
         )

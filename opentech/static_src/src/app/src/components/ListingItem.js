@@ -7,7 +7,7 @@ export default class ListingItem extends React.Component {
         const { onClick, item } = this.props;
         return (
             <li className="listing__item">
-                <a className="listing__link" onClick={() => onClick(item.id)}>
+                <a className="listing__link" onClick={onClick}>
                     {item.title}
                 </a>
             </li>

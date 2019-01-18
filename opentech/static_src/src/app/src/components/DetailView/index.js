@@ -11,26 +11,33 @@ import { getCurrentSubmissionID } from '@selectors/submissions';
 import './style.scss';
 
 class DetailView extends Component {
-    constructor() {
-        super();
-        this.state = {
-            hasActiveApplication: false
         }
     }
 
-    render() {
-        const { listing, hasActiveApplication, windowSize: {windowWidth: width}} = this.props;
-        const isMobile = width < 1024;
+    isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
 
-        if (isMobile) {
-            return (
-                <div className="detail-view">
-                    <SlideInRight in={!hasActiveApplication}>
+    render() {
+        const { listing, hasActiveApplication } = this.props;
+
+        if (this.isMobile()) {
+            var activeDisplay;
+            if (hasActiveApplication){
+                activeDisplay = (
+                    <SlideInRight key={"display"}>
                         <DisplayPanel />
                     </SlideInRight>
-                    <SlideOutLeft in={hasActiveApplication}>
+                )
+            } else {
+                activeDisplay = (
+                    <SlideOutLeft key={"listing"}>
                         {listing}
                     </SlideOutLeft>
+                )
+            }
+
+            return (
+                <div className="detail-view">
+                    { activeDisplay }
                 </div>
             )
         } else {

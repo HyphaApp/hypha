@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withWindowSizeListener } from 'react-window-size-listener';
 
 import { clearCurrentSubmission, fetchSubmission } from '@actions/submissions';
 import {
@@ -27,21 +28,51 @@ class DisplayPanel extends React.Component  {
     }
 
     render() {
-        const { clearCurrentSubmission, isError, isLoading, submission } = this.props;
+        const { isError, isLoading, submission, windowSize: {windowWidth: width} } = this.props;
+        const { clearCurrentSubmission } = this.props;
+
+        const isMobile = width < 1024;
+
+        const application = <ApplicationDisplay isLoading={isLoading} isError={isError} submission={submission} />
+
+        let tabs = [
+            <Tab button="Notes" key="note">
+                <p>Notes</p>
+            </Tab>,
+            <Tab button="Status" key="status">
+                <p>Status</p>
+            </Tab>
+        ]
+
+        if ( isMobile ) {
+            tabs = [
+                <Tab button=<button onClick={clearCurrentSubmission}>Back</button> key="back" />,
+                <Tab button="Application" key="application">
+                    { application }
+                </Tab>,
+                ...tabs
+            ]
+        }
 
         return (
-            <Tabber className="display-panel">
-                <button onClick={clearCurrentSubmission}>Back</button>
-                <Tab name="Application">
-                    <ApplicationDisplay isLoading={isLoading} isError={isError} submission={submission} />
-                </Tab>
-                <Tab name="Notes">
-                    <p>Notes</p>
-                </Tab>
-                <Tab name="Status">
-                    <p>Status</p>
-                </Tab>
-            </Tabber>
+            <div className="display-panel">
+                { !isMobile && (
+                    <div className="display-panel__column">
+                        <div className="display-panel__header display-panel__header--spacer"></div>
+                        <div className="display-panel__body">
+                            { application }
+                        </div>
+                    </div>
+                )}
+                <div className="display-panel__column">
+                    <div className="display-panel__body">
+                        <Tabber>
+                            { tabs }
+                        </Tabber>
+                    </div>
+                </div>
+            </div>
+
         )
     }
 }
@@ -68,4 +99,4 @@ DisplayPanel.propTypes = {
     isError: PropTypes.bool,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DisplayPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

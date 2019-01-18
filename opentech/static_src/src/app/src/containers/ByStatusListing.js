@@ -39,7 +39,6 @@ class ByStatusListing extends React.Component {
                     isLoading={isLoading}
                     isError={isError}
                     items={items}
-                    updateFirstItem={setCurrentItem}
                     onItemSelection={setCurrentItem}
                     groupBy={'status'}
                     order={[

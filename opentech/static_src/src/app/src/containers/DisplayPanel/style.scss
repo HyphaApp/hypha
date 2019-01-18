@@ -40,11 +40,5 @@
 
     &__link {
         padding: 20px;
-
-        @include media-query(tablet-landscape) {
-            &:first-child {
-                display: none;
-            }
-        }
     }
 }
