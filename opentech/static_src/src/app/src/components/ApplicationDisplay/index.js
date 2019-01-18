@@ -64,7 +64,7 @@ export default class ApplicationDisplay extends Component {
         const { meta_questions = [], questions = [] } = this.props.submission;
 
         return (
-            <div>
+            <div className="application-display">
                 <h3>Proposal Information</h3>
 
                 <div className="grid grid--proposal-info">

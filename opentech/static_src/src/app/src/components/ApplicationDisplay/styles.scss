@@ -1,0 +1,6 @@
+$applciation-header-height: 42px;
+
+.application-display {
+    height: calc(100vh - var(--header-admin-height) - #{$application-header-height});
+    overflow-y: scroll;
+}
