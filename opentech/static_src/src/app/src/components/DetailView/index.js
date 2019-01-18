@@ -11,8 +11,6 @@ import { getCurrentSubmissionID } from '@selectors/submissions';
 import './style.scss';
 
 class DetailView extends Component {
-        }
-    }
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
 
@@ -60,6 +58,5 @@ DetailView.propTypes = {
 const mapStateToProps = state => ({
     hasActiveApplication: !!getCurrentSubmissionID(state),
 });
-
 
 export default connect(mapStateToProps)(withWindowSizeListener(DetailView));

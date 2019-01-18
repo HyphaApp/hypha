@@ -20,10 +20,15 @@ export const setCurrentSubmissionRound = id => ({
     id,
 });
 
-export const setCurrentSubmission = id => ({
-    type: SET_CURRENT_SUBMISSION,
-    id,
-});
+export const setCurrentSubmission = id => {
+    return dispatch => {
+        dispatch({
+            type: SET_CURRENT_SUBMISSION,
+            id,
+        });
+        dispatch(fetchSubmission(id));
+    };
+};
 
 export const fetchSubmissionsByRound = roundId => {
     return async function(dispatch) {

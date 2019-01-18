@@ -11,6 +11,7 @@ import {
 import {
     getCurrentRoundID,
     getCurrentRoundSubmissions,
+    getCurrentSubmission,
     getSubmissionsByRoundErrorState,
     getSubmissionsByRoundLoadingState,
 } from '@selectors/submissions';
@@ -34,11 +35,13 @@ class ByStatusListing extends React.Component {
     }
 
     render() {
-        const { isLoading, isError, items, setCurrentItem } = this.props;
+        const { isLoading, isError, items, setCurrentItem, activeSubmission } = this.props;
         return <Listing
                     isLoading={isLoading}
                     isError={isError}
                     items={items}
+                    activeItem={activeSubmission}
+                    updateFirstItem={setCurrentItem}
                     onItemSelection={setCurrentItem}
                     groupBy={'status'}
                     order={[
@@ -61,6 +64,7 @@ const mapStateToProps = state => ({
     roundId: getCurrentRoundID(state),
     isError: getSubmissionsByRoundErrorState(state),
     isLoading: getSubmissionsByRoundLoadingState(state),
+    activeSubmission: getCurrentSubmission(state),
 });
 
 const mapDispatchToProps = dispatch => ({

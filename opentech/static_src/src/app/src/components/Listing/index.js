@@ -18,7 +18,7 @@ export default class Listing extends React.Component {
     }
 
     renderListItems() {
-        const { isLoading, isError, items, onItemSelection } = this.props;
+        const { isLoading, isError, items, onItemSelection, activeItem } = this.props;
 
         if (isLoading) {
             return <p>Loading...</p>;
@@ -35,6 +35,7 @@ export default class Listing extends React.Component {
                         <ListingGroup key={`listing-group-${v.group}`} item={v}>
                             {v.items.map(item => {
                                 return <ListingItem
+                                    selected={!!activeItem && activeItem.id===item.id}
                                     onClick={() => onItemSelection(item.id)}
                                     key={`listing-item-${item.id}`}
                                     item={item}/>;
@@ -85,6 +86,7 @@ export default class Listing extends React.Component {
 
 Listing.propTypes = {
     items: PropTypes.array,
+    activeItem: PropTypes.object,
     isLoading: PropTypes.bool,
     isError: PropTypes.bool,
     groupBy: PropTypes.string,
