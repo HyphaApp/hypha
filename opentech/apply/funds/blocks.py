@@ -72,6 +72,11 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
             if address[field]
         )
 
+    def prepare_data(self, value, data, serialize):
+        if serialize:
+            return json.loads(data)
+        return data
+
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = 'full_name'

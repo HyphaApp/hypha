@@ -62,11 +62,13 @@ class FormFieldBlock(StructBlock):
             'answer': context.get('data'),
         }
 
-    def prepare_data(self, value, context):
-        return bleach_value(str(context.get('data')))
+    def prepare_data(self, value, data, serialize=False):
+        return bleach_value(str(data))
 
     def render(self, value, context):
-        data = self.prepare_data(value, context)
+        data = context.get('data')
+        data = self.prepare_data(value, data, context.get('serialize', False))
+
         context.update(data=data)
         if context.get('serialize'):
             return self.serialize(value, context)
@@ -291,10 +293,9 @@ class UploadableMediaBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         return None
 
-    def prepare_data(self, value, context):
-        data = context.get('data')
-        if context.get('serialize'):
-            return context.get('data').serialize()
+    def prepare_data(self, value, data, serialize):
+        if serialize:
+            return data.serialize()
 
         return data
 
@@ -326,10 +327,9 @@ class MultiFileFieldBlock(UploadableMediaBlock):
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
 
-    def prepare_data(self, value, context):
-        data = context.get('data')
-        if context.get('serialize'):
-            return [file.serialize() for file in context.get('data')]
+    def prepare_data(self, value, data, serialize):
+        if serialize:
+            return [file.serialize() for file in data]
         return data
 
     def no_response(self):

@@ -74,8 +74,7 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         else:
             return forms.RadioSelect
 
-    def prepare_data(self, value, context):
-        data = context['data']
+    def prepare_data(self, value, data, serialize):
         category = value['category']
         if data:
             data = category.options.filter(id__in=data).values_list('value', flat=True)
