@@ -7,7 +7,7 @@ export default class ListingGroup extends React.Component {
     render() {
         return (
             <>
-                <ListingHeading title={this.props.item.group} count={this.props.children.length} />
+                <ListingHeading title={this.props.item.name} count={this.props.children.length} />
                 <ul>
                     {this.props.children}
                 </ul>

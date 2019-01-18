@@ -15,6 +15,17 @@ export default class Listing extends React.Component {
         if (this.props.items !== prevProps.items) {
             this.orderItems();
         }
+
+        const oldItem = prevProps.activeItem
+        const newItem = this.props.activeItem
+
+        // If we have never activated a submission, get the first item
+        if ( !newItem && !oldItem ) {
+            const firstGroup = this.state.orderedItems[0]
+            if ( firstGroup && firstGroup.items[0] ) {
+                this.props.onItemSelection(firstGroup.items[0].id)
+            }
+        }
     }
 
     renderListItems() {
@@ -30,10 +41,10 @@ export default class Listing extends React.Component {
 
         return (
             <ul className="listing__list">
-                {this.state.orderedItems.filter(v => v.items.length !== 0).map(v => {
+                {this.state.orderedItems.map(group => {
                     return (
-                        <ListingGroup key={`listing-group-${v.group}`} item={v}>
-                            {v.items.map(item => {
+                        <ListingGroup key={`listing-group-${group.name}`} item={group}>
+                            {group.items.map(item => {
                                 return <ListingItem
                                     selected={!!activeItem && activeItem.id===item.id}
                                     onClick={() => onItemSelection(item.id)}
@@ -66,8 +77,8 @@ export default class Listing extends React.Component {
         const orderedItems = [];
         const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
         this.setState({
-            orderedItems: order.concat(leftOverKeys).map(key => ({
-                group: key,
+            orderedItems: order.concat(leftOverKeys).filter(key => groupedItems[key] ).map(key => ({
+                name: key,
                 items: groupedItems[key] || []
             })),
         });
