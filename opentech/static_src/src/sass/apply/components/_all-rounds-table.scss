@@ -1,0 +1,17 @@
+.all-rounds-table {
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+    }
+
+    tbody {
+        td {
+            &.title {
+                padding-top: 15px;
+            }
+        }
+    }
+}

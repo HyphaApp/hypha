@@ -169,6 +169,7 @@ class RoundsTable(tables.Table):
 
     class Meta:
         fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
+        attrs = {'class': 'all-rounds-table'}
 
     def render_lead(self, value):
         return format_html('<span>{}</span>', value)
