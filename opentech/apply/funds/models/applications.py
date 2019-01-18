@@ -337,7 +337,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
 class RoundsAndLabsQueryset(PageQuerySet):
     def active(self):
-        return self.filter(Q(progress__lt=100) | Q(progress__isnull=True))
+        return self.filter(progress__lt=100)
 
     def inactive(self):
         return qs.filter(progress=100)
