@@ -60,6 +60,7 @@ class FormFieldBlock(StructBlock):
         return {
             'question': value['field_label'],
             'answer': context.get('data'),
+            'type': self.name,
         }
 
     def prepare_data(self, value, data, serialize=False):

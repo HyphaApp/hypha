@@ -17,23 +17,14 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'questions', 'meta_questions')
+        fields = ('id', 'title', 'meta_questions', 'questions')
 
-    def get_all_questions(self, obj, filter_func=None):
-        for field_id in obj.question_field_ids:
-            if filter_func is not None:
-                if not filter_func(field_id):
-                    continue
+    def serialize_questions(self, obj, fields):
+        for field_id in fields:
             yield obj.serialize(field_id)
 
     def get_meta_questions(self, obj):
-        return self.get_all_questions(
-            obj,
-            filter_func=lambda field_id: field_id in obj.named_blocks
-        )
+        return self.serialize_questions(obj, obj.named_blocks.values())
 
     def get_questions(self, obj):
-        return self.get_all_questions(
-            obj,
-            filter_func=lambda field_id: field_id not in obj.named_blocks
-        )
+        return self.serialize_questions(obj, obj.normal_blocks)
