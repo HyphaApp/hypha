@@ -69,9 +69,9 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
             'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
         ]
         return ', '.join(
-            address[field]
+            data[field]
             for field in order_fields
-            if address[field]
+            if data[field]
         )
 
     def prepare_data(self, value, data, serialize):
