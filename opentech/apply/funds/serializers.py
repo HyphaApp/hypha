@@ -24,7 +24,23 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             yield obj.serialize(field_id)
 
     def get_meta_questions(self, obj):
-        return self.serialize_questions(obj, obj.named_blocks.values())
+        meta_questions = {
+            'title': 'Project Name',
+            'full_name': 'Legal Name',
+            'email': 'Email',
+            'value': 'Requested Funding',
+            'duration': 'Project Duration',
+            'address': 'Address'
+        }
+        data = self.serialize_questions(obj, obj.named_blocks.values())
+        data = [
+            {
+                **response,
+                'question': meta_questions.get(response['type'], response['question'])
+            }
+            for response in data
+        ]
+        return data
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
