@@ -60,11 +60,6 @@ const answerTypes = {
 const Answer = ({ answer, type }) => {
     const AnswerType = answerTypes[type];
 
-    if (!AnswerType) {return <>{type}</>}
-
-    console.log(type)
-    console.log(answer)
-
     return <AnswerType answer={answer} />;
 }
 
