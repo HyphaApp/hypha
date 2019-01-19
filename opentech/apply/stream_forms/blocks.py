@@ -58,15 +58,25 @@ class FormFieldBlock(StructBlock):
             'type': self.name,
         }
 
+    def serialize_no_response(self, value, context):
+        return {
+            'question': value['field_label'],
+            'answer': 'No Response',
+            'type': 'no_response',
+        }
+
     def prepare_data(self, value, data, serialize=False):
         return bleach_value(str(data))
 
     def render(self, value, context):
         data = context.get('data')
-        data = self.prepare_data(value, data, context.get('serialize', False)) or self.no_response()
+        data = self.prepare_data(value, data, context.get('serialize', False))
 
-        context.update(data=data)
+        context.update(data=data or self.no_response())
+
         if context.get('serialize'):
+            if not data:
+                return self.serialize_no_response(value, context)
             return self.serialize(value, context)
 
         return super().render(value, context)

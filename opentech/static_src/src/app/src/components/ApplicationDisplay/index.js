@@ -1,53 +1,23 @@
 import React, {Component} from 'react';
 
+import Answer from './answers'
 import './styles.scss'
 
-const Meta = ({ question, answer }) => {
+const MetaResponse = ({ question, answer, type }) => {
     return (
         <div>
             <h5>{question}</h5>
-            <p dangerouslySetInnerHTML={{ __html: answer }} />
+            <Answer type={type} answer={answer} />
         </div>
     )
 }
 
-const Response = ({question, answer}) => {
-    const containsHtml = (text) => {
-        return text.startsWith('<');
-    }
-
-    const renderAnswer = () => {
-        // handle arrays with and without html
-        if (Array.isArray(answer)) {
-            return <ul>
-                {answer.map((a, i) => {
-                    if (typeof a === 'object') {
-                        return <li key={i}><a href={a.url}>{a.filename}</a></li>
-                    } else if (containsHtml(a)) {
-                        return <li key={i} dangerouslySetInnerHTML={{ __html: a }} />
-                    } else {
-                        return <li key={i}>{a}</li>
-                    }
-                })}
-            </ul>
-        }
-
-        if (answer === true || answer === false) {
-            return <div>{answer ? 'Yes' : 'No'}</div>;
-        }
-
-        // handle strings with and without html
-        if (containsHtml(answer)) {
-            return <div dangerouslySetInnerHTML={{ __html: answer }} />
-        } else {
-            return <div><p>{answer}</p></div>
-        }
-    }
+const Response = ({question, answer, type}) => {
 
     return (
         <section>
             <h4>{question}</h4>
-            {renderAnswer()}
+            <Answer type={type} answer={answer} />
         </section>
     )
 }
@@ -69,13 +39,13 @@ export default class ApplicationDisplay extends Component {
 
                 <div className="grid grid--proposal-info">
                     {meta_questions.map((response, index) => (
-                        <Meta key={index} question={response.question} answer={response.answer} />
+                        <MetaResponse key={index} {...response} />
                     ))}
                 </div>
 
                 <div className="rich-text rich-text--answers">
                     {questions.map((response, index) => (
-                        <Response key={index} question={response.question} answer={response.answer} />
+                        <Response key={index} {...response} />
                     ))}
                 </div>
             </div>
