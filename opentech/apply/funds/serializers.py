@@ -14,10 +14,11 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 class SubmissionDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     meta_questions = serializers.SerializerMethodField()
+    stage = serializers.CharField(source='stage.name')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'meta_questions', 'questions')
+        fields = ('id', 'title', 'stage', 'meta_questions', 'questions')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:

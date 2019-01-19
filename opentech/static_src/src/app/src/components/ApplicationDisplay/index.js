@@ -31,11 +31,11 @@ export default class ApplicationDisplay extends Component {
         } else if (this.props.submission === undefined) {
             return <div>Not selected</div>;
         }
-        const { meta_questions = [], questions = [] } = this.props.submission;
+        const { meta_questions = [], questions = [], stage} = this.props.submission;
 
         return (
             <div className="application-display">
-                <h3>Proposal Information</h3>
+                <h3>{stage} Information</h3>
 
                 <div className="grid grid--proposal-info">
                     {meta_questions.map((response, index) => (
