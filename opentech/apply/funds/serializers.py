@@ -6,9 +6,11 @@ from .models import ApplicationSubmission
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='funds:submissions-api:detail')
+
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status')
+        fields = ('id', 'title', 'status', 'url')
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
