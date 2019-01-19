@@ -51,11 +51,6 @@ class FormFieldBlock(StructBlock):
         field_kwargs = self.get_field_kwargs(struct_value)
         return self.get_field_class(struct_value)(**field_kwargs)
 
-    def get_context(self, value, parent_context):
-        context = super().get_context(value, parent_context)
-        parent_context['data'] = self.format_data(parent_context['data']) or self.no_response()
-        return context
-
     def serialize(self, value, context):
         return {
             'question': value['field_label'],
@@ -68,7 +63,7 @@ class FormFieldBlock(StructBlock):
 
     def render(self, value, context):
         data = context.get('data')
-        data = self.prepare_data(value, data, context.get('serialize', False))
+        data = self.prepare_data(value, data, context.get('serialize', False)) or self.no_response()
 
         context.update(data=data)
         if context.get('serialize'):
@@ -78,9 +73,6 @@ class FormFieldBlock(StructBlock):
 
     def get_searchable_content(self, value, data):
         return str(data)
-
-    def format_data(self, data):
-        return data
 
     def no_response(self):
         return "No response"
