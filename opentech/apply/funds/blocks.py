@@ -65,9 +65,6 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 
     def format_data(self, data):
         # Based on the fields listed in addressfields/widgets.py
-        order_fields = [
-            'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
-        ]
         return ', '.join(
             data[field]
             for field in order_fields
@@ -75,10 +72,23 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
         )
 
     def prepare_data(self, value, data, serialize):
+        order_fields = [
+            'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
+        ]
         data = json.loads(data)
+        data = {
+            field: data[field]
+            for field in order_fields
+        }
+
         if serialize:
             return data
-        return self.format_data(data)
+
+        return ', '.join(
+            value
+            for value in data.values()
+            if value
+        )
 
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
