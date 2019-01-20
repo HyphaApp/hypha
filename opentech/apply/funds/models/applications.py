@@ -336,14 +336,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
 
 class RoundsAndLabsQueryset(PageQuerySet):
-    def active(self):
-        return self.filter(progress__lt=100)
-
-    def inactive(self):
-        return qs.filter(progress=100)
-
     def new(self):
-        return qs.filter(start_date__gt=date.today())
+        return self.filter(start_date__gt=date.today())
 
     def open(self):
         return self.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
@@ -352,11 +346,19 @@ class RoundsAndLabsQueryset(PageQuerySet):
         return self.filter(end_date__lt=date.today())
 
 
+class RoundsAndLabsProgressQueryset(RoundsAndLabsQueryset):
+    def active(self):
+        return self.filter(progress__lt=100)
+
+    def inactive(self):
+        return self.filter(progress=100)
+
+
 class RoundsAndLabsManager(PageManager):
-    def get_queryset(self):
+    def get_queryset(self, base_queryset=RoundsAndLabsQueryset):
         funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
 
-        return RoundsAndLabsQueryset(self.model, using=self._db).type(SubmittableStreamForm).annotate(
+        return base_queryset(self.model, using=self._db).type(SubmittableStreamForm).annotate(
             lead=Coalesce(
                 F('roundbase__lead__full_name'),
                 F('labbase__lead__full_name'),
@@ -371,7 +373,7 @@ class RoundsAndLabsManager(PageManager):
         submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
         closed_submissions = submissions.inactive()
 
-        return self.get_queryset().annotate(
+        return self.get_queryset(RoundsAndLabsProgressQueryset).annotate(
             total_submissions=Coalesce(
                 Subquery(
                     submissions.values('round').annotate(count=Count('pk')).values('count'),
@@ -395,6 +397,15 @@ class RoundsAndLabsManager(PageManager):
 
         )
 
+    def open(self):
+        return self.get_queryset().open()
+
+    def closed(self):
+        return self.get_queryset().closed()
+
+    def new(self):
+        return self.get_queryset().new()
+
 
 class RoundsAndLabs(Page):
     """
@@ -403,6 +414,19 @@ class RoundsAndLabs(Page):
     """
     class Meta:
         proxy = True
+
+    def __eq__(self, other):
+        # This is one way equality RoundAndLab == Round/Lab
+        # Round/Lab == RoundAndLab returns False due to different
+        # Concrete class
+        if not isinstance(other, models.Model):
+            return False
+        if not isinstance(other, SubmittableStreamForm):
+            return False
+        my_pk = self.pk
+        if my_pk is None:
+            return self is other
+        return my_pk == other.pk
 
     objects = RoundsAndLabsManager()
 
