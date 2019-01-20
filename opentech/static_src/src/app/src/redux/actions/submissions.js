@@ -1,5 +1,10 @@
 import api from '@api';
-import { getCurrentSubmission, getCurrentSubmissionID } from '@selectors/submissions';
+import {
+    getCurrentSubmission,
+    getCurrentSubmissionID,
+    getCurrentRoundID,
+    getCurrentRound,
+} from '@selectors/submissions';
 
 
 // Submissions by round
@@ -24,6 +29,17 @@ export const setCurrentSubmission = id => ({
     type: SET_CURRENT_SUBMISSION,
     id,
 });
+
+export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
+    const round = getCurrentRound(getState())
+
+    if (round && requiredFields.every(key => round.hasOwnProperty(key))) {
+        return null
+    }
+
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(getState())))
+}
+
 
 export const fetchSubmissionsByRound = roundID => {
     return async function(dispatch) {

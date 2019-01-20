@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Listing from '@components/Listing';
 import {
-    fetchSubmissionsByRound,
+    loadCurrentRound,
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
@@ -17,7 +17,7 @@ import {
 
 
 const loadData = props => {
-    props.loadSubmissions(props.roundID)
+    props.loadSubmissions(['submissions'])
 }
 
 class ByStatusListing extends React.Component {
@@ -42,6 +42,7 @@ class ByStatusListing extends React.Component {
         const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
         if (roundID && prevProps.roundID !== roundID) {
+            console.log('wooop')
             loadData(this.props)
         }
     }
@@ -80,7 +81,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    loadSubmissions: id => dispatch(fetchSubmissionsByRound(id)),
+    loadSubmissions: () => dispatch(loadCurrentRound()),
     setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });
 
