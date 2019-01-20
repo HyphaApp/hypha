@@ -1,5 +1,3 @@
-from operator import attrgetter
-
 from django.test import TestCase
 
 from opentech.apply.funds.models import RoundsAndLabs
