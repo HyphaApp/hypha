@@ -14,15 +14,21 @@ class DetailView extends Component {
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
 
+    renderDisplay () {
+        return <DisplayPanel />
+    }
+
     render() {
-        const { listing, hasActiveApplication } = this.props;
+        const { listing, submission } = this.props;
+
+        const activeSubmission = !!submission;
 
         if (this.isMobile()) {
             var activeDisplay;
-            if (hasActiveApplication){
+            if (activeSubmission){
                 activeDisplay = (
                     <SlideInRight key={"display"}>
-                        <DisplayPanel />
+                        { this.renderDisplay }
                     </SlideInRight>
                 )
             } else {
@@ -42,7 +48,7 @@ class DetailView extends Component {
             return (
                 <div className="detail-view">
                     {listing}
-                    <DisplayPanel />
+                    { this.renderDisplay }
                 </div>
             )
         }
@@ -56,7 +62,12 @@ DetailView.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    hasActiveApplication: !!getCurrentSubmissionID(state),
+    submission: getCurrentSubmissionID(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    loadSubmission: id => dispatch(fetchSubmission(id)),
+    clearCurrentSubmission: () => dispatch(clearCurrentSubmission()),
 });
 
 export default connect(mapStateToProps)(withWindowSizeListener(DetailView));

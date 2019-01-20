@@ -11,29 +11,21 @@ import {
     getSubmissionLoadingState,
 
 } from '@selectors/submissions';
-import ApplicationDisplay from '@components/ApplicationDisplay'
-import Tabber from '@components/Tabber'
-import {Tab} from '@components/Tabber'
+
+import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
+import Tabber, {Tab} from '@components/Tabber'
 import './style.scss';
 
 
 class DisplayPanel extends React.Component  {
-    componentDidUpdate(prevProps) {
-        const { submissionID } = this.props;
-        if (submissionID !== null && (
-             prevProps.submissionID === undefined || submissionID !== prevProps.submissionID
-        )) {
-            this.props.loadSubmission(submissionID);
-        }
-    }
 
     render() {
-        const { isError, isLoading, submission, windowSize: {windowWidth: width} } = this.props;
+        const { windowSize: {windowWidth: width} } = this.props;
         const { clearCurrentSubmission } = this.props;
 
         const isMobile = width < 1024;
 
-        const application = <ApplicationDisplay isLoading={isLoading} isError={isError} submission={submission} />
+        const submission = <CurrentSubmissionDisplay />
 
         let tabs = [
             <Tab button="Notes" key="note">
@@ -48,7 +40,7 @@ class DisplayPanel extends React.Component  {
             tabs = [
                 <Tab button=<button onClick={clearCurrentSubmission}>Back</button> key="back" />,
                 <Tab button="Application" key="application">
-                    { application }
+                    { submission }
                 </Tab>,
                 ...tabs
             ]
@@ -60,7 +52,7 @@ class DisplayPanel extends React.Component  {
                     <div className="display-panel__column">
                         <div className="display-panel__header display-panel__header--spacer"></div>
                         <div className="display-panel__body">
-                            { application }
+                            { submission }
                         </div>
                     </div>
                 )}
@@ -85,18 +77,12 @@ const mapStateToProps = state => ({
 });
 
 
-const mapDispatchToProps = dispatch => ({
-    loadSubmission: id => dispatch(fetchSubmission(id)),
-    clearCurrentSubmission: () => dispatch(clearCurrentSubmission()),
-});
-
-
 DisplayPanel.propTypes = {
-    submission: PropTypes.object,
     submissionID: PropTypes.number,
     loadSubmission: PropTypes.func,
     isLoading: PropTypes.bool,
     isError: PropTypes.bool,
+    clearSubmissions: PropTypes.func.isRequied,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

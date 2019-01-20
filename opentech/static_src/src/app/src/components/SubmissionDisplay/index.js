@@ -22,7 +22,7 @@ const Response = ({question, answer, type}) => {
     )
 }
 
-export default class ApplicationDisplay extends Component {
+export default class SubmissionDisplay extends Component {
     render() {
         if (this.props.isLoading) {
             return <div>Loading...</div>;
