@@ -1,13 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListingHeading from '@components/ListingHeading';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
 
 import './style.scss';
 
 export default class Listing extends React.Component {
+    static propTypes = {
+        items: PropTypes.array,
+        activeItem: PropTypes.object,
+        isLoading: PropTypes.bool,
+        error: PropTypes.string,
+        groupBy: PropTypes.string,
+        order: PropTypes.arrayOf(PropTypes.string),
+        onItemSelection: PropTypes.func,
+    };
+
     state = { orderedItems: [] };
 
     componentDidUpdate(prevProps, prevState) {
@@ -29,13 +38,18 @@ export default class Listing extends React.Component {
     }
 
     renderListItems() {
-        const { isLoading, isError, items, onItemSelection, activeItem } = this.props;
+        const { isLoading, error, items, onItemSelection, activeItem } = this.props;
 
         if (isLoading) {
             return <p>Loading...</p>;
-        } else if (isError) {
-            return <p>Something went wrong. Please try again later.</p>;
-        } else if (this.props.items.length === 0) {
+        } else if (error) {
+            return (
+                <>
+                    <p>Something went wrong. Please try again later.</p>
+                    <p>{ error }</p>
+                </>
+            );
+        } else if (items.length === 0) {
             return <p>No results found.</p>;
         }
 
@@ -46,7 +60,7 @@ export default class Listing extends React.Component {
                         <ListingGroup key={`listing-group-${group.name}`} item={group}>
                             {group.items.map(item => {
                                 return <ListingItem
-                                    selected={!!activeItem && activeItem.id===item.id}
+                                    selected={!!activeItem && activeItem===item.id}
                                     onClick={() => onItemSelection(item.id)}
                                     key={`listing-item-${item.id}`}
                                     item={item}/>;
@@ -74,7 +88,6 @@ export default class Listing extends React.Component {
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-        const orderedItems = [];
         const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
         this.setState({
             orderedItems: order.concat(leftOverKeys).filter(key => groupedItems[key] ).map(key => ({
@@ -85,7 +98,6 @@ export default class Listing extends React.Component {
     }
 
     render() {
-        const { isLoading, isError } = this.props;
         return (
             <div className="listing">
                 <div className="listing__header"></div>
@@ -94,13 +106,3 @@ export default class Listing extends React.Component {
         );
     }
 }
-
-Listing.propTypes = {
-    items: PropTypes.array,
-    activeItem: PropTypes.object,
-    isLoading: PropTypes.bool,
-    isError: PropTypes.bool,
-    groupBy: PropTypes.string,
-    order: PropTypes.arrayOf(PropTypes.string),
-    onItemSelection: PropTypes.func,
-};

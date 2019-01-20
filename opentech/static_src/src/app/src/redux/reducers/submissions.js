@@ -1,104 +1,86 @@
+import { combineReducers } from 'redux';
+
 import {
     CLEAR_CURRENT_SUBMISSION,
     FAIL_LOADING_SUBMISSION,
     START_LOADING_SUBMISSION,
-    UPDATE_SUBMISSION,
-    FAIL_LOADING_SUBMISSIONS_BY_ROUND,
-    SET_CURRENT_SUBMISSION,
-    SET_CURRENT_SUBMISSION_ROUND,
-    START_LOADING_SUBMISSIONS_BY_ROUND,
     UPDATE_SUBMISSIONS_BY_ROUND,
+    UPDATE_SUBMISSION,
+    SET_CURRENT_SUBMISSION,
 } from '@actions/submissions';
 
-const initialState = {
-    currentRound: null,
-    currentSubmission: null,
-    submissionsByID: {},
-    submissionsByRoundID: {},
-    itemsLoadingError: false,
-    itemsLoading: false,
-    itemLoading: false,
-    itemLoadingError: false,
-};
 
-export default function submissions(state = initialState, action) {
+function submission(state, action) {
     switch(action.type) {
-        // Submissions by round
-        case SET_CURRENT_SUBMISSION:
-            return {
-                ...state,
-                currentSubmission: action.id,
-            };
-        case SET_CURRENT_SUBMISSION_ROUND:
-            return {
-                ...state,
-                currentRound: action.id,
-            };
-        case UPDATE_SUBMISSIONS_BY_ROUND:
-            return {
-                ...state,
-                submissionsByID: {
-                    ...state.submissionsByID,
-                    ...action.data.results.reduce((newItems, v) => {
-                        newItems[v.id] = {
-                            ...state.submissionsByID[v.id],
-                            ...v
-                        };
-                        return newItems;
-                    }, {}),
-                },
-                submissionsByRoundID: {
-                    ...state.submissionsByRoundID,
-                    [action.roundId]: action.data.results.map(v => v.id),
-                },
-                itemsLoading: false,
-                itemsLoadingError: false,
-            };
-        case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
-            return {
-                ...state,
-                itemsLoading: false,
-                itemsLoadingError: true,
-            };
-        case START_LOADING_SUBMISSIONS_BY_ROUND:
-            return {
-                ...state,
-                itemsLoading: true,
-                itemsLoadingError: false,
-            };
-
-        // Submission
         case START_LOADING_SUBMISSION:
             return {
                 ...state,
-                itemLoading: true,
-                itemLoadingError: false,
+                isFetching: true,
+                isErrored: false,
             };
         case FAIL_LOADING_SUBMISSION:
             return {
                 ...state,
-                itemLoading: false,
-                itemLoadingError: true,
+                isFetching: false,
+                isErrored: true,
             };
         case UPDATE_SUBMISSION:
             return {
                 ...state,
-                submissionsByID: {
-                    ...state.submissionsByID,
-                    [action.submissionID]: {
-                        ...state.submissionsByID[action.submissionID],
-                        ...action.data,
-                    }
-                },
-                itemLoading: false,
-                itemLoadingError: false,
+                ...action.data,
+                isFetching: false,
+                isErrored: false,
             };
-        case CLEAR_CURRENT_SUBMISSION:
-            return {
-                ...state,
-                currentSubmission: null,
-            }
         default:
             return state;
     }
 }
+
+
+function submissionsByID(state = {}, action) {
+    switch(action.type) {
+        case START_LOADING_SUBMISSION:
+        case FAIL_LOADING_SUBMISSION:
+        case UPDATE_SUBMISSION:
+            return {
+                ...state,
+                [action.submissionID]: submission(state[action.submissionID], action),
+            };
+        case UPDATE_SUBMISSIONS_BY_ROUND:
+            return {
+                ...state,
+                ...action.data.results.reduce((newItems, newSubmission) => {
+                    newItems[newSubmission.id] = submission(
+                        state[newSubmission.id],
+                        {
+                            type: UPDATE_SUBMISSION,
+                            data: newSubmission,
+                        }
+                    );
+                    return newItems;
+                }, {}),
+            };
+        default:
+            return state;
+    }
+}
+
+
+function currentSubmission(state = null, action) {
+    switch(action.type) {
+        case SET_CURRENT_SUBMISSION:
+            return action.id;
+        case CLEAR_CURRENT_SUBMISSION:
+            return null;
+        default:
+            return state;
+    }
+}
+
+
+const submissions = combineReducers({
+    byID: submissionsByID,
+    current: currentSubmission,
+});
+
+export default submissions;

@@ -11,6 +11,11 @@ import { getCurrentSubmissionID } from '@selectors/submissions';
 import './style.scss';
 
 class DetailView extends Component {
+    static propTypes = {
+        listing: PropTypes.element.isRequired,
+        submission: PropTypes.object,
+        windowSize: PropTypes.objectOf(PropTypes.number),
+    };
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
 
@@ -28,7 +33,7 @@ class DetailView extends Component {
             if (activeSubmission){
                 activeDisplay = (
                     <SlideInRight key={"display"}>
-                        { this.renderDisplay }
+                        { this.renderDisplay() }
                     </SlideInRight>
                 )
             } else {
@@ -48,26 +53,17 @@ class DetailView extends Component {
             return (
                 <div className="detail-view">
                     {listing}
-                    { this.renderDisplay }
+                    { this.renderDisplay() }
                 </div>
             )
         }
 
     }
-};
-
-DetailView.propTypes = {
-    listing: PropTypes.node.isRequired,
-    hasActiveApplication: PropTypes.bool,
-};
+}
 
 const mapStateToProps = state => ({
     submission: getCurrentSubmissionID(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-    loadSubmission: id => dispatch(fetchSubmission(id)),
-    clearCurrentSubmission: () => dispatch(clearCurrentSubmission()),
-});
 
 export default connect(mapStateToProps)(withWindowSizeListener(DetailView));

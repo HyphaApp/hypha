@@ -3,21 +3,24 @@ import PropTypes from 'prop-types';
 
 import ListingHeading from '@components/ListingHeading';
 
+
 export default class ListingGroup extends React.Component {
+    static propTypes = {
+        children: PropTypes.arrayOf(PropTypes.node),
+        item: PropTypes.shape({
+            name: PropTypes.string,
+        }),
+    };
+
     render() {
+        const {item, children} = this.props
         return (
             <>
-                <ListingHeading title={this.props.item.name} count={this.props.children.length} />
+                <ListingHeading title={item.name} count={children.length} />
                 <ul>
-                    {this.props.children}
+                    {children}
                 </ul>
             </>
         );
     }
 }
-
-ListingGroup.propTypes = {
-    item: PropTypes.shape({
-        group: PropTypes.string,
-    }),
-};

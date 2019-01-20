@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withWindowSizeListener } from 'react-window-size-listener';
 
-import { clearCurrentSubmission, fetchSubmission } from '@actions/submissions';
+import { clearCurrentSubmission } from '@actions/submissions';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
@@ -18,10 +18,18 @@ import './style.scss';
 
 
 class DisplayPanel extends React.Component  {
+    static propTypes = {
+        submissionID: PropTypes.number,
+        loadSubmission: PropTypes.func,
+        isLoading: PropTypes.bool,
+        isError: PropTypes.bool,
+        clearSubmissions: PropTypes.func.isRequied,
+        windowSize: PropTypes.objectOf(PropTypes.number)
+    };
 
     render() {
         const { windowSize: {windowWidth: width} } = this.props;
-        const { clearCurrentSubmission } = this.props;
+        const { clearSubmissions } = this.props;
 
         const isMobile = width < 1024;
 
@@ -38,7 +46,7 @@ class DisplayPanel extends React.Component  {
 
         if ( isMobile ) {
             tabs = [
-                <Tab button=<button onClick={clearCurrentSubmission}>Back</button> key="back" />,
+                <Tab button=<button onClick={clearSubmissions}>Back</button> key="back" />,
                 <Tab button="Application" key="application">
                     { submission }
                 </Tab>,
@@ -76,13 +84,9 @@ const mapStateToProps = state => ({
     submission: getCurrentSubmission(state),
 });
 
+const mapDispatchToProps = () => ({
+    clearSubmissions: clearCurrentSubmission()
+})
 
-DisplayPanel.propTypes = {
-    submissionID: PropTypes.number,
-    loadSubmission: PropTypes.func,
-    isLoading: PropTypes.bool,
-    isError: PropTypes.bool,
-    clearSubmissions: PropTypes.func.isRequied,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

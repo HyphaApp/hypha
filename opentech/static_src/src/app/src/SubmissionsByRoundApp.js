@@ -9,10 +9,17 @@ import { setCurrentSubmissionRound } from '@actions/submissions';
 
 
 class SubmissionsByRoundApp extends React.Component {
+    static propTypes = {
+        roundID: PropTypes.number,
+        setSubmissionRound: PropTypes.func,
+        pageContent: PropTypes.node.isRequired,
+    };
+
+
     state = { detailOpened: false };
 
     componentDidMount() {
-        this.props.setSubmissionRound(this.props.roundId);
+        this.props.setSubmissionRound(this.props.roundID);
     }
 
     openDetail = () => {
@@ -41,17 +48,12 @@ class SubmissionsByRoundApp extends React.Component {
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
 
                 {this.state.detailOpened &&
-                    <GroupByStatusDetailView roundId={this.props.roundId} />
+                    <GroupByStatusDetailView roundId={this.props.roundID} />
                 }
             </>
         )
     }
 }
-
-SubmissionsByRoundApp.propTypes = {
-    roundId: PropTypes.number,
-    setSubmissionRound: PropTypes.func,
-};
 
 const mapDispatchToProps = dispatch => {
     return {

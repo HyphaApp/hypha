@@ -1,8 +1,19 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+
+
 
 export const Tab = ({button, children}) => <div>{children}</div>
+Tab.propTypes = {
+    button: PropTypes.node,
+    children: PropTypes.node,
+}
 
 class Tabber extends Component {
+    static propTypes = {
+        children: PropTypes.element,
+    }
+
     constructor() {
         super();
 

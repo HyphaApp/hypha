@@ -1,5 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import Transition from 'react-transition-group/Transition';
+
 
 const SlideOutLeft = ({ children, in: inProp }) => {
     const duration = 250;
@@ -27,6 +29,11 @@ const SlideOutLeft = ({ children, in: inProp }) => {
             )}
         </Transition>
     )
+}
+
+SlideOutLeft.propTypes = {
+    children: PropTypes.node,
+    in: PropTypes.bool,
 }
 
 export default SlideOutLeft

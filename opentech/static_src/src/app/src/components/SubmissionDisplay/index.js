@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
 import Answer from './answers'
 import './styles.scss'
+
 
 const MetaResponse = ({ question, answer, type }) => {
     return (
@@ -11,9 +13,14 @@ const MetaResponse = ({ question, answer, type }) => {
         </div>
     )
 }
+MetaResponse.propTypes = {
+    question: PropTypes.string.isRequired,
+    answer: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+}
+
 
 const Response = ({question, answer, type}) => {
-
     return (
         <section>
             <h4>{question}</h4>
@@ -21,8 +28,20 @@ const Response = ({question, answer, type}) => {
         </section>
     )
 }
+Response.propTypes = {
+    question: PropTypes.string.isRequired,
+    answer: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+}
+
 
 export default class SubmissionDisplay extends Component {
+    static propTypes = {
+        isLoading: PropTypes.bool,
+        isError: PropTypes.bool,
+        submission: PropTypes.object,
+    }
+
     render() {
         if (this.props.isLoading) {
             return <div>Loading...</div>;

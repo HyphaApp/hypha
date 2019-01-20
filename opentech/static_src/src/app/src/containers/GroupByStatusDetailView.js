@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import DetailView from '@components/DetailView';
 import ByStatusListing from '@containers/ByStatusListing';

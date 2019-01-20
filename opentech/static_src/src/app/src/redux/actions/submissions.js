@@ -1,5 +1,5 @@
 import api from '@api';
-import { getCurrentSubmissionID } from '@selectors/submissions';
+import { getCurrentSubmission, getCurrentSubmissionID } from '@selectors/submissions';
 
 
 // Submissions by round
@@ -20,78 +20,88 @@ export const setCurrentSubmissionRound = id => ({
     id,
 });
 
-export const setCurrentSubmission = id => {
-    return dispatch => {
-        dispatch({
-            type: SET_CURRENT_SUBMISSION,
-            id,
-        });
-        dispatch(fetchSubmission(id));
-    };
-};
+export const setCurrentSubmission = id => ({
+    type: SET_CURRENT_SUBMISSION,
+    id,
+});
 
-export const fetchSubmissionsByRound = roundId => {
+export const fetchSubmissionsByRound = roundID => {
     return async function(dispatch) {
-        dispatch(startLoadingSubmissionsByRound());
+        dispatch(startLoadingSubmissionsByRound(roundID));
         try {
-            const response = await api.fetchSubmissionsByRound(roundId);
+            const response = await api.fetchSubmissionsByRound(roundID);
             const json = await response.json();
-            if (!response.ok) {
-                dispatch(failLoadingSubmissionsByRound(submissionID, data));
-                return;
+            if (response.ok) {
+                dispatch(updateSubmissionsByRound(roundID, json));
+            } else {
+                dispatch(failLoadingSubmissionsByRound(json.meta.error));
             }
-            dispatch(updateSubmissionsByRound(roundId, json));
         } catch (e) {
-            console.error(e);
-            dispatch(failLoadingSubmissionsByRound());
+            dispatch(failLoadingSubmissionsByRound(e.message));
         }
     };
 };
 
 
-const updateSubmissionsByRound = (roundId, data) => ({
+const updateSubmissionsByRound = (roundID, data) => ({
     type: UPDATE_SUBMISSIONS_BY_ROUND,
-    roundId,
+    roundID,
     data,
 });
 
 
-const startLoadingSubmissionsByRound = () => ({
+const startLoadingSubmissionsByRound = (roundID) => ({
     type: START_LOADING_SUBMISSIONS_BY_ROUND,
+    roundID,
 });
 
 
-
-const failLoadingSubmissionsByRound = () => ({
+const failLoadingSubmissionsByRound = (message) => ({
     type: FAIL_LOADING_SUBMISSIONS_BY_ROUND,
+    message,
 });
+
+
+export const loadCurrentSubmission = (requiredFields=[]) => (dispatch, getState) => {
+    const submission = getCurrentSubmission(getState())
+
+    if (submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
+        return null
+    }
+
+    return dispatch(fetchSubmission(getCurrentSubmissionID(getState())))
+}
 
 
 export const fetchSubmission = submissionID => {
     return async function(dispatch) {
 
-        dispatch(startLoadingSubmission());
+        dispatch(startLoadingSubmission(submissionID));
         try {
             const response = await api.fetchSubmission(submissionID);
             const json = await response.json();
-            if (!response.ok) {
-                dispatch(failLoadingSubmission());
+            if (response.ok) {
+                dispatch(updateSubmission(submissionID, json));
+            } else {
+                dispatch(failLoadingSubmission(json.meta.error));
             }
-            dispatch(updateSubmission(submissionID, json));
-        } catch(e) {
-            console.error(e);
-            dispatch(failLoadingSubmission());
+        } catch (e) {
+            dispatch(failLoadingSubmission(e.message));
         }
     };
 };
 
-const startLoadingSubmission = () => ({
+
+const startLoadingSubmission = submissionID => ({
     type: START_LOADING_SUBMISSION,
+    submissionID,
 });
 
-const failLoadingSubmission = () => ({
+const failLoadingSubmission = submissionID => ({
     type: FAIL_LOADING_SUBMISSION,
+    submissionID,
 });
+
 
 const updateSubmission = (submissionID, data) => ({
     type: UPDATE_SUBMISSION,

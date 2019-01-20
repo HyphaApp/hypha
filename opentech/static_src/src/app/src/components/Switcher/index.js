@@ -1,11 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+
 import ArrayIcon from 'images/icon-array.svg'
 import GridIcon from 'images/icon-grid.svg';
 
 import './styles.scss';
 
 class Switcher extends React.Component {
+    static propTypes = {
+        handleOpen: PropTypes.func.isRequired,
+        handleClose: PropTypes.func.isRequired,
+        selector: PropTypes.string.isReqiured,
+        open: PropTypes.bool,
+    }
+
     constructor(props) {
         super(props);
         this.el = document.getElementById(props.selector);

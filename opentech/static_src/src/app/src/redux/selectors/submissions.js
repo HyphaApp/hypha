@@ -1,20 +1,29 @@
 import { createSelector } from 'reselect';
 
-const getSubmissions = state => state.submissions.submissionsByID;
+const getSubmissions = state => state.submissions.byID;
 
-const getSubmissionIDsByRound = state => state.submissions.submissionsByRoundID;
+const getRounds = state => state.rounds.byID;
 
-const getCurrentRoundID = state => state.submissions.currentRound;
+const getCurrentRoundID = state => state.rounds.current;
 
-const getCurrentSubmissionID = state => state.submissions.currentSubmission;
+const getCurrentRound = createSelector(
+    [ getCurrentRoundID, getRounds],
+    (id, rounds) => {
+        return rounds[id];
+    }
+);
+
+const getCurrentSubmissionID = state => state.submissions.current;
 
 
 const getCurrentRoundSubmissions = createSelector(
-    [ getSubmissionIDsByRound, getCurrentRoundID , getSubmissions],
-    (submissionsByRound, currentRoundID, submissions) => {
-        return (submissionsByRound[currentRoundID] || []).map(submissionID => submissions[submissionID]);
+    [ getCurrentRound, getSubmissions],
+    (round, submissions) => {
+        const roundSubmissions = round ? round.submissions : [];
+        return roundSubmissions.map(submissionID => submissions[submissionID]);
     }
 );
+
 
 const getCurrentSubmission = createSelector(
     [ getCurrentSubmissionID, getSubmissions ],
@@ -27,16 +36,17 @@ const getSubmissionLoadingState = state => state.submissions.itemLoading === tru
 
 const getSubmissionErrorState = state => state.submissions.itemLoadingError === true;
 
-const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError === true;
+const getSubmissionsByRoundError = state => state.rounds.error;
 
 const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading === true;
 
 export {
     getCurrentRoundID,
+    getCurrentRound,
     getCurrentRoundSubmissions,
     getCurrentSubmission,
     getCurrentSubmissionID,
-    getSubmissionsByRoundErrorState,
+    getSubmissionsByRoundError,
     getSubmissionsByRoundLoadingState,
     getSubmissionLoadingState,
     getSubmissionErrorState,

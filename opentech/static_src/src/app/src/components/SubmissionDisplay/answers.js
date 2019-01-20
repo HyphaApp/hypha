@@ -1,19 +1,34 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Download from 'images/download.svg';
 import File from 'images/file.svg';
+
+const answerType = {answer: PropTypes.string.isRequired}
+const arrayAnswerType = {answer: PropTypes.arrayOf(PropTypes.string)}
+const fileType = {answer: PropTypes.shape({
+    filename: PropTypes.string.isRequired,
+    url:PropTypes.string.isRequired,
+})}
 
 const ListAnswer = ({Wrapper, answers}) => (
     <ul>{
         answers.map((answer, index) => <li key={index}><Wrapper answer={answer} /></li>)
     }</ul>
 );
+ListAnswer.propTypes = {
+    Wrapper: PropTypes.element,
+    ...arrayAnswerType,
+}
 
 const BasicAnswer = ({answer}) => <p>{ answer }</p>;
+BasicAnswer.propTypes = answerType
 
 const BasicListAnswer = ({answer}) => <ListAnswer Wrapper={BasicAnswer} answers={answer} />;
+BasicListAnswer.propTypes = arrayAnswerType
 
 const RichTextAnswer = ({answer}) => <div dangerouslySetInnerHTML={{ __html: answer }} />;
+RichTextAnswer.propTypes = answerType
 
 const FileAnswer = ({answer}) => (
     <a className="link link--download" href={answer.url}>
@@ -23,15 +38,19 @@ const FileAnswer = ({answer}) => (
         <Download />
     </a>
 );
+FileAnswer.propTypes = fileType
 
 const MultiFileAnswer = ({answer}) => <ListAnswer Wrapper={FileAnswer} answers={answer} />;
+MultiFileAnswer.propTypes = {answer: PropTypes.arrayOf(fileType)}
 
 const AddressAnswer = ({answer}) => (
         <div>{
             Object.entries(answer)
                 .filter(([key, value]) => !!value )
-                .map(([key, value]) => <p>{value}</p> )}</div>
+                  .map(([key, value]) => <p key={key}>{value}</p> )}
+        </div>
 )
+AddressAnswer.propTypes = {answer: PropTypes.objectOf(PropTypes.string)}
 
 
 const answerTypes = {
@@ -61,6 +80,10 @@ const Answer = ({ answer, type }) => {
     const AnswerType = answerTypes[type];
 
     return <AnswerType answer={answer} />;
+}
+Answer.propTypes = {
+    answer: PropTypes.node.isRequired,
+    type: PropTypes.string.isRequired,
 }
 
 export default Answer;
