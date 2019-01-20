@@ -6,7 +6,7 @@
                 <p> {{ round.fund|default_if_none:"-" }} </p>
                 <p class="round-block__date">
                     {% if round.end_date %}
-                        {{display_text }} {{ round.end_date|date:"Y-m-d" }}
+                        {{ display_text }} {{ round.end_date|date:"Y-m-d" }}
                     {% else %}
                         -
                     {% endif %}
