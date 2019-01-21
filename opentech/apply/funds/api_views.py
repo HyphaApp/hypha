@@ -6,9 +6,11 @@ from django_filters import rest_framework as filters
 from wagtail.core.models import Page
 
 from opentech.api.pagination import StandardResultsSetPagination
+from opentech.apply.activity.models import Activity
 from .models import ApplicationSubmission
 from .models.applications import SubmittableStreamForm
 from .serializers import (
+    CommentSerializer,
     RoundLabSerializer,
     SubmissionListSerializer,
     SubmissionDetailSerializer,
@@ -62,3 +64,17 @@ class RoundLabDetail(generics.RetrieveAPIView):
 
     def get_object(self):
         return super().get_object().specific
+
+
+class CommentList(generics.ListAPIView):
+    queryset = Activity.comments.all()
+    serializer_class = CommentSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('submission', 'visibility')
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        return super().get_queryset().visible_to(self.request.user)

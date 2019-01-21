@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from wagtail.core.models import Page
 
+from opentech.apply.activity.models import Activity
 from .models import ApplicationSubmission
 
 
@@ -64,3 +65,11 @@ class RoundLabSerializer(serializers.ModelSerializer):
             }
             for phase in obj.workflow.values()
         ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
