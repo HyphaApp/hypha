@@ -9,14 +9,14 @@
                         {% endif %}">
                 <span class="status-bar__tooltip"
                 {% if phase.step != current_phase.step %}
-                    {% if public %}
-                        {% if phase.step > current_phase.step %}
-                            data-title="{{ phase.future_name }}" aria-label="{{ current_phase.future_name }}"
-                        {% else %}
-                            data-title="{{ phase.public_name }}" aria-label="{{ phase.public_name }}"
-                        {% endif %}
+                    {% if phase.step > current_phase.step %}
+                        data-title="{{ phase.future_name }}" aria-label="{{ current_phase.future_name }}"
                     {% else %}
-                        data-title="{{ phase }}" aria-label="{{ phase }}"
+                        {% if public %}
+                                data-title="{{ phase.public_name }}" aria-label="{{ phase.public_name }}"
+                        {% else %}
+                            data-title="{{ phase }}" aria-label="{{ phase }}"
+                        {% endif %}
                     {% endif %}
                 {% else %}
                     {% if public %}

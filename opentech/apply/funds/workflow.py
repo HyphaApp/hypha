@@ -72,8 +72,13 @@ class Phase:
     def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
         self.name = name
         self.display_name = display
+        if public and future:
+            # This prevent having to check that the display name fallback is ok for the
+            # public to see
+            raise ValueError("Cant provide both a future and a public name")
+
         self.public_name = public or self.display_name
-        self.future_name = future or self.public_name
+        self.future_name = future or self.display_name
         self.stage = stage
         self.permissions = Permissions(permissions)
         self.step = step
