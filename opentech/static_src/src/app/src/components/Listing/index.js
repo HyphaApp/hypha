@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
+import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
 
@@ -43,8 +44,7 @@ export default class Listing extends React.Component {
         if (isLoading) {
             return (
                 <div className="listing__list is-loading">
-                    <h5 className="listing__loading-header">Loading...</h5>
-                    <div className="listing__loader" />
+                    <LoadingPanel />
                 </div>
             )
         } else if (error) {

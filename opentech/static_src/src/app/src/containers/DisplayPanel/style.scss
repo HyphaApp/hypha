@@ -22,6 +22,18 @@
         padding: 20px;
     }
 
+    // loading container
+    &__loading {
+        // 100vh - listing header - display-panel__body padding
+        @include media-query(laptop-short) {
+            height: calc(100vh -  #{$listing-header-height} - 40px);
+        }
+
+        @include media-query(tablet-portrait) {
+            height: calc(100vh - var(--header-admin-height) - #{$listing-header-height} - 40px);
+        }
+    }
+
     &__header {
         &--spacer {
             display: none;
