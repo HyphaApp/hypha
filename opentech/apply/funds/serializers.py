@@ -90,3 +90,11 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility')
