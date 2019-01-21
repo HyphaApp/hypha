@@ -17,7 +17,13 @@ export default class Listing extends React.Component {
         onItemSelection: PropTypes.func,
     };
 
-    state = { orderedItems: [] };
+    state = {
+        orderedItems: [],
+    };
+
+    componentDidMount() {
+        this.orderItems();
+    }
 
     componentDidUpdate(prevProps, prevState) {
         // Order items
@@ -32,6 +38,7 @@ export default class Listing extends React.Component {
         if ( !newItem && !oldItem ) {
             const firstGroup = this.state.orderedItems[0]
             if ( firstGroup && firstGroup.items[0] ) {
+                this.setState({firstUpdate: false})
                 this.props.onItemSelection(firstGroup.items[0].id)
             }
         }

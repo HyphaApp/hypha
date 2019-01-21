@@ -79,6 +79,10 @@ const failLoadingSubmissionsByRound = (message) => ({
 
 
 export const loadCurrentSubmission = (requiredFields=[]) => (dispatch, getState) => {
+    const submissionID = getCurrentSubmissionID(getState())
+    if ( !submissionID ) {
+        return null
+    }
     const submission = getCurrentSubmission(getState())
 
     if (submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
