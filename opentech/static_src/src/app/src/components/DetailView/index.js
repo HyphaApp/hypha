@@ -13,7 +13,7 @@ import './style.scss';
 class DetailView extends Component {
     static propTypes = {
         listing: PropTypes.element.isRequired,
-        submission: PropTypes.object,
+        submissionID: PropTypes.number,
         windowSize: PropTypes.objectOf(PropTypes.number),
     };
 
@@ -24,9 +24,9 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, submission } = this.props;
+        const { listing, submissionID } = this.props;
 
-        const activeSubmission = !!submission;
+        const activeSubmission = !!submissionID;
 
         if (this.isMobile()) {
             var activeDisplay;
@@ -62,7 +62,7 @@ class DetailView extends Component {
 }
 
 const mapStateToProps = state => ({
-    submission: getCurrentSubmissionID(state),
+    submissionID: getCurrentSubmissionID(state),
 });
 
 

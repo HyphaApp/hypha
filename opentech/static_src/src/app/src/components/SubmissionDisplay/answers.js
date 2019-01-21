@@ -76,13 +76,20 @@ const answerTypes = {
     'multi_file': MultiFileAnswer,
 }
 
+export const answerPropTypes = PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.arrayOf(PropTypes.object),
+])
+
 const Answer = ({ answer, type }) => {
     const AnswerType = answerTypes[type];
 
     return <AnswerType answer={answer} />;
 }
 Answer.propTypes = {
-    answer: PropTypes.node.isRequired,
+    answer: answerPropTypes,
     type: PropTypes.string.isRequired,
 }
 

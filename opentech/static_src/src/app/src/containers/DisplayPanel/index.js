@@ -23,13 +23,13 @@ class DisplayPanel extends React.Component  {
         loadSubmission: PropTypes.func,
         isLoading: PropTypes.bool,
         isError: PropTypes.bool,
-        clearSubmissions: PropTypes.func.isRequied,
+        clearSubmission: PropTypes.func.isRequired,
         windowSize: PropTypes.objectOf(PropTypes.number)
     };
 
     render() {
         const { windowSize: {windowWidth: width} } = this.props;
-        const { clearSubmissions } = this.props;
+        const { clearSubmission } = this.props;
 
         const isMobile = width < 1024;
 
@@ -46,7 +46,7 @@ class DisplayPanel extends React.Component  {
 
         if ( isMobile ) {
             tabs = [
-                <Tab button="Back" key="back" handleClick={ clearSubmissions } />,
+                <Tab button="Back" key="back" handleClick={ clearSubmission } />,
                 <Tab button="Application" key="application">
                     { submission }
                 </Tab>,
@@ -84,9 +84,9 @@ const mapStateToProps = state => ({
     submission: getCurrentSubmission(state),
 });
 
-const mapDispatchToProps = () => ({
-    clearSubmissions: clearCurrentSubmission
-})
+const mapDispatchToProps = {
+    clearSubmission: clearCurrentSubmission
+}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

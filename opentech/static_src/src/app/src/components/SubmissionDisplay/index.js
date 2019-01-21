@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-import Answer from './answers'
+import Answer, { answerPropTypes } from './answers'
 import './styles.scss'
 
 
@@ -15,7 +15,7 @@ const MetaResponse = ({ question, answer, type }) => {
 }
 MetaResponse.propTypes = {
     question: PropTypes.string.isRequired,
-    answer: PropTypes.string.isRequired,
+    answer: answerPropTypes,
     type: PropTypes.string.isRequired,
 }
 
@@ -30,7 +30,7 @@ const Response = ({question, answer, type}) => {
 }
 Response.propTypes = {
     question: PropTypes.string.isRequired,
-    answer: PropTypes.string.isRequired,
+    answer: answerPropTypes,
     type: PropTypes.string.isRequired,
 }
 

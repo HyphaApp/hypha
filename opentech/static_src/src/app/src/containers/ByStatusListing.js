@@ -23,12 +23,12 @@ const loadData = props => {
 class ByStatusListing extends React.Component {
     static propTypes = {
         loadSubmissions: PropTypes.func,
-        submissions: PropTypes.arrayOf(PropTypes.objects),
+        submissions: PropTypes.arrayOf(PropTypes.object),
         roundID: PropTypes.number,
         round: PropTypes.object,
         error: PropTypes.string,
         setCurrentItem: PropTypes.func,
-        activeSubmission: PropTypes.object
+        activeSubmission: PropTypes.number,
     };
 
     componentDidMount() {

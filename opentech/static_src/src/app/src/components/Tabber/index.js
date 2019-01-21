@@ -12,7 +12,7 @@ Tab.propTypes = {
 
 class Tabber extends Component {
     static propTypes = {
-        children: PropTypes.element,
+        children: PropTypes.arrayOf(PropTypes.element),
     }
 
     constructor() {

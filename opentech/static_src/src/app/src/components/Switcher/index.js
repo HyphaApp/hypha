@@ -11,7 +11,7 @@ class Switcher extends React.Component {
     static propTypes = {
         handleOpen: PropTypes.func.isRequired,
         handleClose: PropTypes.func.isRequired,
-        selector: PropTypes.string.isReqiured,
+        selector: PropTypes.string.isRequired,
         open: PropTypes.bool,
     }
 

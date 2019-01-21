@@ -9,7 +9,7 @@ import './style.scss';
 export default class Listing extends React.Component {
     static propTypes = {
         items: PropTypes.array,
-        activeItem: PropTypes.object,
+        activeItem: PropTypes.number,
         isLoading: PropTypes.bool,
         error: PropTypes.string,
         groupBy: PropTypes.string,
