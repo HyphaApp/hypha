@@ -155,11 +155,13 @@
     }
   }
 
+// used for the submission list items in the react app
 @mixin submission-list-item {
     border-bottom: 2px solid $color--light-mid-grey;
     border-right: 2px solid $color--light-mid-grey;
 }
 
+// ie11-specific css
 @mixin target-ie11 {
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
         @content;

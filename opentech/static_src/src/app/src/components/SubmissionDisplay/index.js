@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import Answer, { answerPropTypes } from './answers'
+import LoadingPanel from '@components/LoadingPanel';
+
 import './styles.scss'
 
 
@@ -44,11 +46,23 @@ export default class SubmissionDisplay extends Component {
 
     render() {
         if (this.props.isLoading) {
-            return <div>Loading...</div>;
+            return (
+                <div className="display-panel__loading">
+                    <LoadingPanel />
+                </div>
+            )
         } else if (this.props.isError) {
-            return <div>Error occured...</div>;
+            return (
+                <div className="display-panel__loading">
+                    <p>Something went wrong. Please try again later.</p>
+                </div>
+            )
         } else if (this.props.submission === undefined) {
-            return <div>Not selected</div>;
+            return (
+                <div className="display-panel__loading">
+                    <p>Please select a submission.</p>
+                </div>
+            )
         }
         const { meta_questions = [], questions = [], stage} = this.props.submission;
 
