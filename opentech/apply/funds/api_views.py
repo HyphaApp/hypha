@@ -91,6 +91,15 @@ class RoundLabDetail(generics.RetrieveAPIView):
         return super().get_object().specific
 
 
+class CommentFilter(filters.FilterSet):
+    since = filters.DateTimeFilter(field_name="timestamp", lookup_expr='gte')
+    before = filters.DateTimeFilter(field_name="timestamp", lookup_expr='lte')
+
+    class Meta:
+        model = Activity
+        fields = ['submission', 'visibility', 'since', 'before']
+
+
 class CommentList(generics.ListAPIView):
     queryset = Activity.comments.all()
     serializer_class = CommentSerializer
@@ -98,7 +107,7 @@ class CommentList(generics.ListAPIView):
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('submission', 'visibility')
+    filter_class = CommentFilter
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
