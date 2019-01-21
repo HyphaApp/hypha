@@ -1,6 +1,10 @@
 .round-block {
     $root: &;
 
+    p {
+        font-size: 14px;
+    }
+
     &__item {
         align-items: center;
         background-color: $color--white;
@@ -8,7 +12,11 @@
         border-bottom: 0;
         padding: 25px;
         transition: background-color $quick-transition;
-        min-height: 100px;
+        min-height: 80px;
+
+        &:last-child {
+            border-bottom: 1px solid $color--light-mid-grey;
+        }
 
         @include media-query(tablet-landscape) {
             display: flex;
