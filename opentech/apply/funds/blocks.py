@@ -39,6 +39,9 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
     class Meta:
         label = _('Requested amount')
 
+    def prepare_data(self, value, data, serialize):
+        return '$' + str(data)
+
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = 'email'
@@ -62,14 +65,29 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 
     def format_data(self, data):
         # Based on the fields listed in addressfields/widgets.py
+        return ', '.join(
+            data[field]
+            for field in order_fields
+            if data[field]
+        )
+
+    def prepare_data(self, value, data, serialize):
         order_fields = [
             'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
         ]
-        address = json.loads(data)
-        return ', '.join(
-            address[field]
+        data = json.loads(data)
+        data = {
+            field: data[field]
             for field in order_fields
-            if address[field]
+        }
+
+        if serialize:
+            return data
+
+        return ', '.join(
+            value
+            for value in data.values()
+            if value
         )
 
 
@@ -108,7 +126,7 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
         field_kwargs['choices'] = self.DURATION_OPTIONS.items()
         return field_kwargs
 
-    def format_data(self, data):
+    def prepare_data(self, value, data, serialize):
         return self.DURATION_OPTIONS[int(data)]
 
     class Meta:

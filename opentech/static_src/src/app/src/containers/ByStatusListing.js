@@ -4,37 +4,58 @@ import { connect } from 'react-redux'
 
 import Listing from '@components/Listing';
 import {
+    loadCurrentRound,
+    setCurrentSubmission,
+} from '@actions/submissions';
+import {
+    getCurrentRound,
     getCurrentRoundID,
     getCurrentRoundSubmissions,
-    getSubmissionsByRoundErrorState,
-    getSubmissionsByRoundLoadingState,
+    getCurrentSubmissionID,
+    getSubmissionsByRoundError,
 } from '@selectors/submissions';
-import { setCurrentSubmissionRound, fetchSubmissionsByRound } from '@actions/submissions';
 
+
+const loadData = props => {
+    props.loadSubmissions(['submissions'])
+}
 
 class ByStatusListing extends React.Component {
+    static propTypes = {
+        loadSubmissions: PropTypes.func,
+        submissions: PropTypes.arrayOf(PropTypes.object),
+        roundID: PropTypes.number,
+        round: PropTypes.object,
+        error: PropTypes.string,
+        setCurrentItem: PropTypes.func,
+        activeSubmission: PropTypes.number,
+    };
+
     componentDidMount() {
-        const { roundId } = this.props;
         // Update items if round ID is defined.
-        if (roundId !== null && roundId !== undefined) {
-            this.props.loadSubmissions(roundId);
+        if ( this.props.roundID ) {
+            loadData(this.props)
         }
     }
 
     componentDidUpdate(prevProps) {
-        const { roundId } = this.props;
+        const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
-        if (roundId !== null && roundId !== undefined && prevProps.roundId !== roundId) {
-            this.props.loadSubmissions(roundId);
+        if (roundID && prevProps.roundID !== roundID) {
+            console.log('wooop')
+            loadData(this.props)
         }
     }
 
     render() {
-        const { isLoading, isError } = this.props;
+        const { error, submissions, round, setCurrentItem, activeSubmission } = this.props;
+        const isLoading = round && round.isFetching
         return <Listing
                     isLoading={isLoading}
-                    isError={isError}
-                    items={this.props.items}
+                    error={error}
+                    items={submissions}
+                    activeItem={activeSubmission}
+                    onItemSelection={setCurrentItem}
                     groupBy={'status'}
                     order={[
                         // TODO: Set the proper order of statuses.
@@ -52,21 +73,17 @@ class ByStatusListing extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    items: getCurrentRoundSubmissions(state),
-    roundId: getCurrentRoundID(state),
-    isError: getSubmissionsByRoundErrorState(state),
-    isLoading: getSubmissionsByRoundLoadingState(state),
-});
+    roundID: getCurrentRoundID(state),
+    submissions: getCurrentRoundSubmissions(state),
+    round: getCurrentRound(state),
+    error: getSubmissionsByRoundError(state),
+    activeSubmission: getCurrentSubmissionID(state),
+})
 
 const mapDispatchToProps = dispatch => ({
-    loadSubmissions: id => dispatch(fetchSubmissionsByRound(id)),
+    loadSubmissions: () => dispatch(loadCurrentRound()),
+    setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });
-
-ByStatusListing.propTypes = {
-    loadSubmissions: PropTypes.func,
-    roundId: PropTypes.number,
-};
-
 
 export default connect(
     mapStateToProps,

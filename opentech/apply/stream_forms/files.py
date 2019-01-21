@@ -66,6 +66,12 @@ class StreamFieldFile(File):
             return self.file.size
         return self.storage.size(self.name)
 
+    def serialize(self):
+        return {
+            'url': self.url,
+            'filename': self.filename,
+        }
+
     def open(self, mode='rb'):
         if getattr(self, '_file', None) is None:
             self.file = self.storage.open(self.name, mode)

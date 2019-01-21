@@ -1,26 +1,53 @@
 import { createSelector } from 'reselect';
 
-const getSubmissions = state => state.submissions.submissionsByID;
+const getSubmissions = state => state.submissions.byID;
 
-const getSubmissionIDsByRound = state => state.submissions.submissionsByRoundID;
+const getRounds = state => state.rounds.byID;
 
-const getCurrentRoundID = state => state.submissions.currentRound;
+const getCurrentRoundID = state => state.rounds.current;
 
-
-const getCurrentRoundSubmissions = createSelector(
-    [ getSubmissionIDsByRound, getCurrentRoundID , getSubmissions],
-    (submissionsByRound, currentRoundID, submissions) => {
-        return (submissionsByRound[currentRoundID] || []).map(submissionID => submissions[submissionID]);
+const getCurrentRound = createSelector(
+    [ getCurrentRoundID, getRounds],
+    (id, rounds) => {
+        return rounds[id];
     }
 );
 
-const getSubmissionsByRoundErrorState = state => state.submissions.itemsLoadingError;
+const getCurrentSubmissionID = state => state.submissions.current;
 
-const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading;
+
+const getCurrentRoundSubmissions = createSelector(
+    [ getCurrentRound, getSubmissions],
+    (round, submissions) => {
+        const roundSubmissions = round ? round.submissions : [];
+        return roundSubmissions.map(submissionID => submissions[submissionID]);
+    }
+);
+
+
+const getCurrentSubmission = createSelector(
+    [ getCurrentSubmissionID, getSubmissions ],
+    (id, submissions) => {
+        return submissions[id];
+    }
+);
+
+const getSubmissionLoadingState = state => state.submissions.itemLoading === true;
+
+const getSubmissionErrorState = state => state.submissions.itemLoadingError === true;
+
+const getSubmissionsByRoundError = state => state.rounds.error;
+
+const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading === true;
 
 export {
     getCurrentRoundID,
+    getCurrentRound,
     getCurrentRoundSubmissions,
-    getSubmissionsByRoundErrorState,
+    getCurrentSubmission,
+    getCurrentSubmissionID,
+    getSubmissionsByRoundError,
     getSubmissionsByRoundLoadingState,
+    getSubmissionLoadingState,
+    getSubmissionErrorState,
 };

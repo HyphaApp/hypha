@@ -1,4 +1,10 @@
 import api from '@api';
+import {
+    getCurrentSubmission,
+    getCurrentSubmissionID,
+    getCurrentRoundID,
+    getCurrentRound,
+} from '@selectors/submissions';
 
 
 // Submissions by round
@@ -7,46 +13,122 @@ export const UPDATE_SUBMISSIONS_BY_ROUND = 'UPDATE_SUBMISSIONS_BY_ROUND';
 export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_ROUND';
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
 
+// Submissions
+export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
+export const START_LOADING_SUBMISSION = 'START_LOADING_SUBMISSION';
+export const FAIL_LOADING_SUBMISSION = 'FAIL_LOADING_SUBMISSION';
+export const UPDATE_SUBMISSION = 'UPDATE_SUBMISSION';
+export const CLEAR_CURRENT_SUBMISSION = 'CLEAR_CURRENT_SUBMISSION';
 
 export const setCurrentSubmissionRound = id => ({
     type: SET_CURRENT_SUBMISSION_ROUND,
     id,
 });
 
-export const fetchSubmissionsByRound = roundId => {
+export const setCurrentSubmission = id => ({
+    type: SET_CURRENT_SUBMISSION,
+    id,
+});
+
+export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
+    const round = getCurrentRound(getState())
+
+    if (round && requiredFields.every(key => round.hasOwnProperty(key))) {
+        return null
+    }
+
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(getState())))
+}
+
+
+export const fetchSubmissionsByRound = roundID => {
     return async function(dispatch) {
-        dispatch(startLoadingSubmissionsByRound(roundId));
+        dispatch(startLoadingSubmissionsByRound(roundID));
         try {
-            const response = await api.fetchSubmissionsByRound(roundId);
+            const response = await api.fetchSubmissionsByRound(roundID);
             const json = await response.json();
-            if (!response.ok) {
-                dispatch(failLoadingSubmissionsByRound(roundId));
-                return;
+            if (response.ok) {
+                dispatch(updateSubmissionsByRound(roundID, json));
+            } else {
+                dispatch(failLoadingSubmissionsByRound(json.meta.error));
             }
-            dispatch(updateSubmissionsByRound(roundId, json));
         } catch (e) {
-            console.error(e);
-            dispatch(failLoadingSubmissionsByRound(roundId));
+            dispatch(failLoadingSubmissionsByRound(e.message));
         }
     };
 };
 
 
-const updateSubmissionsByRound = (roundId, data) => ({
+const updateSubmissionsByRound = (roundID, data) => ({
     type: UPDATE_SUBMISSIONS_BY_ROUND,
-    roundId,
+    roundID,
     data,
 });
 
 
-const startLoadingSubmissionsByRound = roundId => ({
+const startLoadingSubmissionsByRound = (roundID) => ({
     type: START_LOADING_SUBMISSIONS_BY_ROUND,
-    roundId,
+    roundID,
 });
 
 
-
-const failLoadingSubmissionsByRound = roundId => ({
+const failLoadingSubmissionsByRound = (message) => ({
     type: FAIL_LOADING_SUBMISSIONS_BY_ROUND,
-    roundId,
+    message,
+});
+
+
+export const loadCurrentSubmission = (requiredFields=[]) => (dispatch, getState) => {
+    const submissionID = getCurrentSubmissionID(getState())
+    if ( !submissionID ) {
+        return null
+    }
+    const submission = getCurrentSubmission(getState())
+
+    if (submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
+        return null
+    }
+
+    return dispatch(fetchSubmission(getCurrentSubmissionID(getState())))
+}
+
+
+export const fetchSubmission = submissionID => {
+    return async function(dispatch) {
+
+        dispatch(startLoadingSubmission(submissionID));
+        try {
+            const response = await api.fetchSubmission(submissionID);
+            const json = await response.json();
+            if (response.ok) {
+                dispatch(updateSubmission(submissionID, json));
+            } else {
+                dispatch(failLoadingSubmission(json.meta.error));
+            }
+        } catch (e) {
+            dispatch(failLoadingSubmission(e.message));
+        }
+    };
+};
+
+
+const startLoadingSubmission = submissionID => ({
+    type: START_LOADING_SUBMISSION,
+    submissionID,
+});
+
+const failLoadingSubmission = submissionID => ({
+    type: FAIL_LOADING_SUBMISSION,
+    submissionID,
+});
+
+
+const updateSubmission = (submissionID, data) => ({
+    type: UPDATE_SUBMISSION,
+    submissionID,
+    data,
+});
+
+export const clearCurrentSubmission = () => ({
+    type: CLEAR_CURRENT_SUBMISSION,
 });

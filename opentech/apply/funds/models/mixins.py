@@ -137,6 +137,22 @@ class AccessFormData:
             if isinstance(field.block, SingleIncludeMixin)
         }
 
+    @property
+    def normal_blocks(self):
+        return [
+            field_id
+            for field_id in self.question_field_ids
+            if field_id not in self.named_blocks
+        ]
+
+    def serialize(self, field_id):
+        field = self.field(field_id)
+        data = self.data(field_id)
+        return field.render(context={
+            'serialize': True,
+            'data': data,
+        })
+
     def render_answer(self, field_id, include_question=False):
         try:
             field = self.field(field_id)
@@ -149,8 +165,7 @@ class AccessFormData:
         # Returns a list of the rendered answers
         return [
             self.render_answer(field_id, include_question=True)
-            for field_id in self.question_field_ids
-            if field_id not in self.named_blocks
+            for field_id in self.normal_blocks
         ]
 
     def output_answers(self):

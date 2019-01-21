@@ -23,7 +23,16 @@ module.exports = {
                         'react-hot-loader/babel',
                         '@babel/plugin-proposal-class-properties'
                     ]
-                }
+                },
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                include: [path.resolve(__dirname, './src')],
+                loader: 'eslint-loader',
+                options: {
+                    configFile: path.resolve(__dirname, './.eslintrc'),
+                },
             },
             {
                 test: /\.scss$/,

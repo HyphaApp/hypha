@@ -1,0 +1,45 @@
+.display-panel {
+    background-color: $color--white;
+
+    @include media-query(tablet-landscape) {
+        display: grid;
+        grid-template-columns: 1fr 250px;
+    }
+
+    @include media-query(desktop) {
+        grid-template-columns: 1fr 390px;
+        grid-template-rows: 75px 1fr;
+    }
+
+    @include target-ie11 {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    &__body,
+    &__header {
+        @include submission-list-item;
+        padding: 20px;
+    }
+
+    &__header {
+        &--spacer {
+            display: none;
+            min-height: 75px;
+
+            @include media-query(tablet-landscape) {
+                display: block;
+            }
+        }
+    }
+
+    &__links {
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+
+    &__link {
+        padding: 20px;
+    }
+}

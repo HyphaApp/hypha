@@ -1,5 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 import bleach
+from django_bleach.templatetags.bleach_tags import bleach_value
 
 from django import forms
 from django.db.models import BLANK_CHOICE_DASH
@@ -50,16 +51,38 @@ class FormFieldBlock(StructBlock):
         field_kwargs = self.get_field_kwargs(struct_value)
         return self.get_field_class(struct_value)(**field_kwargs)
 
-    def get_context(self, value, parent_context):
-        context = super().get_context(value, parent_context)
-        parent_context['data'] = self.format_data(parent_context['data']) or self.no_response()
-        return context
+    def serialize(self, value, context):
+        return {
+            'question': value['field_label'],
+            'answer': context.get('data'),
+            'type': self.name,
+        }
+
+    def serialize_no_response(self, value, context):
+        return {
+            'question': value['field_label'],
+            'answer': 'No Response',
+            'type': 'no_response',
+        }
+
+    def prepare_data(self, value, data, serialize=False):
+        return bleach_value(str(data))
+
+    def render(self, value, context):
+        data = context.get('data')
+        data = self.prepare_data(value, data, context.get('serialize', False))
+
+        context.update(data=data or self.no_response())
+
+        if context.get('serialize'):
+            if not data:
+                return self.serialize_no_response(value, context)
+            return self.serialize(value, context)
+
+        return super().render(value, context)
 
     def get_searchable_content(self, value, data):
         return str(data)
-
-    def format_data(self, data):
-        return data
 
     def no_response(self):
         return "No response"
@@ -273,6 +296,12 @@ class UploadableMediaBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         return None
 
+    def prepare_data(self, value, data, serialize):
+        if serialize:
+            return data.serialize()
+
+        return data
+
 
 class ImageFieldBlock(UploadableMediaBlock):
     field_class = forms.ImageField
@@ -300,6 +329,11 @@ class MultiFileFieldBlock(UploadableMediaBlock):
     class Meta:
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
+
+    def prepare_data(self, value, data, serialize):
+        if serialize:
+            return [file.serialize() for file in data]
+        return data
 
     def no_response(self):
         return [super().no_response()]

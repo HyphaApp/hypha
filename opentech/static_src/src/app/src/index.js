@@ -12,7 +12,7 @@ const store = createStore();
 
 ReactDOM.render(
     <Provider store={store}>
-        <SubmissionsByRoundApp pageContent={container.innerHTML} roundId={parseInt(container.dataset.roundId)} />
+        <SubmissionsByRoundApp pageContent={container.innerHTML} roundID={parseInt(container.dataset.roundId)} />
     </Provider>,
     container
 );

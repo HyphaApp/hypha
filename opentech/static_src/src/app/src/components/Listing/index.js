@@ -1,31 +1,76 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListingHeading from '@components/ListingHeading';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
 
 import './style.scss';
 
 export default class Listing extends React.Component {
+    static propTypes = {
+        items: PropTypes.array,
+        activeItem: PropTypes.number,
+        isLoading: PropTypes.bool,
+        error: PropTypes.string,
+        groupBy: PropTypes.string,
+        order: PropTypes.arrayOf(PropTypes.string),
+        onItemSelection: PropTypes.func,
+    };
+
+    state = {
+        orderedItems: [],
+    };
+
+    componentDidMount() {
+        this.orderItems();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        // Order items
+        if (this.props.items !== prevProps.items) {
+            this.orderItems();
+        }
+
+        const oldItem = prevProps.activeItem
+        const newItem = this.props.activeItem
+
+        // If we have never activated a submission, get the first item
+        if ( !newItem && !oldItem ) {
+            const firstGroup = this.state.orderedItems[0]
+            if ( firstGroup && firstGroup.items[0] ) {
+                this.setState({firstUpdate: false})
+                this.props.onItemSelection(firstGroup.items[0].id)
+            }
+        }
+    }
+
     renderListItems() {
-        const { isLoading, isError, items } = this.props;
+        const { isLoading, error, items, onItemSelection, activeItem } = this.props;
 
         if (isLoading) {
             return <p>Loading...</p>;
-        } else if (isError) {
-            return <p>Something went wrong. Please try again later.</p>;
+        } else if (error) {
+            return (
+                <>
+                    <p>Something went wrong. Please try again later.</p>
+                    <p>{ error }</p>
+                </>
+            );
         } else if (items.length === 0) {
             return <p>No results found.</p>;
         }
 
         return (
             <ul className="listing__list">
-                {this.getOrderedItems().filter(v => v.items.length !== 0).map(v => {
+                {this.state.orderedItems.map(group => {
                     return (
-                        <ListingGroup key={`listing-group-${v.group}`} item={v}>
-                            {v.items.map(item => {
-                                return <ListingItem key={`listing-item-${item.id}`} item={item}/>;
+                        <ListingGroup key={`listing-group-${group.name}`} item={group}>
+                            {group.items.map(item => {
+                                return <ListingItem
+                                    selected={!!activeItem && activeItem===item.id}
+                                    onClick={() => onItemSelection(item.id)}
+                                    key={`listing-item-${item.id}`}
+                                    item={item}/>;
                             })}
                         </ListingGroup>
                     );
@@ -47,19 +92,19 @@ export default class Listing extends React.Component {
         }, {});
     }
 
-    getOrderedItems() {
+    orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-        const orderedItems = [];
         const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
-        return order.concat(leftOverKeys).map(key => ({
-            group: key,
-            items: groupedItems[key] || []
-        }));
+        this.setState({
+            orderedItems: order.concat(leftOverKeys).filter(key => groupedItems[key] ).map(key => ({
+                name: key,
+                items: groupedItems[key] || []
+            })),
+        });
     }
 
     render() {
-        const { isLoading, isError } = this.props;
         return (
             <div className="listing">
                 <div className="listing__header"></div>
@@ -68,11 +113,3 @@ export default class Listing extends React.Component {
         );
     }
 }
-
-Listing.propTypes = {
-    items: PropTypes.array,
-    isLoading: PropTypes.bool,
-    isError: PropTypes.bool,
-    groupBy: PropTypes.string,
-    order: PropTypes.arrayOf(PropTypes.string),
-};
