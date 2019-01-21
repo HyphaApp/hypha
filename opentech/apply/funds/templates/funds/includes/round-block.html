@@ -1,0 +1,20 @@
+<div class="wrapper wrapper--bottom-space">
+    <section class="section section--with-options">
+        <h4 class="heading heading--normal heading--no-margin">All Rounds and Labs</h4>
+        <div class="js-tabs">
+            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-1">Closed</a>
+            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-2">Open</a>
+        </div>
+    </section>
+
+    {# Closed rounds/labs tab #}
+    <div class="tabs__content" id="tab-1">
+        {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query %}
+    </div>
+
+    {# Open rounds/labs tab #}
+    <div class="tabs__content" id="tab-2">
+        {% include "funds/includes/round-block-listing.html" with rounds=open_rounds display_text="Open until" query=open_query %}
+    </div>
+
+</div>
