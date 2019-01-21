@@ -11,15 +11,15 @@
 
     // containing <ul>
     &__list {
-        @include media-query(laptop-short) {
-            // allow for vertical scrolling on laptops
-            height: calc(100vh -  #{$listing-header-height});
-        }
-
         @include media-query(tablet-landscape) {
             // only allow columns to be scrolled on larger screens
             height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
             overflow-y: scroll;
+        }
+
+        @include media-query(laptop-short) {
+            // allow for vertical scrolling on laptops
+            height: calc(100vh -  #{$listing-header-height});
         }
 
         &.is-loading {
