@@ -7,7 +7,12 @@ from wagtail.core.models import Page
 
 from opentech.api.pagination import StandardResultsSetPagination
 from .models import ApplicationSubmission
-from .serializers import SubmissionListSerializer, SubmissionDetailSerializer
+from .models.applications import SubmittableStreamForm
+from .serializers import (
+    RoundLabSerializer,
+    SubmissionListSerializer,
+    SubmissionDetailSerializer,
+)
 from .permissions import IsApplyStaffUser
 
 
@@ -21,7 +26,7 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 
 class SubmissionsFilter(filters.FilterSet):
     # TODO replace with better call to Round and Lab base class
-    round = RoundLabFilter(queryset=Page.objects.all())
+    round = RoundLabFilter(queryset=Page.objects.type(SubmittableStreamForm))
 
     class Meta:
         model = ApplicationSubmission
@@ -45,3 +50,15 @@ class SubmissionDetail(generics.RetrieveAPIView):
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
+
+
+class RoundLabDetail(generics.RetrieveAPIView):
+    # TODO replace with better call to Round and Lab base class
+    queryset = Page.objects.type(SubmittableStreamForm)
+    serializer_class = RoundLabSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )
+
+    def get_object(self):
+        return super().get_object().specific

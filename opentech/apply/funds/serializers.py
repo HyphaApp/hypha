@@ -1,10 +1,12 @@
 from rest_framework import serializers
+from wagtail.core.models import Page
 
 from .models import ApplicationSubmission
 
 
+
 class SubmissionListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='funds:submissions-api:detail')
+    url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
 
     class Meta:
         model = ApplicationSubmission
@@ -45,3 +47,20 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+
+class RoundLabSerializer(serializers.ModelSerializer):
+    workflow = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = ('id', 'title', 'workflow')
+
+    def get_workflow(self, obj):
+        return [
+            {
+                'value': phase.name,
+                'display': phase.display_name
+            }
+            for phase in obj.workflow.values()
+        ]
