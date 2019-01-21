@@ -157,3 +157,75 @@ class SubmissionFilter(filters.FilterSet):
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
+
+class RoundsTable(tables.Table):
+    title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
+    fund = tables.Column(accessor=A('specific.fund'))
+    lead = tables.Column()
+    start_date = tables.Column()
+    end_date = tables.Column()
+    progress = tables.Column(verbose_name="Determined")
+
+    class Meta:
+        fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
+
+    def render_lead(self, value):
+        return format_html('<span>{}</span>', value)
+
+    def render_progress(self, record):
+        return f'{record.progress}%'
+
+    def _field_order(self, field, desc):
+        return getattr(F(f'{field}'), 'desc' if desc else 'asc')(nulls_last=True)
+
+    def order_start_date(self, qs, desc):
+        return qs.order_by(self._field_order('start_date', desc)), True
+
+    def order_end_date(self, qs, desc):
+        return qs.order_by(self._field_order('end_date', desc)), True
+
+    def order_fund(self, qs, desc):
+        return qs.order_by(self._field_order('fund', desc)), True
+
+    def order_progress(self, qs, desc):
+        return qs.order_by(self._field_order('progress', desc)), True
+
+
+class ActiveRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('active', 'Active'), ('inactive', 'Inactive')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) != 1:
+            return qs
+
+        value = value[0]
+        if value == 'active':
+            return qs.active()
+        else:
+            return qs.inactive()
+
+
+class OpenRoundFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, choices=[('open', 'Open'), ('closed', 'Closed'), ('new', 'Not Started')], **kwargs)
+
+    def filter(self, qs, value):
+        if value is None or len(value) != 1:
+            return qs
+
+        value = value[0]
+        if value == 'closed':
+            return qs.closed()
+        if value == 'new':
+            return qs.new()
+
+        return qs.open()
+
+
+class RoundsFilter(filters.FilterSet):
+    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
+    active = ActiveRoundFilter(label='Active')
+    round_state = OpenRoundFilter(label='Open')

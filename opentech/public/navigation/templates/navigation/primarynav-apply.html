@@ -3,6 +3,7 @@
         {% if request.user.is_apply_staff %}
             {% include "navigation/primarynav-apply-item.html" with name="Dashboard" url="dashboard:dashboard" %}
             {% include "navigation/primarynav-apply-item.html" with name="Submissions" url="funds:submissions:list" %}
+            {% include "navigation/primarynav-apply-item.html" with name="Rounds" url="funds:rounds:list" %}
         {% else %}
             {% include "navigation/primarynav-apply-item.html" with name="Dashboard" url="dashboard:dashboard" %}
         {% endif %}

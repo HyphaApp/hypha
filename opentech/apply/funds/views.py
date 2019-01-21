@@ -31,8 +31,13 @@ from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
-from .tables import AdminSubmissionsTable, SubmissionFilterAndSearch
+from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
+from .tables import (
+    AdminSubmissionsTable,
+    RoundsTable,
+    RoundsFilter,
+    SubmissionFilterAndSearch,
+)
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -68,11 +73,26 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
         )
 
-        return kwargs
+        return super().get_context_data(**kwargs)
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
+
+    def get_context_data(self, **kwargs):
+        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
+        open_rounds = base_query.open()[:6]
+        open_query = '?round_state=open&active=active'
+        closed_rounds = base_query.closed()[:6]
+        closed_query = '?round_state=closed&active=active'
+
+        return super().get_context_data(
+            open_rounds=open_rounds,
+            open_query=open_query,
+            closed_rounds=closed_rounds,
+            closed_query=closed_query,
+            **kwargs,
+        )
 
 
 class SubmissionsByRound(BaseAdminSubmissionsTable):
@@ -463,3 +483,13 @@ class RevisionCompareView(DetailView):
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
         self.compare_revisions(from_revision, to_revision)
         return super().get_context_data(**kwargs)
+
+
+@method_decorator(staff_required, name='dispatch')
+class RoundListView(SingleTableMixin, FilterView):
+    template_name = 'funds/rounds.html'
+    table_class = RoundsTable
+    filterset_class = RoundsFilter
+
+    def get_queryset(self):
+        return RoundsAndLabs.objects.with_progress()

@@ -136,6 +136,10 @@ class RoundFactory(wagtail_factories.PageFactory):
             start_date=factory.LazyFunction(datetime.date.today),
             end_date=factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7)),
         )
+        closed = factory.Trait(
+            start_date=factory.LazyFunction(lambda: datetime.date.today() - datetime.timedelta(days=7)),
+            end_date=factory.LazyFunction(lambda: datetime.date.today() - datetime.timedelta(days=1)),
+        )
 
     title = factory.Sequence('Round {}'.format)
     start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * n + 1))

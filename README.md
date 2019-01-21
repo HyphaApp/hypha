@@ -72,3 +72,12 @@ gulp build
 ```
 
 For more command see the `gulpfile.js` file.
+
+
+# Running tests
+
+Run all tests for the project with the following command within the SSH session:
+
+``` bash
+DJANGO_SETTINGS_MODULE=opentech.settings.test python manage.py test --keepdb
+```

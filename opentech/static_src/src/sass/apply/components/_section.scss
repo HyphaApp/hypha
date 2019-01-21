@@ -8,4 +8,15 @@
             margin-bottom: 0;
         }
     }
+
+    &--with-options {
+        display: flex;
+        flex-direction: column;
+
+        @include media-query(small-tablet) {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
 }
