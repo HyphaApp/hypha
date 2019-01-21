@@ -11,11 +11,13 @@ const fileType = {answer: PropTypes.shape({
     url:PropTypes.string.isRequired,
 })}
 
-const ListAnswer = ({Wrapper, answers}) => (
-    <ul>{
-        answers.map((answer, index) => <li key={index}><Wrapper answer={answer} /></li>)
-    }</ul>
-);
+const ListAnswer = ({Wrapper, answers}) => {
+    return (
+        <ul className={`${Wrapper === FileAnswer ? 'remove-list-style' : ''}`}>{
+            answers.map((answer, index) => <li key={index}><Wrapper answer={answer} /></li>)
+        }</ul>
+    )
+};
 ListAnswer.propTypes = {
     Wrapper: PropTypes.element,
     ...arrayAnswerType,
@@ -44,11 +46,11 @@ const MultiFileAnswer = ({answer}) => <ListAnswer Wrapper={FileAnswer} answers={
 MultiFileAnswer.propTypes = {answer: PropTypes.arrayOf(fileType)}
 
 const AddressAnswer = ({answer}) => (
-        <div>{
-            Object.entries(answer)
-                .filter(([key, value]) => !!value )
-                  .map(([key, value]) => <p key={key}>{value}</p> )}
-        </div>
+    <div>{
+        Object.entries(answer)
+            .filter(([key, value]) => !!value )
+                .map(([key, value]) => <p key={key}>{value}</p> )}
+    </div>
 )
 AddressAnswer.propTypes = {answer: PropTypes.objectOf(PropTypes.string)}
 
