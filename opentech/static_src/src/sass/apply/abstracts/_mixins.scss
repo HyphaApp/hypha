@@ -167,3 +167,38 @@
         @content;
     }
 }
+
+@mixin table-ordering-styles {
+    thead {
+        th {
+            // ordering
+            &.desc,
+            &.asc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    top: 32px;
+                    margin-left: 3px;
+                }
+
+                a {
+                    color: inherit;
+                }
+            }
+
+            &.desc {
+                &::after {
+                    @include triangle(top, $color--default, 5px);
+                }
+            }
+
+            &.asc {
+                &::after {
+                    @include triangle(bottom, $color--default, 5px);
+                }
+            }
+        }
+    }
+}

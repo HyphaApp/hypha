@@ -1,7 +1,5 @@
-// also in _table.scss
-$table-breakpoint: 'tablet-landscape';
-
-.all-submissions {
+.all-submissions-table {
+    @include table-ordering-styles;
     $root: &;
     font-size: 14px;
 
@@ -13,35 +11,6 @@ $table-breakpoint: 'tablet-landscape';
         }
 
         th {
-            // ordering
-            &.desc,
-            &.asc {
-                position: relative;
-                color: $color--dark-grey;
-
-                &::after {
-                    position: absolute;
-                    top: 32px;
-                    margin-left: 3px;
-                }
-
-                a {
-                    color: inherit;
-                }
-            }
-
-            &.desc {
-                &::after {
-                    @include triangle(top, $color--default, 5px);
-                }
-            }
-
-            &.asc {
-                &::after {
-                    @include triangle(bottom, $color--default, 5px);
-                }
-            }
-
             &.reviews_stats { // sass-lint:disable-line class-name-format
                 color: $color--mid-dark-grey;
 

@@ -18,8 +18,13 @@
 
     const urlParams = new URLSearchParams(window.location.search);
 
+    const persistedParams = ['sort', 'query'];
+
     // check if the page has a query string and keep filters open if so on desktop
-    const minimumNumberParams = 1 + urlParams.has('query') ? 1 : 0;
+    const minimumNumberParams = persistedParams.reduce(
+        (count, param) => count + urlParams.has(param) ? 1 : 0,
+        1
+    );
 
     if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {
         $body.addClass(filterOpenClass);
@@ -77,7 +82,9 @@
 
     // redirect to submissions home to clear filters
     function handleClearFilters() {
-        window.location.href = window.location.href.split('?')[0] + '?query=' + urlParams.get('query');
+        const query = persistedParams.reduce(
+            (query, param) => query + (urlParams.get(param) ? `&${param}=${urlParams.get(param)}` : ''), '?');
+        window.location.href = window.location.href.split('?')[0] + query;
     }
 
     // toggle filters button wording
