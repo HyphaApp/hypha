@@ -1,26 +1,42 @@
 <div class="status-bar {{ class }}">
-    {% for phase_name, phase in phases.items %}
-        {% if not same_stage or current_phase.stage == phase.stage %}
-            {% ifchanged phase.step %}
-                <div class="status-bar__item
-                            {% if phase.step == current_phase.step %}
-                                status-bar__item--is-current
-                            {% elif current_phase.step > phase.step %}
-                                status-bar__item--is-complete
-                            {% endif %}">
-                    <span class="status-bar__tooltip"
-                    {% if phase.step != current_phase.step %}
-                        data-title="{{ phase }}" aria-label="{{ phase }}"
+    {% for phase in phases %}
+        {% ifchanged phase.step %}
+            <div class="status-bar__item
+                        {% if phase.step == current_phase.step %}
+                            status-bar__item--is-current
+                        {% elif current_phase.step > phase.step %}
+                            status-bar__item--is-complete
+                        {% endif %}">
+                <span class="status-bar__tooltip"
+                {% if phase.step != current_phase.step %}
+                    {% if phase.step > current_phase.step %}
+                        data-title="{{ phase.future_name }}" aria-label="{{ current_phase.future_name }}"
+                    {% else %}
+                        {% if public %}
+                                data-title="{{ phase.public_name }}" aria-label="{{ phase.public_name }}"
+                        {% else %}
+                            data-title="{{ phase }}" aria-label="{{ phase }}"
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if public %}
+                        data-title="{{ current_phase.public_name }}" aria-label="{{ current_phase.public_name }}"
                     {% else %}
                         data-title="{{ current_phase }}" aria-label="{{ current_phase }}"
                     {% endif %}
-                    ></span>
-                    <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
-                </div>
-                {% endifchanged %}
-        {% endif %}
+                {% endif %}
+                ></span>
+                <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
+            </div>
+        {% endifchanged %}
     {% endfor %}
 </div>
 <div class="status-bar--mobile">
-    <h6 class="status-bar__subheading">{{ current_phase }}</h6>
+    <h6 class="status-bar__subheading">
+        {% if public %}
+            {{ current_phase.public_name }}
+        {% else %}
+            {{ current_phase }}
+        {% endif %}
+    </h6>
 </div>
