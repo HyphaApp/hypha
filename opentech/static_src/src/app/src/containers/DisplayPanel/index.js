@@ -46,7 +46,7 @@ class DisplayPanel extends React.Component  {
 
         if ( isMobile ) {
             tabs = [
-                <Tab button=<button onClick={clearSubmissions}>Back</button> key="back" />,
+                <Tab button="Back" key="back" handleClick={ clearSubmissions } />,
                 <Tab button="Application" key="application">
                     { submission }
                 </Tab>,
@@ -85,7 +85,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = () => ({
-    clearSubmissions: clearCurrentSubmission()
+    clearSubmissions: clearCurrentSubmission
 })
 
 

@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 
 
-export const Tab = ({button, children}) => <div>{children}</div>
+export const Tab = ({button, children, handleClick}) => <div>{children}</div>
 Tab.propTypes = {
     button: PropTypes.node,
     children: PropTypes.node,
+    handleClick: PropTypes.func,
 }
 
 class Tabber extends Component {
@@ -41,7 +42,10 @@ class Tabber extends Component {
         return (
             <div className="tabber">
                 <div className="tabber__navigation">
-                    {children.map((child, i) => <a onClick={() => this.handleClick(i)} className="display-panel__link" key={child.key}>{child.props.button}</a>)}
+                    {children.map((child, i) => {
+                            return <a onClick={child.props.handleClick ? child.props.handleClick : () => this.handleClick(i)} className="display-panel__link" key={child.key}>{child.props.button}</a>
+                        })
+                    }
                 </div>
                 <div className="tabber-tab__active">
                     { children[this.state.activeTab] }
