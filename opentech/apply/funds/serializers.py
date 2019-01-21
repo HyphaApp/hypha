@@ -5,6 +5,14 @@ from opentech.apply.activity.models import Activity
 from .models import ApplicationSubmission
 
 
+class ActionSerializer(serializers.Field):
+    def to_representation(self, instance):
+        actions = instance.get_actions_for_user(self.context['request'].user)
+        return {
+            transition: action
+            for transition, action in actions
+        }
+
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
@@ -18,10 +26,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     meta_questions = serializers.SerializerMethodField()
     stage = serializers.CharField(source='stage.name')
+    actions = ActionSerializer(source='*')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'meta_questions', 'questions')
+        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -48,6 +57,14 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+
+class SubmissionActionSerializer(serializers.ModelSerializer):
+    actions = ActionSerializer(source='*')
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('id', 'actions',)
 
 
 class RoundLabSerializer(serializers.ModelSerializer):

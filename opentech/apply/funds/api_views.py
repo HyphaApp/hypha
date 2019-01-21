@@ -1,6 +1,8 @@
+from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db.models import Q
-from rest_framework import generics
-from rest_framework import permissions
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django_filters import rest_framework as filters
 
 from wagtail.core.models import Page
@@ -12,6 +14,7 @@ from .models.applications import SubmittableStreamForm
 from .serializers import (
     CommentSerializer,
     RoundLabSerializer,
+    SubmissionActionSerializer,
     SubmissionListSerializer,
     SubmissionDetailSerializer,
 )
@@ -52,6 +55,25 @@ class SubmissionDetail(generics.RetrieveAPIView):
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
+
+
+class SubmissionAction(generics.RetrieveAPIView):
+    queryset = ApplicationSubmission.objects.all()
+    serializer_class = SubmissionActionSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )
+
+    def post(self, request, *args, **kwargs):
+        action = request.data.get('action')
+        if not action:
+            raise ValidationError('Action must be provided.')
+        obj = self.get_object()
+        try:
+            obj.perform_transition(action, self.request.user, request=self.request)
+        except DjangoPermissionDenied as e:
+            raise PermissionDenied(str(e))
+        return Response(status=status.HTTP_200_OK)
 
 
 class RoundLabDetail(generics.RetrieveAPIView):

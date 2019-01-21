@@ -13,6 +13,7 @@ from .views import (
 from .api_views import (
     CommentList,
     RoundLabDetail,
+    SubmissionAction,
     SubmissionList,
     SubmissionDetail,
 )
@@ -44,6 +45,7 @@ api_urls = ([
     path('submissions/', include(([
         path('', SubmissionList.as_view(), name='list'),
         path('<int:pk>/', SubmissionDetail.as_view(), name='detail'),
+        path('<int:pk>/actions/', SubmissionAction.as_view(), name='actions'),
     ], 'submissions'))),
     path('rounds/', include(([
         path('<int:pk>/', RoundLabDetail.as_view(), name='detail'),
