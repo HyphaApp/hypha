@@ -41,16 +41,25 @@ export default class Listing extends React.Component {
         const { isLoading, error, items, onItemSelection, activeItem } = this.props;
 
         if (isLoading) {
-            return <p>Loading...</p>;
+            return (
+                <div className="listing__list is-loading">
+                    <h5 className="listing__loading-header">Loading...</h5>
+                    <div className="listing__loader" />
+                </div>
+            )
         } else if (error) {
             return (
-                <>
+                <div className="listing__list is-loading">
                     <p>Something went wrong. Please try again later.</p>
                     <p>{ error }</p>
-                </>
-            );
+                </div>
+            )
         } else if (items.length === 0) {
-            return <p>No results found.</p>;
+            return (
+                <div className="listing__list is-loading">
+                    <p>No results found.</p>
+                </div>
+            )
         }
 
         return (

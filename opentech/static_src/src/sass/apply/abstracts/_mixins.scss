@@ -155,13 +155,53 @@
     }
   }
 
+// used for the submission list items in the react app
 @mixin submission-list-item {
     border-bottom: 2px solid $color--light-mid-grey;
     border-right: 2px solid $color--light-mid-grey;
 }
 
+// ie11-specific css
 @mixin target-ie11 {
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
         @content;
+    }
+}
+
+// loading icon
+@mixin loading-icon($speed: .4s) {
+    font-size: 10px;
+    margin: 30px auto;
+    text-indent: -9999em;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(to right, $color--dark-grey 10%, transparent 42%);
+    position: relative;
+    animation: spin $speed infinite linear;
+    transform: translateZ(0);
+
+    &::after {
+        background: $color--light-grey;
+        width: 75%;
+        height: 75%;
+        border-radius: 50%;
+        content: '';
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
     }
 }

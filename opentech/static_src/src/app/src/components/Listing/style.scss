@@ -23,6 +23,14 @@ $listing-header-height: 75px;
             // allow for vertical scrolling on laptops
             height: calc(100vh -  #{$listing-header-height});
         }
+
+        &.is-loading {
+            border-right: 2px solid $color--light-mid-grey;
+
+            p {
+                margin: 20px 0 20px 20px;
+            }
+        }
     }
 
     // inner <li>'s
@@ -85,5 +93,14 @@ $listing-header-height: 75px;
         padding: 0 8px;
         border-radius: 5px;
         font-size: 14px;
+    }
+
+    &__loading-header {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    &__loader {
+        @include loading-icon;
     }
 }
