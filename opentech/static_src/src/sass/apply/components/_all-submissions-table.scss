@@ -37,6 +37,14 @@
                     width: 150px;
                 }
             }
+
+            &.selected {
+                @include checkbox-without-label;
+
+                @include media-query($table-breakpoint) {
+                    width: 60px;
+                }
+            }
         }
 
         tr {
@@ -58,7 +66,7 @@
                     display: flex;
                     align-items: center;
                     padding-top: 20px;
-                    padding-left: 10px;
+                    padding-left: 0;
                 }
 
                 @include media-query(desktop) {
@@ -135,6 +143,16 @@
             }
 
             &.reviews_stats { // sass-lint:disable-line class-name-format
+                display: none;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
+                }
+            }
+
+            // batch action checkboxes
+            &.selected {
+                @include checkbox-without-label;
                 display: none;
 
                 @include media-query($table-breakpoint) {
