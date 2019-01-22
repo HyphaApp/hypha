@@ -5,6 +5,8 @@
     const $body = $('body');
     const $checkbox = $('.js-batch-select');
     const $allCheckboxInput = $('.js-batch-select-all');
+    const $changeStatusForm = $('.js-batch-update-status');
+    const $changeReviewersForm = $('.js-batch-update-reviewers');
     const activeClass = 'batch-actions-enabled';
 
     $allCheckboxInput.change(function () {
@@ -52,6 +54,24 @@
     function resetCheckAllInput() {
         $allCheckboxInput.prop('checked', false);
     }
+
+    // change status form handler
+    $changeStatusForm.submit(function (e) {
+        e.preventDefault();
+
+        $checkbox.each(function () {
+            if ($(this).is(':checked')) {
+                console.log($(this).parents('tr').data('record-id')); // tr data-record-id
+                console.log($(this).parents('tr').find('.js-title').data('tooltip')); // project title
+            }
+        });
+    });
+
+    // reviewers form handler
+    $changeReviewersForm.submit(function (e) {
+        e.preventDefault();
+        console.log('reviewers form submitted');
+    });
 
 
 
