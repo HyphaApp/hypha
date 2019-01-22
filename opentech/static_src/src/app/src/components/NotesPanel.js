@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import LoadingPanel from '@components/LoadingPanel';
 
-export default class NotesPanelItem extends React.Component {
+export default class NotesPanel extends React.Component {
     static propTypes = {
         children: PropTypes.node,
         isLoading: PropTypes.bool.isRequired,
