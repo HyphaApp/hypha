@@ -21,6 +21,7 @@
             });
         }
 
+        toggleBatchActions();
         updateCount();
     });
 
