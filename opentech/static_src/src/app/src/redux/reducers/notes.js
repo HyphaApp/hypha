@@ -19,7 +19,6 @@ function notesFetching(state = false, action) {
     }
 }
 
-
 function notesErrored(state = false, action) {
     switch (action.type) {
         case UPDATE_NOTES:

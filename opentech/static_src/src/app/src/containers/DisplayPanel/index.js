@@ -17,7 +17,6 @@ import SubmissionNotesPanel from '@containers/SubmissionNotesPanel';
 import Tabber, {Tab} from '@components/Tabber'
 import './style.scss';
 
-
 class DisplayPanel extends React.Component  {
     static propTypes = {
         submissionID: PropTypes.number,
@@ -88,6 +87,5 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     clearSubmission: clearCurrentSubmission
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

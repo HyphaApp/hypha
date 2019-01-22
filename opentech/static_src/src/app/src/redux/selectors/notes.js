@@ -21,4 +21,3 @@ export const getNotesForCurrentSubmission = createSelector(
                            .filter(v => v !== undefined && v !== null)
     }
 );
-
