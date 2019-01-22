@@ -622,7 +622,7 @@ DoubleStageDefinition = [
     {
         'proposal_accepted': {
             'display': 'Accepted',
-            'future': 'Application Determination',
+            'future': 'Final Determination',
             'stage': Proposal,
             'permissions': no_permissions,
         },
