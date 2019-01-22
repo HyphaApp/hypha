@@ -67,12 +67,13 @@ class SubmissionsTable(tables.Table):
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
+    selected = tables.CheckBoxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
     screening_status = tables.Column(verbose_name="Screening")
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
+        fields = ('selected', 'title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
         sequence = fields + ('comments',)
 
     def render_lead(self, value):
