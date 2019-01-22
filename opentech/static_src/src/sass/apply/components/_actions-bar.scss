@@ -1,0 +1,32 @@
+.actions-bar {
+    margin-bottom: 20px;
+
+    @include media-query(tablet-landscape) {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__inner {
+        display: flex;
+        align-items: center;
+
+        & > * {
+            padding-left: 20px;
+        }
+
+        &--left {
+            display: none;
+
+            @include media-query(tablet-landscape) {
+                display: flex;
+            }
+        }
+    }
+
+    &__total {
+        background-color: $color--light-blue;
+        color: $color--white;
+        padding: 6px 16px;
+        border-radius: 30px;
+    }
+}
