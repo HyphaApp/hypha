@@ -477,7 +477,7 @@ DoubleStageDefinition = [
     {
         'invited_to_proposal': {
             'display': 'Concept Accepted',
-            'future': 'Preliminary Decision',
+            'future': 'Preliminary Determination',
             'transitions': {
                 'draft_proposal': {
                     'display': 'Progress',
@@ -623,7 +623,7 @@ DoubleStageDefinition = [
     {
         'proposal_accepted': {
             'display': 'Accepted',
-            'future': 'Application Outcome',
+            'future': 'Application Determination',
             'stage': Proposal,
             'permissions': no_permissions,
         },
