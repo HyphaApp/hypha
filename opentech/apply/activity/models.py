@@ -81,7 +81,7 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
     message = models.TextField()
-    visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
+    visibility = models.CharField(choices=list(VISIBILITY.items()), default=PUBLIC, max_length=10)
 
     # Fields for generic relations to other objects. related_object should implement `get_absolute_url`
     content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)

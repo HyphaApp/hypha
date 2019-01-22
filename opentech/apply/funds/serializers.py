@@ -1,10 +1,21 @@
 from rest_framework import serializers
+from wagtail.core.models import Page
 
+from opentech.apply.activity.models import Activity
 from .models import ApplicationSubmission
 
 
+class ActionSerializer(serializers.Field):
+    def to_representation(self, instance):
+        actions = instance.get_actions_for_user(self.context['request'].user)
+        return {
+            transition: action
+            for transition, action in actions
+        }
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='funds:submissions-api:detail')
+    url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
 
     class Meta:
         model = ApplicationSubmission
@@ -15,10 +26,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     meta_questions = serializers.SerializerMethodField()
     stage = serializers.CharField(source='stage.name')
+    actions = ActionSerializer(source='*')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'meta_questions', 'questions')
+        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -45,3 +57,44 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+
+class SubmissionActionSerializer(serializers.ModelSerializer):
+    actions = ActionSerializer(source='*')
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('id', 'actions',)
+
+
+class RoundLabSerializer(serializers.ModelSerializer):
+    workflow = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = ('id', 'title', 'workflow')
+
+    def get_workflow(self, obj):
+        return [
+            {
+                'value': phase.name,
+                'display': phase.display_name
+            }
+            for phase in obj.workflow.values()
+        ]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Activity
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility')
