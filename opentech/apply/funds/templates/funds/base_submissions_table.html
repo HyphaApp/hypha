@@ -3,6 +3,7 @@
 {% load render_table from django_tables2 %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
 {{ filter.form.media.css }}
 {% endblock %}
 
@@ -16,6 +17,8 @@
 
 {% block extra_js %}
     {{ filter.form.media.js }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
     <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/symbol-es6@0.1.2/symbol-es6.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
