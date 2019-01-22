@@ -77,6 +77,7 @@ class BaseRoundsAndLabTestCase:
         self.assertEqual(qs_all.count(), 2)
         self.assertEqual(qs_by_lead.count(), 1)
         self.assertEqual(fetched_obj.lead, obj.lead.full_name)
+        self.assertNotEqual(round_other_lead.title, fetched_obj.title)
 
 
 class TestForLab(BaseRoundsAndLabTestCase, TestCase):

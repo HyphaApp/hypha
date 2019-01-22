@@ -16,7 +16,7 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
     {% if closed_rounds or open_rounds %}
-        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds %}
+        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
     {% endif %}
 
     {% block table %}

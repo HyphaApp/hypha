@@ -89,24 +89,21 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         return super().get_table_data().order_by(F('last_update').desc(nulls_last=True))[:5]
 
     def get_context_data(self, **kwargs):
-        # For OTF staff, display rounds/labs where user is the lead
-        if self.request.user.is_staff:
-            base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
-            base_query = base_query.by_lead(self.request.user)
-            open_rounds = base_query.open()[:6]
-            open_query = '?round_state=open'
-            closed_rounds = base_query.closed()[:6]
-            closed_query = '?round_state=closed'
+        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
+        open_rounds = base_query.open()[:6]
+        open_query = '?round_state=open'
+        closed_rounds = base_query.closed()[:6]
+        closed_query = '?round_state=closed'
+        rounds_title = 'All Rounds and Labs'
 
-            return super().get_context_data(
-                open_rounds=open_rounds,
-                open_query=open_query,
-                closed_rounds=closed_rounds,
-                closed_query=closed_query,
-                **kwargs,
-            )
-        else:
-            return super().get_context_data(**kwargs)
+        return super().get_context_data(
+            open_rounds=open_rounds,
+            open_query=open_query,
+            closed_rounds=closed_rounds,
+            closed_query=closed_query,
+            rounds_title=rounds_title,
+            **kwargs,
+        )
 
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
