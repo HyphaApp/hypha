@@ -7,11 +7,18 @@
     }
 
     &__inner {
-        display: flex;
-        align-items: center;
-
         & > * {
-            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        @include media-query(tablet-landscape) {
+            display: flex;
+            align-items: center;
+
+            & > * {
+                padding-left: 20px;
+                margin: 0;
+            }
         }
 
         &--left {
@@ -19,6 +26,14 @@
 
             @include media-query(tablet-landscape) {
                 display: flex;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity $quick-transition;
+
+                .batch-actions-enabled & {
+                    opacity: 1;
+                    pointer-events: all;
+                }
             }
         }
     }
@@ -28,5 +43,8 @@
         color: $color--white;
         padding: 6px 16px;
         border-radius: 30px;
+        min-width: 120px;
+        text-align: center;
+        font-weight: $weight--semibold;
     }
 }
