@@ -15,5 +15,6 @@ export async function apiFetch(path, method = 'GET', params, options) {
         ...options,
         method,
         mode: 'same-origin',
+        credentials: 'include'
     });
 }

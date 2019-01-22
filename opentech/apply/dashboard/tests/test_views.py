@@ -57,12 +57,6 @@ class TestStaffDashboard(BaseViewTestCase):
     url_name = 'dashboard:{}'
     base_view_name = 'dashboard'
 
-    def test_can_see_need_determinations(self):
-        ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, lead=self.user,
-                                     form_data__title='Internet of things')
-        response = self.get_page()
-        self.assertContains(response, 'Internet of things')
-
     def test_cannot_see_submission_in_determination_when_not_lead(self):
         ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, form_data__title='Reviewr')
         response = self.get_page()

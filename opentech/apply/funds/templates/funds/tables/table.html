@@ -12,7 +12,7 @@
     </tr>
 
     {% with submission=row.record %}
-        <tr class="all-submissions__child" data-parent-id="{{ submission.id }}">
+        <tr class="all-submissions-table__child" data-parent-id="{{ submission.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="submission-meta">
                     <tr class="submission-meta__row">
@@ -48,7 +48,7 @@
 
     {% if row.record.previous %}
         {# we have a linked application, re-render the header row #}
-        <tr class="all-submissions__child" data-parent-id="{{ row.record.id }}">
+        <tr class="all-submissions-table__child" data-parent-id="{{ row.record.id }}">
             <td colspan="{{ table.columns|length }}">
                 <table class="submission-meta">
                     <tr class="submission-meta__row">

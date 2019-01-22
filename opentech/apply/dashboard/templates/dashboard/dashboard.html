@@ -26,17 +26,6 @@
             {% endif %}
         </div>
 </div>
-
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <h3>Applications awaiting determination</h3>
-        {% if awaiting_determination.data %}
-            {% render_table awaiting_determination %}
-        {% else %}
-            No applications awaiting determination
-        {% endif %}
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
