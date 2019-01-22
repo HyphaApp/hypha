@@ -34,3 +34,23 @@ def status_bar(workflow, current_phase, user, css_class='', same_stage=False):
         'class': css_class,
         'public': user.is_applicant,
     }
+
+
+@register.simple_tag()
+def status_display(current_phase, phase, public):
+    if phase.step == current_phase.step:
+        if public:
+            return current_phase.public_name
+        else:
+            return current_phase.display_name
+
+    if phase.step > current_phase.step:
+        if public:
+            return phase.future_name_public
+        else:
+            return phase.future_name_staff
+
+    if public:
+        return phase.public_name
+    else:
+        return phase.display_name
