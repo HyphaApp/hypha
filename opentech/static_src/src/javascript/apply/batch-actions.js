@@ -26,7 +26,6 @@
     });
 
     $checkbox.change(function () {
-
         // see how many checkboxes are :checked
         toggleBatchActions();
 
@@ -73,7 +72,4 @@
         e.preventDefault();
         console.log('reviewers form submitted');
     });
-
-
-
 })(jQuery);
