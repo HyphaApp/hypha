@@ -6,7 +6,8 @@
     const $checkbox = $('.js-batch-select');
     const $allCheckboxInput = $('.js-batch-select-all');
     const $changeStatusForm = $('.js-batch-update-status');
-    const $changeReviewersForm = $('.js-batch-update-reviewers');
+    const $batchReviewersButton = $('.js-batch-update-reviewers');
+    const $batchTitles = $('.js-batch-titles');
     const activeClass = 'batch-actions-enabled';
 
     $allCheckboxInput.change(function () {
@@ -38,6 +39,17 @@
         }
     });
 
+    // append selected project titles to batch update reviewer modal
+    $batchReviewersButton.click(function () {
+        $batchTitles.html('');
+
+        $checkbox.each(function () {
+            if ($(this).is(':checked')) {
+                $batchTitles.append(`<p>${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
+            }
+        });
+    });
+
     function toggleBatchActions() {
         if ($('.js-batch-select:checked').length) {
             $body.addClass(activeClass);
@@ -65,11 +77,5 @@
                 console.log($(this).parents('tr').find('.js-title').data('tooltip')); // project title
             }
         });
-    });
-
-    // reviewers form handler
-    $changeReviewersForm.submit(function (e) {
-        e.preventDefault();
-        console.log('reviewers form submitted');
     });
 })(jQuery);

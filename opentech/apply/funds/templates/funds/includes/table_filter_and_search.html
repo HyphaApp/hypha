@@ -7,9 +7,7 @@
                 <button class="button button--action button--change-status" type="submit">Change status</button>
             </form>
 
-            <form action="" class="js-batch-update-reviewers">
-                <button class="button button--action button--reviewers" type="submit">Reviewers</button>
-            </form>
+            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-update-reviewers" type="submit">Reviewers</button>
         </div>
 
         {# Right #}
@@ -45,3 +43,5 @@
         </ul>
     </form>
 </div>
+
+{% include "funds/includes/batch_update_reviewer_form.html" %}
