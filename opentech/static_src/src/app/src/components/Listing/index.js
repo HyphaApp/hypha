@@ -16,7 +16,12 @@ export default class Listing extends React.Component {
         groupBy: PropTypes.string,
         order: PropTypes.arrayOf(PropTypes.string),
         onItemSelection: PropTypes.func,
+        shouldSelectFirst: PropTypes.bool,
     };
+
+    static defaultProps = {
+        shouldSelectFirst: true,
+    }
 
     state = {
         orderedItems: [],
@@ -32,15 +37,17 @@ export default class Listing extends React.Component {
             this.orderItems();
         }
 
-        const oldItem = prevProps.activeItem
-        const newItem = this.props.activeItem
+        if ( this.props.shouldSelectFirst ){
+            const oldItem = prevProps.activeItem
+            const newItem = this.props.activeItem
 
-        // If we have never activated a submission, get the first item
-        if ( !newItem && !oldItem ) {
-            const firstGroup = this.state.orderedItems[0]
-            if ( firstGroup && firstGroup.items[0] ) {
-                this.setState({firstUpdate: false})
-                this.props.onItemSelection(firstGroup.items[0].id)
+            // If we have never activated a submission, get the first item
+            if ( !newItem && !oldItem ) {
+                const firstGroup = this.state.orderedItems[0]
+                if ( firstGroup && firstGroup.items[0] ) {
+                    this.setState({firstUpdate: false})
+                    this.props.onItemSelection(firstGroup.items[0].id)
+                }
             }
         }
     }
