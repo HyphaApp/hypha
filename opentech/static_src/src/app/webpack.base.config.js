@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
     context: __dirname,
 
-    entry: ['@babel/polyfill', './src/index'],
+    entry: ['@babel/polyfill', './src/datetime', './src/index'],
 
     output: {
         filename: '[name]-[hash].js'

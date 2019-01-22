@@ -13,6 +13,7 @@ import {
 } from '@selectors/submissions';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
+import SubmissionNotesPanel from '@containers/SubmissionNotesPanel';
 import Tabber, {Tab} from '@components/Tabber'
 import './style.scss';
 
@@ -28,7 +29,7 @@ class DisplayPanel extends React.Component  {
     };
 
     render() {
-        const { windowSize: {windowWidth: width} } = this.props;
+        const { windowSize: {windowWidth: width}, submissionID } = this.props;
         const { clearSubmission } = this.props;
 
         const isMobile = width < 1024;
@@ -37,7 +38,7 @@ class DisplayPanel extends React.Component  {
 
         let tabs = [
             <Tab button="Notes" key="note">
-                <p>Notes</p>
+                <SubmissionNotesPanel submissionID={submissionID} />
             </Tab>,
             <Tab button="Status" key="status">
                 <p>Status</p>

@@ -123,7 +123,7 @@ const failLoadingSubmission = submissionID => ({
 });
 
 
-const updateSubmission = (submissionID, data) => ({
+export const updateSubmission = (submissionID, data) => ({
     type: UPDATE_SUBMISSION,
     submissionID,
     data,
