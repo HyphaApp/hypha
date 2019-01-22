@@ -81,7 +81,7 @@
 
         @include media-query(tablet-landscape) {
             background: none;
-            padding: 0;
+            padding: 0 10px;
             border: 0;
             align-items: center;
             justify-content: flex-start;
@@ -109,7 +109,7 @@
 
     &--search {
         position: absolute;
-        top: .35em;
+        top: .65em;
         right: 10px;
 
         svg {
