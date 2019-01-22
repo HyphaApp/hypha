@@ -7,30 +7,36 @@
     const $allCheckboxInput = $('.js-batch-select-all');
     const activeClass = 'batch-actions-enabled';
 
-    $allCheckboxInput.change(function() {
+    $allCheckboxInput.change(function () {
         if ($(this).is(':checked')) {
-            $checkbox.each(function() {
+            $checkbox.each(function () {
                 this.checked = true;
             });
-        } else {
-            $checkbox.each(function() {
+        }
+        else {
+            $checkbox.each(function () {
                 this.checked = false;
             });
         }
 
         updateCount();
-    })
+    });
 
     $checkbox.change(function () {
 
         // see how many checkboxes are :checked
-        checkTotalSelected();
+        toggleBatchActions();
 
         // updates selected checbox count
         updateCount();
+
+        // reset the check all input
+        if (!$(this).is(':checked') && $allCheckboxInput.is(':checked')) {
+            resetCheckAllInput();
+        }
     });
 
-    function checkTotalSelected() {
+    function toggleBatchActions() {
         if ($('.js-batch-select:checked').length) {
             $body.addClass(activeClass);
         }
@@ -41,6 +47,10 @@
 
     function updateCount() {
         $('.js-total-actions').html($('.js-batch-select:checked').length);
+    }
+
+    function resetCheckAllInput() {
+        $allCheckboxInput.prop('checked', false);
     }
 
 
