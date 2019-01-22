@@ -10,6 +10,11 @@
     const $batchTitles = $('.js-batch-titles');
     const activeClass = 'batch-actions-enabled';
 
+    $(window).on('load', function () {
+        toggleBatchActions();
+        updateCount();
+    });
+
     $allCheckboxInput.change(function () {
         if ($(this).is(':checked')) {
             $checkbox.each(function () {
