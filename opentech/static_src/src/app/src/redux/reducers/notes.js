@@ -66,7 +66,7 @@ function notesFailedCreating(state = {}, action) {
         case UPDATE_NOTE:
         case START_CREATING_NOTE_FOR_SUBMISSION:
             return Object.entries(state).reduce((acc, [k, v]) => {
-                if (k !== action.submissionID) {
+                if (parseInt(k) !== action.submissionID) {
                     acc[k] = v;
                 }
                 return acc;
