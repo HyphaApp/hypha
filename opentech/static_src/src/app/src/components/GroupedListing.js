@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import Listing from '@components/Listing';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
+import ListingDropdown from '@components/ListingDropdown';
+
+// add styles from listing header
 
 export default class GroupedListing extends React.Component {
     static propTypes = {
@@ -25,6 +28,11 @@ export default class GroupedListing extends React.Component {
     state = {
         orderedItems: [],
     };
+
+    constructor(props) {
+        super(props);
+        this.listRef = React.createRef();
+    }
 
     componentDidMount() {
         this.orderItems();
@@ -79,7 +87,7 @@ export default class GroupedListing extends React.Component {
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
         return (
-            <ListingGroup key={`listing-group-${group.name}`} item={group}>
+            <ListingGroup key={`listing-group-${group.name}`} item={group} ref={this.listRef}>
                 {group.items.map(item => {
                     return <ListingItem
                         selected={!!activeItem && activeItem===item.id}
@@ -92,13 +100,31 @@ export default class GroupedListing extends React.Component {
     }
 
     render() {
+        const { isLoading, error } = this.props;
+        const isError = Boolean(error);
+
         const passProps = {
             items: this.state.orderedItems,
             renderItem: this.renderItem,
-            isLoading: this.props.isLoading,
-            isError: Boolean(this.error),
-            error: this.error,
+            isLoading,
+            isError,
+            error
         };
-        return <Listing {...passProps} />;
+
+        return  (
+            <div className="grouped-listing">
+                <div className="grouped-listing__dropdown">
+                    {!error && !isLoading &&
+                        <ListingDropdown
+                            list={this.listRef.current}
+                            error={this.props.isLoading}
+                            items={this.state.orderedItems}
+                            isLoading={this.props.isLoading}
+                        />
+                    }
+                </div>
+                <Listing {...passProps} />
+            </div>
+        );
     }
 }

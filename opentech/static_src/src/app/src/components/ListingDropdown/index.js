@@ -5,8 +5,6 @@ export default class ListingDropdown extends React.Component {
     static propTypes = {
         list: PropTypes.object,
         items: PropTypes.array,
-        error: PropTypes.string,
-        isLoading: PropTypes.bool,
     }
 
     handleChange(e) {
@@ -18,11 +16,7 @@ export default class ListingDropdown extends React.Component {
     }
 
     renderListDropdown() {
-        const { isLoading, error, items } = this.props;
-
-        if (isLoading || error) {
-            return;
-        }
+        const { items } = this.props;
 
         return (
             <form className="form form__select">
