@@ -6,3 +6,10 @@ export function fetchNotesForSubmission(submissionID, visibility = 'internal') {
         page_size: 1000,
     });
 }
+
+
+export function createNoteForSubmission(submissionID, note) {
+    return apiFetch(`/apply/api/submissions/${submissionID}/comments/`, 'POST', {}, {
+        body: JSON.stringify(note),
+    });
+}

@@ -32,7 +32,7 @@ export const fetchNotesForSubmission = submissionID => {
 };
 
 const updateNotesForSubmission = (submissionID, data) => {
-    return async function(dispatch) {
+    return function(dispatch) {
         dispatch(updateNotes(data));
         dispatch(updateSubmission(submissionID, {
             comments: data.results.map(v => v.id),
@@ -44,3 +44,21 @@ export const updateNotes = data => ({
     type: UPDATE_NOTES,
     data,
 });
+
+
+export const createNoteForSubmission = (submissionID, note) => {
+    return async function(dispatch) {
+        try {
+            const response = await api.createNoteForSubmission(submissionID, note);
+            const json = await response.json();
+            if (!response.ok) {
+                console.error(json);
+                return;
+            }
+            return;
+        } catch (e) {
+            console.error(e);
+            return;
+        }
+    }
+}
