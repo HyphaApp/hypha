@@ -77,6 +77,11 @@ class AdminSubmissionsTable(SubmissionsTable):
         return format_html('<span>{}</span>', value)
 
 
+class SummarySubmissionsTable(AdminSubmissionsTable):
+    class Meta(AdminSubmissionsTable.Meta):
+        orderable = False
+
+
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 

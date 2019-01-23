@@ -37,6 +37,7 @@ from .tables import (
     RoundsTable,
     RoundsFilter,
     SubmissionFilterAndSearch,
+    SummarySubmissionsTable,
 )
 from .workflow import STAGE_CHANGE_ACTIONS
 
@@ -78,6 +79,10 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
+    table_class = SummarySubmissionsTable
+
+    def get_queryset(self):
+        return super().get_queryset()[:10]
 
     def get_context_data(self, **kwargs):
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
