@@ -12,10 +12,12 @@
 
     // containing <ul>
     &__list {
+        overflow-y: scroll;
+        height: calc(100vh - #{$listing-header-height});
+
         @include media-query(tablet-landscape) {
             // only allow columns to be scrolled on larger screens
             height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
-            overflow-y: scroll;
         }
 
         @include media-query(laptop-short) {
