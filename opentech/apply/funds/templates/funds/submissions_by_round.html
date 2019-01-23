@@ -7,7 +7,7 @@
     <div class="admin-bar">
         <div class="admin-bar__inner admin-bar__inner--with-button">
             <div>
-                <h5><a href="{% url "apply:submissions:list" %}">< Submissions</a></h5>
+                <h5><a href="{% url "apply:submissions:overview" %}">< Submissions</a></h5>
                 <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
                 <h5>{% if object.fund %}{{ object.fund }} | {% endif %}Lead: {{ object.lead }}</h5>
             </div>
