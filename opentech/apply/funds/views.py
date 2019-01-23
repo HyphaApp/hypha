@@ -95,6 +95,10 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
         )
 
 
+class SubmissionListAllView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions.html'
+
+
 class SubmissionsByRound(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_round.html'
 
