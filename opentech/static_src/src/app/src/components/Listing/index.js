@@ -19,6 +19,11 @@ export default class Listing extends React.Component {
         handleRetry: PropTypes.func,
     };
 
+    constructor(props) {
+        super(props);
+        this.listRef = React.createRef();
+    }
+
     renderListItems() {
         const {
             isError,
@@ -44,7 +49,7 @@ export default class Listing extends React.Component {
         }
 
         return (
-            <ul className="listing__list" ref={this.myRef}>
+            <ul className="listing__list" ref={this.listRef}>
                 {items.map(v => renderItem(v))}
             </ul>
         );
@@ -67,9 +72,9 @@ export default class Listing extends React.Component {
             <div className="listing">
                 <div className="listing__header">
                     <ListingDropdown
-                        list={this.myRef.current}
+                        list={this.listRef.current}
                         error={this.props.isLoading}
-                        items={this.state.orderedItems}
+                        items={this.props.items}
                         isLoading={this.props.isLoading}
                     />
                 </div>
