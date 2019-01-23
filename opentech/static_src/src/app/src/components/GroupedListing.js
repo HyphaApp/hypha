@@ -5,8 +5,6 @@ import Listing from '@components/Listing';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
 
-import '@components/Listing/style.scss';
-
 export default class GroupedListing extends React.Component {
     static propTypes = {
         items: PropTypes.array,
@@ -89,6 +87,9 @@ export default class GroupedListing extends React.Component {
         const passProps = {
             items: this.state.orderedItems,
             renderItem: this.renderItem,
+            isLoading: this.props.isLoading,
+            isError: Boolean(this.error),
+            error: this.error,
         };
         return <Listing {...passProps} />;
     }
