@@ -32,6 +32,10 @@ const getCurrentSubmission = createSelector(
     }
 );
 
+const getSubmissionOfID = (submissionID) => createSelector(
+    [getSubmissions], submissions => submissions[submissionID]
+);
+
 const getSubmissionLoadingState = state => state.submissions.itemLoading === true;
 
 const getSubmissionErrorState = state => state.submissions.itemLoadingError === true;
@@ -50,4 +54,5 @@ export {
     getSubmissionsByRoundLoadingState,
     getSubmissionLoadingState,
     getSubmissionErrorState,
+    getSubmissionOfID,
 };

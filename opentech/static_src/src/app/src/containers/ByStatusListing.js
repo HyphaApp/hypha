@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
-import Listing from '@components/Listing';
+import GroupedListing from '@components/GroupedListing';
 import {
     loadCurrentRound,
     setCurrentSubmission,
@@ -50,7 +50,7 @@ class ByStatusListing extends React.Component {
     render() {
         const { error, submissions, round, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
         const isLoading = round && round.isFetching
-        return <Listing
+        return <GroupedListing
                     isLoading={isLoading}
                     error={error}
                     items={submissions}

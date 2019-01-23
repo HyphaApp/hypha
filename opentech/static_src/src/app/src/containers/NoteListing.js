@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { fetchNotesForSubmission } from '@actions/notes';
-import NotesPanel from '@components/NotesPanel';
-import NotesPanelItem from '@components/NotesPanelItem';
+import Listing from '@components/Listing';
+import Note from '@containers/Note';
 import {
     getNotesErrorState,
-    getNotesForCurrentSubmission,
+    getNoteIDsForSubmissionOfID,
     getNotesFetchState,
 } from '@selectors/notes';
 
-class SubmissionNotesPanel extends React.Component {
+class NoteListing extends React.Component {
     static propTypes = {
         loadNotes: PropTypes.func,
         submissionID: PropTypes.number,
-        notes: PropTypes.array,
+        noteIDs: PropTypes.array,
         isErrored: PropTypes.bool,
         isLoading: PropTypes.bool,
     };
@@ -39,19 +39,21 @@ class SubmissionNotesPanel extends React.Component {
         this.props.loadNotes(this.props.submissionID);
     }
 
+    renderItem = noteID => {
+        return <Note key={`note-${noteID}`} noteID={noteID} />;
+    }
+
     render() {
-        const { notes } = this.props;
+        const { noteIDs } = this.props;
         const passProps = {
             isLoading: this.props.isLoading,
-            isErrored: this.props.isErrored,
+            isError: this.props.isErrored,
             handleRetry: this.handleRetry,
+            renderItem: this.renderItem,
+            items: noteIDs,
         };
         return (
-            <NotesPanel {...passProps}>
-                {notes.map(v =>
-                    <NotesPanelItem key={`note-${v.id}`} note={v} />
-                )}
-            </NotesPanel>
+            <Listing {...passProps} />
         );
     }
 }
@@ -60,10 +62,10 @@ const mapDispatchToProps = dispatch => ({
     loadNotes: submissionID => dispatch(fetchNotesForSubmission(submissionID)),
 });
 
-const mapStateToProps = state => ({
-    notes: getNotesForCurrentSubmission(state),
+const mapStateToProps = (state, ownProps) => ({
+    noteIDs: getNoteIDsForSubmissionOfID(ownProps.submissionID)(state),
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SubmissionNotesPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

@@ -1,8 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-export default class NotesPanelItem extends React.Component {
+import { getNoteOfID } from '@selectors/notes';
+
+class Note extends React.Component {
     static propTypes = {
         note: PropTypes.shape({
             user: PropTypes.string,
@@ -21,4 +24,11 @@ export default class NotesPanelItem extends React.Component {
             </div>
         );
     }
+
 }
+
+const mapStateToProps = (state, ownProps) => ({
+    note: getNoteOfID(ownProps.noteID)(state),
+});
+
+export default connect(mapStateToProps)(Note);
