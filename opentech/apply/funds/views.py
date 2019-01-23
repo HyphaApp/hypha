@@ -55,8 +55,8 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             'exclude': self.excluded_fields
         }
 
-    def get_table_kwargs(self):
-        return self.excluded
+    def get_table_kwargs(self, **kwargs):
+        return {**self.excluded, **kwargs}
 
     def get_filterset_kwargs(self, filterset_class):
         kwargs = super().get_filterset_kwargs(filterset_class)
