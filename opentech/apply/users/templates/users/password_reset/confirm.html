@@ -4,10 +4,31 @@
 {% block page_title %}Set your new password{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small wrapper--bottom-space">
-    <form class="form form--with-p-tags" method="post" novalidate>
+    <form class="form" method="post" novalidate>
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if form.errors %}
+            <ul class="errorlist">
+                {% blocktrans count counter=form.errors.items|length %}
+                <li>Please correct the error below.</li>
+                {% plural %}
+                <li>Please correct the errors below.</li>
+                {% endblocktrans %}
+            </ul>
+        {% endif %}
+
         {% csrf_token %}
-        <p>{{ form.new_password1.label_tag }} {{ form.new_password1 }}</p>
-        <p>{{ form.new_password2.label_tag }} {{ form.new_password2 }}</p>
+
+        {% for field in form %}
+            {% include "forms/includes/field.html" %}
+        {% endfor %}
+
         <button class="link link--button-secondary" type="submit">{% trans 'Reset password' %}</button>
     </form>
 </div>
