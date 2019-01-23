@@ -16,3 +16,15 @@ export const getNoteIDsForSubmissionOfID = submissionID => createSelector(
     [getSubmissionOfID(submissionID)],
     submission => (submission || {}).comments || []
 );
+
+const getNoteCreatingErrors = state => state.notes.createError;
+
+export const getNoteCreatingErrorForSubmission = submissionID => createSelector(
+    [getNoteCreatingErrors], errors => errors[submissionID]
+);
+
+const getNoteCreatingState = state => state.notes.isCreating;
+
+export const getNoteCreatingStateForSubmission = submissionID => createSelector(
+    [getNoteCreatingState], creatingStates => creatingStates.includes(submissionID)
+);

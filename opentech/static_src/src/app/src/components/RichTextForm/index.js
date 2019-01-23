@@ -11,6 +11,7 @@ export default class RichTextForm extends React.Component {
         disabled: PropTypes.bool.isRequired,
         initialValue: PropTypes.string,
         onValueChange: PropTypes.func,
+        value: PropTypes.string,
     };
 
     render() {
@@ -18,6 +19,7 @@ export default class RichTextForm extends React.Component {
             disabled: this.props.disabled,
             defaultValue: this.props.initialValue,
             onChange: this.handleValueChange,
+            value: this.props.value,
         };
         return (
             <textarea {...passProps} />
