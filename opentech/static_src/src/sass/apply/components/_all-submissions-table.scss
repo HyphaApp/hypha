@@ -3,6 +3,7 @@
     $root: &;
     font-size: 14px;
 
+
     thead {
         display: none;
 
@@ -226,4 +227,21 @@
     &__toggle {
         padding: 5px 0 5px 5px;
     }
+
+    &__more {
+        display: flex;
+        justify-content: center;
+        background-color: $color--white;
+        padding: 20px 25px;
+        min-height: auto;
+
+        a {
+            margin: 0;
+            flex-basis: auto;
+            font-weight: $weight--semibold;
+        }
+
+    }
+
+
 }

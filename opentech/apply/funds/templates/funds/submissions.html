@@ -21,7 +21,11 @@
     {% endif %}
 
     {% block table %}
+        <h4 class="heading heading--normal heading--no-margin">All Submissions</h4>
         {{ block.super }}
+        <div class="all-submissions-table__more">
+            <a href="{% url 'apply:submissions:list' %}">Show all</a>
+        </div>
     {% endblock %}
 </div>
 

@@ -80,6 +80,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
     table_class = SummarySubmissionsTable
+    table_pagination = False
 
     def get_queryset(self):
         return super().get_queryset()[:10]
