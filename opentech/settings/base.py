@@ -301,6 +301,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+# Django registration
+
+ACCOUNT_ACTIVATION_DAYS = 7  # One-week activation window.
 
 # Logging
 LOGGING = {
