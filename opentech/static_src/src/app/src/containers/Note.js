@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import { getNoteOfID } from '@selectors/notes';
+import NoteListingItem from '@components/NoteListingItem';
 
 class Note extends React.Component {
     static propTypes = {
@@ -17,12 +18,11 @@ class Note extends React.Component {
     render() {
         const { note } = this.props;
 
-        return (
-            <div>
-                <div style={{fontWeight: 'bold'}}>{note.user} - {moment(note.timestamp).format('ll')}</div>
-                <div>{note.message}</div>
-            </div>
-        );
+        return <NoteListingItem
+                user={note.user}
+                message={note.message}
+                timestamp={moment(note.timestamp)}
+        />;
     }
 
 }
