@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ListingDropdown from '@components/ListingDropdown';
 import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
@@ -43,7 +44,7 @@ export default class Listing extends React.Component {
         }
 
         return (
-            <ul className="listing__list">
+            <ul className="listing__list" ref={this.myRef}>
                 {items.map(v => renderItem(v))}
             </ul>
         );
@@ -64,7 +65,14 @@ export default class Listing extends React.Component {
     render() {
         return (
             <div className="listing">
-                <div className="listing__header"></div>
+                <div className="listing__header">
+                    <ListingDropdown
+                        list={this.myRef.current}
+                        error={this.props.isLoading}
+                        items={this.state.orderedItems}
+                        isLoading={this.props.isLoading}
+                    />
+                </div>
                 {this.renderListItems()}
             </div>
         );
