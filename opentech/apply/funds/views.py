@@ -83,7 +83,7 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     table_pagination = False
 
     def get_queryset(self):
-        return super().get_queryset()[:10]
+        return super().get_queryset()[:5]
 
     def get_context_data(self, **kwargs):
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
