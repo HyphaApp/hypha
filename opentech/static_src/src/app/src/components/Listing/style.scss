@@ -1,6 +1,7 @@
 .listing {
     @include target-ie11 {
         max-width: 390px;
+        width: 100%;
     }
 
     &__header {
