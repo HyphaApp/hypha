@@ -16,6 +16,10 @@ html {
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    @supports(overflow-y: overlay) {
+        overflow-y: overlay;
+    }
 }
 
 body {

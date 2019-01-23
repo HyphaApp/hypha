@@ -168,6 +168,13 @@
     }
 }
 
+// ms-edge specific css
+@mixin target-edge {
+    @supports (-ms-ime-align: auto) {
+        @content;
+    }
+}
+
 @mixin table-ordering-styles {
     thead {
         th {
