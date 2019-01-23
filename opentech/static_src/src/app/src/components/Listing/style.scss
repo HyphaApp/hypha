@@ -42,6 +42,10 @@
         @include submission-list-item;
 
         &.is-active {
+            @include target-edge {
+                margin-left: 8px;
+            }
+
             border-right: 2px solid $color--white;
             transition: border $transition;
         }
