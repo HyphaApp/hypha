@@ -26,7 +26,7 @@ export default class ListingDropdown extends React.Component {
 
         return (
             <form className="form form__select">
-                <select onChange={(e) => this.handleChange(e)}>
+                <select onChange={(e) => this.handleChange(e)} aria-label="Jump to listing group">
                     {items.map(group => {
                         return (
                             <option key={`listing-heading-${group.name}`} value={group.name}>{group.name}</option>
