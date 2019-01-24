@@ -23,7 +23,7 @@
     // check if the page has a query string and keep filters open if so on desktop
     const minimumNumberParams = persistedParams.reduce(
         (count, param) => count + urlParams.has(param) ? 1 : 0,
-        1
+        0
     );
 
     if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {

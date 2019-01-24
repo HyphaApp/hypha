@@ -2,11 +2,11 @@
     <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
 
     {% if use_search|default:False %}
-    <form method="get" role="search" class="form form--search-desktop js-search-form">
+    <form method="get" role="search" class="form form--search js-search-form">
         <button class="button button--search" type="submit" aria-label="Search">
             <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
         </button>
-        <input class="input input--search js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
+        <input class="input input--search input--secondary js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
     </form>
     {% endif %}
 </div>
@@ -18,7 +18,7 @@
         <button class="filters__button js-close-filters">Close</button>
     </div>
 
-    <form action="" method="get" class="form form--filters js-filter-form">
+    <form action="{{ filter_action }}" method="get" class="form form--filters js-filter-form">
         <ul class="form__filters select2">
             {{ filter.form.as_ul }}
             <li>

@@ -189,7 +189,8 @@ class ActivityAdapter(AdapterBase):
         visibility = kwargs.get('visibility', PUBLIC)
 
         related = kwargs['related']
-        if isinstance(related, models.Model):
+        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
+        if has_correct_fields and isinstance(related, models.Model):
             related_object = related
         else:
             related_object = None

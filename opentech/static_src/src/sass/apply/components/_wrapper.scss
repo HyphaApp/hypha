@@ -269,13 +269,14 @@
     &--table-actions {
         margin-bottom: 20px;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(tablet-portrait) {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
 
-            & > * {
-                padding-left: 20px;
-            }
+        }
+
+        @include media-query(tablet-landscape) {
+            justify-content: flex-end;
         }
     }
 }

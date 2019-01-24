@@ -1,3 +1,4 @@
+{% load statusbar_tags %}
 <div class="status-bar {{ class }}">
     {% for phase in phases %}
         {% ifchanged phase.step %}
@@ -8,23 +9,8 @@
                             status-bar__item--is-complete
                         {% endif %}">
                 <span class="status-bar__tooltip"
-                {% if phase.step != current_phase.step %}
-                    {% if phase.step > current_phase.step %}
-                        data-title="{{ phase.future_name }}" aria-label="{{ current_phase.future_name }}"
-                    {% else %}
-                        {% if public %}
-                                data-title="{{ phase.public_name }}" aria-label="{{ phase.public_name }}"
-                        {% else %}
-                            data-title="{{ phase }}" aria-label="{{ phase }}"
-                        {% endif %}
-                    {% endif %}
-                {% else %}
-                    {% if public %}
-                        data-title="{{ current_phase.public_name }}" aria-label="{{ current_phase.public_name }}"
-                    {% else %}
-                        data-title="{{ current_phase }}" aria-label="{{ current_phase }}"
-                    {% endif %}
-                {% endif %}
+                    {% status_display current_phase phase public as display_text %}
+                    data-title="{{ display_text }}" aria-label="{{ display_text }}"
                 ></span>
                 <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
             </div>

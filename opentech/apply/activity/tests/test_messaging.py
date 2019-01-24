@@ -11,6 +11,7 @@ from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
 from ..models import Activity, Event, Message, INTERNAL, PUBLIC
@@ -266,6 +267,21 @@ class TestActivityAdapter(TestCase):
 
         self.assertIn(submission.phase.display_name, message)
         self.assertIn(old_phase.display_name, message)
+
+    def test_lead_not_saved_on_activity(self):
+        submission = ApplicationSubmissionFactory()
+        user = UserFactory()
+        self.adapter.send_message('a message', user=user, submission=submission, related=user)
+        activity = Activity.objects.first()
+        self.assertEqual(activity.related_object, None)
+
+    def test_review_saved_on_activtiy(self):
+        submission = ApplicationSubmissionFactory()
+        user = UserFactory()
+        review = ReviewFactory(submission=submission)
+        self.adapter.send_message('a message', user=user, submission=submission, related=review)
+        activity = Activity.objects.first()
+        self.assertEqual(activity.related_object, review)
 
 
 class TestSlackAdapter(AdapterMixin, TestCase):
