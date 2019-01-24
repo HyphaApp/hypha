@@ -66,16 +66,27 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
-class CustomCheckBoxColumn(tables.CheckBoxColumn):
+class LabeledCheckboxColumn(tables.CheckBoxColumn):
+    def wrap_with_label(self, checkbox, for_value):
+        return format_html(
+            '<label for="{}">{}</label>',
+            for_value,
+            checkbox,
+        )
+
+    @property
+    def header(self):
+        checkbox = super().header
+        return self.wrap_with_label(checkbox, 'selectall')
 
     def render(self, value, record, bound_column):
-        return format_html('<label for="">{}</label>', super().render(value, record, bound_column))
-        # needs checkbox id in the for attr above
+        checkbox = super().render(value=value, record=record, bound_column=bound_column)
+        return self.wrap_with_label(checkbox, value)
 
 
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
-    selected = CustomCheckBoxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
+    selected = LabeledCheckboxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
     screening_status = tables.Column(verbose_name="Screening")
