@@ -1,4 +1,6 @@
 .application-display {
+    padding: 20px;
+
     @include media-query(tablet-landscape) {
         height: calc(100vh - var(--header-admin-height) - #{$listing-header-height} - 40px);
         overflow-y: scroll;
