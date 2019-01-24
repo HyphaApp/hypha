@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 import django_filters as filters
@@ -65,9 +66,16 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
+class CustomCheckBoxColumn(tables.CheckBoxColumn):
+
+    def render(self, value, record, bound_column):
+        return format_html('<label for="">{}</label>', super().render(value, record, bound_column))
+        # needs checkbox id in the for attr above
+
+
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
-    selected = tables.CheckBoxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
+    selected = CustomCheckBoxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
     screening_status = tables.Column(verbose_name="Screening")
