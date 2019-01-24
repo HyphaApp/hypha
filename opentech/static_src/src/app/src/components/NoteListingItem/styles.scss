@@ -1,0 +1,20 @@
+.note {
+    margin: 20px;
+    font-size: 14px;
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        font-weight: $weight--bold;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    &__date {
+        color: $color--dark-blue;
+    }
+
+    &__content {
+        margin: 0;
+    }
+}
