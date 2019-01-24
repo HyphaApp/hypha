@@ -8,7 +8,7 @@ from .views import (
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
-    SubmissionListAllView,
+    SubmissionOverviewView,
     SubmissionSealedView,
 )
 from .api_views import SubmissionList, SubmissionDetail
@@ -23,8 +23,8 @@ revision_urls = ([
 app_name = 'funds'
 
 submission_urls = ([
-    path('', SubmissionListView.as_view(), name="list"),
-    path('all/', SubmissionListAllView.as_view(), name="listall"),
+    path('', SubmissionOverviewView.as_view(), name="overview"),
+    path('all/', SubmissionListView.as_view(), name="list"),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),

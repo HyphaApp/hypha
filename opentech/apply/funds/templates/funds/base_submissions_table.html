@@ -8,8 +8,7 @@
 
 {% block content %}
     {% block table %}
-
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True%}
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action %}
 
         {% render_table table %}
     {% endblock %}

@@ -71,3 +71,7 @@
     {% endif %}
 
 {% endblock %}
+
+{% block table.tbody.empty_text %}
+<tr class="all-submissions-table__empty"><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+{% endblock table.tbody.empty_text %}
