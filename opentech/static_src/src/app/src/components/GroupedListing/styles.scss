@@ -1,0 +1,7 @@
+.grouped-listing {
+    &__dropdown {
+        @include submission-list-item;
+        height: $listing-header-height;
+        padding: 20px;
+    }
+}

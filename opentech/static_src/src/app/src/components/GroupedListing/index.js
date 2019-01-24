@@ -6,7 +6,7 @@ import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
 import ListingDropdown from '@components/ListingDropdown';
 
-// add styles from listing header
+import './styles.scss'
 
 export default class GroupedListing extends React.Component {
     static propTypes = {
@@ -87,7 +87,7 @@ export default class GroupedListing extends React.Component {
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
         return (
-            <ListingGroup key={`listing-group-${group.name}`} item={group} ref={this.listRef}>
+            <ListingGroup key={`listing-group-${group.name}`} item={group}>
                 {group.items.map(item => {
                     return <ListingItem
                         selected={!!activeItem && activeItem===item.id}
@@ -116,14 +116,14 @@ export default class GroupedListing extends React.Component {
                 <div className="grouped-listing__dropdown">
                     {!error && !isLoading &&
                         <ListingDropdown
-                            list={this.listRef.current}
-                            error={this.props.isLoading}
-                            items={this.state.orderedItems}
-                            isLoading={this.props.isLoading}
+                            error={error}
+                            isLoading={isLoading}
+                            listRef={this.listRef}
+                            groups={this.state.orderedItems}
                         />
                     }
                 </div>
-                <Listing {...passProps} />
+                <Listing {...passProps} listRef={this.listRef} />
             </div>
         );
     }
