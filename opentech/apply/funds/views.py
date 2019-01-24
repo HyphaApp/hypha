@@ -46,6 +46,7 @@ from .workflow import STAGE_CHANGE_ACTIONS
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
+    filter_action = ''
 
     excluded_fields = []
 
@@ -72,6 +73,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         search_term = self.request.GET.get('query')
         kwargs.update(
             search_term=search_term,
+            filter_action=self.filter_action,
         )
 
         return super().get_context_data(**kwargs)
@@ -81,6 +83,7 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
+    filter_action = reverse_lazy('funds:submissions:list')
 
     def get_queryset(self):
         return super().get_queryset()[:5]

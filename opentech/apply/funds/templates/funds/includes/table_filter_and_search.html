@@ -18,7 +18,7 @@
         <button class="filters__button js-close-filters">Close</button>
     </div>
 
-    <form action="" method="get" class="form form--filters js-filter-form">
+    <form action="{{ filter_action }}" method="get" class="form form--filters js-filter-form">
         <ul class="form__filters select2">
             {{ filter.form.as_ul }}
             <li>
