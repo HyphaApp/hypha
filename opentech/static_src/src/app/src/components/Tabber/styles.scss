@@ -22,8 +22,8 @@
         opacity: .6 ;
         transition: opacity $transition;
 
-        @include media-query(tablet-ladnscape) {
-            padding: 0 20px;
+        @include media-query(tablet-landscape) {
+            margin-right: 20px;
         }
 
         &::after {
