@@ -224,6 +224,17 @@
         }
     }
 
+    &__empty {
+        text-align: center;
+        vertical-align: middle;
+        font-weight: $weight--bold;
+        color: $color--default;
+
+        td {
+            padding: 20px;
+        }
+    }
+
     &__toggle {
         padding: 5px 0 5px 5px;
     }

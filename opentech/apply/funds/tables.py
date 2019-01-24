@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.text import mark_safe, slugify
+from django.utils.translation import ugettext_lazy as _
 
 import django_filters as filters
 import django_tables2 as tables
@@ -49,6 +50,7 @@ class SubmissionsTable(tables.Table):
             'data-record-id': lambda record: record.id,
         }
         attrs = {'class': 'all-submissions-table'}
+        empty_text = _('No submissions available')
 
     def render_user(self, value):
         return value.get_full_name()
