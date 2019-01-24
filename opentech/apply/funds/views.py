@@ -79,8 +79,8 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return super().get_context_data(**kwargs)
 
 
-class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
-    template_name = 'funds/submissions.html'
+class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
     filter_action = reverse_lazy('funds:submissions:list')
@@ -104,7 +104,7 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
         )
 
 
-class SubmissionListAllView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
 
 
