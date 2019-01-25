@@ -22,6 +22,7 @@ from .serializers import (
     SubmissionDetailSerializer,
 )
 from .permissions import IsApplyStaffUser
+from .workflow import PHASES
 
 
 class RoundLabFilter(filters.ModelChoiceFilter):
@@ -35,6 +36,7 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 class SubmissionsFilter(filters.FilterSet):
     # TODO replace with better call to Round and Lab base class
     round = RoundLabFilter(queryset=Page.objects.type(SubmittableStreamForm))
+    status = filters.MultipleChoiceFilter(choices=PHASES)
 
     class Meta:
         model = ApplicationSubmission
