@@ -123,4 +123,22 @@
         border-radius: 5px;
         font-size: 14px;
     }
+
+    &__blank-icon {
+        border-radius: 50%;
+        background-color: $color--light-mid-grey;
+        padding: 20px;
+        width: 130px;
+        height: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+
+        svg {
+            fill: $color--white;
+            width: 74px;
+            height: 68px;
+        }
+    }
 }
