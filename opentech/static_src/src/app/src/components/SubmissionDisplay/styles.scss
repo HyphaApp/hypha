@@ -1,13 +1,4 @@
 .application-display {
+    @include column-scrolling;
     padding: 20px;
-
-    @include media-query(tablet-landscape) {
-        height: calc(100vh - var(--header-admin-height) - #{$listing-header-height} - 40px);
-        overflow-y: scroll;
-    }
-
-    @include media-query(laptop-short) {
-        // allow for vertical scrolling on laptops
-        height: calc(100vh -  #{$listing-header-height} - 40px);
-    }
 }

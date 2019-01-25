@@ -11,18 +11,8 @@
 
     // containing <ul>
     &__list {
+        @include column-scrolling;
         overflow-y: scroll;
-        height: calc(100vh - #{$listing-header-height});
-
-        @include media-query(tablet-landscape) {
-            // only allow columns to be scrolled on larger screens
-            height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
-        }
-
-        @include media-query(laptop-short) {
-            // allow for vertical scrolling on laptops
-            height: calc(100vh -  #{$listing-header-height});
-        }
 
         // ensures the last item will be at the top of the column after navigating to it via the dropdown
         &--applications {
