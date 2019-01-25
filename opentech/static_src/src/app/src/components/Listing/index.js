@@ -9,10 +9,6 @@ import SadNoteIcon from 'images/sad-note.svg';
 import './style.scss';
 
 export default class Listing extends React.Component {
-    static defaultProps = {
-        modifier: '',
-    };
-
     static propTypes = {
         items: PropTypes.array.isRequired,
         isLoading: PropTypes.bool,
@@ -70,6 +66,7 @@ export default class Listing extends React.Component {
                 </div>
                 <p>Something went wrong!</p>
                 <p>Sorry we couldn&apos;t load the notes</p>
+            <div className={`listing__list listing__list--${column} is-blank`}>
                 {error && <p>{error}</p>}
                 {handleRetry && retryButton}
             </div>
