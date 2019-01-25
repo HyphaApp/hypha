@@ -37,10 +37,20 @@ class SubmissionsFilter(filters.FilterSet):
     # TODO replace with better call to Round and Lab base class
     round = RoundLabFilter(queryset=Page.objects.type(SubmittableStreamForm))
     status = filters.MultipleChoiceFilter(choices=PHASES)
+    active = filters.BooleanFilter(method='filter_active')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('status', 'round')
+        fields = ('status', 'round', 'active')
+
+    def filter_active(self, value):
+        if value is None:
+            return qs
+
+        if value:
+            return qs.active()
+        else:
+            return qs.inactive()
 
 
 class SubmissionList(generics.ListAPIView):
