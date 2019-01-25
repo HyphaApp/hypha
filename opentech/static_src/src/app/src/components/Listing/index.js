@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import LoadingPanel from '@components/LoadingPanel';
+import EmptyPanel from '@components/EmptyPanel';
 
-// import NoteIcon from 'images/note.svg';
 import SadNoteIcon from 'images/sad-note.svg';
 
 import './style.scss';
@@ -42,11 +42,7 @@ export default class Listing extends React.Component {
         } else if (isError) {
             return this.renderError();
         } else if (items.length === 0) {
-            return (
-                <div className="listing__list is-loading">
-                    <p>No results found.</p>
-                </div>
-            );
+            return <EmptyPanel column={this.props.column} />;
         }
 
         return (
