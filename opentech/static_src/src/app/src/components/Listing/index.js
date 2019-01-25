@@ -6,6 +6,10 @@ import LoadingPanel from '@components/LoadingPanel';
 import './style.scss';
 
 export default class Listing extends React.Component {
+    static defaultProps = {
+        modifier: '',
+    };
+
     static propTypes = {
         items: PropTypes.array.isRequired,
         isLoading: PropTypes.bool,
