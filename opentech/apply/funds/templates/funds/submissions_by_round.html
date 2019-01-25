@@ -7,10 +7,6 @@
     <div class="admin-bar">
         <div class="admin-bar__inner admin-bar__inner--with-button">
             <div>
-                <a href="{% url "apply:submissions:overview" %}" class="admin-bar__link">
-                    <svg><use xlink:href="#arrow"></use></svg>
-                    Submissions
-                </a>
                 <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
                 <p class="admin-bar__meta">{% if object.fund %}{{ object.fund }} | {% endif %}Lead: {{ object.lead }}</p>
             </div>

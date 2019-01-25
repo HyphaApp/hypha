@@ -29,27 +29,6 @@
         }
     }
 
-    &__link {
-        display: inline-flex;
-        align-items: center;
-        color: $color--white;
-        opacity: .8;
-        transition: opacity $quick-transition;
-        font-size: 14px;
-        font-weight: $weight--semibold;
-
-        &:hover {
-            opacity: 1;
-        }
-
-        svg {
-            width: 30px;
-            height: 30px;
-            fill: $color--white;
-            margin-right: 5px;
-        }
-    }
-
     &__meta {
         margin: 0 0 10px;
     }
