@@ -225,11 +225,6 @@
     }
 
     &__empty {
-        text-align: center;
-        vertical-align: middle;
-        font-weight: $weight--bold;
-        color: $color--default;
-
         td {
             padding: 20px;
         }
@@ -251,8 +246,5 @@
             flex-basis: auto;
             font-weight: $weight--semibold;
         }
-
     }
-
-
 }
