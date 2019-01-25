@@ -25,8 +25,8 @@ class Switcher extends React.Component {
 
         return ReactDOM.createPortal(
             <>
-                <button className={`button button--switcher ${open ? 'is-active' : ''}`} onClick={handleOpen} aria-label="Show grid"><ArrayIcon /></button>
                 <button className={`button button--switcher ${open ? '' : 'is-active'}`} onClick={handleClose} aria-label="Show table"><GridIcon /></button>
+                <button className={`button button--switcher ${open ? 'is-active' : ''}`} onClick={handleOpen} aria-label="Show grid"><ArrayIcon /></button>
             </>,
             this.el,
         );
