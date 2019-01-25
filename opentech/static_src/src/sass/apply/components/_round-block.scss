@@ -80,4 +80,11 @@
     &__title {
         font-weight: $weight--semibold;
     }
+
+    &__not-found {
+        margin: 0;
+        padding: 20px;
+        background-color: $color--white;
+        border: 1px solid $color--light-mid-grey;
+    }
 }

@@ -25,5 +25,9 @@
                 <a href="{% url 'apply:rounds:list' %}{{ query }}">Show all</a>
             </li>
         {% endif %}
+    {% empty %}
+        <p class="round-block__not-found">
+            There are no {% if round.end_date %} {{ display_text|lower }} {% else %} open {% endif %} rounds
+        </p>
     {% endfor %}
 </ul>
