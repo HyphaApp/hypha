@@ -3,7 +3,9 @@ from django.utils.text import mark_safe
 from django.core.files import File
 from django.core.files.storage import get_storage_class
 
-from opentech.apply.stream_forms.blocks import FormFieldBlock
+from opentech.apply.stream_forms.blocks import (
+    FileFieldBlock, FormFieldBlock, ImageFieldBlock, MultiFileFieldBlock
+)
 from opentech.apply.utils.blocks import SingleIncludeMixin
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
@@ -113,6 +115,14 @@ class AccessFormData:
                 yield field_id
 
     @property
+    def question_text_field_ids(self):
+        for field_id, field in self.fields.items():
+            if isinstance(field.block, (FileFieldBlock, ImageFieldBlock, MultiFileFieldBlock)):
+                pass
+            elif isinstance(field.block, FormFieldBlock):
+                yield field_id
+
+    @property
     def raw_fields(self):
         # Field ids to field class mapping - similar to raw_data
         return {
@@ -166,6 +176,14 @@ class AccessFormData:
         return [
             self.render_answer(field_id, include_question=True)
             for field_id in self.normal_blocks
+        ]
+
+    def render_text_blocks_answers(self):
+        # Returns a list of the rendered answers of type text
+        return [
+            self.render_answer(field_id, include_question=True)
+            for field_id in self.question_text_field_ids
+            if field_id not in self.named_blocks
         ]
 
     def output_answers(self):
