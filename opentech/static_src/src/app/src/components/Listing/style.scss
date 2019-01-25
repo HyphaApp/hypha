@@ -128,17 +128,30 @@
         border-radius: 50%;
         background-color: $color--light-mid-grey;
         padding: 20px;
-        width: 130px;
-        height: 130px;
+        width: 150px;
+        height: 150px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: auto;
+        margin: 40px auto 20px;
 
         svg {
             fill: $color--white;
             width: 74px;
             height: 68px;
         }
+    }
+
+    &__help-text {
+        margin: 0 0 5px;
+        color: $color--dark-blue;
+
+        &--standout {
+            font-weight: $weight--bold;
+        }
+    }
+
+    &__help-link {
+        text-decoration: underline;
     }
 }
