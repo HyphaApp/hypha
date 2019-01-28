@@ -17,9 +17,14 @@
         border-bottom: 2px solid $color--light-mid-grey;
     }
 
-    &__body,
     &__header {
         border-right: 2px solid $color--light-mid-grey;
+    }
+
+    &__body {
+        &--center {
+            border-right: 2px solid $color--light-mid-grey;
+        }
     }
 
     // loading container
