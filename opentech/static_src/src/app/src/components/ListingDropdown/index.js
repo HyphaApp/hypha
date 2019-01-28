@@ -1,10 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import smoothscroll from 'smoothscroll-polyfill';
 
 export default class ListingDropdown extends React.Component {
     static propTypes = {
         listRef: PropTypes.object,
         groups: PropTypes.array,
+    }
+
+    componentDidMount() {
+        // polyfill element.scrollTo
+        smoothscroll.polyfill();
     }
 
     handleChange(e) {
