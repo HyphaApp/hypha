@@ -4,8 +4,14 @@ import {
     getCurrentSubmissionID,
     getCurrentRoundID,
     getCurrentRound,
+    getCurrentRoundSubmissionIDs,
 } from '@selectors/submissions';
 
+
+// Round
+export const UPDATE_ROUND = 'UPDATE_ROUND';
+export const START_LOADING_ROUND = 'START_LOADING_ROUND';
+export const FAIL_LOADING_ROUND = 'FAIL_LOADING_ROUND';
 
 // Submissions by round
 export const SET_CURRENT_SUBMISSION_ROUND = 'SET_CURRENT_SUBMISSION_ROUND';
@@ -33,15 +39,66 @@ export const setCurrentSubmission = id => ({
     id,
 });
 
-export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
-    const round = getCurrentRound(getState())
 
-    if (round && requiredFields.every(key => round.hasOwnProperty(key))) {
+export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
+    const state = getState()
+    const round = getCurrentRound(state)
+
+    if ( round && requiredFields.every(key => round.hasOwnProperty(key)) ) {
         return null
     }
 
-    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(getState())))
+    return dispatch(fetchRound(getCurrentRoundID(state)))
 }
+
+export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
+    const state = getState()
+    const submissions = getCurrentRoundSubmissionIDs(state)
+
+    if ( submissions && submissions.length !== 0 ) {
+        return null
+    }
+
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state)))
+}
+
+
+export const fetchRound = roundID => {
+    return async function(dispatch) {
+        dispatch(startLoadingRound(roundID));
+        try {
+            const response = await api.fetchRound(roundID);
+            const json = await response.json();
+            if (response.ok) {
+                dispatch(updateRound(roundID, json));
+            } else {
+                dispatch(failLoadingRound(json.meta.error));
+            }
+        } catch (e) {
+            dispatch(failLoadingRound(e.message));
+        }
+    };
+};
+
+
+const updateRound = (roundID, data) => ({
+    type: UPDATE_ROUND,
+    roundID,
+    data,
+});
+
+
+const startLoadingRound = (roundID) => ({
+    type: START_LOADING_ROUND,
+    roundID,
+});
+
+
+const failLoadingRound = (message) => ({
+    type: FAIL_LOADING_ROUND,
+    message,
+});
+
 
 
 export const fetchSubmissionsByRound = roundID => {

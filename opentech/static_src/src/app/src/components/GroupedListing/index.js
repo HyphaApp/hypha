@@ -15,7 +15,11 @@ export default class GroupedListing extends React.Component {
         isLoading: PropTypes.bool,
         error: PropTypes.string,
         groupBy: PropTypes.string,
-        order: PropTypes.arrayOf(PropTypes.string),
+        order: PropTypes.arrayOf(PropTypes.shape({
+            key: PropTypes.string.isRequired,
+            display: PropTypes.string.isRequired,
+            values: PropTypes.arrayOf(PropTypes.string),
+        })),
         onItemSelection: PropTypes.func,
         shouldSelectFirst: PropTypes.bool,
     };
@@ -39,6 +43,13 @@ export default class GroupedListing extends React.Component {
 
         // get the height of the dropdown container
         this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
+    }
+
+    shouldComponentUpdate(nextProps) {
+        if ( nextProps.items !== this.props.items ) {
+            return true
+        }
+        return false
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -78,19 +89,20 @@ export default class GroupedListing extends React.Component {
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-        const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
-        this.setState({
-            orderedItems: order.concat(leftOverKeys).filter(key => groupedItems[key] ).map(key => ({
-                name: key,
-                items: groupedItems[key] || []
-            })),
-        });
+
+        const orderedItems = order.map(({key, display, values}) => ({
+            name: display,
+            key: key,
+            items: values.reduce((acc, value) => acc.concat(groupedItems[value] || []), [])
+        }))
+
+        this.setState({orderedItems});
     }
 
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
         return (
-            <ListingGroup key={`listing-group-${group.name}`} item={group}>
+            <ListingGroup key={`listing-group-${group.key}`} item={group}>
                 {group.items.map(item => {
                     return <ListingItem
                         selected={!!activeItem && activeItem===item.id}
