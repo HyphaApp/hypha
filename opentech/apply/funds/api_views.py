@@ -5,14 +5,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from django_filters import rest_framework as filters
 
-from wagtail.core.models import Page
-
 from opentech.api.pagination import StandardResultsSetPagination
 from opentech.apply.activity.models import Activity, COMMENT
 from opentech.apply.activity.messaging import messenger, MESSAGES
 
-from .models import ApplicationSubmission
-from .models.applications import SubmittableStreamForm
+from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
     CommentSerializer,
     CommentCreateSerializer,
@@ -34,8 +31,7 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 
 
 class SubmissionsFilter(filters.FilterSet):
-    # TODO replace with better call to Round and Lab base class
-    round = RoundLabFilter(queryset=Page.objects.type(SubmittableStreamForm))
+    round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
     status = filters.MultipleChoiceFilter(choices=PHASES)
     active = filters.BooleanFilter(method='filter_active')
 
@@ -92,8 +88,7 @@ class SubmissionAction(generics.RetrieveAPIView):
 
 
 class RoundLabDetail(generics.RetrieveAPIView):
-    # TODO replace with better call to Round and Lab base class
-    queryset = Page.objects.type(SubmittableStreamForm)
+    queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
