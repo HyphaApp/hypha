@@ -39,19 +39,6 @@
             }
         }
 
-        &.is-loading {
-            padding: 20px;
-            border-right: 2px solid $color--light-mid-grey;
-
-            p {
-                margin: 20px 0 20px 20px;
-            }
-
-            .loading-panel__icon::after {
-                background: $color--light-grey;
-            }
-        }
-
         &.is-blank {
             padding: 20px;
             text-align: center;

@@ -35,7 +35,7 @@ export default class Listing extends React.Component {
 
         if (isLoading) {
             return (
-                <div className="listing__list is-loading">
+                <div className="listing__list">
                     <LoadingPanel />
                 </div>
             );
