@@ -13,6 +13,7 @@
     &__list {
         @include column-scrolling;
         overflow-y: scroll;
+        height: calc(100vh -  #{$listing-header-height});
 
         // ensures the last item will be at the top of the column after navigating to it via the dropdown
         &--applications {
