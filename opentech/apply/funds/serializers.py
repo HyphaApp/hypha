@@ -14,6 +14,15 @@ class ActionSerializer(serializers.Field):
         }
 
 
+class ReviewSummarySerializer(serializers.Field):
+    def to_representation(self, instance):
+        return {
+            'count': instance.reviews.count(),
+            'score': instance.reviews.score(),
+            'recommendation': instance.reviews.recommendation(),
+        }
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
 
@@ -27,10 +36,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     meta_questions = serializers.SerializerMethodField()
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
+    review = ReviewSummarySerializer(source='*')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions')
+        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions', 'review')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
