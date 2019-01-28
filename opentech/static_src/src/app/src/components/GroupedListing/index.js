@@ -36,6 +36,9 @@ export default class GroupedListing extends React.Component {
 
     componentDidMount() {
         this.orderItems();
+
+        // get the height of the dropdown container
+        this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -113,13 +116,14 @@ export default class GroupedListing extends React.Component {
 
         return  (
             <div className="grouped-listing">
-                <div className="grouped-listing__dropdown">
+                <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
                     {!error && !isLoading &&
                         <ListingDropdown
                             error={error}
                             isLoading={isLoading}
                             listRef={this.listRef}
                             groups={this.state.orderedItems}
+                            scrollOffset={this.dropdownContainerHeight}
                         />
                     }
                 </div>

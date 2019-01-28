@@ -6,6 +6,7 @@ export default class ListingDropdown extends React.Component {
     static propTypes = {
         listRef: PropTypes.object,
         groups: PropTypes.array,
+        scrollOffset: PropTypes.number,
     }
 
     componentDidMount() {
@@ -14,7 +15,7 @@ export default class ListingDropdown extends React.Component {
     }
 
     handleChange(e) {
-        const groupHeaderPosition = document.getElementById(e.target.value).offsetTop - 75;
+        const groupHeaderPosition = document.getElementById(e.target.value).offsetTop - this.props.scrollOffset;
 
         this.props.listRef.current.scrollTo({
             top: groupHeaderPosition
