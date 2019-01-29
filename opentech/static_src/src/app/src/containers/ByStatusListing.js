@@ -29,6 +29,7 @@ class ByStatusListing extends React.Component {
         error: PropTypes.string,
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
+        shouldSelectFirst: PropTypes.bool,
     };
 
     componentDidMount() {
@@ -42,13 +43,12 @@ class ByStatusListing extends React.Component {
         const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
         if (roundID && prevProps.roundID !== roundID) {
-            console.log('wooop')
             loadData(this.props)
         }
     }
 
     render() {
-        const { error, submissions, round, setCurrentItem, activeSubmission } = this.props;
+        const { error, submissions, round, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
         const isLoading = round && round.isFetching
         return <Listing
                     isLoading={isLoading}
@@ -56,6 +56,7 @@ class ByStatusListing extends React.Component {
                     items={submissions}
                     activeItem={activeSubmission}
                     onItemSelection={setCurrentItem}
+                    shouldSelectFirst={shouldSelectFirst}
                     groupBy={'status'}
                     order={[
                         // TODO: Set the proper order of statuses.

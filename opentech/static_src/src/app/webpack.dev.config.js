@@ -25,7 +25,9 @@ config.devServer = {
         'Access-Control-Allow-Headers': '*',
     },
     hotOnly: true,
-    port: 3000
+    host: 'localhost',
+    port: 3000,
+    overlay: true
 }
 
 config.devtool = 'source-map'
