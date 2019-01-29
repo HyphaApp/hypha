@@ -14,43 +14,9 @@ export default class Listing extends React.Component {
         groupBy: PropTypes.string,
         order: PropTypes.arrayOf(PropTypes.string),
         onItemSelection: PropTypes.func,
-        shouldSelectFirst: PropTypes.bool,
         renderItem: PropTypes.func.isRequired,
         handleRetry: PropTypes.func,
     };
-
-    static defaultProps = {
-        shouldSelectFirst: true,
-    }
-
-    state = {
-        orderedItems: [],
-    };
-
-    componentDidMount() {
-        this.orderItems();
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        // Order items
-        if (this.props.items !== prevProps.items) {
-            this.orderItems();
-        }
-
-        if ( this.props.shouldSelectFirst ){
-            const oldItem = prevProps.activeItem
-            const newItem = this.props.activeItem
-
-            // If we have never activated a submission, get the first item
-            if ( !newItem && !oldItem ) {
-                const firstGroup = this.state.orderedItems[0]
-                if ( firstGroup && firstGroup.items[0] ) {
-                    this.setState({firstUpdate: false})
-                    this.props.onItemSelection(firstGroup.items[0].id)
-                }
-            }
-        }
-    }
 
     renderListItems() {
         const {
