@@ -18,6 +18,11 @@
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
+
+            {% if closed_rounds or open_rounds %}
+                {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
+            {% endif %}
+
             <h3>Applications to review</h3>
             {% if in_review.data %}
                 {% render_table in_review %}
@@ -30,4 +35,5 @@
 
 {% block extra_js %}
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
 {% endblock %}
