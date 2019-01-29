@@ -1,5 +1,5 @@
 <h4>Get the latest internet freedom news</h4>
-<form class="form" action="{% url "newsletter:subscribe" %}" method="post">
+<form class="form" action="{{ PUBLIC_SITE.root_url }}{% url "newsletter:subscribe" %}" method="post">
     <div>
         {% for field in newsletter_form %}
         <label for="{{ field.id_for_label }}"{% if field.field.required %} required{% endif %}>

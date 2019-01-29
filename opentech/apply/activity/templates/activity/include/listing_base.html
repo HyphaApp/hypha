@@ -19,7 +19,7 @@
                 updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
 
-            {{ activity.message|submission_links|markdown|bleach }}
+            {{ activity|display_for:request.user|submission_links|markdown|bleach }}
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}

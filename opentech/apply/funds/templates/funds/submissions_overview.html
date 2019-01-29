@@ -1,0 +1,42 @@
+{% extends "funds/base_submissions_table.html" %}
+{% load static %}
+{% block title %}Submissions{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--search">
+        {% block page_header %}
+            <div>
+                <h1 class="gamma heading heading--no-margin heading--bold">Submissions</h1>
+                <h5>Track and explore recent submissions</h5>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+
+    {% if closed_rounds or open_rounds %}
+        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds %}
+    {% endif %}
+
+    {% block table %}
+        <h4 class="heading heading--normal heading--no-margin">All Submissions</h4>
+        {{ block.super }}
+        <div class="all-submissions-table__more">
+            <a href="{% url 'apply:submissions:list' %}">Show all</a>
+        </div>
+    {% endblock %}
+</div>
+
+<a href="#" class="js-open-feed link link--open-feed">
+    <h4 class="heading heading--no-margin heading--activity-feed">Activity Feed</h4>
+</a>
+{% include "funds/includes/activity-feed.html" %}
+
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/apply/activity-feed.js' %}"></script>
+{% endblock %}

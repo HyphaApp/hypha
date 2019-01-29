@@ -33,6 +33,11 @@
     ul {
         padding-left: 20px;
         list-style: outside disc;
+
+        &.remove-list-style {
+            padding: 0;
+            list-style: none;
+        }
     }
 
     ol {

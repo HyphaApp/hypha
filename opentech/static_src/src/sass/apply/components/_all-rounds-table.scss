@@ -1,0 +1,23 @@
+.all-rounds-table {
+    @include table-ordering-styles;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+
+        th {
+            padding: 25px 10px;
+        }
+    }
+
+    tbody {
+        td {
+            &.title {
+                padding-top: 15px;
+            }
+        }
+    }
+}

@@ -7,18 +7,34 @@
             return '.js-tabs';
         }
 
-        constructor() {
+        constructor(node) {
+            this.node = node[0];
             // The tabs
-            this.tabItems = Array.prototype.slice.call(document.querySelectorAll('.tab__item:not(.js-tabs-off)'));
+            this.tabItems = Array.prototype.slice.call(this.node.querySelectorAll('.tab__item:not(.js-tabs-off)'));
 
             // The tabs content
             this.tabsContents = Array.prototype.slice.call(document.querySelectorAll('.tabs__content'));
+
+            // The tabs content container
+            this.tabsContentsContainer = Array.prototype.slice.call(document.querySelectorAll('.js-tabs-content'));
 
             // Active classes
             this.tabActiveClass = 'tab__item--active';
             this.tabContentActiveClass = 'tabs__content--current';
             this.defaultSelectedTab = 'tab-1';
+            this.addDataAttributes();
             this.bindEvents();
+        }
+
+        addDataAttributes() {
+            // Add data-attrs for multiple tabs
+            this.tabsContentsContainer.forEach((tabsContent, i) => {
+                tabsContent.dataset.tabs = i + 1;
+            });
+
+            $('.js-tabs').each(function (i) {
+                $(this).attr('data-tabs', i + 1);
+            });
         }
 
         bindEvents() {
@@ -48,15 +64,19 @@
         tabs(e) {
             // Find current tab
             const tab = e.currentTarget;
-            this.stripTabClasses();
+
+            const tabContentId = $(tab).closest('.js-tabs').data('tabs');
+            this.stripTabClasses(tabContentId);
             this.addTabClasses(tab);
             this.updateUrl(tab);
         }
 
-        stripTabClasses() {
+        stripTabClasses(tabContentId) {
             // remove active classes from all tabs and tab contents
-            this.tabItems.forEach(tabItem => tabItem.classList.remove(this.tabActiveClass));
-            this.tabsContents.forEach(tabsContent => tabsContent.classList.remove(this.tabContentActiveClass));
+            const parents = Array.prototype.slice.call($(`.js-tabs-content[data-tabs=${tabContentId}]`).find('.tabs__content'));
+            const childTabs = Array.prototype.slice.call($(`.js-tabs[data-tabs=${tabContentId}]`).find('.tab__item'));
+            childTabs.forEach(tabItem => tabItem.classList.remove(this.tabActiveClass));
+            parents.forEach(tabsContent => tabsContent.classList.remove(this.tabContentActiveClass));
         }
 
         addTabClasses(tab) {
@@ -65,10 +85,12 @@
             }
 
             const tabId = tab.getAttribute('data-tab');
+            const tabContentId = $(tab).closest('.js-tabs').data('tabs');
+            const parents = $(`.js-tabs-content[data-tabs=${tabContentId}]`);
 
             // add active classes to tabs and their respecitve content
             tab.classList.add(this.tabActiveClass);
-            document.querySelector(`#${tabId}`).classList.add(this.tabContentActiveClass);
+            $(parents).find(`#${tabId}`).addClass(this.tabContentActiveClass);
         }
 
         updateUrl(tab) {

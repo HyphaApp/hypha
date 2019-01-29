@@ -1,0 +1,105 @@
+.listing {
+    @include target-ie11 {
+        max-width: 390px;
+        width: 100%;
+    }
+
+    &__header {
+        @include submission-list-item;
+        height: $listing-header-height;
+        padding: 20px;
+    }
+
+    // containing <ul>
+    &__list {
+        @include media-query(tablet-landscape) {
+            // only allow columns to be scrolled on larger screens
+            height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
+            overflow-y: scroll;
+        }
+
+        @include media-query(laptop-short) {
+            // allow for vertical scrolling on laptops
+            height: calc(100vh -  #{$listing-header-height});
+        }
+
+        &.is-loading {
+            padding: 20px;
+            border-right: 2px solid $color--light-mid-grey;
+
+            p {
+                margin: 20px 0 20px 20px;
+            }
+
+            .loading-panel__icon::after {
+                background: $color--light-grey;
+            }
+        }
+    }
+
+    // inner <li>'s
+    &__item {
+        @include submission-list-item;
+
+        &.is-active {
+            @include target-edge {
+                margin-left: 8px;
+            }
+
+            border-right: 2px solid $color--white;
+            transition: border $transition;
+        }
+
+        &--heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: $color--fog;
+            padding: 15px 20px;
+        }
+    }
+
+    // <a> tags
+    &__link {
+        display: block;
+        padding: 30px;
+        background-color: transparent;
+        transition: background-color $quick-transition;
+        position: relative;
+        color: $color--default;
+
+        &::before {
+            content: '';
+            height: 100%;
+            width: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: $color--dark-blue;
+            transition: width $transition;
+        }
+
+        &:hover {
+            background-color: $color--white;
+        }
+
+        .is-active & {
+            background-color: $color--white;
+
+            &::before {
+                width: 8px;
+            }
+        }
+    }
+
+    &__title {
+        margin: 0;
+    }
+
+    &__count {
+        background-color: $color--white;
+        padding: 0 8px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+}

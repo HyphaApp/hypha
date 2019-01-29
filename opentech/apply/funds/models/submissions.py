@@ -61,7 +61,8 @@ class JSONOrderable(models.QuerySet):
                 field = field[1:]
             else:
                 descending = False
-            return OrderBy(RawSQL(f'LOWER({self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
+            db_table = self.model._meta.db_table
+            return OrderBy(RawSQL(f'LOWER({db_table}.{self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
 
         field_ordering = [build_json_order_by(field) for field in field_names]
         return super().order_by(*field_ordering)
@@ -308,6 +309,14 @@ class ApplicationSubmission(
 
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
+
+    screening_status = models.ForeignKey(
+        'funds.ScreeningStatus',
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='screening status',
+        null=True,
+    )
 
     is_draft = False
 
@@ -639,6 +648,9 @@ class ApplicationRevision(AccessFormData, models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    def __str__(self):
+        return f'Revision for {self.submission.title} by {self.author} '
 
     @property
     def form_fields(self):

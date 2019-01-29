@@ -6,6 +6,7 @@ class MESSAGES(Enum):
     EDIT = 'Edit'
     APPLICANT_EDIT = "Applicant Edit"
     NEW_SUBMISSION = 'New Submission'
+    SCREENING = 'Screening'
     TRANSITION = 'Transition'
     DETERMINATION_OUTCOME = 'Determination Outcome'
     INVITED_TO_PROPOSAL = 'Invited To Proposal'

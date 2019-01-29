@@ -265,4 +265,18 @@
     &--reviews-table {
         overflow-x: scroll;
     }
+
+    &--table-actions {
+        margin-bottom: 20px;
+
+        @include media-query(tablet-portrait) {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        @include media-query(tablet-landscape) {
+            justify-content: flex-end;
+        }
+    }
 }

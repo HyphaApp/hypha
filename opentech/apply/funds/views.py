@@ -3,6 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -29,48 +30,102 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableView, ViewDispatcher
 
 from .differ import compare
-from .forms import ProgressSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
-from .models import ApplicationSubmission, ApplicationRevision, RoundBase, LabBase
-from .tables import AdminSubmissionsTable, SubmissionFilter, SubmissionFilterAndSearch
+from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
+from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
+from .tables import (
+    AdminSubmissionsTable,
+    RoundsTable,
+    RoundsFilter,
+    SubmissionFilterAndSearch,
+    SummarySubmissionsTable,
+)
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionListView(AllActivityContextMixin, SingleTableMixin, FilterView):
-    template_name = 'funds/submissions.html'
+class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
-
-    filterset_class = SubmissionFilter
-
-    def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        active_filters = self.filterset.data
-        return super().get_context_data(active_filters=active_filters, **kwargs)
-
-
-@method_decorator(staff_required, name='dispatch')
-class SubmissionSearchView(SingleTableMixin, FilterView):
-    template_name = 'funds/submissions_search.html'
-    table_class = AdminSubmissionsTable
-
     filterset_class = SubmissionFilterAndSearch
+    filter_action = ''
+
+    excluded_fields = []
+
+    @property
+    def excluded(self):
+        return {
+            'exclude': self.excluded_fields
+        }
+
+    def get_table_kwargs(self, **kwargs):
+        return {**self.excluded, **kwargs}
+
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super().get_filterset_kwargs(filterset_class)
+        kwargs.update(self.excluded)
+        return kwargs
 
     def get_queryset(self):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        search_term = self.request.GET.get('query')
+        kwargs = super().get_context_data(**kwargs)
 
-        # We have more data than just 'query'
-        active_filters = len(self.filterset.data) > 1
+        search_term = self.request.GET.get('query')
+        kwargs.update(
+            search_term=search_term,
+            filter_action=self.filter_action,
+        )
+
+        return super().get_context_data(**kwargs)
+
+
+class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_overview.html'
+    table_class = SummarySubmissionsTable
+    table_pagination = False
+    filter_action = reverse_lazy('funds:submissions:list')
+
+    def get_queryset(self):
+        return super().get_queryset()[:5]
+
+    def get_context_data(self, **kwargs):
+        base_query = RoundsAndLabs.objects.with_progress().order_by('end_date')
+        open_rounds = base_query.open()[:6]
+        open_query = '?round_state=open'
+        closed_rounds = base_query.closed()[:6]
+        closed_query = '?round_state=closed'
 
         return super().get_context_data(
-            search_term=search_term,
-            active_filters=active_filters,
+            open_rounds=open_rounds,
+            open_query=open_query,
+            closed_rounds=closed_rounds,
+            closed_query=closed_query,
             **kwargs,
         )
+
+
+class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions.html'
+
+
+class SubmissionsByRound(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_by_round.html'
+
+    excluded_fields = ('round', 'lead', 'fund')
+
+    def get_queryset(self):
+        # We want to only show lab or Rounds in this view, their base class is Page
+        try:
+            self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
+        except Page.DoesNotExist:
+            raise Http404(_("No Round or Lab found matching the query"))
+
+        if not isinstance(self.obj, (LabBase, RoundBase)):
+            raise Http404(_("No Round or Lab found matching the query"))
+        return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(object=self.obj, **kwargs)
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -88,6 +143,26 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
         self.object.perform_transition(action, self.request.user, request=self.request)
         return super().form_valid(form)
+
+
+@method_decorator(staff_required, name='dispatch')
+class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = ScreeningSubmissionForm
+    context_name = 'screening_form'
+
+    def form_valid(self, form):
+        old = copy(self.get_object())
+        response = super().form_valid(form)
+        # Record activity
+        messenger(
+            MESSAGES.SCREENING,
+            request=self.request,
+            user=self.request.user,
+            submission=self.object,
+            related=str(old.screening_status),
+        )
+        return response
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -140,6 +215,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
+        ScreeningSubmissionView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
@@ -423,14 +499,10 @@ class RevisionCompareView(DetailView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionsByRound(DetailView):
-    model = Page
-    template_name = 'funds/submissions_by_round.html'
+class RoundListView(SingleTableMixin, FilterView):
+    template_name = 'funds/rounds.html'
+    table_class = RoundsTable
+    filterset_class = RoundsFilter
 
-    def get_object(self):
-        # We want to only show lab or Rounds in this view, their base class is Page
-        obj = super().get_object()
-        obj = obj.specific
-        if not isinstance(obj, (LabBase, RoundBase)):
-            raise Http404(_("No Round or Lab found matching the query"))
-        return obj
+    def get_queryset(self):
+        return RoundsAndLabs.objects.with_progress()

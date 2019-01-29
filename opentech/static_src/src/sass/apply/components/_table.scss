@@ -1,6 +1,4 @@
-// also in _all-submissions.scss
-$table-breakpoint: 'tablet-landscape';
-
+// base table styles - specific ones in their own scss partial
 table {
     width: 100%;
     background-color: $color--white;
@@ -15,7 +13,7 @@ table {
         text-align: left;
 
         a {
-            color: $color--mid-dark-grey;
+            color: $color--black-60;
             transition: color .25s ease-out;
         }
     }
@@ -78,6 +76,12 @@ table {
                     }
                 }
             }
+
+            &.title {
+                a {
+                    font-weight: $weight--bold;
+                }
+            }
         }
     }
 
@@ -87,6 +91,10 @@ table {
 
         @include media-query($table-breakpoint) {
             padding: 15px 10px;
+        }
+
+        &.title {
+            padding-left: 20px;
         }
     }
 }

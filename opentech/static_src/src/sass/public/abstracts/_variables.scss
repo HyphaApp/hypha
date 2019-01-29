@@ -92,12 +92,15 @@ $breakpoints: (
     'tablet-portrait'   '(min-width: 768px)',
     'tablet-landscape'  '(min-width: 1024px)',
     'desktop'           '(min-width: 1320px)',
-    'deskop-wide'       '(min-width: 2556px)'
+    'desktop-wide'      '(min-width: 2556px)'
 );
 
 // Transition
 $transition: .25s ease-out;
 $quick-transition: .15s ease;
+
+// Delays
+$base-delay: 30ms;
 
 // Spacing
 $mobile-gutter: 20px;

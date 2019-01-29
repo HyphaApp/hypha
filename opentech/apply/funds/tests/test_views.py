@@ -1,15 +1,14 @@
 from datetime import datetime, timedelta
 import json
 
-from opentech.apply.activity.models import Activity
+from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
-    LabFactory,
     LabSubmissionFactory,
-    RoundFactory,
+    ScreeningStatusFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
@@ -181,6 +180,25 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(form_fields__exclude__value=True)
         response = self.get_page(submission)
         self.assertNotContains(response, 'Value')
+
+    def test_can_screen_submission(self):
+        screening_outcome = ScreeningStatusFactory()
+        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        submission = self.refresh(self.submission)
+        self.assertEqual(submission.screening_status, screening_outcome)
+
+    def test_cant_screen_submission(self):
+        """
+        Now that the submission has been rejected, we cannot screen it as staff
+        """
+        submission = ApplicationSubmissionFactory(rejected=True)
+        screening_outcome = ScreeningStatusFactory()
+        response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        self.assertEqual(response.context_data['screening_form'].should_show, False)
+
+    def test_can_view_submission_screening_block(self):
+        response = self.get_page(self.submission)
+        self.assertContains(response, 'Screening Status')
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
@@ -360,6 +378,21 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = InvitedToProposalFactory(draft=True)
         response = self.get_page(submission, 'edit')
         self.assertEqual(response.status_code, 403)
+
+    def test_cant_screen_submission(self):
+        """
+        Test that an applicant cannot set the screening status
+        and that they don't see the screening status form.
+        """
+        screening_outcome = ScreeningStatusFactory()
+        response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        self.assertNotIn('screening_form', response.context_data)
+        submission = self.refresh(self.submission)
+        self.assertNotEqual(submission.screening_status, screening_outcome)
+
+    def test_cant_see_screening_status_block(self):
+        response = self.get_page(self.submission)
+        self.assertNotContains(response, 'Screening Status')
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
@@ -551,49 +584,35 @@ class TestSuperUserSealedView(BaseSubmissionViewTestCase):
         self.assertTrue(str(second.id) in self.client.session['peeked'])
 
 
-class ByRoundTestCase(BaseViewTestCase):
-    url_name = 'apply:submissions:{}'
-    base_view_name = 'by_round'
+class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
+    user_factory = SuperUserFactory
 
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
+    @classmethod
+    def setUpTestData(cls):
+        cls.submission = ApplicationSubmissionFactory()
+        super().setUpTestData()
 
+    def __setUp__(self):
+        self.refresh(self.submission)
 
-class TestStaffSubmissionByRound(ByRoundTestCase):
-    user_factory = StaffFactory
+    def test_can_screen_submission(self):
+        screening_outcome = ScreeningStatusFactory()
+        self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        submission = self.refresh(self.submission)
+        self.assertEqual(submission.screening_status, screening_outcome)
 
-    def test_can_access_round_page(self):
-        new_round = RoundFactory()
-        response = self.get_page(new_round)
-        self.assertContains(response, new_round.title)
+    def test_can_screen_applications_in_final_status(self):
+        """
+        Now that the submission has been rejected (final determination),
+        we can still screen it because we are super user
+        """
+        submission = ApplicationSubmissionFactory(rejected=True)
+        screening_outcome = ScreeningStatusFactory()
+        response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
+        submission = self.refresh(submission)
+        self.assertEqual(response.context_data['screening_form'].should_show, True)
+        self.assertEqual(submission.screening_status, screening_outcome)
 
-    def test_can_access_lab_page(self):
-        new_lab = LabFactory()
-        response = self.get_page(new_lab)
-        self.assertContains(response, new_lab.title)
-
-    def test_cant_access_normal_page(self):
-        new_round = RoundFactory()
-        page = new_round.get_site().root_page
-        response = self.get_page(page)
-        self.assertEqual(response.status_code, 404)
-
-
-class TestApplicantSubmissionByRound(ByRoundTestCase):
-    user_factory = UserFactory
-
-    def test_cant_access_round_page(self):
-        new_round = RoundFactory()
-        response = self.get_page(new_round)
-        self.assertEqual(response.status_code, 403)
-
-    def test_cant_access_lab_page(self):
-        new_lab = LabFactory()
-        response = self.get_page(new_lab)
-        self.assertEqual(response.status_code, 403)
-
-    def test_cant_access_normal_page(self):
-        new_round = RoundFactory()
-        page = new_round.get_site().root_page
-        response = self.get_page(page)
-        self.assertEqual(response.status_code, 403)
+        # Check that an activity was created that should only be viewable internally
+        activity = Activity.objects.filter(message__contains='Screening status').first()
+        self.assertEqual(activity.visibility, INTERNAL)

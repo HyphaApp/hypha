@@ -10,6 +10,7 @@ from opentech.apply.funds.models import (
     LabType,
     RequestForPartners,
     Round,
+    ScreeningStatus,
     SealedRound,
 )
 from opentech.apply.funds.models.forms import (
@@ -43,6 +44,7 @@ __all__ = [
     'LabBaseFormFactory',
     'LabSubmissionFactory',
     'RequestForPartnersFactory',
+    'ScreeningStatusFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
     'TodayRoundFactory',
@@ -133,6 +135,10 @@ class RoundFactory(wagtail_factories.PageFactory):
         now = factory.Trait(
             start_date=factory.LazyFunction(datetime.date.today),
             end_date=factory.LazyFunction(lambda: datetime.date.today() + datetime.timedelta(days=7)),
+        )
+        closed = factory.Trait(
+            start_date=factory.LazyFunction(lambda: datetime.date.today() - datetime.timedelta(days=7)),
+            end_date=factory.LazyFunction(lambda: datetime.date.today() - datetime.timedelta(days=1)),
         )
 
     title = factory.Sequence('Round {}'.format)
@@ -311,3 +317,10 @@ class LabBaseReviewFormFactory(AbstractReviewFormFactory):
         model = LabBaseReviewForm
 
     lab = factory.SubFactory(LabFactory)
+
+
+class ScreeningStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ScreeningStatus
+
+    title = factory.Iterator(["Bad", "Good"])

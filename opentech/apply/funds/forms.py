@@ -22,6 +22,20 @@ class ProgressSubmissionForm(forms.ModelForm):
         self.should_show = bool(choices)
 
 
+class ScreeningSubmissionForm(forms.ModelForm):
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('screening_status',)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.should_show = False
+        if (self.instance.active and self.user.is_apply_staff) or self.user.is_superuser:
+            self.should_show = True
+
+
 class UpdateSubmissionLeadForm(forms.ModelForm):
     class Meta:
         model = ApplicationSubmission

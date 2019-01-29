@@ -38,13 +38,48 @@ class Workflow(dict):
                 stages.append(phase.stage)
         return stages
 
+    @property
+    def stepped_phases(self):
+        phases = defaultdict(list)
+        for phase in list(self.values()):
+            phases[phase.step].append(phase)
+        return phases
+
+    def phases_for(self, user=None):
+        # Grab the first phase for each step - visible only, the display phase
+        return [
+            phase for phase, *_ in self.stepped_phases.values()
+            if not user or phase.permissions.can_view(user)
+        ]
+
+    def previous_visible(self, current, user):
+        """Find the latest phase that the user has view permissions for"""
+        display_phase = self.stepped_phases[current.step][0]
+        phases = self.phases_for()
+        index = phases.index(display_phase)
+        for phase in phases[index - 1::-1]:
+            if phase.permissions.can_view(user):
+                return phase
+
 
 class Phase:
-    def __init__(self, name, display, stage, permissions, step, transitions=dict()):
+    """
+    Phase Names:
+    display_name = phase name displayed to staff members in the system
+    public_name = phase name displayed to applicants in the system
+    future_name = phase_name displayed to applicants if they haven't passed this stage
+    """
+    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
         self.name = name
         self.display_name = display
+        if public and future:
+            raise ValueError("Cant provide both a future and a public name")
+
+        self.public_name = public or self.display_name
+        self.future_name_staff = future or self.display_name
+        self.future_name_public = future or self.public_name
         self.stage = stage
-        self.permissions = permissions
+        self.permissions = Permissions(permissions)
         self.step = step
 
         # For building transition methods on the parent
@@ -69,6 +104,9 @@ class Phase:
     def __str__(self):
         return self.display_name
 
+    def __repr__(self):
+        return f'<Phase {self.display_name} ({self.public_name})>'
+
 
 class Stage:
     def __init__(self, name, has_external_review=False):
@@ -79,60 +117,48 @@ class Stage:
         return self.name
 
 
-class BasePermissions:
-    def can_edit(self, user: 'User') -> bool:
-        if user.is_apply_staff:
-            return self.can_staff_edit(user)
+class Permissions:
+    def __init__(self, permissions):
+        self.permissions = permissions
 
-        if user.is_applicant:
-            return self.can_applicant_edit(user)
+    def can_do(self, user, action):
+        checks = self.permissions.get(action, list())
+        return any(check(user) for check in checks)
 
-    def can_staff_edit(self, user: 'User') -> bool:
-        return False
+    def can_edit(self, user):
+        return self.can_do(user, 'edit')
 
-    def can_applicant_edit(self, user: 'User') -> bool:
-        return False
+    def can_review(self, user):
+        return self.can_do(user, 'review')
 
-    def can_review(self, user: 'User') -> bool:
-        if user.is_apply_staff:
-            return self.can_staff_review(user)
-
-        if user.is_reviewer:
-            return self.can_reviewer_review(user)
-
-    def can_staff_review(self, user: 'User') -> bool:
-        return False
-
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return False
+    def can_view(self, user):
+        return self.can_do(user, 'view')
 
 
-class NoPermissions(BasePermissions):
-    pass
+staff_can = lambda user: user.is_apply_staff  # NOQA
+
+applicant_can = lambda user: user.is_applicant  # NOQA
+
+reviewer_can = lambda user: user.is_reviewer  # NOQA
 
 
-class DefaultPermissions(BasePermissions):
-    # Other Permissions should inherit from this class
-    # Staff can review at any time
-    def can_staff_review(self, user: 'User') -> bool:
-        return True
-
-    def can_staff_edit(self, user: 'User') -> bool:
-        return True
+def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
+    return {
+        'edit': edit,
+        'review': review,
+        'view': view,
+    }
 
 
-class ReviewerReviewPermissions(DefaultPermissions):
-    def can_reviewer_review(self, user: 'User') -> bool:
-        return True
+no_permissions = make_permissions()
 
+default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
 
-class CanEditPermissions(DefaultPermissions):
-    def can_applicant_edit(self, user: 'User') -> bool:
-        return True
+hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can])
 
-    def can_staff_edit(self, user: 'User') -> bool:
-        # Prevent staff editing whilst with the user for edits
-        return False
+reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can])
+
+applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
 
 Request = Stage('Request', False)
@@ -146,409 +172,487 @@ Proposal = Stage('Proposal', True)
 
 INITIAL_STATE = 'in_discussion'
 
-SingleStageDefinition = {
-    INITIAL_STATE: {
-        'transitions': {
-            'internal_review': 'Open Review',
-            'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'more_info': 'Request More Information',
-            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-        },
-        'display': 'Under Discussion',
-        'stage': Request,
-        'permissions': DefaultPermissions(),
-        'step': 0,
-    },
-    'more_info': {
-        'transitions': {
-            INITIAL_STATE: {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+SingleStageDefinition = [
+    {
+        INITIAL_STATE: {
+            'transitions': {
+                'internal_review': 'Open Review',
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'more_info': 'Request More Information',
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
-            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'display': 'Screening',
+            'public': 'Application Received',
+            'stage': Request,
+            'permissions': default_permissions,
         },
-        'display': 'More information required',
-        'stage': Request,
-        'permissions': CanEditPermissions(),
-        'step': 0,
-    },
-    'internal_review': {
-        'transitions': {
-            'post_review_discussion': 'Close Review',
-        },
-        'display': 'Internal Review',
-        'stage': Request,
-        'permissions': DefaultPermissions(),
-        'step': 1,
-    },
-    'post_review_discussion': {
-        'transitions': {
-            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'post_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': Request,
-        'permissions': DefaultPermissions(),
-        'step': 2,
-    },
-    'post_review_more_info': {
-        'transitions': {
-            'post_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+        'more_info': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
-            'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'display': 'More information required',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
         },
-        'display': 'More information required',
-        'stage': Request,
-        'permissions': CanEditPermissions(),
-        'step': 2,
     },
+    {
+        'internal_review': {
+            'transitions': {
+                'post_review_discussion': 'Close Review',
+            },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': Request,
+            'permissions': default_permissions,
+        },
+    },
+    {
+        'post_review_discussion': {
+            'transitions': {
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'post_review_more_info': 'Request More Information',
+            },
+            'display': 'Ready For Discussion',
+            'stage': Request,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'post_review_more_info': {
+            'transitions': {
+                'post_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'More information required',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'determination': {
+            'transitions': {
+                'accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Request,
+        },
+    },
+    {
+        'accepted': {
+            'display': 'Accepted',
+            'future': 'Application Outcome',
+            'stage': Request,
+            'permissions': no_permissions,
+        },
+        'rejected': {
+            'display': 'Dismissed',
+            'stage': Request,
+            'permissions': no_permissions,
+        },
+    },
+]
 
-    'accepted': {
-        'display': 'Accepted',
-        'stage': Request,
-        'permissions': NoPermissions(),
-        'step': 3,
-    },
-    'rejected': {
-        'display': 'Dismissed',
-        'stage': Request,
-        'permissions': NoPermissions(),
-        'step': 3,
-    },
-}
-
-SingleStageExternalDefinition = {
-    INITIAL_STATE: {
-        'transitions': {
-            'ext_internal_review': 'Open Review',
-            'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'ext_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': RequestExt,
-        'permissions': DefaultPermissions(),
-        'step': 0,
-    },
-    'ext_more_info': {
-        'transitions': {
-            INITIAL_STATE: {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+SingleStageExternalDefinition = [
+    {
+        INITIAL_STATE: {
+            'transitions': {
+                'ext_internal_review': 'Open Review',
+                'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_more_info': 'Request More Information',
+                'ext_determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
+            'display': 'Screening',
+            'public': 'Application Received',
+            'stage': RequestExt,
+            'permissions': default_permissions,
         },
-        'display': 'More information required',
-        'stage': RequestExt,
-        'permissions': CanEditPermissions(),
-        'step': 0,
-    },
-    'ext_internal_review': {
-        'transitions': {
-            'ext_post_review_discussion': 'Close Review',
-        },
-        'display': 'Internal Review',
-        'stage': RequestExt,
-        'permissions': DefaultPermissions(),
-        'step': 1,
-    },
-    'ext_post_review_discussion': {
-        'transitions': {
-            'ext_external_review': 'Open AC review',
-            'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'ext_post_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': RequestExt,
-        'permissions': DefaultPermissions(),
-        'step': 2,
-    },
-    'ext_post_review_more_info': {
-        'transitions': {
-            'ext_post_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+        'ext_more_info': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
             },
+            'display': 'More information required',
+            'stage': RequestExt,
+            'permissions': applicant_edit_permissions,
         },
-        'display': 'More information required',
-        'stage': RequestExt,
-        'permissions': CanEditPermissions(),
-        'step': 2,
     },
-    'ext_external_review': {
-        'transitions': {
-            'ext_post_external_review_discussion': 'Close Review',
-        },
-        'display': 'Advisory Council Review',
-        'stage': RequestExt,
-        'permissions': ReviewerReviewPermissions(),
-        'step': 3,
-    },
-    'ext_post_external_review_discussion': {
-        'transitions': {
-            'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'ext_post_external_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': RequestExt,
-        'permissions': DefaultPermissions(),
-        'step': 4,
-    },
-    'ext_post_external_review_more_info': {
-        'transitions': {
-            'ext_post_external_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+    {
+        'ext_internal_review': {
+            'transitions': {
+                'ext_post_review_discussion': 'Close Review',
             },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': RequestExt,
+            'permissions': default_permissions,
         },
-        'display': 'More information required',
-        'stage': RequestExt,
-        'permissions': CanEditPermissions(),
-        'step': 4,
     },
-
-    'ext_accepted': {
-        'display': 'Accepted',
-        'stage': RequestExt,
-        'permissions': NoPermissions(),
-        'step': 5,
-    },
-    'ext_rejected': {
-        'display': 'Dismissed',
-        'stage': RequestExt,
-        'permissions': NoPermissions(),
-        'step': 5,
-    },
-}
-
-
-DoubleStageDefinition = {
-    INITIAL_STATE: {
-        'transitions': {
-            'concept_internal_review': 'Open Review',
-            'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'concept_more_info': 'Request More Information',
-            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-        },
-        'display': 'Under Discussion',
-        'stage': Concept,
-        'permissions': DefaultPermissions(),
-        'step': 0,
-    },
-    'concept_more_info': {
-        'transitions': {
-            INITIAL_STATE: {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+    {
+        'ext_post_review_discussion': {
+            'transitions': {
+                'ext_external_review': 'Open AC review',
+                'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_post_review_more_info': 'Request More Information',
+                'ext_determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
-            'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'display': 'Ready For Discussion',
+            'stage': RequestExt,
+            'permissions': hidden_from_applicant_permissions,
         },
-        'display': 'More information required',
-        'stage': Concept,
-        'permissions': CanEditPermissions(),
-        'step': 0,
-    },
-    'concept_internal_review': {
-        'transitions': {
-            'concept_review_discussion': 'Close Review',
-            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-        },
-        'display': 'Internal Review',
-        'stage': Concept,
-        'permissions': DefaultPermissions(),
-        'step': 1,
-    },
-    'concept_review_discussion': {
-        'transitions': {
-            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'concept_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': Concept,
-        'permissions': DefaultPermissions(),
-        'step': 2,
-    },
-    'concept_review_more_info': {
-        'transitions': {
-            'concept_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+        'ext_post_review_more_info': {
+            'transitions': {
+                'ext_post_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
             },
-            'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            'display': 'More information required',
+            'stage': RequestExt,
+            'permissions': applicant_edit_permissions,
         },
-        'display': 'More information required',
-        'stage': Concept,
-        'permissions': CanEditPermissions(),
-        'step': 2,
     },
-    'invited_to_proposal': {
-        'display': 'Concept Accepted',
-        'transitions': {
-            'draft_proposal': {
-                'display': 'Progress',
-                'method': 'progress_application',
-                'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD},
-                'conditions': 'not_progressed',
+    {
+        'ext_external_review': {
+            'transitions': {
+                'ext_post_external_review_discussion': 'Close Review',
             },
+            'display': 'Advisory Council Review',
+            'stage': RequestExt,
+            'permissions': reviewer_review_permissions,
         },
-        'stage': Concept,
-        'permissions': NoPermissions(),
-        'step': 3,
     },
-    'concept_rejected': {
-        'display': 'Dismissed',
-        'stage': Concept,
-        'permissions': NoPermissions(),
-        'step': 3,
-    },
-    'draft_proposal': {
-        'transitions': {
-            'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
-            'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'external_review': 'Open AC review',
-        },
-        'display': 'Invited for Proposal',
-        'stage': Proposal,
-        'permissions': CanEditPermissions(),
-        'step': 4,
-    },
-    'proposal_discussion': {
-        'transitions': {
-            'proposal_internal_review': 'Open Review',
-            'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'proposal_more_info': 'Request More Information',
-            'external_review': 'Open AC review',
-        },
-        'display': 'Under Discussion',
-        'stage': Proposal,
-        'permissions': DefaultPermissions(),
-        'step': 5,
-    },
-    'proposal_more_info': {
-        'transitions': {
-            'proposal_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+    {
+        'ext_post_external_review_discussion': {
+            'transitions': {
+                'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_post_external_review_more_info': 'Request More Information',
+                'ext_determination': {'display': 'Ready For Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
-            'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'external_review': 'Open AC review',
+            'display': 'Ready for Discussion',
+            'stage': RequestExt,
+            'permissions': hidden_from_applicant_permissions,
         },
-        'display': 'More information required',
-        'stage': Proposal,
-        'permissions': CanEditPermissions(),
-        'step': 5,
-    },
-    'proposal_internal_review': {
-        'transitions': {
-            'post_proposal_review_discussion': 'Close Review',
-        },
-        'display': 'Internal Review',
-        'stage': Proposal,
-        'permissions': DefaultPermissions(),
-        'step': 6,
-    },
-    'post_proposal_review_discussion': {
-        'transitions': {
-            'external_review': 'Open AC review',
-            'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'post_proposal_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': Proposal,
-        'permissions': DefaultPermissions(),
-        'step': 7,
-    },
-    'post_proposal_review_more_info': {
-        'transitions': {
-            'post_proposal_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+        'ext_post_external_review_more_info': {
+            'transitions': {
+                'ext_post_external_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
             },
-            'external_review': 'Open AC review',
+            'display': 'More information required',
+            'stage': RequestExt,
+            'permissions': applicant_edit_permissions,
         },
-        'display': 'More information required',
-        'stage': Proposal,
-        'permissions': CanEditPermissions(),
-        'step': 7,
     },
-    'external_review': {
-        'transitions': {
-            'post_external_review_discussion': 'Close Review',
-        },
-        'display': 'Advisory Council Review',
-        'stage': Proposal,
-        'permissions': ReviewerReviewPermissions(),
-        'step': 8,
-    },
-    'post_external_review_discussion': {
-        'transitions': {
-            'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
-            'post_external_review_more_info': 'Request More Information',
-        },
-        'display': 'Under Discussion',
-        'stage': Proposal,
-        'permissions': DefaultPermissions(),
-        'step': 9,
-    },
-    'post_external_review_more_info': {
-        'transitions': {
-            'post_external_review_discussion': {
-                'display': 'Submit',
-                'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
-                'method': 'create_revision',
+    {
+        'ext_determination': {
+            'transitions': {
+                'ext_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'ext_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
             },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': RequestExt,
         },
-        'display': 'More information required',
-        'stage': Proposal,
-        'permissions': CanEditPermissions(),
-        'step': 9,
     },
-    'proposal_accepted': {
-        'display': 'Accepted',
-        'stage': Proposal,
-        'permissions': NoPermissions(),
-        'step': 10,
+    {
+        'ext_accepted': {
+            'display': 'Accepted',
+            'future': 'Application Outcome',
+            'stage': RequestExt,
+            'permissions': no_permissions,
+        },
+        'ext_rejected': {
+            'display': 'Dismissed',
+            'stage': RequestExt,
+            'permissions': no_permissions,
+        },
     },
-    'proposal_rejected': {
-        'display': 'Dismissed',
-        'stage': Proposal,
-        'permissions': NoPermissions(),
-        'step': 10,
-    },
-
-}
+]
 
 
-Request = Workflow('Request', 'single', **{
-    phase_name: Phase(phase_name, **phase_data)
-    for phase_name, phase_data in SingleStageDefinition.items()
-})
+DoubleStageDefinition = [
+    {
+        INITIAL_STATE: {
+            'transitions': {
+                'concept_internal_review': 'Open Review',
+                'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_more_info': 'Request More Information',
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_determination': {'display': 'Ready For Preliminary Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Screening',
+            'public': 'Concept Note Received',
+            'stage': Concept,
+            'permissions': default_permissions,
+        },
+        'concept_more_info': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_determination': {'display': 'Ready For Preliminary Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'More information required',
+            'stage': Concept,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'concept_internal_review': {
+            'transitions': {
+                'concept_review_discussion': 'Close Review',
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': Concept,
+            'permissions': default_permissions,
+        },
+    },
+    {
+        'concept_review_discussion': {
+            'transitions': {
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_review_more_info': 'Request More Information',
+                'concept_determination': {'display': 'Ready For Preliminary Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Discussion',
+            'stage': Concept,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'concept_review_more_info': {
+            'transitions': {
+                'concept_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'More information required',
+            'stage': Concept,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'concept_determination': {
+            'transitions': {
+                'invited_to_proposal': {'display': 'Invite to Proposal', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'concept_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Preliminary Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Concept,
+        },
+    },
+    {
+        'invited_to_proposal': {
+            'display': 'Concept Accepted',
+            'future': 'Preliminary Determination',
+            'transitions': {
+                'draft_proposal': {
+                    'display': 'Progress',
+                    'method': 'progress_application',
+                    'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD},
+                    'conditions': 'not_progressed',
+                },
+            },
+            'stage': Concept,
+            'permissions': no_permissions,
+        },
+        'concept_rejected': {
+            'display': 'Dismissed',
+            'stage': Concept,
+            'permissions': no_permissions,
+        },
+    },
+    {
+        'draft_proposal': {
+            'transitions': {
+                'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'external_review': 'Open AC review',
+                'proposal_determination': {'display': 'Ready For Final Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Invited for Proposal',
+            'stage': Proposal,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'proposal_discussion': {
+            'transitions': {
+                'proposal_internal_review': 'Open Review',
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_more_info': 'Request More Information',
+                'proposal_determination': {'display': 'Ready For Final Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'external_review': 'Open AC review',
+            },
+            'display': 'Proposal Received',
+            'stage': Proposal,
+            'permissions': default_permissions,
+        },
+        'proposal_more_info': {
+            'transitions': {
+                'proposal_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_determination': {'display': 'Ready For Final Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'external_review': 'Open AC review',
+            },
+            'display': 'More information required',
+            'stage': Proposal,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'proposal_internal_review': {
+            'transitions': {
+                'post_proposal_review_discussion': 'Close Review',
+            },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': Proposal,
+            'permissions': default_permissions,
+        },
+    },
+    {
+        'post_proposal_review_discussion': {
+            'transitions': {
+                'external_review': 'Open AC review',
+                'proposal_determination': {'display': 'Ready For Final Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'post_proposal_review_more_info': 'Request More Information',
+            },
+            'display': 'Ready for Discussion',
+            'stage': Proposal,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'post_proposal_review_more_info': {
+            'transitions': {
+                'post_proposal_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+                'external_review': 'Open AC review',
+            },
+            'display': 'More information required',
+            'stage': Proposal,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'external_review': {
+            'transitions': {
+                'post_external_review_discussion': 'Close Review',
+            },
+            'display': 'Advisory Council Review',
+            'stage': Proposal,
+            'permissions': reviewer_review_permissions,
+        },
+    },
+    {
+        'post_external_review_discussion': {
+            'transitions': {
+                'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_determination': {'display': 'Ready For Final Determination', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'post_external_review_more_info': 'Request More Information',
+            },
+            'display': 'Ready for Discussion',
+            'stage': Proposal,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'post_external_review_more_info': {
+            'transitions': {
+                'post_external_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'More information required',
+            'stage': Proposal,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'proposal_determination': {
+            'transitions': {
+                'proposal_accepted': {'display': 'Accept', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+                'proposal_rejected': {'display': 'Dismiss', 'permissions': {UserPermissions.ADMIN, UserPermissions.LEAD}},
+            },
+            'display': 'Ready for Final Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': Proposal,
+        },
+    },
+    {
+        'proposal_accepted': {
+            'display': 'Accepted',
+            'future': 'Final Determination',
+            'stage': Proposal,
+            'permissions': no_permissions,
+        },
+        'proposal_rejected': {
+            'display': 'Dismissed',
+            'stage': Proposal,
+            'permissions': no_permissions,
+        },
+    },
+]
 
-RequestExternal = Workflow('Request with external review', 'single_ext', **{
-    phase_name: Phase(phase_name, **phase_data)
-    for phase_name, phase_data in SingleStageExternalDefinition.items()
-})
 
-ConceptProposal = Workflow('Concept & Proposal', 'double', **{
-    phase_name: Phase(phase_name, **phase_data)
-    for phase_name, phase_data in DoubleStageDefinition.items()
-})
+def unpack_phases(phases):
+    for step, step_data in enumerate(phases):
+        for name, phase_data in step_data.items():
+            yield step, name, phase_data
+
+
+def phase_data(phases):
+    return {
+        phase_name: Phase(phase_name, step=step, **phase_data)
+        for step, phase_name, phase_data in unpack_phases(phases)
+    }
+
+
+Request = Workflow('Request', 'single', **phase_data(SingleStageDefinition))
+
+RequestExternal = Workflow('Request with external review', 'single_ext', **phase_data(SingleStageExternalDefinition))
+
+ConceptProposal = Workflow('Concept & Proposal', 'double', **phase_data(DoubleStageDefinition))
 
 
 WORKFLOWS = {

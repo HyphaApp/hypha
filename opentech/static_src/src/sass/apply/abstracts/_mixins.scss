@@ -155,3 +155,57 @@
     }
   }
 
+// used for the submission list items in the react app
+@mixin submission-list-item {
+    border-bottom: 2px solid $color--light-mid-grey;
+    border-right: 2px solid $color--light-mid-grey;
+}
+
+// ie11-specific css
+@mixin target-ie11 {
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        @content;
+    }
+}
+
+// ms-edge specific css
+@mixin target-edge {
+    @supports (-ms-ime-align: auto) {
+        @content;
+    }
+}
+
+@mixin table-ordering-styles {
+    thead {
+        th {
+            // ordering
+            &.desc,
+            &.asc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    top: 32px;
+                    margin-left: 3px;
+                }
+
+                a {
+                    color: inherit;
+                }
+            }
+
+            &.desc {
+                &::after {
+                    @include triangle(top, $color--default, 5px);
+                }
+            }
+
+            &.asc {
+                &::after {
+                    @include triangle(bottom, $color--default, 5px);
+                }
+            }
+        }
+    }
+}

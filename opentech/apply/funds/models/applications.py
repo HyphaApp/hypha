@@ -3,7 +3,21 @@ from datetime import date
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import (
+    Case,
+    CharField,
+    Count,
+    F,
+    FloatField,
+    Func,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    When,
+)
+from django.db.models.functions import Coalesce, Length
+
 from django.http import Http404
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
@@ -18,7 +32,7 @@ from wagtail.admin.edit_handlers import (
     ObjectList,
     TabbedInterface,
 )
-from wagtail.core.models import PageManager, PageQuerySet
+from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
@@ -102,6 +116,11 @@ class RoundBaseManager(PageQuerySet):
             Q(start_date__lte=date.today()) &
             Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
         )
+        return rounds
+
+    def closed(self):
+        rounds = self.live().public().specific()
+        rounds = rounds.filter(end_date__lt=date.today())
         return rounds
 
 
@@ -314,3 +333,125 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     def open_round(self):
         return self.live
+
+
+class RoundsAndLabsQueryset(PageQuerySet):
+    def new(self):
+        return self.filter(start_date__gt=date.today())
+
+    def open(self):
+        return self.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+
+    def closed(self):
+        return self.filter(end_date__lt=date.today())
+
+
+class RoundsAndLabsProgressQueryset(RoundsAndLabsQueryset):
+    def active(self):
+        return self.filter(progress__lt=100)
+
+    def inactive(self):
+        return self.filter(progress=100)
+
+
+class RoundsAndLabsManager(PageManager):
+    def get_queryset(self, base_queryset=RoundsAndLabsQueryset):
+        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
+
+        return base_queryset(self.model, using=self._db).type(SubmittableStreamForm).annotate(
+            lead=Coalesce(
+                F('roundbase__lead__full_name'),
+                F('labbase__lead__full_name'),
+            ),
+            start_date=F('roundbase__start_date'),
+            end_date=F('roundbase__end_date'),
+            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
+            fund=Subquery(funds.values('title')[:1]),
+        )
+
+    def with_progress(self):
+        submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
+        closed_submissions = submissions.inactive()
+
+        return self.get_queryset(RoundsAndLabsProgressQueryset).annotate(
+            total_submissions=Coalesce(
+                Subquery(
+                    submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+            closed_submissions=Coalesce(
+                Subquery(
+                    closed_submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+        ).annotate(
+            progress=Case(
+                When(total_submissions=0, then=None),
+                default=(F('closed_submissions') * 100) / F('total_submissions'),
+                output_fields=FloatField(),
+            )
+
+        )
+
+    def open(self):
+        return self.get_queryset().open()
+
+    def closed(self):
+        return self.get_queryset().closed()
+
+    def new(self):
+        return self.get_queryset().new()
+
+
+class RoundsAndLabs(Page):
+    """
+    This behaves as a useful way to get all the rounds and labs that are defined
+    in the project regardless of how they are implemented (lab/round/sealed_round)
+    """
+    class Meta:
+        proxy = True
+
+    def __eq__(self, other):
+        # This is one way equality RoundAndLab == Round/Lab
+        # Round/Lab == RoundAndLab returns False due to different
+        # Concrete class
+        if not isinstance(other, models.Model):
+            return False
+        if not isinstance(other, SubmittableStreamForm):
+            return False
+        my_pk = self.pk
+        if my_pk is None:
+            return self is other
+        return my_pk == other.pk
+
+    objects = RoundsAndLabsManager()
+
+    def save(self, *args, **kwargs):
+        raise NotImplementedError('Do not save through this model')
+
+
+# TODO remove in django 2.1 where this is fixed
+F.relabeled_clone = lambda self, relabels: self
+
+
+# TODO remove in django 2.1 where this is added
+class Left(Func):
+    function = 'LEFT'
+    arity = 2
+
+    def __init__(self, expression, length, **extra):
+        """
+        expression: the name of a field, or an expression returning a string
+        length: the number of characters to return from the start of the string
+        """
+        if not hasattr(length, 'resolve_expression'):
+            if length < 1:
+                raise ValueError("'length' must be greater than 0.")
+        super().__init__(expression, length, **extra)
+
+    def get_substr(self):
+        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])

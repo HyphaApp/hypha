@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'opentech.apply.review',
     'opentech.apply.determinations',
     'opentech.apply.stream_forms',
+    'opentech.apply.utils',
 
     'opentech.public.funds',
     'opentech.public.home',
@@ -116,6 +117,7 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'rest_framework',
 
     'hijack',
     'compat',
@@ -331,6 +333,11 @@ LOGGING = {
         'wagtail': {
             'handlers': ['console', 'sentry'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'sentry'],
+            'level': 'ERROR',
             'propagate': False,
         },
         'django.request': {
@@ -604,4 +611,16 @@ WEBPACK_LOADER = {
 # Django countries package provides ISO 3166-1 countries which does not contain Kosovo.
 COUNTRIES_OVERRIDE = {
     'KV': 'Kosovo',
+}
+
+# Rest Framework configuration
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }

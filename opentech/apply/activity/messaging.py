@@ -1,3 +1,4 @@
+import json
 import requests
 
 from django.db import models
@@ -5,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.template.loader import render_to_string
 
+from .models import INTERNAL, PUBLIC
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -21,6 +23,7 @@ neat_related = {
     MESSAGES.APPLICANT_EDIT: 'revision',
     MESSAGES.EDIT: 'revision',
     MESSAGES.COMMENT: 'comment',
+    MESSAGES.SCREENING: 'old_status',
 }
 
 
@@ -117,7 +120,7 @@ class ActivityAdapter(AdapterBase):
     adapter_type = "Activity Feed"
     always_send = True
     messages = {
-        MESSAGES.TRANSITION: 'Progressed from {old_phase.display_name} to {submission.phase}',
+        MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
@@ -127,14 +130,18 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
+        MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}'
     }
 
     def recipients(self, message_type, **kwargs):
         return [None]
 
-    def extra_kwargs(self, message_type, **kwargs):
-        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED]:
-            from .models import INTERNAL
+    def extra_kwargs(self, message_type, submission, **kwargs):
+        from .models import INTERNAL
+        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
+            return {'visibility': INTERNAL}
+        if message_type == MESSAGES.TRANSITION and not submission.phase.permissions.can_view(submission.user):
+            # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': INTERNAL}
         return {}
 
@@ -150,12 +157,40 @@ class ActivityAdapter(AdapterBase):
 
         return ' '.join(message)
 
+    def handle_transition(self, old_phase, submission, **kwargs):
+        base_message = 'Progressed from {old_display} to {new_display}'
+
+        new_phase = submission.phase
+
+        staff_message = base_message.format(
+            old_display=old_phase.display_name,
+            new_display=new_phase.display_name,
+        )
+
+        if new_phase.permissions.can_view(submission.user):
+            # we need to provide a different message to the applicant
+            if not old_phase.permissions.can_view(submission.user):
+                old_phase = submission.workflow.previous_visible(old_phase, submission.user)
+
+            applicant_message = base_message.format(
+                old_display=old_phase.public_name,
+                new_display=new_phase.public_name,
+            )
+
+            return json.dumps({
+                INTERNAL: staff_message,
+                PUBLIC: applicant_message,
+            })
+
+        return staff_message
+
     def send_message(self, message, user, submission, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
 
         related = kwargs['related']
-        if isinstance(related, models.Model):
+        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
+        if has_correct_fields and isinstance(related, models.Model):
             related_object = related
         else:
             related_object = None
@@ -300,6 +335,11 @@ class EmailAdapter(AdapterBase):
     def recipients(self, message_type, submission, **kwargs):
         if message_type == MESSAGES.READY_FOR_REVIEW:
             return self.reviewers(submission)
+
+        if message_type == MESSAGES.TRANSITION:
+            # Only notify the applicant if the new phase can be seen within the workflow
+            if not submission.phase.permissions.can_view(submission.user):
+                return []
         return [submission.user.email]
 
     def reviewers(self, submission):

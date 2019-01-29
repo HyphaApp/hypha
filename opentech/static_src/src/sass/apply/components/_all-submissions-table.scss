@@ -1,9 +1,8 @@
-// also in _table.scss
-$table-breakpoint: 'tablet-landscape';
-
-.all-submissions {
+.all-submissions-table {
+    @include table-ordering-styles;
     $root: &;
     font-size: 14px;
+
 
     thead {
         display: none;
@@ -13,37 +12,8 @@ $table-breakpoint: 'tablet-landscape';
         }
 
         th {
-            // ordering
-            &.desc,
-            &.asc {
-                position: relative;
-                color: $color--dark-grey;
-
-                &::after {
-                    position: absolute;
-                    top: 32px;
-                    margin-left: 3px;
-                }
-
-                a {
-                    color: inherit;
-                }
-            }
-
-            &.desc {
-                &::after {
-                    @include triangle(top, $color--default, 5px);
-                }
-            }
-
-            &.asc {
-                &::after {
-                    @include triangle(bottom, $color--default, 5px);
-                }
-            }
-
             &.reviews_stats { // sass-lint:disable-line class-name-format
-                color: $color--mid-dark-grey;
+                color: $color--black-60;
 
                 span {
                     font-size: 13px;
@@ -254,7 +224,27 @@ $table-breakpoint: 'tablet-landscape';
         }
     }
 
+    &__empty {
+        td {
+            padding: 20px;
+        }
+    }
+
     &__toggle {
         padding: 5px 0 5px 5px;
+    }
+
+    &__more {
+        display: flex;
+        justify-content: center;
+        background-color: $color--white;
+        padding: 20px 25px;
+        min-height: auto;
+
+        a {
+            margin: 0;
+            flex-basis: auto;
+            font-weight: $weight--semibold;
+        }
     }
 }

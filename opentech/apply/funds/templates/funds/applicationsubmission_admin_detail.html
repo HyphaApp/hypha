@@ -12,6 +12,7 @@
 
 {% block sidebar_forms %}
         {% include "funds/includes/actions.html" %}
+        {% include "funds/includes/screening_form.html" %}
         {% include "funds/includes/progress_form.html" %}
         {% include "funds/includes/update_lead_form.html" %}
         {% include "funds/includes/update_reviewer_form.html" %}
@@ -30,6 +31,10 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block screening_status %}
+    {% include 'funds/includes/screening_status_block.html' %}
 {% endblock %}
 
 {% block determination %}

@@ -11,9 +11,10 @@ from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory
+from opentech.apply.review.tests.factories import ReviewFactory
+from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
-from ..models import Activity, Event, Message
+from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
@@ -221,6 +222,66 @@ class TestActivityAdapter(TestCase):
         self.assertTrue('Removed' in message)
         self.assertTrue('1' in message)
         self.assertTrue('2' in message)
+
+    def test_internal_transition_kwarg_for_invisible_transition(self):
+        submission = ApplicationSubmissionFactory(status='post_review_discussion')
+        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission)
+
+        self.assertEqual(kwargs['visibility'], INTERNAL)
+
+    def test_public_transition_kwargs(self):
+        submission = ApplicationSubmissionFactory()
+        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission)
+
+        self.assertNotIn('visibility', kwargs)
+
+    def test_handle_transition_public_to_public(self):
+        submission = ApplicationSubmissionFactory(status='more_info')
+        old_phase = submission.workflow.phases_for()[0]
+
+        message = self.adapter.handle_transition(old_phase, submission)
+        message = json.loads(message)
+
+        self.assertIn(submission.phase.display_name, message[INTERNAL])
+        self.assertIn(old_phase.display_name, message[INTERNAL])
+        self.assertIn(submission.phase.public_name, message[PUBLIC])
+        self.assertIn(old_phase.public_name, message[PUBLIC])
+
+    def test_handle_transition_to_private_to_public(self):
+        submission = ApplicationSubmissionFactory(status='more_info')
+        old_phase = submission.workflow.phases_for()[1]
+
+        message = self.adapter.handle_transition(old_phase, submission)
+        message = json.loads(message)
+
+        self.assertIn(submission.phase.display_name, message[INTERNAL])
+        self.assertIn(old_phase.display_name, message[INTERNAL])
+        self.assertIn(submission.phase.public_name, message[PUBLIC])
+        self.assertIn(old_phase.public_name, message[PUBLIC])
+
+    def test_handle_transition_to_public_to_private(self):
+        submission = ApplicationSubmissionFactory(status='internal_review')
+        old_phase = submission.workflow.phases_for()[0]
+
+        message = self.adapter.handle_transition(old_phase, submission)
+
+        self.assertIn(submission.phase.display_name, message)
+        self.assertIn(old_phase.display_name, message)
+
+    def test_lead_not_saved_on_activity(self):
+        submission = ApplicationSubmissionFactory()
+        user = UserFactory()
+        self.adapter.send_message('a message', user=user, submission=submission, related=user)
+        activity = Activity.objects.first()
+        self.assertEqual(activity.related_object, None)
+
+    def test_review_saved_on_activtiy(self):
+        submission = ApplicationSubmissionFactory()
+        user = UserFactory()
+        review = ReviewFactory(submission=submission)
+        self.adapter.send_message('a message', user=user, submission=submission, related=review)
+        activity = Activity.objects.first()
+        self.assertEqual(activity.related_object, review)
 
 
 class TestSlackAdapter(AdapterMixin, TestCase):
