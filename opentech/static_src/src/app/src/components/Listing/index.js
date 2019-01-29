@@ -73,10 +73,10 @@ export default class Listing extends React.Component {
 
     // set css custom prop to allow scrolling from dropdown to last item in the list
     setLastItemHeight() {
-        const { listRef } = this.props;
-        if (listRef.current) {
-            document.documentElement.style.setProperty('--last-listing-item-height', listRef.current.lastElementChild.offsetHeight + 'px');
-        }
+        // const { listRef } = this.props;
+        // if (listRef.current) {
+        //     document.documentElement.style.setProperty('--last-listing-item-height', listRef.current.lastElementChild.offsetHeight + 'px');
+        // }
     }
 
     render() {
