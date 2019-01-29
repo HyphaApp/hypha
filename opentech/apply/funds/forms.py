@@ -75,7 +75,6 @@ class UpdateReviewersForm(forms.ModelForm):
         self.submitted_reviewers = submitted_reviewers
         self.fields = fields
 
-
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
         if can_alter_reviewers(self.instance, self.user):

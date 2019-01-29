@@ -80,8 +80,8 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
         return super().get_context_data(
             search_term=search_term,
-            **kwargs,
             filter_action=self.filter_action,
+            **kwargs,
         )
 
 
@@ -103,7 +103,7 @@ class BatchUpdateReviewersView(DelegatedViewMixin):
             old_reviewers = set(submission.reviewers.all())
             reviewers = User.objects.filter(id__in=request.POST.getlist('staff_reviewers'))
             for reviewer in reviewers:
-                if not reviewer in old_reviewers:
+                if reviewer not in old_reviewers:
                     submission.reviewers.add(reviewer)
 
             new_reviewers = set(submission.reviewers.all())
