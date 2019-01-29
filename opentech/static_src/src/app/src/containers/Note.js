@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { markdown } from 'markdown';
 
 import { getNoteOfID } from '@selectors/notes';
 import NoteListingItem from '@components/NoteListingItem';
@@ -20,7 +21,7 @@ class Note extends React.Component {
 
         return <NoteListingItem
                 user={note.user}
-                message={note.message}
+                message={markdown.toHTML(note.message)}
                 timestamp={moment(note.timestamp)}
         />;
     }

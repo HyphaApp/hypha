@@ -1,9 +1,10 @@
 import { fetchSubmission, fetchSubmissionsByRound } from '@api/submissions';
-import { fetchNotesForSubmission } from '@api/notes';
+import { createNoteForSubmission, fetchNotesForSubmission } from '@api/notes';
 
 export default {
     fetchSubmissionsByRound,
     fetchSubmission,
 
     fetchNotesForSubmission,
+    createNoteForSubmission,
 };
