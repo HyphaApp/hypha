@@ -114,6 +114,11 @@ export default class GroupedListing extends React.Component {
             error
         };
 
+        // set css custom prop to allow scrolling from dropdown to last item in the list
+        if (this.listRef.current) {
+            document.documentElement.style.setProperty('--last-listing-item-height', this.listRef.current.lastElementChild.offsetHeight + 'px');
+        }
+
         return  (
             <div className="grouped-listing">
                 <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
