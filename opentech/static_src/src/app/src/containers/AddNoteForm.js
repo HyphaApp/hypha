@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { createNoteForSubmission } from '@actions/notes';
 import RichTextForm from '@components/RichTextForm';
+
 import {
     getNoteCreatingErrorForSubmission,
     getNoteCreatingStateForSubmission,
@@ -17,10 +18,6 @@ class AddNoteForm extends React.Component {
         isCreating: PropTypes.bool,
     };
 
-    state = {
-        text: '',
-    };
-
     render() {
         const { error, isCreating } = this.props;
         return (
@@ -28,34 +25,21 @@ class AddNoteForm extends React.Component {
                 {Boolean(error) && <p>{error}</p>}
                 <RichTextForm
                     disabled={isCreating}
-                    value={this.state.text}
-                    onValueChange={this.setText} />
-                <button
-                    disabled={!this.state.text.trim() || isCreating}
-                    onClick={this.onSubmit}
-                >
-                    Submit
-                </button>
+                    onSubmit={this.onSubmit}
+                />
             </>
         );
     }
 
-    onSubmit = async () => {
+    onSubmit = async (message, resetEditor) => {
         const action = await this.props.submitNote(this.props.submissionID, {
-            message: this.state.text.trim(),
+            message,
             visibility: 'internal',
         });
-        if (action === true) {
-            this.setState({
-                text: ''
-            });
-        }
-    }
 
-    setText = text => {
-        this.setState({
-            text
-        });
+        if (action === true) {
+            resetEditor();
+        }
     }
 }
 

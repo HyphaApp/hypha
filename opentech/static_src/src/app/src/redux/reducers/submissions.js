@@ -37,7 +37,7 @@ function submission(state, action) {
                 ...state,
                 comments: [
                     action.noteID,
-                    ...state.comments
+                    ...(state.comments || []),
                 ]
             };
         default:

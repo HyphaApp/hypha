@@ -14,7 +14,7 @@ export default class NoteListingItem extends React.Component {
         return (
             <div>
                 <div style={{fontWeight: 'bold'}}>{user} - {timestamp.format('ll')}</div>
-                <div>{message}</div>
+                <div dangerouslySetInnerHTML={{__html: message}} />
             </div>
         );
     }

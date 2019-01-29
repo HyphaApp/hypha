@@ -21,14 +21,22 @@ class NoteListing extends React.Component {
     };
 
     componentDidUpdate(prevProps) {
-        const { submissionID } = this.props;
+        const { isLoading, loadNotes, submissionID } = this.props;
         const prevSubmissionID = prevProps.submissionID;
 
         if(
             submissionID !== null && submissionID !== undefined &&
-            prevSubmissionID !== submissionID && !this.props.isLoading
+            prevSubmissionID !== submissionID && !isLoading
         ) {
-            this.props.loadNotes(submissionID);
+            loadNotes(submissionID);
+        }
+    }
+
+    componentDidMount() {
+        const { isLoading, loadNotes, submissionID } = this.props;
+
+        if (submissionID && !isLoading) {
+            loadNotes(submissionID);
         }
     }
 

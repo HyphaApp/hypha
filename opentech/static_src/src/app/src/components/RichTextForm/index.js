@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import RichTextEditor from 'react-rte';
 
 export default class RichTextForm extends React.Component {
     static defaultProps = {
@@ -9,24 +10,53 @@ export default class RichTextForm extends React.Component {
 
     static propTypes = {
         disabled: PropTypes.bool.isRequired,
-        initialValue: PropTypes.string,
         onValueChange: PropTypes.func,
         value: PropTypes.string,
+        onSubmit: PropTypes.func,
     };
+
+    state = {
+        value: RichTextEditor.createEmptyValue(),
+    };
+
+    setEditor = editor => {
+        this.editor = editor;
+    }
+
+    resetEditor = () => {
+        this.setState({value: RichTextEditor.createEmptyValue()});
+    }
 
     render() {
         const passProps = {
             disabled: this.props.disabled,
-            defaultValue: this.props.initialValue,
             onChange: this.handleValueChange,
-            value: this.props.value,
+            value: this.state.value,
+            ref: this.setEditor,
         };
+
         return (
-            <textarea {...passProps} />
+            <div>
+                <RichTextEditor {...passProps} />
+                <button
+                    disabled={this.isEmpty() || this.props.disabled}
+                    onClick={this.handleSubmit}
+                >
+                    Submit
+                </button>
+            </div>
         );
     }
 
-    handleValueChange = evt => {
-        this.props.onValueChange(evt.target.value);
+    isEmpty = () => {
+        return !this.state.value;
+    }
+
+    handleValueChange = value => {
+        this.setState({value});
+    }
+
+    handleSubmit = () => {
+        this.props.onSubmit(this.state.value.toString('markdown'), this.resetEditor);
     }
 }
