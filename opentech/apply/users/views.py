@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.models import BaseUserManager
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
@@ -71,6 +72,9 @@ class ActivationView(TemplateView):
 
         if self.valid(user, kwargs.get('token')):
             user.is_active = True
+            # Set a temp password so users who skip setting one can use the password reset function.
+            temp_pass = BaseUserManager().make_random_password(length=32)
+            user.set_password(temp_pass)
             user.save()
 
             user.backend = 'django.contrib.auth.backends.ModelBackend'

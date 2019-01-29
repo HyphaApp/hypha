@@ -3,7 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import F, Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -85,8 +85,8 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
     table_pagination = False
     filter_action = reverse_lazy('funds:submissions:list')
 
-    def get_queryset(self):
-        return super().get_queryset()[:5]
+    def get_table_data(self):
+        return super().get_table_data().order_by(F('last_update').desc(nulls_last=True))[:5]
 
     def get_context_data(self, **kwargs):
         base_query = RoundsAndLabs.objects.with_progress().order_by('end_date')
