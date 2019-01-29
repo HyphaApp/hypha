@@ -58,6 +58,7 @@ AddressAnswer.propTypes = {answer: PropTypes.objectOf(PropTypes.string)}
 const answerTypes = {
     'no_response': BasicAnswer,
     'char': BasicAnswer,
+    'text': BasicAnswer,
     'email': BasicAnswer,
     'name': BasicAnswer,
     'value': BasicAnswer,
@@ -86,7 +87,7 @@ export const answerPropTypes = PropTypes.oneOfType([
 ])
 
 const Answer = ({ answer, type }) => {
-    const AnswerType = answerTypes[type];
+    const AnswerType = answerTypes[type] || BasicAnswer;
 
     return <AnswerType answer={answer} />;
 }
