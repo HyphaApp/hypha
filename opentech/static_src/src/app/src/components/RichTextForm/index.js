@@ -19,10 +19,6 @@ export default class RichTextForm extends React.Component {
         value: RichTextEditor.createEmptyValue(),
     };
 
-    setEditor = editor => {
-        this.editor = editor;
-    }
-
     resetEditor = () => {
         this.setState({value: RichTextEditor.createEmptyValue()});
     }
@@ -32,7 +28,6 @@ export default class RichTextForm extends React.Component {
             disabled: this.props.disabled,
             onChange: this.handleValueChange,
             value: this.state.value,
-            ref: this.setEditor,
         };
 
         return (

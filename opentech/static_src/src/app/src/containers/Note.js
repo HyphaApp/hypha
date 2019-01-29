@@ -18,7 +18,6 @@ class Note extends React.Component {
 
     render() {
         const { note } = this.props;
-        console.log(note.timestamp);
 
         return <NoteListingItem
                 user={note.user}
