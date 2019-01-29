@@ -39,7 +39,7 @@ from .tables import (
     SubmissionFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS
+from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -128,6 +128,29 @@ class SubmissionsByRound(BaseAdminSubmissionsTable):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(object=self.obj, **kwargs)
+
+
+class SubmissionsByStatus(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_by_status.html'
+    status_mapping = PHASES_MAPPING
+
+    def get(self, request, *args, **kwargs):
+        self.status = kwargs.get('status')
+        if self.status not in self.status_mapping:
+            raise Http404(_("No statuses match the requested value"))
+
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status__in=self.status_mapping[self.status]['statuses'])
+
+    def get_context_data(self, **kwargs):
+        status_data = self.status_mapping[self.status]
+        return super().get_context_data(
+            status=status_data['name'],
+            statuses=status_data['statuses'],
+            **kwargs,
+        )
 
 
 @method_decorator(staff_required, name='dispatch')
