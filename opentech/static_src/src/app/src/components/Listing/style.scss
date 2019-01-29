@@ -25,6 +25,19 @@
             height: calc(100vh -  #{$listing-header-height});
         }
 
+        // ensures the last item will be at the top of the column after navigating to it via the dropdown
+        &--applications {
+            padding-bottom: calc(100vh - var(--last-listing-item-height) - #{$listing-header-height});
+
+            @include media-query(tablet-landscape) {
+                padding-bottom: calc(100vh - var(--header-admin-height) - var(--last-listing-item-height) - #{$listing-header-height});
+            }
+
+            @include media-query(laptop-short) {
+                padding-bottom: calc(100vh - var(--last-listing-item-height) - #{$listing-header-height});
+            }
+        }
+
         &.is-loading {
             padding: 20px;
             border-right: 2px solid $color--light-mid-grey;

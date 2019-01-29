@@ -20,6 +20,10 @@ export default class Listing extends React.Component {
         column: PropTypes.string,
     };
 
+    componentDidUpdate() {
+        this.setLastItemHeight();
+    }
+
     renderListItems() {
         const {
             isError,
@@ -46,6 +50,8 @@ export default class Listing extends React.Component {
             );
         }
 
+        this.setLastItemHeight();
+
         return (
             <ul className={`listing__list listing__list--${column}`} ref={listRef}>
                 {items.map(v => renderItem(v))}
@@ -63,6 +69,14 @@ export default class Listing extends React.Component {
                 {handleRetry && retryButton}
             </div>
         );
+    }
+
+    // set css custom prop to allow scrolling from dropdown to last item in the list
+    setLastItemHeight() {
+        const { listRef } = this.props;
+        if (listRef.current) {
+            document.documentElement.style.setProperty('--last-listing-item-height', listRef.current.lastElementChild.offsetHeight + 'px');
+        }
     }
 
     render() {
