@@ -27,10 +27,17 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import DelegateableView, ViewDispatcher
+from opentech.apply.users.models import User
+from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
-from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
+from .forms import (
+    BatchUpdateReviewersForm,
+    ProgressSubmissionForm,
+    ScreeningSubmissionForm,
+    UpdateReviewersForm,
+    UpdateSubmissionLeadForm,
+)
 from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
 from .tables import (
     AdminSubmissionsTable,
@@ -39,6 +46,7 @@ from .tables import (
     SubmissionFilterAndSearch,
     SummarySubmissionsTable,
 )
+from .utils import save_reviewers_message
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -68,22 +76,54 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs)
-
         search_term = self.request.GET.get('query')
-        kwargs.update(
+
+        return super().get_context_data(
             search_term=search_term,
+            **kwargs,
             filter_action=self.filter_action,
         )
 
-        return super().get_context_data(**kwargs)
+
+@method_decorator(staff_required, name='dispatch')
+class BatchUpdateReviewersView(DelegatedViewMixin):
+    form_class = BatchUpdateReviewersForm
+    context_name = 'batch_reviewer_form'
+
+    def save_all(self, request, *args, **kwargs):
+        """
+        Loop through all submissions selected on the page,
+        Add any reviewers that were selected,  only if they are not
+        currently saved to that submission.
+        Send out a message of updates.
+        """
+        for submission_id in request.POST["submission_ids"].split(","):
+            submission = ApplicationSubmission.objects.get(id=submission_id)
+
+            old_reviewers = set(submission.reviewers.all())
+            reviewers = User.objects.filter(id__in=request.POST.getlist('staff_reviewers'))
+            for reviewer in reviewers:
+                if not reviewer in old_reviewers:
+                    submission.reviewers.add(reviewer)
+
+            new_reviewers = set(submission.reviewers.all())
+
+            save_reviewers_message(old_reviewers, new_reviewers, request, submission)
+
+    @classmethod
+    def contribute_form(cls, submission, user):
+        # We don't want to pass the submission (this is a batch update) or user to the form
+        return super().contribute_form(None, None)
 
 
-class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
     filter_action = reverse_lazy('funds:submissions:list')
+    form_views = [
+        BatchUpdateReviewersView
+    ]
 
     def get_table_data(self):
         return super().get_table_data().order_by(F('last_update').desc(nulls_last=True))[:5]
@@ -198,17 +238,8 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         new_reviewers = set(form.instance.reviewers.all())
 
-        added = new_reviewers - old_reviewers
-        removed = old_reviewers - new_reviewers
+        save_reviewers_message(old_reviewers, new_reviewers, self.request, self.kwargs['submission'])
 
-        messenger(
-            MESSAGES.REVIEWERS_UPDATED,
-            request=self.request,
-            user=self.request.user,
-            submission=self.kwargs['submission'],
-            added=added,
-            removed=removed,
-        )
         return response
 
 

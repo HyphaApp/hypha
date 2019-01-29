@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
+from django.forms.models import ModelFormMetaclass
 from django.utils.decorators import method_decorator
 from django.views import defaults
 from django.views.generic import DetailView, View
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
+from django.views.generic.list import MultipleObjectMixin
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
@@ -36,11 +38,12 @@ class ViewDispatcher(View):
 
 
 class DelegateableView(DetailView):
-    """A view which passes its context to child form views to allow them to post to the same URL """
+    """ A detail view which passes its context to child form views to allow them to post to the same URL """
     form_prefix = 'form-submitted-'
 
     def get_context_data(self, **kwargs):
         forms = dict(form_view.contribute_form(self.object, self.request.user) for form_view in self.form_views)
+
         return super().get_context_data(
             form_prefix=self.form_prefix,
             **forms,
@@ -61,6 +64,34 @@ class DelegateableView(DetailView):
                 return form_view.as_view()(request, *args, **kwargs)
 
         # Fall back to get if not form exists as submitted
+        return self.get(request, *args, **kwargs)
+
+
+class DelegateableListView(MultipleObjectMixin):
+    """
+    A list view which passes its context to child form views to allow them to post to the same URL
+    `DelegateableListView` objects should contain form views that inherit from `DelegatedViewMixin`
+    and have a save_all() method that loops through all submission ID's on the page
+    and saves associated data (ie. reviewers selected)
+    Each related form should inherit from `forms.Form` and define a
+    `name` setting, ie.`name='batch_reviewer_form'`. This is required for the html form to behave properly.
+    """
+    form_prefix = 'form-submitted-'
+
+    def get_context_data(self, **kwargs):
+        forms = dict(form_view.contribute_form(None, self.request.user) for form_view in self.form_views)
+        return super().get_context_data(
+            form_prefix=self.form_prefix,
+            **forms,
+            **kwargs,
+        )
+
+    def post(self, request, *args, **kwargs):
+        for form_view in self.form_views:
+            """ Check to see which form we are submitting and save to that form """
+            if self.form_prefix + form_view.context_name in request.POST:
+                form_view.save_all(self, request, *args, **kwargs)
+
         return self.get(request, *args, **kwargs)
 
 
@@ -88,8 +119,11 @@ class DelegatedViewMixin(View):
 
     @classmethod
     def contribute_form(cls, submission, user):
-        form = cls.form_class(instance=submission, user=user)
-        form.name = cls.context_name
+        if type(cls.form_class) == ModelFormMetaclass:  # This is a model form, we are passing in submission and user
+            form = cls.form_class(instance=submission, user=user)
+            form.name = cls.context_name
+        else:
+            form = cls.form_class()  # This is for the batch update, we don't pass in the user or a single submission
         return cls.context_name, form
 
 

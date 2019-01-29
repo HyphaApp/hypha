@@ -3,6 +3,7 @@ from django import forms
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission
+from .utils import can_alter_reviewers, set_reviewers_fields
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -66,29 +67,18 @@ class UpdateReviewersForm(forms.ModelForm):
         model = ApplicationSubmission
         fields: list = []
 
-    def can_alter_reviewers(self, user):
-        return self.instance.stage.has_external_review and user == self.instance.lead
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = self.instance.reviewers.all()
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
-        staff_field = self.fields['staff_reviewers']
-        staff_field.queryset = staff_field.queryset.exclude(id__in=self.submitted_reviewers)
-        staff_field.initial = reviewers
+        submitted_reviewers, fields = set_reviewers_fields(self.instance, self.user, self.fields)
+        self.submitted_reviewers = submitted_reviewers
+        self.fields = fields
 
-        if self.can_alter_reviewers(self.user):
-            review_field = self.fields['reviewer_reviewers']
-            review_field.queryset = review_field.queryset.exclude(id__in=self.submitted_reviewers)
-            review_field.initial = reviewers
-        else:
-            self.fields.pop('reviewer_reviewers')
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if self.can_alter_reviewers(self.user):
+        if can_alter_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
         else:
             reviewers = instance.reviewers_not_reviewed
@@ -99,3 +89,14 @@ class UpdateReviewersForm(forms.ModelForm):
             self.submitted_reviewers
         )
         return instance
+
+
+class BatchUpdateReviewersForm(forms.Form):
+    name = 'batch_reviewer_form'
+
+    staff_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.staff(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
+        required=False,
+    )
+    submission_ids = forms.CharField(widget=forms.HiddenInput())
