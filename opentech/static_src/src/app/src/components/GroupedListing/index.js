@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import Listing from '@components/Listing';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
+import ListingDropdown from '@components/ListingDropdown';
+
+import './styles.scss'
 
 export default class GroupedListing extends React.Component {
     static propTypes = {
@@ -26,8 +29,16 @@ export default class GroupedListing extends React.Component {
         orderedItems: [],
     };
 
+    constructor(props) {
+        super(props);
+        this.listRef = React.createRef();
+    }
+
     componentDidMount() {
         this.orderItems();
+
+        // get the height of the dropdown container
+        this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -92,13 +103,37 @@ export default class GroupedListing extends React.Component {
     }
 
     render() {
+        const { isLoading, error } = this.props;
+        const isError = Boolean(error);
+
         const passProps = {
             items: this.state.orderedItems,
             renderItem: this.renderItem,
-            isLoading: this.props.isLoading,
-            isError: Boolean(this.error),
-            error: this.error,
+            isLoading,
+            isError,
+            error
         };
-        return <Listing {...passProps} />;
+
+        // set css custom prop to allow scrolling from dropdown to last item in the list
+        if (this.listRef.current) {
+            document.documentElement.style.setProperty('--last-listing-item-height', this.listRef.current.lastElementChild.offsetHeight + 'px');
+        }
+
+        return  (
+            <div className="grouped-listing">
+                <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
+                    {!error && !isLoading &&
+                        <ListingDropdown
+                            error={error}
+                            isLoading={isLoading}
+                            listRef={this.listRef}
+                            groups={this.state.orderedItems}
+                            scrollOffset={this.dropdownContainerHeight}
+                        />
+                    }
+                </div>
+                <Listing {...passProps} listRef={this.listRef} column="applications" />
+            </div>
+        );
     }
 }

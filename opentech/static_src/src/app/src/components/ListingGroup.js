@@ -15,12 +15,12 @@ export default class ListingGroup extends React.Component {
     render() {
         const {item, children} = this.props
         return (
-            <>
+            <li>
                 <ListingHeading title={item.name} count={children.length} />
                 <ul>
                     {children}
                 </ul>
-            </>
+            </li>
         );
     }
 }
