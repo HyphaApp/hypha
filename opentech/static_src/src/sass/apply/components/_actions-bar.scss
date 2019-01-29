@@ -1,5 +1,6 @@
 .actions-bar {
-    margin-bottom: 20px;
+    margin: 20px 0;
+    width: 100%;
 
     @include media-query(tablet-landscape) {
         display: flex;
