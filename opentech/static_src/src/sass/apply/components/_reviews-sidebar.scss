@@ -62,6 +62,10 @@
         }
     }
 
+    &__date {
+        @include font-size(milli);
+    }
+
     &__no-reviews {
         color: $color--mid-grey;
     }
