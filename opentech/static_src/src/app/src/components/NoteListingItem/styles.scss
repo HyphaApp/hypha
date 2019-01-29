@@ -1,5 +1,17 @@
 .note {
-    margin: 20px 20px 30px;
+    margin: 20px;
+    font-size: 14px;
+    transition: opacity 200ms ease-out 200ms, transform 200ms ease-out 200ms;
+
+    &.add-note-enter {
+        opacity: 0;
+        transform: translate(0, 10px);
+    }
+
+    &.add-note-enter-done {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
 
     &__meta {
         display: flex;
