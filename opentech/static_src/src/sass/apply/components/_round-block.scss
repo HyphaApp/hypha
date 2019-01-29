@@ -23,8 +23,6 @@
 
             &:hover {
                 background-color: $color--light-grey;
-                border-right: 1px solid $color--light-grey;
-                border-left: 1px solid $color--light-grey;
             }
 
             // item spacing
@@ -78,6 +76,8 @@
     }
 
     &__title {
+        color: $color--default;
+        font-size: map-get($font-sizes, epsilon);
         font-weight: $weight--semibold;
     }
 
