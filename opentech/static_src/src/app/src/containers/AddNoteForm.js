@@ -10,6 +10,8 @@ import {
     getNoteCreatingStateForSubmission,
 } from '@selectors/notes';
 
+import './AddNoteForm.scss';
+
 class AddNoteForm extends React.Component {
     static propTypes = {
         submitNote: PropTypes.func,
@@ -26,6 +28,7 @@ class AddNoteForm extends React.Component {
                 <RichTextForm
                     disabled={isCreating}
                     onSubmit={this.onSubmit}
+                    instance="add-note-form"
                 />
             </>
         );

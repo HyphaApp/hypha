@@ -1,0 +1,35 @@
+$submit-button-height: 60px;
+
+.add-note-form {
+    position: relative;
+    height: 25vh; // list is set to 75vh
+
+    textarea {
+        width: 100%;
+        height: calc(100% - #{$submit-button-height});
+        border: 0;
+        padding: 10px;
+    }
+
+    &__button {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        border-top: 1px solid $color--fog;
+        color: $color--dark-blue;
+        font-weight: $weight--bold;
+        font-size: 18px;
+        height: $submit-button-height;
+        opacity: 1;
+    }
+
+    textarea,
+    &__button {
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+}
