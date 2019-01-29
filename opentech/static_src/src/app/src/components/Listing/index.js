@@ -17,6 +17,7 @@ export default class Listing extends React.Component {
         renderItem: PropTypes.func.isRequired,
         handleRetry: PropTypes.func,
         listRef: PropTypes.object,
+        column: PropTypes.string,
     };
 
     renderListItems() {
@@ -25,6 +26,8 @@ export default class Listing extends React.Component {
             isLoading,
             items,
             renderItem,
+            column,
+            listRef,
         } = this.props;
 
         if (isLoading) {
@@ -44,7 +47,7 @@ export default class Listing extends React.Component {
         }
 
         return (
-            <ul className="listing__list" ref={this.props.listRef}>
+            <ul className={`listing__list listing__list--${column}`} ref={listRef}>
                 {items.map(v => renderItem(v))}
             </ul>
         );

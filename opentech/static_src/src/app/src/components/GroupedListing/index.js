@@ -127,7 +127,7 @@ export default class GroupedListing extends React.Component {
                         />
                     }
                 </div>
-                <Listing {...passProps} listRef={this.listRef} />
+                <Listing {...passProps} listRef={this.listRef} column="applications" />
             </div>
         );
     }
