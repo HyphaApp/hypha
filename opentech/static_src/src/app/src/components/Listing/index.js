@@ -1,123 +1,64 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListingGroup from '@components/ListingGroup';
-import ListingItem from '@components/ListingItem';
 import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
 
 export default class Listing extends React.Component {
     static propTypes = {
-        items: PropTypes.array,
-        activeItem: PropTypes.number,
+        items: PropTypes.array.isRequired,
         isLoading: PropTypes.bool,
+        isError: PropTypes.bool,
         error: PropTypes.string,
         groupBy: PropTypes.string,
         order: PropTypes.arrayOf(PropTypes.string),
         onItemSelection: PropTypes.func,
-        shouldSelectFirst: PropTypes.bool,
+        renderItem: PropTypes.func.isRequired,
+        handleRetry: PropTypes.func,
     };
-
-    static defaultProps = {
-        shouldSelectFirst: true,
-    }
-
-    state = {
-        orderedItems: [],
-    };
-
-    componentDidMount() {
-        this.orderItems();
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        // Order items
-        if (this.props.items !== prevProps.items) {
-            this.orderItems();
-        }
-
-        if ( this.props.shouldSelectFirst ){
-            const oldItem = prevProps.activeItem
-            const newItem = this.props.activeItem
-
-            // If we have never activated a submission, get the first item
-            if ( !newItem && !oldItem ) {
-                const firstGroup = this.state.orderedItems[0]
-                if ( firstGroup && firstGroup.items[0] ) {
-                    this.setState({firstUpdate: false})
-                    this.props.onItemSelection(firstGroup.items[0].id)
-                }
-            }
-        }
-    }
 
     renderListItems() {
-        const { isLoading, error, items, onItemSelection, activeItem } = this.props;
+        const {
+            isError,
+            isLoading,
+            items,
+            renderItem,
+        } = this.props;
 
         if (isLoading) {
             return (
                 <div className="listing__list is-loading">
                     <LoadingPanel />
                 </div>
-            )
-        } else if (error) {
-            return (
-                <div className="listing__list is-loading">
-                    <p>Something went wrong. Please try again later.</p>
-                    <p>{ error }</p>
-                </div>
-            )
+            );
+        } else if (isError) {
+            return this.renderError();
         } else if (items.length === 0) {
             return (
                 <div className="listing__list is-loading">
                     <p>No results found.</p>
                 </div>
-            )
+            );
         }
 
         return (
             <ul className="listing__list">
-                {this.state.orderedItems.map(group => {
-                    return (
-                        <ListingGroup key={`listing-group-${group.name}`} item={group}>
-                            {group.items.map(item => {
-                                return <ListingItem
-                                    selected={!!activeItem && activeItem===item.id}
-                                    onClick={() => onItemSelection(item.id)}
-                                    key={`listing-item-${item.id}`}
-                                    item={item}/>;
-                            })}
-                        </ListingGroup>
-                    );
-                })}
+                {items.map(v => renderItem(v))}
             </ul>
         );
     }
 
-    getGroupedItems() {
-        const { groupBy, items } = this.props;
-
-        return items.reduce((tmpItems, v) => {
-            const groupByValue = v[groupBy];
-            if (!(groupByValue in tmpItems)) {
-                tmpItems[groupByValue] = [];
-            }
-            tmpItems[groupByValue].push({...v});
-            return tmpItems;
-        }, {});
-    }
-
-    orderItems() {
-        const groupedItems = this.getGroupedItems();
-        const { order = [] } = this.props;
-        const leftOverKeys = Object.keys(groupedItems).filter(v => !order.includes(v));
-        this.setState({
-            orderedItems: order.concat(leftOverKeys).filter(key => groupedItems[key] ).map(key => ({
-                name: key,
-                items: groupedItems[key] || []
-            })),
-        });
+    renderError = () => {
+        const { handleRetry, error } = this.props;
+        const retryButton = <a onClick={handleRetry}>Refresh</a>;
+        return (
+            <div className="listing__list is-loading">
+                <p>Something went wrong. Please try again later.</p>
+                {error && <p>{error}</p>}
+                {handleRetry && retryButton}
+            </div>
+        );
     }
 
     render() {
