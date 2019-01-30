@@ -51,7 +51,7 @@ class ByRoundListing extends React.Component {
                                  .filter((value, index, arr) => arr.indexOf(value) === index);
         return rounds.map((v, i) => ({
             display: `Round ${v}`,
-            key: v,
+            key: `round-${v}`,
             position: i,
             values: [v],
         }));
