@@ -170,6 +170,7 @@
         color: $color--black-50;
         opacity: 0;
         transition: opacity $transition;
+        pointer-events: none;
 
         @include media-query(tablet-portrait) {
             right: 30px;
@@ -178,6 +179,7 @@
 
         &.is-visible {
             opacity: 1;
+            pointer-events: all;
         }
     }
 
