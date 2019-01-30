@@ -3,8 +3,28 @@
     width: calc(100% - 40px);
     padding: 20px;
 
+    &--secondary {
+        padding: 0;
+    }
+
     @include media-query(small-tablet) {
         width: 580px;
         padding: 30px;
+    }
+
+    &__header-bar {
+        color: $color--white;
+        background-color: $color--dark-blue;
+        margin: -24px -24px 20px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    &__list {
+        max-height: 230px;
+        overflow: scroll;
+        margin: -15px -24px 20px -24px;
+        padding: 0 24px;
+        border-bottom: 2px solid $color--light-mid-grey;
     }
 }
