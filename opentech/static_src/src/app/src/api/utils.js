@@ -4,7 +4,7 @@ const getBaseUrl = () => {
     return process.env.API_BASE_URL;
 };
 
-export async function apiFetch(path, method = 'GET', params, options = {}) {
+export async function apiFetch({path, method = 'GET', params = {}, options = {}}) {
     const url = new URL(getBaseUrl());
     url.pathname = path;
 

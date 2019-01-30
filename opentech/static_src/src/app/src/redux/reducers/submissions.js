@@ -7,8 +7,9 @@ import {
     UPDATE_SUBMISSIONS_BY_ROUND,
     UPDATE_SUBMISSION,
     SET_CURRENT_SUBMISSION,
-    ADD_NOTE_FOR_SUBMISSION,
 } from '@actions/submissions';
+
+import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
 function submission(state, action) {
@@ -32,11 +33,16 @@ function submission(state, action) {
                 isFetching: false,
                 isErrored: false,
             };
-        case ADD_NOTE_FOR_SUBMISSION:
+        case UPDATE_NOTES:
+            return {
+                ...state,
+                comments: action.data.results.map(note => note.id),
+            };
+        case UPDATE_NOTE:
             return {
                 ...state,
                 comments: [
-                    action.noteID,
+                    action.data.id,
                     ...(state.comments || []),
                 ]
             };
@@ -50,8 +56,9 @@ function submissionsByID(state = {}, action) {
     switch(action.type) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
-        case ADD_NOTE_FOR_SUBMISSION:
         case UPDATE_SUBMISSION:
+        case UPDATE_NOTE:
+        case UPDATE_NOTES:
             return {
                 ...state,
                 [action.submissionID]: submission(state[action.submissionID], action),

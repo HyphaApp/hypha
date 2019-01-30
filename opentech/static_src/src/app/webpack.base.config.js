@@ -71,6 +71,7 @@ module.exports = {
             '@reducers': path.resolve(__dirname, 'src/redux/reducers'),
             '@selectors': path.resolve(__dirname, 'src/redux/selectors'),
             '@actions': path.resolve(__dirname, 'src/redux/actions'),
+            '@middleware': path.resolve(__dirname, 'src/redux/middleware'),
             '@api': path.resolve(__dirname, 'src/api'),
         }
     }
