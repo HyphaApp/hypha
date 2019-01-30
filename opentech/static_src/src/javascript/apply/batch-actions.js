@@ -52,11 +52,22 @@
     $batchReviewersButton.click(function () {
         $batchTitlesList.html('');
         $batchTitleCount.html('');
+        $batchTitlesList.removeClass(closedClass);
+        $toggleBatchList.html('Hide');
+
         let selectedIDs = [];
 
         $checkbox.each(function () {
             if ($(this).is(':checked')) {
-                $batchTitlesList.append(`<p class="modal__list-item">${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
+                const href = $(this).parents('tr').find('.js-title').find('a').attr('href');
+                const title = $(this).parents('tr').find('.js-title').data('tooltip');
+
+                $batchTitlesList.append(`
+                    <a href="${href}" class="modal__list-item" target="_blank" rel="noopener noreferrer">
+                        ${title}
+                        <svg class="modal__open-link-icon"><use xlink:href="#open-in-new-tab"></use></svg>
+                    </a>
+                `);
                 selectedIDs.push($(this).parents('tr').data('record-id'));
             }
         });
