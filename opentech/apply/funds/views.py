@@ -146,8 +146,11 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable,
         )
 
 
-class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
+    form_views = [
+        BatchUpdateReviewersView
+    ]
 
 
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
