@@ -47,7 +47,7 @@ export default store => next => action => {
     }
 
     const actionWith = data => {
-        const finalAction = Object.assign({}, action, data)
+        const finalAction = {...action, ...data}
         delete finalAction[CALL_API]
         return finalAction
     }
