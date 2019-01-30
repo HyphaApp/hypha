@@ -92,7 +92,7 @@ export default class GroupedListing extends React.Component {
 
         const orderedItems = order.map(({key, display, values}) => ({
             name: display,
-            key: key,
+            key,
             items: values.reduce((acc, value) => acc.concat(groupedItems[value] || []), [])
         }))
 

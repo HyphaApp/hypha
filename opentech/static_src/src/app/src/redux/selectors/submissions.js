@@ -16,7 +16,7 @@ const getCurrentRound = createSelector(
 const getCurrentSubmissionID = state => state.submissions.current;
 
 const getCurrentRoundSubmissionIDs = createSelector(
-    [ getCurrentRound, getSubmissions],
+    [ getCurrentRound ],
     (round) => {
         return round ? round.submissions.ids : [];
     }

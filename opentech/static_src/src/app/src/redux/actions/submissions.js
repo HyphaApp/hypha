@@ -72,7 +72,7 @@ export const fetchRound = roundID => {
             if (response.ok) {
                 dispatch(updateRound(roundID, json));
             } else {
-                dispatch(failLoadingRound(json.meta.error));
+                dispatch(failLoadingRound(json.detail));
             }
         } catch (e) {
             dispatch(failLoadingRound(e.message));
@@ -110,7 +110,7 @@ export const fetchSubmissionsByRound = roundID => {
             if (response.ok) {
                 dispatch(updateSubmissionsByRound(roundID, json));
             } else {
-                dispatch(failLoadingSubmissionsByRound(json.meta.error));
+                dispatch(failLoadingSubmissionsByRound(json.detail));
             }
         } catch (e) {
             dispatch(failLoadingSubmissionsByRound(e.message));
@@ -149,7 +149,7 @@ export const loadCurrentSubmission = (requiredFields=[]) => (dispatch, getState)
         return null
     }
 
-    return dispatch(fetchSubmission(getCurrentSubmissionID(getState())))
+    return dispatch(fetchSubmission(submissionID))
 }
 
 
@@ -163,7 +163,7 @@ export const fetchSubmission = submissionID => {
             if (response.ok) {
                 dispatch(updateSubmission(submissionID, json));
             } else {
-                dispatch(failLoadingSubmission(json.meta.error));
+                dispatch(failLoadingSubmission(json.detail));
             }
         } catch (e) {
             dispatch(failLoadingSubmission(e.message));
