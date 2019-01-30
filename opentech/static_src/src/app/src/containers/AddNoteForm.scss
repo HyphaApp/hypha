@@ -2,7 +2,14 @@ $submit-button-height: 60px;
 
 .add-note-form {
     position: relative;
-    height: 25vh; // list is set to 75vh
+
+    @include media-query(tablet-landscape) {
+        height: 25vh; // .list--notes is set to 75vh
+    }
+
+    @include media-query(laptop-short) {
+        height: 40vh; // .list--notes is set to 60vh
+    }
 
     &__container {
         width: 100%;
