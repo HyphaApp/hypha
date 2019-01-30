@@ -150,8 +150,11 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
 
 
-class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
+    form_views = [
+        BatchUpdateReviewersView
+    ]
 
     excluded_fields = ('round', 'lead', 'fund')
 
