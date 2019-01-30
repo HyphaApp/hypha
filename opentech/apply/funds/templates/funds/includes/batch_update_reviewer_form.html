@@ -1,5 +1,9 @@
 <div class="modal modal--secondary" id="batch-update-reviewers">
     <h4 class="modal__header-bar">Update Reviewers</h4>
+    <div class="modal__list-item modal__list-item--meta" aria-live="polite">
+        <span class="js-batch-title-count"></span>
+        <a href="#" class="modal__hide-link js-toggle-batch-list">Hide</a>
+    </div>
     <div class="modal__list js-batch-titles" aria-live="polite"></div>
     {% include 'funds/includes/delegated_form_base.html' with form=batch_reviewer_form value='Update'%}
 </div>
