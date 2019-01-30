@@ -8,6 +8,7 @@
     const $changeStatusForm = $('.js-batch-update-status');
     const $batchReviewersButton = $('.js-batch-update-reviewers');
     const $batchTitles = $('.js-batch-titles');
+    const $batchTitleCount = $('.js-batch-title-count');
     const $hiddenIDlist = $('#id_submission_ids');
     const activeClass = 'batch-actions-enabled';
 
@@ -48,6 +49,7 @@
     // append selected project titles to batch update reviewer modal
     $batchReviewersButton.click(function () {
         $batchTitles.html('');
+        $batchTitleCount.html('');
         let selectedIDs = [];
 
         $checkbox.each(function () {
@@ -56,6 +58,8 @@
                 selectedIDs.push($(this).parents('tr').data('record-id'));
             }
         });
+
+        $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
         $hiddenIDlist.val(selectedIDs.join(','));
     });
 

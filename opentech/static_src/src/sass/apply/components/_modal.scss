@@ -15,7 +15,7 @@
     &__header-bar {
         color: $color--white;
         background-color: $color--dark-blue;
-        margin: -24px -24px 8px;
+        margin: -24px -24px 0;
         padding: 15px;
         text-align: center;
     }
@@ -34,5 +34,17 @@
         padding: 12px 28px;
         border-bottom: 2px solid $color--light-mid-grey;
         margin: 0;
+
+        &--meta {
+            color: $color--dark-blue;
+            font-weight: $weight--semibold;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 -24px 0;
+        }
+    }
+
+    &__hide-link {
+        text-decoration: underline;
     }
 }
