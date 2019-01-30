@@ -1,8 +1,20 @@
-import { camelizeKeys } from 'humps'
+import { camelizeKeys, decamelizeKeys } from 'humps'
 
 import { apiFetch } from '@api/utils'
 
 const callApi = (endpoint) => {
+    // If body is an object, decamelize the keys.
+    const { options } = endpoint;
+    if (options !== undefined && typeof options.body === 'object') {
+        endpoint = {
+            ...endpoint,
+            options: {
+                ...options,
+                body: JSON.stringify(decamelizeKeys(options.body))
+            }
+        }
+    }
+
     return apiFetch(endpoint)
         .then(response =>
               response.json().then(json => {

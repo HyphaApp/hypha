@@ -1,11 +1,10 @@
-import { decamelizeKeys } from 'humps';
 import Cookies from 'js-cookie';
 
 const getBaseUrl = () => {
     return process.env.API_BASE_URL;
 };
 
-export function apiFetch({path, method = 'GET', params = {}, options = {}, decamelizeJSON = true}) {
+export function apiFetch({path, method = 'GET', params = {}, options = {}}) {
     const url = new URL(getBaseUrl());
     url.pathname = path;
 
@@ -21,13 +20,6 @@ export function apiFetch({path, method = 'GET', params = {}, options = {}, decam
             'Content-Type': 'application/json',
             'X-CSRFToken': getCSRFToken(),
         };
-    }
-
-    if (decamelizeJSON === true && options.body !== undefined) {
-        options = {
-            ...options,
-            body: JSON.stringify(decamelizeKeys(options.body))
-        }
     }
 
     return fetch(url, {
