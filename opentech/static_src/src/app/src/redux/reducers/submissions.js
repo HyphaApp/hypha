@@ -7,6 +7,7 @@ import {
     UPDATE_SUBMISSIONS_BY_ROUND,
     UPDATE_SUBMISSION,
     SET_CURRENT_SUBMISSION,
+    UPDATE_SUBMISSIONS_BY_STATUSES,
 } from '@actions/submissions';
 
 import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -63,6 +64,7 @@ function submissionsByID(state = {}, action) {
                 ...state,
                 [action.submissionID]: submission(state[action.submissionID], action),
             };
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
         case UPDATE_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
@@ -95,9 +97,23 @@ function currentSubmission(state = null, action) {
 }
 
 
+function submissionsByStatuses(state = {}, action) {
+    switch (action.type) {
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
+            return {
+                ...state,
+                [action.statuses]: action.data.results.map(v => v.id),
+            };
+        default:
+            return state
+    }
+}
+
+
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
+    byStatuses: submissionsByStatuses,
 });
 
 export default submissions;

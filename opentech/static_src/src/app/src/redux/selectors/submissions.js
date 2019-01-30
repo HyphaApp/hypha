@@ -4,6 +4,8 @@ const getSubmissions = state => state.submissions.byID;
 
 const getRounds = state => state.rounds.byID;
 
+const getSubmissionsByStatuses = state => state.submissions.byStatuses;
+
 const getCurrentRoundID = state => state.rounds.current;
 
 const getCurrentRound = createSelector(
@@ -14,6 +16,18 @@ const getCurrentRound = createSelector(
 );
 
 const getCurrentSubmissionID = state => state.submissions.current;
+
+const getSubmissionsByGivenStatuses = statuses => createSelector(
+    [getSubmissions, getSubmissionsByStatuses], (submissions, byStatuses) => {
+        for (const [key, value] of Object.entries(byStatuses)) {
+            if (key.split(',').every(v => statuses.includes(v))) {
+                return value.map(id => submissions[id])
+            }
+        }
+
+        return []
+    }
+);
 
 const getCurrentRoundSubmissionIDs = createSelector(
     [ getCurrentRound ],
@@ -61,4 +75,5 @@ export {
     getSubmissionLoadingState,
     getSubmissionErrorState,
     getSubmissionOfID,
+    getSubmissionsByGivenStatuses,
 };

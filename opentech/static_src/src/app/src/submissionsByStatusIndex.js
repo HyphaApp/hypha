@@ -12,7 +12,7 @@ const store = createStore();
 
 ReactDOM.render(
     <Provider store={store}>
-        <SubmissionsByStatusApp pageContent={container.innerHTML} />
+        <SubmissionsByStatusApp pageContent={container.innerHTML} statuses={container.dataset.statuses.split(',')} />
     </Provider>,
     container
 );

@@ -9,6 +9,7 @@ module.exports = {
         submissionsByRound: COMMON_ENTRY.concat(['./src/submissionsByRoundIndex']),
         submissionsByStatus: COMMON_ENTRY.concat(['./src/submissionsByStatusIndex']),
     },
+
     output: {
         filename: '[name]-[hash].js'
     },

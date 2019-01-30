@@ -48,7 +48,7 @@ class SubmissionsByRoundApp extends React.Component {
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
 
                 {this.state.detailOpened &&
-                    <GroupByStatusDetailView roundId={this.props.roundID} />
+                    <GroupByStatusDetailView />
                 }
             </>
         )

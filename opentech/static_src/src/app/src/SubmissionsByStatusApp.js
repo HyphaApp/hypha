@@ -3,21 +3,18 @@ import PropTypes from 'prop-types';
 import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux'
 
+import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
 import Switcher from '@components/Switcher';
 
 
 class SubmissionsByStatusApp extends React.Component {
     static propTypes = {
-        roundID: PropTypes.number,
-        setSubmissionRound: PropTypes.func,
         pageContent: PropTypes.node.isRequired,
+        statuses: PropTypes.arrayOf(PropTypes.string),
     };
 
 
     state = { detailOpened: false };
-
-    componentDidMount() {
-    }
 
     openDetail = () => {
         this.setState(state => ({
@@ -45,8 +42,7 @@ class SubmissionsByStatusApp extends React.Component {
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
 
                 {this.state.detailOpened &&
-                    //<GroupByStatusDetailView roundId={this.props.roundID} />
-                    <p>Test</p>
+                    <GroupByRoundDetailView submissionStatuses={this.props.statuses} />
                 }
             </>
         )

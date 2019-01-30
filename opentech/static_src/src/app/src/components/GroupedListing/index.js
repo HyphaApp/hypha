@@ -89,7 +89,6 @@ export default class GroupedListing extends React.Component {
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-
         const orderedItems = order.map(({key, display, values}) => ({
             name: display,
             key,

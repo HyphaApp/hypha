@@ -28,7 +28,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status', 'url')
+        fields = ('id', 'title', 'status', 'url', 'round')
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
