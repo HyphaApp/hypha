@@ -7,10 +7,12 @@
     const $allCheckboxInput = $('.js-batch-select-all');
     const $changeStatusForm = $('.js-batch-update-status');
     const $batchReviewersButton = $('.js-batch-update-reviewers');
-    const $batchTitles = $('.js-batch-titles');
+    const $batchTitlesList = $('.js-batch-titles');
     const $batchTitleCount = $('.js-batch-title-count');
     const $hiddenIDlist = $('#id_submission_ids');
+    const $toggleBatchList = $('.js-toggle-batch-list');
     const activeClass = 'batch-actions-enabled';
+    const closedClass = 'is-closed';
 
     $(window).on('load', function () {
         toggleBatchActions();
@@ -48,19 +50,34 @@
 
     // append selected project titles to batch update reviewer modal
     $batchReviewersButton.click(function () {
-        $batchTitles.html('');
+        $batchTitlesList.html('');
         $batchTitleCount.html('');
+
         let allids = [];  // create an array of submission id's from the selected checkboxes
 
         $checkbox.each(function () {
             if ($(this).is(':checked')) {
-                $batchTitles.append(`<p class="modal__list-item">${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
+                $batchTitlesList.append(`<p class="modal__list-item">${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
                 allids.push($(this).parents('tr').data('record-id'));
             }
         });
 
         $batchTitleCount.append(`${allids.length} submissions selected`);
         $hiddenIDlist.val(allids.join(','));
+    });
+
+    // show/hide the list of actions
+    $toggleBatchList.click(e => {
+        e.preventDefault();
+
+        if ($('.js-batch-titles').hasClass(closedClass)) {
+            $toggleBatchList.html('Hide');
+        }
+        else {
+            $toggleBatchList.html('Show');
+        }
+
+        $batchTitlesList.toggleClass(closedClass);
     });
 
     function toggleBatchActions() {
