@@ -36,8 +36,7 @@ class AddNoteForm extends React.Component {
             message,
             visibility: 'internal',
         });
-
-        if (action === true) {
+        if (action.error === undefined) {
             resetEditor();
         }
     }
