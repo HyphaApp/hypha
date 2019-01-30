@@ -4,11 +4,23 @@ $submit-button-height: 60px;
     position: relative;
     height: 25vh; // list is set to 75vh
 
-    textarea {
+    &__container {
         width: 100%;
         height: calc(100% - #{$submit-button-height});
         border: 0;
+        overflow: hidden;
+        font-family: inherit;
+    }
+
+    &__toolbar {
+        margin: 0;
         padding: 10px;
+    }
+
+    &__editor {
+        height: 100%;
+        overflow-y: scroll;
+        padding-bottom: 95px;
     }
 
     &__button {

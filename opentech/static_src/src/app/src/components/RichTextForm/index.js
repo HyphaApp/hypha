@@ -33,6 +33,9 @@ export default class RichTextForm extends React.Component {
                     disabled={ disabled }
                     onChange={ this.handleValueChange }
                     value={ this.state.value }
+                    className="add-note-form__container"
+                    toolbarClassName="add-note-form__toolbar"
+                    editorClassName="add-note-form__editor"
                 />
                 <button
                     disabled={this.isEmpty() || disabled}
