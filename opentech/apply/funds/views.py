@@ -97,18 +97,30 @@ class BatchUpdateReviewersView(DelegatedViewMixin):
         currently saved to that submission.
         Send out a message of updates.
         """
+        page_message = "Submission reviewers updated. "
         for submission_id in request.POST["submission_ids"].split(","):
             submission = ApplicationSubmission.objects.get(id=submission_id)
+            page_message += submission.title + ": reviewers added: "
 
             old_reviewers = set(submission.reviewers.all())
             reviewers = User.objects.filter(id__in=request.POST.getlist('staff_reviewers'))
+            reviewers_found = False
             for reviewer in reviewers:
                 if reviewer not in old_reviewers:
                     submission.reviewers.add(reviewer)
+                    reviewers_found = True
+                    page_message += reviewer.full_name + " "
 
             new_reviewers = set(submission.reviewers.all())
-
             save_reviewers_message(old_reviewers, new_reviewers, request, submission)
+            if not reviewers_found:
+                page_message += "No new reviewers found, "
+            else:
+                page_message = page_message[:-1] + ", " # Cut out the last space after that last reviewer
+
+        page_message = page_message[:-2]  # Remove the last comma and space
+
+        return page_message
 
     @classmethod
     def contribute_form(cls, submission, user):

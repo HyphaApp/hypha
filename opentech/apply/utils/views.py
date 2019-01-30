@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelFormMetaclass
 from django.utils.decorators import method_decorator
@@ -90,7 +91,8 @@ class DelegateableListView(MultipleObjectMixin):
         for form_view in self.form_views:
             """ Check to see which form we are submitting and save to that form """
             if self.form_prefix + form_view.context_name in request.POST:
-                form_view.save_all(self, request, *args, **kwargs)
+                page_message = form_view.save_all(self, request, *args, **kwargs)
+                messages.info(request, page_message)
 
         return self.get(request, *args, **kwargs)
 
