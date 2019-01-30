@@ -9,8 +9,7 @@ const callApi = (endpoint) => {
                   if (!response.ok) {
                       return Promise.reject({message: json.error})
                   }
-                  const camelizedJson = camelizeKeys(json)
-                  return camelizedJson
+                  return camelizeKeys(json)
               })
              )
 }

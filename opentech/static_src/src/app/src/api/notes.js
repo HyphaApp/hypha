@@ -14,7 +14,7 @@ export function createNoteForSubmission(submissionID, note) {
         path: `/apply/api/submissions/${submissionID}/comments/`,
         method: 'POST',
         options: {
-            body: JSON.stringify(note),
+            body: note,
         }
     };
 }
