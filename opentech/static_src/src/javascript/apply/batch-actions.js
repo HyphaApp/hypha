@@ -52,7 +52,7 @@
 
         $checkbox.each(function () {
             if ($(this).is(':checked')) {
-                $batchTitles.append(`<p>${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
+                $batchTitles.append(`<p class="modal__list-item">${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
                 allids.push($(this).parents('tr').data('record-id'));
             }
         });
