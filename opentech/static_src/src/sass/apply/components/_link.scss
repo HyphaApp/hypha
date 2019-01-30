@@ -96,6 +96,10 @@
         color: $color--white;
         background: url('./../../images/speech-bubble-blue.svg') no-repeat center;
 
+        .app-open & {
+            display: none;
+        }
+
         @include media-query(tablet-portrait) {
             @include button($color--light-blue, $color--dark-blue);
             right: 5%;
