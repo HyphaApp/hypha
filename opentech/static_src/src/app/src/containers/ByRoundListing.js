@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import GroupedListing from '@components/GroupedListing';
 import {
+    loadRounds,
     loadSubmissionsOfStatuses,
     setCurrentSubmission,
 } from '@actions/submissions';
@@ -11,11 +12,13 @@ import {
     getSubmissionsByGivenStatuses,
     getCurrentSubmissionID,
     getSubmissionsByRoundError,
+    getRounds,
 } from '@selectors/submissions';
 
 
 const loadData = props => {
     props.loadSubmissions()
+    props.loadRounds()
 }
 
 class ByRoundListing extends React.Component {
@@ -27,6 +30,7 @@ class ByRoundListing extends React.Component {
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
+        rounds: PropTypes.array,
     };
 
     componentDidMount() {
@@ -49,8 +53,9 @@ class ByRoundListing extends React.Component {
         const rounds = this.props.submissions
                                  .map(v => v.round)
                                  .filter((value, index, arr) => arr.indexOf(value) === index);
+        console.log(this.props.rounds)
         return rounds.map((v, i) => ({
-            display: `Round ${v}`,
+            display: this.props.rounds[parseInt(v)].title,
             key: `round-${v}`,
             position: i,
             values: [v],
@@ -78,10 +83,12 @@ const mapStateToProps = (state, ownProps) => ({
     submissions: getSubmissionsByGivenStatuses(ownProps.submissionStatuses)(state),
     error: getSubmissionsByRoundError(state),
     activeSubmission: getCurrentSubmissionID(state),
+    rounds: getRounds(state),
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     loadSubmissions: () => dispatch(loadSubmissionsOfStatuses(ownProps.submissionStatuses)),
+    loadRounds: () => dispatch(loadRounds()),
     setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });
 

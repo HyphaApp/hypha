@@ -8,6 +8,7 @@ import {
     FAIL_LOADING_ROUND,
     START_LOADING_ROUND,
     UPDATE_ROUND,
+    UPDATE_ROUNDS,
 } from '@actions/submissions';
 
 const submissionsDefaultState = {ids: [], isFetching: false};
@@ -80,6 +81,17 @@ function roundsByID(state = {}, action) {
             return {
                 ...state,
                 [action.roundID]: round(state[action.roundID], action)
+            };
+        case UPDATE_ROUNDS:
+            return {
+                ...state,
+                ...action.data.results.reduce((acc, value) => {
+                    acc[value.id] = round(state[value.id], {
+                        type: UPDATE_ROUND,
+                        data: value
+                    });
+                    return acc;
+                }, {}),
             };
         default:
             return state;

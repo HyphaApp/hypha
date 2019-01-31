@@ -70,6 +70,7 @@ export {
     getCurrentRoundSubmissions,
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getRounds,
     getSubmissionsByRoundError,
     getSubmissionsByRoundLoadingState,
     getSubmissionLoadingState,

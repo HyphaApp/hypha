@@ -1,5 +1,5 @@
 import { fetchSubmission, fetchSubmissionsByRound, fetchSubmissionsByStatuses } from '@api/submissions';
-import { fetchRound } from '@api/rounds';
+import { fetchRound, fetchRounds } from '@api/rounds';
 import { createNoteForSubmission, fetchNotesForSubmission } from '@api/notes';
 
 export default {
@@ -8,6 +8,7 @@ export default {
     fetchSubmission,
 
     fetchRound,
+    fetchRounds,
 
     fetchNotesForSubmission,
     createNoteForSubmission,

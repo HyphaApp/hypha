@@ -15,6 +15,12 @@ export const UPDATE_ROUND = 'UPDATE_ROUND';
 export const START_LOADING_ROUND = 'START_LOADING_ROUND';
 export const FAIL_LOADING_ROUND = 'FAIL_LOADING_ROUND';
 
+
+// Rounds
+export const UPDATE_ROUNDS = 'UPDATE_ROUNDS';
+export const START_LOADING_ROUNDS = 'START_LOADING_ROUNDS';
+export const FAIL_LOADING_ROUNDS = 'FAIL_LOADING_ROUNDS';
+
 // Submissions by round
 export const SET_CURRENT_SUBMISSION_ROUND = 'SET_CURRENT_SUBMISSION_ROUND';
 export const UPDATE_SUBMISSIONS_BY_ROUND = 'UPDATE_SUBMISSIONS_BY_ROUND';
@@ -58,6 +64,11 @@ export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
     return dispatch(fetchRound(getCurrentRoundID(state)))
 }
 
+
+export const loadRounds = () => (dispatch, getState) => {
+    return dispatch(fetchRounds())
+}
+
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentRoundSubmissionIDs(state)
@@ -76,6 +87,14 @@ const fetchRound = (roundID) => ({
         endpoint: api.fetchRound(roundID),
     },
     roundID,
+})
+
+
+const fetchRounds = () => ({
+    [CALL_API]: {
+        types: [ START_LOADING_ROUNDS, UPDATE_ROUNDS, FAIL_LOADING_ROUNDS],
+        endpoint: api.fetchRounds(),
+    },
 })
 
 const fetchSubmissionsByRound = (roundID) => ({
