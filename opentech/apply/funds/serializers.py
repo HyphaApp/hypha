@@ -25,10 +25,17 @@ class ReviewSummarySerializer(serializers.Field):
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
+    round = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
         fields = ('id', 'title', 'status', 'url', 'round')
+
+    def get_round(self, obj):
+        """
+        This gets round or lab ID.
+        """
+        return obj.round_id or obj.page_id
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
@@ -83,6 +90,13 @@ class RoundLabSerializer(serializers.ModelSerializer):
     class Meta:
         model = Page
         fields = ('id', 'title', 'workflow')
+
+    def __init__(self, *args, **kwargs):
+        show_workflow = kwargs.pop('show_workflow', False)
+        if not show_workflow:
+            del self.fields['workflow']
+        super().__init__(*args, **kwargs)
+
 
     def get_workflow(self, obj):
         return [

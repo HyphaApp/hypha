@@ -97,6 +97,20 @@ class RoundLabDetail(generics.RetrieveAPIView):
     def get_object(self):
         return super().get_object().specific
 
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        kwargs['show_workflow'] = True
+        return serializer_class(*args, **kwargs)
+
+
+class RoundLabList(generics.ListAPIView):
+    queryset = RoundsAndLabs.objects.specific()
+    serializer_class = RoundLabSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )
+
 
 class CommentFilter(filters.FilterSet):
     since = filters.DateTimeFilter(field_name="timestamp", lookup_expr='gte')
