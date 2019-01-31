@@ -94,7 +94,6 @@ class BatchUpdateReviewersForm(forms.Form):
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
-        required=False,
     )
     submission_ids = forms.CharField(widget=forms.HiddenInput())
 

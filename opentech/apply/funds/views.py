@@ -102,7 +102,7 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
         for submission in submissions:
-            submission.reviewers.add(reviewers)
+            submission.reviewers.add(*reviewers)
 
         messenger(
             MESSAGES.BATCH_REVIEWERS_UPDATED,

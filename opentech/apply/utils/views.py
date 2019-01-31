@@ -1,6 +1,5 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.forms.models import ModelFormMetaclass
+from django.forms.models import ModelForm
 from django.utils.decorators import method_decorator
 from django.views import defaults
 from django.views.generic import DetailView, View
@@ -120,7 +119,7 @@ class DelegatedViewMixin(View):
 
     @classmethod
     def is_model_form(cls):
-        return issubclass(cls.form_class, ModelFormMetaclass)
+        return issubclass(cls.form_class, ModelForm)
 
     @classmethod
     def contribute_form(cls, submission, user):
