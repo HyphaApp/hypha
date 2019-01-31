@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, FormView, ListView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -46,7 +46,6 @@ from .tables import (
     SubmissionFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .utils import save_reviewers_message
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
@@ -86,46 +85,34 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class BatchUpdateReviewersView(DelegatedViewMixin):
+class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
-    def save_all(self, request, *args, **kwargs):
+    def form_valid(self, form):
         """
         Loop through all submissions selected on the page,
         Add any reviewers that were selected,  only if they are not
         currently saved to that submission.
         Send out a message of updates.
         """
-        page_message = "Submission reviewers updated. "
-        for submission_id in request.POST["submission_ids"].split(","):
-            submission = ApplicationSubmission.objects.get(id=submission_id)
-            page_message += submission.title + ": reviewers added: "
+        reviewers = User.objects.filter(id__in=form.cleaned_data['staff_reviewers'])
 
-            old_reviewers = set(submission.reviewers.all())
-            reviewers = User.objects.filter(id__in=request.POST.getlist('staff_reviewers'))
-            reviewers_found = False
-            for reviewer in reviewers:
-                if reviewer not in old_reviewers:
-                    submission.reviewers.add(reviewer)
-                    reviewers_found = True
-                    page_message += reviewer.full_name + " "
+        submission_ids = form.cleaned_data['submission_ids']
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-            new_reviewers = set(submission.reviewers.all())
-            save_reviewers_message(old_reviewers, new_reviewers, request, submission)
-            if not reviewers_found:
-                page_message += "No new reviewers found, "
-            else:
-                page_message = page_message[:-1] + ", " # Cut out the last space after that last reviewer
+        for submission in submissions:
+            submission.reviewers.add(reviewers)
 
-        page_message = page_message[:-2]  # Remove the last comma and space
+        messenger(
+            MESSAGES.BATCH_REVIEWERS_UPDATED,
+            request=self.request,
+            user=self.request.user,
+            submissions=submissions,
+            added=reviewers,
+        )
 
-        return page_message
-
-    @classmethod
-    def contribute_form(cls, submission, user):
-        # We don't want to pass the submission (this is a batch update) or user to the form
-        return super().contribute_form(None, None)
+        return super().form_valid(form)
 
 
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
@@ -256,7 +243,17 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         new_reviewers = set(form.instance.reviewers.all())
 
-        save_reviewers_message(old_reviewers, new_reviewers, self.request, self.kwargs['submission'])
+        added = new_reviewers - old_reviewers
+        removed = old_reviewers - new_reviewers
+
+        messenger(
+            MESSAGES.REVIEWERS_UPDATED,
+            request=self.request,
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            added=added,
+            removed=removed,
+        )
 
         return response
 

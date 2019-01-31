@@ -48,15 +48,15 @@
     // append selected project titles to batch update reviewer modal
     $batchReviewersButton.click(function () {
         $batchTitles.html('');
-        let allids = [];  // create an array of submission id's from the selected checkboxes
+        let selectedIDs = [];
 
         $checkbox.each(function () {
             if ($(this).is(':checked')) {
                 $batchTitles.append(`<p>${$(this).parents('tr').find('.js-title').data('tooltip')}</p>`);
-                allids.push($(this).parents('tr').data('record-id'));
+                selectedIDs.push($(this).parents('tr').data('record-id'));
             }
         });
-        $hiddenIDlist.val(allids.join(','));
+        $hiddenIDlist.val(selectedIDs.join(','));
     });
 
     function toggleBatchActions() {
@@ -82,8 +82,8 @@
 
         $checkbox.each(function () {
             if ($(this).is(':checked')) {
-                console.log($(this).parents('tr').data('record-id')); // tr data-record-id
-                console.log($(this).parents('tr').find('.js-title').data('tooltip')); // project title
+                // console.log($(this).parents('tr').data('record-id')); // tr data-record-id
+                // console.log($(this).parents('tr').find('.js-title').data('tooltip')); // project title
             }
         });
     });

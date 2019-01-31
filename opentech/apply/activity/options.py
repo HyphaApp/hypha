@@ -11,6 +11,7 @@ class MESSAGES(Enum):
     DETERMINATION_OUTCOME = 'Determination Outcome'
     INVITED_TO_PROPOSAL = 'Invited To Proposal'
     REVIEWERS_UPDATED = 'Reviewers Updated'
+    BATCH_REVIEWERS_UPDATED = 'Batch Reviewers Updated'
     READY_FOR_REVIEW = 'Ready For Review'
     NEW_REVIEW = 'New Review'
     COMMENT = 'Comment'

@@ -74,8 +74,6 @@ class DelegateableListView(MultipleObjectMixin):
     `DelegateableListView` objects should contain form views that inherit from `DelegatedViewMixin`
     and have a save_all() method that loops through all submission ID's on the page
     and saves associated data (ie. reviewers selected)
-    Each related form should inherit from `forms.Form` and define a
-    `name` setting, ie.`name='batch_reviewer_form'`. This is required for the html form to behave properly.
     """
     form_prefix = 'form-submitted-'
 
@@ -91,20 +89,21 @@ class DelegateableListView(MultipleObjectMixin):
         for form_view in self.form_views:
             """ Check to see which form we are submitting and save to that form """
             if self.form_prefix + form_view.context_name in request.POST:
-                page_message = form_view.save_all(self, request, *args, **kwargs)
-                messages.info(request, page_message)
+                return form_view.as_view()(request, *args, **kwargs)
 
         return self.get(request, *args, **kwargs)
 
 
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
+
     def get_template_names(self):
         return self.kwargs['template_names']
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        if self.is_model_form():
+            kwargs['user'] = self.request.user
         return kwargs
 
     def get_form(self, *args, **kwargs):
@@ -120,13 +119,21 @@ class DelegatedViewMixin(View):
         return super().get_context_data(**kwargs)
 
     @classmethod
+    def is_model_form(cls):
+        return issubclass(cls.form_class, ModelFormMetaclass)
+
+    @classmethod
     def contribute_form(cls, submission, user):
-        if type(cls.form_class) == ModelFormMetaclass:  # This is a model form, we are passing in submission and user
+        if cls.is_model_form():
             form = cls.form_class(instance=submission, user=user)
-            form.name = cls.context_name
         else:
             form = cls.form_class()  # This is for the batch update, we don't pass in the user or a single submission
+        form.name = cls.context_name
         return cls.context_name, form
+
+    def get_success_url(self):
+        return self.request.path
+
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):

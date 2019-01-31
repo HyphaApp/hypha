@@ -22,21 +22,3 @@ def set_reviewers_fields(instance, user, fields):
         fields.pop('reviewer_reviewers')
 
     return submitted_reviewers, fields
-
-
-def save_reviewers_message(old_reviewers, new_reviewers, request, submission):
-    """
-    Save activity messages for reviewers updates based on old vs new reviewers.
-    TODO: need to batch send slack messages for MESSAGES.REVIEWERS_UPDATED
-    """
-    added = new_reviewers - old_reviewers
-    removed = old_reviewers - new_reviewers
-
-    messenger(
-        MESSAGES.REVIEWERS_UPDATED,
-        request=request,
-        user=request.user,
-        submission=submission,
-        added=added,
-        removed=removed,
-    )

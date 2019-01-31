@@ -91,11 +91,13 @@ class UpdateReviewersForm(forms.ModelForm):
 
 
 class BatchUpdateReviewersForm(forms.Form):
-    name = 'batch_reviewer_form'
-
     staff_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.staff(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
         required=False,
     )
     submission_ids = forms.CharField(widget=forms.HiddenInput())
+
+    def clean_submission_ids(self):
+        value = self.cleaned_data['submission_ids']
+        return [int(submission) for submission in value.split(',')]
