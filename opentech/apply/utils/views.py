@@ -2,9 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
 from django.utils.decorators import method_decorator
 from django.views import defaults
-from django.views.generic import DetailView, View
+from django.views.generic import View
+from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
-from django.views.generic.edit import ModelFormMixin, ProcessFormView
+from django.views.generic.edit import ModelFormMixin, ProcessFormView, SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
 
 
@@ -37,12 +38,19 @@ class ViewDispatcher(View):
         return view.as_view()(request, *args, **kwargs)
 
 
-class DelegateableView(DetailView):
-    """ A detail view which passes its context to child form views to allow them to post to the same URL """
+class DelegatableBase(ContextMixin):
+    """
+    A view which passes its context to child form views to allow them to post to the same URL
+    `DelegateableViews` objects should contain form views that inherit from `DelegatedViewMixin`
+    and `FormView`
+    """
     form_prefix = 'form-submitted-'
 
+    def get_form_args(self):
+        return (None, None)
+
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(self.object, self.request.user) for form_view in self.form_views)
+        forms = dict(form_view.contribute_form(*self.get_form_args()) for form_view in self.form_views)
 
         return super().get_context_data(
             form_prefix=self.form_prefix,
@@ -51,12 +59,7 @@ class DelegateableView(DetailView):
         )
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        kwargs['submission'] = self.object
-
         # Information to pretend we originate from this view
-        kwargs['template_names'] = self.get_template_names()
         kwargs['context'] = self.get_context_data()
 
         for form_view in self.form_views:
@@ -67,30 +70,23 @@ class DelegateableView(DetailView):
         return self.get(request, *args, **kwargs)
 
 
-class DelegateableListView(MultipleObjectMixin):
-    """
-    A list view which passes its context to child form views to allow them to post to the same URL
-    `DelegateableListView` objects should contain form views that inherit from `DelegatedViewMixin`
-    and have a save_all() method that loops through all submission ID's on the page
-    and saves associated data (ie. reviewers selected)
-    """
-    form_prefix = 'form-submitted-'
-
-    def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(None, self.request.user) for form_view in self.form_views)
-        return super().get_context_data(
-            form_prefix=self.form_prefix,
-            **forms,
-            **kwargs,
-        )
+class DelegateableView(DelegatableBase):
+    def get_form_args(self):
+        return self.object, self.request.user
 
     def post(self, request, *args, **kwargs):
-        for form_view in self.form_views:
-            """ Check to see which form we are submitting and save to that form """
-            if self.form_prefix + form_view.context_name in request.POST:
-                return form_view.as_view()(request, *args, **kwargs)
+        self.object = self.get_object()
 
-        return self.get(request, *args, **kwargs)
+        kwargs['template_names'] = self.get_template_names()
+        kwargs['submission'] = self.object
+
+        return super().post(request, *args, **kwargs)
+
+
+class DelegateableListView(DelegatableBase):
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return super().post(request, *args, **kwargs)
 
 
 class DelegatedViewMixin(View):
