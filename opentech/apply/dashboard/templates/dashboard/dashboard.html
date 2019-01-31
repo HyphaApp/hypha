@@ -20,8 +20,9 @@
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
             <h4 class="heading heading--normal">
-                Waiting for your review
+                Waiting for your review <span class="heading heading--submission-count">{{ in_review_count }}</span>
             </h4>
+
             {% if in_review.data %}
                 {% render_table in_review %}
             {% else %}

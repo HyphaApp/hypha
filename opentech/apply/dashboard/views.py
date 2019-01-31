@@ -11,9 +11,10 @@ from opentech.apply.utils.views import ViewDispatcher
 class AdminDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+        qs_in_review = ApplicationSubmission.objects.all().for_table(self.request.user)
+        qs_in_review = qs_in_review.in_review_for(request.user)
 
-        in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
+        in_review = SubmissionsTable(qs_in_review, prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
         base_query = base_query.by_lead(request.user)
@@ -25,6 +26,7 @@ class AdminDashboardView(TemplateView):
 
         return render(request, 'dashboard/dashboard.html', {
             'in_review': in_review,
+            'in_review_count': qs_in_review.count(),
             'open_rounds': open_rounds,
             'open_query': open_query,
             'closed_rounds': closed_rounds,
