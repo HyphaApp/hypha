@@ -53,7 +53,6 @@ class ByRoundListing extends React.Component {
         const rounds = this.props.submissions
                                  .map(v => v.round)
                                  .filter((value, index, arr) => arr.indexOf(value) === index);
-        console.log(this.props.rounds)
         return rounds.map((v, i) => ({
             display: this.props.rounds[parseInt(v)].title,
             key: `round-${v}`,
