@@ -70,7 +70,6 @@ export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
 export const loadRounds = () => (dispatch, getState) => {
     const state = getState()
     const rounds = getRounds(state)
-    console.log(rounds);
 
     if ( rounds && Object.keys(rounds).length !== 0 ) {
         return null

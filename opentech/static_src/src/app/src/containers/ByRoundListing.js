@@ -9,11 +9,15 @@ import {
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
+    getRounds,
+    getRoundsFetching,
+    getRoundsErrored,
+} from '@selectors/rounds';
+import {
     getSubmissionsByGivenStatuses,
     getCurrentSubmissionID,
     getByGivenStatusesError,
     getByGivenStatusesLoading,
-    getRounds,
 } from '@selectors/submissions';
 
 
@@ -27,12 +31,12 @@ class ByRoundListing extends React.Component {
         submissionStatuses: PropTypes.arrayOf(PropTypes.string),
         loadSubmissions: PropTypes.func,
         submissions: PropTypes.arrayOf(PropTypes.object),
-        error: PropTypes.string,
+        isErrored: PropTypes.bool,
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
         rounds: PropTypes.array,
-        loading: PropTypes.bool,
+        isLoading: PropTypes.bool,
     };
 
     componentDidMount() {
@@ -50,40 +54,46 @@ class ByRoundListing extends React.Component {
         }
     }
 
-
     prepareOrder = () => {
-        const rounds = this.props.submissions
-                                 .map(v => v.round)
-                                 .filter((value, index, arr) => arr.indexOf(value) === index);
-        return rounds.map((v, i) => ({
-            display: this.props.rounds[parseInt(v)].title,
-            key: `round-${v}`,
-            position: i,
-            values: [v],
-        }));
+        const { isLoading, rounds, submissions } = this.props;
+        if (isLoading)
+            return []
+        return submissions.map(v => v.round)
+                          .filter((value, index, arr) => arr.indexOf(value) === index)
+                          .map((v, i) => ({
+                              display: rounds[parseInt(v)].title,
+                              key: `round-${v}`,
+                              position: i,
+                              values: [v],
+                          }));
     }
 
     render() {
-        const { loading, error, submissions, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
-        const isLoading = loading
+        const { isLoading, isErrored, submissions, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
         const order = this.prepareOrder();
         return <GroupedListing
-                    isLoading={isLoading}
-                    error={error}
-                    items={submissions || []}
-                    activeItem={activeSubmission}
-                    onItemSelection={setCurrentItem}
-                    shouldSelectFirst={shouldSelectFirst}
-                    groupBy={'round'}
-                    order={order}
+                isLoading={isLoading}
+                error={isErrored ? 'Fetching failed.' : undefined}
+                items={submissions || []}
+                activeItem={activeSubmission}
+                onItemSelection={setCurrentItem}
+                shouldSelectFirst={shouldSelectFirst}
+                groupBy={'round'}
+                order={order}
             />;
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
     submissions: getSubmissionsByGivenStatuses(ownProps.submissionStatuses)(state),
-    error: getByGivenStatusesError(ownProps.submissionStatuses)(state) ? "Something went wrong" : undefined,
-    loading: getByGivenStatusesLoading(ownProps.submissionStatuses)(state),
+    isErrored: (
+        getByGivenStatusesError(ownProps.submissionStatuses)(state) ||
+        getRoundsErrored(state)
+    ),
+    isLoading: (
+        getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
+        getRoundsFetching(state)
+    ),
     activeSubmission: getCurrentSubmissionID(state),
     rounds: getRounds(state),
 })
