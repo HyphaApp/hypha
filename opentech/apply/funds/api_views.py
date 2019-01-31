@@ -110,6 +110,7 @@ class RoundLabList(generics.ListAPIView):
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
+    pagination_class = StandardResultsSetPagination
 
 
 class CommentFilter(filters.FilterSet):
