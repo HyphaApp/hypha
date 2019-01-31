@@ -243,6 +243,8 @@
     }
 
     &--change-status {
+        display: none;
+
         &::before {
             background-image: url('./../../images/arrow-split.svg');
             transform: rotate(90deg);
