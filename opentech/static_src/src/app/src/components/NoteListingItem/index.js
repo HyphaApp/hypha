@@ -13,10 +13,11 @@ export default class NoteListingItem extends React.Component {
 
     render() {
         const { user, timestamp, message } = this.props;
+        const trimmedUser = `${user.substring(0, 16)}...`
         return (
             <li className="note">
                 <p className="note__meta">
-                    <span>{user}</span>
+                    <span>{trimmedUser}</span>
                     <span className="note__date">{timestamp.format('ll')}</span>
                 </p>
                 <div className="note__content" dangerouslySetInnerHTML={{__html: message}} />
