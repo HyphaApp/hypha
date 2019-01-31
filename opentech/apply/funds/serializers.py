@@ -97,7 +97,6 @@ class RoundLabSerializer(serializers.ModelSerializer):
             del self.fields['workflow']
         super().__init__(*args, **kwargs)
 
-
     def get_workflow(self, obj):
         return [
             {
