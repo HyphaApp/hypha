@@ -51,8 +51,8 @@
     $batchReviewersButton.click(function () {
         $batchTitlesList.html('');
         $batchTitleCount.html('');
-        $batchTitlesList.removeClass(closedClass);
-        $toggleBatchList.html('Hide');
+        $batchTitlesList.addClass(closedClass);
+        $toggleBatchList.html('Show');
 
         let selectedIDs = [];
 
