@@ -7,6 +7,8 @@ import {
     getCurrentRoundID,
     getCurrentRound,
     getCurrentRoundSubmissionIDs,
+    getRounds,
+    getSubmissionsByGivenStatuses,
 } from '@selectors/submissions';
 
 
@@ -66,6 +68,13 @@ export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
 
 
 export const loadRounds = () => (dispatch, getState) => {
+    const state = getState()
+    const rounds = getRounds(state)
+    console.log(rounds);
+
+    if ( rounds && Object.keys(rounds).length !== 0 ) {
+        return null
+    }
     return dispatch(fetchRounds())
 }
 
@@ -121,12 +130,12 @@ const fetchSubmissionsByStatuses = statuses => {
 };
 
 export const loadSubmissionsOfStatuses = statuses => (dispatch, getState) => {
-    //const state = getState()
-    //const submissions = getCurrentRoundSubmissionIDs(state)
+    const state = getState()
+    const submissions = getSubmissionsByGivenStatuses(statuses)(state)
 
-    //if ( submissions && submissions.length !== 0 ) {
-        //return null
-    //}
+    if ( submissions && submissions.length !== 0 ) {
+        return null
+    }
 
     return dispatch(fetchSubmissionsByStatuses(statuses))
 }
