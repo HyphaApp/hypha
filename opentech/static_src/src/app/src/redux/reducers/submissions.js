@@ -102,7 +102,7 @@ function submissionsByStatuses(state = {}, action) {
         case UPDATE_SUBMISSIONS_BY_STATUSES:
             return {
                 ...state,
-                [action.statuses]: action.data.results.map(v => v.id),
+                [action.statuses.join(',')]: action.data.results.map(v => v.id),
             };
         default:
             return state
