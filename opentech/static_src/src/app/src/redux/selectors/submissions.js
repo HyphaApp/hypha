@@ -17,16 +17,30 @@ const getCurrentRound = createSelector(
 
 const getCurrentSubmissionID = state => state.submissions.current;
 
-const getSubmissionsByGivenStatuses = statuses => createSelector(
-    [getSubmissions, getSubmissionsByStatuses], (submissions, byStatuses) => {
+const getByGivenStatusesObject = statuses => createSelector(
+    [getSubmissionsByStatuses], (byStatuses) => {
         for (const [key, value] of Object.entries(byStatuses)) {
             if (key.split(',').every(v => statuses.includes(v))) {
-                return value.map(id => submissions[id])
+                return value;
             }
         }
-
-        return []
+        return {};
     }
+);
+
+const getSubmissionsByGivenStatuses = statuses => createSelector(
+    [getSubmissions, getByGivenStatusesObject(statuses)],
+    (submissions, byStatus) => (byStatus.ids || []).map(id => submissions[id])
+);
+
+const getByGivenStatusesError = statuses => createSelector(
+    [getByGivenStatusesObject(statuses)],
+    byStatus => byStatus.isErrored === true
+);
+
+const getByGivenStatusesLoading = statuses => createSelector(
+    [getByGivenStatusesObject(statuses)],
+    byStatus => byStatus.isFetching === true
 );
 
 const getCurrentRoundSubmissionIDs = createSelector(
@@ -64,6 +78,8 @@ const getSubmissionsByRoundError = state => state.rounds.error;
 const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading === true;
 
 export {
+    getByGivenStatusesError,
+    getByGivenStatusesLoading,
     getCurrentRoundID,
     getCurrentRound,
     getCurrentRoundSubmissionIDs,

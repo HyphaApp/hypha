@@ -11,14 +11,15 @@ import {
 import {
     getSubmissionsByGivenStatuses,
     getCurrentSubmissionID,
-    getSubmissionsByRoundError,
+    getByGivenStatusesError,
+    getByGivenStatusesLoading,
     getRounds,
 } from '@selectors/submissions';
 
 
 const loadData = props => {
-    props.loadSubmissions()
     props.loadRounds()
+    props.loadSubmissions()
 }
 
 class ByRoundListing extends React.Component {
@@ -31,6 +32,7 @@ class ByRoundListing extends React.Component {
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
         rounds: PropTypes.array,
+        loading: PropTypes.bool,
     };
 
     componentDidMount() {
@@ -62,13 +64,13 @@ class ByRoundListing extends React.Component {
     }
 
     render() {
-        const { error, submissions, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
-        const isLoading = false
+        const { loading, error, submissions, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
+        const isLoading = loading
         const order = this.prepareOrder();
         return <GroupedListing
                     isLoading={isLoading}
                     error={error}
-                    items={submissions}
+                    items={submissions || []}
                     activeItem={activeSubmission}
                     onItemSelection={setCurrentItem}
                     shouldSelectFirst={shouldSelectFirst}
@@ -80,7 +82,8 @@ class ByRoundListing extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     submissions: getSubmissionsByGivenStatuses(ownProps.submissionStatuses)(state),
-    error: getSubmissionsByRoundError(state),
+    error: getByGivenStatusesError(ownProps.submissionStatuses)(state) ? "Something went wrong" : undefined,
+    loading: getByGivenStatusesLoading(ownProps.submissionStatuses)(state),
     activeSubmission: getCurrentSubmissionID(state),
     rounds: getRounds(state),
 })

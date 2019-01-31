@@ -8,6 +8,8 @@ import {
     UPDATE_SUBMISSION,
     SET_CURRENT_SUBMISSION,
     UPDATE_SUBMISSIONS_BY_STATUSES,
+    START_LOADING_SUBMISSIONS_BY_STATUSES,
+    FAIL_LOADING_SUBMISSIONS_BY_STATUSES,
 } from '@actions/submissions';
 
 import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -98,11 +100,35 @@ function currentSubmission(state = null, action) {
 
 
 function submissionsByStatuses(state = {}, action) {
+    const key = () => action.statuses.join(',');
     switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_STATUSES:
             return {
-                ...state,
-                [action.statuses.join(',')]: action.data.results.map(v => v.id),
+                ...state || null,
+                [key()]: {
+                    ...state[key()],
+                    ids: action.data.results.map(v => v.id),
+                    isFetching: false,
+                    isErrored: false,
+                }
+            };
+        case START_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                ...state || null,
+                [key()]: {
+                    ...state[key()],
+                    isFetching: true,
+                    isErrored: false,
+                }
+            };
+        case FAIL_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                ...state || null,
+                [key()]: {
+                    ...state[key()],
+                    isFetching: false,
+                    isErrored: true,
+                }
             };
         default:
             return state
