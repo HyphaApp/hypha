@@ -63,7 +63,7 @@
                 const title = $(this).parents('tr').find('.js-title').data('tooltip');
 
                 $batchTitlesList.append(`
-                    <a href="${href}" class="modal__list-item" target="_blank" rel="noopener noreferrer">
+                    <a href="${href}" class="modal__list-item" target="_blank" rel="noopener noreferrer" title="${title}">
                         ${title}
                         <svg class="modal__open-link-icon"><use xlink:href="#open-in-new-tab"></use></svg>
                     </a>
