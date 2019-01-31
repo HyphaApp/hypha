@@ -4,17 +4,16 @@ from django_tables2 import RequestConfig
 from django_tables2.views import SingleTableView
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from opentech.apply.funds.tables import SubmissionsTable, AdminSubmissionsTable
+from opentech.apply.funds.tables import AdminSubmissionsTable, SubmissionsTable, SummarySubmissionsTable
 from opentech.apply.utils.views import ViewDispatcher
 
 
 class AdminDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
-        qs_in_review = ApplicationSubmission.objects.all().for_table(self.request.user)
-        qs_in_review = qs_in_review.in_review_for(request.user)
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        in_review = SubmissionsTable(qs_in_review, prefix='in-review-')
+        in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
         base_query = base_query.by_lead(request.user)
@@ -26,7 +25,6 @@ class AdminDashboardView(TemplateView):
 
         return render(request, 'dashboard/dashboard.html', {
             'in_review': in_review,
-            'in_review_count': qs_in_review.count(),
             'open_rounds': open_rounds,
             'open_query': open_query,
             'closed_rounds': closed_rounds,
@@ -39,9 +37,9 @@ class ReviewerDashboardView(TemplateView):
     def get(self, request, *args, **kwargs):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        my_review_qs = qs.in_review_for(request.user)
-        my_review = SubmissionsTable(my_review_qs, prefix='my-review-')
-        RequestConfig(request, paginate={'per_page': 10}).configure(my_review)
+        my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
+        my_review = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        display_more = (my_review_qs.count() > 5)
 
         also_in_review = AdminSubmissionsTable(
             qs.in_review_for(request.user, assigned=False).exclude(id__in=my_review_qs),
@@ -51,6 +49,8 @@ class ReviewerDashboardView(TemplateView):
 
         return render(request, 'dashboard/reviewer_dashboard.html', {
             'my_review': my_review,
+            'in_review_count': my_review_qs.count(),
+            'display_more': display_more,
             'also_in_review': also_in_review,
         })
 

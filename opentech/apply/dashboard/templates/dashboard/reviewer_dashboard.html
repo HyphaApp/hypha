@@ -12,12 +12,23 @@
         {% endblock %}
     </div>
 </div>
+
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
-            <h3>Applications to review</h3>
+
+            <h4 class="heading heading--normal">
+                Waiting for your review <span class="heading heading--submission-count">{{ in_review_count }}</span>
+            </h4>
+
             {% if my_review.data %}
-                <p>These are applications for which your review has been requested.</p>
                 {% render_table my_review %}
+
+                {% if display_more %}
+                    <div class="all-submissions-table__more">
+                        <a href="{% url 'apply:submissions:list' %}">Show all</a>
+                    </div>
+                {% endif %}
+
             {% else %}
                 No reviews to complete
             {% endif %}

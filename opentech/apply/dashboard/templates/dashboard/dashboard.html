@@ -19,20 +19,16 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
-            <h4 class="heading heading--normal">
-                Waiting for your review <span class="heading heading--submission-count">{{ in_review_count }}</span>
-            </h4>
+            {% if closed_rounds or open_rounds %}
+                {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
+            {% endif %}
 
+            <h3>Applications to review</h3>
             {% if in_review.data %}
                 {% render_table in_review %}
             {% else %}
                 No reviews to complete
             {% endif %}
-
-            {% if closed_rounds or open_rounds %}
-                {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
-            {% endif %}
-
         </div>
 </div>
 {% endblock %}
