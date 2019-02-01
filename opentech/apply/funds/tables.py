@@ -125,9 +125,16 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
 
 
 class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        choices = [(slugify(status), status) for status in STATUSES]
-        self.status_map = {slugify(name): status for name, status in STATUSES.items()}
+    def __init__(self, limit_to, *args, **kwargs):
+        choices = [
+            (slugify(name), name)
+            for name, statuses in STATUSES.items()
+            if not limit_to or self.has_any(statuses, limit_to)
+        ]
+        self.status_map = {
+            slugify(name): status
+            for name, status in STATUSES.items()
+        }
         super().__init__(
             *args,
             name='status',
@@ -136,6 +143,9 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
             **kwargs,
         )
 
+    def has_any(self, first, second):
+        return any(item in second for item in first)
+
     def get_filter_predicate(self, v):
         return {f'{ self.field_name }__in': self.status_map[v]}
 
@@ -143,7 +153,6 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
-    status = StatusMultipleChoiceFilter()
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
@@ -152,8 +161,10 @@ class SubmissionFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('fund', 'round', 'status')
 
-    def __init__(self, *args, exclude=list(), **kwargs):
+    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
 
         self.filters = {
             field: filter
