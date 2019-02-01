@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load static wagtailcore_tags %}
 
 {% block title %}OTF reviewer Dashboard{% endblock %}
 
@@ -30,8 +30,12 @@
                 {% endif %}
 
             {% else %}
-                <div class="grid grid--two wrapper wrapper--large">
-                    <div>Nice! You're all caught up.</div>
+                <div class="grid wrapper wrapper--large ">
+                    <div class="reviewer-dash-box">
+                        <h5 class="reviewer-dash-box__title">Nice! You're all caught up.</h5>
+                        <a class="button button--primary" href="{% url 'apply:submissions:list' %}">Find new applications to review</a>
+                    </div>
+                    {# TODO Fill in data and update styles in future ticket #}
                     <div>Since you last logged in</div>
                 </div>
             {% endif %}
