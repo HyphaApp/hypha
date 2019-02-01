@@ -137,12 +137,13 @@ class AdapterBase:
 
     def create_logs(self, message, recipient, *events):
         from .models import Message
-        return Message.objects.bulk_create(
+        messages = Message.objects.bulk_create(
             Message(
-                self.log_kwargs(message, recipient, event)
-                for event in events
+                **self.log_kwargs(message, recipient, event)
             )
+            for event in events
         )
+        return Message.objects.filter(id__in=[message.id for message in messages])
 
     def log_kwargs(self, message, recipient, event):
         return {
