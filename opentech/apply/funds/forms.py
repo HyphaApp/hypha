@@ -76,7 +76,7 @@ class UpdateReviewersForm(forms.ModelForm):
         if self.can_alter_external_reviewers(self.instance, self.user):
             self.prepare_field('reviewer_reviewers', reviewers, submitted_reviewers)
         else:
-            fields.pop('reviewer_reviewers')
+            self.fields.pop('reviewer_reviewers')
 
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]
