@@ -57,6 +57,6 @@ export default class RichTextForm extends React.Component {
     }
 
     handleSubmit = () => {
-        this.props.onSubmit(this.state.value.toString('markdown'), this.resetEditor);
+        this.props.onSubmit(this.state.value.toString('html'), this.resetEditor);
     }
 }
