@@ -119,14 +119,14 @@ class AdapterBase:
 
 
         for recipient in recipients:
-            message_log = self.create_logs(message, recipient, *events)
+            message_logs = self.create_logs(message, recipient, *events)
 
             if settings.SEND_MESSAGES or self.always_send:
-                status = self.send_message(message, recipient=recipient, message_log=message_log, **kwargs)
+                status = self.send_message(message, recipient=recipient, logs=message_logs, **kwargs)
             else:
                 status = 'Message not sent as SEND_MESSAGES==FALSE'
 
-            message_log.status = status
+            message_logs.update_status = status
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -137,9 +137,11 @@ class AdapterBase:
 
     def create_logs(self, message, recipient, *events):
         from .models import Message
-        return Message(
-            self.log_kwargs(message, recipient, event)
-            for event in events
+        return Message.objects.bulk_create(
+            Message(
+                self.log_kwargs(message, recipient, event)
+                for event in events
+            )
         )
 
     def log_kwargs(self, message, recipient, event):
@@ -424,14 +426,14 @@ class EmailAdapter(AdapterBase):
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)
 
-    def send_message(self, message, submission, subject, recipient, **kwargs):
+    def send_message(self, message, submission, subject, recipient, logs, **kwargs):
         try:
             send_mail(
                 subject,
                 message,
                 submission.page.specific.from_address,
                 [recipient],
-                log=kwargs['message_log']
+                logs=logs
             )
         except Exception as e:
             return 'Error: ' + str(e)
