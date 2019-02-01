@@ -13,13 +13,13 @@
         </div>
     </div>
 
-    <div id="submissions-by-status-react-app" data-statuses="{{ statuses }}">
+    <div id="submissions-by-status-react-app" data-statuses="{{ statuses|join:',' }}">
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
             {% block table %}
                 {{ block.super }}
             {% endblock %}
         </div>
     </div>
-{% render_bundle 'main' %}
+{% render_bundle 'submissionsByStatus' %}
 
 {% endblock %}

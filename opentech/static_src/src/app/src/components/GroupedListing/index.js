@@ -93,7 +93,6 @@ export default class GroupedListing extends React.Component {
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-
         const orderedItems = order.map(({key, display, values}) => ({
             name: display,
             key,
@@ -106,7 +105,7 @@ export default class GroupedListing extends React.Component {
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
         return (
-            <ListingGroup key={`listing-group-${group.key}`} item={group}>
+            <ListingGroup key={`listing-group-${group.key}`} id={group.key} item={group}>
                 {group.items.map(item => {
                     return <ListingItem
                         selected={!!activeItem && activeItem===item.id}

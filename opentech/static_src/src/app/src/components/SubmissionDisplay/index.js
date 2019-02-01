@@ -64,14 +64,14 @@ export default class SubmissionDisplay extends Component {
                 </div>
             )
         }
-        const { meta_questions = [], questions = [], stage} = this.props.submission;
+        const { metaQuestions = [], questions = [], stage} = this.props.submission;
 
         return (
             <div className="application-display">
                 <h3>{stage} Information</h3>
 
                 <div className="grid grid--proposal-info">
-                    {meta_questions.map((response, index) => (
+                    {metaQuestions.map((response, index) => (
                         <MetaResponse key={index} {...response} />
                     ))}
                 </div>

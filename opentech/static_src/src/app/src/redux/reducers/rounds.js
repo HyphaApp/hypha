@@ -8,6 +8,9 @@ import {
     FAIL_LOADING_ROUND,
     START_LOADING_ROUND,
     UPDATE_ROUND,
+    UPDATE_ROUNDS,
+    FAIL_LOADING_ROUNDS,
+    START_LOADING_ROUNDS,
 } from '@actions/submissions';
 
 const submissionsDefaultState = {ids: [], isFetching: false};
@@ -81,6 +84,17 @@ function roundsByID(state = {}, action) {
                 ...state,
                 [action.roundID]: round(state[action.roundID], action)
             };
+        case UPDATE_ROUNDS:
+            return {
+                ...state,
+                ...action.data.results.reduce((acc, value) => {
+                    acc[value.id] = round(state[value.id], {
+                        type: UPDATE_ROUND,
+                        data: value
+                    });
+                    return acc;
+                }, {}),
+            };
         default:
             return state;
     }
@@ -103,6 +117,30 @@ function errorMessage(state = null, action) {
 
 }
 
+function roundsErrored(state = false, action) {
+    switch (action.type) {
+        case START_LOADING_ROUNDS:
+        case UPDATE_ROUNDS:
+            return false;
+        case FAIL_LOADING_ROUNDS:
+            return true;
+        default:
+            return state;
+    }
+}
+
+function roundsFetching(state = false, action) {
+    switch (action.type) {
+        case FAIL_LOADING_ROUNDS:
+        case UPDATE_ROUNDS:
+            return false;
+        case START_LOADING_ROUNDS:
+            return true;
+        default:
+            return state;
+    }
+}
+
 
 function currentRound(state = null, action) {
     switch(action.type) {
@@ -118,6 +156,8 @@ const rounds = combineReducers({
     byID: roundsByID,
     current: currentRound,
     error: errorMessage,
+    isFetching: roundsFetching,
+    isErrored: roundsErrored,
 });
 
 export default rounds;
