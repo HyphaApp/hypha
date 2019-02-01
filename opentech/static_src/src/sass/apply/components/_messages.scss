@@ -12,8 +12,9 @@
         color: $color--white;
         font-size: 14px;
         opacity: 1;
-        transition: opacity $transition;
+        transition: opacity, max-height, $transition;
         pointer-events: all;
+        max-height: 1000px;
 
         @include media-query(desktop) {
             padding: 15px 30px;
@@ -36,6 +37,8 @@
         &--hide {
             opacity: 0;
             pointer-events: none;
+            max-height: 0;
+            padding: 0;
         }
     }
 
