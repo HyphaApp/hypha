@@ -65,8 +65,25 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
-class AdminSubmissionsTable(SubmissionsTable):
-    """Adds admin only columns to the submissions table"""
+class LabeledCheckboxColumn(tables.CheckBoxColumn):
+    def wrap_with_label(self, checkbox, for_value):
+        return format_html(
+            '<label for="{}">{}</label>',
+            for_value,
+            checkbox,
+        )
+
+    @property
+    def header(self):
+        checkbox = super().header
+        return self.wrap_with_label(checkbox, 'selectall')
+
+    def render(self, value, record, bound_column):
+        checkbox = super().render(value=value, record=record, bound_column=bound_column)
+        return self.wrap_with_label(checkbox, value)
+
+
+class BaseAdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
     screening_status = tables.Column(verbose_name="Screening")
@@ -79,8 +96,17 @@ class AdminSubmissionsTable(SubmissionsTable):
         return format_html('<span>{}</span>', value)
 
 
-class SummarySubmissionsTable(AdminSubmissionsTable):
-    class Meta(AdminSubmissionsTable.Meta):
+class AdminSubmissionsTable(BaseAdminSubmissionsTable):
+    """Adds admin only columns to the submissions table"""
+    selected = LabeledCheckboxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
+
+    class Meta(BaseAdminSubmissionsTable.Meta):
+        fields = ('selected', *BaseAdminSubmissionsTable.Meta.fields)
+        sequence = fields
+
+
+class SummarySubmissionsTable(BaseAdminSubmissionsTable):
+    class Meta(BaseAdminSubmissionsTable.Meta):
         orderable = False
 
 

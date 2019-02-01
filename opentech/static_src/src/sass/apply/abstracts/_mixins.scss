@@ -221,3 +221,23 @@
         height: calc(100vh -  #{$listing-header-height});
     }
 }
+
+@mixin checkbox-without-label {
+    input[type='checkbox'] {
+        margin: 0 auto;
+        display: block;
+        width: 20px;
+        height: 20px;
+        border: 1px solid $color--mid-grey;
+        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        appearance: none;
+        background-color: $color--white;
+
+        &:checked {
+            background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
+            background-size: 12px;
+            border: 1px solid $color--dark-blue;
+        }
+    }
+}

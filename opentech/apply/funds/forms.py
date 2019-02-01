@@ -66,29 +66,29 @@ class UpdateReviewersForm(forms.ModelForm):
         model = ApplicationSubmission
         fields: list = []
 
-    def can_alter_reviewers(self, user):
-        return self.instance.stage.has_external_review and user == self.instance.lead
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
+        submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
-        staff_field = self.fields['staff_reviewers']
-        staff_field.queryset = staff_field.queryset.exclude(id__in=self.submitted_reviewers)
-        staff_field.initial = reviewers
-
-        if self.can_alter_reviewers(self.user):
-            review_field = self.fields['reviewer_reviewers']
-            review_field.queryset = review_field.queryset.exclude(id__in=self.submitted_reviewers)
-            review_field.initial = reviewers
+        self.prepare_field('staff_reviewers', reviewers, submitted_reviewers)
+        if self.can_alter_external_reviewers(self.instance, self.user):
+            self.prepare_field('reviewer_reviewers', reviewers, submitted_reviewers)
         else:
             self.fields.pop('reviewer_reviewers')
 
+    def prepare_field(self, field_name, initial, excluded):
+        field = self.fields[field_name]
+        field.queryset = field.queryset.exclude(id__in=excluded)
+        field.initial = initial
+
+    def can_alter_external_reviewers(self, instance, user):
+        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
+
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if self.can_alter_reviewers(self.user):
+        if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
         else:
             reviewers = instance.reviewers_not_reviewed
@@ -99,3 +99,15 @@ class UpdateReviewersForm(forms.ModelForm):
             self.submitted_reviewers
         )
         return instance
+
+
+class BatchUpdateReviewersForm(forms.Form):
+    staff_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.staff(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
+    )
+    submission_ids = forms.CharField(widget=forms.HiddenInput())
+
+    def clean_submission_ids(self):
+        value = self.cleaned_data['submission_ids']
+        return [int(submission) for submission in value.split(',')]

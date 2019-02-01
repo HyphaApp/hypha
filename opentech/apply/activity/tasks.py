@@ -8,7 +8,7 @@ app = Celery('tasks')
 app.config_from_object(settings, namespace='CELERY', force=True)
 
 
-def send_mail(subject, message, from_address, recipients, log=None):
+def send_mail(subject, message, from_address, recipients, logs=None):
     # Convenience method to wrap the tasks and handle the callback
     send_mail_task.apply_async(
         kwargs={
@@ -17,7 +17,7 @@ def send_mail(subject, message, from_address, recipients, log=None):
             'from_email': from_address,
             'to': recipients,
         },
-        link=update_message_status.s(log.id),
+        link=update_message_status.s(log.values_list('id', flat=True)),
     )
 
 
@@ -42,8 +42,8 @@ def send_mail_task(**kwargs):
 
 
 @app.task
-def update_message_status(response, message_id):
+def update_message_status(response, message_ids):
     from .models import Message
-    message = Message.objects.get(id=message_id)
+    message = Message.objects.filter(id__in=message_ids)
     message.external_id = response['id']
     message.update_status(response['status'])

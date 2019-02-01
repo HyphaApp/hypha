@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, FormView, ListView, UpdateView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -27,10 +27,17 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import DelegateableView, ViewDispatcher
+from opentech.apply.users.models import User
+from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
-from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReviewersForm, UpdateSubmissionLeadForm
+from .forms import (
+    BatchUpdateReviewersForm,
+    ProgressSubmissionForm,
+    ScreeningSubmissionForm,
+    UpdateReviewersForm,
+    UpdateSubmissionLeadForm,
+)
 from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
 from .tables import (
     AdminSubmissionsTable,
@@ -69,15 +76,48 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs)
-
         search_term = self.request.GET.get('query')
-        kwargs.update(
+
+        return super().get_context_data(
             search_term=search_term,
             filter_action=self.filter_action,
+            **kwargs,
         )
 
-        return super().get_context_data(**kwargs)
+
+@method_decorator(staff_required, name='dispatch')
+class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
+    form_class = BatchUpdateReviewersForm
+    context_name = 'batch_reviewer_form'
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        """
+        Loop through all submissions selected on the page,
+        Add any reviewers that were selected,  only if they are not
+        currently saved to that submission.
+        Send out a message of updates.
+        """
+        reviewers = User.objects.filter(id__in=form.cleaned_data['staff_reviewers'])
+
+        submission_ids = form.cleaned_data['submission_ids']
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+        for submission in submissions:
+            submission.reviewers.add(*reviewers)
+
+        messenger(
+            MESSAGES.BATCH_REVIEWERS_UPDATED,
+            request=self.request,
+            user=self.request.user,
+            submissions=submissions,
+            added=reviewers,
+        )
+
+        return super().form_valid(form)
 
 
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
@@ -107,12 +147,18 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
-class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
+    form_views = [
+        BatchUpdateReviewersView
+    ]
 
 
-class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
+    form_views = [
+        BatchUpdateReviewersView
+    ]
 
     excluded_fields = ('round', 'lead', 'fund')
 
@@ -238,10 +284,11 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             added=added,
             removed=removed,
         )
+
         return response
 
 
-class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView):
+class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [

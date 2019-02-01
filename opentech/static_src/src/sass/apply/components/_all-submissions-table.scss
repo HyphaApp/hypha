@@ -24,7 +24,7 @@
             &.title {
                 @include media-query($table-breakpoint) {
                     width: 130px;
-                    padding-left: 20px;
+                    padding-left: 10px;
                 }
 
                 @include media-query(desktop) {
@@ -35,6 +35,14 @@
             &.phase {
                 @include media-query($table-breakpoint) {
                     width: 150px;
+                }
+            }
+
+            &.selected {
+                @include checkbox-without-label;
+
+                @include media-query($table-breakpoint) {
+                    width: 60px;
                 }
             }
         }
@@ -57,13 +65,12 @@
                 @include media-query($table-breakpoint) {
                     display: flex;
                     align-items: center;
-                    padding-top: 20px;
+                    padding-top: 10px;
                     padding-left: 10px;
                 }
 
                 @include media-query(desktop) {
                     display: table-cell;
-                    padding-left: 20px;
                 }
 
                 &.has-tooltip {
@@ -135,6 +142,16 @@
             }
 
             &.reviews_stats { // sass-lint:disable-line class-name-format
+                display: none;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
+                }
+            }
+
+            // batch action checkboxes
+            &.selected {
+                @include checkbox-without-label;
                 display: none;
 
                 @include media-query($table-breakpoint) {
