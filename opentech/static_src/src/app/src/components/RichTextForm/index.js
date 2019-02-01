@@ -12,6 +12,7 @@ export default class RichTextForm extends React.Component {
         disabled: PropTypes.bool.isRequired,
         onValueChange: PropTypes.func,
         value: PropTypes.string,
+        instance: PropTypes.string,
         onSubmit: PropTypes.func,
     };
 
@@ -24,18 +25,22 @@ export default class RichTextForm extends React.Component {
     }
 
     render() {
-        const passProps = {
-            disabled: this.props.disabled,
-            onChange: this.handleValueChange,
-            value: this.state.value,
-        };
+        const { instance, disabled } = this.props;
 
         return (
-            <div>
-                <RichTextEditor {...passProps} />
+            <div className={ instance } >
+                <RichTextEditor
+                    disabled={ disabled }
+                    onChange={ this.handleValueChange }
+                    value={ this.state.value }
+                    className="add-note-form__container"
+                    toolbarClassName="add-note-form__toolbar"
+                    editorClassName="add-note-form__editor"
+                />
                 <button
-                    disabled={this.isEmpty() || this.props.disabled}
+                    disabled={this.isEmpty() || disabled}
                     onClick={this.handleSubmit}
+                    className={`button ${instance}__button`}
                 >
                     Submit
                 </button>

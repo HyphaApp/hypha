@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TransitionGroup } from 'react-transition-group';
 
 import LoadingPanel from '@components/LoadingPanel';
 import EmptyPanel from '@components/EmptyPanel';
@@ -47,7 +48,9 @@ export default class Listing extends React.Component {
 
         return (
             <ul className={`listing__list listing__list--${column}`} ref={listRef}>
-                {items.map(v => renderItem(v))}
+                <TransitionGroup>
+                    {items.map(v => renderItem(v))}
+                </TransitionGroup>
             </ul>
         );
     }

@@ -1,0 +1,59 @@
+$submit-button-height: 60px;
+
+.add-note-form {
+    position: relative;
+
+    @include media-query(tablet-landscape) {
+        height: 25vh; // .list--notes is set to 75vh
+    }
+
+    @include media-query(laptop-short) {
+        height: 40vh; // .list--notes is set to 60vh
+    }
+
+    &__container {
+        width: 100%;
+        height: calc(100% - #{$submit-button-height});
+        border: 0;
+        overflow: hidden;
+        font-family: inherit;
+    }
+
+    &__toolbar {
+        margin: 0;
+        padding: 10px;
+    }
+
+    &__editor {
+        height: 250px;
+        overflow-y: scroll;
+        padding-bottom: 60px;
+
+        @include media-query(tablet-landscape) {
+            height: 100%;
+            padding-bottom: 95px;
+        }
+    }
+
+    &__button {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        border-top: 1px solid $color--mid-grey;
+        color: $color--dark-blue;
+        font-weight: $weight--bold;
+        font-size: 18px;
+        height: $submit-button-height;
+        opacity: 1;
+    }
+
+    textarea,
+    &__button {
+        &:disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    }
+}
