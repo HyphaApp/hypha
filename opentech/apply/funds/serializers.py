@@ -1,7 +1,11 @@
+import mistune
 from rest_framework import serializers
+from django_bleach.templatetags.bleach_tags import bleach_value
 
 from opentech.apply.activity.models import Activity
 from .models import ApplicationSubmission, RoundsAndLabs
+
+markdown = mistune.Markdown()
 
 
 class ActionSerializer(serializers.Field):
@@ -108,10 +112,14 @@ class RoundLabSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    message = serializers.SerializerMethodField()
 
     class Meta:
         model = Activity
         fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+
+    def get_message(self, obj):
+        return bleach_value(markdown(obj.message))
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):

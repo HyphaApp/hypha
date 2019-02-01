@@ -33,5 +33,23 @@
         margin: 0;
         word-break: break-all;
         hyphens: auto;
+
+        ul {
+            list-style: initial;
+            list-style-position: inside;
+        }
+
+        ol {
+            list-style-type: decimal;
+            list-style-position: inside;
+        }
+
+        blockquote {
+            margin: 0;
+            padding-left: 1em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            border-left: 2px solid $color--dark-blue;
+        }
     }
 }
