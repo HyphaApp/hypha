@@ -3,7 +3,6 @@ from django import forms
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission
-from .utils import can_alter_reviewers, set_reviewers_fields
 from .widgets import Select2MultiCheckboxesWidget
 
 
