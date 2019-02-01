@@ -69,11 +69,11 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = instance.reviewers.all()
-        submitted_reviewers = User.objects.filter(id__in=instance.reviews.values('author'))
+        reviewers = self.instance.reviewers.all()
+        submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
         self.prepare_field('staff_reviewers', reviewers, submitted_reviewers)
-        if self.can_alter_external_reviewers(instance, user):
+        if self.can_alter_external_reviewers(self.instance, self.user):
             self.prepare_field('reviewer_reviewers', reviewers, submitted_reviewers)
         else:
             fields.pop('reviewer_reviewers')
@@ -83,7 +83,7 @@ class UpdateReviewersForm(forms.ModelForm):
         field.queryset = field.queryset.exclude(id__in=excluded)
         field.initial = initial
 
-    def can_alter_external_reviewers(instance, user):
+    def can_alter_external_reviewers(self, instance, user):
         return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
 
     def save(self, *args, **kwargs):
