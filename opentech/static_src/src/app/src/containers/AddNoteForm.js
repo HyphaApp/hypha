@@ -31,15 +31,11 @@ class AddNoteForm extends React.Component {
         );
     }
 
-    onSubmit = async (message, resetEditor) => {
-        const action = await this.props.submitNote(this.props.submissionID, {
+    onSubmit = (message, resetEditor) => {
+        this.props.submitNote(this.props.submissionID, {
             message,
             visibility: 'internal',
-        });
-
-        if (action === true) {
-            resetEditor();
-        }
+        }).then(() => resetEditor());
     }
 }
 
