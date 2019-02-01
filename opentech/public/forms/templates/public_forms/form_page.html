@@ -2,13 +2,23 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
-    <div>
+<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    <div class="wrapper--sidebar--inner">
         <h1>{{ page.title }}</h1>
         {{ page.intro|richtext }}
-        <form action="{% pageurl page %}" method="POST">
+        <form class="form" action="{% pageurl page %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
+            {{ form.media }}
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+            <input class="link link--button-secondary" type="submit" value="Submit">
         </form>
     </div>
+</div>
+
 {% endblock %}
