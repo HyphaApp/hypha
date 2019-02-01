@@ -193,7 +193,7 @@ class TestActivityAdapter(TestCase):
         user = UserFactory()
         submission = ApplicationSubmissionFactory()
 
-        self.adapter.send_message(message, user=user, submission=submission, related=None)
+        self.adapter.send_message(message, user=user, submission=submission, submissions=[], related=None)
 
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
@@ -271,7 +271,7 @@ class TestActivityAdapter(TestCase):
     def test_lead_not_saved_on_activity(self):
         submission = ApplicationSubmissionFactory()
         user = UserFactory()
-        self.adapter.send_message('a message', user=user, submission=submission, related=user)
+        self.adapter.send_message('a message', user=user, submission=submission, submissions=[], related=user)
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, None)
 
@@ -279,7 +279,7 @@ class TestActivityAdapter(TestCase):
         submission = ApplicationSubmissionFactory()
         user = UserFactory()
         review = ReviewFactory(submission=submission)
-        self.adapter.send_message('a message', user=user, submission=submission, related=review)
+        self.adapter.send_message('a message', user=user, submission=submission, submissions=[], related=review)
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, review)
 

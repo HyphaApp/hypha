@@ -136,12 +136,13 @@ class Event(models.Model):
 
 class MessagesQueryset(models.QuerySet):
     def update_status(self, status):
-        return self.update(
-            status=Case(
-                When(status='', then=Value(status)),
-                default=Concat('status', Value('<br />' + status))
+        if status:
+            return self.update(
+                status=Case(
+                    When(status='', then=Value(status)),
+                    default=Concat('status', Value('<br />' + status))
+                )
             )
-        )
 
     update_status.queryset_only = True
 
