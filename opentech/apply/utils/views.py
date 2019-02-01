@@ -61,6 +61,7 @@ class DelegatableBase(ContextMixin):
     def post(self, request, *args, **kwargs):
         # Information to pretend we originate from this view
         kwargs['context'] = self.get_context_data()
+        kwargs['template_names'] = self.get_template_names()
 
         for form_view in self.form_views:
             if self.form_prefix + form_view.context_name in request.POST:
@@ -77,7 +78,6 @@ class DelegateableView(DelegatableBase):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        kwargs['template_names'] = self.get_template_names()
         kwargs['submission'] = self.object
 
         return super().post(request, *args, **kwargs)

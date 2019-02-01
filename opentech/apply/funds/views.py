@@ -89,6 +89,10 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
+
     def form_valid(self, form):
         """
         Loop through all submissions selected on the page,
