@@ -70,11 +70,11 @@ class UpdateReviewersForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
-        submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
+        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
-        self.prepare_field('staff_reviewers', reviewers, submitted_reviewers)
+        self.prepare_field('staff_reviewers', reviewers, self.submitted_reviewers)
         if self.can_alter_external_reviewers(self.instance, self.user):
-            self.prepare_field('reviewer_reviewers', reviewers, submitted_reviewers)
+            self.prepare_field('reviewer_reviewers', reviewers, self.submitted_reviewers)
         else:
             self.fields.pop('reviewer_reviewers')
 

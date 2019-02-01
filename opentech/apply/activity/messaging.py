@@ -98,10 +98,10 @@ class AdapterBase:
             self.process_send(message_type, recipients, events, request, user, submissions=submissions, submission=None, related=related, **kwargs)
 
     def process(self, message_type, event, request, user, submission, related=None, **kwargs):
-        recipients = self.recipients(message_type, **kwargs)
+        recipients = self.recipients(message_type, submission=submission, **kwargs)
         self.process_send(message_type, recipients, [event], request, user, submission, related=related, **kwargs)
 
-    def process_send(self, message_type, recipients, events, request, user, submission, submissions=None, related=None, **kwargs):
+    def process_send(self, message_type, recipients, events, request, user, submission, submissions=list(), related=None, **kwargs):
         kwargs = {
             'request': request,
             'user': user,
@@ -125,7 +125,7 @@ class AdapterBase:
             else:
                 status = 'Message not sent as SEND_MESSAGES==FALSE'
 
-            message_logs.update_status = status
+            message_logs.update_status(status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
@@ -244,7 +244,7 @@ class ActivityAdapter(AdapterBase):
         try:
             # If this was a batch action we want to pull out the submission
             submission = submissions[0]
-        except TypeError:
+        except IndexError:
             pass
 
         Activity.actions.create(

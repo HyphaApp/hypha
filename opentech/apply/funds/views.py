@@ -376,7 +376,7 @@ class SubmissionSealedView(DetailView):
             return HttpResponseRedirect(reverse_lazy('funds:submissions:sealed', args=(submission.id,)))
 
 
-class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView):
+class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     model = ApplicationSubmission
     form_views = [CommentFormView]
 
