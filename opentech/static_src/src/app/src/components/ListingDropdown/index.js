@@ -30,7 +30,7 @@ export default class ListingDropdown extends React.Component {
                 <select onChange={(e) => this.handleChange(e)} aria-label="Jump to listing group">
                     {groups.map(group => {
                         return (
-                            <option key={`listing-heading-${group.name}`} value={group.name}>{group.name}</option>
+                            <option key={`listing-heading-${group.key}`} value={group.key}>{group.name}</option>
                         )
                     })}
                 </select>

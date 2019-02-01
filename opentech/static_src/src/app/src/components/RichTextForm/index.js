@@ -44,7 +44,7 @@ export default class RichTextForm extends React.Component {
     }
 
     isEmpty = () => {
-        return !this.state.value;
+        return !this.state.value.getEditorState().getCurrentContent().hasText();
     }
 
     handleValueChange = value => {

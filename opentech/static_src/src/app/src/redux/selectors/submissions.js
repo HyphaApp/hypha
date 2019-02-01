@@ -15,12 +15,17 @@ const getCurrentRound = createSelector(
 
 const getCurrentSubmissionID = state => state.submissions.current;
 
+const getCurrentRoundSubmissionIDs = createSelector(
+    [ getCurrentRound ],
+    (round) => {
+        return round ? round.submissions.ids : [];
+    }
+);
 
 const getCurrentRoundSubmissions = createSelector(
-    [ getCurrentRound, getSubmissions],
-    (round, submissions) => {
-        const roundSubmissions = round ? round.submissions : [];
-        return roundSubmissions.map(submissionID => submissions[submissionID]);
+    [ getCurrentRoundSubmissionIDs, getSubmissions],
+    (submissionIDs, submissions) => {
+        return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
 
@@ -47,6 +52,7 @@ const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoadin
 export {
     getCurrentRoundID,
     getCurrentRound,
+    getCurrentRoundSubmissionIDs,
     getCurrentRoundSubmissions,
     getCurrentSubmission,
     getCurrentSubmissionID,
