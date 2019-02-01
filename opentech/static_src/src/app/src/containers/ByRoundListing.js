@@ -48,7 +48,6 @@ class ByRoundListing extends React.Component {
 
     componentDidUpdate(prevProps) {
         const { submissionStatuses } = this.props;
-        // Update entries if round ID is changed or is not null.
         if (!submissionStatuses.every(v => prevProps.submissionStatuses.includes(v))) {
             loadData(this.props)
         }
@@ -58,13 +57,13 @@ class ByRoundListing extends React.Component {
         const { isLoading, rounds, submissions } = this.props;
         if (isLoading)
             return []
-        return submissions.map(v => v.round)
-                          .filter((value, index, arr) => arr.indexOf(value) === index)
-                          .map((v, i) => ({
-                              display: rounds[parseInt(v)].title,
-                              key: `round-${v}`,
+        return submissions.map(submission => submission.round)
+                          .filter((round, index, arr) => arr.indexOf(round) === index)
+                          .map((round, i) => ({
+                              display: rounds[parseInt(round)].title,
+                              key: `round-${round}`,
                               position: i,
-                              values: [v],
+                              values: [round],
                           }));
     }
 

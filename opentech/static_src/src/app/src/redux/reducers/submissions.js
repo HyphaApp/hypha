@@ -100,35 +100,17 @@ function currentSubmission(state = null, action) {
 
 
 function submissionsByStatuses(state = {}, action) {
-    const key = () => action.statuses.join(',');
     switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_STATUSES:
             return {
-                ...state || null,
-                [key()]: {
-                    ...state[key()],
-                    ids: action.data.results.map(v => v.id),
-                    isFetching: false,
-                    isErrored: false,
-                }
-            };
-        case START_LOADING_SUBMISSIONS_BY_STATUSES:
-            return {
-                ...state || null,
-                [key()]: {
-                    ...state[key()],
-                    isFetching: true,
-                    isErrored: false,
-                }
-            };
-        case FAIL_LOADING_SUBMISSIONS_BY_STATUSES:
-            return {
-                ...state || null,
-                [key()]: {
-                    ...state[key()],
-                    isFetching: false,
-                    isErrored: true,
-                }
+                ...state,
+                ...action.data.results.reduce((accumulator, submission) => {
+                    const submissions = accumulator[submission.status] || []
+                    if ( !submissions.includes(submission.id) ) {
+                        accumulator[submission.status] = [...submissions, submission.id]
+                    }
+                    return state
+                }, state)
             };
         default:
             return state
@@ -136,10 +118,33 @@ function submissionsByStatuses(state = {}, action) {
 }
 
 
+function submissionsFetchingState(state = {isFetching: true, isError: false}, action) {
+    switch (action.type) {
+        case FAIL_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: false,
+                isErrored: true,
+            };
+        case START_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: true,
+                isErrored: false,
+            };
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: true,
+                isErrored: false,
+            };
+        default:
+            return state
+    }
+}
+
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
     byStatuses: submissionsByStatuses,
+    fetchingState: submissionsFetchingState,
 });
 
 export default submissions;

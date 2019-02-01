@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from wagtail.core.models import Page
 
 from opentech.apply.activity.models import Activity
-from .models import ApplicationSubmission
+from .models import ApplicationSubmission, RoundsAndLabs
 
 
 class ActionSerializer(serializers.Field):
@@ -84,18 +83,12 @@ class SubmissionActionSerializer(serializers.ModelSerializer):
         fields = ('id', 'actions',)
 
 
-class RoundLabSerializer(serializers.ModelSerializer):
+class RoundLabDetailSerializer(serializers.ModelSerializer):
     workflow = serializers.SerializerMethodField()
 
     class Meta:
-        model = Page
+        model = RoundsAndLabs
         fields = ('id', 'title', 'workflow')
-
-    def __init__(self, *args, **kwargs):
-        show_workflow = kwargs.pop('show_workflow', False)
-        if not show_workflow:
-            del self.fields['workflow']
-        super().__init__(*args, **kwargs)
 
     def get_workflow(self, obj):
         return [
@@ -105,6 +98,12 @@ class RoundLabSerializer(serializers.ModelSerializer):
             }
             for phase in obj.workflow.values()
         ]
+
+
+class RoundLabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoundsAndLabs
+        fields = ('id', 'title')
 
 
 class CommentSerializer(serializers.ModelSerializer):

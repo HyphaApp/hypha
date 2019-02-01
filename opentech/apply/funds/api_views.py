@@ -13,6 +13,7 @@ from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
     CommentSerializer,
     CommentCreateSerializer,
+    RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
     SubmissionListSerializer,
@@ -89,19 +90,13 @@ class SubmissionAction(generics.RetrieveAPIView):
 
 class RoundLabDetail(generics.RetrieveAPIView):
     queryset = RoundsAndLabs.objects.all()
-    serializer_class = RoundLabSerializer
+    serializer_class = RoundLabDetailSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
 
     def get_object(self):
         return super().get_object().specific
-
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        kwargs['context'] = self.get_serializer_context()
-        kwargs['show_workflow'] = True
-        return serializer_class(*args, **kwargs)
 
 
 class RoundLabList(generics.ListAPIView):
