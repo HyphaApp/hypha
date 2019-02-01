@@ -255,7 +255,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         return response
 
 
-class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView):
+class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
