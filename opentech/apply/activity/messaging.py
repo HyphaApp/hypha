@@ -445,18 +445,6 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
     }
 
-    def reviewers_updated(self, added=list(), removed=list(), **kwargs):
-        message = ['Reviewers updated.']
-        if added:
-            message.append('Added:')
-            message.append()
-
-        if removed:
-            message.append('Removed:')
-            message.append(', '.join([str(user) for user in removed]) + '.')
-
-        return ' '.join(message)
-
     def batch_reviewers_updated(self, added, submissions, **kwargs):
         return (
             'Batch reviewers added: ' +
