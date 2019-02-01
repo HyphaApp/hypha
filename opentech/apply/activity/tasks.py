@@ -17,7 +17,7 @@ def send_mail(subject, message, from_address, recipients, logs=None):
             'from_email': from_address,
             'to': recipients,
         },
-        link=update_message_status.s(logs.values_list('id', flat=True)),
+        link=update_message_status.s([log.pk for log in logs]),
     )
 
 
@@ -42,8 +42,8 @@ def send_mail_task(**kwargs):
 
 
 @app.task
-def update_message_status(response, message_ids):
+def update_message_status(response, message_pks):
     from .models import Message
-    messages = Message.objects.filter(id__in=message_ids)
+    messages = Message.objects.filter(pk__in=message_pks)
     messages.update(external_id=response['id'])
     messages.update_status(response['status'])
