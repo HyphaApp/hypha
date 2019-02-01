@@ -5,6 +5,7 @@ from .views import (
     RevisionListView,
     RoundListView,
     SubmissionsByRound,
+    SubmissionsByStatus,
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
@@ -42,6 +43,7 @@ submission_urls = ([
         path('', include('opentech.apply.determinations.urls', namespace="determinations")),
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
+    path('<slug:status>/', SubmissionsByStatus.as_view(), name='status'),
 ], 'submissions')
 
 api_urls = ([

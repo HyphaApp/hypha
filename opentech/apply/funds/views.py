@@ -39,7 +39,7 @@ from .tables import (
     SubmissionFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS
+from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -59,10 +59,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     def get_table_kwargs(self, **kwargs):
         return {**self.excluded, **kwargs}
 
-    def get_filterset_kwargs(self, filterset_class):
-        kwargs = super().get_filterset_kwargs(filterset_class)
-        kwargs.update(self.excluded)
-        return kwargs
+    def get_filterset_kwargs(self, filterset_class, **kwargs):
+        new_kwargs = super().get_filterset_kwargs(filterset_class)
+        new_kwargs.update(self.excluded)
+        new_kwargs.update(kwargs)
+        return new_kwargs
 
     def get_queryset(self):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
@@ -128,6 +129,34 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(object=self.obj, **kwargs)
+
+
+class SubmissionsByStatus(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_by_status.html'
+    status_mapping = PHASES_MAPPING
+
+    def get(self, request, *args, **kwargs):
+        self.status = kwargs.get('status')
+        status_data = self.status_mapping[self.status]
+        self.status_name = status_data['name']
+        self.statuses = status_data['statuses']
+        if self.status not in self.status_mapping:
+            raise Http404(_("No statuses match the requested value"))
+
+        return super().get(request, *args, **kwargs)
+
+    def get_filterset_kwargs(self, filterset_class, **kwargs):
+        return super().get_filterset_kwargs(filterset_class, limit_statuses=self.statuses, **kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().filter(status__in=self.statuses)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            status=self.status_name,
+            statuses=self.statuses,
+            **kwargs,
+        )
 
 
 @method_decorator(staff_required, name='dispatch')
