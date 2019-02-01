@@ -61,7 +61,7 @@ class NoteListing extends React.Component {
             items: noteIDs,
         };
         return (
-            <Listing {...passProps} />
+            <Listing {...passProps} column="notes" />
         );
     }
 }

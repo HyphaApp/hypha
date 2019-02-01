@@ -209,3 +209,15 @@
         }
     }
 }
+
+@mixin column-scrolling {
+    @include media-query(tablet-landscape) {
+        height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
+        overflow-y: scroll;
+    }
+
+    @include media-query(laptop-short) {
+        // allow for vertical scrolling on laptops
+        height: calc(100vh -  #{$listing-header-height});
+    }
+}

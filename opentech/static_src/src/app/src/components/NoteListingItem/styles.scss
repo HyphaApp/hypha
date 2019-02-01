@@ -1,0 +1,24 @@
+.note {
+    margin: 20px 20px 30px;
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        font-weight: $weight--bold;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        color: transparentize( $color--default, .2);
+        letter-spacing: .3px;
+        font-size: 15px;
+    }
+
+    &__date {
+        color: $color--dark-blue;
+    }
+
+    &__content {
+        margin: 0;
+        word-break: break-all;
+        hyphens: auto;
+    }
+}

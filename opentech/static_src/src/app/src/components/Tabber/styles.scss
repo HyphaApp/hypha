@@ -1,0 +1,52 @@
+.tabber {
+    &__navigation {
+        height: $listing-header-height;
+        display: flex;
+        justify-content: flex-start;
+        margin: 0 10px;
+
+        @include media-query(tablet-landscape) {
+            display: block;
+            margin: 0 20px;
+        }
+    }
+
+    &__link {
+        align-items: center;
+        display: inline-flex;
+        height: calc(100% - 2px);
+        padding: 0 10px;
+        position: relative;
+        color: $color--default;
+        font-weight: $weight--semibold;
+        opacity: .6 ;
+        transition: opacity $transition;
+
+        @include media-query(tablet-landscape) {
+            margin-right: 20px;
+        }
+
+        &::after {
+            content: '';
+            height: 0;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background-color: $color--dark-blue;
+            transition: height $transition;
+        }
+
+        &:hover,
+        &:focus,
+        &.is-active {
+            opacity: 1;
+        }
+
+        &.is-active {
+            &::after {
+                height: 4px;
+            }
+        }
+    }
+}

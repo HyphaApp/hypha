@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import LoadingPanel from '@components/LoadingPanel';
+import EmptyPanel from '@components/EmptyPanel';
+
+import SadNoteIcon from 'images/sad-note.svg';
 
 import './style.scss';
 
@@ -32,18 +35,14 @@ export default class Listing extends React.Component {
 
         if (isLoading) {
             return (
-                <div className="listing__list is-loading">
+                <div className="listing__list">
                     <LoadingPanel />
                 </div>
             );
         } else if (isError) {
             return this.renderError();
         } else if (items.length === 0) {
-            return (
-                <div className="listing__list is-loading">
-                    <p>No results found.</p>
-                </div>
-            );
+            return <EmptyPanel column={this.props.column} />;
         }
 
         return (
@@ -54,13 +53,27 @@ export default class Listing extends React.Component {
     }
 
     renderError = () => {
-        const { handleRetry, error } = this.props;
-        const retryButton = <a onClick={handleRetry}>Refresh</a>;
+        const { handleRetry, error, column } = this.props;
+        const retryButton = <a className="listing__help-link" onClick={handleRetry}>Refresh</a>;
+
         return (
-            <div className="listing__list is-loading">
-                <p>Something went wrong. Please try again later.</p>
+            <div className={`listing__list listing__list--${column} is-blank`}>
                 {error && <p>{error}</p>}
-                {handleRetry && retryButton}
+
+                {!handleRetry &&
+                    <p>Something went wrong!</p>
+                }
+
+                {handleRetry && retryButton &&
+                    <>
+                        <div className="listing__blank-icon">
+                            <SadNoteIcon  />
+                        </div>
+                        <p className="listing__help-text listing__help-text--standout">Something went wrong!</p>
+                        <p className="listing__help-text">Sorry we couldn&apos;t load the notes</p>
+                        {retryButton}
+                    </>
+                }
             </div>
         );
     }
