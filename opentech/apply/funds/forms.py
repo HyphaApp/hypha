@@ -70,14 +70,26 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        reviewers = instance.reviewers.all()
+        submitted_reviewers = User.objects.filter(id__in=instance.reviews.values('author'))
 
-        submitted_reviewers, fields = set_reviewers_fields(self.instance, self.user, self.fields)
-        self.submitted_reviewers = submitted_reviewers
-        self.fields = fields
+        self.prepare_field('staff_reviewers', reviewers, submitted_reviewers)
+        if self.can_alter_external_reviewers(instance, user):
+            self.prepare_field('reviewer_reviewers', reviewers, submitted_reviewers)
+        else:
+            fields.pop('reviewer_reviewers')
+
+    def prepare_field(self, field_name, initial, excluded):
+        field = self.fields[field_name]
+        field.queryset = field.queryset.exclude(id__in=excluded)
+        field.initial = initial
+
+    def can_alter_external_reviewers(instance, user):
+        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if can_alter_reviewers(self.instance, self.user):
+        if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
         else:
             reviewers = instance.reviewers_not_reviewed
