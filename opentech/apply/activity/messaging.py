@@ -117,7 +117,6 @@ class AdapterBase:
         if not message:
             return
 
-
         for recipient in recipients:
             message_logs = self.create_logs(message, recipient, *events)
 

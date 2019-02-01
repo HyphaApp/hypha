@@ -5,8 +5,7 @@ from django.views import defaults
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
-from django.views.generic.edit import ModelFormMixin, ProcessFormView, SingleObjectMixin
-from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
@@ -128,7 +127,6 @@ class DelegatedViewMixin(View):
 
     def get_success_url(self):
         return self.request.path
-
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
