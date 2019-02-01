@@ -110,7 +110,7 @@ class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
 
 
-class SubmissionsByRound(BaseAdminSubmissionsTable):
+class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_round.html'
 
     excluded_fields = ('round', 'lead', 'fund')

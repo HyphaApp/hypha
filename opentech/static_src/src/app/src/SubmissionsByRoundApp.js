@@ -23,6 +23,7 @@ class SubmissionsByRoundApp extends React.Component {
     }
 
     openDetail = () => {
+        document.body.classList.add('app-open');
         this.setState(state => ({
             style: { ...state.style, display: 'none' } ,
             detailOpened: true,
@@ -30,6 +31,7 @@ class SubmissionsByRoundApp extends React.Component {
     }
 
     closeDetail = () => {
+        document.body.classList.remove('app-open');
         this.setState(state => {
             const newStyle = { ...state.style };
             delete newStyle.display;
