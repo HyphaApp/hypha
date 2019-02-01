@@ -267,6 +267,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
@@ -307,6 +308,20 @@ class SlackAdapter(AdapterBase):
                 'submissions': submissions.filter(lead=lead),
             } for lead in leads
         ]
+
+    def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
+        submissions_text = ', '.join(
+            f'<{links[submission.id]}|{submission.title}>'
+            for submission in submissions
+        )
+        reviewers_text = ', '.join([str(user) for user in added])
+        return (
+            '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
+                user=user,
+                submissions_text=submissions_text,
+                reviewers_text=reviewers_text,
+            )
+        )
 
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
