@@ -115,14 +115,11 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         return super().form_valid(form)
 
 
-class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
+class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
     filter_action = reverse_lazy('funds:submissions:list')
-    form_views = [
-        BatchUpdateReviewersView
-    ]
 
     def get_table_data(self):
         return super().get_table_data().order_by(F('last_update').desc(nulls_last=True))[:5]
