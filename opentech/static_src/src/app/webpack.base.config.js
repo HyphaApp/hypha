@@ -1,6 +1,7 @@
+var webpack = require('webpack')
 var path = require('path');
 
-var COMMON_ENTRY = ['@babel/polyfill', './src/datetime']
+var COMMON_ENTRY = ['@babel/polyfill']
 
 module.exports = {
     context: __dirname,
