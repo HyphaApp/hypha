@@ -65,6 +65,11 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
+class UnorderedSubmissionsTable(SubmissionsTable):
+    class Meta(SubmissionsTable.Meta):
+        orderable = False
+
+
 class AdminSubmissionsTable(SubmissionsTable):
     """Adds admin only columns to the submissions table"""
     lead = tables.Column(order_by=('lead.full_name',))
@@ -164,6 +169,30 @@ class SubmissionFilter(filters.FilterSet):
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
+
+class SubmissionDashboardFilter(filters.FilterSet):
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
+    fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
+    status = StatusMultipleChoiceFilter()
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('fund', 'round', 'status')
+
+    def __init__(self, *args, exclude=list(), **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
+
+
+class SubmissionDashboardFilterAndSearch(SubmissionDashboardFilter):
+    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
 
 
 class RoundsTable(tables.Table):

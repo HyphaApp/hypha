@@ -4,7 +4,12 @@ from django_tables2 import RequestConfig
 from django_tables2.views import SingleTableView
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from opentech.apply.funds.tables import AdminSubmissionsTable, SubmissionsTable, SummarySubmissionsTable
+from opentech.apply.funds.tables import (
+    AdminSubmissionsTable,
+    SubmissionDashboardFilterAndSearch,
+    SubmissionsTable,
+    UnorderedSubmissionsTable,
+)
 from opentech.apply.utils.views import ViewDispatcher
 
 
@@ -34,25 +39,52 @@ class AdminDashboardView(TemplateView):
 
 
 class ReviewerDashboardView(TemplateView):
+
     def get(self, request, *args, **kwargs):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
+        # Reviewer's current to-review submissions
         my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
-        my_review = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        my_review = UnorderedSubmissionsTable(my_review_qs[:5], prefix='my-review-')
         display_more = (my_review_qs.count() > 5)
-
-        also_in_review = AdminSubmissionsTable(
-            qs.in_review_for(request.user, assigned=False).exclude(id__in=my_review_qs),
-            prefix='also-in-review-'
-        )
-        RequestConfig(request, paginate={'per_page': 10}).configure(also_in_review)
-
-        return render(request, 'dashboard/reviewer_dashboard.html', {
+        context = {
             'my_review': my_review,
             'in_review_count': my_review_qs.count(),
             'display_more': display_more,
-            'also_in_review': also_in_review,
+        }
+
+        # Reviewer's reviewed submissions for 'Previous reviews' block
+        # Replicating django_filters.views.FilterView
+        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        kwargs = {
+            'data': self.request.GET or None,
+            'request': self.request,
+        }
+        kwargs.update({
+            'queryset': my_reviewed_qs,
         })
+        self.filterset = SubmissionDashboardFilterAndSearch(**kwargs)
+        my_reviewed_qs = self.filterset.qs
+
+        my_reviewed = UnorderedSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
+        display_more_reviewed = (my_reviewed_qs.count() > 5)
+
+        context.update({
+            'my_reviewed': my_reviewed,
+            'display_more_reviewed': display_more_reviewed,
+            'filter': self.filterset,
+        })
+
+        return render(request, 'dashboard/reviewer_dashboard.html', context)
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        search_term = self.request.GET.get('query')
+        kwargs.update(
+            search_term=search_term,
+        )
+
+        return super().get_context_data(**kwargs)
 
 
 class ApplicantDashboardView(SingleTableView):
