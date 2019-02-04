@@ -98,5 +98,9 @@
                 }
             }
         }
+
+        &--seventy-thirty {
+            grid-template-columns: 0.70fr 0.3fr;
+        }
     }
 }
