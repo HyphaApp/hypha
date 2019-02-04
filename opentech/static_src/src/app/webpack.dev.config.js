@@ -34,6 +34,4 @@ devConfig.devServer = {
 
 devConfig.devtool = 'source-map'
 
-devConfig.mode = "development"
-
 module.exports = devConfig
