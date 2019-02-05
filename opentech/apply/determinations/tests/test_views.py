@@ -50,7 +50,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertContains(response, submission.get_absolute_url())
 
     def test_cant_access_wrong_status(self):
-        submission = ApplicationSubmissionFactory(status='more_info')
+        submission = ApplicationSubmissionFactory(status='rejected')
         response = self.get_page(submission, 'form')
         self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
 
@@ -79,11 +79,12 @@ class DeterminationFormTestCase(BaseViewTestCase):
         response = self.get_page(submission, 'form')
         self.assertNotContains(response, 'Update ')
 
-    def test_cannot_edit_draft_determination_if_not_lead(self):
+    def test_can_edit_draft_determination_if_not_lead(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
-        self.assertRedirects(response, self.url(submission))
+        self.assertContains(response, 'Approved')
+        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
 
     def test_sends_message_if_requires_more_info(self):
         submission = ApplicationSubmissionFactory(status='in_discussion', lead=self.user)

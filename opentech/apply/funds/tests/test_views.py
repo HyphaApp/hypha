@@ -80,7 +80,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertContains(response, submission.title)
 
     def test_can_progress_phase(self):
-        next_status = list(self.submission.get_actions_for_user(self.user))[0][0]
+        next_status = 'internal_review'
         self.post_page(self.submission, {'form-submitted-progress_form': '', 'action': next_status})
 
         submission = self.refresh(self.submission)
