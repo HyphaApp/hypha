@@ -1,6 +1,9 @@
 from django import forms
 
+from django_select2.forms import Select2Widget
+
 from opentech.apply.users.models import User
+from opentech.apply.funds.models import ReviewerRole
 
 from .models import ApplicationSubmission
 from .widgets import Select2MultiCheckboxesWidget
@@ -50,18 +53,6 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
 
 class UpdateReviewersForm(forms.ModelForm):
-    staff_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.staff(),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
-        required=False,
-    )
-    reviewer_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
-        label='Reviewers',
-        required=False,
-    )
-
     class Meta:
         model = ApplicationSubmission
         fields: list = []
@@ -69,35 +60,20 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = self.instance.reviewers.all()
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
-
-        self.prepare_field('staff_reviewers', reviewers, self.submitted_reviewers)
-        if self.can_alter_external_reviewers(self.instance, self.user):
-            self.prepare_field('reviewer_reviewers', reviewers, self.submitted_reviewers)
-        else:
-            self.fields.pop('reviewer_reviewers')
-
-    def prepare_field(self, field_name, initial, excluded):
-        field = self.fields[field_name]
-        field.queryset = field.queryset.exclude(id__in=excluded)
-        field.initial = initial
-
-    def can_alter_external_reviewers(self, instance, user):
-        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
+        reviewers = User.objects.staff() | User.objects.reviewers()
+        for role in ReviewerRole.objects.all():
+            role_name = role.name.replace(" ", "_")
+            self.fields[role_name + '_reviewer_' + str(role.pk)] = forms.ModelChoiceField(
+                queryset=reviewers,
+                widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
+                required=False,
+            )
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if self.can_alter_external_reviewers(self.instance, self.user):
-            reviewers = self.cleaned_data.get('reviewer_reviewers')
-        else:
-            reviewers = instance.reviewers_not_reviewed
-
-        instance.reviewers.set(
-            self.cleaned_data['staff_reviewers'] |
-            reviewers |
-            self.submitted_reviewers
-        )
+        # TODO loop through self.cleaned_data and save reviewers to submission
+        # for field_name, value in self.cleaned_data.items():
+        #   role_pk = field_name[field_name.rindex("_")+1:]
         return instance
 
 
