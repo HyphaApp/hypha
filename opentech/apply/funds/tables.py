@@ -70,8 +70,25 @@ class ReviewerSubmissionsTable(SubmissionsTable):
         orderable = False
 
 
-class AdminSubmissionsTable(SubmissionsTable):
-    """Adds admin only columns to the submissions table"""
+class LabeledCheckboxColumn(tables.CheckBoxColumn):
+    def wrap_with_label(self, checkbox, for_value):
+        return format_html(
+            '<label for="{}">{}</label>',
+            for_value,
+            checkbox,
+        )
+
+    @property
+    def header(self):
+        checkbox = super().header
+        return self.wrap_with_label(checkbox, 'selectall')
+
+    def render(self, value, record, bound_column):
+        checkbox = super().render(value=value, record=record, bound_column=bound_column)
+        return self.wrap_with_label(checkbox, value)
+
+
+class BaseAdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews\n<span>Assgn.\tComp.</span>"), orderable=False)
     screening_status = tables.Column(verbose_name="Screening")
@@ -84,8 +101,17 @@ class AdminSubmissionsTable(SubmissionsTable):
         return format_html('<span>{}</span>', value)
 
 
-class SummarySubmissionsTable(AdminSubmissionsTable):
-    class Meta(AdminSubmissionsTable.Meta):
+class AdminSubmissionsTable(BaseAdminSubmissionsTable):
+    """Adds admin only columns to the submissions table"""
+    selected = LabeledCheckboxColumn(accessor=A('pk'), attrs={'input': {'class': 'js-batch-select'}, 'th__input': {'class': 'js-batch-select-all'}})
+
+    class Meta(BaseAdminSubmissionsTable.Meta):
+        fields = ('selected', *BaseAdminSubmissionsTable.Meta.fields)
+        sequence = fields
+
+
+class SummarySubmissionsTable(BaseAdminSubmissionsTable):
+    class Meta(BaseAdminSubmissionsTable.Meta):
         orderable = False
 
 
@@ -130,9 +156,16 @@ class Select2ModelMultipleChoiceFilter(Select2MultipleChoiceFilter, filters.Mode
 
 
 class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        choices = [(slugify(status), status) for status in STATUSES]
-        self.status_map = {slugify(name): status for name, status in STATUSES.items()}
+    def __init__(self, limit_to, *args, **kwargs):
+        choices = [
+            (slugify(name), name)
+            for name, statuses in STATUSES.items()
+            if not limit_to or self.has_any(statuses, limit_to)
+        ]
+        self.status_map = {
+            slugify(name): status
+            for name, status in STATUSES.items()
+        }
         super().__init__(
             *args,
             name='status',
@@ -141,6 +174,9 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
             **kwargs,
         )
 
+    def has_any(self, first, second):
+        return any(item in second for item in first)
+
     def get_filter_predicate(self, v):
         return {f'{ self.field_name }__in': self.status_map[v]}
 
@@ -148,7 +184,6 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
-    status = StatusMultipleChoiceFilter()
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
@@ -157,8 +192,10 @@ class SubmissionFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('fund', 'round', 'status')
 
-    def __init__(self, *args, exclude=list(), **kwargs):
+    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
 
         self.filters = {
             field: filter
@@ -174,14 +211,15 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 class SubmissionDashboardFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
-    status = StatusMultipleChoiceFilter()
 
     class Meta:
         model = ApplicationSubmission
         fields = ('fund', 'round', 'status')
 
-    def __init__(self, *args, exclude=list(), **kwargs):
+    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
 
         self.filters = {
             field: filter

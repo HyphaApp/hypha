@@ -45,8 +45,12 @@ export default class GroupedListing extends React.Component {
         this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
-    shouldComponentUpdate(nextProps) {
-        if ( nextProps.items !== this.props.items ) {
+    shouldComponentUpdate(nextProps, nextState) {
+        const propsToCheck = ['items', 'isLoading', 'error']
+        if ( propsToCheck.some(prop => nextProps[prop] !== this.props[prop])) {
+            return true
+        }
+        if ( nextState.orderedItems !== this.state.orderedItems ) {
             return true
         }
         return false
@@ -89,7 +93,6 @@ export default class GroupedListing extends React.Component {
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
-
         const orderedItems = order.map(({key, display, values}) => ({
             name: display,
             key,
@@ -102,7 +105,7 @@ export default class GroupedListing extends React.Component {
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
         return (
-            <ListingGroup key={`listing-group-${group.key}`} item={group}>
+            <ListingGroup key={`listing-group-${group.key}`} id={group.key} item={group}>
                 {group.items.map(item => {
                     return <ListingItem
                         selected={!!activeItem && activeItem===item.id}
@@ -128,7 +131,7 @@ export default class GroupedListing extends React.Component {
 
         // set css custom prop to allow scrolling from dropdown to last item in the list
         if (this.listRef.current) {
-            document.documentElement.style.setProperty('--last-listing-item-height', this.listRef.current.lastElementChild.offsetHeight + 'px');
+            document.documentElement.style.setProperty('--last-listing-item-height', this.listRef.current.firstChild.lastElementChild.offsetHeight + 'px');
         }
 
         return  (

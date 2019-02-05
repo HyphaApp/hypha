@@ -1,8 +1,11 @@
+import mistune
 from rest_framework import serializers
-from wagtail.core.models import Page
+from django_bleach.templatetags.bleach_tags import bleach_value
 
 from opentech.apply.activity.models import Activity
-from .models import ApplicationSubmission
+from .models import ApplicationSubmission, RoundsAndLabs
+
+markdown = mistune.Markdown()
 
 
 class ActionSerializer(serializers.Field):
@@ -25,10 +28,17 @@ class ReviewSummarySerializer(serializers.Field):
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
+    round = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status', 'url')
+        fields = ('id', 'title', 'status', 'url', 'round')
+
+    def get_round(self, obj):
+        """
+        This gets round or lab ID.
+        """
+        return obj.round_id or obj.page_id
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
@@ -77,11 +87,11 @@ class SubmissionActionSerializer(serializers.ModelSerializer):
         fields = ('id', 'actions',)
 
 
-class RoundLabSerializer(serializers.ModelSerializer):
+class RoundLabDetailSerializer(serializers.ModelSerializer):
     workflow = serializers.SerializerMethodField()
 
     class Meta:
-        model = Page
+        model = RoundsAndLabs
         fields = ('id', 'title', 'workflow')
 
     def get_workflow(self, obj):
@@ -94,12 +104,22 @@ class RoundLabSerializer(serializers.ModelSerializer):
         ]
 
 
+class RoundLabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoundsAndLabs
+        fields = ('id', 'title')
+
+
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    message = serializers.SerializerMethodField()
 
     class Meta:
         model = Activity
         fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+
+    def get_message(self, obj):
+        return bleach_value(markdown(obj.message))
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):

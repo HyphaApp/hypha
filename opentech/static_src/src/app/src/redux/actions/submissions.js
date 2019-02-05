@@ -7,6 +7,8 @@ import {
     getCurrentRoundID,
     getCurrentRound,
     getCurrentRoundSubmissionIDs,
+    getRounds,
+    getSubmissionsByGivenStatuses,
 } from '@selectors/submissions';
 
 
@@ -15,11 +17,22 @@ export const UPDATE_ROUND = 'UPDATE_ROUND';
 export const START_LOADING_ROUND = 'START_LOADING_ROUND';
 export const FAIL_LOADING_ROUND = 'FAIL_LOADING_ROUND';
 
+
+// Rounds
+export const UPDATE_ROUNDS = 'UPDATE_ROUNDS';
+export const START_LOADING_ROUNDS = 'START_LOADING_ROUNDS';
+export const FAIL_LOADING_ROUNDS = 'FAIL_LOADING_ROUNDS';
+
 // Submissions by round
 export const SET_CURRENT_SUBMISSION_ROUND = 'SET_CURRENT_SUBMISSION_ROUND';
 export const UPDATE_SUBMISSIONS_BY_ROUND = 'UPDATE_SUBMISSIONS_BY_ROUND';
 export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_ROUND';
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
+
+// Submissions by statuses
+export const UPDATE_SUBMISSIONS_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
+export const START_LOADING_SUBMISSIONS_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
+export const FAIL_LOADING_SUBMISSIONS_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
 
 // Submissions
 export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
@@ -53,6 +66,17 @@ export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
     return dispatch(fetchRound(getCurrentRoundID(state)))
 }
 
+
+export const loadRounds = () => (dispatch, getState) => {
+    const state = getState()
+    const rounds = getRounds(state)
+
+    if ( rounds && Object.keys(rounds).length !== 0 ) {
+        return null
+    }
+    return dispatch(fetchRounds())
+}
+
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentRoundSubmissionIDs(state)
@@ -73,6 +97,14 @@ const fetchRound = (roundID) => ({
     roundID,
 })
 
+
+const fetchRounds = () => ({
+    [CALL_API]: {
+        types: [ START_LOADING_ROUNDS, UPDATE_ROUNDS, FAIL_LOADING_ROUNDS],
+        endpoint: api.fetchRounds(),
+    },
+})
+
 const fetchSubmissionsByRound = (roundID) => ({
     [CALL_API]: {
         types: [ START_LOADING_SUBMISSIONS_BY_ROUND, UPDATE_SUBMISSIONS_BY_ROUND, FAIL_LOADING_SUBMISSIONS_BY_ROUND],
@@ -80,6 +112,32 @@ const fetchSubmissionsByRound = (roundID) => ({
     },
     roundID,
 })
+
+
+const fetchSubmissionsByStatuses = statuses => {
+    if(!Array.isArray(statuses)) {
+        throw new Error("Statuses have to be an array of statuses");
+    }
+
+    return {
+        [CALL_API]: {
+            types: [ START_LOADING_SUBMISSIONS_BY_STATUSES, UPDATE_SUBMISSIONS_BY_STATUSES, FAIL_LOADING_SUBMISSIONS_BY_STATUSES],
+            endpoint: api.fetchSubmissionsByStatuses(statuses),
+        },
+        statuses,
+    };
+};
+
+export const loadSubmissionsOfStatuses = statuses => (dispatch, getState) => {
+    const state = getState()
+    const submissions = getSubmissionsByGivenStatuses(statuses)(state)
+
+    if ( submissions && submissions.length !== 0 ) {
+        return null
+    }
+
+    return dispatch(fetchSubmissionsByStatuses(statuses))
+}
 
 const fetchSubmission = (submissionID) => ({
     [CALL_API]: {

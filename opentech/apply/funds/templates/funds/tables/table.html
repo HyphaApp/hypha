@@ -5,7 +5,9 @@
     <tr {{ row.attrs.as_html }}>
         {% for column, cell in row.items %}
             <td {{ column.attrs.td.as_html }}>
-                <span class="mobile-label {{ column.attrs.td.class }}">{{ column.header }}: </span>
+                {% if column.name != "selected" %}
+                    <span class="mobile-label {{ column.attrs.td.class }}">{{ column.header }}: </span>
+                {% endif %}
                 {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
             </td>
         {% endfor %}
@@ -54,6 +56,7 @@
                     <tr class="submission-meta__row">
                     {% for column in row.table.columns %}
                         {% if forloop.first %}
+                        {% elif forloop.counter == 2 %}
                             <th>Linked {{ row.record.previous.stage }}</th>
                         {% else %}
                             <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
@@ -63,7 +66,13 @@
 
                     {# mutate the row to render the data for the child row #}
                     {% with row=row|row_from_record:row.record.previous %}
-                        {{ block.super }}
+                        <tr {{ row.attrs.as_html }}>
+                            {% for column, cell in row.items %}
+                                {% if column.name != "selected" %}
+                                    <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td>
+                                    {% endif %}
+                            {% endfor %}
+                        </tr>
                     {% endwith %}
                 </table>
             </td>

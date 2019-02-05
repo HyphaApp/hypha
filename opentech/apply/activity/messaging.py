@@ -4,6 +4,7 @@ import requests
 from django.db import models
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 
 from .models import INTERNAL, PUBLIC
@@ -11,8 +12,12 @@ from .options import MESSAGES
 from .tasks import send_mail
 
 
+User = get_user_model()
+
+
 def link_to(target, request):
-    return request.scheme + '://' + request.get_host() + target.get_absolute_url()
+    if target:
+        return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
 neat_related = {
@@ -70,11 +75,38 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
+    def batch_recipients(self, message_type, submissions, **kwargs):
+        # Default batch recipients is to send a message to each of the recipients that would
+        # receive a message under normal conditions
+        return [
+            {
+                'recipients': self.recipients(message_type, submission=submission, **kwargs),
+                'submissions': [submission]
+            }
+            for submission in submissions
+        ]
+
+    def process_batch(self, message_type, events, request, user, submissions, related=None, **kwargs):
+        events_by_submission = {
+            event.submission.id: event
+            for event in events
+        }
+        for recipient in self.batch_recipients(message_type, submissions, **kwargs):
+            recipients = recipient['recipients']
+            submissions = recipient['submissions']
+            events = [events_by_submission[submission.id] for submission in submissions]
+            self.process_send(message_type, recipients, events, request, user, submissions=submissions, submission=None, related=related, **kwargs)
+
     def process(self, message_type, event, request, user, submission, related=None, **kwargs):
+        recipients = self.recipients(message_type, submission=submission, **kwargs)
+        self.process_send(message_type, recipients, [event], request, user, submission, related=related, **kwargs)
+
+    def process_send(self, message_type, recipients, events, request, user, submission, submissions=list(), related=None, **kwargs):
         kwargs = {
             'request': request,
             'user': user,
             'submission': submission,
+            'submissions': submissions,
             'related': related,
             **kwargs,
         }
@@ -85,30 +117,40 @@ class AdapterBase:
         if not message:
             return
 
-        for recipient in self.recipients(message_type, **kwargs):
-            message_log = self.create_log(message, recipient, event)
+        for recipient in recipients:
+            message_logs = self.create_logs(message, recipient, *events)
+
             if settings.SEND_MESSAGES or self.always_send:
-                status = self.send_message(message, recipient=recipient, message_log=message_log, **kwargs)
+                status = self.send_message(message, recipient=recipient, logs=message_logs, **kwargs)
             else:
                 status = 'Message not sent as SEND_MESSAGES==FALSE'
 
-            message_log.update_status(status)
+            message_logs.update_status(status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
                     message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
                 else:
                     message = '{}: {}'.format(self.adapter_type, message)
-                messages.add_message(request, messages.INFO, message)
+                messages.add_message(request, messages.DEBUG, message)
 
-    def create_log(self, message, recipient, event):
+    def create_logs(self, message, recipient, *events):
         from .models import Message
-        return Message.objects.create(
-            type=self.adapter_type,
-            content=message,
-            recipient=recipient or '',
-            event=event,
+        messages = Message.objects.bulk_create(
+            Message(
+                **self.log_kwargs(message, recipient, event)
+            )
+            for event in events
         )
+        return Message.objects.filter(id__in=[message.id for message in messages])
+
+    def log_kwargs(self, message, recipient, event):
+        return {
+            'type': self.adapter_type,
+            'content': message,
+            'recipient': recipient or '',
+            'event': event,
+        }
 
     def send_message(self, message, **kwargs):
         # Process the message, should return the result of the send
@@ -128,6 +170,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}'
@@ -145,7 +188,7 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, added, removed, **kwargs):
+    def reviewers_updated(self, added=list(), removed=list(), **kwargs):
         message = ['Reviewers updated.']
         if added:
             message.append('Added:')
@@ -156,6 +199,9 @@ class ActivityAdapter(AdapterBase):
             message.append(', '.join([str(user) for user in removed]) + '.')
 
         return ' '.join(message)
+
+    def batch_reviewers_updated(self, added, **kwargs):
+        return 'Batch ' + self.reviewers_updated(added, **kwargs)
 
     def handle_transition(self, old_phase, submission, **kwargs):
         base_message = 'Progressed from {old_display} to {new_display}'
@@ -184,7 +230,7 @@ class ActivityAdapter(AdapterBase):
 
         return staff_message
 
-    def send_message(self, message, user, submission, **kwargs):
+    def send_message(self, message, user, submission, submissions, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
 
@@ -194,6 +240,12 @@ class ActivityAdapter(AdapterBase):
             related_object = related
         else:
             related_object = None
+
+        try:
+            # If this was a batch action we want to pull out the submission
+            submission = submissions[0]
+        except IndexError:
+            pass
 
         Activity.actions.create(
             user=user,
@@ -214,6 +266,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
@@ -230,12 +283,44 @@ class SlackAdapter(AdapterBase):
 
     def extra_kwargs(self, message_type, **kwargs):
         submission = kwargs['submission']
+        submissions = kwargs['submissions']
         request = kwargs['request']
         link = link_to(submission, request)
-        return {'link': link}
+        links = {
+            submission.id: link_to(submission, request)
+            for submission in submissions
+        }
+        return {
+            'link': link,
+            'links': links,
+        }
 
     def recipients(self, message_type, submission, **kwargs):
         return [self.slack_id(submission.lead)]
+
+    def batch_recipients(self, message_type, submissions, **kwargs):
+        # We group the messages by lead
+        leads = User.objects.filter(id__in=submissions.values('lead'))
+        return [
+            {
+                'recipients': [self.slack_id(lead)],
+                'submissions': submissions.filter(lead=lead),
+            } for lead in leads
+        ]
+
+    def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
+        submissions_text = ', '.join(
+            f'<{links[submission.id]}|{submission.title}>'
+            for submission in submissions
+        )
+        reviewers_text = ', '.join([str(user) for user in added])
+        return (
+            '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
+                user=user,
+                submissions_text=submissions_text,
+                reviewers_text=reviewers_text,
+            )
+        )
 
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
@@ -317,13 +402,17 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
     }
 
-    def extra_kwargs(self, message_type, submission, **kwargs):
-        if message_type == MESSAGES.READY_FOR_REVIEW:
-            subject = 'Application ready to review: {submission.title}'.format(submission=submission)
-        else:
-            subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
+    def get_subject(self, message_type, submission):
+        if submission:
+            if message_type == MESSAGES.READY_FOR_REVIEW:
+                subject = 'Application ready to review: {submission.title}'.format(submission=submission)
+            else:
+                subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
+            return subject
+
+    def extra_kwargs(self, message_type, submission, submissions, **kwargs):
         return {
-            'subject': subject,
+            'subject': self.get_subject(message_type, submission),
         }
 
     def notify_comment(self, **kwargs):
@@ -352,37 +441,76 @@ class EmailAdapter(AdapterBase):
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)
 
-    def send_message(self, message, submission, subject, recipient, **kwargs):
+    def send_message(self, message, submission, subject, recipient, logs, **kwargs):
         try:
             send_mail(
                 subject,
                 message,
                 submission.page.specific.from_address,
                 [recipient],
-                log=kwargs['message_log']
+                logs=logs
             )
         except Exception as e:
             return 'Error: ' + str(e)
+
+
+class DjangoMessagesAdapter(AdapterBase):
+    adapter_type = 'Django'
+    always_send = True
+
+    messages = {
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
+    }
+
+    def batch_reviewers_updated(self, added, submissions, **kwargs):
+        return (
+            'Batch reviewers added: ' +
+            ', '.join([str(user) for user in added]) +
+            ' to ' +
+            ', '.join(['"{}"'.format(submission.title) for submission in submissions])
+        )
+
+    def recipients(self, *args, **kwargs):
+        return [None]
+
+    def batch_recipients(self, message_type, submissions, *args, **kwargs):
+        return [{
+            'recipients': [None],
+            'submissions': submissions,
+        }]
+
+    def send_message(self, message, request, **kwargs):
+        messages.add_message(request, messages.INFO, message)
 
 
 class MessengerBackend:
     def __init__(self, *adpaters):
         self.adapters = adpaters
 
-    def __call__(self, message_type, request, user, submission, related=None, **kwargs):
-        return self.send(message_type, request=request, user=user, submission=submission, related=related, **kwargs)
+    def __call__(self, *args, related=None, **kwargs):
+        return self.send(*args, related=related, **kwargs)
 
-    def send(self, message_type, request, user, submission, related, **kwargs):
+    def send(self, message_type, request, user, related, submission=None, submissions=list(), **kwargs):
         from .models import Event
-        event = Event.objects.create(type=message_type.name, by=user, submission=submission)
-        for adapter in self.adapters:
-            adapter.process(message_type, event, request=request, user=user, submission=submission, related=related, **kwargs)
+        if submission:
+            event = Event.objects.create(type=message_type.name, by=user, submission=submission)
+            for adapter in self.adapters:
+                adapter.process(message_type, event, request=request, user=user, submission=submission, related=related, **kwargs)
+
+        elif submissions:
+            events = Event.objects.bulk_create(
+                Event(type=message_type.name, by=user, submission=submission)
+                for submission in submissions
+            )
+            for adapter in self.adapters:
+                adapter.process_batch(message_type, events, request=request, user=user, submissions=submissions, related=related, **kwargs)
 
 
 adapters = [
     ActivityAdapter(),
     SlackAdapter(),
     EmailAdapter(),
+    DjangoMessagesAdapter(),
 ]
 
 
