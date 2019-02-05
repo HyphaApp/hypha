@@ -1,11 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from django_tables2 import RequestConfig
 from django_tables2.views import SingleTableView
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.funds.tables import (
-    AdminSubmissionsTable,
     ReviewerSubmissionsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,

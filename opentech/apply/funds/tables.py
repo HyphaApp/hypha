@@ -194,7 +194,6 @@ class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
 
 
-
 class RoundsTable(tables.Table):
     title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
     fund = tables.Column(accessor=A('specific.fund'))
