@@ -329,7 +329,7 @@ class SlackAdapter(AdapterBase):
                 reviewers_to_notify.append(reviewer)
 
         reviewers = ', '.join(
-            self.slack_id(reviewer) or str(reviewer) for reviewer in reviewers_to_notify
+            str(reviewer) for reviewer in reviewers_to_notify
         )
 
         return (
@@ -439,7 +439,7 @@ class EmailAdapter(AdapterBase):
         return [
             reviewer.email
             for reviewer in submission.missing_reviewers.all()
-            if submission.phase.permissions.can_review(reviewer)
+            if submission.phase.permissions.can_review(reviewer) and not reviewer.is_apply_staff
         ]
 
     def render_message(self, template, **kwargs):
