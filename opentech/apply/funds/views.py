@@ -130,6 +130,7 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
         return super().get_queryset().reviewed_by(self.request.user)
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
@@ -157,6 +158,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
     form_views = [
@@ -173,6 +175,7 @@ class SubmissionListView(ViewDispatcher):
     reviewer_view = SubmissionReviewerListView
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
@@ -196,6 +199,7 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, Del
         return super().get_context_data(object=self.obj, **kwargs)
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionsByStatus(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
