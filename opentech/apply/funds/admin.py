@@ -1,7 +1,7 @@
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from opentech.apply.funds.models import ScreeningStatus
+from opentech.apply.funds.models import ReviewerRole, ScreeningStatus
 from opentech.apply.review.admin import ReviewFormAdmin
 from opentech.apply.utils.admin import ListRelatedMixin
 from .admin_helpers import (
@@ -74,6 +74,13 @@ class LabAdmin(ModelAdmin):
     menu_label = 'Labs'
 
 
+class ReviewerRoleAdmin(ModelAdmin):
+    model = ReviewerRole
+    menu_icon = 'group'
+    menu_label = 'Reviewer Roles'
+
+
+
 class NoDeletePermission(PermissionHelper):
     def user_can_delete_obj(self, user, obj):
         return False
@@ -106,4 +113,5 @@ class ApplyAdminGroup(ModelAdminGroup):
         ReviewFormAdmin,
         CategoryAdmin,
         ScreeningStatusAdmin,
+        ReviewerRoleAdmin,
     )
