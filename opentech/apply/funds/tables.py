@@ -65,7 +65,7 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
-class UnorderedSubmissionsTable(SubmissionsTable):
+class ReviewerSubmissionsTable(SubmissionsTable):
     class Meta(SubmissionsTable.Meta):
         orderable = False
 
@@ -190,7 +190,7 @@ class SubmissionDashboardFilter(filters.FilterSet):
         }
 
 
-class SubmissionDashboardFilterAndSearch(SubmissionDashboardFilter):
+class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
 
 

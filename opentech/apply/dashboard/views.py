@@ -6,9 +6,9 @@ from django_tables2.views import SingleTableView
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.funds.tables import (
     AdminSubmissionsTable,
-    SubmissionDashboardFilterAndSearch,
+    ReviewerSubmissionsTable,
+    SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
-    UnorderedSubmissionsTable,
 )
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -45,7 +45,7 @@ class ReviewerDashboardView(TemplateView):
 
         # Reviewer's current to-review submissions
         my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
-        my_review = UnorderedSubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        my_review = ReviewerSubmissionsTable(my_review_qs[:5], prefix='my-review-')
         display_more = (my_review_qs.count() > 5)
         context = {
             'my_review': my_review,
@@ -63,10 +63,10 @@ class ReviewerDashboardView(TemplateView):
         kwargs.update({
             'queryset': my_reviewed_qs,
         })
-        self.filterset = SubmissionDashboardFilterAndSearch(**kwargs)
+        self.filterset = SubmissionReviewerFilterAndSearch(**kwargs)
         my_reviewed_qs = self.filterset.qs
 
-        my_reviewed = UnorderedSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
+        my_reviewed = ReviewerSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
         display_more_reviewed = (my_reviewed_qs.count() > 5)
 
         context.update({

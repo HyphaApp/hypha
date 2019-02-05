@@ -34,15 +34,16 @@ from .forms import ProgressSubmissionForm, ScreeningSubmissionForm, UpdateReview
 from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
 from .tables import (
     AdminSubmissionsTable,
+    ReviewerSubmissionsTable,
     RoundsTable,
     RoundsFilter,
     SubmissionFilterAndSearch,
+    SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
 from .workflow import STAGE_CHANGE_ACTIONS
 
 
-@method_decorator(staff_required, name='dispatch')
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
@@ -79,6 +80,16 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return super().get_context_data(**kwargs)
 
 
+class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
+    table_class = ReviewerSubmissionsTable
+    filterset_class = SubmissionReviewerFilterAndSearch
+
+    def get_queryset(self):
+        # Reviewers can only see submissions they have reviewed
+        return super().get_queryset().reviewed_by(self.request.user)
+
+
+@method_decorator(staff_required, name='dispatch')
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
@@ -106,10 +117,20 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
-class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions.html'
 
 
+class SubmissionReviewerListView(AllActivityContextMixin, BaseReviewerSubmissionsTable):
+    template_name = 'funds/submissions.html'
+
+
+class SubmissionListView(ViewDispatcher):
+    admin_view = SubmissionAdminListView
+    reviewer_view = SubmissionReviewerListView
+
+
+@method_decorator(staff_required, name='dispatch')
 class SubmissionsByRound(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_round.html'
 
