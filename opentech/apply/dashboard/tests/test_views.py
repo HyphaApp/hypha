@@ -3,7 +3,7 @@ from opentech.apply.funds.tests.factories import (
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
 )
-from opentech.apply.users.tests.factories import UserFactory, StaffFactory
+from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory, StaffFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 
@@ -61,3 +61,29 @@ class TestStaffDashboard(BaseViewTestCase):
         ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, form_data__title='Reviewr')
         response = self.get_page()
         self.assertNotContains(response, 'Reviewr')
+
+    def test_waiting_for_review_with_count(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[self.user])
+        response = self.get_page()
+        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, submission.title)
+        self.assertEquals(response.context['in_review_count'], 1)
+
+
+class TestReviewerDashboard(BaseViewTestCase):
+    user_factory = ReviewerFactory
+    url_name = 'dashboard:{}'
+    base_view_name = 'dashboard'
+
+    def test_waiting_for_review_with_count(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[self.user])
+        response = self.get_page()
+        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, submission.title)
+        self.assertEquals(response.context['in_review_count'], 1)
+
+    def test_no_submissions_waiting_for_review(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[])
+        response = self.get_page()
+        self.assertNotContains(response, submission.title)
+        self.assertEquals(response.context['in_review_count'], 0)
