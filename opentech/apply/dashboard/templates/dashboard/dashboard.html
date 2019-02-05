@@ -2,6 +2,10 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 
+{% block extra_css %}
+    {{ filter.form.media.css }}
+{% endblock %}
+
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -47,17 +51,37 @@
                 {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
             {% endif %}
 
-            <h3>Applications to review</h3>
-            {% if in_review.data %}
-                {% render_table in_review %}
-            {% else %}
-                No reviews to complete
-            {% endif %}
         </div>
+
+        <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            <div class="wrapper wrapper--large wrapper--inner-space-medium">
+
+                {% if my_reviewed.data %}
+
+                    <h4 class="heading heading--normal">
+                        Previous reviews
+                    </h4>
+
+                    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
+                    {% render_table my_reviewed %}
+
+                    {% if display_more_reviewed %}
+                        <div class="all-submissions-table__more">
+                            <a href="{% url 'apply:submissions:list' %}">Show all</a>
+                        </div>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+        </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
+    {{ filter.form.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
     <script src="{% static 'js/apply/tabs.js' %}"></script>
 {% endblock %}
