@@ -28,7 +28,7 @@
 
                 {% if display_more %}
                     <div class="all-submissions-table__more">
-                        <a href="{% url 'apply:submissions:list' %}">Show all</a>
+                        <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
                     </div>
                 {% endif %}
 
