@@ -671,3 +671,19 @@ class ApplicationRevision(AccessFormData, models.Model):
             'to': self.id,
             'from': previous_revision.id,
         })
+
+
+class ApplicationSubmissionReviewer(models.Model):
+    submission = models.ForeignKey(ApplicationSubmission, related_name='role_reviewers', on_delete=models.PROTECT)
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='submission_reviewer',
+        on_delete=models.PROTECT,
+    )
+    reviewer_role = models.ForeignKey(
+        'funds.ReviewerRole',
+        related_name='+',
+        on_delete=models.SET_NULL,
+        verbose_name='screening status',
+        null=True,
+    )
