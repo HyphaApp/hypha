@@ -53,6 +53,7 @@ class AdminDashboardView(TemplateView):
             'closed_query': closed_query,
             'rounds_title': rounds_title,
             'my_review': my_review,
+            'in_review_count': my_review_qs.count(),
             'display_more': display_more,
             'my_reviewed': my_reviewed,
             'display_more_reviewed': display_more_reviewed,
