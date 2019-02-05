@@ -67,14 +67,21 @@ export default store => next => action => {
     const [ requestType, successType, failureType ] = types
     next(actionWith({ type: requestType }))
 
-    return callApi(endpoint).then(
-        response => next(actionWith({
-            data: response,
-            type: successType
-        })),
-        error => next(actionWith({
-            type: failureType,
-            error: error.message || 'Something bad happened'
-        }))
-  )
+    return new Promise((resolve, reject) => {
+        return callApi(endpoint).then(
+            response => {
+                resolve();
+                return next(actionWith({
+                    data: response,
+                    type: successType
+                }))
+            },
+            error => {
+                reject();
+                return next(actionWith({
+                    type: failureType,
+                    error: error.message || 'Something bad happened'
+                }))
+            })
+    });
 }

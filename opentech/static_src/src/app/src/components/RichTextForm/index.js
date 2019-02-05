@@ -2,6 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RichTextEditor from 'react-rte';
 
+const toolbarConfig = {
+    display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'LINK_BUTTONS'],
+    INLINE_STYLE_BUTTONS: [
+        {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
+        {label: 'Italic', style: 'ITALIC'},
+        {label: 'Underline', style: 'UNDERLINE'},
+        {label: 'Blockquote', style: 'blockquote'},
+
+    ],
+    BLOCK_TYPE_DROPDOWN: [
+        {label: 'Normal', style: 'unstyled'},
+        {label: 'H1', style: 'header-four'},
+        {label: 'H2', style: 'header-five'},
+    ],
+    BLOCK_TYPE_BUTTONS: [
+        {label: 'UL', style: 'unordered-list-item'},
+        {label: 'OL', style: 'ordered-list-item'}
+    ]
+};
+
 export default class RichTextForm extends React.Component {
     static defaultProps = {
         disabled: false,
@@ -12,6 +32,7 @@ export default class RichTextForm extends React.Component {
         disabled: PropTypes.bool.isRequired,
         onValueChange: PropTypes.func,
         value: PropTypes.string,
+        instance: PropTypes.string,
         onSubmit: PropTypes.func,
     };
 
@@ -24,18 +45,23 @@ export default class RichTextForm extends React.Component {
     }
 
     render() {
-        const passProps = {
-            disabled: this.props.disabled,
-            onChange: this.handleValueChange,
-            value: this.state.value,
-        };
+        const { instance, disabled } = this.props;
 
         return (
-            <div>
-                <RichTextEditor {...passProps} />
+            <div className={ instance } >
+                <RichTextEditor
+                    disabled={ disabled }
+                    onChange={ this.handleValueChange }
+                    value={ this.state.value }
+                    className="add-note-form__container"
+                    toolbarClassName="add-note-form__toolbar"
+                    editorClassName="add-note-form__editor"
+                    toolbarConfig={toolbarConfig}
+                />
                 <button
-                    disabled={this.isEmpty() || this.props.disabled}
+                    disabled={this.isEmpty() || disabled}
                     onClick={this.handleSubmit}
+                    className={`button ${instance}__button`}
                 >
                     Submit
                 </button>
@@ -44,7 +70,7 @@ export default class RichTextForm extends React.Component {
     }
 
     isEmpty = () => {
-        return !this.state.value;
+        return !this.state.value.getEditorState().getCurrentContent().hasText();
     }
 
     handleValueChange = value => {
@@ -52,6 +78,6 @@ export default class RichTextForm extends React.Component {
     }
 
     handleSubmit = () => {
-        this.props.onSubmit(this.state.value.toString('markdown'), this.resetEditor);
+        this.props.onSubmit(this.state.value.toString('html'), this.resetEditor);
     }
 }

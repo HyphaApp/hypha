@@ -61,7 +61,7 @@ class DisplayPanel extends React.Component  {
                 { !isMobile && (
                     <div className="display-panel__column">
                         <div className="display-panel__header display-panel__header--spacer"></div>
-                        <div className="display-panel__body">
+                        <div className="display-panel__body display-panel__body--center">
                             { submission }
                         </div>
                     </div>

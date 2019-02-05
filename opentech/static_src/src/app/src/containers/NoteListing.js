@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 
 import { fetchNotesForSubmission } from '@actions/notes';
 import Listing from '@components/Listing';
@@ -48,7 +49,11 @@ class NoteListing extends React.Component {
     }
 
     renderItem = noteID => {
-        return <Note key={`note-${noteID}`} noteID={noteID} />;
+        return (
+            <CSSTransition key={`note-${noteID}`} timeout={200} classNames="add-note">
+                <Note key={`note-${noteID}`} noteID={noteID} />
+            </CSSTransition>
+        );
     }
 
     render() {
@@ -61,7 +66,7 @@ class NoteListing extends React.Component {
             items: noteIDs,
         };
         return (
-            <Listing {...passProps} />
+            <Listing {...passProps} column="notes" />
         );
     }
 }

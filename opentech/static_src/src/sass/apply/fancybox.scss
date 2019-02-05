@@ -325,6 +325,10 @@ body.fancybox-iosfix {
 	position: relative;
     overflow: visible;
     shape-rendering: geometricPrecision;
+
+	.modal--secondary & {
+		display: none;
+	}
 }
 
 .fancybox-button svg path {
@@ -424,6 +428,13 @@ body.fancybox-iosfix {
 	transition: background-color .25s;
 	box-sizing: border-box;
 	z-index: 2;
+
+	.modal--secondary & {
+		color: white;
+		font-size: 40px;
+		margin-top: 12px;
+    	margin-right: 8px;
+	}
 }
 
 .fancybox-close-small:focus {

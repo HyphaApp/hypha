@@ -4,4 +4,8 @@
         height: $listing-header-height;
         padding: 20px;
     }
+
+    .loading-panel__icon::after {
+        background: $color--light-grey;
+    }
 }

@@ -446,6 +446,11 @@ HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
 
 # Messaging Settings
 SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
+
+if not SEND_MESSAGES:
+    from django.contrib.messages import constants as message_constants
+    MESSAGE_LEVEL = message_constants.DEBUG
+
 SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
 SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
 

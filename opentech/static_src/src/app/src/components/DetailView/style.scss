@@ -1,6 +1,5 @@
 .detail-view {
     margin: 0 -20px;
-    overflow-y: overlay;
 
     @include media-query(tablet-landscape) {
         // breakout of the wrapper

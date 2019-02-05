@@ -27,7 +27,10 @@
     });
 
     // Scroll to the top of the activity feed
-    $('.js-to-top').click(() => $('.js-activity-feed').animate({scrollTop: 0}, 250));
+    $('.js-to-top').click((e) => {
+        e.preventDefault();
+        $('.js-activity-feed').animate({scrollTop: 0}, 250);
+    });
 
     // Collaps long comments in activity feed.
     $('.feed__item').each(function () {

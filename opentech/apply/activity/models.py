@@ -134,6 +134,19 @@ class Event(models.Model):
         return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.submission.title])
 
 
+class MessagesQueryset(models.QuerySet):
+    def update_status(self, status):
+        if status:
+            return self.update(
+                status=Case(
+                    When(status='', then=Value(status)),
+                    default=Concat('status', Value('<br />' + status))
+                )
+            )
+
+    update_status.queryset_only = True
+
+
 class Message(models.Model):
     """Model to track content of messages sent from an event"""
 
@@ -143,6 +156,8 @@ class Message(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     status = models.TextField()
     external_id = models.CharField(max_length=75, null=True, blank=True)  # Stores the id of the object from an external system
+
+    objects = MessagesQueryset.as_manager()
 
     def update_status(self, status):
         if status:
