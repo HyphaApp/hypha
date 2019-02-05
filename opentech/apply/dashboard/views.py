@@ -28,6 +28,10 @@ class AdminDashboardView(TemplateView):
         closed_query = '?round_state=closed'
         rounds_title = 'Your rounds and labs'
 
+        my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
+        my_review = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        display_more = (my_review_qs.count() > 5)
+
         return render(request, 'dashboard/dashboard.html', {
             'in_review': in_review,
             'open_rounds': open_rounds,
@@ -35,6 +39,9 @@ class AdminDashboardView(TemplateView):
             'closed_rounds': closed_rounds,
             'closed_query': closed_query,
             'rounds_title': rounds_title,
+            'my_review': my_review,
+            'in_review_count': my_review_qs.count(),
+            'display_more': display_more,
         })
 
 
