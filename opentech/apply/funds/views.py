@@ -277,8 +277,11 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     context_name = 'reviewer_form'
 
     def form_valid(self, form):
+        response = super().form_valid(form)
         if len(form.cleaned_data.values()) != len(set(form.cleaned_data.values())):  # If any of the users match
-            messages.error(self.request, mark_safe(_('Users cannot be assigned to multiple roles.') + form.errors.as_ul()))
+            error_message = _('Users cannot be assigned to multiple roles.')
+            messages.error(self.request, mark_safe(error_message + form.errors.as_ul()))
+            form.add_error(None, error_message)
             return self.form_invalid(form)
 
         # Loop through cleaned_data and save reviewers by role type to submission
@@ -293,7 +296,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
                 Q(submission=form.instance),
                 ~Q(reviewer=value),
                 Q(reviewer_role=role)).delete()
-        response = super().form_valid(form)
+
         """
         old_reviewers = set(self.get_object().reviewers.all())
         new_reviewers = set(form.instance.reviewers.all())
@@ -332,6 +335,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
+        objects_with_icons = ReviewerRole.objects.all().order_by('order')
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
@@ -340,6 +344,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         return super().get_context_data(
             other_submissions=other_submissions,
             public_page=public_page,
+            objects_with_icons=objects_with_icons,
             **kwargs,
         )
 
