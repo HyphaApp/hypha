@@ -188,15 +188,10 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, added=list(), removed=list(), **kwargs):
+    def reviewers_updated(self, added_messages_list=list(), **kwargs):
         message = ['Reviewers updated.']
-        if added:
-            message.append('Added:')
-            message.append(', '.join([str(user) for user in added]) + '.')
-
-        if removed:
-            message.append('Removed:')
-            message.append(', '.join([str(user) for user in removed]) + '.')
+        if added_messages_list:
+            message.append(', '.join(added_messages_list) + '.')
 
         return ' '.join(message)
 
@@ -265,7 +260,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{submission.title}> by {user}',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
-        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
@@ -307,6 +302,13 @@ class SlackAdapter(AdapterBase):
                 'submissions': submissions.filter(lead=lead),
             } for lead in leads
         ]
+
+    def reviewers_updated(self, submission, link, user, added_messages_list=list(), **kwargs):
+        message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
+        if added_messages_list:
+            message = message  + ', '.join(added_messages_list) + '.'
+
+        return message
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = ', '.join(

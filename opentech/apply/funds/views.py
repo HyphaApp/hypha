@@ -283,36 +283,29 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             messages.error(self.request, mark_safe(error_message + form.errors.as_ul()))
             form.add_error(None, error_message)
             return self.form_invalid(form)
-
+        added_messages_list = []
         # Loop through cleaned_data and save reviewers by role type to submission
-        for key, value in form.cleaned_data.items():
+        for key, user in form.cleaned_data.items():
             role_pk = key[key.rindex("_") + 1:]
             role = ReviewerRole.objects.get(pk=role_pk)
             # Create the reviewer/role association to submission if it doesn't exist
-            submission_reviewer, c = ApplicationSubmissionReviewer.objects.get_or_create(
-                submission=form.instance, reviewer=value, reviewer_role=role)
+            submission_reviewer, created = ApplicationSubmissionReviewer.objects.get_or_create(
+                submission=form.instance, reviewer=user, reviewer_role=role)
+            if created:
+                added_messages_list.append(f'{user} added as {role}')
             # Delete any reviewer/role associations that existed previously
             ApplicationSubmissionReviewer.objects.filter(
                 Q(submission=form.instance),
-                ~Q(reviewer=value),
+                ~Q(reviewer=user),
                 Q(reviewer_role=role)).delete()
-
-        """
-        old_reviewers = set(self.get_object().reviewers.all())
-        new_reviewers = set(form.instance.reviewers.all())
-
-        added = new_reviewers - old_reviewers
-        removed = old_reviewers - new_reviewers
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            added=added,
-            removed=removed,
+            added_messages_list=added_messages_list,
         )
-        """
 
         return response
 
