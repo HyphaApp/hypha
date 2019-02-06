@@ -1,5 +1,4 @@
 from django import forms
-from django.db.models import Q
 
 from django_select2.forms import Select2Widget
 
@@ -73,22 +72,6 @@ class UpdateReviewersForm(forms.ModelForm):
             existing_submission_reviewer = ApplicationSubmissionReviewer.objects.filter(submission=self.instance, reviewer_role=role)
             if existing_submission_reviewer:
                 self.fields[field_name].initial = existing_submission_reviewer[0].reviewer
-
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-        # Loop through self.cleaned_data and save reviewers by role type to submission
-        for key, value in self.cleaned_data.items():
-            role_pk = key[key.rindex("_")+1:]
-            role = ReviewerRole.objects.get(pk=role_pk)
-            # Create the reviewer/role association to submission if it doesn't exist
-            submission_reviewer, _ = ApplicationSubmissionReviewer.objects.get_or_create(submission=instance, reviewer=value, reviewer_role=role)
-            # Delete any reviewer/role associations that existed previously
-            ApplicationSubmissionReviewer.objects.filter(
-                Q(submission=instance),
-                ~Q(reviewer=value),
-                Q(reviewer_role=role)).delete()
-
-        return instance
 
 
 class BatchUpdateReviewersForm(forms.Form):

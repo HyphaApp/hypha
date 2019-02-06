@@ -38,7 +38,15 @@ from .forms import (
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
 )
-from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
+from .models import (
+    ApplicationSubmission,
+    ApplicationSubmissionReviewer,
+    ApplicationRevision,
+    ReviewerRole,
+    RoundsAndLabs,
+    RoundBase,
+    LabBase
+)
 from .tables import (
     AdminSubmissionsTable,
     RoundsTable,
@@ -269,8 +277,25 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     context_name = 'reviewer_form'
 
     def form_valid(self, form):
-        old_reviewers = set(self.get_object().reviewers.all())
+        if len(form.cleaned_data.values()) != len(set(form.cleaned_data.values())):  # If any of the users match
+            messages.error(self.request, mark_safe(_('Users cannot be assigned to multiple roles.') + form.errors.as_ul()))
+            return self.form_invalid(form)
+
+        # Loop through cleaned_data and save reviewers by role type to submission
+        for key, value in form.cleaned_data.items():
+            role_pk = key[key.rindex("_")+1:]
+            role = ReviewerRole.objects.get(pk=role_pk)
+            # Create the reviewer/role association to submission if it doesn't exist
+            submission_reviewer, c = ApplicationSubmissionReviewer.objects.get_or_create(
+                submission=form.instance, reviewer=value, reviewer_role=role)
+            # Delete any reviewer/role associations that existed previously
+            ApplicationSubmissionReviewer.objects.filter(
+                Q(submission=form.instance),
+                ~Q(reviewer=value),
+                Q(reviewer_role=role)).delete()
         response = super().form_valid(form)
+        """
+        old_reviewers = set(self.get_object().reviewers.all())
         new_reviewers = set(form.instance.reviewers.all())
 
         added = new_reviewers - old_reviewers
@@ -284,6 +309,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             added=added,
             removed=removed,
         )
+        """
 
         return response
 
