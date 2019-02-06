@@ -60,13 +60,14 @@ class UpdateReviewersForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = User.objects.staff() | User.objects.reviewers()
-        for role in ReviewerRole.objects.all():
+        for role in ReviewerRole.objects.all().order_by('order'):
             role_name = role.name.replace(" ", "_")
             field_name = role_name + '_reviewer_' + str(role.pk)
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=reviewers,
                 widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
                 required=False,
+                label=f'{role.name} Reviewer',
             )
             # Pre-populate form field
             existing_submission_reviewer = ApplicationSubmissionReviewer.objects.filter(submission=self.instance, reviewer_role=role)
