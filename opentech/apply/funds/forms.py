@@ -61,8 +61,7 @@ class UpdateReviewersForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         reviewers = User.objects.staff()
         for role in ReviewerRole.objects.all().order_by('order'):
-            role_name = role.name.replace(" ", "_")
-            field_name = role_name + '_reviewer_' + str(role.pk)
+            field_name = 'reviewer_' + str(role.pk)
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=reviewers,
                 widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
