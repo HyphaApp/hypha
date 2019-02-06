@@ -10,7 +10,7 @@ class ReviewerRole(models.Model):
         related_name='+',
         on_delete=models.SET_NULL
     )
-    order= models.IntegerField(
+    order = models.IntegerField(
         help_text='The order this role should appear in the Update Reviewers form.',
         null=True,
         blank=True,

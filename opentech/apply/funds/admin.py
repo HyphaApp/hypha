@@ -80,7 +80,6 @@ class ReviewerRoleAdmin(ModelAdmin):
     menu_label = 'Reviewer Roles'
 
 
-
 class NoDeletePermission(PermissionHelper):
     def user_can_delete_obj(self, user, obj):
         return False

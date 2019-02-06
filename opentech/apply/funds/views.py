@@ -286,7 +286,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
 
         # Loop through cleaned_data and save reviewers by role type to submission
         for key, value in form.cleaned_data.items():
-            role_pk = key[key.rindex("_")+1:]
+            role_pk = key[key.rindex("_") + 1:]
             role = ReviewerRole.objects.get(pk=role_pk)
             # Create the reviewer/role association to submission if it doesn't exist
             submission_reviewer, c = ApplicationSubmissionReviewer.objects.get_or_create(
