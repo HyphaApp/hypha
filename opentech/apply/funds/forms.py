@@ -59,7 +59,7 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = User.objects.staff() | User.objects.reviewers()
+        reviewers = User.objects.staff()
         for role in ReviewerRole.objects.all().order_by('order'):
             role_name = role.name.replace(" ", "_")
             field_name = role_name + '_reviewer_' + str(role.pk)
