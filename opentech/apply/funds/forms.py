@@ -32,7 +32,7 @@ class ScreeningSubmissionForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.should_show = False
-        if (self.instance.active and self.user.is_apply_staff) or self.user.is_superuser:
+        if self.user.is_apply_staff:
             self.should_show = True
 
 

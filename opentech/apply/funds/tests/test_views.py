@@ -187,15 +187,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
 
-    def test_cant_screen_submission(self):
-        """
-        Now that the submission has been rejected, we cannot screen it as staff
-        """
-        submission = ApplicationSubmissionFactory(rejected=True)
-        screening_outcome = ScreeningStatusFactory()
-        response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
-        self.assertEqual(response.context_data['screening_form'].should_show, False)
-
     def test_can_view_submission_screening_block(self):
         response = self.get_page(self.submission)
         self.assertContains(response, 'Screening Status')
