@@ -306,7 +306,7 @@ class SlackAdapter(AdapterBase):
     def reviewers_updated(self, submission, link, user, added_messages_list=list(), **kwargs):
         message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
         if added_messages_list:
-            message = message  + ', '.join(added_messages_list) + '.'
+            message = message + ', '.join(added_messages_list) + '.'
 
         return message
 
