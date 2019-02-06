@@ -1,11 +1,11 @@
 from django import forms
+from django.db.models import Q
 
 from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
-from opentech.apply.funds.models import ReviewerRole
 
-from .models import ApplicationSubmission
+from .models import ApplicationSubmission, ApplicationSubmissionReviewer, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -63,17 +63,31 @@ class UpdateReviewersForm(forms.ModelForm):
         reviewers = User.objects.staff() | User.objects.reviewers()
         for role in ReviewerRole.objects.all():
             role_name = role.name.replace(" ", "_")
-            self.fields[role_name + '_reviewer_' + str(role.pk)] = forms.ModelChoiceField(
+            field_name = role_name + '_reviewer_' + str(role.pk)
+            self.fields[field_name] = forms.ModelChoiceField(
                 queryset=reviewers,
                 widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
                 required=False,
             )
+            # Pre-populate form field
+            existing_submission_reviewer = ApplicationSubmissionReviewer.objects.filter(submission=self.instance, reviewer_role=role)
+            if existing_submission_reviewer:
+                self.fields[field_name].initial = existing_submission_reviewer[0].reviewer
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        # TODO loop through self.cleaned_data and save reviewers to submission
-        # for field_name, value in self.cleaned_data.items():
-        #   role_pk = field_name[field_name.rindex("_")+1:]
+        # Loop through self.cleaned_data and save reviewers by role type to submission
+        for key, value in self.cleaned_data.items():
+            role_pk = key[key.rindex("_")+1:]
+            role = ReviewerRole.objects.get(pk=role_pk)
+            # Create the reviewer/role association to submission if it doesn't exist
+            submission_reviewer, _ = ApplicationSubmissionReviewer.objects.get_or_create(submission=instance, reviewer=value, reviewer_role=role)
+            # Delete any reviewer/role associations that existed previously
+            ApplicationSubmissionReviewer.objects.filter(
+                Q(submission=instance),
+                ~Q(reviewer=value),
+                Q(reviewer_role=role)).delete()
+
         return instance
 
 
