@@ -54,25 +54,22 @@
         </div>
 
         <div class="wrapper wrapper--large wrapper--inner-space-medium">
-            <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            {% if my_reviewed.data %}
 
-                {% if my_reviewed.data %}
+                <h4 class="heading heading--normal">
+                    Previous reviews
+                </h4>
 
-                    <h4 class="heading heading--normal">
-                        Previous reviews
-                    </h4>
+                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
+                {% render_table my_reviewed %}
 
-                    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
-                    {% render_table my_reviewed %}
-
-                    {% if display_more_reviewed %}
-                        <div class="all-submissions-table__more">
-                            <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
-                        </div>
-                    {% endif %}
-
+                {% if display_more_reviewed %}
+                    <div class="all-submissions-table__more">
+                        <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
+                    </div>
                 {% endif %}
-            </div>
+
+            {% endif %}
         </div>
 
 </div>
