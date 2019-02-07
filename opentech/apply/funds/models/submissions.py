@@ -85,7 +85,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
-        return qs
+        return qs.distinct()
 
     def reviewed_by(self, user):
         return self.filter(reviews__author=user)
