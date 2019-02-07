@@ -8,8 +8,8 @@
             {{ field.errors }}
 
             {# TODO: Add styles around icon later #}
-            {% if field.field.widget.attrs.icon %}
-                {% image field.field.widget.attrs.icon max-20x20 %}
+            {% if field.field.widget.attrs.role and field.field.widget.attrs.role.icon %}
+                {% image field.field.widget.attrs.role.icon max-20x20 %}
             {% endif %}
 
 

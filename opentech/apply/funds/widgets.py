@@ -25,6 +25,6 @@ class Select2MultiCheckboxesWidget(Select2MultipleWidget):
 class Select2IconWidget(Select2Widget):
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get('attrs', {})
-        attrs.setdefault('icon', '')
+        attrs.setdefault('role', '')
         kwargs['attrs'] = attrs
         super().__init__(*args, **kwargs)

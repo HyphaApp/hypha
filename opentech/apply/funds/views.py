@@ -42,7 +42,6 @@ from .models import (
     ApplicationSubmission,
     AssignedReviewers,
     ApplicationRevision,
-    ReviewerRole,
     RoundsAndLabs,
     RoundBase,
     LabBase
@@ -289,18 +288,12 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
         form.cleaned_data.pop('reviewer_reviewers')
         for key, user in form.cleaned_data.items():
-            role_pk = key[key.rindex("_") + 1:]
-            role = ReviewerRole.objects.get(pk=role_pk)
-            # Create the reviewer/role association to submission if it doesn't exist
-            submission_reviewer, created = AssignedReviewers.objects.get_or_create(
-                submission=form.instance, reviewer=user, role=role)
+            role = form.fields[key].widget.attrs['role']
+            # Create the reviewer/role association to submission if it doesn't exist, or update it
+            obj, created = AssignedReviewers.objects.update_or_create(
+                submission=form.instance, role=role, defaults={'reviewer': user})
             if created:
                 users_with_roles.append({ 'user': user, 'role': role})
-            # Delete any reviewer/role associations that existed previously
-            AssignedReviewers.objects.filter(
-                Q(submission=form.instance),
-                ~Q(reviewer=user),
-                Q(role=role)).delete()
 
         new_reviewers_external = set(AssignedReviewers.objects.filter(submission=form.instance, role__isnull=True))
         added_external = new_reviewers_external - old_reviewers_external
