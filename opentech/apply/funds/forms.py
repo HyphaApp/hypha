@@ -4,7 +4,7 @@ from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
 
-from .models import ApplicationSubmission, ApplicationSubmissionReviewer, ReviewerRole
+from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -52,6 +52,13 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
 
 class UpdateReviewersForm(forms.ModelForm):
+    reviewer_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
+        label='Reviewers',
+        required=False,
+    )
+
     class Meta:
         model = ApplicationSubmission
         fields: list = []
@@ -59,19 +66,55 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = User.objects.staff()
+
+        reviewers = self.instance.reviewers.all()
+        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
+
+        if self.can_alter_external_reviewers(self.instance, self.user):
+            self.prepare_field('reviewer_reviewers', reviewers, self.submitted_reviewers)
+        else:
+            self.fields.pop('reviewer_reviewers')
+
+        staff_reviewers = User.objects.staff()
         for role in ReviewerRole.objects.all().order_by('order'):
             field_name = 'reviewer_' + str(role.pk)
             self.fields[field_name] = forms.ModelChoiceField(
-                queryset=reviewers,
+                queryset=staff_reviewers,
                 widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
                 required=False,
                 label=f'{role.name} Reviewer',
             )
             # Pre-populate form field
-            existing_submission_reviewer = ApplicationSubmissionReviewer.objects.filter(submission=self.instance, reviewer_role=role)
+            existing_submission_reviewer = AssignedReviewers.objects.filter(submission=self.instance, reviewer_role=role)
             if existing_submission_reviewer:
                 self.fields[field_name].initial = existing_submission_reviewer[0].reviewer
+
+    def prepare_field(self, field_name, initial, excluded):
+        field = self.fields[field_name]
+        field.queryset = field.queryset.exclude(id__in=excluded)
+        field.initial = initial
+
+    def can_alter_external_reviewers(self, instance, user):
+        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+        if self.can_alter_external_reviewers(self.instance, self.user):
+            reviewers = self.cleaned_data.get('reviewer_reviewers')
+        else:
+            reviewers = instance.reviewers_not_reviewed
+
+        current_reviewers = set(reviewers | self.submitted_reviewers)
+        for reviewer in current_reviewers:
+            AssignedReviewers.objects.create(
+                submission=instance,
+                reviewer=reviewer,
+                )
+        AssignedReviewers.objects.filter(
+            submission=instance).exclude(
+            reviewer__in=current_reviewers).delete()
+
+        return instance
 
 
 class BatchUpdateReviewersForm(forms.Form):

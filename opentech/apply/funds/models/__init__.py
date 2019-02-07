@@ -4,10 +4,10 @@ from .applications import ApplicationBase, RoundBase, LabBase, RoundsAndLabs  # 
 from .forms import ApplicationForm
 from .reviewer_role import ReviewerRole
 from .screening import ScreeningStatus
-from .submissions import ApplicationSubmission, ApplicationSubmissionReviewer, ApplicationRevision
+from .submissions import ApplicationSubmission, AssignedReviewers, ApplicationRevision
 
 
-__all__ = ['ApplicationSubmission', 'ApplicationSubmissionReviewer', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole']
+__all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole']
 
 
 class FundType(ApplicationBase):

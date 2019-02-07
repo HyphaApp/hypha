@@ -301,8 +301,8 @@ class ApplicationSubmission(
     reviewers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='submissions_reviewer',
-        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
         blank=True,
+        through='AssignedReviewers',
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
@@ -673,17 +673,21 @@ class ApplicationRevision(AccessFormData, models.Model):
         })
 
 
-class ApplicationSubmissionReviewer(models.Model):
-    submission = models.ForeignKey(ApplicationSubmission, related_name='role_reviewers', on_delete=models.PROTECT)
+class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='submission_reviewer',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
+        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
     )
-    reviewer_role = models.ForeignKey(
+    submission = models.ForeignKey(
+        ApplicationSubmission,
+        on_delete=models.CASCADE)
+    role = models.ForeignKey(
         'funds.ReviewerRole',
         related_name='+',
         on_delete=models.SET_NULL,
-        verbose_name='screening status',
         null=True,
     )
+
+    class Meta:
+        unique_together = ('submission', 'role')

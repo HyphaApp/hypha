@@ -40,7 +40,7 @@ from .forms import (
 )
 from .models import (
     ApplicationSubmission,
-    ApplicationSubmissionReviewer,
+    AssignedReviewers,
     ApplicationRevision,
     ReviewerRole,
     RoundsAndLabs,
@@ -286,18 +286,19 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         added_messages_list = []
         # Loop through cleaned_data and save reviewers by role type to submission
         for key, user in form.cleaned_data.items():
-            role_pk = key[key.rindex("_") + 1:]
-            role = ReviewerRole.objects.get(pk=role_pk)
-            # Create the reviewer/role association to submission if it doesn't exist
-            submission_reviewer, created = ApplicationSubmissionReviewer.objects.get_or_create(
-                submission=form.instance, reviewer=user, reviewer_role=role)
-            if created:
-                added_messages_list.append(f'{user} added as {role}')
-            # Delete any reviewer/role associations that existed previously
-            ApplicationSubmissionReviewer.objects.filter(
-                Q(submission=form.instance),
-                ~Q(reviewer=user),
-                Q(reviewer_role=role)).delete()
+            if key != 'reviewer_reviewers':  # Only save role reviewers
+                role_pk = key[key.rindex("_") + 1:]
+                role = ReviewerRole.objects.get(pk=role_pk)
+                # Create the reviewer/role association to submission if it doesn't exist
+                submission_reviewer, created = AssignedReviewers.objects.get_or_create(
+                    submission=form.instance, reviewer=user, reviewer_role=role)
+                if created:
+                    added_messages_list.append(f'{user} added as {role}')
+                # Delete any reviewer/role associations that existed previously
+                AssignedReviewers.objects.filter(
+                    Q(submission=form.instance),
+                    ~Q(reviewer=user),
+                    Q(reviewer_role=role)).delete()
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,

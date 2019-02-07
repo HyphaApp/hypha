@@ -7,10 +7,7 @@
         {% for field in form %}
             {{ field.errors }}
 
-            {# TODO: Add styles around this later #}
-            {% if objects_with_icons %}
-                {% image objects_with_icons|get_icon_by_index:forloop.counter0 max-20x20 %}
-            {% endif %}
+
 
             {{ field.label_tag }} {{ field }}
 
