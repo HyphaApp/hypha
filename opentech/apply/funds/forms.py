@@ -3,8 +3,6 @@ from django.contrib import messages
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from django_select2.forms import Select2Widget
-
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
@@ -106,9 +104,10 @@ class UpdateReviewersForm(forms.ModelForm):
         cleaned_data = super().clean()
         role_reviewers = cleaned_data.copy()
         role_reviewers.pop('reviewer_reviewers')
-        role_reviewer_users_list =  [value for value in role_reviewers.values()]
+        role_reviewer_users_list = [value for value in role_reviewers.values()]
 
-        if len(role_reviewer_users_list) != len(set(role_reviewer_users_list)):  # If any of the users match
+        # If any of the users match and are set to multiple roles, throw an error
+        if len(role_reviewer_users_list) != len(set(role_reviewer_users_list)):
             error_message = _('Users cannot be assigned to multiple roles.')
             messages.error(self.request, mark_safe(error_message + self.errors.as_ul()))
             raise forms.ValidationError(error_message)
@@ -127,7 +126,7 @@ class UpdateReviewersForm(forms.ModelForm):
             AssignedReviewers.objects.get_or_create(
                 submission=instance,
                 reviewer=reviewer,
-                )
+            )
         AssignedReviewers.objects.filter(
             submission=instance).exclude(
             reviewer__in=current_reviewers).delete()
