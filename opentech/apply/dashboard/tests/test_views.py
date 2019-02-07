@@ -93,4 +93,3 @@ class TestReviewerDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertNotContains(response, submission.title)
         self.assertEquals(response.context['in_review_count'], 0)
-

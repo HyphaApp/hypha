@@ -26,25 +26,11 @@ class AdminDashboardView(TemplateView):
         closed_query = '?round_state=closed'
         rounds_title = 'Your rounds and labs'
 
-        my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
-        my_review = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
-        display_more = (my_review_qs.count() > 5)
+        # Staff reviewer's current to-review submissions
+        my_review_qs, my_review, display_more = self.get_my_reviews(request.user, qs)
 
         # Staff reviewer's reviewed submissions for 'Previous reviews' block
-        # Replicating django_filters.views.FilterView
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-        kwargs = {
-            'data': self.request.GET or None,
-            'request': self.request,
-        }
-        kwargs.update({
-            'queryset': my_reviewed_qs,
-        })
-        self.filterset = SubmissionFilterAndSearch(**kwargs)
-        my_reviewed_qs = self.filterset.qs
-
-        my_reviewed = SummarySubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
-        display_more_reviewed = (my_reviewed_qs.count() > 5)
+        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
 
         return render(request, 'dashboard/dashboard.html', {
             'open_rounds': open_rounds,
@@ -57,8 +43,31 @@ class AdminDashboardView(TemplateView):
             'display_more': display_more,
             'my_reviewed': my_reviewed,
             'display_more_reviewed': display_more_reviewed,
-            'filter': self.filterset,
+            'filter': filterset,
         })
+
+    def get_my_reviews(self, user, qs):
+        my_review_qs = qs.in_review_for(user).order_by('-submit_time')
+        my_review_table = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        display_more = (my_review_qs.count() > 5)
+
+        return my_review_qs, my_review_table, display_more
+
+    def get_my_reviewed(self, request, qs):
+        # Replicating django_filters.views.FilterView
+        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        kwargs = {
+            'data': self.request.GET or None,
+            'request': self.request,
+            'queryset': my_reviewed_qs,
+        }
+        filterset = SubmissionFilterAndSearch(**kwargs)
+        my_reviewed_qs = filterset.qs
+
+        my_reviewed_table = SummarySubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
+        display_more_reviewed = (my_reviewed_qs.count() > 5)
+
+        return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
 
 
 class ReviewerDashboardView(TemplateView):
@@ -67,38 +76,44 @@ class ReviewerDashboardView(TemplateView):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Reviewer's current to-review submissions
-        my_review_qs = qs.in_review_for(request.user).order_by('-submit_time')
-        my_review = ReviewerSubmissionsTable(my_review_qs[:5], prefix='my-review-')
-        display_more = (my_review_qs.count() > 5)
+        my_review_qs, my_review, display_more = self.get_my_reviews(request.user, qs)
+
+        # Reviewer's reviewed submissions and filters for 'Previous reviews' block
+        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
+
         context = {
             'my_review': my_review,
             'in_review_count': my_review_qs.count(),
             'display_more': display_more,
+            'my_reviewed': my_reviewed,
+            'display_more_reviewed': display_more_reviewed,
+            'filter': filterset,
         }
 
-        # Reviewer's reviewed submissions for 'Previous reviews' block
+        return render(request, 'dashboard/reviewer_dashboard.html', context)
+
+    def get_my_reviews(self, user, qs):
+        my_review_qs = qs.in_review_for(user).order_by('-submit_time')
+        my_review_table = ReviewerSubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        display_more = (my_review_qs.count() > 5)
+
+        return my_review_qs, my_review_table, display_more
+
+    def get_my_reviewed(self, request, qs):
         # Replicating django_filters.views.FilterView
         my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
         kwargs = {
-            'data': self.request.GET or None,
-            'request': self.request,
-        }
-        kwargs.update({
+            'data': request.GET or None,
+            'request': request,
             'queryset': my_reviewed_qs,
-        })
-        self.filterset = SubmissionReviewerFilterAndSearch(**kwargs)
-        my_reviewed_qs = self.filterset.qs
+        }
+        filterset = SubmissionReviewerFilterAndSearch(**kwargs)
+        my_reviewed_qs = filterset.qs
 
-        my_reviewed = ReviewerSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
+        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
         display_more_reviewed = (my_reviewed_qs.count() > 5)
 
-        context.update({
-            'my_reviewed': my_reviewed,
-            'display_more_reviewed': display_more_reviewed,
-            'filter': self.filterset,
-        })
-
-        return render(request, 'dashboard/reviewer_dashboard.html', context)
+        return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
