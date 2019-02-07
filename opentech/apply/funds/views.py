@@ -337,7 +337,6 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def get_context_data(self, **kwargs):
         other_submissions = self.model.objects.filter(user=self.object.user).current().exclude(id=self.object.id)
-        objects_with_icons = ReviewerRole.objects.all().order_by('order')
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
@@ -346,7 +345,6 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         return super().get_context_data(
             other_submissions=other_submissions,
             public_page=public_page,
-            objects_with_icons=objects_with_icons,
             **kwargs,
         )
 

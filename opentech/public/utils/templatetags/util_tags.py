@@ -33,11 +33,3 @@ def field_type(bound_field):
 @register.simple_tag
 def verbose_name(instance):
     return instance.specific._meta.verbose_name.title()
-
-
-@register.filter
-def get_icon_by_index(qs, i):
-    try:
-        return qs[int(i)].icon
-    except AttributeError:
-        return None

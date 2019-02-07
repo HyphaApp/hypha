@@ -8,7 +8,7 @@ from django_select2.forms import Select2Widget
 from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
-from .widgets import Select2MultiCheckboxesWidget
+from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -84,7 +84,7 @@ class UpdateReviewersForm(forms.ModelForm):
             field_name = 'reviewer_' + str(role.pk)
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=staff_reviewers,
-                widget=Select2Widget(attrs={'data-placeholder': 'Select a reviewer'}),
+                widget=Select2IconWidget(attrs={'data-placeholder': 'Select a reviewer', 'icon': role.icon}),
                 required=False,
                 label=f'{role.name} Reviewer',
             )
