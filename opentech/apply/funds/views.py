@@ -292,8 +292,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             # Create the reviewer/role association to submission if it doesn't exist, or update it
             obj, created = AssignedReviewers.objects.update_or_create(
                 submission=form.instance, role=role, defaults={'reviewer': user})
-            if created:
-                users_with_roles.append({'user': user, 'role': role})
+            users_with_roles.append({'user': user, 'role': role})
 
         new_reviewers_external = set(AssignedReviewers.objects.filter(submission=form.instance, role__isnull=True))
         added_external = new_reviewers_external - old_reviewers_external
