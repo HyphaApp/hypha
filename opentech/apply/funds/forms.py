@@ -85,7 +85,7 @@ class UpdateReviewersForm(forms.ModelForm):
                 label=f'{role.name} Reviewer',
             )
             # Pre-populate form field
-            existing_submission_reviewer = AssignedReviewers.objects.filter(submission=self.instance, reviewer_role=role)
+            existing_submission_reviewer = AssignedReviewers.objects.filter(submission=self.instance, role=role)
             if existing_submission_reviewer:
                 self.fields[field_name].initial = existing_submission_reviewer[0].reviewer
 

@@ -291,14 +291,14 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
                 role = ReviewerRole.objects.get(pk=role_pk)
                 # Create the reviewer/role association to submission if it doesn't exist
                 submission_reviewer, created = AssignedReviewers.objects.get_or_create(
-                    submission=form.instance, reviewer=user, reviewer_role=role)
+                    submission=form.instance, reviewer=user, role=role)
                 if created:
                     added_messages_list.append(f'{user} added as {role}')
                 # Delete any reviewer/role associations that existed previously
                 AssignedReviewers.objects.filter(
                     Q(submission=form.instance),
                     ~Q(reviewer=user),
-                    Q(reviewer_role=role)).delete()
+                    Q(role=role)).delete()
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,
