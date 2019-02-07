@@ -188,7 +188,7 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, added_messages_list=list(), added_external=list(), removed_external=list(), **kwargs):
+    def reviewers_updated(self, users_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
         message = ['Reviewers updated.']
         if added_external:
             message.append('Added:')
@@ -198,8 +198,9 @@ class ActivityAdapter(AdapterBase):
             message.append('Removed:')
             message.append(', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '.')
 
-        if added_messages_list:
-            message.append(', '.join(added_messages_list) + '.')
+        if users_with_roles:
+            for user_role in users_with_roles:
+                message.append(f"{str(user_role['user'])} added as {str(user_role['role'])}. ")
 
         return ' '.join(message)
 
@@ -311,10 +312,11 @@ class SlackAdapter(AdapterBase):
             } for lead in leads
         ]
 
-    def reviewers_updated(self, submission, link, user, added_messages_list=list(), **kwargs):
+    def reviewers_updated(self, submission, link, user, users_with_roles=list(), **kwargs):
         message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
-        if added_messages_list:
-            message = message + ', '.join(added_messages_list) + '.'
+        if users_with_roles:
+            for user_role in users_with_roles:
+                message = message + f"{str(user_role['user'])} added as {str(user_role['role'])}. "
 
         return message
 

@@ -285,9 +285,9 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         old_reviewers_external = set(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=True))
         response = super().form_valid(form)
 
-        added_messages_list = []
-        # Loop through cleaned_data and save reviewers by role type to submission
-        form.cleaned_data.pop('reviewer_reviewers')  # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
+        users_with_roles = []
+        # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
+        form.cleaned_data.pop('reviewer_reviewers')
         for key, user in form.cleaned_data.items():
             role_pk = key[key.rindex("_") + 1:]
             role = ReviewerRole.objects.get(pk=role_pk)
@@ -295,7 +295,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             submission_reviewer, created = AssignedReviewers.objects.get_or_create(
                 submission=form.instance, reviewer=user, role=role)
             if created:
-                added_messages_list.append(f'{user} added as {role}')
+                users_with_roles.append({ 'user': user, 'role': role})
             # Delete any reviewer/role associations that existed previously
             AssignedReviewers.objects.filter(
                 Q(submission=form.instance),
@@ -311,7 +311,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            added_messages_list=added_messages_list,
+            users_with_roles=users_with_roles,
             added_external=added_external,
             removed_external=removed_external,
         )
