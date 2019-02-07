@@ -87,3 +87,10 @@ class TestReviewerDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertNotContains(response, submission.title)
         self.assertEquals(response.context['in_review_count'], 0)
+
+    def test_no_submissions_in_external_review_status(self):
+        submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2)
+        response = self.get_page()
+        self.assertNotContains(response, submission.title)
+        self.assertEquals(response.context['in_review_count'], 0)
+
