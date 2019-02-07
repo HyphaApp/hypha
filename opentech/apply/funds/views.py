@@ -158,8 +158,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
-@method_decorator(staff_required, name='dispatch')
-class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
         BatchUpdateReviewersView
