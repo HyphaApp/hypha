@@ -188,8 +188,16 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, added_messages_list=list(), **kwargs):
+    def reviewers_updated(self, added_messages_list=list(), added_external=list(), removed_external=list(), **kwargs):
         message = ['Reviewers updated.']
+        if added_external:
+            message.append('Added:')
+            message.append(', '.join([str(reviewer.reviewer) for reviewer in added_external]) + '.')
+
+        if removed_external:
+            message.append('Removed:')
+            message.append(', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '.')
+
         if added_messages_list:
             message.append(', '.join(added_messages_list) + '.')
 

@@ -1,4 +1,7 @@
 from django import forms
+from django.contrib import messages
+from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from django_select2.forms import Select2Widget
 
@@ -65,6 +68,7 @@ class UpdateReviewersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
         reviewers = self.instance.reviewers.all()
@@ -97,6 +101,19 @@ class UpdateReviewersForm(forms.ModelForm):
     def can_alter_external_reviewers(self, instance, user):
         return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        role_reviewers = cleaned_data.copy()
+        role_reviewers.pop('reviewer_reviewers')
+        role_reviewer_users_list =  [value for value in role_reviewers.values()]
+
+        if len(role_reviewer_users_list) != len(set(role_reviewer_users_list)):  # If any of the users match
+            error_message = _('Users cannot be assigned to multiple roles.')
+            messages.error(self.request, mark_safe(error_message + self.errors.as_ul()))
+            raise forms.ValidationError(error_message)
+
+        return cleaned_data
+
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
         if self.can_alter_external_reviewers(self.instance, self.user):
@@ -106,7 +123,7 @@ class UpdateReviewersForm(forms.ModelForm):
 
         current_reviewers = set(reviewers | self.submitted_reviewers)
         for reviewer in current_reviewers:
-            AssignedReviewers.objects.create(
+            AssignedReviewers.objects.get_or_create(
                 submission=instance,
                 reviewer=reviewer,
                 )

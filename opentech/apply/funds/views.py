@@ -276,29 +276,35 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def form_valid(self, form):
+        old_reviewers_external = set(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=True))
         response = super().form_valid(form)
-        if len(form.cleaned_data.values()) != len(set(form.cleaned_data.values())):  # If any of the users match
-            error_message = _('Users cannot be assigned to multiple roles.')
-            messages.error(self.request, mark_safe(error_message + form.errors.as_ul()))
-            form.add_error(None, error_message)
-            return self.form_invalid(form)
+
         added_messages_list = []
         # Loop through cleaned_data and save reviewers by role type to submission
+        form.cleaned_data.pop('reviewer_reviewers')  # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
         for key, user in form.cleaned_data.items():
-            if key != 'reviewer_reviewers':  # Only save role reviewers
-                role_pk = key[key.rindex("_") + 1:]
-                role = ReviewerRole.objects.get(pk=role_pk)
-                # Create the reviewer/role association to submission if it doesn't exist
-                submission_reviewer, created = AssignedReviewers.objects.get_or_create(
-                    submission=form.instance, reviewer=user, role=role)
-                if created:
-                    added_messages_list.append(f'{user} added as {role}')
-                # Delete any reviewer/role associations that existed previously
-                AssignedReviewers.objects.filter(
-                    Q(submission=form.instance),
-                    ~Q(reviewer=user),
-                    Q(role=role)).delete()
+            role_pk = key[key.rindex("_") + 1:]
+            role = ReviewerRole.objects.get(pk=role_pk)
+            # Create the reviewer/role association to submission if it doesn't exist
+            submission_reviewer, created = AssignedReviewers.objects.get_or_create(
+                submission=form.instance, reviewer=user, role=role)
+            if created:
+                added_messages_list.append(f'{user} added as {role}')
+            # Delete any reviewer/role associations that existed previously
+            AssignedReviewers.objects.filter(
+                Q(submission=form.instance),
+                ~Q(reviewer=user),
+                Q(role=role)).delete()
+
+        new_reviewers_external = set(AssignedReviewers.objects.filter(submission=form.instance, role__isnull=True))
+        added_external = new_reviewers_external - old_reviewers_external
+        removed_external = old_reviewers_external - new_reviewers_external
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,
@@ -306,6 +312,8 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             user=self.request.user,
             submission=self.kwargs['submission'],
             added_messages_list=added_messages_list,
+            added_external=added_external,
+            removed_external=removed_external,
         )
 
         return response
