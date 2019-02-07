@@ -312,11 +312,18 @@ class SlackAdapter(AdapterBase):
             } for lead in leads
         ]
 
-    def reviewers_updated(self, submission, link, user, users_with_roles=list(), **kwargs):
+    def reviewers_updated(self, submission, link, user, users_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
         message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
+
+        if added_external:
+            message += 'Reviewers added: ' + ', '.join([str(reviewer.reviewer) for reviewer in added_external]) + '. '
+
+        if removed_external:
+            message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '. '
+
         if users_with_roles:
             for user_role in users_with_roles:
-                message = message + f"{str(user_role['user'])} added as {str(user_role['role'])}. "
+                message += f"{str(user_role['user'])} added as {str(user_role['role'])}. "
 
         return message
 
