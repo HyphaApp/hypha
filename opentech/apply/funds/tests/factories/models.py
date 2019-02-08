@@ -253,7 +253,6 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
                     role=None)
 
 
-
 class ReviewerRoleFactory(factory.DjangoModelFactory):
     class Meta:
         model = ReviewerRole
