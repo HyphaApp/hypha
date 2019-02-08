@@ -522,12 +522,11 @@ class ApplicationSubmission(
 
         if creating:
             self.process_file_data(files)
-            AssignedReviewers.bulk_create(
-                AssignedReviewers(
-                     reviewer=reviewer,
-                     submission=self
-                ) for reviewer in self.get_from_parent('reviewers').all()
-            )
+            for reviewer in self.get_from_parent('reviewers').all():
+                AssignedReviewers.objects.create(
+                    reviewer=reviewer,
+                    submission=self
+                )
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
                 form_data=self.form_data,
