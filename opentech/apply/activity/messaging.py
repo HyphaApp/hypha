@@ -188,19 +188,15 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, updated_reviewers_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
+    def reviewers_updated(self, added=list(), removed=list(), **kwargs):
         message = ['Reviewers updated.']
-        if added_external:
+        if added:
             message.append('Added:')
-            message.append(', '.join([str(reviewer.reviewer) for reviewer in added_external]) + '.')
+            message.append(', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in added]) + '.')
 
-        if removed_external:
+        if removed:
             message.append('Removed:')
-            message.append(', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '.')
-
-        if updated_reviewers_with_roles:
-            for reviewer in updated_reviewers_with_roles:
-                message.append(f"{str(reviewer.reviewer)} added as {str(reviewer.role)}. ")
+            message.append(', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in removed]) + '.')
 
         return ' '.join(message)
 
@@ -312,18 +308,15 @@ class SlackAdapter(AdapterBase):
             } for lead in leads
         ]
 
-    def reviewers_updated(self, submission, link, user, updated_reviewers_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
+    def reviewers_updated(self, submission, link, user, added=list(), removed=list(), **kwargs):
         message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
 
-        if added_external:
-            message += 'Reviewers added: ' + ', '.join([str(reviewer.reviewer) for reviewer in added_external]) + '. '
+        if added:
+            message += 'Reviewers added: ' + ', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in added]) + '. '
 
-        if removed_external:
-            message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '. '
+        if removed:
+            message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in removed]) + '. '
 
-        if updated_reviewers_with_roles:
-            for reviewer in updated_reviewers_with_roles:
-                message += f"{str(reviewer.reviewer)} added as {str(reviewer.role)}. "
 
         return message
 

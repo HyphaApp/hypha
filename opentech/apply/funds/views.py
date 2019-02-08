@@ -281,9 +281,8 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         return kwargs
 
     def form_valid(self, form):
-        old_reviewers_external = set(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=True))
-        old_reviewers_role_dict = list(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=False).values('role', 'reviewer'))
-        updated_reviewers_with_roles = []
+        old = copy(self.get_object())
+        old_reviewers = set(AssignedReviewers.objects.filter(submission=old))
         response = super().form_valid(form)
 
         # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
@@ -293,24 +292,18 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             # Create the reviewer/role association to submission if it doesn't exist, or update it
             obj, created = AssignedReviewers.objects.update_or_create(
                 submission=form.instance, role=role, defaults={'reviewer': user})
-            idx = next((index for (index, d) in enumerate(old_reviewers_role_dict) if d["role"] == role.pk), None)
-            if idx < 0:  # New assigned reviewer/role, where one didn't exist before
-                updated_reviewers_with_roles.append(obj)
-            elif old_reviewers_role_dict[idx]['reviewer'] != obj.reviewer.pk:  # Updated assigned reviewer/role
-                updated_reviewers_with_roles.append(obj)
 
-        new_reviewers_external = set(AssignedReviewers.objects.filter(submission=form.instance, role__isnull=True))
-        added_external = new_reviewers_external - old_reviewers_external
-        removed_external = old_reviewers_external - new_reviewers_external
+        new_reviewers = set(AssignedReviewers.objects.filter(submission=form.instance))
+        added = new_reviewers - old_reviewers
+        removed = old_reviewers - new_reviewers
 
         messenger(
             MESSAGES.REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            updated_reviewers_with_roles=updated_reviewers_with_roles,
-            added_external=added_external,
-            removed_external=removed_external,
+            added=added,
+            removed=removed,
         )
 
         return response
