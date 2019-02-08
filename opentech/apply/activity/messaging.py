@@ -317,7 +317,6 @@ class SlackAdapter(AdapterBase):
         if removed:
             message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in removed]) + '. '
 
-
         return message
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
