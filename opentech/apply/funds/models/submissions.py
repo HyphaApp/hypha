@@ -526,7 +526,7 @@ class ApplicationSubmission(
                 AssignedReviewers.objects.create(
                     reviewer=reviewer,
                     submission=self
-                    )
+                )
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
                 form_data=self.form_data,
