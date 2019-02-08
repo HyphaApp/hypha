@@ -20,5 +20,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-	    migrations.RunPython(move_reviewer_data),
+	    migrations.RunPython(move_reviewer_data, reverse_code=migrations.RunPython.noop),
     ]
