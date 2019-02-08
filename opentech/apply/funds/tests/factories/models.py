@@ -6,6 +6,7 @@ import wagtail_factories
 from opentech.apply.funds.models import (
     ApplicationSubmission,
     ApplicationRevision,
+    AssignedReviewers,
     FundType,
     LabType,
     RequestForPartners,
@@ -244,7 +245,11 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
-            self.reviewers.set(reviewers)
+            for reviewer in reviewers:
+                AssignedReviewers.objects.create(
+                    reviewer=reviewer,
+                    submission=self,
+                    role=None)
 
 
 class InvitedToProposalFactory(ApplicationSubmissionFactory):
