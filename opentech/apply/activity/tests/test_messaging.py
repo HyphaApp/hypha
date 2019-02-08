@@ -14,6 +14,7 @@ from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
+from opentech.apply.funds.models import AssignedReviewers
 from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
     AdapterBase,
@@ -202,26 +203,38 @@ class TestActivityAdapter(TestCase):
         self.assertEqual(activity.submission, submission)
 
     def test_reviewers_message_no_removed(self):
-        message = self.adapter.reviewers_updated([1], [])
+        user = UserFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[user])
+        assigned_reviewer = AssignedReviewers.objects.filter(submission=submission).first()
+
+        message = self.adapter.reviewers_updated([assigned_reviewer], [])
 
         self.assertTrue('Added' in message)
         self.assertFalse('Removed' in message)
-        self.assertTrue('1' in message)
+        self.assertTrue(str(user) in message)
 
     def test_reviewers_message_no_added(self):
-        message = self.adapter.reviewers_updated([], [1])
+        user = UserFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[user])
+        assigned_reviewer = AssignedReviewers.objects.filter(submission=submission).first()
+        message = self.adapter.reviewers_updated([], [assigned_reviewer])
 
         self.assertFalse('Added' in message)
         self.assertTrue('Removed' in message)
-        self.assertTrue('1' in message)
+        self.assertTrue(str(user) in message)
 
     def test_reviewers_message_both(self):
-        message = self.adapter.reviewers_updated([1], [2])
+        user_1 = UserFactory()
+        user_2 = UserFactory()
+        submission = ApplicationSubmissionFactory(reviewers=[user_1, user_2])
+        assigned_reviewer_1 = AssignedReviewers.objects.filter(submission=submission, reviewer=user_1).first()
+        assigned_reviewer_2 = AssignedReviewers.objects.filter(submission=submission, reviewer=user_2).first()
+        message = self.adapter.reviewers_updated([assigned_reviewer_1], [assigned_reviewer_2])
 
         self.assertTrue('Added' in message)
         self.assertTrue('Removed' in message)
-        self.assertTrue('1' in message)
-        self.assertTrue('2' in message)
+        self.assertTrue(str(user_1) in message)
+        self.assertTrue(str(user_2) in message)
 
     def test_internal_transition_kwarg_for_invisible_transition(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion')
@@ -275,10 +288,10 @@ class TestActivityAdapter(TestCase):
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, None)
 
-    def test_review_saved_on_activtiy(self):
-        submission = ApplicationSubmissionFactory()
+    def test_review_saved_on_activity(self):
         user = UserFactory()
-        review = ReviewFactory(submission=submission)
+        submission = ApplicationSubmissionFactory(reviewers=[user])
+        review = ReviewFactory(submission=submission, author=user)
         self.adapter.send_message('a message', user=user, submission=submission, submissions=[], related=review)
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, review)

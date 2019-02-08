@@ -10,6 +10,7 @@ from opentech.apply.funds.models import (
     FundType,
     LabType,
     RequestForPartners,
+    ReviewerRole,
     Round,
     ScreeningStatus,
     SealedRound,
@@ -250,6 +251,17 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
                     reviewer=reviewer,
                     submission=self,
                     role=None)
+
+
+
+class ReviewerRoleFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ReviewerRole
+
+
+class AssignedReviewersFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = AssignedReviewers
 
 
 class InvitedToProposalFactory(ApplicationSubmissionFactory):
