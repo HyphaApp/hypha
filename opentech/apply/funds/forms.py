@@ -103,14 +103,15 @@ class UpdateReviewersForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         role_reviewers = cleaned_data.copy()
-        role_reviewers.pop('reviewer_reviewers')
-        role_reviewer_users_list = [value for value in role_reviewers.values()]
+        if role_reviewers.get('reviewer_reviewers', None):
+            role_reviewers.pop('reviewer_reviewers')
+            role_reviewer_users_list = [value for value in role_reviewers.values()]
 
-        # If any of the users match and are set to multiple roles, throw an error
-        if len(role_reviewer_users_list) != len(set(role_reviewer_users_list)):
-            error_message = _('Users cannot be assigned to multiple roles.')
-            messages.error(self.request, mark_safe(error_message + self.errors.as_ul()))
-            raise forms.ValidationError(error_message)
+            # If any of the users match and are set to multiple roles, throw an error
+            if len(role_reviewer_users_list) != len(set(role_reviewer_users_list)):
+                error_message = _('Users cannot be assigned to multiple roles.')
+                messages.error(self.request, mark_safe(error_message + self.errors.as_ul()))
+                raise forms.ValidationError(error_message)
 
         return cleaned_data
 
