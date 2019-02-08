@@ -214,12 +214,10 @@ class SubmissionDashboardFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('fund', 'round', 'status')
+        fields = ('fund', 'round')
 
     def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
 
         self.filters = {
             field: filter

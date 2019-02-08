@@ -1,5 +1,7 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 from django_tables2.views import SingleTableView
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
@@ -16,6 +18,13 @@ from opentech.apply.utils.views import ViewDispatcher
 class AdminDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
+        # redirect to submissions list when we use the filter to search for something
+        if len(request.GET):
+            query_str = '?'
+            for key, value in request.GET.items():
+                query_str += key + '=' + value + '&'
+            return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
@@ -73,6 +82,13 @@ class AdminDashboardView(TemplateView):
 class ReviewerDashboardView(TemplateView):
 
     def get(self, request, *args, **kwargs):
+        # redirect to submissions list when we use the filter to search for something
+        if len(request.GET):
+            query_str = '?'
+            for key, value in request.GET.items():
+                query_str += key + '=' + value + '&'
+            return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Reviewer's current to-review submissions
@@ -102,6 +118,7 @@ class ReviewerDashboardView(TemplateView):
     def get_my_reviewed(self, request, qs):
         # Replicating django_filters.views.FilterView
         my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+
         kwargs = {
             'data': request.GET or None,
             'request': request,
