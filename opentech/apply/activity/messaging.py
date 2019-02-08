@@ -188,7 +188,7 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': INTERNAL}
         return {}
 
-    def reviewers_updated(self, users_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
+    def reviewers_updated(self, updated_reviewers_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
         message = ['Reviewers updated.']
         if added_external:
             message.append('Added:')
@@ -198,9 +198,9 @@ class ActivityAdapter(AdapterBase):
             message.append('Removed:')
             message.append(', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '.')
 
-        if users_with_roles:
-            for user_role in users_with_roles:
-                message.append(f"{str(user_role['user'])} added as {str(user_role['role'])}. ")
+        if updated_reviewers_with_roles:
+            for reviewer in updated_reviewers_with_roles:
+                message.append(f"{str(reviewer.reviewer)} added as {str(reviewer.role)}. ")
 
         return ' '.join(message)
 
@@ -312,7 +312,7 @@ class SlackAdapter(AdapterBase):
             } for lead in leads
         ]
 
-    def reviewers_updated(self, submission, link, user, users_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
+    def reviewers_updated(self, submission, link, user, updated_reviewers_with_roles=list(), added_external=list(), removed_external=list(), **kwargs):
         message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
 
         if added_external:
@@ -321,9 +321,9 @@ class SlackAdapter(AdapterBase):
         if removed_external:
             message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) for reviewer in removed_external]) + '. '
 
-        if users_with_roles:
-            for user_role in users_with_roles:
-                message += f"{str(user_role['user'])} added as {str(user_role['role'])}. "
+        if updated_reviewers_with_roles:
+            for reviewer in updated_reviewers_with_roles:
+                message += f"{str(reviewer.reviewer)} added as {str(reviewer.role)}. "
 
         return message
 

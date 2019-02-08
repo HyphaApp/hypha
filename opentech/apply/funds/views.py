@@ -282,9 +282,10 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         old_reviewers_external = set(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=True))
+        old_reviewers_role_dict = list(AssignedReviewers.objects.filter(submission=self.get_object(), role__isnull=False).values('role', 'reviewer'))
+        updated_reviewers_with_roles = []
         response = super().form_valid(form)
 
-        users_with_roles = []
         # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
         form.cleaned_data.pop('reviewer_reviewers')
         for key, user in form.cleaned_data.items():
@@ -292,7 +293,11 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             # Create the reviewer/role association to submission if it doesn't exist, or update it
             obj, created = AssignedReviewers.objects.update_or_create(
                 submission=form.instance, role=role, defaults={'reviewer': user})
-            users_with_roles.append({'user': user, 'role': role})
+            idx = next((index for (index, d) in enumerate(old_reviewers_role_dict) if d["role"] == role.pk), None)
+            if idx < 0:  # New assigned reviewer/role, where one didn't exist before
+                updated_reviewers_with_roles.append(obj)
+            elif old_reviewers_role_dict[idx]['reviewer'] != obj.reviewer.pk:  # Updated assigned reviewer/role
+                updated_reviewers_with_roles.append(obj)
 
         new_reviewers_external = set(AssignedReviewers.objects.filter(submission=form.instance, role__isnull=True))
         added_external = new_reviewers_external - old_reviewers_external
@@ -303,7 +308,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             submission=self.kwargs['submission'],
-            users_with_roles=users_with_roles,
+            updated_reviewers_with_roles=updated_reviewers_with_roles,
             added_external=added_external,
             removed_external=removed_external,
         )
