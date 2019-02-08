@@ -1,5 +1,7 @@
+import os
 import json
 
+from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.db import models
@@ -16,18 +18,11 @@ from wagtail.contrib.forms.forms import FormBuilder
 from wagtail.contrib.forms.models import (
     AbstractEmailForm, AbstractFormField, FORM_FIELD_CHOICES
 )
-from wagtail.documents.models import get_document_model
 from wagtail.search import index
 
 from opentech.public.utils.models import BasePage
 
-
-def filename_to_title(filename):
-    from os.path import splitext
-    if filename:
-        result = splitext(filename)[0]
-        result = result.replace('-', ' ').replace('_', ' ')
-        return result.title()
+webform_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class FormField(AbstractFormField):
@@ -76,23 +71,11 @@ class FormPage(AbstractEmailForm, BasePage):
             if isinstance(field, FileField):
                 file_data = cleaned_data[name]
                 if file_data:
-                    DocumentModel = get_document_model()
-                    if form.user.is_anonymous:
-                        document = DocumentModel(
-                            file=cleaned_data[name],
-                            title=filename_to_title(cleaned_data[name].name),
-                        )
-                    else:
-                        document = DocumentModel(
-                            file=cleaned_data[name],
-                            title=filename_to_title(cleaned_data[name].name),
-                            uploaded_by_user=form.user,
-                        )
-                    document.save()
-                    if settings.DEBUG:
-                        file_details_dict = {name: 'localhost:8000' + document.url}
-                    else:
-                        file_details_dict = {name: 'https://www.opentech.fund' + document.url}
+                    file_name = file_data.name
+                    file_name = webform_storage.generate_filename(file_name)
+                    upload_to = os.path.join('webform', str(self.id), file_name)
+                    webform_storage.save(upload_to, file_data)
+                    file_details_dict = {name: file_name}
                     cleaned_data.update(file_details_dict)
                 else:
                     del cleaned_data[name]
