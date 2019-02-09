@@ -1,0 +1,21 @@
+.logo-loading {
+    @keyframes fade-in-out {
+        0% {opacity: 1}
+        80%, 100% {opacity: 0.15}
+    }
+
+   .logo-part {
+        animation: fade-in-out .8s ease-out infinite;
+        opacity: 0.15;
+
+        &-1, &-16 {animation-delay: 0s}
+        &-2, &-15 {animation-delay: .1s}
+        &-3, &-14 {animation-delay: .2s}
+        &-4, &-13 {animation-delay: .3s}
+        &-5, &-12 {animation-delay: .4s}
+        &-6, &-11 {animation-delay: .5s}
+        &-7, &-10 {animation-delay: .6s}
+        &-8, &-9 {animation-delay: .7s}
+    }
+
+}
