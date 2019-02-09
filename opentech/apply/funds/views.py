@@ -280,9 +280,21 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         kwargs['request'] = self.request
         return kwargs
 
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            mark_safe(
+                "There are errors with the Reviewers Form:" + form.errors.as_ul()
+            )
+        )
+        return super().form_invalid(form)
+
     def form_valid(self, form):
         old = copy(self.get_object())
-        old_reviewers = set(AssignedReviewers.objects.filter(submission=old))
+        old_reviewers = set(
+            copy.copy(reviewer)
+            for reviewer in AssignedReviewers.objects.filter(submission=old)
+        )
         response = super().form_valid(form)
 
         # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
