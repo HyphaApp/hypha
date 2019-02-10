@@ -8,6 +8,7 @@ import Listing from '@components/Listing';
 import Note from '@containers/Note';
 import {
     getNotesErrorState,
+    getNotesErrorMessage,
     getNoteIDsForSubmissionOfID,
     getNotesFetchState,
 } from '@selectors/notes';
@@ -19,6 +20,7 @@ class NoteListing extends React.Component {
         submissionID: PropTypes.number,
         noteIDs: PropTypes.array,
         isErrored: PropTypes.bool,
+        errorMessage: PropTypes.string,
         isLoading: PropTypes.bool,
     };
 
@@ -63,16 +65,17 @@ class NoteListing extends React.Component {
     }
 
     render() {
-        const { noteIDs } = this.props;
-        const passProps = {
-            isLoading: this.props.isLoading,
-            isError: this.props.isErrored,
-            handleRetry: this.handleRetry,
-            renderItem: this.renderItem,
-            items: noteIDs,
-        };
+        const { noteIDs, isLoading, isErrored, errorMessage } = this.props;
         return (
-            <Listing {...passProps} column="notes" />
+            <Listing
+                isLoading={ isLoading }
+                isError={ isErrored }
+                error={ errorMessage }
+                handleRetry={ this.handleRetry }
+                renderItem={ this.renderItem }
+                items={ noteIDs }
+                column="notes"
+            />
         );
     }
 }
@@ -85,6 +88,7 @@ const mapStateToProps = (state, ownProps) => ({
     noteIDs: getNoteIDsForSubmissionOfID(ownProps.submissionID)(state),
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
+    errorMessage: getNotesErrorMessage(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

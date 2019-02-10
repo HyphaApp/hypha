@@ -10,7 +10,9 @@ export const getNoteOfID = (noteID) => createSelector(
 
 export const getNotesFetchState = state => state.notes.isFetching === true;
 
-export const getNotesErrorState = state => state.notes.isErrored === true;
+export const getNotesErrorState = state => state.notes.error.errored === true;
+
+export const getNotesErrorMessage = state => state.notes.error.message;
 
 export const getNoteIDsForSubmissionOfID = submissionID => createSelector(
     [getSubmissionOfID(submissionID)],
