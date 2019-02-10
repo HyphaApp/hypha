@@ -4,14 +4,19 @@ from django.db import migrations
 
 
 def move_reviewer_data(apps, schema_editor):
-	# We need to move data to the new `reviewers_new` field which will be renamed to `reviewers` in the next migration
-	# This data migration is necessary because you cannot add a through model to an existing M2M field
-	ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
-	AssignedReviewers = apps.get_model('funds', 'AssignedReviewers')
-	for submission in ApplicationSubmission.objects.all():
-		reviewers = submission.reviewers.all()
-		for reviewer in reviewers:
-			AssignedReviewers.objects.create(submission=submission,reviewer=reviewer,role=None)
+    # We need to move data to the new `reviewers_new` field which will be renamed to `reviewers` in the next migration
+    # This data migration is necessary because you cannot add a through model to an existing M2M field
+    ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
+    AssignedReviewers = apps.get_model('funds', 'AssignedReviewers')
+    for submission in ApplicationSubmission.objects.all():
+        AssignedReviewers.objects.bulk_create(
+            AssignedReviewers(
+                submission=submission,
+                reviewer=reviewer,
+                role=None,
+            ) for reviewer in submission.reviewers.all()
+        )
+
 
 class Migration(migrations.Migration):
 
@@ -20,5 +25,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-	    migrations.RunPython(move_reviewer_data, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(move_reviewer_data, reverse_code=migrations.RunPython.noop),
     ]
