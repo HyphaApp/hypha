@@ -15,7 +15,7 @@ import {
 import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
-function submission(state, action) {
+function submission(state={id: null, comments: []}, action) {
     switch(action.type) {
         case START_LOADING_SUBMISSION:
             return {
@@ -39,7 +39,10 @@ function submission(state, action) {
         case UPDATE_NOTES:
             return {
                 ...state,
-                comments: action.data.results.map(note => note.id),
+                comments: [
+                    ...state.comments,
+                    ...action.data.results.map(note => note.id).filter(id => !state.comments.includes(id))
+                ]
             };
         case UPDATE_NOTE:
             return {

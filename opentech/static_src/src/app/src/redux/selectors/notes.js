@@ -17,6 +17,11 @@ export const getNoteIDsForSubmissionOfID = submissionID => createSelector(
     submission => (submission || {}).comments || []
 );
 
+export const getLatestNoteForSubmissionOfID = submissionID => createSelector(
+    [getNoteIDsForSubmissionOfID(submissionID)],
+    notes => notes[0] || null
+);
+
 const getNoteCreatingErrors = state => state.notes.createError;
 
 export const getNoteCreatingErrorForSubmission = submissionID => createSelector(

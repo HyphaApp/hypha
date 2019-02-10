@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { TransitionGroup } from 'react-transition-group';
 
 import LoadingPanel from '@components/LoadingPanel';
+import InlineLoading from '@components/InlineLoading'
 import EmptyPanel from '@components/EmptyPanel';
 
 import SadNoteIcon from 'images/sad-note.svg';
@@ -34,7 +35,7 @@ export default class Listing extends React.Component {
             listRef,
         } = this.props;
 
-        if (isLoading) {
+        if (isLoading && !items) {
             return (
                 <div className="listing__list">
                     <LoadingPanel />
@@ -47,11 +48,14 @@ export default class Listing extends React.Component {
         }
 
         return (
-            <ul className={`listing__list listing__list--${column}`} ref={listRef}>
-                <TransitionGroup>
-                    {items.map(v => renderItem(v))}
-                </TransitionGroup>
-            </ul>
+            <>
+                { isLoading && <InlineLoading /> }
+                <ul className={`listing__list listing__list--${column}`} ref={listRef}>
+                    <TransitionGroup component={null} >
+                        {items.map(v => renderItem(v))}
+                    </TransitionGroup>
+                </ul>
+            </>
         );
     }
 

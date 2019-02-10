@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
-import { fetchNotesForSubmission } from '@actions/notes';
+import { fetchNewNotesForSubmission } from '@actions/notes';
 import Listing from '@components/Listing';
 import Note from '@containers/Note';
 import {
@@ -11,6 +11,7 @@ import {
     getNoteIDsForSubmissionOfID,
     getNotesFetchState,
 } from '@selectors/notes';
+
 
 class NoteListing extends React.Component {
     static propTypes = {
@@ -38,7 +39,12 @@ class NoteListing extends React.Component {
 
         if (submissionID && !isLoading) {
             loadNotes(submissionID);
+            this.pollNotes = setInterval(() => loadNotes(submissionID), 30000)
         }
+    }
+
+    componentWillUnmount() {
+        this.pollNotes = null;
     }
 
     handleRetry = () => {
@@ -72,7 +78,7 @@ class NoteListing extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    loadNotes: submissionID => dispatch(fetchNotesForSubmission(submissionID)),
+    loadNotes: submissionID => dispatch(fetchNewNotesForSubmission(submissionID)),
 });
 
 const mapStateToProps = (state, ownProps) => ({
