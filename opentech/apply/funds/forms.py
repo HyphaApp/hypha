@@ -83,7 +83,8 @@ class UpdateReviewersForm(forms.ModelForm):
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=staff_reviewers,
                 widget=Select2IconWidget(attrs={
-                    'data-placeholder': 'Select a reviewer', 'role': role}),
+                    'data-placeholder': 'Select a reviewer', 'icon': role.icon
+                }),
                 required=False,
                 label=f'{role.name} Reviewer',
             )

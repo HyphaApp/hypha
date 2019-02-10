@@ -2,23 +2,7 @@
 <form class="form {{extra_classes}}" method="post" id="{{ form.name }}">
     {% csrf_token %}
     <div class="form__item">
-        {{ form.non_field_errors }}
-
-        {% for field in form %}
-            {{ field.errors }}
-
-            {# TODO: Add styles around icon later #}
-            {% if field.field.widget.attrs.role and field.field.widget.attrs.role.icon %}
-                {% image field.field.widget.attrs.role.icon max-20x20 %}
-            {% endif %}
-
-
-            {{ field.label_tag }} {{ field }}
-
-            {% if field.help_text %}
-                {{ field.help_text|safe }}
-            {% endif %}
-        {% endfor %}
+        {{ form }}
     </div>
 
     <input class="button button--primary button--top-space" id="{{ form.name }}-submit" name="{{ form_prefix }}{{ form.name }}" type="submit" form="{{ form.name }}" value="{{ value }}">

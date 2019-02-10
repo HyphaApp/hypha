@@ -23,8 +23,10 @@ class Select2MultiCheckboxesWidget(Select2MultipleWidget):
 
 
 class Select2IconWidget(Select2Widget):
+    template_name = 'funds/widgets/icon_select2.html'
+
     def __init__(self, *args, **kwargs):
         attrs = kwargs.get('attrs', {})
-        attrs.setdefault('role', '')
+        attrs.setdefault('icon', '')
         kwargs['attrs'] = attrs
         super().__init__(*args, **kwargs)
