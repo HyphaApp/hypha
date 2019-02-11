@@ -292,18 +292,10 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         old = copy(self.get_object())
         old_reviewers = set(
-            copy.copy(reviewer)
+            copy(reviewer)
             for reviewer in AssignedReviewers.objects.filter(submission=old)
         )
         response = super().form_valid(form)
-
-        # Save role reviewers ONLY, we saved others in UpdateReviewersForm.save()
-        form.cleaned_data.pop('reviewer_reviewers', None)
-        for key, user in form.cleaned_data.items():
-            role = form.fields[key].widget.attrs['role']
-            # Create the reviewer/role association to submission if it doesn't exist, or update it
-            obj, created = AssignedReviewers.objects.update_or_create(
-                submission=form.instance, role=role, defaults={'reviewer': user})
 
         new_reviewers = set(AssignedReviewers.objects.filter(submission=form.instance))
         added = new_reviewers - old_reviewers

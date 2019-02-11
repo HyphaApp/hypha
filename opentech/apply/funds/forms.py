@@ -77,9 +77,21 @@ class UpdateReviewersForm(forms.ModelForm):
         else:
             self.fields.pop('reviewer_reviewers')
 
+        self.roles = {}
         staff_reviewers = User.objects.staff()
+
+        assigned_roles = {
+            assigned.role: assigned.reviewer
+            for assigned in AssignedReviewers.objects.filter(
+                submission=self.instance,
+                role__isnull=False
+            )
+        }
+
         for role in ReviewerRole.objects.all().order_by('order'):
-            field_name = 'reviewer_' + str(role.pk)
+            field_name = 'reviewer_' + str(role)
+            self.roles[field_name] = role
+
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=staff_reviewers,
                 widget=Select2IconWidget(attrs={
@@ -89,9 +101,7 @@ class UpdateReviewersForm(forms.ModelForm):
                 label=f'{role.name} Reviewer',
             )
             # Pre-populate form field
-            existing_submission_reviewer = AssignedReviewers.objects.filter(submission=self.instance, role=role)
-            if existing_submission_reviewer:
-                self.fields[field_name].initial = existing_submission_reviewer[0].reviewer
+            self.fields[field_name].initial = assigned_roles.get(role)
 
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]
@@ -123,15 +133,21 @@ class UpdateReviewersForm(forms.ModelForm):
             reviewers = instance.reviewers_not_reviewed
 
         current_reviewers = set(reviewers | self.submitted_reviewers)
-        AssignedReviewers.objects.filter(submission=instance)
         for reviewer in current_reviewers:
-            AssignedReviewers.objects.get_or_create(
+            AssignedReviewers.objects.update_or_create(
                 submission=instance,
-                reviewer=reviewer,
+                role=None,
+                defaults={'reviewer': reviewer},
             )
-        AssignedReviewers.objects.filter(
-            submission=instance).exclude(
-            reviewer__in=current_reviewers).delete()
+
+        for field, role in self.roles.items():
+            reviewer = self.cleaned_data[field]
+            if reviewer:
+                AssignedReviewers.objects.update_or_create(
+                    submission=instance,
+                    role=role,
+                    defaults={'reviewer': reviewer},
+                )
 
         return instance
 
