@@ -1,6 +1,4 @@
 from django import forms
-from django.contrib import messages
-from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.users.models import User

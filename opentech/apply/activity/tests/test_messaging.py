@@ -18,7 +18,6 @@ from opentech.apply.funds.tests.factories import (
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
-from opentech.apply.funds.models import AssignedReviewers
 from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
     AdapterBase,

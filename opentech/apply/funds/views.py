@@ -40,7 +40,6 @@ from .forms import (
 )
 from .models import (
     ApplicationSubmission,
-    AssignedReviewers,
     ApplicationRevision,
     RoundsAndLabs,
     RoundBase,
