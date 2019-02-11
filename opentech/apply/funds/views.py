@@ -540,11 +540,11 @@ class RevisionCompareView(DetailView):
 
     def compare_revisions(self, from_data, to_data):
         self.object.form_data = from_data.form_data
-        from_fields = self.object.render_answers()
+        from_rendered_text_fields = self.object.render_text_blocks_answers()
         from_required = self.render_required()
 
         self.object.form_data = to_data.form_data
-        to_fields = self.object.render_answers()
+        to_rendered_text_fields = self.object.render_text_blocks_answers()
         to_required = self.render_required()
 
         # Compare all the required fields
@@ -556,12 +556,12 @@ class RevisionCompareView(DetailView):
             setattr(self.object, 'get_{}_display'.format(field), diff)
 
         # Compare all the answers
-        diffed_answers = [
+        diffed_text_fields_answers = [
             compare(*fields, should_bleach=False)
-            for fields in zip(from_fields, to_fields)
+            for fields in zip(from_rendered_text_fields, to_rendered_text_fields)
         ]
 
-        self.object.output_answers = mark_safe(''.join(diffed_answers))
+        self.object.output_answers = mark_safe(''.join(diffed_text_fields_answers))
 
     def render_required(self):
         return [

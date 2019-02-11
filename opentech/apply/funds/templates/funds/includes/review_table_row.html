@@ -10,6 +10,7 @@
                     <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
                         <span>{{ review.author }}</span>
                     </a>
+                    <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
                 {% else %}
                     <span>{{ review.author }}</span>
                 {% endif %}

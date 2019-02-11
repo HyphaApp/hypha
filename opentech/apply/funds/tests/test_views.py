@@ -80,7 +80,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertContains(response, submission.title)
 
     def test_can_progress_phase(self):
-        next_status = list(self.submission.get_actions_for_user(self.user))[0][0]
+        next_status = 'internal_review'
         self.post_page(self.submission, {'form-submitted-progress_form': '', 'action': next_status})
 
         submission = self.refresh(self.submission)
@@ -186,15 +186,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_status, screening_outcome)
-
-    def test_cant_screen_submission(self):
-        """
-        Now that the submission has been rejected, we cannot screen it as staff
-        """
-        submission = ApplicationSubmissionFactory(rejected=True)
-        screening_outcome = ScreeningStatusFactory()
-        response = self.post_page(submission, {'form-submitted-screening_form': '', 'screening_status': screening_outcome.id})
-        self.assertEqual(response.context_data['screening_form'].should_show, False)
 
     def test_can_view_submission_screening_block(self):
         response = self.get_page(self.submission)

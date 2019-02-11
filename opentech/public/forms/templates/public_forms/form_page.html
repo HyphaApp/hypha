@@ -1,14 +1,26 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
+{% load static wagtailcore_tags %}
 
 {% block content %}
-    <div>
-        <h1>{{ page.title }}</h1>
-        {{ page.intro|richtext }}
-        <form action="{% pageurl page %}" method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit">
-        </form>
-    </div>
+<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    <h1>{{ page.title }}</h1>
+    {{ page.intro|richtext }}
+    <p class="wrapper--error message-no-js">You must have Javascript enabled to use this contact form.</p>
+    <form class="form form__wagtail-form" action="#" data-pageurl="{% pageurl page %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {% for field in form %}
+            {% if field.field %}
+                {% include "forms/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+        <button class="link link--button-secondary" type="submit" disabled>Submit</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/public/wagtail-form.js' %}"></script>
 {% endblock %}
