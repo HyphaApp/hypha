@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='assignedreviewers',
             name='submission',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='funds.ApplicationSubmission'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='assigned', to='funds.ApplicationSubmission'),
         ),
         migrations.AddField(
             model_name='applicationsubmission',

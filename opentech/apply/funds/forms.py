@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.users.models import User
@@ -90,7 +91,7 @@ class UpdateReviewersForm(forms.ModelForm):
         }
 
         for role in ReviewerRole.objects.all().order_by('order'):
-            field_name = 'reviewer_role_' + str(role)
+            field_name = 'reviewer_role_' + slugify(str(role))
             self.roles[field_name] = role
 
             self.fields[field_name] = forms.ModelChoiceField(

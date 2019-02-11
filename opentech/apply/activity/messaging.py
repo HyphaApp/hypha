@@ -328,7 +328,7 @@ class SlackAdapter(AdapterBase):
         ]
 
     def reviewers_updated(self, submission, link, user, added=list(), removed=list(), **kwargs):
-        message = [f'{user} has updated the reviewers on <{link}|{submission.title}>']
+        message = [f'{user} has updated the reviewers on <{link}|{submission.title}>.']
 
         if added:
             message.append('Added:')
@@ -338,7 +338,7 @@ class SlackAdapter(AdapterBase):
             message.append('Removed:')
             message.extend(reviewers_message(removed))
 
-        return '. '.join(message)
+        return ' '.join(message)
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = ', '.join(
