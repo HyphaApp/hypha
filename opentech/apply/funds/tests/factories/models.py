@@ -39,6 +39,8 @@ __all__ = [
     'ApplicationFormFactory',
     'ApplicationRevisionFactory',
     'ApplicationSubmissionFactory',
+    'AssignedReviewersFactory',
+    'AssignedWithRoleReviewersFactory',
     'InvitedToProposalFactory',
     'RoundFactory',
     'RoundBaseFormFactory',
@@ -246,21 +248,34 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
-            for reviewer in reviewers:
-                AssignedReviewers.objects.create(
+            AssignedReviewers.objects.bulk_create(
+                AssignedReviewers(
                     reviewer=reviewer,
                     submission=self,
-                    role=None)
+                    role=None
+                ) for reviewer in reviewers
+            )
 
 
 class ReviewerRoleFactory(factory.DjangoModelFactory):
     class Meta:
         model = ReviewerRole
 
+    name = factory.Faker('word')
+    order = factory.Sequence(lambda n: n)
+
 
 class AssignedReviewersFactory(factory.DjangoModelFactory):
     class Meta:
         model = AssignedReviewers
+
+    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    role = None
+    reviewer = factory.SubFactory(StaffFactory)
+
+
+class AssignedWithRoleReviewersFactory(AssignedReviewersFactory):
+    role = factory.SubFactory(ReviewerRoleFactory)
 
 
 class InvitedToProposalFactory(ApplicationSubmissionFactory):

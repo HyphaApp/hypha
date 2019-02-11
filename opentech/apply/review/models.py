@@ -165,8 +165,7 @@ def update_submission_reviewers_list(sender, **kwargs):
     review = kwargs.get('instance')
 
     # Make sure the reviewer is in the reviewers list on the submission
-    if not review.submission.reviewers.filter(id=review.author.id).exists():
-        AssignedReviewers.objects.create(
-            submission=review.submission,
-            reviewer=review.author,
-        )
+    AssignedReviewers.objects.get_or_create(
+        submission=review.submission,
+        reviewer=review.author,
+    )

@@ -65,7 +65,7 @@ class StaffReviewFormTestCase(BaseViewTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(status='internal_review', reviewers=[cls.user])
+        cls.submission = ApplicationSubmissionFactory(status='internal_review')
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -201,7 +201,7 @@ class ReviewDetailTestCase(BaseViewTestCase):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}
 
     def test_review_detail_recommendation(self):
-        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, reviewers=[self.user])
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
         review = ReviewFactory(submission=submission, author=self.user, recommendation_yes=True)
         response = self.get_page(review)
         self.assertContains(response, submission.title)
