@@ -3,10 +3,6 @@
 
     @include media-query(tablet-landscape) {
         display: grid;
-        grid-template-columns: 1fr 250px;
-    }
-
-    @include media-query(desktop) {
         grid-template-columns: 1fr 390px;
         grid-template-rows: 75px 1fr;
     }
@@ -17,22 +13,23 @@
         width: 100%;
     }
 
-    &__body,
+    &__column {
+        border-bottom: 2px solid $color--light-mid-grey;
+    }
+
     &__header {
-        @include submission-list-item;
-        padding: 20px;
+        border-right: 2px solid $color--light-mid-grey;
+    }
+
+    &__body {
+        &--center {
+            border-right: 2px solid $color--light-mid-grey;
+        }
     }
 
     // loading container
     &__loading {
-        @include media-query(tablet-portrait) {
-            height: calc(100vh - var(--header-admin-height) - #{$listing-header-height} - 40px);
-        }
-
-        // 100vh - listing header - display-panel__body padding
-        @include media-query(laptop-short) {
-            height: calc(100vh -  #{$listing-header-height} - 40px);
-        }
+        @include column-scrolling;
     }
 
     &__header {

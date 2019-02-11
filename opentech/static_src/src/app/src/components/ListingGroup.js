@@ -10,17 +10,18 @@ export default class ListingGroup extends React.Component {
         item: PropTypes.shape({
             name: PropTypes.string,
         }),
+        id: PropTypes.string,
     };
 
     render() {
-        const {item, children} = this.props
+        const {id, item, children} = this.props
         return (
-            <>
-                <ListingHeading title={item.name} count={children.length} />
+            <li id={id}>
+                <ListingHeading  title={item.name} count={children.length} />
                 <ul>
                     {children}
                 </ul>
-            </>
+            </li>
         );
     }
 }

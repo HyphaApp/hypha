@@ -1,13 +1,7 @@
 .detail-view {
     margin: 0 -20px;
-    overflow-y: overlay;
 
     @include media-query(tablet-landscape) {
-        display: grid;
-        grid-template-columns: 250px 1fr;
-    }
-
-    @include media-query(desktop) {
         // breakout of the wrapper
         width: 100vw;
         position: relative;
@@ -15,6 +9,11 @@
         right: 50%;
         margin-left: -50vw;
         margin-right: -50vw;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+    }
+
+    @include media-query(desktop) {
         grid-template-columns: 390px 1fr;
     }
 

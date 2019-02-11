@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from django_tables2 import RequestConfig
 from django_tables2.views import SingleTableView
 
-from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.funds.tables import SubmissionsTable, AdminSubmissionsTable
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -15,9 +15,21 @@ class AdminDashboardView(TemplateView):
 
         in_review = SubmissionsTable(qs.in_review_for(request.user), prefix='in-review-')
         RequestConfig(request, paginate={'per_page': 10}).configure(in_review)
+        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
+        base_query = base_query.by_lead(request.user)
+        open_rounds = base_query.open()[:6]
+        open_query = '?round_state=open'
+        closed_rounds = base_query.closed()[:6]
+        closed_query = '?round_state=closed'
+        rounds_title = 'Your rounds and labs'
 
         return render(request, 'dashboard/dashboard.html', {
             'in_review': in_review,
+            'open_rounds': open_rounds,
+            'open_query': open_query,
+            'closed_rounds': closed_rounds,
+            'closed_query': closed_query,
+            'rounds_title': rounds_title,
         })
 
 

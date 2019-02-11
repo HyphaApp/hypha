@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.forms.models import ModelForm
 from django.utils.decorators import method_decorator
 from django.views import defaults
-from django.views.generic import DetailView, View
+from django.views.generic import View
+from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
@@ -35,12 +37,20 @@ class ViewDispatcher(View):
         return view.as_view()(request, *args, **kwargs)
 
 
-class DelegateableView(DetailView):
-    """A view which passes its context to child form views to allow them to post to the same URL """
+class DelegatableBase(ContextMixin):
+    """
+    A view which passes its context to child form views to allow them to post to the same URL
+    `DelegateableViews` objects should contain form views that inherit from `DelegatedViewMixin`
+    and `FormView`
+    """
     form_prefix = 'form-submitted-'
 
+    def get_form_args(self):
+        return (None, None)
+
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(self.object, self.request.user) for form_view in self.form_views)
+        forms = dict(form_view.contribute_form(*self.get_form_args()) for form_view in self.form_views)
+
         return super().get_context_data(
             form_prefix=self.form_prefix,
             **forms,
@@ -48,13 +58,9 @@ class DelegateableView(DetailView):
         )
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        kwargs['submission'] = self.object
-
         # Information to pretend we originate from this view
-        kwargs['template_names'] = self.get_template_names()
         kwargs['context'] = self.get_context_data()
+        kwargs['template_names'] = self.get_template_names()
 
         for form_view in self.form_views:
             if self.form_prefix + form_view.context_name in request.POST:
@@ -64,14 +70,34 @@ class DelegateableView(DetailView):
         return self.get(request, *args, **kwargs)
 
 
+class DelegateableView(DelegatableBase):
+    def get_form_args(self):
+        return self.object, self.request.user
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        kwargs['submission'] = self.object
+
+        return super().post(request, *args, **kwargs)
+
+
+class DelegateableListView(DelegatableBase):
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return super().post(request, *args, **kwargs)
+
+
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
+
     def get_template_names(self):
         return self.kwargs['template_names']
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        if self.is_model_form():
+            kwargs['user'] = self.request.user
         return kwargs
 
     def get_form(self, *args, **kwargs):
@@ -87,10 +113,20 @@ class DelegatedViewMixin(View):
         return super().get_context_data(**kwargs)
 
     @classmethod
+    def is_model_form(cls):
+        return issubclass(cls.form_class, ModelForm)
+
+    @classmethod
     def contribute_form(cls, submission, user):
-        form = cls.form_class(instance=submission, user=user)
+        if cls.is_model_form():
+            form = cls.form_class(instance=submission, user=user)
+        else:
+            form = cls.form_class()  # This is for the batch update, we don't pass in the user or a single submission
         form.name = cls.context_name
         return cls.context_name, form
+
+    def get_success_url(self):
+        return self.request.path
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):

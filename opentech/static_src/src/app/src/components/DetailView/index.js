@@ -19,56 +19,30 @@ class DetailView extends Component {
         clearSubmission: PropTypes.func.isRequired,
     };
 
-    state = {
-        listingShown: true,
-        firstRender: true,
-    }
-
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
 
     renderDisplay () {
         return <DisplayPanel />
     }
 
-    componentDidUpdate (prevProps, prevState) {
-        if (this.isMobile()) {
-            const haveCleared = prevProps.submissionID && !this.props.submissionID
-            const haveUpdated = !prevProps.submissionID && this.props.submissionID
-
-            if ( haveCleared ) {
-                this.setState({listingShown: true})
-            } else if ( haveUpdated && this.state.firstRender ) {
-                // Listing automatically updating after update
-                // clear, but dont run again
-                this.props.clearSubmission()
-                this.setState({firstRender: false})
-            } else if ( prevProps.submissionID !== this.props.submissionID) {
-                // Submission has changed and we want to show it
-                // reset the firstRender so that we can clear it again
-                this.setState({
-                    listingShown: false,
-                    firstRender: true,
-                })
-            }
-        }
-    }
-
     render() {
-        const { listing } = this.props;
+        const { listing, submissionID } = this.props;
+
+        const activeSubmision = !!submissionID;
 
         if (this.isMobile()) {
             var activeDisplay;
-            if (this.state.listingShown){
-                activeDisplay = (
-                    <SlideOutLeft key={"listing"}>
-                        {listing}
-                    </SlideOutLeft>
-                )
-            } else {
+            if (activeSubmision) {
                 activeDisplay = (
                     <SlideInRight key={"display"}>
                         { this.renderDisplay() }
                     </SlideInRight>
+                )
+            } else {
+                activeDisplay = (
+                    <SlideOutLeft key={"listing"}>
+                        { React.cloneElement(listing, { shouldSelectFirst: false }) }
+                    </SlideOutLeft>
                 )
             }
 

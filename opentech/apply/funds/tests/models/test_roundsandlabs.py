@@ -67,6 +67,18 @@ class BaseRoundsAndLabTestCase:
         self.assertEqual(fetched_obj, obj)
         self.assertFalse(base_qs.active().exists())
 
+    def test_by_lead(self):
+        obj = self.base_factory()
+        # Create an additional round which will create a new staff lead
+        round_other_lead = RoundFactory()
+        qs_all = RoundsAndLabs.objects.with_progress()
+        qs_by_lead = qs_all.by_lead(obj.lead)
+        fetched_obj = qs_by_lead.first()
+        self.assertEqual(qs_all.count(), 2)
+        self.assertEqual(qs_by_lead.count(), 1)
+        self.assertEqual(fetched_obj.lead, obj.lead.full_name)
+        self.assertNotEqual(round_other_lead.title, fetched_obj.title)
+
 
 class TestForLab(BaseRoundsAndLabTestCase, TestCase):
     base_factory = LabFactory

@@ -1,9 +1,14 @@
 var path = require('path');
 
+var COMMON_ENTRY = ['@babel/polyfill', './src/datetime']
+
 module.exports = {
     context: __dirname,
 
-    entry: ['@babel/polyfill', './src/index'],
+    entry: {
+        submissionsByRound: COMMON_ENTRY.concat(['./src/submissionsByRoundIndex']),
+        submissionsByStatus: COMMON_ENTRY.concat(['./src/submissionsByStatusIndex']),
+    },
 
     output: {
         filename: '[name]-[hash].js'
@@ -71,6 +76,7 @@ module.exports = {
             '@reducers': path.resolve(__dirname, 'src/redux/reducers'),
             '@selectors': path.resolve(__dirname, 'src/redux/selectors'),
             '@actions': path.resolve(__dirname, 'src/redux/actions'),
+            '@middleware': path.resolve(__dirname, 'src/redux/middleware'),
             '@api': path.resolve(__dirname, 'src/api'),
         }
     }

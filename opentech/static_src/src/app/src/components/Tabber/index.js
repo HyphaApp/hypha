@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-
+import './styles.scss';
 
 export const Tab = ({button, children, handleClick}) => <div>{children}</div>
 Tab.propTypes = {
@@ -43,7 +43,12 @@ class Tabber extends Component {
             <div className="tabber">
                 <div className="tabber__navigation">
                     {children.map((child, i) => {
-                            return <a onClick={child.props.handleClick ? child.props.handleClick : () => this.handleClick(i)} className="display-panel__link" key={child.key}>{child.props.button}</a>
+                        return <a
+                        key={child.key}
+                        onClick={child.props.handleClick ? child.props.handleClick : () => this.handleClick(i)}
+                        className={`tabber__link ${this.state.activeTab === i ? 'is-active' : ''}`}>
+                            {child.props.button}
+                        </a>
                         })
                     }
                 </div>

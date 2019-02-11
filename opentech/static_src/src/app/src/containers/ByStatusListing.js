@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
-import Listing from '@components/Listing';
+import GroupedListing from '@components/GroupedListing';
 import {
     loadCurrentRound,
+    loadCurrentRoundSubmissions,
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
@@ -17,18 +18,21 @@ import {
 
 
 const loadData = props => {
-    props.loadSubmissions(['submissions'])
+    props.loadRound(['workflow'])
+    props.loadSubmissions()
 }
 
 class ByStatusListing extends React.Component {
     static propTypes = {
-        loadSubmissions: PropTypes.func,
+        loadRound: PropTypes.func.isRequired,
+        loadSubmissions: PropTypes.func.isRequired,
         submissions: PropTypes.arrayOf(PropTypes.object),
         roundID: PropTypes.number,
         round: PropTypes.object,
         error: PropTypes.string,
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
+        shouldSelectFirst: PropTypes.bool,
     };
 
     componentDidMount() {
@@ -42,33 +46,39 @@ class ByStatusListing extends React.Component {
         const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
         if (roundID && prevProps.roundID !== roundID) {
-            console.log('wooop')
             loadData(this.props)
         }
     }
 
+    prepareOrder(round) {
+        if ( !round ) { return []}
+        const slugify = value => value.toLowerCase().replace(/\s/g, '-')
+        const workflow = round.workflow
+        const order = workflow.reduce((accumulator, {display, value}, idx) => {
+            const key = slugify(display);
+            const existing = accumulator[key] || {}
+            const existingValues = existing.values || []
+            const position = existing.position || idx
+            accumulator[key] = {key, display, position, values: [...existingValues, value]}
+            return accumulator
+        }, {})
+        const arrayOrder = Object.values(order).sort((a,b) => a.position - b.position)
+        return arrayOrder
+    }
+
     render() {
-        const { error, submissions, round, setCurrentItem, activeSubmission } = this.props;
-        const isLoading = round && round.isFetching
-        return <Listing
+        const { error, submissions, round, setCurrentItem, activeSubmission, shouldSelectFirst } = this.props;
+        const isLoading = !round || ( round && (round.isFetching || round.submissions.isFetching) )
+        const order = this.prepareOrder(round)
+        return <GroupedListing
                     isLoading={isLoading}
                     error={error}
                     items={submissions}
                     activeItem={activeSubmission}
                     onItemSelection={setCurrentItem}
+                    shouldSelectFirst={shouldSelectFirst}
                     groupBy={'status'}
-                    order={[
-                        // TODO: Set the proper order of statuses.
-                        'post_external_review_discussion',
-                        'in_discussion',
-                        'more_info',
-                        'internal_review',
-                        'post_review_discussion',
-                        'post_review_more_info',
-                        'accepted',
-                        'rejected',
-                    ]}
-            />;
+                    order={ order } />;
     }
 }
 
@@ -81,7 +91,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    loadSubmissions: () => dispatch(loadCurrentRound()),
+    loadRound: fields => dispatch(loadCurrentRound(fields)),
+    loadSubmissions: () => dispatch(loadCurrentRoundSubmissions()),
     setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });
 

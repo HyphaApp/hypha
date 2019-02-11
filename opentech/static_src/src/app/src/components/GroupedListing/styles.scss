@@ -1,0 +1,11 @@
+.grouped-listing {
+    &__dropdown {
+        @include submission-list-item;
+        height: $listing-header-height;
+        padding: 20px;
+    }
+
+    .loading-panel__icon::after {
+        background: $color--light-grey;
+    }
+}

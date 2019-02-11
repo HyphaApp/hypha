@@ -13,9 +13,10 @@ import {
 } from '@selectors/submissions';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
+import AddNoteForm from '@containers/AddNoteForm';
+import NoteListing from '@containers/NoteListing';
 import Tabber, {Tab} from '@components/Tabber'
 import './style.scss';
-
 
 class DisplayPanel extends React.Component  {
     static propTypes = {
@@ -28,18 +29,18 @@ class DisplayPanel extends React.Component  {
     };
 
     render() {
-        const { windowSize: {windowWidth: width} } = this.props;
+        const { windowSize: {windowWidth: width}, submissionID } = this.props;
         const { clearSubmission } = this.props;
 
         const isMobile = width < 1024;
-        const { submissionID } = this.props;
         const submissionLink = "/apply/submissions/" + submissionID + "/";
 
         const submission = <CurrentSubmissionDisplay />
 
         let tabs = [
             <Tab button="Notes" key="note">
-                <p>Notes</p>
+                <NoteListing submissionID={submissionID} />
+                <AddNoteForm submissionID={submissionID} />
             </Tab>,
             <Tab button="Status" key="status">
                 <p>Status</p>
@@ -61,7 +62,7 @@ class DisplayPanel extends React.Component  {
                 { !isMobile && (
                     <div className="display-panel__column">
                         <div className="display-panel__header display-panel__header--spacer"></div>
-                        <div className="display-panel__body">
+                        <div className="display-panel__body display-panel__body--center">
                             <a target="_blank" rel="noopener noreferrer" href={ submissionLink }>Open in new tab</a>
                             { submission }
                         </div>
@@ -90,6 +91,5 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     clearSubmission: clearCurrentSubmission
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DisplayPanel));

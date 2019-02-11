@@ -235,10 +235,13 @@ gulp.task('watch:static', function watch () {
 gulp.task('watch:app', function watch (callback) {
     var webpackOptions = webpackDev();
 
-    webpackOptions.entry.unshift(
-        `webpack-dev-server/client?http://localhost:${webpackOptions.devServer.port}/`,
-        `webpack/hot/dev-server`
-    );
+    webpackOptions.entry = Object.keys(webpackOptions.entry).reduce((acc, key) => {
+        acc[key] = [
+            `webpack-dev-server/client?http://localhost:${webpackOptions.devServer.port}/`,
+            'webpack/hot/dev-server',
+        ].concat(webpackOptions.entry[key])
+        return acc;
+    }, {});
 
     var serverOptions = Object.assign(
         {}, webpackOptions.devServer, {

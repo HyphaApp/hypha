@@ -16,5 +16,5 @@ class TestSendEmail(TestCase):
             'from_email': 'from_email',
             'to': 'to',
         }
-        send_mail(*kwargs, log=MessageFactory())
+        send_mail(*kwargs, logs=[MessageFactory()])
         email_mock.assert_called_once_with(**kwargs)
