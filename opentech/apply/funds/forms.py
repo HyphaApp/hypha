@@ -136,7 +136,7 @@ class UpdateReviewersForm(forms.ModelForm):
             for field, role in self.roles.items()
         }
 
-        missing_staff = instance.staff_not_reviewed.filter(
+        assigned_staff = instance.staff_not_reviewed.filter(
             assignedreviewers__submission=instance,
             assignedreviewers__role__isnull=True
         ).exclude(
@@ -148,16 +148,19 @@ class UpdateReviewersForm(forms.ModelForm):
         else:
             reviewers = instance.reviewers_not_reviewed
 
-        current_reviewers = set(reviewers | self.submitted_reviewers | missing_staff)
+        current_reviewers = set(reviewers | self.submitted_reviewers | assigned_staff)
 
-        instance.assigned.filter(role=None).delete()
+        # Clear out old reviewers
+        instance.assigned.filter(role=None).exclude(reviewer__in=current_reviewers).delete()
 
+        # Add new reviewers
         AssignedReviewers.objects.bulk_create(
             AssignedReviewers(
                 submission=instance,
                 role=None,
                 reviewer=reviewer,
             ) for reviewer in current_reviewers
+            if reviewer not in instance.reviewers.filter(assignedreviewers__role=None)
         )
 
         for role, reviewer in assigned_roles.items():

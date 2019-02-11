@@ -1,5 +1,6 @@
 import json
 import requests
+from collections import defaultdict
 
 from django.db import models
 from django.conf import settings
@@ -18,6 +19,24 @@ User = get_user_model()
 def link_to(target, request):
     if target:
         return request.scheme + '://' + request.get_host() + target.get_absolute_url()
+
+
+def group_reviewers(reviewers):
+    groups = defaultdict(list)
+    for reviewer in reviewers:
+        groups[reviewer.role].append(reviewer.reviewer)
+    return groups
+
+
+def reviewers_message(reviewers):
+    messages = []
+    for role, reviewers in group_reviewers(reviewers).items():
+        message = ', '.join(str(reviewer) for reviewer in reviewers)
+        if role:
+            message += ' as ' + str(role)
+        message += '.'
+        messages.append(message)
+    return messages
 
 
 neat_related = {
@@ -192,11 +211,11 @@ class ActivityAdapter(AdapterBase):
         message = ['Reviewers updated.']
         if added:
             message.append('Added:')
-            message.append(', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in added]) + '.')
+            message.extend(reviewers_message(added))
 
         if removed:
             message.append('Removed:')
-            message.append(', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in removed]) + '.')
+            message.extend(reviewers_message(removed))
 
         return ' '.join(message)
 
@@ -309,15 +328,17 @@ class SlackAdapter(AdapterBase):
         ]
 
     def reviewers_updated(self, submission, link, user, added=list(), removed=list(), **kwargs):
-        message = f'{user} has updated the reviewers on <{link}|{submission.title}>. '
+        message = [f'{user} has updated the reviewers on <{link}|{submission.title}>']
 
         if added:
-            message += 'Reviewers added: ' + ', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in added]) + '. '
+            message.append('Added:')
+            message.extend(reviewers_message(added))
 
         if removed:
-            message += 'Reviewers removed: ' + ', '.join([str(reviewer.reviewer) + ' as ' + str(reviewer.role) for reviewer in removed]) + '. '
+            message.append('Removed:')
+            message.extend(reviewers_message(removed))
 
-        return message
+        return '. '.join(message)
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = ', '.join(

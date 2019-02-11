@@ -700,3 +700,16 @@ class AssignedReviewers(models.Model):
 
     def __str__(self):
         return f'{self.reviewer} as {self.role}'
+
+    def __eq__(self, other):
+        if not isinstance(other, models.Model):
+            return False
+        if self._meta.concrete_model != other._meta.concrete_model:
+            return False
+        my_pk = self.pk
+        if my_pk is None:
+            return self is other
+        return all([
+            self.reviewer_id == other.reviewer_id,
+            self.role_id == other.role_id,
+        ])

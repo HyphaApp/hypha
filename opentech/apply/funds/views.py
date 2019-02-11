@@ -290,14 +290,13 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         return super().form_invalid(form)
 
     def form_valid(self, form):
-        old = copy(self.get_object())
         old_reviewers = set(
             copy(reviewer)
-            for reviewer in AssignedReviewers.objects.filter(submission=old)
+            for reviewer in form.instance.assigned.all()
         )
         response = super().form_valid(form)
 
-        new_reviewers = set(AssignedReviewers.objects.filter(submission=form.instance))
+        new_reviewers = set(form.instance.assigned.all())
         added = new_reviewers - old_reviewers
         removed = old_reviewers - new_reviewers
 
