@@ -685,7 +685,9 @@ class AssignedReviewers(models.Model):
     )
     submission = models.ForeignKey(
         ApplicationSubmission,
-        on_delete=models.CASCADE)
+        related_name='assigned',
+        on_delete=models.CASCADE
+    )
     role = models.ForeignKey(
         'funds.ReviewerRole',
         related_name='+',
@@ -695,3 +697,6 @@ class AssignedReviewers(models.Model):
 
     class Meta:
         unique_together = ('submission', 'role')
+
+    def __str__(self):
+        return f'{self.reviewer} as {self.role}'

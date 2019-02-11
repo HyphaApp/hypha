@@ -69,11 +69,15 @@ class UpdateReviewersForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
-        reviewers = self.instance.reviewers.all()
         self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
         if self.can_alter_external_reviewers(self.instance, self.user):
-            self.prepare_field('reviewer_reviewers', reviewers, self.submitted_reviewers)
+            reviewers = self.instance.reviewers.all()
+            self.prepare_field(
+                'reviewer_reviewers',
+                initial=reviewers,
+                excluded=self.submitted_reviewers
+            )
         else:
             self.fields.pop('reviewer_reviewers')
 
@@ -82,8 +86,7 @@ class UpdateReviewersForm(forms.ModelForm):
 
         assigned_roles = {
             assigned.role: assigned.reviewer
-            for assigned in AssignedReviewers.objects.filter(
-                submission=self.instance,
+            for assigned in self.instance.assigned.filter(
                 role__isnull=False
             )
         }
@@ -127,21 +130,37 @@ class UpdateReviewersForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
+
+        assigned_roles = {
+            role: self.cleaned_data[field]
+            for field, role in self.roles.items()
+        }
+
+        missing_staff = instance.staff_not_reviewed.filter(
+            assignedreviewers__submission=instance,
+            assignedreviewers__role__isnull=True
+        ).exclude(
+            id__in=[user.id for user in assigned_roles.values()]
+        )
+
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
         else:
             reviewers = instance.reviewers_not_reviewed
 
-        current_reviewers = set(reviewers | self.submitted_reviewers)
-        for reviewer in current_reviewers:
-            AssignedReviewers.objects.update_or_create(
+        current_reviewers = set(reviewers | self.submitted_reviewers | missing_staff)
+
+        instance.assigned.filter(role=None).delete()
+
+        AssignedReviewers.objects.bulk_create(
+            AssignedReviewers(
                 submission=instance,
                 role=None,
-                defaults={'reviewer': reviewer},
-            )
+                reviewer=reviewer,
+            ) for reviewer in current_reviewers
+        )
 
-        for field, role in self.roles.items():
-            reviewer = self.cleaned_data[field]
+        for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_or_create(
                     submission=instance,
