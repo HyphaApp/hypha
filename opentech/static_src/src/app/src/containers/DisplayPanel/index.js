@@ -33,7 +33,6 @@ class DisplayPanel extends React.Component  {
         const { clearSubmission } = this.props;
 
         const isMobile = width < 1024;
-        const { submissionID } = this.props;
         const submissionLink = "/apply/submissions/" + submissionID + "/";
 
         const submission = <CurrentSubmissionDisplay />
