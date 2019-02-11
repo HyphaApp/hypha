@@ -92,7 +92,7 @@ class UpdateReviewersForm(forms.ModelForm):
         }
 
         for role in ReviewerRole.objects.all().order_by('order'):
-            field_name = 'reviewer_' + str(role)
+            field_name = 'reviewer_role_' + str(role)
             self.roles[field_name] = role
 
             self.fields[field_name] = forms.ModelChoiceField(
@@ -123,7 +123,7 @@ class UpdateReviewersForm(forms.ModelForm):
         ]
 
         # If any of the users match and are set to multiple roles, throw an error
-        if len(role_reviewers) != len(set(role_reviewers)):
+        if len(role_reviewers) != len(set(role_reviewers)) and any(role_reviewers):
             self.add_error(None, _('Users cannot be assigned to multiple roles.'))
 
         return cleaned_data
@@ -140,7 +140,7 @@ class UpdateReviewersForm(forms.ModelForm):
             assignedreviewers__submission=instance,
             assignedreviewers__role__isnull=True
         ).exclude(
-            id__in=[user.id for user in assigned_roles.values()]
+            id__in=[user.id for user in assigned_roles.values() if user]
         )
 
         if self.can_alter_external_reviewers(self.instance, self.user):

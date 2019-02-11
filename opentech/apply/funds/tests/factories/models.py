@@ -51,6 +51,7 @@ __all__ = [
     'ScreeningStatusFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
+    'ReviewerRoleFactory',
     'TodayRoundFactory',
     'workflow_for_stages',
 ]

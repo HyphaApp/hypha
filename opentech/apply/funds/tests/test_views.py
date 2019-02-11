@@ -6,8 +6,10 @@ from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    AssignedWithRoleReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
+    ReviewerRoleFactory,
     ScreeningStatusFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
@@ -207,13 +209,38 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.staff = StaffFactory.create_batch(4)
         cls.reviewers = ReviewerFactory.create_batch(4)
+        cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, reviewers=list()):
-        return self.post_page(submission, {
+    def post_form(self, submission, reviewer_roles=list(), reviewers=list()):
+        data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]
-        })
+        }
+        data.update(
+            **{
+                f'reviewer_role_{str(role)}': reviewer.id
+                for role, reviewer in zip(self.roles, reviewer_roles)
+            }
+        )
+        return self.post_page(submission, data)
+
+    def test_lead_can_add_staff_single(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+
+        self.post_form(submission, [self.staff[0]])
+
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
+
+    def test_lead_can_change_staff_single(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
+
+        self.post_form(submission, [self.staff[1]])
+
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[1]])
 
     def test_lead_cant_add_reviewers_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
@@ -225,7 +252,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     def test_lead_can_add_reviewers_for_proposal(self):
         submission = InvitedToProposalFactory(lead=self.user)
 
-        self.post_form(submission, self.reviewers)
+        self.post_form(submission, reviewers=self.reviewers)
 
         self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
@@ -241,7 +268,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         submission = InvitedToProposalFactory(lead=self.user, reviewers=self.reviewers)
         self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
-        self.post_form(submission, self.reviewers[0:2])
+        self.post_form(submission, reviewers=self.reviewers[0:2])
 
         self.assertCountEqual(submission.reviewers.all(), self.reviewers[0:2])
 
