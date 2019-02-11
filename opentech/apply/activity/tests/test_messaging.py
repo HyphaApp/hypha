@@ -232,6 +232,20 @@ class TestActivityAdapter(TestCase):
         self.assertTrue(str(added.reviewer) in message)
         self.assertTrue(str(removed.reviewer) in message)
 
+    def test_reviewers_with_role(self):
+        with_role = AssignedWithRoleReviewersFactory()
+        message = self.adapter.reviewers_updated([with_role], [])
+        self.assertTrue(str(with_role.reviewer) in message)
+        self.assertTrue(str(with_role.role) in message)
+
+    def test_reviewers_with_and_without_role(self):
+        with_role = AssignedWithRoleReviewersFactory()
+        without_role = AssignedReviewersFactory()
+        message = self.adapter.reviewers_updated([with_role, without_role], [])
+        self.assertTrue(str(with_role.reviewer) in message)
+        self.assertTrue(str(with_role.role) in message)
+        self.assertTrue(str(without_role.reviewer) in message)
+
     def test_internal_transition_kwarg_for_invisible_transition(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion')
         kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission)
