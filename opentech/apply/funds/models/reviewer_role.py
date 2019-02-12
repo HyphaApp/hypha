@@ -1,4 +1,6 @@
 from django.db import models
+from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 class ReviewerRole(models.Model):
@@ -16,5 +18,13 @@ class ReviewerRole(models.Model):
         blank=True,
     )
 
+    panels = [
+        FieldPanel('name'),
+        ImageChooserPanel('icon'),
+        FieldPanel('order'),
+    ]
+
     def __str__(self):
         return self.name
+
+
