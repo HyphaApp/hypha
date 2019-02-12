@@ -33,6 +33,7 @@ class DisplayPanel extends React.Component  {
         const { clearSubmission } = this.props;
 
         const isMobile = width < 1024;
+        const submissionLink = "/apply/submissions/" + submissionID + "/";
 
         const submission = <CurrentSubmissionDisplay />
 
@@ -62,6 +63,7 @@ class DisplayPanel extends React.Component  {
                     <div className="display-panel__column">
                         <div className="display-panel__header display-panel__header--spacer"></div>
                         <div className="display-panel__body display-panel__body--center">
+                            <a target="_blank" rel="noopener noreferrer" href={ submissionLink }>Open in new tab</a>
                             { submission }
                         </div>
                     </div>

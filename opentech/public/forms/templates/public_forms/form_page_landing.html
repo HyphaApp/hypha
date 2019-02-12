@@ -2,8 +2,10 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
-    <div>
+<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    <div class="wrapper--sidebar--inner">
         <h1>Thank you</h1>
         <div>{{ page.thank_you_text|richtext }}</div>
     </div>
+</div>
 {% endblock %}
