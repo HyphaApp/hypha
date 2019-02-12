@@ -215,6 +215,10 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         ]
         return kwargs
 
+    def prepare_data(self, value, data, serialize=False):
+        base_prepare = super().prepare_data
+        return [base_prepare(value, item, serialize) for item in data]
+
     def get_searchable_content(self, value, data):
         return data
 
