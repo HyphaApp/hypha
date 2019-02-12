@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Switcher from '@components/Switcher';
+import MessagesContainer from '@containers/MessagesContainer'
 
 export default class SwitcherApp extends React.Component {
     static propTypes = {
@@ -36,6 +37,7 @@ export default class SwitcherApp extends React.Component {
     render() {
         return (
             <>
+                <MessagesContainer />
                 <Switcher selector={this.props.switcherSelector} open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
 
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
