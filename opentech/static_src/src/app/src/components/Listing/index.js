@@ -72,9 +72,7 @@ export default class Listing extends React.Component {
         return (
             <li className="listing__item listing__item--error">
                 <h5>Something went wrong!</h5>
-                {error &&
-                    <p>{error}</p>
-                }
+                <p>{error}</p>
                 { !navigator.onLine && <p>You appear to be offline.</p>}
                 { handleRetry && this.renderRetryButton() }
             </li>
