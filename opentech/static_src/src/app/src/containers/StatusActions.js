@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { executeSubmissionAction } from '@actions/submissions';
 import Modal from '@components/Modal';
 import { getSubmissionOfID } from '@selectors/submissions';
+import { redirect } from '@utils';
 
 class StatusActions extends React.Component {
     static propTypes = {
@@ -40,7 +41,21 @@ class StatusActions extends React.Component {
     }
 
     handleStatusChange = () => {
-        this.props.changeStatus(this.state.statusSelectValue).then(this.closeStatusModal());
+        const { changeStatus, submission } = this.props
+        const { statusSelectValue } = this.state
+        const actionObject = submission.actions.find(
+            v => v.value === statusSelectValue
+        )
+
+        switch (actionObject.type) {
+            case 'redirect':
+                return redirect(actionObject.target)
+            case 'submit':
+                return changeStatus(statusSelectValue)
+                        .then(() => this.closeStatusModal())
+            default:
+                throw "Invalid action type"
+        }
     }
 
     renderModal = () => {
