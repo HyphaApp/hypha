@@ -551,6 +551,10 @@ class ApplicationSubmission(
     def reviewers_not_reviewed(self):
         return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
 
+    @property
+    def role_reviewers(self):
+        return AssignedReviewers.objects.filter(submission=self, role__isnull=False)
+
     def reviewed_by(self, user):
         return self.reviews.submitted().filter(author=user).exists()
 
