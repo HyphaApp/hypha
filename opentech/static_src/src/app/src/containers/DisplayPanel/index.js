@@ -12,6 +12,7 @@ import {
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import AddNoteForm from '@containers/AddNoteForm';
 import NoteListing from '@containers/NoteListing';
+import StatusActions from '@containers/StatusActions';
 import Tabber, {Tab} from '@components/Tabber'
 import './style.scss';
 
@@ -38,7 +39,7 @@ class DisplayPanel extends React.Component  {
                 <AddNoteForm submissionID={submissionID} />
             </Tab>,
             <Tab button="Status" key="status">
-                <p>Status</p>
+                <StatusActions submissionID={submissionID} />
             </Tab>
         ]
 

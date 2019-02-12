@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.db import transaction
 from django.db.models import Q
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -85,7 +86,16 @@ class SubmissionAction(generics.RetrieveAPIView):
             obj.perform_transition(action, self.request.user, request=self.request)
         except DjangoPermissionDenied as e:
             raise PermissionDenied(str(e))
-        return Response(status=status.HTTP_200_OK)
+        obj = self.get_object()
+        serializer = SubmissionDetailSerializer(obj, context={
+            'request': request,
+        })
+        return Response({
+            'id': serializer.data['id'],
+            'status': serializer.data['status'],
+            'actions': serializer.data['actions'],
+            'phase': serializer.data['phase'],
+        })
 
 
 class RoundLabDetail(generics.RetrieveAPIView):

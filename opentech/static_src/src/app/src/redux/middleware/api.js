@@ -57,7 +57,6 @@ export default store => next => action => {
     if (!types.every(type => typeof type === 'string')) {
         throw new Error('Expected action types to be strings.')
     }
-
     const actionWith = data => {
         const finalAction = {...action, ...data}
         delete finalAction[CALL_API]
