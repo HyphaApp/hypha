@@ -68,19 +68,25 @@ export default class SubmissionDisplay extends Component {
 
         return (
             <div className="application-display">
-                <h3>{stage} Information</h3>
+                {stage &&
+                    <h3>{stage} Information</h3>
+                }
 
-                <div className="grid grid--proposal-info">
-                    {metaQuestions.map((response, index) => (
-                        <MetaResponse key={index} {...response} />
-                    ))}
-                </div>
+                {metaQuestions.length > 0 &&
+                    <div className="grid grid--proposal-info">
+                        {metaQuestions.map((response, index) => (
+                            <MetaResponse key={index} {...response} />
+                        ))}
+                    </div>
+                }
 
-                <div className="rich-text rich-text--answers">
-                    {questions.map((response, index) => (
-                        <Response key={index} {...response} />
-                    ))}
-                </div>
+                {questions.length > 0 &&
+                    <div className="rich-text rich-text--answers">
+                        {questions.map((response, index) => (
+                            <Response key={index} {...response} />
+                        ))}
+                    </div>
+                }
             </div>
         )
     }
