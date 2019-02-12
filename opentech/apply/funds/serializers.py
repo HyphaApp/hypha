@@ -12,10 +12,10 @@ markdown = mistune.Markdown()
 class ActionSerializer(serializers.Field):
     def to_representation(self, instance):
         actions = instance.get_actions_for_user(self.context['request'].user)
-        return {
-            transition: action
+        return [
+            {'value': transition, 'display': action}
             for transition, action in actions
-        }
+        ]
 
 
 class ReviewSummarySerializer(serializers.Field):
@@ -66,10 +66,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
+    phase = serializers.CharField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions', 'review')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -99,11 +100,12 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
-    actions = ActionSerializer(source='*')
+    actions = ActionSerializer(source='*', read_only=True)
+    action = serializers.CharField(write_only=True)
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'actions',)
+        fields = ('id', 'actions', 'action')
 
 
 class RoundLabDetailSerializer(serializers.ModelSerializer):
