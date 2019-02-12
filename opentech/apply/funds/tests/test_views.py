@@ -14,6 +14,7 @@ from opentech.apply.funds.tests.factories import (
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
+from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.stream_forms.testing.factories import flatten_for_form
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
@@ -277,6 +278,21 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.post_form(submission, reviewers=[])
 
         self.assertCountEqual(submission.reviewers.all(), self.reviewers)
+
+    def test_lead_can_change_role_reviewer_and_review_remains(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+
+        self.post_form(submission, reviewer_roles=[self.staff[0]])
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
+
+        # Add a review from that staff reviewer
+        review = ReviewFactory(submission=submission, author=self.staff[0])
+
+        # Assign a different reviewer to the same role
+        self.post_form(submission, reviewer_roles=[self.staff[1]])
+
+        # TODO: need to test that submission.assigned still contains self.staff[0]
+        # self.assertIn(self.staff[0], submission.reviewers.all())
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):

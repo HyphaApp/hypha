@@ -678,8 +678,8 @@ class ApplicationRevision(AccessFormData, models.Model):
 
 
 class AssignedReviewersQuerySet(models.QuerySet):
-    def role_reviewers_by_submission(self, submission):
-        return self.filter(role__isnull=False, submission=submission)
+    def with_roles(self):
+        return self.filter(role__isnull=False)
 
 
 class AssignedReviewers(models.Model):

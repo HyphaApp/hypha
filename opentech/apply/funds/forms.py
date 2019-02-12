@@ -68,10 +68,9 @@ class UpdateReviewersForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
-        # All submitted reviews by non-role reviewers
         self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
         self.submitted_reviewers = self.submitted_reviewers.exclude(
-            id__in=AssignedReviewers.objects.role_reviewers_by_submission(self.instance).values('reviewer'))
+            id__in=self.instance.assigned.with_roles().values('reviewer'))
 
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.instance.reviewers.all()
@@ -154,6 +153,8 @@ class UpdateReviewersForm(forms.ModelForm):
         else:
             reviewers = instance.reviewers_not_reviewed
 
+        # TODO, if a reviewer is moved from a role assignment, but they have reviewed the submission
+        # they should keep a record in AssignedReviewers with role=None
         current_reviewers = set(reviewers | self.submitted_reviewers | assigned_staff)
 
         # Clear out old reviewers
