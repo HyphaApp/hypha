@@ -75,4 +75,17 @@
             text-align: left;
         }
     }
+
+    &--submission-count {
+        display: inline-block;
+        padding: 2px 10px;
+        font-size: 13px;
+        font-weight: $weight--bold;
+        color: $color--marine;
+        text-align: center;
+        background-color: $color--sky-blue;
+        border-radius: 20%;
+        border: 1px solid $color--light-blue-90;
+        vertical-align: middle;
+    }
 }
