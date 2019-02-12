@@ -19,13 +19,17 @@ import {
 const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading }) => {
     const fetchNotes = () => loadNotes(submissionID)
 
+    const {start, stop } = useInterval(fetchNotes, 30000)
+
     useEffect( () => {
         if ( submissionID ) {
             fetchNotes()
+            start()
+        } else {
+            stop()
         }
     }, [submissionID])
 
-    useInterval(fetchNotes, 30000)
 
     const handleRetry = () => {
         if (!isLoading || isErrored) {
