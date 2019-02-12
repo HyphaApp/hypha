@@ -62,7 +62,8 @@ export default class Listing extends React.Component {
         );
     }
 
-    retryButton = (handleRetry) => {
+    renderRetryButton = () => {
+        const { handleRetry } = this.props;
         return <a className="listing__help-link" onClick={handleRetry}>Refresh</a>;
     }
 
@@ -73,7 +74,7 @@ export default class Listing extends React.Component {
                 <h5>Something went wrong!</h5>
                 <p>{ error }</p>
                 { !navigator.onLine && <p>You appear to be offline.</p>}
-                { handleRetry && this.retryButton(handleRetry) }
+                { handleRetry && this.renderRetryButton() }
             </li>
         )
     }
@@ -96,7 +97,7 @@ export default class Listing extends React.Component {
                         </div>
                         <p className="listing__help-text listing__help-text--standout">Something went wrong!</p>
                         <p className="listing__help-text">Sorry we couldn&apos;t load the notes</p>
-                        { this.handleRetry(handleRetry) }
+                        { this.renderRetryButton() }
                     </>
                 }
             </div>

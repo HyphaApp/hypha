@@ -46,7 +46,7 @@ class NoteListing extends React.Component {
     }
 
     componentWillUnmount() {
-        this.pollNotes = null;
+        clearInterval(this.pollNotes)
     }
 
     handleRetry = () => {

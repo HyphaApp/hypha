@@ -15,7 +15,7 @@ import {
 import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
-function submission(state={id: null, comments: []}, action) {
+function submission(state={comments: []}, action) {
     switch(action.type) {
         case START_LOADING_SUBMISSION:
             return {
