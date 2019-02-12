@@ -30,6 +30,12 @@
     // loading container
     &__loading {
         @include column-scrolling;
+
+        &--cover {
+            background: $color--white;
+            height: 100%;
+            border-left: 2px solid $color--light-mid-grey;
+        }
     }
 
     &__header {
