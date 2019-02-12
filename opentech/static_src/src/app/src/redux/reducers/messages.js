@@ -22,7 +22,7 @@ const messages = (state = {}, action) => {
             return {
                 ...state,
                 [action.messageID]: message(
-                    state[action.messageID], ADD_MESSAGE
+                    state[action.messageID], action
                 ),
             }
         case DISMISS_MESSAGE:
@@ -38,5 +38,5 @@ const messages = (state = {}, action) => {
 }
 
 export default combineReducers({
-    messages
+    messages,
 })
