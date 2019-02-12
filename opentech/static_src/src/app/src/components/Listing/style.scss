@@ -54,10 +54,19 @@
         @include submission-list-item;
 
         &--error {
-            padding: 5px 20px 5px;
+            color: $color--white;
+            background-color: darken($color--error, 20%);
+            padding: 20px;
+            border: 0;
 
+            h5,
             p {
-                margin: 5px 0px;
+                margin: 0 0 5px;
+            }
+
+            a {
+                font-weight: $weight--bold;
+                color: inherit;
             }
         }
 
