@@ -139,8 +139,6 @@ export default class GroupedListing extends React.Component {
                 <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
                     {!error && !isLoading &&
                         <ListingDropdown
-                            error={error}
-                            isLoading={isLoading}
                             listRef={this.listRef}
                             groups={this.state.orderedItems}
                             scrollOffset={this.dropdownContainerHeight}
