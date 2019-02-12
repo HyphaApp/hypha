@@ -677,6 +677,11 @@ class ApplicationRevision(AccessFormData, models.Model):
         })
 
 
+class AssignedReviewersQuerySet(models.QuerySet):
+    def role_reviewers_by_submission(self, submission):
+        return self.filter(role__isnull=False, submission=submission)
+
+
 class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -694,6 +699,8 @@ class AssignedReviewers(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
+
+    objects = AssignedReviewersQuerySet.as_manager()
 
     class Meta:
         unique_together = ('submission', 'role')

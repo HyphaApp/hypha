@@ -68,7 +68,10 @@ class UpdateReviewersForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
+        # All submitted reviews by non-role reviewers
         self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
+        self.submitted_reviewers = self.submitted_reviewers.exclude(
+            id__in=AssignedReviewers.objects.role_reviewers_by_submission(self.instance).values('reviewer'))
 
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.instance.reviewers.all()
