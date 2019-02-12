@@ -71,6 +71,7 @@ const answerTypes = {
     'radios': BasicAnswer,
 
     // SPECIAL
+    'checkboxes': BasicListAnswer,
     'rich_text': RichTextAnswer,
     'address': AddressAnswer,
     'category': BasicListAnswer,
