@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { MESSAGE_TYPES, addMessage } from '@actions/messages';
 import { executeSubmissionAction } from '@actions/submissions';
 import Modal from '@components/Modal';
 import { getSubmissionOfID } from '@selectors/submissions';
@@ -19,6 +20,7 @@ class StatusActions extends React.Component {
             })),
         }),
         changeStatus: PropTypes.func.isRequired,
+        addMessage: PropTypes.func.isRequired,
     }
 
     state = {
@@ -41,7 +43,7 @@ class StatusActions extends React.Component {
     }
 
     handleStatusChange = () => {
-        const { changeStatus, submission } = this.props
+        const { addMessage, changeStatus, submission } = this.props
         const { statusSelectValue } = this.state
         const actionObject = submission.actions.find(
             v => v.value === statusSelectValue
@@ -52,7 +54,13 @@ class StatusActions extends React.Component {
                 return redirect(actionObject.target)
             case 'submit':
                 return changeStatus(statusSelectValue)
-                        .then(() => this.closeStatusModal())
+                        .then(() => {
+                            this.closeStatusModal()
+                            addMessage(
+                                'You have successfully updated the status of the submission',
+                                MESSAGE_TYPES.SUCCESS,
+                            );
+                        })
             default:
                 throw "Invalid action type"
         }
@@ -99,6 +107,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     changeStatus: action => {
         return dispatch(executeSubmissionAction(ownProps.submissionID, action))
     },
+    addMessage: (message, type) => dispatch(addMessage(message, type)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StatusActions);
