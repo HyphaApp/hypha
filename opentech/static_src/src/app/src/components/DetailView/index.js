@@ -69,12 +69,8 @@ class DetailView extends Component {
             }
             return (
                 <div className="detail-view">
-                    {!isLoading &&
-                        <>
-                            {listing}
-                            { this.renderDisplay() }
-                        </>
-                    }
+                    {listing}
+                    { this.renderDisplay() }
                 </div>
             )
         }
