@@ -37,9 +37,11 @@ class FormFieldBlock(StructBlock):
         return self.widget
 
     def get_field_kwargs(self, struct_value):
-        kwargs = {'label': struct_value['field_label'],
-                  'help_text': struct_value['help_text'],
-                  'required': struct_value.get('required', False)}
+        kwargs = {
+            'label': struct_value['field_label'],
+            'help_text': struct_value['help_text'],
+            'required': struct_value.get('required', False)
+        }
         if 'default_value' in struct_value:
             kwargs['initial'] = struct_value['default_value']
         form_widget = self.get_widget(struct_value)
@@ -173,10 +175,11 @@ class RadioButtonsFieldBlock(OptionalFormFieldBlock):
         icon = 'radio-empty'
 
     def get_field_kwargs(self, struct_value):
-        kwargs = super(RadioButtonsFieldBlock,
-                       self).get_field_kwargs(struct_value)
-        kwargs['choices'] = [(choice, choice)
-                             for choice in struct_value['choices']]
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['choices'] = [
+            (choice, choice)
+            for choice in struct_value['choices']
+        ]
         return kwargs
 
 
@@ -188,8 +191,7 @@ class DropdownFieldBlock(RadioButtonsFieldBlock):
         icon = 'arrow-down-big'
 
     def get_field_kwargs(self, struct_value):
-        kwargs = super(DropdownFieldBlock,
-                       self).get_field_kwargs(struct_value)
+        kwargs = super().get_field_kwargs(struct_value)
         kwargs['choices'].insert(0, BLANK_CHOICE_DASH[0])
         return kwargs
 
@@ -206,10 +208,11 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         template = 'stream_forms/render_list_field.html'
 
     def get_field_kwargs(self, struct_value):
-        kwargs = super(CheckboxesFieldBlock,
-                       self).get_field_kwargs(struct_value)
-        kwargs['choices'] = [(choice, choice)
-                             for choice in struct_value['checkboxes']]
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['choices'] = [
+            (choice, choice)
+            for choice in struct_value['checkboxes']
+        ]
         return kwargs
 
     def get_searchable_content(self, value, data):
