@@ -1,14 +1,20 @@
 import React from 'react'
 
+import OTFLoadingIcon from '@components/OTFLoadingIcon'
+
 import './styles.scss';
 
-const LoadingIcon = () => {
-  return (
-      <div className="loading-panel">
-          <h5>Loading...</h5>
-          <div className="loading-panel__icon" />
-      </div>
-  )
+const LoadingPanel = () => {
+    return (
+        <div className="loading-panel">
+            <div className="loading-panel__text" >
+                <h5>Loading...</h5>
+            </div>
+            <div className="loading-panel__icon" >
+                <OTFLoadingIcon />
+            </div>
+        </div>
+    )
 }
 
-export default LoadingIcon
+export default LoadingPanel
