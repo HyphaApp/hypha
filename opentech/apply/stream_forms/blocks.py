@@ -52,8 +52,9 @@ class FormFieldBlock(StructBlock):
         return self.get_field_class(struct_value)(**field_kwargs)
 
     def serialize(self, value, context):
+        field_kwargs = self.get_field_kwargs(value)
         return {
-            'question': value['field_label'],
+            'question': field_kwargs['label'],
             'answer': context.get('data'),
             'type': self.name,
         }
