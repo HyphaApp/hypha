@@ -153,11 +153,9 @@ class UpdateReviewersForm(forms.ModelForm):
         else:
             reviewers = instance.reviewers_not_reviewed
 
-        # TODO, if a reviewer is moved from a role assignment, but they have reviewed the submission
-        # they should keep a record in AssignedReviewers with role=None
         current_reviewers = set(reviewers | self.submitted_reviewers | assigned_staff)
 
-        # Clear out old reviewers
+        # Clear out old reviewers, as long as they aren't assigned to a role
         instance.assigned.filter(role=None).exclude(reviewer__in=current_reviewers).delete()
 
         # Add new reviewers
@@ -170,13 +168,32 @@ class UpdateReviewersForm(forms.ModelForm):
             if reviewer not in instance.reviewers.filter(assignedreviewers__role=None)
         )
 
+        # Update or create role reviewers
         for role, reviewer in assigned_roles.items():
             if reviewer:
-                AssignedReviewers.objects.update_or_create(
+                # Edge case: handle any role reviewers that reviewed and now have been removed from role assignment,
+                # We want to have a AssignedReviewer record for that orphaned reviewer
+                # because they have left a review but no longer have a role
+                existing = AssignedReviewers.objects.filter(
                     submission=instance,
-                    role=role,
-                    defaults={'reviewer': reviewer},
-                )
+                    role=role)
+                if existing:
+                    existing_reviewer = existing.first().reviewer
+                    if existing_reviewer != reviewer:
+                        if instance.reviewed_by(existing_reviewer):
+                            AssignedReviewers.objects.create(
+                                submission=instance,
+                                role=None,
+                                reviewer=existing_reviewer,
+                            )
+                        existing.first().reviewer = reviewer
+                        existing.first().save()
+                else:
+                    AssignedReviewers.objects.create(
+                        submission=instance,
+                        role=role,
+                        reviewer=reviewer,
+                    )
 
         return instance
 

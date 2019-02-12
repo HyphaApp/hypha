@@ -291,8 +291,9 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         # Assign a different reviewer to the same role
         self.post_form(submission, reviewer_roles=[self.staff[1]])
 
-        # TODO: need to test that submission.assigned still contains self.staff[0]
-        # self.assertIn(self.staff[0], submission.reviewers.all())
+        # Make sure that the ex-role-reviewer (self.staff[0]) still has a assignedreviewer record
+        self.assertEqual(submission.reviewers.all().count(), 2)
+        self.assertIn(self.staff[0], submission.reviewers.all())
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
