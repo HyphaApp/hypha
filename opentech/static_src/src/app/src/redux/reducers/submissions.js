@@ -39,10 +39,10 @@ function submission(state={comments: []}, action) {
         case UPDATE_NOTES:
             return {
                 ...state,
-                comments: [
-                    ...state.comments,
-                    ...action.data.results.map(note => note.id).filter(id => !state.comments.includes(id))
-                ]
+                comments: action.data.results
+                    .map(note => note.id)
+                    .filter(id => !state.comments.includes(id))
+                    .concat(state.comments)
             };
         case UPDATE_NOTE:
             return {
