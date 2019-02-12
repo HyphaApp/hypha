@@ -8,6 +8,7 @@ import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
 import { getCurrentSubmissionID } from '@selectors/submissions';
+import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
 
@@ -17,6 +18,7 @@ class DetailView extends Component {
         submissionID: PropTypes.number,
         windowSize: PropTypes.objectOf(PropTypes.number),
         clearSubmission: PropTypes.func.isRequired,
+        isLoading: PropTypes.bool,
     };
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
@@ -26,8 +28,7 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, submissionID } = this.props;
-
+        const { listing, submissionID, isLoading } = this.props;
         const activeSubmision = !!submissionID;
 
         if (this.isMobile()) {
@@ -52,14 +53,22 @@ class DetailView extends Component {
                 </div>
             )
         } else {
+            if (isLoading) {
+                return (
+                    <LoadingPanel />
+                )
+            }
             return (
                 <div className="detail-view">
-                    {listing}
-                    { this.renderDisplay() }
+                    {!isLoading &&
+                        <>
+                            {listing}
+                            { this.renderDisplay() }
+                        </>
+                    }
                 </div>
             )
         }
-
     }
 }
 
