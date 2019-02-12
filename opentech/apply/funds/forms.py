@@ -108,6 +108,10 @@ class UpdateReviewersForm(forms.ModelForm):
             # Pre-populate form field
             self.fields[field_name].initial = assigned_roles.get(role)
 
+            # Move the non-role reviewers field to the end of the field list
+            if self.fields.get('reviewer_reviewers'):
+                self.fields.move_to_end('reviewer_reviewers')
+
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]
         field.queryset = field.queryset.exclude(id__in=excluded)
