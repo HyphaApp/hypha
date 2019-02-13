@@ -222,7 +222,7 @@
     }
 }
 
-@mixin checkbox-without-label {
+@mixin table-checkbox {
     input[type='checkbox'] {
         margin: 0 auto;
         display: block;

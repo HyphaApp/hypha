@@ -39,7 +39,7 @@
             }
 
             &.selected {
-                @include checkbox-without-label;
+                @include table-checkbox;
 
                 @include media-query($table-breakpoint) {
                     width: 60px;
@@ -151,7 +151,7 @@
 
             // batch action checkboxes
             &.selected {
-                @include checkbox-without-label;
+                @include table-checkbox;
                 display: none;
 
                 @include media-query($table-breakpoint) {
