@@ -1,0 +1,13 @@
+.loading-inline {
+    width: 100%;
+    text-align: center;
+
+    &__icon {
+        padding: 5px;
+
+        svg {
+            height: 30px;
+            width: 30px;
+        }
+    }
+}

@@ -108,13 +108,22 @@ class RoundLabList(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
 
+class NewerThanFilter(filters.ModelChoiceFilter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        return qs.newer(value)
+
+
 class CommentFilter(filters.FilterSet):
     since = filters.DateTimeFilter(field_name="timestamp", lookup_expr='gte')
     before = filters.DateTimeFilter(field_name="timestamp", lookup_expr='lte')
+    newer = NewerThanFilter(queryset=Activity.comments.all())
 
     class Meta:
         model = Activity
-        fields = ['submission', 'visibility', 'since', 'before']
+        fields = ['submission', 'visibility', 'since', 'before', 'newer']
 
 
 class CommentList(generics.ListAPIView):
@@ -138,7 +147,7 @@ class CommentListCreate(generics.ListCreateAPIView):
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_fields = ('visibility',)
+    filter_class = CommentFilter
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
