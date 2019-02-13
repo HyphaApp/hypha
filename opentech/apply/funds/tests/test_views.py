@@ -7,6 +7,7 @@ from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
     AssignedWithRoleReviewersFactory,
+    AssignedReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
     ReviewerRoleFactory,
@@ -296,8 +297,10 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
 
     def test_lead_adds_two_roles_one_reviewer_and_a_new_review_comes_in(self):
         submission = ApplicationSubmissionFactory(lead=self.user, status='external_review', workflow_stages=2)
-
-        self.post_form(submission, reviewer_roles=[self.staff[0], self.staff[1]], reviewers=[self.reviewers[0]])
+        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
+        AssignedWithRoleReviewersFactory(role=self.roles[1], submission=submission, reviewer=self.staff[1])
+        AssignedReviewersFactory(submission=submission, reviewer=self.reviewers[0])
+        # Now, let's check that we have 3 reviewers to begin with
         self.assertEqual(submission.reviewers.all().count(), 3)
 
         # Add a review from a new reviewer who isn't assigned
