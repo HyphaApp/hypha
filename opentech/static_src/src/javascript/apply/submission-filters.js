@@ -18,7 +18,7 @@
 
     const urlParams = new URLSearchParams(window.location.search);
 
-    const persistedParams = ['sort', 'query'];
+    const persistedParams = ['sort', 'query', 'submission'];
 
     // check if the page has a query string and keep filters open if so on desktop
     const minimumNumberParams = persistedParams.reduce(
