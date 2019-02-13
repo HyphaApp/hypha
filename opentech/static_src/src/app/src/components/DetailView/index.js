@@ -7,7 +7,9 @@ import { clearCurrentSubmission } from '@actions/submissions';
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
-import { getCurrentSubmissionID } from '@selectors/submissions';
+import {
+    getCurrentSubmissionID,
+} from '@selectors/submissions';
 import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
@@ -20,6 +22,7 @@ class DetailView extends Component {
         clearSubmission: PropTypes.func.isRequired,
         isLoading: PropTypes.bool,
         error: PropTypes.string,
+        isEmpty: PropTypes.bool,
     };
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
@@ -29,7 +32,7 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, submissionID, isLoading, error } = this.props;
+        const { listing, submissionID, isLoading, error, isEmpty } = this.props;
         const activeSubmision = !!submissionID;
         const isError = Boolean(error);
 
@@ -64,6 +67,12 @@ class DetailView extends Component {
                     <div className="loading-panel">
                         <h5>Something went wrong!</h5>
                         <p>{error}</p>
+                    </div>
+                )
+            } else if (!isLoading && isEmpty) {
+                return (
+                    <div className="loading-panel">
+                        <h5>No submissions available</h5>
                     </div>
                 )
             }

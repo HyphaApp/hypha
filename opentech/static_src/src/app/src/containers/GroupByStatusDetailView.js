@@ -8,6 +8,7 @@ import ByStatusListing from '@containers/ByStatusListing';
 import {
     getCurrentRound,
     getSubmissionsByRoundError,
+    getCurrentRoundSubmissions
 } from '@selectors/submissions';
 
 
@@ -20,10 +21,17 @@ class GroupByStatusDetailView extends React.Component {
 
     render() {
         const listing = <ByStatusListing />;
-        const { round, error } = this.props;
+        const { round, error, submissions } = this.props;
         const isLoading = !round || (round && (round.isFetching || round.submissions.isFetching))
+        const isEmpty = submissions.length === 0;
+
         return (
-            <DetailView listing={listing} isLoading={isLoading} error={error} />
+            <DetailView
+                listing={listing}
+                isLoading={isLoading}
+                error={error}
+                isEmpty={isEmpty}
+            />
         );
     }
 }
@@ -31,6 +39,7 @@ class GroupByStatusDetailView extends React.Component {
 const mapStateToProps = state => ({
     round: getCurrentRound(state),
     error: getSubmissionsByRoundError(state),
+    submissions: getCurrentRoundSubmissions(state),
 })
 
 export default connect(
