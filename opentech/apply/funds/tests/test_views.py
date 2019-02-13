@@ -286,7 +286,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
         # Add a review from that staff reviewer
-        review = ReviewFactory(submission=submission, author=self.staff[0])
+        ReviewFactory(submission=submission, author=self.staff[0])
 
         # Assign a different reviewer to the same role
         self.post_form(submission, reviewer_roles=[self.staff[1]])
