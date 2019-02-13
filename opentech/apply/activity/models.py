@@ -41,6 +41,9 @@ class BaseActivityQuerySet(models.QuerySet):
     def visible_to(self, user):
         return self.filter(visibility__in=self.model.visibility_for(user))
 
+    def newer(self, activity):
+        return self.filter(timestamp__gt=activity.timestamp)
+
 
 class ActivityQuerySet(BaseActivityQuerySet):
     def comments(self):

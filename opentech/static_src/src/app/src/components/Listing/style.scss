@@ -53,6 +53,14 @@
     &__item {
         @include submission-list-item;
 
+        &--error {
+            padding: 5px 20px 5px;
+
+            p {
+                margin: 5px 0px;
+            }
+        }
+
         &.is-active {
             @include target-edge {
                 margin-left: 8px;
@@ -70,6 +78,7 @@
             padding: 15px 20px;
         }
     }
+
 
     // <a> tags
     &__link {

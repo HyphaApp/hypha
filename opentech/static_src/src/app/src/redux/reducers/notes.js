@@ -21,13 +21,20 @@ function notesFetching(state = false, action) {
     }
 }
 
-function notesErrored(state = false, action) {
+function notesErrored(state = {errored: false, message: null}, action) {
     switch (action.type) {
         case UPDATE_NOTES:
         case START_FETCHING_NOTES:
-            return false;
+        return {
+            ...state,
+            errored: false,
+        };
         case FAIL_FETCHING_NOTES:
-            return true;
+            return {
+                ...state,
+                message: action.error,
+                errored: true,
+            };
         default:
             return state;
     }
@@ -110,7 +117,7 @@ function notesByID(state = {}, action) {
 export default combineReducers({
     byID: notesByID,
     isFetching: notesFetching,
-    isErrored: notesErrored,
+    error: notesErrored,
     createError: notesFailedCreating,
     isCreating: notesCreating,
 });

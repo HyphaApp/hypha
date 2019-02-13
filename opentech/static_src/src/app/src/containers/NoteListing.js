@@ -1,54 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 
-import { fetchNotesForSubmission } from '@actions/notes';
+import useInterval from "@rooks/use-interval"
+
+import { fetchNewNotesForSubmission } from '@actions/notes';
 import Listing from '@components/Listing';
 import Note from '@containers/Note';
 import {
     getNotesErrorState,
+    getNotesErrorMessage,
     getNoteIDsForSubmissionOfID,
     getNotesFetchState,
 } from '@selectors/notes';
 
-class NoteListing extends React.Component {
-    static propTypes = {
-        loadNotes: PropTypes.func,
-        submissionID: PropTypes.number,
-        noteIDs: PropTypes.array,
-        isErrored: PropTypes.bool,
-        isLoading: PropTypes.bool,
-    };
 
-    componentDidUpdate(prevProps) {
-        const { isLoading, loadNotes, submissionID } = this.props;
-        const prevSubmissionID = prevProps.submissionID;
+const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading }) => {
+    const fetchNotes = () => loadNotes(submissionID)
 
-        if(
-            submissionID !== null && submissionID !== undefined &&
-            prevSubmissionID !== submissionID && !isLoading
-        ) {
-            loadNotes(submissionID);
+    const {start, stop } = useInterval(fetchNotes, 30000)
+
+    useEffect( () => {
+        if ( submissionID ) {
+            fetchNotes()
+            start()
+        } else {
+            stop()
+        }
+    }, [submissionID])
+
+
+    const handleRetry = () => {
+        if (!isLoading || isErrored) {
+            fetchNotes()
         }
     }
 
-    componentDidMount() {
-        const { isLoading, loadNotes, submissionID } = this.props;
-
-        if (submissionID && !isLoading) {
-            loadNotes(submissionID);
-        }
-    }
-
-    handleRetry = () => {
-        if (this.props.isLoading || !this.props.isErrored) {
-            return;
-        }
-        this.props.loadNotes(this.props.submissionID);
-    }
-
-    renderItem = noteID => {
+    const renderItem = noteID => {
         return (
             <CSSTransition key={`note-${noteID}`} timeout={200} classNames="add-note">
                 <Note key={`note-${noteID}`} noteID={noteID} />
@@ -56,29 +45,38 @@ class NoteListing extends React.Component {
         );
     }
 
-    render() {
-        const { noteIDs } = this.props;
-        const passProps = {
-            isLoading: this.props.isLoading,
-            isError: this.props.isErrored,
-            handleRetry: this.handleRetry,
-            renderItem: this.renderItem,
-            items: noteIDs,
-        };
-        return (
-            <Listing {...passProps} column="notes" />
-        );
-    }
+    return (
+        <Listing
+            isLoading={ isLoading }
+            isError={ isErrored }
+            error={ errorMessage }
+            handleRetry={ handleRetry }
+            renderItem={ renderItem }
+            items={ noteIDs }
+            column="notes"
+        />
+    );
 }
 
+NoteListing.propTypes = {
+    loadNotes: PropTypes.func,
+    submissionID: PropTypes.number,
+    noteIDs: PropTypes.array,
+    isErrored: PropTypes.bool,
+    errorMessage: PropTypes.string,
+    isLoading: PropTypes.bool,
+};
+
+
 const mapDispatchToProps = dispatch => ({
-    loadNotes: submissionID => dispatch(fetchNotesForSubmission(submissionID)),
+    loadNotes: submissionID => dispatch(fetchNewNotesForSubmission(submissionID)),
 });
 
 const mapStateToProps = (state, ownProps) => ({
     noteIDs: getNoteIDsForSubmissionOfID(ownProps.submissionID)(state),
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
+    errorMessage: getNotesErrorMessage(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

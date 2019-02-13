@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { TransitionGroup } from 'react-transition-group';
 
 import LoadingPanel from '@components/LoadingPanel';
+import InlineLoading from '@components/InlineLoading'
 import EmptyPanel from '@components/EmptyPanel';
 
 import SadNoteIcon from 'images/sad-note.svg';
@@ -34,30 +35,52 @@ export default class Listing extends React.Component {
             listRef,
         } = this.props;
 
-        if (isLoading) {
-            return (
-                <div className="listing__list">
-                    <LoadingPanel />
-                </div>
-            );
-        } else if (isError) {
-            return this.renderError();
-        } else if (items.length === 0) {
-            return <EmptyPanel column={this.props.column} />;
+        if ( items.length === 0 ) {
+            if (isLoading) {
+                return (
+                    <div className="listing__list">
+                        <LoadingPanel />
+                    </div>
+                );
+            } else if (isError) {
+                return this.renderError();
+            } else {
+                return <EmptyPanel column={this.props.column} />;
+            }
         }
 
         return (
-            <ul className={`listing__list listing__list--${column}`} ref={listRef}>
-                <TransitionGroup>
-                    {items.map(v => renderItem(v))}
-                </TransitionGroup>
-            </ul>
+            <>
+                { isLoading && <InlineLoading /> }
+                <ul className={`listing__list listing__list--${column}`} ref={listRef}>
+                    { isError && this.renderErrorItem() }
+                    <TransitionGroup component={null} >
+                        {items.map(v => renderItem(v))}
+                    </TransitionGroup>
+                </ul>
+            </>
         );
+    }
+
+    renderRetryButton = () => {
+        const { handleRetry } = this.props;
+        return <a className="listing__help-link" onClick={handleRetry}>Refresh</a>;
+    }
+
+    renderErrorItem = () => {
+        const { handleRetry, error } = this.props;
+        return (
+            <li className={`listing__item listing__item--error`}>
+                <h5>Something went wrong!</h5>
+                <p>{ error }</p>
+                { !navigator.onLine && <p>You appear to be offline.</p>}
+                { handleRetry && this.renderRetryButton() }
+            </li>
+        )
     }
 
     renderError = () => {
         const { handleRetry, error, column } = this.props;
-        const retryButton = <a className="listing__help-link" onClick={handleRetry}>Refresh</a>;
 
         return (
             <div className={`listing__list listing__list--${column} is-blank`}>
@@ -67,14 +90,14 @@ export default class Listing extends React.Component {
                     <p>Something went wrong!</p>
                 }
 
-                {handleRetry && retryButton &&
+                {handleRetry &&
                     <>
                         <div className="listing__blank-icon">
                             <SadNoteIcon  />
                         </div>
                         <p className="listing__help-text listing__help-text--standout">Something went wrong!</p>
                         <p className="listing__help-text">Sorry we couldn&apos;t load the notes</p>
-                        {retryButton}
+                        { this.renderRetryButton() }
                     </>
                 }
             </div>

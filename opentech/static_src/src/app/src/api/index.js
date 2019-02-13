@@ -1,6 +1,6 @@
 import { fetchSubmission, fetchSubmissionsByRound, fetchSubmissionsByStatuses } from '@api/submissions';
 import { fetchRound, fetchRounds } from '@api/rounds';
-import { createNoteForSubmission, fetchNotesForSubmission } from '@api/notes';
+import { createNoteForSubmission, fetchNotesForSubmission, fetchNewNotesForSubmission } from '@api/notes';
 
 export default {
     fetchSubmissionsByRound,
@@ -11,5 +11,6 @@ export default {
     fetchRounds,
 
     fetchNotesForSubmission,
+    fetchNewNotesForSubmission,
     createNoteForSubmission,
 };
