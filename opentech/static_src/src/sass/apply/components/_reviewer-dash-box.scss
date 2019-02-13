@@ -1,0 +1,11 @@
+.reviewer-dash-box {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px;
+    border: 1px solid $color--mid-grey;
+
+    &__title {
+        color: $color--mid-dark-grey;
+    }
+}
