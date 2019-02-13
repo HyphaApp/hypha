@@ -302,7 +302,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.reviewers.all().count(), 3)
 
         # Add a review from a new reviewer who isn't assigned
-        review = ReviewFactory(submission=submission, author=self.reviewers[1])
+        ReviewFactory(submission=submission, author=self.reviewers[1])
 
         # Now there should be 4 reviewers assigned, because an outsider reviewed
         self.assertEqual(submission.reviewers.all().count(), 4)
