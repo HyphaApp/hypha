@@ -295,7 +295,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.reviewers.all().count(), 2)
         self.assertIn(self.staff[0], submission.reviewers.all())
 
-    def test_lead_adds_two_roles_one_reviewer_and_a_new_review_comes_in(self):
+    def test_reviewer_exists_after_submitting_review(self):
         submission = ApplicationSubmissionFactory(lead=self.user, status='external_review', workflow_stages=2)
         AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
         AssignedWithRoleReviewersFactory(role=self.roles[1], submission=submission, reviewer=self.staff[1])
