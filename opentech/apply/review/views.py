@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.models import ApplicationSubmission, AssignedReviewers
+from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from opentech.apply.review.forms import ReviewModelForm
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -21,9 +21,13 @@ from .models import Review
 
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
-        role_reviews = self.object.reviews.filter(author__in=self.object.role_reviewers.values('reviewer'))
-        non_role_reviews = self.object.reviews.filter(
-            author__in=AssignedReviewers.objects.non_role_reviewers_by_submission(submission=self.object).values('reviewer'))
+        # TODO: order role_reviews by role_order
+        role_reviews = self.object.reviews.filter(
+            author__in=self.object.assigned.with_roles().values('reviewer')
+        )
+        non_role_reviews = self.object.reviews.exclude(
+            author__in=self.object.assigned.with_roles().values('reviewer')
+        )
 
         return super().get_context_data(
             role_reviews=role_reviews,
