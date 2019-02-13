@@ -159,13 +159,14 @@ class UpdateReviewersForm(forms.ModelForm):
         instance.assigned.filter(role=None).exclude(reviewer__in=current_reviewers).delete()
 
         # Add new reviewers
+        reviewers_no_role_existing = instance.reviewers.filter(assignedreviewers__role=None)
         AssignedReviewers.objects.bulk_create(
             AssignedReviewers(
                 submission=instance,
                 role=None,
                 reviewer=reviewer,
             ) for reviewer in current_reviewers
-            if reviewer not in instance.reviewers.filter(assignedreviewers__role=None)
+            if reviewer not in reviewers_no_role_existing
         )
 
         # Update or create role reviewers
