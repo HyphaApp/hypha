@@ -7,9 +7,7 @@ import { clearCurrentSubmission } from '@actions/submissions';
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
-import {
-    getCurrentSubmissionID,
-} from '@selectors/submissions';
+
 import LoadingPanel from '@components/LoadingPanel';
 
 import './style.scss';
@@ -17,7 +15,7 @@ import './style.scss';
 class DetailView extends Component {
     static propTypes = {
         listing: PropTypes.element.isRequired,
-        submissionID: PropTypes.number,
+        showSubmision: PropTypes.bool,
         windowSize: PropTypes.objectOf(PropTypes.number),
         clearSubmission: PropTypes.func.isRequired,
         isLoading: PropTypes.bool,
@@ -32,13 +30,12 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, submissionID, isLoading, error, isEmpty } = this.props;
-        const activeSubmision = !!submissionID;
+        const { listing, isLoading, error, isEmpty, showSubmision } = this.props;
         const isError = Boolean(error);
 
         if (this.isMobile()) {
             var activeDisplay;
-            if (activeSubmision) {
+            if (showSubmision) {
                 activeDisplay = (
                     <SlideInRight key={"display"}>
                         { this.renderDisplay() }
@@ -86,13 +83,8 @@ class DetailView extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    submissionID: getCurrentSubmissionID(state),
-});
-
 const mapDispatchToProps = {
     clearSubmission: clearCurrentSubmission
 }
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DetailView));
+export default connect(null, mapDispatchToProps)(withWindowSizeListener(DetailView));
