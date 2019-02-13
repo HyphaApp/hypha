@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom'
 
 import Listing from '@components/Listing';
 import ListingGroup from '@components/ListingGroup';
@@ -8,7 +9,7 @@ import ListingDropdown from '@components/ListingDropdown';
 
 import './styles.scss'
 
-export default class GroupedListing extends React.Component {
+class GroupedListing extends React.Component {
     static propTypes = {
         items: PropTypes.array,
         activeItem: PropTypes.number,
@@ -23,6 +24,7 @@ export default class GroupedListing extends React.Component {
         })),
         onItemSelection: PropTypes.func,
         shouldSelectFirst: PropTypes.bool,
+        history: PropTypes.object.isRequired,
     };
 
     static defaultProps = {
@@ -105,6 +107,9 @@ export default class GroupedListing extends React.Component {
 
     renderItem = group => {
         const { activeItem, onItemSelection } = this.props;
+        if (activeItem) {
+            this.updateUrl(activeItem);
+        }
         return (
             <ListingGroup key={`listing-group-${group.key}`} id={group.key} item={group}>
                 {group.items.map(item => {
@@ -116,6 +121,10 @@ export default class GroupedListing extends React.Component {
                 })}
             </ListingGroup>
         );
+    }
+
+    updateUrl(activeItem) {
+        this.props.history.push(`?submission=${activeItem}`);
     }
 
     render() {
@@ -150,3 +159,5 @@ export default class GroupedListing extends React.Component {
         );
     }
 }
+
+export default withRouter(GroupedListing);
