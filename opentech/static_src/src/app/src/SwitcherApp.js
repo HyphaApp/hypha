@@ -11,6 +11,13 @@ export default class SwitcherApp extends React.Component {
         switcherSelector: PropTypes.string.isRequired,
     };
 
+    componentDidMount() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('submission')) {
+            this.openDetail();
+        }
+    }
 
     state = { detailOpened: false };
 
