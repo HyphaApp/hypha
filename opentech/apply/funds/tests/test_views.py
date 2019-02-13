@@ -230,9 +230,10 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
         self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
-        self.post_form(submission, [self.staff[1]])
+        self.post_form(submission, reviewer_roles=[self.staff[1]])
 
         self.assertCountEqual(submission.reviewers.all(), [self.staff[1]])
+        self.assertEqual(submission.assigned.with_roles().first().reviewer, self.staff[1])
 
     def test_lead_cant_add_reviewers_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)

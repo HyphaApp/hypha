@@ -186,8 +186,7 @@ class UpdateReviewersForm(forms.ModelForm):
                                 role=None,
                                 reviewer=existing_reviewer,
                             )
-                        existing.first().reviewer = reviewer
-                        existing.first().save()
+                        existing.update(reviewer=reviewer)
                 else:
                     AssignedReviewers.objects.create(
                         submission=instance,
