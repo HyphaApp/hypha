@@ -17,14 +17,14 @@
                     <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
                         <span>
                             {{ review.author }}
-                            {% image review.role_review_icon max-20x20 %}
+                            {% image review.role_review_icon max-12x12 %}
                         </span>
                     </a>
                     <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
                 {% else %}
                     <span>
                         {{ review.author }}
-                        {% image review.role_review_icon max-20x20 %}
+                        {% image review.role_review_icon max-12x12 %}
                     </span>
                 {% endif %}
             </td>
