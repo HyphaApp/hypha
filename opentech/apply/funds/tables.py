@@ -65,6 +65,11 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
 
+class ReviewerSubmissionsTable(SubmissionsTable):
+    class Meta(SubmissionsTable.Meta):
+        orderable = False
+
+
 class LabeledCheckboxColumn(tables.CheckBoxColumn):
     def wrap_with_label(self, checkbox, for_value):
         return format_html(
@@ -200,6 +205,28 @@ class SubmissionFilter(filters.FilterSet):
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
+    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+
+
+class SubmissionDashboardFilter(filters.FilterSet):
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
+    fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('fund', 'round')
+
+    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.filters = {
+            field: filter
+            for field, filter in self.filters.items()
+            if field not in exclude
+        }
+
+
+class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
 
 

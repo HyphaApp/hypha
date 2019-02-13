@@ -2,6 +2,10 @@
 {% load render_table from django_tables2 %}
 {% load static %}
 
+{% block extra_css %}
+    {{ filter.form.media.css }}
+{% endblock %}
+
 {% block title %}OTF reviewer Dashboard{% endblock %}
 
 {% block content %}
@@ -12,31 +16,41 @@
         {% endblock %}
     </div>
 </div>
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <div class="wrapper wrapper--large wrapper--inner-space-medium">
-            <h3>Applications to review</h3>
-            {% if my_review.data %}
-                <p>These are applications for which your review has been requested.</p>
-                {% render_table my_review %}
-            {% else %}
-                No reviews to complete
-            {% endif %}
-        </div>
-</div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <h3>Other Applications in review</h3>
-        {% if also_in_review.data %}
-            <p>You are not assigned to review these applications but they may be of interest</p>
-            {% render_table also_in_review %}
-        {% else %}
-            There are no other applications in review
+
+    <div>
+
+        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more %}
+
+    </div>
+
+    <div>
+        {% if my_reviewed.data %}
+
+            <h4 class="heading heading--normal">
+                Your previous reviews
+            </h4>
+
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
+            {% render_table my_reviewed %}
+
+            {% if display_more_reviewed %}
+                <div class="all-submissions-table__more">
+                    <a href="{% url 'apply:submissions:list' %}">Show all</a>
+                </div>
+            {% endif %}
+
         {% endif %}
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
+    {{ filter.form.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
 {% endblock %}
+

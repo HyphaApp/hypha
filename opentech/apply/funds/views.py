@@ -47,15 +47,16 @@ from .models import (
 )
 from .tables import (
     AdminSubmissionsTable,
+    ReviewerSubmissionsTable,
     RoundsTable,
     RoundsFilter,
     SubmissionFilterAndSearch,
+    SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
 from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING
 
 
-@method_decorator(staff_required, name='dispatch')
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
@@ -126,6 +127,16 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         return super().form_valid(form)
 
 
+class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
+    table_class = ReviewerSubmissionsTable
+    filterset_class = SubmissionReviewerFilterAndSearch
+
+    def get_queryset(self):
+        # Reviewers can only see submissions they have reviewed
+        return super().get_queryset().reviewed_by(self.request.user)
+
+
+@method_decorator(staff_required, name='dispatch')
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
@@ -153,13 +164,23 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
-class SubmissionListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
+class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
         BatchUpdateReviewersView
     ]
 
 
+class SubmissionReviewerListView(AllActivityContextMixin, BaseReviewerSubmissionsTable):
+    template_name = 'funds/submissions.html'
+
+
+class SubmissionListView(ViewDispatcher):
+    admin_view = SubmissionAdminListView
+    reviewer_view = SubmissionReviewerListView
+
+
+@method_decorator(staff_required, name='dispatch')
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
@@ -183,6 +204,7 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, Del
         return super().get_context_data(object=self.obj, **kwargs)
 
 
+@method_decorator(staff_required, name='dispatch')
 class SubmissionsByStatus(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
