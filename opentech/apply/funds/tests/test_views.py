@@ -295,6 +295,18 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.reviewers.all().count(), 2)
         self.assertIn(self.staff[0], submission.reviewers.all())
 
+    def test_lead_adds_two_roles_one_reviewer_and_a_new_review_comes_in(self):
+        submission = ApplicationSubmissionFactory(lead=self.user, status='external_review', workflow_stages=2)
+
+        self.post_form(submission, reviewer_roles=[self.staff[0], self.staff[1]], reviewers=[self.reviewers[0]])
+        self.assertEqual(submission.reviewers.all().count(), 3)
+
+        # Add a review from a new reviewer who isn't assigned
+        review = ReviewFactory(submission=submission, author=self.reviewers[1])
+
+        # Now there should be 4 reviewers assigned, because an outsider reviewed
+        self.assertEqual(submission.reviewers.all().count(), 4)
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = UserFactory
