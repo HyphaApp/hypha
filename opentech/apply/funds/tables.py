@@ -115,6 +115,14 @@ class SummarySubmissionsTable(BaseAdminSubmissionsTable):
         orderable = False
 
 
+class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
+    """ Adds Role Assigned to the 'Waiting for My Review' table """
+    role_assigned = tables.Column(verbose_name="Assigned Role")
+
+    class Meta(BaseAdminSubmissionsTable.Meta):
+        orderable = False
+
+
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 
