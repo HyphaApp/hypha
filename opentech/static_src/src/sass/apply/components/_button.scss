@@ -71,7 +71,6 @@
         display: flex;
         justify-content: space-between;
         max-width: 300px;
-        padding: 15px 20px;
         font-weight: $weight--normal;
         color: $color--default;
         background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
@@ -215,7 +214,7 @@
 
         @include media-query(tablet-landscape) {
             background: none;
-            padding: 0;
+            padding: 10px;
             border: 0;
             align-items: center;
             justify-content: flex-start;
