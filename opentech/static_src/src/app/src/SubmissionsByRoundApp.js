@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { hot } from 'react-hot-loader';
 import { connect } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom';
 
 import SwitcherApp from './SwitcherApp';
 import GroupByStatusDetailView from '@containers/GroupByStatusDetailView';
@@ -20,10 +21,14 @@ class SubmissionsByRoundApp extends React.Component {
     }
 
     render() {
-        return <SwitcherApp
+        return (
+            <BrowserRouter>
+                <SwitcherApp
                 detailComponent={<GroupByStatusDetailView />}
                 switcherSelector={'submissions-by-round-app-react-switcher'}
-                pageContent={this.props.pageContent} />;
+                pageContent={this.props.pageContent} />
+            </BrowserRouter>
+        )
     }
 }
 
