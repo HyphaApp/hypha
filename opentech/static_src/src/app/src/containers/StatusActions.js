@@ -18,6 +18,7 @@ class StatusActions extends React.Component {
                 display: PropTypes.string.isRequired,
                 value: PropTypes.string.isRequired,
             })),
+            isExecutingAction: PropTypes.bool,
         }),
         changeStatus: PropTypes.func.isRequired,
         addMessage: PropTypes.func.isRequired,
@@ -66,19 +67,31 @@ class StatusActions extends React.Component {
         }
     }
 
+    get formDisabled() {
+        return (
+            !this.state.statusSelectValue ||
+            Boolean(this.props.submission.isExecutingAction)
+        )
+    }
+
     renderModal = () => {
         const { submission } = this.props
-        const { phase } = submission
+        const { phase, executionActionError } = submission
         return (
             <>
+                {executionActionError && <p>{executionActionError}</p>}
                 {phase && <div>Current status: {phase}</div>}
-                <select value={this.state.statusSelectValue} onChange={evt => this.setState({ statusSelectValue: evt.target.value })}>
+                <select value={this.state.statusSelectValue}
+                    onChange={evt => this.setState({
+                        statusSelectValue: evt.target.value
+                    })}
+                >
                     <option>---</option>
                     {submission.actions.map(({value, display}) =>
                         <option value={value} key={value}>{display}</option>
                     )}
                 </select>
-                <button onClick={this.handleStatusChange} disabled={!this.state.statusSelectValue}>Progress</button>
+                <button onClick={this.handleStatusChange} disabled={this.formDisabled}>Progress</button>
             </>
         );
     }
