@@ -282,9 +282,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
 
     def test_lead_can_change_role_reviewer_and_review_remains(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
-
-        self.post_form(submission, reviewer_roles=[self.staff[0]])
-        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
+        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
 
         # Add a review from that staff reviewer
         ReviewFactory(submission=submission, author=self.staff[0])
