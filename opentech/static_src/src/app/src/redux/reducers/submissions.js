@@ -10,6 +10,8 @@ import {
     UPDATE_SUBMISSIONS_BY_STATUSES,
     START_LOADING_SUBMISSIONS_BY_STATUSES,
     FAIL_LOADING_SUBMISSIONS_BY_STATUSES,
+    START_EXECUTING_SUBMISSION_ACTION,
+    FAIL_EXECUTING_SUBMISSION_ACTION,
 } from '@actions/submissions';
 
 import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -44,9 +46,26 @@ function submission(state={comments: []}, action) {
                     .filter(id => !state.comments.includes(id))
                     .concat(state.comments)
             };
+        case START_EXECUTING_SUBMISSION_ACTION:
+            return {
+                ...state,
+                isExecutingAction: true,
+                isExecutingActionErrored: false,
+                executionActionError: undefined,
+            };
+        case FAIL_EXECUTING_SUBMISSION_ACTION:
+            return {
+                ...state,
+                isExecutingAction: false,
+                isExecutingActionErrored: true,
+                executionActionError: action.error
+            }
         case UPDATE_NOTE:
             return {
                 ...state,
+                isExecutingAction: false,
+                isExecutingActionErrored: false,
+                executionActionError: undefined,
                 comments: [
                     action.data.id,
                     ...(state.comments || []),
@@ -65,6 +84,8 @@ function submissionsByID(state = {}, action) {
         case UPDATE_SUBMISSION:
         case UPDATE_NOTE:
         case UPDATE_NOTES:
+        case START_EXECUTING_SUBMISSION_ACTION:
+        case FAIL_EXECUTING_SUBMISSION_ACTION:
             return {
                 ...state,
                 [action.submissionID]: submission(state[action.submissionID], action),
