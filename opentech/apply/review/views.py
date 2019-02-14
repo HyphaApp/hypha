@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -21,17 +23,33 @@ from .models import Review
 
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
-        # TODO: order role_reviews by role_order
-        role_reviews = self.object.reviews.filter(
-            author__in=self.object.assigned.with_roles().values('reviewer')
-        )
-        non_role_reviews = self.object.reviews.exclude(
-            author__in=self.object.assigned.with_roles().values('reviewer')
-        )
+        assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
+        reviews = self.object.reviews.all().select_related('author')
+
+        reviews_block = defaultdict(list)
+        for assigned_reviewer in assigned:
+            reviewer = assigned_reviewer.reviewer
+            role = assigned_reviewer.role
+            review = reviews.filter(author=reviewer).first()
+            if role:
+                if review:
+                    key = 'role_reviewed'
+                else:
+                    key = 'role_not_reviewed'
+            else:
+                if review:
+                    key = 'external_reviewed'
+                else:
+                    key = 'external_not_reviewed'
+
+            reviews_block[key].append({
+                'reviewer': reviewer,
+                'review': review,
+                'role': role,
+            })
 
         return super().get_context_data(
-            role_reviews=role_reviews,
-            non_role_reviews=non_role_reviews,
+            reviews_block=reviews_block,
             **kwargs,
         )
 

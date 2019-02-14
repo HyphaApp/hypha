@@ -1,35 +1,39 @@
 {% load wagtailimages_tags %}
 
-{% for review in reviews %}
-    <tr class="tr--subchild {{ class }} {% if missing %}no-response{% endif %}">
-        {% if missing %}
-            <td class="reviews-sidebar__author" colspan="2">
-                <span>
-                    {{ review.reviewer }}
-                    {% image review.role.icon max-20x20 %}
-                </span>
-            </td>
-            <td>-</td>
-            <td>-</td>
-        {% else %}
-            <td class="reviews-sidebar__author" colspan="2">
-                {% if request.user.is_apply_staff or request.user == review.author %}
-                    <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
-                        <span>
-                            {{ review.author }}
-                            {% image review.role_review_icon max-12x12 %}
-                        </span>
-                    </a>
-                    <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
-                {% else %}
-                    <span>
-                        {{ review.author }}
-                        {% image review.role_review_icon max-12x12 %}
-                    </span>
+<tr class="tr--subchild {{ class }} {% if missing %}no-response{% endif %}">
+    {% if missing %}
+        <td class="reviews-sidebar__author" colspan="2">
+            <span>
+                {{ reviewer }}
+                {% if role %}
+                    {% image role.icon max-12x12 %}
                 {% endif %}
-            </td>
-            <td>{{ review.get_recommendation_display }}</td>
-            <td>{{ review.get_score_display }}</td>
-        {% endif %}
-    </tr>
-{% endfor %}
+            </span>
+        </td>
+        <td>-</td>
+        <td>-</td>
+    {% else %}
+        <td class="reviews-sidebar__author" colspan="2">
+            {% if request.user.is_apply_staff or request.user == reviewer %}
+                <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
+                    <span>
+                        {{ reviewer }}
+                        {% if role %}
+                            {% image role.icon max-12x12 %}
+                        {% endif %}
+                    </span>
+                </a>
+                <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
+            {% else %}
+                <span>
+                    {{ reviewer }}
+                    {% if role %}
+                        {% image role.icon max-12x12 %}
+                    {% endif %}
+                </span>
+            {% endif %}
+        </td>
+        <td>{{ review.get_recommendation_display }}</td>
+        <td>{{ review.get_score_display }}</td>
+    {% endif %}
+</tr>
