@@ -684,6 +684,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def with_roles(self):
         return self.filter(role__isnull=False)
 
+    def without_roles(self):
+        return self.filter(role__isnull=True)
+
 
 class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
