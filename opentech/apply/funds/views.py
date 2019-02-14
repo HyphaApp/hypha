@@ -3,7 +3,7 @@ from copy import copy
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.db.models import F, Q
+from django.db.models import Count, F, Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -148,12 +148,27 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         closed_query = '?round_state=closed'
         rounds_title = 'All Rounds and Labs'
 
+        status_counts = dict(
+            ApplicationSubmission.objects.current().values('status').annotate(
+                count=Count('status'),
+            ).values_list('status', 'count')
+        )
+
+        grouped_statuses = {
+            status: {
+                'name': data['name'],
+                'count': sum(status_counts.get(status, 0) for status in data['statuses']),
+            }
+            for status, data in PHASES_MAPPING.items()
+        }
+
         return super().get_context_data(
             open_rounds=open_rounds,
             open_query=open_query,
             closed_rounds=closed_rounds,
             closed_query=closed_query,
             rounds_title=rounds_title,
+            status_counts=grouped_statuses,
             **kwargs,
         )
 
