@@ -51,7 +51,7 @@
         font-weight: $weight--semibold;
 
         @include media-query(tablet-landscape) {
-            height: 55px;
+            min-height: 55px;
         }
     }
 
@@ -63,7 +63,6 @@
         @include media-query(tablet-landscape) {
             opacity: 0;
             pointer-events: none;
-            height: 55px;
 
             #{$root}__item:hover & {
                 opacity: 1;
