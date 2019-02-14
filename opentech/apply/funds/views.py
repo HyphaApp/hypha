@@ -296,15 +296,6 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
 
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            mark_safe(
-                "There are errors with the Reviewers Form:" + form.errors.as_ul()
-            )
-        )
-        return super().form_invalid(form)
-
     def form_valid(self, form):
         old_reviewers = set(
             copy(reviewer)
