@@ -65,12 +65,11 @@ class UpdateReviewersForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
 
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
-        self.submitted_reviewers = self.submitted_reviewers.exclude(
-            id__in=self.instance.assigned.with_roles().values('reviewer'))
+        self.submitted_reviewers = User.objects.filter(
+            id__in=self.instance.reviews.values('author'),
+        )
 
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.instance.reviewers.all()

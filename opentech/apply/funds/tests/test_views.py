@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import json
 
+from django.test import TestCase
+
 from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
@@ -282,7 +284,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
     def test_lead_can_change_role_reviewer_and_review_remains(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
+        submission = ApplicationSubmissionFactory()
         AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
 
         # Add a review from that staff reviewer
@@ -291,23 +293,66 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         # Assign a different reviewer to the same role
         self.post_form(submission, reviewer_roles=[self.staff[1]])
 
-        # Make sure that the ex-role-reviewer (self.staff[0]) still has a assignedreviewer record
-        self.assertEqual(submission.reviewers.all().count(), 2)
-        self.assertIn(self.staff[0], submission.reviewers.all())
+        # Make sure that the ex-role-reviewer is still assigned record
+        self.assertCountEqual(submission.reviewers.all(), self.staff[0:2])
 
-    def test_reviewer_exists_after_submitting_review(self):
-        submission = ApplicationSubmissionFactory(lead=self.user, status='external_review', workflow_stages=2)
-        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
-        AssignedWithRoleReviewersFactory(role=self.roles[1], submission=submission, reviewer=self.staff[1])
-        AssignedReviewersFactory(submission=submission, reviewer=self.reviewers[0])
-        # Now, let's check that we have 3 reviewers to begin with
-        self.assertEqual(submission.reviewers.all().count(), 3)
+    def test_can_remove_external_reviewer_and_review_remains(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        reviewer = self.reviewers[0]
+        AssignedReviewersFactory(submission=submission, reviewer=reviewer)
+        ReviewFactory(submission=submission, author=reviewer)
+
+        # Assign a different reviewer to the same role
+        self.post_form(submission, reviewers=[])
+
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+
+class TestPostSaveOnReview(TestCase):
+    def test_external_reviewer_exists_after_review(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory()
 
         # Add a review from a new reviewer who isn't assigned
-        ReviewFactory(submission=submission, author=self.reviewers[1])
+        ReviewFactory(submission=submission, author=reviewer)
 
-        # Now there should be 4 reviewers assigned, because an outsider reviewed
-        self.assertEqual(submission.reviewers.all().count(), 4)
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+    def test_assigned_external_reviewer_exists_after_review(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory()
+
+        # Add a review from a new reviewer who is assigned
+        AssignedReviewersFactory(submission=submission, reviewer=reviewer)
+        ReviewFactory(submission=submission, author=reviewer)
+
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+    def test_staff_reviewer_exists_after_submitting_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
+
+    def test_assigned_staff_reviewer_exists_after_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        AssignedReviewersFactory(submission=submission, reviewer=staff)
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
+
+    def test_role_reviewer_exists_after_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        AssignedWithRoleReviewersFactory(submission=submission, reviewer=staff)
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
