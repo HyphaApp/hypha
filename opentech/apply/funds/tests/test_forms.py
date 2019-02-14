@@ -10,8 +10,6 @@ from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
-    SuperUserFactory,
-    UserFactory,
 )
 
 
