@@ -347,42 +347,46 @@ class SlackAdapter(AdapterBase):
 
     def slack_channel(self, submission):
         try:
-            target_room = submission.get_from_parent('slack_channel')
+            target_rooms = submission.get_from_parent('slack_channel').split(',')
         except AttributeError:
             # If not a submission object, set room to default.
-            target_room = self.target_room
+            target_rooms = self.target_room
         else:
-            if not target_room:
+            if not target_rooms:
                 # If no custom room, set to default.
-                target_room = self.target_room
+                target_rooms = self.target_room
+            else:
+                # Always send a copy to the default channel as well.
+                target_rooms.append(self.target_room)
 
-        # Make sure the channel name starts with a "#".
-        if target_room and not target_room.startswith('#'):
-            target_room = f"#{target_room}"
+        # Make sure each channel name starts with a "#".
+        for i, target_room in enumerate(target_rooms):
+            if target_room and not target_room.startswith('#'):
+                target_rooms[i] = f"#{target_room}"
 
-        return target_room
+        return target_rooms
 
     def send_message(self, message, recipient, **kwargs):
         try:
             submission = kwargs['submission']
         except Exception:
             # If no submission, set room to default.
-            target_room = self.target_room
+            target_rooms = self.target_room
         else:
-            target_room = self.slack_channel(submission)
+            target_rooms = self.slack_channel(submission)
 
-        if not self.destination or not target_room:
+        if not self.destination or not target_rooms:
             errors = list()
             if not self.destination:
                 errors.append('Destination URL')
-            if not target_room:
+            if not target_rooms:
                 errors.append('Room ID')
             return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
 
         data = {
-            "room": target_room,
+            "room": target_rooms,
             "message": message,
         }
         response = requests.post(self.destination, json=data)
