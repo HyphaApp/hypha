@@ -8,7 +8,7 @@ import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
 
-import LoadingPanel from '@components/LoadingPanel';
+import FullScreenLoadingPanel from '@components/FullScreenLoadingPanel';
 
 import './style.scss';
 
@@ -33,6 +33,21 @@ class DetailView extends Component {
     render() {
         const { listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage } = this.props;
 
+        if (isErrored) {
+            return (
+                <div className="loading-panel">
+                    <h5>Something went wrong!</h5>
+                    <p>{errorMessage}</p>
+                </div>
+            )
+        } else if (!isLoading && isEmpty) {
+            return (
+                <div className="loading-panel">
+                    <h5>No submissions available</h5>
+                </div>
+            )
+        }
+
         if (!this.props.windowSize.windowWidth) {
             return null
         }
@@ -52,38 +67,24 @@ class DetailView extends Component {
                     </SlideOutLeft>
                 )
             }
-
-            return (
-                <div className="detail-view">
-                    { activeDisplay }
-                </div>
-            )
         } else {
-            if (isLoading) {
-                return (
-                    <LoadingPanel />
-                )
-            } else if (isErrored) {
-                return (
-                    <div className="loading-panel">
-                        <h5>Something went wrong!</h5>
-                        <p>{errorMessage}</p>
-                    </div>
-                )
-            } else if (!isLoading && isEmpty) {
-                return (
-                    <div className="loading-panel">
-                        <h5>No submissions available</h5>
-                    </div>
-                )
-            }
-            return (
-                <div className="detail-view">
+            activeDisplay = (
+                <>
                     {listing}
-                    { this.renderDisplay() }
-                </div>
+                    {this.renderDisplay()}
+                </>
             )
         }
+        return (
+            <>
+                {isLoading &&
+                    <FullScreenLoadingPanel />
+                }
+                <div className="detail-view">
+                    {activeDisplay}
+                </div>
+            </>
+        )
     }
 }
 
