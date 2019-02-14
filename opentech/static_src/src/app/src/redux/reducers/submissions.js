@@ -37,6 +37,9 @@ function submission(state={comments: []}, action) {
                 ...action.data,
                 isFetching: false,
                 isErrored: false,
+                isExecutingAction: false,
+                isExecutingActionErrored: false,
+                executionActionError: undefined,
             };
         case UPDATE_NOTES:
             return {
@@ -63,9 +66,6 @@ function submission(state={comments: []}, action) {
         case UPDATE_NOTE:
             return {
                 ...state,
-                isExecutingAction: false,
-                isExecutingActionErrored: false,
-                executionActionError: undefined,
                 comments: [
                     action.data.id,
                     ...(state.comments || []),
