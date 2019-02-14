@@ -33,6 +33,10 @@ class DetailView extends Component {
     render() {
         const { listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage } = this.props;
 
+        if (!this.props.windowSize.windowWidth) {
+            return null
+        }
+
         if (this.isMobile()) {
             var activeDisplay;
             if (showSubmision) {
