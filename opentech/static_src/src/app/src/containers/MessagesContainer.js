@@ -6,9 +6,9 @@ import { getMessages } from '@selectors/messages'
 import { dismissMessage } from '@actions/messages'
 
 const MessagesContainer = ({ messages, dismiss }) => {
-    return Object.values(messages).map(v =>
-        <MessageBar key={v.id} message={v}
-            onDismiss={() => dismiss(v.id)} />
+    return Object.values(messages).map(({ message, type, id}) =>
+        <MessageBar key={id} message={message} type={type}
+            onDismiss={() => dismiss(id)} />
     )
 }
 
