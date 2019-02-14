@@ -22,12 +22,11 @@ class ActionSerializer(serializers.Field):
 
             # Sometimes the status does not exist in the
             # determination matrix.
-            redirect = None
             try:
                 redirect = DeterminationCreateOrUpdateView.should_redirect(
                     self.context['request'], instance, transition)
             except KeyError:
-                pass
+                redirect = None
             if redirect:
                 action_dict['type'] = 'redirect'
                 action_dict['target'] = redirect.url
@@ -121,11 +120,10 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
     actions = ActionSerializer(source='*', read_only=True)
-    action = serializers.CharField(write_only=True)
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'actions', 'action')
+        fields = ('id', 'actions')
 
 
 class RoundLabDetailSerializer(serializers.ModelSerializer):
