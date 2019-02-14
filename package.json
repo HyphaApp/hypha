@@ -15,6 +15,7 @@
         "@babel/polyfill": "^7.2.5",
         "@rooks/use-interval": "^1.2.0",
         "@svgr/webpack": "^4.1.0",
+        "connected-react-router": "^6.3.1",
         "del": "^3.0.0",
         "gulp": "^4.0.0",
         "gulp-babel": "^8.0.0",

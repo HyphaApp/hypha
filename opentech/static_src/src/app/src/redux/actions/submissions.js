@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router'
 import { CALL_API } from '@middleware/api'
 
 import api from '@api';
@@ -49,10 +50,19 @@ export const setCurrentSubmissionRound = id => ({
     id,
 });
 
-export const setCurrentSubmission = id => ({
-    type: SET_CURRENT_SUBMISSION,
-    id,
-});
+export const setCurrentSubmission = id => (dispatch, getState) => {
+    const submissionID = getCurrentSubmissionID(getState())
+    if (id && submissionID !== id) {
+        dispatch(push(`?submission=${id}`));
+    } else if (!id) {
+        dispatch(push('?'));
+    }
+
+    return dispatch({
+        type: SET_CURRENT_SUBMISSION,
+        id,
+    })
+};
 
 
 export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
