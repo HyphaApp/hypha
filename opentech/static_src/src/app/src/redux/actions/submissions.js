@@ -95,7 +95,12 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
         return null
     }
 
-    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state)))
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state))).then(() => {
+        const ids = getCurrentRoundSubmissionIDs(state)
+        if (!ids.includes(getCurrentSubmissionID(state))) {
+            return dispatch(setCurrentSubmission(ids[0]))
+        }
+    })
 }
 
 
