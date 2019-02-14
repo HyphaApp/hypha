@@ -2,12 +2,14 @@ from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db.models import Q
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import (NotFound, PermissionDenied,
+                                       ValidationError)
 from django_filters import rest_framework as filters
 
 from opentech.api.pagination import StandardResultsSetPagination
 from opentech.apply.activity.models import Activity, COMMENT
 from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 
 from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
@@ -81,10 +83,19 @@ class SubmissionAction(generics.RetrieveAPIView):
         if not action:
             raise ValidationError('Action must be provided.')
         obj = self.get_object()
+
+        redirect = DeterminationCreateOrUpdateView.should_redirect(
+            request, obj, action)
+        if redirect:
+            raise NotFound({
+                'detail': 'The action should be performed at the determination view',
+                'target': redirect.url,
+            })
         try:
             obj.perform_transition(action, self.request.user, request=self.request)
         except DjangoPermissionDenied as e:
             raise PermissionDenied(str(e))
+        # refresh_from_db() raises errors for particular actions.
         obj = self.get_object()
         serializer = SubmissionDetailSerializer(obj, context={
             'request': request,

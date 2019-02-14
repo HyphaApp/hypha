@@ -26,11 +26,11 @@ const messages = (state = {}, action) => {
                 ),
             }
         case DISMISS_MESSAGE:
-            return Object.entries(state).reduce((acc, [k, v]) => {
-                if(k !== action.messageID) {
-                    acc[k] = v
+            return Object.entries(state).reduce((obj, [messageID, message]) => {
+                if(messageID !== action.messageID) {
+                    obj[messageID] = message
                 }
-                return acc
+                return obj
             }, {})
         default:
             return state
