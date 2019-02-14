@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import mistune
 from rest_framework import serializers
 from django_bleach.templatetags.bleach_tags import bleach_value
@@ -19,10 +20,23 @@ class ActionSerializer(serializers.Field):
 
 class ReviewSummarySerializer(serializers.Field):
     def to_representation(self, instance):
+        reviews = instance.reviews.all()
         return {
-            'count': instance.reviews.count(),
-            'score': instance.reviews.score(),
-            'recommendation': instance.reviews.recommendation(),
+            'count': len(reviews),
+            'score': reviews.score(),
+            'recommendation': reviews.recommendation(),
+            'reviews': [
+                OrderedDict([
+                    ('id', review.id),
+                    ('author', str(review.author)),
+                    ('score', review.score),
+                    ('recommendation', OrderedDict([
+                        ('value', review.recommendation),
+                        ('display', review.get_recommendation_display()),
+                    ])),
+                    ('review_url', review.get_absolute_url()),
+                ]) for review in reviews
+            ]
         }
 
 
