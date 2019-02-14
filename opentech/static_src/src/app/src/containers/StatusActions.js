@@ -1,10 +1,11 @@
 import React from 'react';
+import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { MESSAGE_TYPES, addMessage } from '@actions/messages';
 import { executeSubmissionAction } from '@actions/submissions';
-import Modal from '@components/Modal';
+import Select from '@components/Select'
 import { getSubmissionOfID } from '@selectors/submissions';
 import { redirect } from '@utils';
 
@@ -77,20 +78,18 @@ class StatusActions extends React.Component {
     renderModal = () => {
         const { submission } = this.props
         const { phase, executionActionError } = submission
+
         return (
             <>
+                <button onClick={this.closeStatusModal}>[X]</button>
                 {executionActionError && <p>{executionActionError}</p>}
                 {phase && <div>Current status: {phase}</div>}
-                <select value={this.state.statusSelectValue}
-                    onChange={evt => this.setState({
-                        statusSelectValue: evt.target.value
+                <Select
+                    onChange={statusSelectValue => this.setState({
+                        statusSelectValue
                     })}
-                >
-                    <option>---</option>
-                    {submission.actions.map(({value, display}) =>
-                        <option value={value} key={value}>{display}</option>
-                    )}
-                </select>
+                    options={submission.actions}
+                />
                 <button onClick={this.handleStatusChange} disabled={this.formDisabled}>Progress</button>
             </>
         );
@@ -99,15 +98,22 @@ class StatusActions extends React.Component {
     render() {
         const { submission } = this.props;
 
-        if (submission === undefined || submission.actions === undefined || submission.actions.length === 0) {
+        if (submission === undefined || submission.actions === undefined) {
             return null;
+        } else if (submission.actions.length === 0) {
+            return <button disabled={true}>Update status (no actions)</button>
         }
 
         return (
-            <div>
-                <Modal visible={this.state.modalVisible} onClose={this.closeStatusModal} heading="Update status" content={this.renderModal()} />
+            <>
+                <Modal isOpen={this.state.modalVisible}
+                    onRequestClose={this.closeStatusModal}
+                    contentLabel="Update status"
+                >
+                    {this.renderModal()}
+                </Modal>
                 <button onClick={this.openStatusModal}>Update status</button>
-            </div>
+            </>
         );
     }
 }
