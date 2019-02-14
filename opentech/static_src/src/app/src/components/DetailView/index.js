@@ -19,8 +19,9 @@ class DetailView extends Component {
         windowSize: PropTypes.objectOf(PropTypes.number),
         clearSubmission: PropTypes.func.isRequired,
         isLoading: PropTypes.bool,
-        error: PropTypes.string,
+        errorMessage: PropTypes.string,
         isEmpty: PropTypes.bool,
+        isErrored: PropTypes.bool,
     };
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
@@ -30,8 +31,7 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, isLoading, error, isEmpty, showSubmision } = this.props;
-        const isError = Boolean(error);
+        const { listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage } = this.props;
 
         if (this.isMobile()) {
             var activeDisplay;
@@ -59,11 +59,11 @@ class DetailView extends Component {
                 return (
                     <LoadingPanel />
                 )
-            } else if (isError) {
+            } else if (isErrored) {
                 return (
                     <div className="loading-panel">
                         <h5>Something went wrong!</h5>
-                        <p>{error}</p>
+                        <p>{errorMessage}</p>
                     </div>
                 )
             } else if (!isLoading && isEmpty) {

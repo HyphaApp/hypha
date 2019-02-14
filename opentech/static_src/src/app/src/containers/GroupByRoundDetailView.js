@@ -22,11 +22,12 @@ class GroupByRoundDetailView extends React.Component {
         submissionID: PropTypes.number,
         isLoading: PropTypes.bool,
         isErrored: PropTypes.bool,
+        errorMessage: PropTypes.string,
     };
 
     render() {
         const listing = <ByRoundListing submissionStatuses={this.props.submissionStatuses} />;
-        const { isLoading, isErrored, submissions, submissionID } = this.props;
+        const { isLoading, isErrored, submissions, submissionID, errorMessage } = this.props;
         const isEmpty = submissions.length === 0;
         const activeSubmision = !!submissionID;
 
@@ -36,17 +37,16 @@ class GroupByRoundDetailView extends React.Component {
                 listing={listing}
                 isLoading={isLoading}
                 showSubmision={activeSubmision}
-                error={isErrored ? 'Fetching failed.' : undefined}
+                isErrored={isErrored}
+                errorMessage={errorMessage || 'Fetching failed.'}
             />
         );
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    isErrored: (
-        getByGivenStatusesError(ownProps.submissionStatuses)(state) ||
-        getRoundsErrored(state)
-    ),
+    isErrored: getRoundsErrored(state),
+    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state),
     isLoading: (
         getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
         getRoundsFetching(state)

@@ -10,6 +10,7 @@ import {
     getSubmissionsByRoundError,
     getCurrentRoundSubmissions,
     getCurrentSubmissionID,
+    getSubmissionErrorState,
 } from '@selectors/submissions';
 
 
@@ -18,23 +19,25 @@ class GroupByStatusDetailView extends React.Component {
         submissions: PropTypes.arrayOf(PropTypes.object),
         submissionID: PropTypes.number,
         round: PropTypes.object,
-        error: PropTypes.string,
+        isErrored: PropTypes.bool,
+        errorMessage: PropTypes.string,
     };
 
     render() {
         const listing = <ByStatusListing />;
-        const { round, error, submissions, submissionID } = this.props;
+        const { round, isErrored, submissions, submissionID, errorMessage } = this.props;
         const isLoading = !round || (round && (round.isFetching || round.submissions.isFetching))
         const isEmpty = submissions.length === 0;
         const activeSubmision = !!submissionID;
 
         return (
             <DetailView
-                error={error}
+                isErrored={isErrored}
                 listing={listing}
                 isEmpty={isEmpty}
                 isLoading={isLoading}
                 showSubmision={activeSubmision}
+                errorMessage={errorMessage || 'Fetching failed.'}
             />
         );
     }
@@ -42,7 +45,8 @@ class GroupByStatusDetailView extends React.Component {
 
 const mapStateToProps = state => ({
     round: getCurrentRound(state),
-    error: getSubmissionsByRoundError(state),
+    isErrored: getSubmissionErrorState(state),
+    errorMessage: getSubmissionsByRoundError(state),
     submissions: getCurrentRoundSubmissions(state),
     submissionID: getCurrentSubmissionID(state),
 })
