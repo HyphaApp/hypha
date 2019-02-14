@@ -21,3 +21,11 @@ RECOMMENDATION_CHOICES = (
     (MAYBE, 'Maybe'),
     (YES, 'Yes'),
 )
+
+DISAGREE = 0
+AGREE = 1
+
+OPINION_CHOICES = (
+    (AGREE, 'Agree'),
+    (DISAGREE, 'Disagree'),
+)
