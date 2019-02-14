@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux'
 
 import Switcher from '@components/Switcher';
 import MessagesContainer from '@containers/MessagesContainer'
+import { setCurrentSubmission } from '@actions/submissions';
 
-export default class SwitcherApp extends React.Component {
+
+class SwitcherApp extends React.Component {
     static propTypes = {
         pageContent: PropTypes.node.isRequired,
         detailComponent: PropTypes.node.isRequired,
         switcherSelector: PropTypes.string.isRequired,
+        setCurrentItem: PropTypes.func,
     };
 
     componentDidMount() {
@@ -16,6 +20,10 @@ export default class SwitcherApp extends React.Component {
 
         if (urlParams.has('submission')) {
             this.openDetail();
+
+            // pass in method to this.setActive
+            const activeId = Number(urlParams.get('submission'));
+            this.props.setCurrentItem(activeId);
         }
     }
 
@@ -54,3 +62,9 @@ export default class SwitcherApp extends React.Component {
         )
     }
 }
+
+const mapDispatchToProps = dispatch => ({
+    setCurrentItem: id => dispatch(setCurrentSubmission(id)),
+});
+
+export default connect(null, mapDispatchToProps)(SwitcherApp);
