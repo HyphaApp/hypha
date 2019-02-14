@@ -164,7 +164,7 @@ class UpdateReviewersForm(forms.ModelForm):
                 reviewer__in=reviewers | self.submitted_reviewers
             ).delete()
 
-            remaining_reviewers = list(assigned_reviewers)
+            remaining_reviewers = assigned_reviewers.values_list('reviewer_id', flat=True)
 
             # 2b. Add in any new non-role reviewers selected
             AssignedReviewers.objects.bulk_create(
@@ -173,7 +173,7 @@ class UpdateReviewersForm(forms.ModelForm):
                     role=None,
                     reviewer=reviewer
                 ) for reviewer in reviewers
-                if reviewer not in remaining_reviewers
+                if reviewer.id not in remaining_reviewers
             )
 
         # 3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form

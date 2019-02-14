@@ -215,7 +215,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         }
         data.update(
             **{
-                f'reviewer_role_{str(role)}': reviewer.id
+                f'role_reviewer_{str(role)}': reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles)
             }
         )
@@ -224,7 +224,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     def test_lead_can_add_staff_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
 
-        self.post_form(submission, [self.staff[0]])
+        self.post_form(submission, reviewer_roles=[self.staff[0]])
 
         self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
