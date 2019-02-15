@@ -4,11 +4,13 @@ var BundleTracker = require('webpack-bundle-tracker')
 
 var config = require('./webpack.base.config')
 
+devConfig = config("development")
+
 // override django's STATIC_URL for webpack bundles
-config.output.publicPath = 'http://localhost:3000/app/'
+devConfig.output.publicPath = 'http://localhost:3000/app/'
 
 // Add HotModuleReplacementPlugin and BundleTracker plugins
-config.plugins = config.plugins.concat([
+devConfig.plugins = devConfig.plugins.concat([
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
@@ -19,7 +21,7 @@ config.plugins = config.plugins.concat([
 
 // Add a loader for JSX files with react-hot enabled
 
-config.devServer = {
+devConfig.devServer = {
     headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
@@ -30,8 +32,6 @@ config.devServer = {
     overlay: true
 }
 
-config.devtool = 'source-map'
+devConfig.devtool = 'source-map'
 
-config.mode = "development"
-
-module.exports = config
+module.exports = devConfig
