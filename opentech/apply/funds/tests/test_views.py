@@ -1,17 +1,23 @@
 from datetime import datetime, timedelta
 import json
 
+from django.test import TestCase
+
 from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    AssignedWithRoleReviewersFactory,
+    AssignedReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
+    ReviewerRoleFactory,
     ScreeningStatusFactory,
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
+from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.stream_forms.testing.factories import flatten_for_form
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
@@ -200,36 +206,37 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         super().setUpTestData()
         cls.staff = StaffFactory.create_batch(4)
         cls.reviewers = ReviewerFactory.create_batch(4)
+        cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, staff=list(), reviewers=list()):
-        return self.post_page(submission, {
+    def post_form(self, submission, reviewer_roles=list(), reviewers=list()):
+        data = {
             'form-submitted-reviewer_form': '',
-            'staff_reviewers': [s.id for s in staff],
             'reviewer_reviewers': [r.id for r in reviewers]
-        })
+        }
+        data.update(
+            **{
+                f'role_reviewer_{str(role)}': reviewer.id
+                for role, reviewer in zip(self.roles, reviewer_roles)
+            }
+        )
+        return self.post_page(submission, data)
 
     def test_lead_can_add_staff_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
 
-        self.post_form(submission, self.staff)
+        self.post_form(submission, reviewer_roles=[self.staff[0]])
 
-        self.assertCountEqual(submission.reviewers.all(), self.staff)
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
-    def test_lead_can_remove_staff_single(self):
-        submission = ApplicationSubmissionFactory(lead=self.user, reviewers=self.staff)
-        self.assertCountEqual(submission.reviewers.all(), self.staff)
+    def test_lead_can_change_staff_single(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
-        self.post_form(submission, [])
+        self.post_form(submission, reviewer_roles=[self.staff[1]])
 
-        self.assertCountEqual(submission.reviewers.all(), [])
-
-    def test_lead_can_remove_some_staff(self):
-        submission = ApplicationSubmissionFactory(lead=self.user, reviewers=self.staff)
-        self.assertCountEqual(submission.reviewers.all(), self.staff)
-
-        self.post_form(submission, self.staff[0:2])
-
-        self.assertCountEqual(submission.reviewers.all(), self.staff[0:2])
+        self.assertCountEqual(submission.reviewers.all(), [self.staff[1]])
+        self.assertEqual(submission.assigned.with_roles().first().reviewer, self.staff[1])
 
     def test_lead_cant_add_reviewers_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
@@ -238,43 +245,28 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
 
         self.assertCountEqual(submission.reviewers.all(), [])
 
-    def test_lead_can_add_staff_and_reviewers_for_proposal(self):
+    def test_lead_can_add_reviewers_for_proposal(self):
         submission = InvitedToProposalFactory(lead=self.user)
 
-        self.post_form(submission, self.staff, self.reviewers)
+        self.post_form(submission, reviewers=self.reviewers)
 
-        self.assertCountEqual(submission.reviewers.all(), self.staff + self.reviewers)
+        self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
-    def test_lead_can_remove_staff_and_reviewers_for_proposal(self):
-        submission = InvitedToProposalFactory(lead=self.user, reviewers=self.staff + self.reviewers)
-        self.assertCountEqual(submission.reviewers.all(), self.staff + self.reviewers)
+    def test_lead_can_remove_reviewers_for_proposal(self):
+        submission = InvitedToProposalFactory(lead=self.user, reviewers=self.reviewers)
+        self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
         self.post_form(submission)
 
         self.assertCountEqual(submission.reviewers.all(), [])
 
-    def test_lead_can_remove_some_staff_and_reviewers_for_proposal(self):
-        submission = InvitedToProposalFactory(lead=self.user, reviewers=self.staff + self.reviewers)
-        self.assertCountEqual(submission.reviewers.all(), self.staff + self.reviewers)
+    def test_lead_can_remove_some_reviewers_for_proposal(self):
+        submission = InvitedToProposalFactory(lead=self.user, reviewers=self.reviewers)
+        self.assertCountEqual(submission.reviewers.all(), self.reviewers)
 
-        self.post_form(submission, self.staff[0:2], self.reviewers[0:2])
+        self.post_form(submission, reviewers=self.reviewers[0:2])
 
-        self.assertCountEqual(submission.reviewers.all(), self.staff[0:2] + self.reviewers[0:2])
-
-    def test_staff_can_add_staff_single(self):
-        submission = ApplicationSubmissionFactory()
-
-        self.post_form(submission, self.staff)
-
-        self.assertCountEqual(submission.reviewers.all(), self.staff)
-
-    def test_staff_can_remove_staff_single(self):
-        submission = ApplicationSubmissionFactory(reviewers=self.staff)
-        self.assertCountEqual(submission.reviewers.all(), self.staff)
-
-        self.post_form(submission, [])
-
-        self.assertCountEqual(submission.reviewers.all(), [])
+        self.assertCountEqual(submission.reviewers.all(), self.reviewers[0:2])
 
     def test_staff_cant_add_reviewers_proposal(self):
         submission = ApplicationSubmissionFactory()
@@ -290,6 +282,77 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.post_form(submission, reviewers=[])
 
         self.assertCountEqual(submission.reviewers.all(), self.reviewers)
+
+    def test_lead_can_change_role_reviewer_and_review_remains(self):
+        submission = ApplicationSubmissionFactory()
+        AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
+
+        # Add a review from that staff reviewer
+        ReviewFactory(submission=submission, author=self.staff[0])
+
+        # Assign a different reviewer to the same role
+        self.post_form(submission, reviewer_roles=[self.staff[1]])
+
+        # Make sure that the ex-role-reviewer is still assigned record
+        self.assertCountEqual(submission.reviewers.all(), self.staff[0:2])
+
+    def test_can_remove_external_reviewer_and_review_remains(self):
+        submission = ApplicationSubmissionFactory(lead=self.user)
+        reviewer = self.reviewers[0]
+        AssignedReviewersFactory(submission=submission, reviewer=reviewer)
+        ReviewFactory(submission=submission, author=reviewer)
+
+        # Assign a different reviewer to the same role
+        self.post_form(submission, reviewers=[])
+
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+
+class TestPostSaveOnReview(TestCase):
+    def test_external_reviewer_exists_after_review(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory()
+
+        # Add a review from a new reviewer who isn't assigned
+        ReviewFactory(submission=submission, author=reviewer)
+
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+    def test_assigned_external_reviewer_exists_after_review(self):
+        reviewer = ReviewerFactory()
+        submission = ApplicationSubmissionFactory()
+
+        # Add a review from a new reviewer who is assigned
+        AssignedReviewersFactory(submission=submission, reviewer=reviewer)
+        ReviewFactory(submission=submission, author=reviewer)
+
+        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+
+    def test_staff_reviewer_exists_after_submitting_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
+
+    def test_assigned_staff_reviewer_exists_after_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        AssignedReviewersFactory(submission=submission, reviewer=staff)
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
+
+    def test_role_reviewer_exists_after_review(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        AssignedWithRoleReviewersFactory(submission=submission, reviewer=staff)
+        ReviewFactory(submission=submission, author=staff)
+
+        self.assertCountEqual(submission.reviewers.all(), [staff])
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):

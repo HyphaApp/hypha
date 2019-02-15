@@ -160,8 +160,12 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
 @receiver(post_save, sender=Review)
 def update_submission_reviewers_list(sender, **kwargs):
+    from opentech.apply.funds.models import AssignedReviewers
+
     review = kwargs.get('instance')
 
     # Make sure the reviewer is in the reviewers list on the submission
-    if not review.submission.reviewers.filter(id=review.author.id).exists():
-        review.submission.reviewers.add(review.author)
+    AssignedReviewers.objects.get_or_create(
+        submission=review.submission,
+        reviewer=review.author,
+    )

@@ -1,7 +1,10 @@
+{% load util_tags %}
 <form class="form {{extra_classes}}" method="post" id="{{ form.name }}">
     {% csrf_token %}
     <div class="form__item">
         {{ form }}
     </div>
+
     <input class="button button--primary button--top-space" id="{{ form.name }}-submit" name="{{ form_prefix }}{{ form.name }}" type="submit" form="{{ form.name }}" value="{{ value }}">
+
 </form>

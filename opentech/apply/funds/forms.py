@@ -1,9 +1,11 @@
 from django import forms
+from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.users.models import User
 
-from .models import ApplicationSubmission
-from .widgets import Select2MultiCheckboxesWidget
+from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
+from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -50,13 +52,8 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
 
 
 class UpdateReviewersForm(forms.ModelForm):
-    staff_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.staff(),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
-        required=False,
-    )
     reviewer_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.reviewers().exclude(id__in=User.objects.staff()),
+        queryset=User.objects.reviewers().only('pk', 'full_name'),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
         label='Reviewers',
         required=False,
@@ -69,12 +66,47 @@ class UpdateReviewersForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        reviewers = self.instance.reviewers.all()
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
 
-        self.prepare_field('staff_reviewers', reviewers, self.submitted_reviewers)
+        assigned_roles = {
+            assigned.role: assigned.reviewer
+            for assigned in self.instance.assigned.filter(
+                role__isnull=False
+            )
+        }
+
+        staff_reviewers = User.objects.staff().only('full_name', 'pk')
+
+        self.role_fields = {}
+        for role in ReviewerRole.objects.all().order_by('order'):
+            field_name = 'role_reviewer_' + slugify(str(role))
+            self.role_fields[field_name] = role
+
+            self.fields[field_name] = forms.ModelChoiceField(
+                queryset=staff_reviewers,
+                widget=Select2IconWidget(attrs={
+                    'data-placeholder': 'Select a reviewer', 'icon': role.icon
+                }),
+                required=False,
+                label=f'{role.name} Reviewer',
+            )
+            # Pre-populate form field
+            self.fields[field_name].initial = assigned_roles.get(role)
+
+        self.submitted_reviewers = User.objects.filter(
+            id__in=self.instance.reviews.values('author'),
+        )
+
         if self.can_alter_external_reviewers(self.instance, self.user):
-            self.prepare_field('reviewer_reviewers', reviewers, self.submitted_reviewers)
+
+            reviewers = self.instance.reviewers.all().only('pk')
+            self.prepare_field(
+                'reviewer_reviewers',
+                initial=reviewers,
+                excluded=self.submitted_reviewers
+            )
+
+            # Move the non-role reviewers field to the end of the field list
+            self.fields.move_to_end('reviewer_reviewers')
         else:
             self.fields.pop('reviewer_reviewers')
 
@@ -86,18 +118,77 @@ class UpdateReviewersForm(forms.ModelForm):
     def can_alter_external_reviewers(self, instance, user):
         return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        role_reviewers = [
+            user
+            for field, user in self.cleaned_data.items()
+            if field != 'reviewer_reviewers'
+        ]
+
+        # If any of the users match and are set to multiple roles, throw an error
+        if len(role_reviewers) != len(set(role_reviewers)) and any(role_reviewers):
+            self.add_error(None, _('Users cannot be assigned to multiple roles.'))
+
+        return cleaned_data
+
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
+        """
+        1. Update role reviewers
+        2. Update non-role reviewers
+            2a. Remove those not on form
+            2b. Add in any new non-role reviewers selected
+        3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form
+        """
+
+        # 1. Update role reviewers
+        assigned_roles = {
+            role: self.cleaned_data[field]
+            for field, role in self.role_fields.items()
+        }
+        for role, reviewer in assigned_roles.items():
+            if reviewer:
+                AssignedReviewers.objects.update_or_create(
+                    submission=instance,
+                    role=role,
+                    defaults={'reviewer': reviewer},
+                )
+
+        # 2. Update non-role reviewers
+        # 2a. Remove those not on form
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
-        else:
-            reviewers = instance.reviewers_not_reviewed
+            assigned_reviewers = instance.assigned.without_roles()
+            assigned_reviewers.exclude(
+                reviewer__in=reviewers | self.submitted_reviewers
+            ).delete()
 
-        instance.reviewers.set(
-            self.cleaned_data['staff_reviewers'] |
-            reviewers |
-            self.submitted_reviewers
+            remaining_reviewers = assigned_reviewers.values_list('reviewer_id', flat=True)
+
+            # 2b. Add in any new non-role reviewers selected
+            AssignedReviewers.objects.bulk_create(
+                AssignedReviewers(
+                    submission=instance,
+                    role=None,
+                    reviewer=reviewer
+                ) for reviewer in reviewers
+                if reviewer.id not in remaining_reviewers
+            )
+
+        # 3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form
+        orphaned_reviews = instance.reviews.exclude(
+            author__in=instance.assigned.values('reviewer')
+        ).select_related('author')
+
+        AssignedReviewers.objects.bulk_create(
+            AssignedReviewers(
+                submission=instance,
+                role=None,
+                reviewer=review.author
+            ) for review in orphaned_reviews
         )
+
         return instance
 
 

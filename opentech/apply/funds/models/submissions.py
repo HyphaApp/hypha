@@ -304,8 +304,8 @@ class ApplicationSubmission(
     reviewers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='submissions_reviewer',
-        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
         blank=True,
+        through='AssignedReviewers',
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
@@ -525,7 +525,11 @@ class ApplicationSubmission(
 
         if creating:
             self.process_file_data(files)
-            self.reviewers.set(self.get_from_parent('reviewers').all())
+            for reviewer in self.get_from_parent('reviewers').all():
+                AssignedReviewers.objects.create(
+                    reviewer=reviewer,
+                    submission=self
+                )
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
                 form_data=self.form_data,
@@ -674,3 +678,51 @@ class ApplicationRevision(AccessFormData, models.Model):
             'to': self.id,
             'from': previous_revision.id,
         })
+
+
+class AssignedReviewersQuerySet(models.QuerySet):
+    def with_roles(self):
+        return self.filter(role__isnull=False)
+
+    def without_roles(self):
+        return self.filter(role__isnull=True)
+
+
+class AssignedReviewers(models.Model):
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+    )
+    submission = models.ForeignKey(
+        ApplicationSubmission,
+        related_name='assigned',
+        on_delete=models.CASCADE
+    )
+    role = models.ForeignKey(
+        'funds.ReviewerRole',
+        related_name='+',
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+
+    objects = AssignedReviewersQuerySet.as_manager()
+
+    class Meta:
+        unique_together = ('submission', 'role')
+
+    def __str__(self):
+        return f'{self.reviewer} as {self.role}'
+
+    def __eq__(self, other):
+        if not isinstance(other, models.Model):
+            return False
+        if self._meta.concrete_model != other._meta.concrete_model:
+            return False
+        my_pk = self.pk
+        if my_pk is None:
+            return self is other
+        return all([
+            self.reviewer_id == other.reviewer_id,
+            self.role_id == other.role_id,
+        ])

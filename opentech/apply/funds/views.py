@@ -38,7 +38,13 @@ from .forms import (
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
 )
-from .models import ApplicationSubmission, ApplicationRevision, RoundsAndLabs, RoundBase, LabBase
+from .models import (
+    ApplicationSubmission,
+    ApplicationRevision,
+    RoundsAndLabs,
+    RoundBase,
+    LabBase
+)
 from .tables import (
     AdminSubmissionsTable,
     ReviewerSubmissionsTable,
@@ -291,10 +297,13 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     context_name = 'reviewer_form'
 
     def form_valid(self, form):
-        old_reviewers = set(self.get_object().reviewers.all())
+        old_reviewers = set(
+            copy(reviewer)
+            for reviewer in form.instance.assigned.all()
+        )
         response = super().form_valid(form)
-        new_reviewers = set(form.instance.reviewers.all())
 
+        new_reviewers = set(form.instance.assigned.all())
         added = new_reviewers - old_reviewers
         removed = old_reviewers - new_reviewers
 

@@ -6,9 +6,11 @@ import wagtail_factories
 from opentech.apply.funds.models import (
     ApplicationSubmission,
     ApplicationRevision,
+    AssignedReviewers,
     FundType,
     LabType,
     RequestForPartners,
+    ReviewerRole,
     Round,
     ScreeningStatus,
     SealedRound,
@@ -37,6 +39,8 @@ __all__ = [
     'ApplicationFormFactory',
     'ApplicationRevisionFactory',
     'ApplicationSubmissionFactory',
+    'AssignedReviewersFactory',
+    'AssignedWithRoleReviewersFactory',
     'InvitedToProposalFactory',
     'RoundFactory',
     'RoundBaseFormFactory',
@@ -47,6 +51,7 @@ __all__ = [
     'ScreeningStatusFactory',
     'SealedRoundFactory',
     'SealedSubmissionFactory',
+    'ReviewerRoleFactory',
     'TodayRoundFactory',
     'workflow_for_stages',
 ]
@@ -244,7 +249,34 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
-            self.reviewers.set(reviewers)
+            AssignedReviewers.objects.bulk_create(
+                AssignedReviewers(
+                    reviewer=reviewer,
+                    submission=self,
+                    role=None
+                ) for reviewer in reviewers
+            )
+
+
+class ReviewerRoleFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ReviewerRole
+
+    name = factory.Faker('word')
+    order = factory.Sequence(lambda n: n)
+
+
+class AssignedReviewersFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = AssignedReviewers
+
+    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    role = None
+    reviewer = factory.SubFactory(StaffFactory)
+
+
+class AssignedWithRoleReviewersFactory(AssignedReviewersFactory):
+    role = factory.SubFactory(ReviewerRoleFactory)
 
 
 class InvitedToProposalFactory(ApplicationSubmissionFactory):

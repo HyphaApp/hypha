@@ -10,7 +10,11 @@ from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
 from opentech.apply.utils.testing import make_request
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
+    AssignedWithRoleReviewersFactory,
+)
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 
@@ -202,26 +206,44 @@ class TestActivityAdapter(TestCase):
         self.assertEqual(activity.submission, submission)
 
     def test_reviewers_message_no_removed(self):
-        message = self.adapter.reviewers_updated([1], [])
+        assigned_reviewer = AssignedReviewersFactory()
+
+        message = self.adapter.reviewers_updated([assigned_reviewer], [])
 
         self.assertTrue('Added' in message)
         self.assertFalse('Removed' in message)
-        self.assertTrue('1' in message)
+        self.assertTrue(str(assigned_reviewer.reviewer) in message)
 
     def test_reviewers_message_no_added(self):
-        message = self.adapter.reviewers_updated([], [1])
+        assigned_reviewer = AssignedReviewersFactory()
+        message = self.adapter.reviewers_updated([], [assigned_reviewer])
 
         self.assertFalse('Added' in message)
         self.assertTrue('Removed' in message)
-        self.assertTrue('1' in message)
+        self.assertTrue(str(assigned_reviewer.reviewer) in message)
 
     def test_reviewers_message_both(self):
-        message = self.adapter.reviewers_updated([1], [2])
+        added, removed = AssignedReviewersFactory.create_batch(2)
+        message = self.adapter.reviewers_updated([added], [removed])
 
         self.assertTrue('Added' in message)
         self.assertTrue('Removed' in message)
-        self.assertTrue('1' in message)
-        self.assertTrue('2' in message)
+        self.assertTrue(str(added.reviewer) in message)
+        self.assertTrue(str(removed.reviewer) in message)
+
+    def test_reviewers_with_role(self):
+        with_role = AssignedWithRoleReviewersFactory()
+        message = self.adapter.reviewers_updated([with_role], [])
+        self.assertTrue(str(with_role.reviewer) in message)
+        self.assertTrue(str(with_role.role) in message)
+
+    def test_reviewers_with_and_without_role(self):
+        with_role = AssignedWithRoleReviewersFactory()
+        without_role = AssignedReviewersFactory()
+        message = self.adapter.reviewers_updated([with_role, without_role], [])
+        self.assertTrue(str(with_role.reviewer) in message)
+        self.assertTrue(str(with_role.role) in message)
+        self.assertTrue(str(without_role.reviewer) in message)
 
     def test_internal_transition_kwarg_for_invisible_transition(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion')
@@ -275,11 +297,15 @@ class TestActivityAdapter(TestCase):
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, None)
 
-    def test_review_saved_on_activtiy(self):
-        submission = ApplicationSubmissionFactory()
-        user = UserFactory()
-        review = ReviewFactory(submission=submission)
-        self.adapter.send_message('a message', user=user, submission=submission, submissions=[], related=review)
+    def test_review_saved_on_activity(self):
+        review = ReviewFactory()
+        self.adapter.send_message(
+            'a message',
+            user=review.author,
+            submission=review.submission,
+            submissions=[],
+            related=review,
+        )
         activity = Activity.objects.first()
         self.assertEqual(activity.related_object, review)
 

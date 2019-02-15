@@ -1,5 +1,6 @@
 import json
 import requests
+from collections import defaultdict
 
 from django.db import models
 from django.conf import settings
@@ -18,6 +19,24 @@ User = get_user_model()
 def link_to(target, request):
     if target:
         return request.scheme + '://' + request.get_host() + target.get_absolute_url()
+
+
+def group_reviewers(reviewers):
+    groups = defaultdict(list)
+    for reviewer in reviewers:
+        groups[reviewer.role].append(reviewer.reviewer)
+    return groups
+
+
+def reviewers_message(reviewers):
+    messages = []
+    for role, reviewers in group_reviewers(reviewers).items():
+        message = ', '.join(str(reviewer) for reviewer in reviewers)
+        if role:
+            message += ' as ' + str(role)
+        message += '.'
+        messages.append(message)
+    return messages
 
 
 neat_related = {
@@ -192,11 +211,11 @@ class ActivityAdapter(AdapterBase):
         message = ['Reviewers updated.']
         if added:
             message.append('Added:')
-            message.append(', '.join([str(user) for user in added]) + '.')
+            message.extend(reviewers_message(added))
 
         if removed:
             message.append('Removed:')
-            message.append(', '.join([str(user) for user in removed]) + '.')
+            message.extend(reviewers_message(removed))
 
         return ' '.join(message)
 
@@ -265,7 +284,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{submission.title}> by {user}',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
-        MESSAGES.REVIEWERS_UPDATED: '{user} has updated the reviewers on <{link}|{submission.title}>',
+        MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
@@ -307,6 +326,19 @@ class SlackAdapter(AdapterBase):
                 'submissions': submissions.filter(lead=lead),
             } for lead in leads
         ]
+
+    def reviewers_updated(self, submission, link, user, added=list(), removed=list(), **kwargs):
+        message = [f'{user} has updated the reviewers on <{link}|{submission.title}>.']
+
+        if added:
+            message.append('Added:')
+            message.extend(reviewers_message(added))
+
+        if removed:
+            message.append('Removed:')
+            message.extend(reviewers_message(removed))
+
+        return ' '.join(message)
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = ', '.join(
