@@ -12,9 +12,13 @@
     &__header-bar {
         color: $color--white;
         background-color: $color--dark-blue;
-        margin: -24px -24px 0;
+        margin: -24px -24px 20px;
         padding: 15px;
         text-align: center;
+
+        &--no-bottom-space {
+            margin-bottom: 0;
+        }
     }
 
     &__list {
