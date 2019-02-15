@@ -2,11 +2,7 @@
     $root: &;
     display: none;
     width: calc(100% - 40px);
-    padding: 20px;
-
-    &--secondary {
-        padding: 0;
-    }
+    padding: 0;
 
     @include media-query(small-tablet) {
         width: 580px;
