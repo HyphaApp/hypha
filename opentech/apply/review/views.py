@@ -2,21 +2,22 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, FormView
+from django.views.generic.detail import SingleObjectMixin
 
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
-from opentech.apply.review.forms import ReviewModelForm
+from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
-from .models import Review
+from .models import Review, ReviewOpinion
 
 
 class ReviewContextMixin:
@@ -99,9 +100,13 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
-@method_decorator(login_required, name='dispatch')
-class ReviewDetailView(DetailView):
+class ReviewDisplay(DetailView):
     model = Review
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ReviewOpinionForm()
+        return context
 
     def dispatch(self, request, *args, **kwargs):
         review = self.get_object()
@@ -114,6 +119,40 @@ class ReviewDetailView(DetailView):
             return HttpResponseRedirect(reverse_lazy('apply:reviews:form', args=(review.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class ReviewOpinionFormView(SingleObjectMixin, FormView):
+    template_name = 'review/review_detail.html'
+    form_class = ReviewOpinionForm
+    model = Review
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('apply:submissions:reviews:review', args=(self.object.submission.pk, self.object.id,))
+
+
+@method_decorator(login_required, name='dispatch')
+class ReviewDetailView(DetailView):
+    def get(self, request, *args, **kwargs):
+        view = ReviewDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = ReviewOpinionFormView.as_view()
+        return view(request, *args, **kwargs)
 
 
 @method_decorator(staff_required, name='dispatch')

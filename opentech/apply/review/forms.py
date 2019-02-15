@@ -4,7 +4,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from opentech.apply.review.options import NA
 from opentech.apply.stream_forms.forms import StreamBaseForm
 
-from .models import Review
+from .models import Review, ReviewOpinion
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -84,3 +84,19 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
             return sum(scores) / len(scores)
         except ZeroDivisionError:
             return NA
+
+
+class ReviewOpinionForm(forms.ModelForm):
+
+    class Meta:
+        model = ReviewOpinion
+        fields = ('opinion',)
+
+    def __init__(self, *args, **kwargs):
+        if kwargs.get('user'):
+            self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        # TODO: save the review here
+        return super().save(False)
