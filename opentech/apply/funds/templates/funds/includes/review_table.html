@@ -14,8 +14,6 @@
             {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer role=review_data.role missing=True %}
         {% endfor %}
 
-    {% else %}
-        <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 
     {% if reviews_block.staff_reviewed or reviews_block.staff_not_reviewed %}
@@ -32,7 +30,9 @@
             {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True %}
         {% endfor %}
 
-    {% else %}
+    {% endif %}
+
+    {% if no_top_reviews %}
         <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 
