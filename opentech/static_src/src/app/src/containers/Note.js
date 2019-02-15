@@ -17,7 +17,7 @@ class Note extends React.Component {
     render() {
         const { note } = this.props;
 
-        const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric'})
+        const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
 
         return <NoteListingItem
                 user={note.user}
