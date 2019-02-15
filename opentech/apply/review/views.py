@@ -28,21 +28,19 @@ class ReviewContextMixin:
         reviews_dict = defaultdict()
         for review in reviews:
             reviews_dict[review.author.pk] = review
+        top_reviews = self.object.reviews.by_staff().count()
 
         reviews_block = defaultdict(list)
-        no_top_reviews = True
         for assigned_reviewer in assigned:
             reviewer = assigned_reviewer.reviewer
             role = assigned_reviewer.role
             review = reviews_dict.get(reviewer.pk, None)
             if role:
-                no_top_reviews = False
                 if review:
                     key = 'role_reviewed'
                 else:
                     key = 'role_not_reviewed'
             elif reviewer.is_apply_staff:
-                no_top_reviews = False
                 if review:
                     key = 'staff_reviewed'
                 else:
@@ -59,9 +57,13 @@ class ReviewContextMixin:
                 'role': role,
             })
 
+        # Calculate the recommendation based on role and staff reviews
+        recommendation = self.object.reviews.by_staff().recommendation()
+
         return super().get_context_data(
             reviews_block=reviews_block,
-            no_top_reviews=no_top_reviews,
+            top_reviews=top_reviews,
+            recommendation=recommendation,
             **kwargs,
         )
 
