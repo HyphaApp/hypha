@@ -132,7 +132,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
                 output_field=IntegerField(),
             ),
-            role_assigned=Subquery(roles_for_review[:1].values('role__name')),
+            role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
             'reviews__author'
         ).select_related(
