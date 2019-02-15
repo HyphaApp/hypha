@@ -136,15 +136,6 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     def outcome(self):
         return self.get_recommendation_display()
 
-    @property
-    def role_review_icon(self):
-        reviewer = AssignedReviewers.objects.filter(
-            submission=self.submission, reviewer=self.author, role__isnull=False)
-        if reviewer and reviewer.first().role:
-            return reviewer.first().role.icon
-        else:
-            return None
-
     def get_comments_display(self, include_question=True):
         return self.render_answer(self.comment_field.id, include_question=include_question)
 
