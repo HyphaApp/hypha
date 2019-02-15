@@ -3,9 +3,11 @@ var BundleTracker = require('webpack-bundle-tracker')
 
 var config = require('./webpack.base.config.js')
 
-config.output.path = require('path').resolve('./assets/dist')
+prodConfig = config('production')
 
-config.plugins = config.plugins.concat([
+prodConfig.output.path = require('path').resolve('./assets/dist')
+
+prodConfig.plugins = prodConfig.plugins.concat([
     new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats-prod.json'}),
     new webpack.EnvironmentPlugin({
         NODE_ENV: 'production',
@@ -13,10 +15,7 @@ config.plugins = config.plugins.concat([
     }),
 ])
 
-config.optimization = {
-    minimize: true
-}
+prodConfig.optimization = {}
 
-config.mode = "production"
 
-module.exports = config
+module.exports = prodConfig
