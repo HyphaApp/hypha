@@ -752,7 +752,7 @@ PHASES_MAPPING = {
         'statuses': phases_matching('internal_review'),
     },
     'in-discussion': {
-        'name': 'In Discussion',
+        'name': 'Ready for Discussion',
         'statuses': phases_matching('discussion', exclude=[INITIAL_STATE, 'proposal_discussion']),
     },
     'more-information': {
@@ -760,7 +760,7 @@ PHASES_MAPPING = {
         'statuses': phases_matching('more_info'),
     },
     'invited-for-proposal': {
-        'name': 'Invited for proposal',
+        'name': 'Invited for Proposal',
         'statuses': ['draft_proposal'],
     },
     'external-review': {
@@ -768,7 +768,7 @@ PHASES_MAPPING = {
         'statuses': phases_matching('external_review'),
     },
     'ready-for-determination': {
-        'name': 'Ready for determination',
+        'name': 'Ready for Determination',
         'statuses': phases_matching('determination'),
     },
     'accepted': {

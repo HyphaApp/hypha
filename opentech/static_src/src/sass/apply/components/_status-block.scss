@@ -18,10 +18,13 @@
             border-right: 1px solid $color--light-mid-grey;
             width: calc(100% / 9);
             padding: 10px;
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
         }
 
         @include media-query(desktop) {
-            padding: 20px 20px 30px;
+            padding: 20px 18px 30px;
         }
 
         @include media-query(laptop-short) {
@@ -43,16 +46,16 @@
     }
 
     &__info {
-        font-size: 14px;
+        font-size: 13px;
         color: $color--dark-blue;
+
+        @include media-query(tablet-landscape) {
+            margin-top: auto;
+        }
     }
 
     &__title {
         font-weight: $weight--semibold;
-
-        @include media-query(tablet-landscape) {
-            height: 55px;
-        }
     }
 
     &__link {
@@ -63,7 +66,6 @@
         @include media-query(tablet-landscape) {
             opacity: 0;
             pointer-events: none;
-            height: 55px;
 
             #{$root}__item:hover & {
                 opacity: 1;
