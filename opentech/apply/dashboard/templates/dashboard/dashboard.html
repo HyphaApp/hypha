@@ -22,36 +22,27 @@
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
-        <div>
+    <div class="wrapper wrapper--bottom-space">
+        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more %}
+    </div>
 
-            {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more %}
+    {% if closed_rounds or open_rounds %}
+        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
+    {% endif %}
 
+    {% if my_reviewed.data %}
+        <div class="wrapper wrapper--bottom-space">
 
-            {% if closed_rounds or open_rounds %}
-                {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
-            {% endif %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True use_batch_actions=False heading="Your previous reviews" %}
+            {% render_table my_reviewed %}
 
-        </div>
-
-        <div>
-            {% if my_reviewed.data %}
-
-                <h4 class="heading heading--normal">
-                    Your previous reviews
-                </h4>
-
-                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
-                {% render_table my_reviewed %}
-
-                {% if display_more_reviewed %}
-                    <div class="all-submissions-table__more">
-                        <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
-                    </div>
-                {% endif %}
-
+            {% if display_more_reviewed %}
+                <div class="all-submissions-table__more">
+                    <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
+                </div>
             {% endif %}
         </div>
-
+    {% endif %}
 </div>
 {% endblock %}
 
