@@ -37,6 +37,7 @@ class ByRoundListing extends React.Component {
         shouldSelectFirst: PropTypes.bool,
         rounds: PropTypes.array,
         isLoading: PropTypes.bool,
+        errorMessage: PropTypes.string,
     };
 
     componentDidMount() {
@@ -68,11 +69,12 @@ class ByRoundListing extends React.Component {
     }
 
     render() {
-        const { isLoading, isErrored, submissions, setCurrentItem, activeSubmission, shouldSelectFirst} = this.props;
+        const { isLoading, isErrored, submissions, setCurrentItem, activeSubmission, shouldSelectFirst, errorMessage } = this.props;
         const order = this.prepareOrder();
         return <GroupedListing
                 isLoading={isLoading}
-                error={isErrored ? 'Fetching failed.' : undefined}
+                isErrored={isErrored}
+                errorMessage={errorMessage || 'Fetching failed.'}
                 items={submissions || []}
                 activeItem={activeSubmission}
                 onItemSelection={setCurrentItem}
@@ -85,10 +87,8 @@ class ByRoundListing extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     submissions: getSubmissionsByGivenStatuses(ownProps.submissionStatuses)(state),
-    isErrored: (
-        getByGivenStatusesError(ownProps.submissionStatuses)(state) ||
-        getRoundsErrored(state)
-    ),
+    isErrored: getRoundsErrored(state),
+    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state),
     isLoading: (
         getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
         getRoundsFetching(state)

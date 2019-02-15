@@ -29,7 +29,7 @@ class ByStatusListing extends React.Component {
         submissions: PropTypes.arrayOf(PropTypes.object),
         roundID: PropTypes.number,
         round: PropTypes.object,
-        error: PropTypes.string,
+        errorMessage: PropTypes.string,
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
@@ -67,12 +67,12 @@ class ByStatusListing extends React.Component {
     }
 
     render() {
-        const { error, submissions, round, setCurrentItem, activeSubmission, shouldSelectFirst } = this.props;
+        const { errorMessage, submissions, round, setCurrentItem, activeSubmission, shouldSelectFirst } = this.props;
         const isLoading = !round || ( round && (round.isFetching || round.submissions.isFetching) )
         const order = this.prepareOrder(round)
         return <GroupedListing
                     isLoading={isLoading}
-                    error={error}
+                    errorMessage={errorMessage}
                     items={submissions}
                     activeItem={activeSubmission}
                     onItemSelection={setCurrentItem}
@@ -86,7 +86,7 @@ const mapStateToProps = state => ({
     roundID: getCurrentRoundID(state),
     submissions: getCurrentRoundSubmissions(state),
     round: getCurrentRound(state),
-    error: getSubmissionsByRoundError(state),
+    errorMessage: getSubmissionsByRoundError(state),
     activeSubmission: getCurrentSubmissionID(state),
 })
 

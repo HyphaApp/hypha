@@ -14,8 +14,8 @@ export default class Listing extends React.Component {
     static propTypes = {
         items: PropTypes.array.isRequired,
         isLoading: PropTypes.bool,
-        isError: PropTypes.bool,
-        error: PropTypes.string,
+        isErrored: PropTypes.bool,
+        errorMessage: PropTypes.string,
         groupBy: PropTypes.string,
         order: PropTypes.arrayOf(PropTypes.string),
         onItemSelection: PropTypes.func,
@@ -27,7 +27,7 @@ export default class Listing extends React.Component {
 
     renderListItems() {
         const {
-            isError,
+            isErrored,
             isLoading,
             items,
             renderItem,
@@ -42,7 +42,7 @@ export default class Listing extends React.Component {
                         <LoadingPanel />
                     </div>
                 );
-            } else if (isError) {
+            } else if (isErrored) {
                 return this.renderError();
             } else {
                 return <EmptyPanel column={this.props.column} />;
@@ -53,7 +53,7 @@ export default class Listing extends React.Component {
             <>
                 { isLoading && <InlineLoading /> }
                 <ul className={`listing__list listing__list--${column}`} ref={listRef}>
-                    { isError && this.renderErrorItem() }
+                    { isErrored && this.renderErrorItem() }
                     <TransitionGroup component={null} >
                         {items.map(v => renderItem(v))}
                     </TransitionGroup>
@@ -68,11 +68,11 @@ export default class Listing extends React.Component {
     }
 
     renderErrorItem = () => {
-        const { handleRetry, error } = this.props;
+        const { handleRetry, errorMessage } = this.props;
         return (
             <li className="listing__item listing__item--error">
                 <h5>Something went wrong!</h5>
-                <p>{error}</p>
+                <p>{errorMessage}</p>
                 { !navigator.onLine && <p>You appear to be offline.</p>}
                 { handleRetry && this.renderRetryButton() }
             </li>
@@ -80,11 +80,11 @@ export default class Listing extends React.Component {
     }
 
     renderError = () => {
-        const { handleRetry, error, column } = this.props;
+        const { handleRetry, isErrored, errorMessage, column } = this.props;
 
         return (
             <div className={`listing__list listing__list--${column} is-blank`}>
-                {error && <p>{error}</p>}
+                {isErrored && <p>{errorMessage}</p>}
 
                 {!handleRetry &&
                     <p>Something went wrong!</p>

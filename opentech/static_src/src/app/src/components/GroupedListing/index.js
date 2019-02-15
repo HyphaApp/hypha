@@ -13,7 +13,8 @@ export default class GroupedListing extends React.Component {
         items: PropTypes.array,
         activeItem: PropTypes.number,
         isLoading: PropTypes.bool,
-        error: PropTypes.string,
+        isErrored: PropTypes.bool,
+        errorMessage: PropTypes.string,
         groupBy: PropTypes.string,
         order: PropTypes.arrayOf(PropTypes.shape({
             key: PropTypes.string.isRequired,
@@ -46,7 +47,7 @@ export default class GroupedListing extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        const propsToCheck = ['items', 'isLoading', 'error']
+        const propsToCheck = ['items', 'isLoading', 'isErrored']
         if ( propsToCheck.some(prop => nextProps[prop] !== this.props[prop])) {
             return true
         }
@@ -118,15 +119,14 @@ export default class GroupedListing extends React.Component {
     }
 
     render() {
-        const { isLoading, error } = this.props;
-        const isError = Boolean(error);
+        const { isLoading, isErrored, errorMessage } = this.props;
 
         const passProps = {
             items: this.state.orderedItems,
             renderItem: this.renderItem,
             isLoading,
-            isError,
-            error
+            errorMessage,
+            isErrored
         };
 
         // set css custom prop to allow scrolling from dropdown to last item in the list
@@ -137,7 +137,7 @@ export default class GroupedListing extends React.Component {
         return  (
             <div className="grouped-listing">
                 <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
-                    {!error && !isLoading &&
+                    {!isErrored && !isLoading &&
                         <ListingDropdown
                             listRef={this.listRef}
                             groups={this.state.orderedItems}
