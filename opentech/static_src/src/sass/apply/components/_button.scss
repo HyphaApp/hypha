@@ -5,6 +5,15 @@
     border: 0;
     box-shadow: none;
 
+    &:hover {
+        cursor: pointer;
+    }
+
+    &.is-disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
     &--primary {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
@@ -14,10 +23,6 @@
             text-align: center;
             height: 45px;
         }
-    }
-
-    &:hover {
-        cursor: pointer;
     }
 
     &--contains-icons {
@@ -80,10 +85,24 @@
         width: 100%;
 
         @include media-query(tablet-landscape) {
+            background: none;
+            padding: 0;
+            border: 0;
+            justify-content: flex-start;
+            width: auto;
+            opacity: .7;
+
             &::before {
                 content: '';
                 background-image: url('./../../images/filters.svg');
                 transform: rotate(90deg);
+                background-color: transparent;
+                background-position: left center;
+                background-size: 20px;
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+                margin-right: 10px;
             }
         }
     }
@@ -157,11 +176,6 @@
         }
     }
 
-    &.is-disabled {
-        pointer-events: none;
-        opacity: .5;
-    }
-
     &--top-space {
         margin-top: 20px;
     }
@@ -209,51 +223,88 @@
 
     &--action {
         display: flex;
-        font-weight: $weight--normal;
         color: $color--default;
-        transition: none;
+        align-items: center;
+        transition: opacity $transition;
+        font-weight: $weight--semibold;
+        position: relative;
 
-        @include media-query(tablet-landscape) {
-            background: none;
-            padding: 0;
-            border: 0;
-            align-items: center;
-            justify-content: flex-start;
-            width: auto;
-            transition: opacity $transition;
-            opacity: .7;
-            font-weight: $weight--semibold;
+        &:hover {
+            opacity: 1;
+        }
+
+        &:disabled {
+            color: $color--mid-dark-grey;
+            cursor: not-allowed;
+
+            // tooltip
+            &::before {
+                content: attr(data-tooltip);
+                pointer-events: none;
+                position: absolute;
+                width: 200px;
+                padding: 12px;
+                font-size: 12px;
+                font-weight: $weight--normal;
+                white-space: normal;
+                background: $color--light-blue;
+                opacity: 0;
+                transition: opacity $transition;
+                bottom: 45px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: $color--white;
+                text-align: left;
+                line-height: 1rem;
+                border: 1px solid $color--white;
+                border-radius: 3px;
+            }
+
+            &::after {
+                @include triangle(bottom, $color--primary, 7px);
+                position: absolute;
+                top: -22px;
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                transition: opacity $transition;
+                z-index: 10;
+            }
+
+            svg {
+                fill: $color--mid-dark-grey;
+            }
 
             &:hover {
                 opacity: 1;
-            }
 
-            &::before {
-                content: '';
-                background-image: url('./../../images/filters.svg');
-                background-color: transparent;
-                background-position: left center;
-                background-size: 20px;
-                width: 20px;
-                height: 20px;
-                display: inline-block;
-                margin-right: 10px;
+                // show tooltip
+                &::before {
+                    pointer-events: all;
+                    z-index: 10;
+                    opacity: 1;
+                }
+
+                &::after {
+                    opacity: 1;
+                }
             }
+        }
+
+        svg {
+            fill: $color--light-blue;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            pointer-events: none;
         }
     }
 
     &--change-status {
-        display: none;
+        display: none; // remove when BE is complete
 
-        &::before {
-            background-image: url('./../../images/arrow-split.svg');
+        svg {
             transform: rotate(90deg);
-        }
-    }
-
-    &--reviewers {
-        &::before {
-            background-image: url('./../../images/add-person.svg');
         }
     }
 }

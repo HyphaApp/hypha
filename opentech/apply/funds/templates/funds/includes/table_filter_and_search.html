@@ -4,15 +4,21 @@
         <div class="actions-bar__inner actions-bar__inner--left">
             <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
             <form action="" class="js-batch-update-status">
-                <button class="button button--action button--change-status" type="submit">Change status</button>
+                <button class="button button--action button--change-status" type="submit" data-tooltip="Status changes can't be applied to submissions with different current status." disabled>
+                    <svg><use xlink:href="#arrow-split"></use></svg>
+                    Change status
+                </button>
             </form>
 
-            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-update-reviewers" type="submit">Reviewers</button>
+            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-update-reviewers" type="submit">
+                <svg><use xlink:href="#add-person"></use></svg>
+                Reviewers
+            </button>
         </div>
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
-            <button class="button button--filters button--contains-icons button--action js-toggle-filters">Filters</button>
+            <button class="button button--filters js-toggle-filters">Filters</button>
 
             {% if use_search|default:False %}
             <form method="get" role="search" class="form form--search-desktop js-search-form">
