@@ -71,6 +71,7 @@ var gulp      = require('gulp'),
 // Load webpack config
 var webpackDev = () => require(options.theme.app + 'webpack.dev.config.js');
 var webpackProd = () => require(options.theme.app + 'webpack.prod.config.js');
+var webpackAnalyze = () => require(options.theme.app + 'webpack.analyze.config.js');
 
 // The sass files to process.
 var sassFiles = [
@@ -183,6 +184,14 @@ gulp.task('app:production', function() {
         .pipe(webpackStrm( webpackProd() ))
         .pipe(gulp.dest(options.theme.app_dest));
 })
+
+// Analyze Prod build of App
+gulp.task('app:analyze', function() {
+    return gulp.src(options.theme.app + 'src/')
+        .pipe(webpackStrm( webpackAnalyze() ))
+        .pipe(gulp.dest(options.theme.app_dest));
+})
+
 
 // Copy images.
 gulp.task('images', function copy () {
