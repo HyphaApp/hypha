@@ -36,6 +36,11 @@ class ReviewContextMixin:
                     key = 'role_reviewed'
                 else:
                     key = 'role_not_reviewed'
+            elif reviewer.is_apply_staff:
+                if review:
+                    key = 'staff_reviewed'
+                else:
+                    key = 'staff_not_reviewed'
             else:
                 if review:
                     key = 'external_reviewed'

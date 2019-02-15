@@ -18,6 +18,24 @@
         <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 
+    {% if reviews_block.staff_reviewed or reviews_block.staff_not_reviewed %}
+        {% for review_data in reviews_block.staff_reviewed %}
+            <tr class="tr tr--subchild light-grey-bg">
+                <th colspan="2"></th>
+                <th>{{ review_data.review.recommendation|traffic_light }}</th>
+                <th>{{ review_data.review.get_score_display|default_if_none:'-' }}</th>
+            </tr>
+            {% include 'funds/includes/review_table_row.html' with review=review_data.review reviewer=review_data.reviewer %}
+        {% endfor %}
+
+        {% for review_data in reviews_block.staff_not_reviewed %}
+            {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True %}
+        {% endfor %}
+
+    {% else %}
+        <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
+    {% endif %}
+
     {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
 
         <tr class="tr tr--subchild"><td colspan="4"><hr></td></tr>
