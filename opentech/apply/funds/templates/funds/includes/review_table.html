@@ -26,6 +26,11 @@
         <tr class="tr tr--subchild"><td colspan="4"><hr></td></tr>
 
         {% for review_data in reviews_block.external_reviewed %}
+            <tr class="tr tr--subchild light-grey-bg">
+                <th colspan="2"></th>
+                <th>{{ review_data.review.recommendation|traffic_light }}</th>
+                <th>{{ review_data.review.get_score_display|default_if_none:'-' }}</th>
+            </tr>
             {% include 'funds/includes/review_table_row.html' with review=review_data.review reviewer=review_data.reviewer %}
         {% endfor %}
 
