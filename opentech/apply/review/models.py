@@ -178,3 +178,6 @@ class ReviewOpinion(models.Model):
         on_delete=models.PROTECT,
     )
     opinion = models.IntegerField(choices=OPINION_CHOICES)
+
+    class Meta:
+        unique_together = ('author', 'review')

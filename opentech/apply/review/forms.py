@@ -91,12 +91,3 @@ class ReviewOpinionForm(forms.ModelForm):
     class Meta:
         model = ReviewOpinion
         fields = ('opinion',)
-
-    def __init__(self, *args, **kwargs):
-        if kwargs.get('user'):
-            self.user = kwargs.pop('user')
-        super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        # TODO: save the review here
-        return super().save(False)

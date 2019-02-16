@@ -126,17 +126,15 @@ class ReviewOpinionFormView(SingleObjectMixin, FormView):
     form_class = ReviewOpinionForm
     model = Review
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         form = self.get_form()
         if form.is_valid():
-            form.save()
+            review_opinion = form.save(commit=False)
+            review_opinion.author = self.request.user
+            review_opinion.review = self.object
+            review_opinion.save()
 
         return super().post(request, *args, **kwargs)
 
