@@ -74,8 +74,8 @@ class FormPage(AbstractEmailForm, BasePage):
                     file_name = file_data.name
                     file_name = webform_storage.generate_filename(file_name)
                     upload_to = os.path.join('webform', str(self.id), file_name)
-                    webform_storage.save(upload_to, file_data)
-                    file_details_dict = {name: file_name}
+                    saved_file_name = webform_storage.save(upload_to, file_data)
+                    file_details_dict = {name: webform_storage.url(saved_file_name)}
                     cleaned_data.update(file_details_dict)
                 else:
                     del cleaned_data[name]
