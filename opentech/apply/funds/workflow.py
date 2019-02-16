@@ -349,7 +349,7 @@ SingleStageExternalDefinition = [
                 'ext_post_external_review_more_info': 'Request More Information',
                 'ext_determination': 'Ready For Determination',
             },
-            'display': 'Ready for Discussion',
+            'display': 'Ready For Discussion',
             'stage': RequestExt,
             'permissions': hidden_from_applicant_permissions,
         },
@@ -444,7 +444,7 @@ DoubleStageDefinition = [
                 'concept_review_more_info': 'Request More Information',
                 'concept_determination': 'Ready For Preliminary Determination',
             },
-            'display': 'Ready for Discussion',
+            'display': 'Ready For Discussion',
             'stage': Concept,
             'permissions': hidden_from_applicant_permissions,
         },
@@ -555,7 +555,7 @@ DoubleStageDefinition = [
                 'proposal_rejected': 'Dismiss',
                 'post_proposal_review_more_info': 'Request More Information',
             },
-            'display': 'Ready for Discussion',
+            'display': 'Ready For Discussion',
             'stage': Proposal,
             'permissions': hidden_from_applicant_permissions,
         },
@@ -591,7 +591,7 @@ DoubleStageDefinition = [
                 'proposal_determination': 'Ready For Final Determination',
                 'post_external_review_more_info': 'Request More Information',
             },
-            'display': 'Ready for Discussion',
+            'display': 'Ready For Discussion',
             'stage': Proposal,
             'permissions': hidden_from_applicant_permissions,
         },
@@ -733,3 +733,50 @@ def get_determination_transitions():
 
 
 DETERMINATION_OUTCOMES = get_determination_transitions()
+
+
+def phases_matching(phrase, exclude=list()):
+    return [
+        status for status, _ in PHASES
+        if status.endswith(phrase) and status not in exclude
+    ]
+
+
+PHASES_MAPPING = {
+    'received': {
+        'name': 'Received',
+        'statuses': [INITIAL_STATE, 'proposal_discussion'],
+    },
+    'internal-review': {
+        'name': 'Internal Review',
+        'statuses': phases_matching('internal_review'),
+    },
+    'in-discussion': {
+        'name': 'In Discussion',
+        'statuses': phases_matching('discussion', exclude=[INITIAL_STATE, 'proposal_discussion']),
+    },
+    'more-information': {
+        'name': 'More Information Requested',
+        'statuses': phases_matching('more_info'),
+    },
+    'invited-for-proposal': {
+        'name': 'Invited for proposal',
+        'statuses': ['draft_proposal'],
+    },
+    'external-review': {
+        'name': 'AC Review',
+        'statuses': phases_matching('external_review'),
+    },
+    'ready-for-determination': {
+        'name': 'Ready for determination',
+        'statuses': phases_matching('determination'),
+    },
+    'accepted': {
+        'name': 'Accepted',
+        'statuses': phases_matching('accepted'),
+    },
+    'dismissed': {
+        'name': 'Dismissed',
+        'statuses': phases_matching('rejected'),
+    },
+}

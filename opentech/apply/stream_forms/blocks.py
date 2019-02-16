@@ -298,7 +298,9 @@ class UploadableMediaBlock(OptionalFormFieldBlock):
 
     def prepare_data(self, value, data, serialize):
         if serialize:
-            return data.serialize()
+            if data:
+                return data.serialize()
+            return None
 
         return data
 

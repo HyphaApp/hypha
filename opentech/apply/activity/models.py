@@ -81,7 +81,7 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
     message = models.TextField()
-    visibility = models.CharField(choices=VISIBILITY.items(), default=PUBLIC, max_length=10)
+    visibility = models.CharField(choices=list(VISIBILITY.items()), default=PUBLIC, max_length=10)
 
     # Fields for generic relations to other objects. related_object should implement `get_absolute_url`
     content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)
@@ -134,6 +134,19 @@ class Event(models.Model):
         return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.submission.title])
 
 
+class MessagesQueryset(models.QuerySet):
+    def update_status(self, status):
+        if status:
+            return self.update(
+                status=Case(
+                    When(status='', then=Value(status)),
+                    default=Concat('status', Value('<br />' + status))
+                )
+            )
+
+    update_status.queryset_only = True
+
+
 class Message(models.Model):
     """Model to track content of messages sent from an event"""
 
@@ -143,6 +156,8 @@ class Message(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     status = models.TextField()
     external_id = models.CharField(max_length=75, null=True, blank=True)  # Stores the id of the object from an external system
+
+    objects = MessagesQueryset.as_manager()
 
     def update_status(self, status):
         if status:

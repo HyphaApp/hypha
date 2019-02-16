@@ -1,6 +1,8 @@
 // sass-lint:disable no-color-keywords; no-color-hex
+// Set via JS
 :root {
     --header-admin-height: 0;
+    --last-listing-item-height: 0;
 }
 
 // Default
@@ -11,7 +13,6 @@ $color--light-grey: #f7f7f7;
 $color--light-mid-grey: #e8e8e8;
 $color--mid-grey: #cfcfcf;
 $color--mid-dark-grey: #919191;
-$color--dark-grey: #404041;
 
 // Brand
 $color--light-blue: #0d7db0;

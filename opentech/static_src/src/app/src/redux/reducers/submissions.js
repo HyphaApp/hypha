@@ -7,7 +7,12 @@ import {
     UPDATE_SUBMISSIONS_BY_ROUND,
     UPDATE_SUBMISSION,
     SET_CURRENT_SUBMISSION,
+    UPDATE_SUBMISSIONS_BY_STATUSES,
+    START_LOADING_SUBMISSIONS_BY_STATUSES,
+    FAIL_LOADING_SUBMISSIONS_BY_STATUSES,
 } from '@actions/submissions';
+
+import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
 function submission(state, action) {
@@ -31,6 +36,19 @@ function submission(state, action) {
                 isFetching: false,
                 isErrored: false,
             };
+        case UPDATE_NOTES:
+            return {
+                ...state,
+                comments: action.data.results.map(note => note.id),
+            };
+        case UPDATE_NOTE:
+            return {
+                ...state,
+                comments: [
+                    action.data.id,
+                    ...(state.comments || []),
+                ]
+            };
         default:
             return state;
     }
@@ -42,10 +60,13 @@ function submissionsByID(state = {}, action) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
         case UPDATE_SUBMISSION:
+        case UPDATE_NOTE:
+        case UPDATE_NOTES:
             return {
                 ...state,
                 [action.submissionID]: submission(state[action.submissionID], action),
             };
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
         case UPDATE_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
@@ -78,9 +99,52 @@ function currentSubmission(state = null, action) {
 }
 
 
+function submissionsByStatuses(state = {}, action) {
+    switch (action.type) {
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
+            return {
+                ...state,
+                ...action.data.results.reduce((accumulator, submission) => {
+                    const submissions = accumulator[submission.status] || []
+                    if ( !submissions.includes(submission.id) ) {
+                        accumulator[submission.status] = [...submissions, submission.id]
+                    }
+                    return state
+                }, state)
+            };
+        default:
+            return state
+    }
+}
+
+
+function submissionsFetchingState(state = {isFetching: true, isError: false}, action) {
+    switch (action.type) {
+        case FAIL_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: false,
+                isErrored: true,
+            };
+        case START_LOADING_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: true,
+                isErrored: false,
+            };
+        case UPDATE_SUBMISSIONS_BY_STATUSES:
+            return {
+                isFetching: true,
+                isErrored: false,
+            };
+        default:
+            return state
+    }
+}
+
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
+    byStatuses: submissionsByStatuses,
+    fetchingState: submissionsFetchingState,
 });
 
 export default submissions;

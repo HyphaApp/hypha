@@ -1,14 +1,30 @@
 <div class="wrapper wrapper--table-actions">
-    <button class="button button--filters button--contains-icons js-toggle-filters">Filters</button>
+    <div class="actions-bar">
+        {# Left #}
+        <div class="actions-bar__inner actions-bar__inner--left">
+            <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
+            <form action="" class="js-batch-update-status">
+                <button class="button button--action button--change-status" type="submit">Change status</button>
+            </form>
 
-    {% if use_search|default:False %}
-    <form method="get" role="search" class="form form--search js-search-form">
-        <button class="button button--search" type="submit" aria-label="Search">
-            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-        </button>
-        <input class="input input--search input--secondary js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
-    </form>
-    {% endif %}
+            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-update-reviewers" type="submit">Reviewers</button>
+        </div>
+
+        {# Right #}
+        <div class="actions-bar__inner actions-bar__inner--right">
+            <button class="button button--filters button--contains-icons button--action js-toggle-filters">Filters</button>
+
+            {% if use_search|default:False %}
+            <form method="get" role="search" class="form form--search-desktop js-search-form">
+                <button class="button button--search" type="submit" aria-label="Search">
+                    <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
+                </button>
+                <input class="input input--search input--secondary js-search-input" type="text" placeholder="Search submissions" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
 </div>
 
 <div class="filters">
@@ -27,3 +43,5 @@
         </ul>
     </form>
 </div>
+
+{% include "funds/includes/batch_update_reviewer_form.html" %}

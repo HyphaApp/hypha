@@ -345,6 +345,9 @@ class RoundsAndLabsQueryset(PageQuerySet):
     def closed(self):
         return self.filter(end_date__lt=date.today())
 
+    def by_lead(self, user):
+        return self.filter(lead_pk=user.pk)
+
 
 class RoundsAndLabsProgressQueryset(RoundsAndLabsQueryset):
     def active(self):
@@ -367,6 +370,10 @@ class RoundsAndLabsManager(PageManager):
             end_date=F('roundbase__end_date'),
             parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
             fund=Subquery(funds.values('title')[:1]),
+            lead_pk=Coalesce(
+                F('roundbase__lead__pk'),
+                F('labbase__lead__pk'),
+            ),
         )
 
     def with_progress(self):
@@ -405,6 +412,9 @@ class RoundsAndLabsManager(PageManager):
 
     def new(self):
         return self.get_queryset().new()
+
+    def by_lead(self, user):
+        return self.get_queryset().by_lead(user)
 
 
 class RoundsAndLabs(Page):

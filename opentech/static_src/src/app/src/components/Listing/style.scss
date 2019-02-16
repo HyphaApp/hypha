@@ -5,35 +5,47 @@
     }
 
     &__header {
-        @include submission-list-item;
         height: $listing-header-height;
         padding: 20px;
     }
 
     // containing <ul>
     &__list {
-        @include media-query(tablet-landscape) {
-            // only allow columns to be scrolled on larger screens
-            height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
-            overflow-y: scroll;
+        @include column-scrolling;
+        overflow-y: scroll;
+        height: calc(100vh -  #{$listing-header-height});
+
+        // ensures the last item will be at the top of the column after navigating to it via the dropdown
+        &--applications {
+            padding-bottom: calc(100vh - var(--last-listing-item-height) - #{$listing-header-height});
+
+            @include media-query(tablet-landscape) {
+                padding-bottom: calc(100vh - var(--header-admin-height) - var(--last-listing-item-height) - #{$listing-header-height});
+            }
+
+            @include media-query(laptop-short) {
+                padding-bottom: calc(100vh - var(--last-listing-item-height) - #{$listing-header-height});
+            }
         }
 
-        @include media-query(laptop-short) {
-            // allow for vertical scrolling on laptops
-            height: calc(100vh -  #{$listing-header-height});
+        &--notes {
+            box-shadow: inset 0 -20px 20px -10px $color--light-mid-grey;
+            overflow-y: auto;
+            height: 100%;
+
+            @include media-query(tablet-landscape) {
+                height: calc(75vh - var(--header-admin-height) - #{$listing-header-height});
+            }
+
+            @include media-query(laptop-short) {
+                // allow for vertical scrolling on laptops
+                height: calc(60vh -  #{$listing-header-height});
+            }
         }
 
-        &.is-loading {
+        &.is-blank {
             padding: 20px;
-            border-right: 2px solid $color--light-mid-grey;
-
-            p {
-                margin: 20px 0 20px 20px;
-            }
-
-            .loading-panel__icon::after {
-                background: $color--light-grey;
-            }
+            text-align: center;
         }
     }
 
@@ -101,5 +113,36 @@
         padding: 0 8px;
         border-radius: 5px;
         font-size: 14px;
+    }
+
+    &__blank-icon {
+        border-radius: 50%;
+        background-color: $color--light-mid-grey;
+        padding: 20px;
+        width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 40px auto 20px;
+
+        svg {
+            fill: $color--white;
+            width: 74px;
+            height: 68px;
+        }
+    }
+
+    &__help-text {
+        margin: 0 0 5px;
+        color: $color--dark-blue;
+
+        &--standout {
+            font-weight: $weight--bold;
+        }
+    }
+
+    &__help-link {
+        text-decoration: underline;
     }
 }

@@ -1,46 +1,73 @@
 .messages {
-    position: relative;
-    right: 50%;
-    left: 50%;
-    width: 100vw;
-    margin-right: -50vw;
-    margin-left: -50vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    pointer-events: none;
 
     &__text {
         position: relative;
+        padding: 15px 20px;
+        color: $color--white;
+        font-size: 14px;
+        opacity: 1;
+        transition: opacity, max-height, $transition;
+        pointer-events: all;
         max-height: 1000px;
-        padding: 15px;
-        padding-right: 35px;
-        border: solid 1px;
+
+        @include media-query(desktop) {
+            padding: 15px 30px;
+        }
 
         &--info,
         &--success {
-            background: $color--mint;
-            border-color: darken($color--mint, 20%);
+            background: $color--dark-blue;
         }
 
         &--error,
         &--warning {
-            font-weight: bold;
-            color: $color--white;
-            background: $color--error;
-            border-color: darken($color--error, 20%);
+            background: darken($color--error, 20%);
+        }
+
+        &--debug {
+            background: darken($color--pink, 30%);
         }
 
         &--hide {
+            opacity: 0;
+            pointer-events: none;
             max-height: 0;
-            padding-top: 0;
-            padding-bottom: 0;
-            border: 0 none;
-            transition: all $transition; // sass-lint:disable-line no-transition-all
-            transform-origin: top;
+            padding: 0;
         }
     }
 
-    &__close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
+    &__inner {
+        display: flex;
+        align-items: center;
+        max-width: $site-width;
+        margin: 0 auto;
+    }
 
+    &__copy {
+        padding-right: 20px;
+        margin: 0;
+        flex: 1;
+    }
+
+    &__button {
+        margin-left: auto;
+        color: $color--dark-blue;
+        background-color: $color--white;
+        display: inline-block;
+        font-weight: $weight--bold;
+        padding: 2px 20px;
+    }
+
+    &__icon {
+        width: 25px;
+        height: 25px;
+        fill: $color--white;
+        margin-right: 10px;
     }
 }

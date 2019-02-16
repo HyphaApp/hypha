@@ -17,11 +17,10 @@
         }
     }
 
-    &--search {
+    &--search-desktop {
         position: relative;
         max-width: 300px;
         margin-top: $mobile-gutter;
-        width: 100%;
 
         @include media-query(tablet-landscape) {
             max-width: 280px;
