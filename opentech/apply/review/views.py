@@ -25,10 +25,10 @@ class ReviewContextMixin:
     def get_context_data(self, **kwargs):
         assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
         reviews = self.object.reviews.all().select_related('author')
+
         reviews_dict = defaultdict()
         for review in reviews:
             reviews_dict[review.author.pk] = review
-        top_reviews = self.object.reviews.by_staff().count()
 
         reviews_block = defaultdict(list)
         for assigned_reviewer in assigned:
@@ -62,8 +62,8 @@ class ReviewContextMixin:
 
         return super().get_context_data(
             reviews_block=reviews_block,
-            top_reviews=top_reviews,
             recommendation=recommendation,
+            reviews_exist=reviews.count() | assigned.count(),
             **kwargs,
         )
 
