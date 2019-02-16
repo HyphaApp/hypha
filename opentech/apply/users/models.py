@@ -103,7 +103,7 @@ class User(AbstractUser):
 
     @cached_property
     def is_applicant(self):
-        return not self.is_apply_staff and not self.is_reviewer
+        return not self.is_apply_staff and not self.is_reviewer and not self.is_partner
 
     class Meta:
         ordering = ('full_name', 'email')

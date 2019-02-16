@@ -328,6 +328,11 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        # Only allow partners in the submission they are added as partners
+        if request.user.is_partner:
+            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+            if not partner_has_access:
+                raise PermissionDenied
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
