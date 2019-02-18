@@ -12,6 +12,32 @@
 {% include "forms/includes/form_errors.html" with form=form %}
 
 <div class="wrapper wrapper--medium wrapper--inner-space-medium">
+
+    {% comment %}
+        Example determination block
+        TODO: use correct variables
+    {% endcomment %}
+
+    {% if submissions %}
+        <div class="list-reveal list-reveal--determination">
+            <div class="list-reveal__item list-reveal__item--meta list-reveal__item--determination" aria-live="polite">
+                <span>Determining {{ submissions.length }} submissions</span>
+                <a href="#" class="list-reveal__link js-toggle-batch-list">Show</a>
+            </div>
+            <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
+                {% for submission in submissions %}
+                    <a href="{{ submission.href }}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
+                        {{ submission.title }}
+                        <svg class="list-reveal__open-icon">
+                            <use xlink:href="#open-in-new-tab"></use>
+                        </svg>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
     <form class="form form--with-p-tags" action="" method="post" novalidate>
         {{ form.media }}
         {% csrf_token %}
@@ -49,4 +75,5 @@
 
 {% block extra_js %}
     {# Skip this until the script is improved. <script src="{% static 'js/apply/determination-template.js' %}"></script> #}
+    <script src="{% static 'js/apply/batch-actions.js' %}"></script>
 {% endblock %}

@@ -1,6 +1,15 @@
 .list-reveal {
     $root: &;
 
+    &--determination {
+        background-color: $color--white;
+        margin-bottom: $mobile-gutter;
+
+        @include media-query(tablet-portrait) {
+            max-width: 70%;
+        }
+    }
+
     &__item {
         display: block;
         font-size: map-get($font-sizes, zeta);
@@ -16,16 +25,27 @@
             justify-content: space-between;
             margin: 0 -24px;
         }
+
+        &--determination {
+            border: 1px solid $color--light-mid-grey;
+            margin: 0;
+        }
     }
 
     &__list {
         max-height: 200px;
         overflow: scroll;
-        margin: 0 -24px 20px;
+        margin: 0 -24px $mobile-gutter;
         padding: 0;
         border-bottom: 2px solid $color--light-mid-grey;
         box-shadow: inset 0 -10px 20px -10px $color--mid-grey;
         transition: max-height $transition;
+
+        &--determination {
+            border-left: 1px solid $color--light-mid-grey;
+            border-right: 1px solid $color--light-mid-grey;
+            margin: 0;
+        }
 
         &.is-closed {
             max-height: 0;
