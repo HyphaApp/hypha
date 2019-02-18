@@ -19,4 +19,18 @@
             margin-bottom: 0;
         }
     }
+
+    &__copy {
+        margin: 30px 20px;
+    }
+
+    &__buttons {
+        display: flex;
+        margin: 30px 40px 20px;
+
+        button {
+            width: 100%;
+            padding: .5em 30px;
+        }
+    }
 }

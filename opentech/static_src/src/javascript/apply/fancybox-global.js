@@ -6,7 +6,9 @@
         animationDuration: 350,
         animationEffect: 'fade',
         afterClose: function () {
-            $('.django-select2-checkboxes').select2('close');
+            if ($('.django-select2-checkboxes').length) {
+                $('.django-select2-checkboxes').select2('close');
+            }
         }
     });
 
@@ -15,7 +17,9 @@
         if (e.target.classList.contains('select2-selection__rendered')) {
             return;
         }
-        $('.django-select2-checkboxes').select2('close');
+        if ($('.django-select2-checkboxes').length) {
+            $('.django-select2-checkboxes').select2('close');
+        }
     });
 
     $(document).ready(

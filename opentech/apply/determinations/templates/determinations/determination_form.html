@@ -1,6 +1,9 @@
 {% extends "base-apply.html" %}
 {% load static bleach_tags %}
 {% block title %}Create a determination{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
@@ -63,7 +66,8 @@
             {% endif %}
         {% endfor %}
         <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
-        <input class="button button--submit button--top-space button--primary" type="submit" value="Send" name="submit" />
+        <input data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary" type="button" value="Send" />
+        {% include "funds/includes/batch_send_determination_form.html" %}
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
@@ -75,5 +79,7 @@
 
 {% block extra_js %}
     {# Skip this until the script is improved. <script src="{% static 'js/apply/determination-template.js' %}"></script> #}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
     <script src="{% static 'js/apply/batch-actions.js' %}"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
 {% endblock %}
