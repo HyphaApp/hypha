@@ -64,6 +64,10 @@ const ReviewBlock = ({ review }) => {
 
 ReviewBlock.propTypes = {
     review: PropTypes.shape({
+        score: PropTypes.number,
+        recommendation: PropTypes.shape({
+            display: PropTypes.string,
+        }),
         reviews: PropTypes.arrayOf(PropTypes.shape({
             id: PropTypes.number,
         })),
