@@ -17,6 +17,7 @@ class MESSAGES(Enum):
     COMMENT = 'Comment'
     PROPOSAL_SUBMITTED = 'Proposal Submitted'
     OPENED_SEALED = 'Opened Sealed Submission'
+    REVIEW_OPINION = 'Review Opinion'
 
     @classmethod
     def choices(cls):

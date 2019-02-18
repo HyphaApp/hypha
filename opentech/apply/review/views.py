@@ -18,7 +18,7 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review, ReviewOpinion
-from .options import OPINION_CHOICES
+from .options import OPINION_CHOICES, AGREE
 
 
 class ReviewContextMixin:
@@ -156,6 +156,20 @@ class ReviewOpinionFormView(SingleObjectMixin, FormView):
                 opinion=opinion,
                 author=self.request.user,
                 review=self.object)
+
+        if opinion == AGREE:
+            opinion_verb = 'agrees'
+        else:
+            opinion_verb = 'disagrees'
+        messenger(
+            MESSAGES.REVIEW_OPINION,
+            request=self.request,
+            user=self.request.user,
+            opinion_verb=opinion_verb,
+            reviewer=self.object.author,
+            submission=self.object.submission,
+            related=self.object,
+        )
 
         return super().post(request, *args, **kwargs)
 
