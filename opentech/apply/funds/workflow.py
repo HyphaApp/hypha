@@ -160,6 +160,8 @@ reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_c
 
 applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
+staff_edit_permissions = make_permissions(edit=[staff_can])
+
 
 Request = Stage('Request', False)
 
@@ -258,7 +260,7 @@ SingleStageDefinition = [
             'display': 'Accepted',
             'future': 'Application Outcome',
             'stage': Request,
-            'permissions': no_permissions,
+            'permissions': staff_edit_permissions,
         },
         'rejected': {
             'display': 'Dismissed',
@@ -382,7 +384,7 @@ SingleStageExternalDefinition = [
             'display': 'Accepted',
             'future': 'Application Outcome',
             'stage': RequestExt,
-            'permissions': no_permissions,
+            'permissions': staff_edit_permissions,
         },
         'ext_rejected': {
             'display': 'Dismissed',
@@ -624,7 +626,7 @@ DoubleStageDefinition = [
             'display': 'Accepted',
             'future': 'Final Determination',
             'stage': Proposal,
-            'permissions': no_permissions,
+            'permissions': staff_edit_permissions,
         },
         'proposal_rejected': {
             'display': 'Dismissed',
