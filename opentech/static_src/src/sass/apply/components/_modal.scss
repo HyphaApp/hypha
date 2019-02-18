@@ -25,12 +25,21 @@
     }
 
     &__buttons {
-        display: flex;
-        margin: 30px 40px 20px;
+        margin: 30px $mobile-gutter 0;
+
+        @include media-query(small-tablet) {
+            display: flex;
+            margin: 30px 40px 20px;
+        }
 
         button {
             width: 100%;
             padding: .5em 30px;
+            margin: 0 0 20px;
+
+            @include media-query(small-tablet) {
+                margin: 0 10px 0 0;
+            }
         }
     }
 }
