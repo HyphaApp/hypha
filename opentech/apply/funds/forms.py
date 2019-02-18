@@ -6,6 +6,7 @@ from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
+from .workflow import ACTION_MAPPING
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -26,6 +27,12 @@ class ProgressSubmissionForm(forms.ModelForm):
 
 class BatchProgressSubmissionForm(forms.Form):
     action = forms.ChoiceField(label='Take action')
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        choices = [(action, detail['display']) for action, detail in ACTION_MAPPING.items()]
+        self.fields['action'].choices = choices
 
 
 class ScreeningSubmissionForm(forms.ModelForm):
@@ -202,6 +209,10 @@ class BatchUpdateReviewersForm(forms.Form):
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
     )
     submission_ids = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
 
     def clean_submission_ids(self):
         value = self.cleaned_data['submission_ids']

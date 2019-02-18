@@ -2,6 +2,7 @@ from collections import defaultdict
 from enum import Enum
 import itertools
 
+from django.utils.text import slugify
 
 """
 This file defines classes which allow you to compose workflows based on the following structure:
@@ -730,6 +731,22 @@ def get_determination_transitions():
                 transitions[transition_name] = 'accepted'
 
     return transitions
+
+
+def get_actions_mapping():
+    # Maps action names to the phase they originate from
+    transitions = defaultdict(lambda: {'display': '', 'phases': []})
+    for phase_name, phase in PHASES:
+        for transition_name, transition in phase.transitions.items():
+            transition_name = transition['display']
+            transition_key = slugify(transition_name)
+            transitions[transition_key]['display'] = transition_name
+            transitions[transition_key]['phases'].append(phase_name)
+
+    return transitions
+
+
+ACTION_MAPPING = get_actions_mapping()
 
 
 DETERMINATION_OUTCOMES = get_determination_transitions()

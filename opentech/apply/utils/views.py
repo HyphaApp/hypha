@@ -83,6 +83,9 @@ class DelegateableView(DelegatableBase):
 
 
 class DelegateableListView(DelegatableBase):
+    def get_form_args(self):
+        return None, self.request.user
+
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         return super().post(request, *args, **kwargs)
@@ -96,8 +99,7 @@ class DelegatedViewMixin(View):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if self.is_model_form():
-            kwargs['user'] = self.request.user
+        kwargs['user'] = self.request.user
         return kwargs
 
     def get_form(self, *args, **kwargs):
@@ -121,7 +123,7 @@ class DelegatedViewMixin(View):
         if cls.is_model_form():
             form = cls.form_class(instance=submission, user=user)
         else:
-            form = cls.form_class()  # This is for the batch update, we don't pass in the user or a single submission
+            form = cls.form_class(user=user)
         form.name = cls.context_name
         return cls.context_name, form
 
