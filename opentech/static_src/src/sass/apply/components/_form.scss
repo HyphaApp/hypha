@@ -204,6 +204,10 @@
             max-width: 100%;
         }
 
+        .modal--update-reviewers & {
+            margin-bottom: 20px;
+        }
+
         select[multiple='multiple'] {
             display: block;
         }

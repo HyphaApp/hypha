@@ -16,6 +16,7 @@ from wagtail.core.models import Page
 from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.utils.image import generate_image_url
 from .widgets import Select2MultiCheckboxesWidget
 
 
@@ -124,18 +125,11 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
         orderable = False
 
     def render_role_icon(self, value):
-        from django.urls import reverse
-        from wagtail.images.views.serve import generate_signature
-        from opentech.images.models import CustomImage
-
         if value:
             image = CustomImage.objects.filter(id=value).first()
             if image:
                 filter_spec = 'fill-20x20'
-                signature = generate_signature(image.id, filter_spec)
-                url = reverse('wagtailimages_serve', args=(signature, image.id, filter_spec))
-                url += image.file.name[len('original_images/'):]
-                return format_html(f'<img alt="{image.title}" height="20" width="20" src="{url}">')
+                return generate_image_url(image, filter_spec)
 
         return ''
 

@@ -1,11 +1,12 @@
 from django import forms
-from django.utils.text import slugify
+from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 
 from opentech.apply.users.models import User
+from opentech.apply.utils.image import generate_image_url
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
-from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
+from .widgets import Select2MultiCheckboxesWidget, Select2Widget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -83,11 +84,11 @@ class UpdateReviewersForm(forms.ModelForm):
 
             self.fields[field_name] = forms.ModelChoiceField(
                 queryset=staff_reviewers,
-                widget=Select2IconWidget(attrs={
-                    'data-placeholder': 'Select a reviewer', 'icon': role.icon
+                widget=Select2Widget(attrs={
+                    'data-placeholder': 'Select a reviewer',
                 }),
                 required=False,
-                label=f'{role.name} Reviewer',
+                label=mark_safe(self.render_icon(role.icon) + f'{role.name} Reviewer'),
             )
             # Pre-populate form field
             self.fields[field_name].initial = assigned_roles.get(role)
@@ -109,6 +110,10 @@ class UpdateReviewersForm(forms.ModelForm):
             self.fields.move_to_end('reviewer_reviewers')
         else:
             self.fields.pop('reviewer_reviewers')
+
+    def render_icon(self, image):
+        filter_spec = 'fill-20x20'
+        return generate_image_url(image, filter_spec)
 
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]

@@ -8,6 +8,12 @@
         padding: 0;
     }
 
+    &--update-reviewers {
+        img {
+            margin-right: 6px;
+        }
+    }
+
     @include media-query(small-tablet) {
         width: 580px;
         padding: 30px;
