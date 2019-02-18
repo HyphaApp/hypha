@@ -5,7 +5,7 @@
     const $body = $('body');
     const $checkbox = $('.js-batch-select');
     const $allCheckboxInput = $('.js-batch-select-all');
-    const $batchReviewersButton = $('.js-batch-update-reviewers');
+    const $batchButtons = $('.js-batch-button');
     const $batchTitlesList = $('.js-batch-titles');
     const $batchTitleCount = $('.js-batch-title-count');
     const $hiddenIDlist = $('#id_submission_ids');
@@ -48,31 +48,33 @@
     });
 
     // append selected project titles to batch update reviewer modal
-    $batchReviewersButton.click(function () {
-        $batchTitlesList.html('');
-        $batchTitleCount.html('');
-        $batchTitlesList.addClass(closedClass);
-        $toggleBatchList.html('Show');
+    $batchButtons.each(function () {
+        $(this).click(function () {
+            $batchTitlesList.html('');
+            $batchTitleCount.html('');
+            $batchTitlesList.addClass(closedClass);
+            $toggleBatchList.html('Show');
 
-        let selectedIDs = [];
+            let selectedIDs = [];
 
-        $checkbox.each(function () {
-            if ($(this).is(':checked')) {
-                const href = $(this).parents('tr').find('.js-title').find('a').attr('href');
-                const title = $(this).parents('tr').find('.js-title').data('tooltip');
+            $checkbox.each(function () {
+                if ($(this).is(':checked')) {
+                    const href = $(this).parents('tr').find('.js-title').find('a').attr('href');
+                    const title = $(this).parents('tr').find('.js-title').data('tooltip');
 
-                $batchTitlesList.append(`
-                    <a href="${href}" class="modal__list-item" target="_blank" rel="noopener noreferrer" title="${title}">
-                        ${title}
-                        <svg class="modal__open-link-icon"><use xlink:href="#open-in-new-tab"></use></svg>
-                    </a>
-                `);
-                selectedIDs.push($(this).parents('tr').data('record-id'));
-            }
+                    $batchTitlesList.append(`
+                        <a href="${href}" class="modal__list-item" target="_blank" rel="noopener noreferrer" title="${title}">
+                            ${title}
+                            <svg class="modal__open-link-icon"><use xlink:href="#open-in-new-tab"></use></svg>
+                        </a>
+                    `);
+                    selectedIDs.push($(this).parents('tr').data('record-id'));
+                }
+            });
+
+            $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
+            $hiddenIDlist.val(selectedIDs.join(','));
         });
-
-        $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
-        $hiddenIDlist.val(selectedIDs.join(','));
     });
 
     // show/hide the list of actions

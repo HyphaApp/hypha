@@ -24,6 +24,10 @@ class ProgressSubmissionForm(forms.ModelForm):
         self.should_show = bool(choices)
 
 
+class BatchProgressSubmissionForm(forms.Form):
+    action = forms.ChoiceField(label='Take action')
+
+
 class ScreeningSubmissionForm(forms.ModelForm):
 
     class Meta:

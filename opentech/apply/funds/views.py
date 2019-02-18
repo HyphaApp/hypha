@@ -33,6 +33,7 @@ from opentech.apply.utils.views import DelegateableListView, DelegateableView, V
 from .differ import compare
 from .forms import (
     BatchUpdateReviewersForm,
+    BatchProgressSubmissionForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
     UpdateReviewersForm,
@@ -127,9 +128,23 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         return super().form_valid(form)
 
 
+@method_decorator(staff_required, name='dispatch')
+class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
+    form_class = BatchProgressSubmissionForm
+    context_name = 'batch_progress_form'
+
+    def form_valid(self, form):
+        print('wooooop')
+        return super().form_valid(form)
+
+
 class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
     table_class = ReviewerSubmissionsTable
     filterset_class = SubmissionReviewerFilterAndSearch
+    form_views = [
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
+    ]
 
     def get_queryset(self):
         # Reviewers can only see submissions they have reviewed
@@ -182,7 +197,8 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
 class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
-        BatchUpdateReviewersView
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
     ]
 
 
@@ -199,7 +215,8 @@ class SubmissionListView(ViewDispatcher):
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
-        BatchUpdateReviewersView
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
     ]
 
     excluded_fields = ('round', 'lead', 'fund')
@@ -220,9 +237,13 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, Del
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionsByStatus(BaseAdminSubmissionsTable):
+class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
+    form_views = [
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
+    ]
 
     def get(self, request, *args, **kwargs):
         self.status = kwargs.get('status')
