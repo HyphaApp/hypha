@@ -20,22 +20,22 @@ class ActionSerializer(serializers.Field):
 
 class ReviewSummarySerializer(serializers.Field):
     def to_representation(self, instance):
-        reviews = instance.reviews.all()
+        reviews = instance.reviews.select_related('author')
         return {
             'count': len(reviews),
             'score': reviews.score(),
             'recommendation': reviews.recommendation(),
             'reviews': [
-                OrderedDict([
-                    ('id', review.id),
-                    ('author', str(review.author)),
-                    ('score', review.score),
-                    ('recommendation', OrderedDict([
-                        ('value', review.recommendation),
-                        ('display', review.get_recommendation_display()),
-                    ])),
-                    ('review_url', review.get_absolute_url()),
-                ]) for review in reviews
+                {
+                    'id': review.id,
+                    'author': str(review.author),
+                    'score': review.score,
+                    'recommendation': {
+                        'value': review.recommendation,
+                        'display': review.get_recommendation_display(),
+                    },
+                    'review_url': review.get_absolute_url(),
+                } for review in reviews
             ]
         }
 
