@@ -39,7 +39,7 @@
 
     {% for choice in opinion_choices %}
         <button name="opinion" type="submit" value="{{ choice.value }}"
-            class="button button--primary {{ choice.disabled_class }}" {% if choice.disabled %}disabled{% endif %}>
+            class="button button--primary button--bottom-space {{ choice.disabled_class }}" {% if choice.disabled %}disabled{% endif %}>
             {{ choice.label }}
         </button>
     {% endfor %}
