@@ -28,9 +28,7 @@ Review.propTypes = {
 
 const ReviewBlock = ({ review }) => {
     const renderReviews = () => {
-        if (review === undefined) {
-            return null
-        } else if (review.reviews.length === 0) {
+        if (review.reviews.length === 0) {
             return <EmptyPanel column="reviews" />
         }
 
@@ -38,13 +36,28 @@ const ReviewBlock = ({ review }) => {
             <Review key={review.id} {...{ review }} />)
     }
 
+    const renderReviewBody = () => {
+        if (review === undefined) {
+            return null
+        }
+
+        return (
+            <>
+                {review.recommendation.display &&
+                    <p>Recommendation: {review.recommendation.display}</p>
+                }
+                {!isNaN(parseFloat(review.score)) &&
+                    <p>Score: {review.score}</p>
+                }
+                {renderReviews()}
+            </>
+        )
+    }
+
     return (
         <div>
             <h1>Reviews &amp; assigness</h1>
-            {review && review.recommendation.display &&
-                <p>Recommendation: {review.recommendation.display}</p>
-            }
-            {renderReviews()}
+            {renderReviewBody()}
         </div>
     )
 }
