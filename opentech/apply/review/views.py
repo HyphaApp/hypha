@@ -18,6 +18,7 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review, ReviewOpinion
+from .options import OPINION_CHOICES
 
 
 class ReviewContextMixin:
@@ -105,7 +106,23 @@ class ReviewDisplay(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = ReviewOpinionForm()
+        if self.get_object().author != self.request.user:
+            existing_opinion = ReviewOpinion.objects.filter(
+                author=self.request.user, review=self.get_object()).first()
+            opinion_choices = []
+            for value, label in OPINION_CHOICES:
+                button_dict = {
+                    'value': value,
+                    'label': label,
+                    'disabled': False,
+                }
+                if existing_opinion and existing_opinion.opinion == value:
+                    button_dict['disabled'] = True
+                    button_dict['disabled_class'] = 'is-disabled'
+                opinion_choices.append(button_dict)
+
+            context['opinion_choices'] = opinion_choices
+            context['form'] = ReviewOpinionForm()
         return context
 
     def dispatch(self, request, *args, **kwargs):
@@ -129,12 +146,17 @@ class ReviewOpinionFormView(SingleObjectMixin, FormView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        form = self.get_form()
-        if form.is_valid():
-            review_opinion = form.save(commit=False)
-            review_opinion.author = self.request.user
-            review_opinion.review = self.object
-            review_opinion.save()
+        opinion = int(request.POST.get('opinion'))
+        # TODO: update_or_create is failing here for me, so I'm doing this the long way ...
+        existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
+        if existing_review:
+            existing_review.opinion = opinion
+            existing_review.save()
+        else:
+            ReviewOpinion.objects.create(
+                opinion=opinion,
+                author=self.request.user,
+                review=self.object)
 
         return super().post(request, *args, **kwargs)
 

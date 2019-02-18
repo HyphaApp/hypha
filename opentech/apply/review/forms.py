@@ -5,7 +5,6 @@ from opentech.apply.review.options import NA
 from opentech.apply.stream_forms.forms import StreamBaseForm
 
 from .models import Review, ReviewOpinion
-from .widgets import ButtonsAsSelectWidget
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -91,8 +90,4 @@ class ReviewOpinionForm(forms.ModelForm):
 
     class Meta:
         model = ReviewOpinion
-        fields = ('opinion',)
-
-        widgets = {
-            'opinion': ButtonsAsSelectWidget(),
-        }
+        fields = ()
