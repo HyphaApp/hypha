@@ -122,7 +122,6 @@ class ReviewDisplay(DetailView):
                 opinion_choices.append(button_dict)
 
             context['opinion_choices'] = opinion_choices
-            context['form'] = ReviewOpinionForm()
         return context
 
     def dispatch(self, request, *args, **kwargs):
