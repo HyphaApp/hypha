@@ -1,0 +1,9 @@
+{% for group_name, group_choices, group_index in widget.optgroups %}
+
+    {% if group_index %} {# Do not include the first blank option as a button #}
+        <button name="opinion" type="submit" value="{{ group_choices.0.value }}" class="button button--primary">
+            {{ group_choices.0.label }}
+        </button>
+    {% endif %}
+
+{% endfor %}
