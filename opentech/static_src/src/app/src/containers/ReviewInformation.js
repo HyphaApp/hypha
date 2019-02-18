@@ -2,20 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-import ReviewsBlock from '@components/ReviewsBlock'
+import ReviewBlock from '@components/ReviewBlock'
 import { getSubmissionOfID } from '@selectors/submissions'
 
-const ReviewInformation = ({ submission }) => {
-    return <ReviewsBlock submission={submission} />
+const ReviewInformation = ({ review }) => {
+    return <ReviewBlock review={review} />
 }
 
 ReviewInformation.propTypes = {
-    submission: PropTypes.object,
+    review: PropTypes.object,
     submissionID: PropTypes.number.isRequired,
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    submission: getSubmissionOfID(ownProps.submissionID)(state),
+    review: getSubmissionOfID(ownProps.submissionID)(state).review,
 })
 
 export default connect(mapStateToProps)(ReviewInformation)

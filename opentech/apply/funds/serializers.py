@@ -1,9 +1,9 @@
-from collections import OrderedDict
 import mistune
 from rest_framework import serializers
 from django_bleach.templatetags.bleach_tags import bleach_value
 
 from opentech.apply.activity.models import Activity
+from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from .models import ApplicationSubmission, RoundsAndLabs
 
 markdown = mistune.Markdown()
@@ -21,10 +21,15 @@ class ActionSerializer(serializers.Field):
 class ReviewSummarySerializer(serializers.Field):
     def to_representation(self, instance):
         reviews = instance.reviews.select_related('author')
+        recommendation = reviews.recommendation()
+
         return {
             'count': len(reviews),
             'score': reviews.score(),
-            'recommendation': reviews.recommendation(),
+            'recommendation': {
+                'value': recommendation,
+                'display': dict(RECOMMENDATION_CHOICES).get(recommendation)
+            },
             'reviews': [
                 {
                     'id': review.id,

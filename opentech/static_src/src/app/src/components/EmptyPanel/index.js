@@ -27,6 +27,10 @@ export default class EmptyPanel extends React.Component {
                 {column === 'applications' &&
                     <p>No results found.</p>
                 }
+
+                {column === 'reviews' &&
+                    <p>No reviews found</p>
+                }
             </div>
         )
     }
