@@ -206,3 +206,30 @@ class ReviewDetailTestCase(BaseViewTestCase):
         response = self.get_page(review)
         self.assertContains(response, submission.title)
         self.assertContains(response, "<p>Yes</p>")
+
+
+class StaffReviewOpinionCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+    def test_can_see_opinion_buttons_on_another_reviewers_review(self):
+        staff = StaffFactory()
+        review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
+        response = self.get_page(review)
+        self.assertContains(response, '<button name="opinion"')
+        self.assertIn('opinion_choices', response.context_data)
+
+    def test_cant_see_opinion_buttons_on_self_review(self):
+        review = ReviewFactory(submission=self.submission, author=self.user, recommendation_yes=True)
+        response = self.get_page(review)
+        self.assertNotContains(response, '<button name="opinion"')
+        self.assertNotIn('opinion_choices', response.context_data)
