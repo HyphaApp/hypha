@@ -9,6 +9,9 @@ import Select from '@components/Select'
 import { getSubmissionOfID } from '@selectors/submissions';
 import { redirect } from '@utils';
 
+import './ReactModal.scss';
+import './StatusActions.scss';
+
 class StatusActions extends React.Component {
     static propTypes = {
         submissionID: PropTypes.number.isRequired,
@@ -29,6 +32,25 @@ class StatusActions extends React.Component {
         modalVisible: false,
         statusSelectValue: '',
     }
+
+    customModalStyles = {
+        overlay: {
+            backgroundColor: 'rgba(30, 30, 30, 0.79)',
+            zIndex: '200',
+        },
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            transform: 'translate(-50%, -50%)',
+            width: '90%',
+            maxWidth: '650px',
+            padding: '0',
+            border: '0',
+            borderRadius: '0',
+        }
+    };
 
     openStatusModal = () => {
         this.setState({
@@ -80,18 +102,23 @@ class StatusActions extends React.Component {
         const { phase, executionActionError } = submission
 
         return (
-            <>
-                <button onClick={this.closeStatusModal}>[X]</button>
-                {executionActionError && <p>{executionActionError}</p>}
-                {phase && <div>Current status: {phase}</div>}
-                <Select
-                    onChange={statusSelectValue => this.setState({
-                        statusSelectValue
-                    })}
-                    options={submission.actions}
-                />
-                <button onClick={this.handleStatusChange} disabled={this.formDisabled}>Progress</button>
-            </>
+            <div className="react-modal">
+                <h4 className="react-modal__header-bar">Update status</h4>
+                <div className="react-modal__inner">
+                    <button className="react-modal__close" onClick={this.closeStatusModal}>&#10005;</button>
+                    {executionActionError && <p>{executionActionError}</p>}
+                    {phase && <p>Current status: {phase}</p>}
+                    <div className="form form__select">
+                        <Select
+                            onChange={statusSelectValue => this.setState({
+                                statusSelectValue
+                            })}
+                            options={submission.actions}
+                            />
+                    </div>
+                    <button className="button button--primary button--top-space" onClick={this.handleStatusChange} disabled={this.formDisabled}>Progress</button>
+                </div>
+            </div>
         );
     }
 
@@ -101,7 +128,7 @@ class StatusActions extends React.Component {
         if (submission === undefined || submission.actions === undefined) {
             return null;
         } else if (submission.actions.length === 0) {
-            return <button disabled={true}>Update status (no actions)</button>
+            return <button className="button button--primary button--full-width" disabled={true}>Update status (no actions)</button>
         }
 
         return (
@@ -109,10 +136,14 @@ class StatusActions extends React.Component {
                 <Modal isOpen={this.state.modalVisible}
                     onRequestClose={this.closeStatusModal}
                     contentLabel="Update status"
+                    style={this.customModalStyles}
                 >
                     {this.renderModal()}
                 </Modal>
-                <button onClick={this.openStatusModal}>Update status</button>
+
+                <div className="status-actions">
+                    <button className="button button--primary button--full-width" onClick={this.openStatusModal}>Update status</button>
+                </div>
             </>
         );
     }
