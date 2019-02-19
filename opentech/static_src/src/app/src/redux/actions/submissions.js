@@ -5,12 +5,20 @@ import api from '@api';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getCurrentStatusesSubmissions
+} from '@selectors/submissions';
+
+import {
+    getCurrentStatuses,
+    getSubmissionIDsForCurrentStatuses,
+} from '@selectors/statuses';
+
+import {
+    getRounds,
     getCurrentRoundID,
     getCurrentRound,
     getCurrentRoundSubmissionIDs,
-    getRounds,
-    getSubmissionsByGivenStatuses,
-} from '@selectors/submissions';
+} from '@selectors/rounds';
 
 
 // Round
@@ -31,9 +39,10 @@ export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
 
 // Submissions by statuses
-export const UPDATE_SUBMISSIONS_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
-export const START_LOADING_SUBMISSIONS_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
-export const FAIL_LOADING_SUBMISSIONS_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
+export const SET_CURRENT_STATUSES = "SET_CURRENT_STATUSES_FOR_SUBMISSIONS";
+export const UPDATE_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
+export const START_LOADING_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
+export const FAIL_LOADING_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
 
 // Submissions
 export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
@@ -143,31 +152,39 @@ const fetchSubmissionsByRound = (roundID) => ({
 })
 
 
-const fetchSubmissionsByStatuses = statuses => {
+export const setCurrentStatuses = (statuses) => (dispatch) => {
     if(!Array.isArray(statuses)) {
         throw new Error("Statuses have to be an array of statuses");
     }
 
+    return dispatch({
+        type: SET_CURRENT_STATUSES,
+        statuses,
+    });
+};
+
+
+const fetchSubmissionsByStatuses = (statuses) => {
     return {
         [CALL_API]: {
-            types: [ START_LOADING_SUBMISSIONS_BY_STATUSES, UPDATE_SUBMISSIONS_BY_STATUSES, FAIL_LOADING_SUBMISSIONS_BY_STATUSES],
+            types: [ START_LOADING_BY_STATUSES, UPDATE_BY_STATUSES, FAIL_LOADING_BY_STATUSES],
             endpoint: api.fetchSubmissionsByStatuses(statuses),
         },
         statuses,
     };
 };
 
-export const loadSubmissionsOfStatuses = statuses => (dispatch, getState) => {
+export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
     const state = getState()
-    const submissions = getSubmissionsByGivenStatuses(statuses)(state)
+    const submissions = getCurrentStatusesSubmissions(state)
 
     if ( submissions && submissions.length !== 0 ) {
         return null
     }
 
-    return dispatch(fetchSubmissionsByStatuses(statuses)).then(() => {
+    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state))).then(() => {
         const state = getState()
-        const ids = getSubmissionsByGivenStatuses(statuses)(state)
+        const ids = getSubmissionIDsForCurrentStatuses(state)
         if (!ids.includes(getCurrentSubmissionID(state))) {
             return dispatch(setCurrentSubmission(null))
         }

@@ -31,9 +31,7 @@ class SubmissionsByRoundApp extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setSubmissionRound: id => {
-            dispatch(setCurrentSubmissionRound(id));
-        },
+        setSubmissionRound: id => {dispatch(setCurrentSubmissionRound(id));},
     }
 };
 

@@ -9,12 +9,14 @@ import {
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
-    getCurrentRound,
-    getCurrentRoundID,
     getCurrentRoundSubmissions,
     getCurrentSubmissionID,
     getSubmissionsByRoundError,
 } from '@selectors/submissions';
+import {
+    getCurrentRound,
+    getCurrentRoundID,
+} from '@selectors/rounds';
 
 
 const loadData = props => {
