@@ -173,10 +173,6 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
 class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
     table_class = ReviewerSubmissionsTable
     filterset_class = SubmissionReviewerFilterAndSearch
-    form_views = [
-        BatchUpdateReviewersView,
-        BatchProgressSubmissionView,
-    ]
 
     def get_queryset(self):
         # Reviewers can only see submissions they have reviewed
@@ -252,6 +248,11 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, Del
     ]
 
     excluded_fields = ('round', 'lead', 'fund')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['round'] = self.obj
+        return kwargs
 
     def get_queryset(self):
         # We want to only show lab or Rounds in this view, their base class is Page

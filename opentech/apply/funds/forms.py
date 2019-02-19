@@ -6,7 +6,7 @@ from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
-from .workflow import ACTION_MAPPING
+from .workflow import get_action_mapping
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -29,10 +29,12 @@ class BatchProgressSubmissionForm(forms.Form):
     action = forms.ChoiceField(label='Take action')
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, round=None, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        choices = [(action, detail['display']) for action, detail in ACTION_MAPPING.items()]
+        workflow = round and round.workflow
+        self.action_mapping = get_action_mapping(workflow)
+        choices = [(action, detail['display']) for action, detail in self.action_mapping.items()]
         self.fields['action'].choices = choices
 
     def clean_submissions(self):
@@ -42,7 +44,7 @@ class BatchProgressSubmissionForm(forms.Form):
 
     def clean_action(self):
         value = self.cleaned_data['action']
-        action = ACTION_MAPPING[value]['transitions']
+        action = self.action_mapping[value]['transitions']
         return action
 
 
@@ -221,8 +223,7 @@ class BatchUpdateReviewersForm(forms.Form):
     )
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop('user')
+    def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean_submissions(self):

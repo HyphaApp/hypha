@@ -45,11 +45,12 @@ class DelegatableBase(ContextMixin):
     """
     form_prefix = 'form-submitted-'
 
-    def get_form_args(self):
-        return (None, None)
+    def get_form_kwargs(self):
+        return {}
 
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(*self.get_form_args()) for form_view in self.form_views)
+        form_kwargs = self.get_form_kwargs()
+        forms = dict(form_view.contribute_form(**form_kwargs) for form_view in self.form_views)
 
         return super().get_context_data(
             form_prefix=self.form_prefix,
@@ -71,8 +72,11 @@ class DelegatableBase(ContextMixin):
 
 
 class DelegateableView(DelegatableBase):
-    def get_form_args(self):
-        return self.object, self.request.user
+    def get_form_kwargs(self):
+        return {
+            'user': self.request.user,
+            'instance': self.object,
+        }
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -83,8 +87,10 @@ class DelegateableView(DelegatableBase):
 
 
 class DelegateableListView(DelegatableBase):
-    def get_form_args(self):
-        return None, self.request.user
+    def get_form_kwargs(self):
+        return {
+            'user': self.request.user,
+        }
 
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -119,11 +125,8 @@ class DelegatedViewMixin(View):
         return issubclass(cls.form_class, ModelForm)
 
     @classmethod
-    def contribute_form(cls, submission, user):
-        if cls.is_model_form():
-            form = cls.form_class(instance=submission, user=user)
-        else:
-            form = cls.form_class(user=user)
+    def contribute_form(cls, **kwargs):
+        form = cls.form_class(**kwargs)
         form.name = cls.context_name
         return cls.context_name, form
 
