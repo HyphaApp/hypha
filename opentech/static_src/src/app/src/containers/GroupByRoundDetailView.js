@@ -46,7 +46,7 @@ class GroupByRoundDetailView extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     isErrored: getRoundsErrored(state),
-    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state),
+    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state) ? "Something went wrong" : "",
     isLoading: (
         getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
         getRoundsFetching(state)
