@@ -385,7 +385,6 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
