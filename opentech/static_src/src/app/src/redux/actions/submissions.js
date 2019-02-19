@@ -103,6 +103,7 @@ export const loadRounds = () => (dispatch, getState) => {
     return dispatch(fetchRounds())
 }
 
+
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentRoundSubmissionIDs(state)
@@ -168,7 +169,13 @@ export const loadSubmissionsOfStatuses = statuses => (dispatch, getState) => {
         return null
     }
 
-    return dispatch(fetchSubmissionsByStatuses(statuses))
+    return dispatch(fetchSubmissionsByStatuses(statuses)).then(() => {
+        const state = getState()
+        const ids = getSubmissionsByGivenStatuses(statuses)(state)
+        if (!ids.includes(getCurrentSubmissionID(state))) {
+            return dispatch(setCurrentSubmission(null))
+        }
+    })
 }
 
 const fetchSubmission = (submissionID) => ({
