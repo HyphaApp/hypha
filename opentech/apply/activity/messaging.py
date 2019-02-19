@@ -295,6 +295,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
@@ -307,6 +308,12 @@ class SlackAdapter(AdapterBase):
         super().__init__()
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
+
+    def slack_links(self, links, submissions):
+        return ', '.join(
+            f'<{links[submission.id]}|{submission.title}>'
+            for submission in submissions
+        )
 
     def extra_kwargs(self, message_type, **kwargs):
         submission = kwargs['submission']
@@ -349,10 +356,7 @@ class SlackAdapter(AdapterBase):
         return ' '.join(message)
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
-        submissions_text = ', '.join(
-            f'<{links[submission.id]}|{submission.title}>'
-            for submission in submissions
-        )
+        submissions_text = self.slack_links(links, submissions)
         reviewers_text = ', '.join([str(user) for user in added])
         return (
             '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
@@ -361,6 +365,23 @@ class SlackAdapter(AdapterBase):
                 reviewers_text=reviewers_text,
             )
         )
+
+    def handle_batch_transition(self, user, links, submissions, transitions, **kwargs):
+        submissions_text = [
+            ': '.join([
+                self.slack_links(links, [submission]),
+                f'{transitions[submission.phase].display_name} → {submission.phase}',
+            ])
+            for submission in submissions
+        ]
+        submissions_links = ','.join(submissions_text)
+        return (
+            '{user} has transitioned the following submissions: {submissions_links}'.format(
+                user=user,
+                submissions_links=submissions_links,
+            )
+        )
+
 
     def notify_reviewers(self, submission, **kwargs):
         reviewers_to_notify = []
