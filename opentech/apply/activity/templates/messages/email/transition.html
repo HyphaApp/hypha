@@ -1,3 +1,3 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% block content %}Your application has been progressed from {{ old_phase.display_name }} to {{ submission.phase }}.{% endblock %}
+{% block content %}Your application has been progressed from {{ old_phase.public_name }} to {{ submission.phase.public_name }}.{% endblock %}
