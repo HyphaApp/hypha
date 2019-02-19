@@ -9,15 +9,17 @@ import {
     getRoundsErrored,
 } from '@selectors/rounds';
 import {
-    getByGivenStatusesLoading,
-    getByGivenStatusesError,
-    getCurrentRoundSubmissions,
+    getCurrentStatusesSubmissions,
     getCurrentSubmissionID,
 } from '@selectors/submissions';
+import {
+    getByStatusesLoading,
+    getByStatusesError,
+} from '@selectors/statuses';
+
 
 class GroupByRoundDetailView extends React.Component {
     static propTypes = {
-        submissionStatuses: PropTypes.arrayOf(PropTypes.string),
         submissions: PropTypes.arrayOf(PropTypes.object),
         submissionID: PropTypes.number,
         isLoading: PropTypes.bool,
@@ -26,7 +28,6 @@ class GroupByRoundDetailView extends React.Component {
     };
 
     render() {
-        const listing = <ByRoundListing submissionStatuses={this.props.submissionStatuses} />;
         const { isLoading, isErrored, submissions, submissionID, errorMessage } = this.props;
         const isEmpty = submissions.length === 0;
         const activeSubmision = !!submissionID;
@@ -34,24 +35,22 @@ class GroupByRoundDetailView extends React.Component {
         return (
             <DetailView
                 isEmpty={isEmpty}
-                listing={listing}
+                listing={<ByRoundListing />}
                 isLoading={isLoading}
                 showSubmision={activeSubmision}
                 isErrored={isErrored}
-                errorMessage={errorMessage || 'Fetching failed.'}
+                errorMessage={isErrored ? "Something went wrong" : ""}
             />
         );
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    isErrored: getRoundsErrored(state),
-    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state) ? "Something went wrong" : "",
+    isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
-        getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
-        getRoundsFetching(state)
+        getByStatusesLoading(state) || getRoundsFetching(state)
     ),
-    submissions: getCurrentRoundSubmissions(state),
+    submissions: getCurrentStatusesSubmissions(state),
     submissionID: getCurrentSubmissionID(state),
 })
 
