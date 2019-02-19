@@ -4,12 +4,15 @@ import PropTypes from 'prop-types'
 import { MESSAGE_TYPES } from '@actions/messages'
 
 const MessageBar = ({ message, type, onDismiss }) => {
+    const modifierClass = type ? `messages__text--${type}` : '';
 
     return (
-        <div className={type}>
-            <p>{message}</p>
-            {onDismiss && <button onClick={onDismiss}>[X]</button>}
-        </div>
+        <li className={`messages__text ${modifierClass}`}>
+            <div className="messages__inner">
+                <p className="messages__copy">{message}</p>
+                {onDismiss && <button className="messages__button" onClick={onDismiss}>Ok</button>}
+            </div>
+        </li>
     )
 }
 
