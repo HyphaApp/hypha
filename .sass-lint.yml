@@ -15,6 +15,7 @@ rules:
     - 2
     - exclude:
       - 'media-query'
+      - 'target-ie11'
 
   # Line Spacing
   one-declaration-per-line: 2
