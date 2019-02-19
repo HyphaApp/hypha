@@ -46,7 +46,7 @@ export default class GroupedListing extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        const propsToCheck = ['items', 'isLoading', 'isErrored']
+        const propsToCheck = ['items', 'isLoading', 'isErrored', 'activeItem']
         if ( propsToCheck.some(prop => nextProps[prop] !== this.props[prop])) {
             return true
         }
@@ -63,11 +63,10 @@ export default class GroupedListing extends React.Component {
         }
 
         if ( this.props.shouldSelectFirst ){
-            const oldItem = prevProps.activeItem
             const newItem = this.props.activeItem
 
-            // If we have never activated a submission, get the first item
-            if ( !newItem && !oldItem ) {
+            // If we dont have an active item, then get one
+            if ( !newItem ) {
                 const firstGroup = this.state.orderedItems[0]
                 if ( firstGroup && firstGroup.items[0] ) {
                     this.setState({firstUpdate: false})
