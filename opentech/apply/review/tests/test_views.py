@@ -226,19 +226,19 @@ class StaffReviewOpinionCase(BaseViewTestCase):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
         response = self.get_page(review)
-        self.assertContains(response, '<button name="opinion"')
+        self.assertContains(response, '<button name="agree"')
         self.assertIn('opinion_choices', response.context_data)
 
     def test_cant_see_opinion_buttons_on_self_review(self):
         review = ReviewFactory(submission=self.submission, author=self.user, recommendation_yes=True)
         response = self.get_page(review)
-        self.assertNotContains(response, '<button name="opinion"')
+        self.assertNotContains(response, '<button name="agree"')
         self.assertNotIn('opinion_choices', response.context_data)
 
     def test_can_add_opinion_to_others_review(self):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
-        self.post_page(review, {'opinion': AGREE})
+        self.post_page(review, {'agree': AGREE})
         self.assertTrue('agrees' in Activity.objects.first().message)
         self.assertEqual(ReviewOpinion.objects.all().count(), 1)
         self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)

@@ -145,31 +145,33 @@ class ReviewOpinionFormView(SingleObjectMixin, FormView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        opinion = int(request.POST.get('opinion'))
-        # TODO: update_or_create is failing here for me, so I'm doing this the long way ...
-        existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
-        if existing_review:
-            existing_review.opinion = opinion
-            existing_review.save()
-        else:
-            ReviewOpinion.objects.create(
-                opinion=opinion,
-                author=self.request.user,
-                review=self.object)
+        form = self.get_form()
+        if form.is_valid():
+            opinion = form.cleaned_data['opinion']
+            # TODO: update_or_create is failing here for me, so I'm doing this the long way ...
+            existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
+            if existing_review:
+                existing_review.opinion = opinion
+                existing_review.save()
+            else:
+                ReviewOpinion.objects.create(
+                    opinion=opinion,
+                    author=self.request.user,
+                    review=self.object)
 
-        if opinion == AGREE:
-            opinion_verb = 'agrees'
-        else:
-            opinion_verb = 'disagrees'
-        messenger(
-            MESSAGES.REVIEW_OPINION,
-            request=self.request,
-            user=self.request.user,
-            opinion_verb=opinion_verb,
-            reviewer=self.object.author,
-            submission=self.object.submission,
-            related=self.object,
-        )
+            if opinion == AGREE:
+                opinion_verb = 'agrees'
+            else:
+                opinion_verb = 'disagrees'
+            messenger(
+                MESSAGES.REVIEW_OPINION,
+                request=self.request,
+                user=self.request.user,
+                opinion_verb=opinion_verb,
+                reviewer=self.object.author,
+                submission=self.object.submission,
+                related=self.object,
+            )
 
         return super().post(request, *args, **kwargs)
 

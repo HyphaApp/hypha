@@ -87,7 +87,12 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
 
 class ReviewOpinionForm(forms.ModelForm):
+    agree = forms.IntegerField()
 
     class Meta:
         model = ReviewOpinion
         fields = ()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['opinion'] = cleaned_data['agree']
