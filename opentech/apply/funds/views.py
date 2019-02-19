@@ -303,11 +303,12 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
 
     def dispatch(self, request, *args, **kwargs):
         self.status = kwargs.get('status')
-        status_data = self.status_mapping[self.status]
+        try:
+            status_data = self.status_mapping[self.status]
+        except KeyError:
+            raise Http404(_("No statuses match the requested value"))
         self.status_name = status_data['name']
         self.statuses = status_data['statuses']
-        if self.status not in self.status_mapping:
-            raise Http404(_("No statuses match the requested value"))
         return super().dispatch(request, *args, **kwargs)
 
     def get_filterset_kwargs(self, filterset_class, **kwargs):

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
+import useInterval from '@rooks/use-interval'
+import pick from 'lodash.pick'
+import isEqual from 'lodash.isequal'
 
 import { loadCurrentSubmission } from '@actions/submissions'
 import {
@@ -10,34 +13,85 @@ import {
 import SubmissionDisplay from '@components/SubmissionDisplay';
 
 const loadData = props => {
-    props.loadCurrentSubmission(['questions'])
+    return props.loadCurrentSubmission(['questions'], { bypassCache: true })
+}
+
+const hasSubmissionUpdated = (prevSubmission, submission) => {
+    const KEYS_MONITORED = ['metaQuestions', 'questions', 'stage']
+    const pickKeys = obj => pick(obj, KEYS_MONITORED)
+    return !isEqual(...[submission, prevSubmission].map(v => pickKeys(v)))
 
 }
 
-class CurrentSubmissionDisplay extends React.Component {
-    static propTypes = {
-        submission: PropTypes.object,
-        submissionID: PropTypes.number,
-    }
+const  CurrentSubmissionDisplay = props => {
+    const { submission, submissionID } = props
 
-    componentDidMount() {
-        loadData(this.props)
-    }
+    const { start, stop } = useInterval(() => loadData(props), 2000)
 
-    componentDidUpdate(prevProps) {
-        if (this.props.submissionID !== prevProps.submissionID ) {
-            loadData(this.props)
+    const [initialSubmissionLoaded, setInitialSubmissionLoaded] = useState(false)
+    const [localSubmission, setSubmission] = useState(undefined);
+    const [submissionUpdated, setSubmissionUpdated] = useState(false);
+
+    // Load newly selected submission.
+    useEffect(() => {
+        setInitialSubmissionLoaded(false)
+        setSubmissionUpdated(false)
+        setSubmission(undefined)
+        loadData(props)
+        start()
+
+        return () => stop()
+    }, [submissionID])
+
+    // Determine if the submission has been updated by someone else.
+    useEffect(() => {
+        if (!submission || !submission.questions || submission.isFetching) {
+            return;
         }
+
+        if (!initialSubmissionLoaded) {
+            setInitialSubmissionLoaded(true)
+            setSubmission(submission)
+            setSubmissionUpdated(false)
+        } else if (hasSubmissionUpdated(localSubmission, submission)) {
+            setSubmissionUpdated(true)
+        }
+    }, [submission])
+
+    const handleUpdateSubmission = () => {
+        setSubmission(submission)
+        setSubmissionUpdated(false)
     }
 
-    render () {
-        const { submission } = this.props
-        return <SubmissionDisplay
-                    submission={submission}
-                    isLoading={!submission || submission.isFetching}
-                    isError={submission && submission.isErrored} />
+    if ( !localSubmission ) {
+        return <p>Loading</p>
     }
 
+    const renderUpdatedMessage = () =>{
+        if (!submissionUpdated) {
+            return null
+        }
+        const msg = (
+            'The contents of this application have been changed by someone ' +
+            ' else.'
+        )
+        return <p>
+            {msg} <button onClick={handleUpdateSubmission}>Refresh</button>
+        </p>
+    }
+
+    return <>
+        {renderUpdatedMessage()}
+        <SubmissionDisplay
+                submission={localSubmission}
+                isLoading={!localSubmission || localSubmission.isFetching}
+                isError={localSubmission && localSubmission.isErrored} />
+    </>
+}
+
+CurrentSubmissionDisplay.propTypes = {
+    submission: PropTypes.object,
+    submissionID: PropTypes.number,
 }
 
 const mapStateToProps = state => ({
@@ -45,5 +99,9 @@ const mapStateToProps = state => ({
     submission: getCurrentSubmission(state),
 })
 
+const mapDispatchToProps = dispatch => ({
+    loadCurrentSubmission: (fields, options) => dispatch(loadCurrentSubmission(fields, options))
+})
 
-export default connect(mapStateToProps, {loadCurrentSubmission})(CurrentSubmissionDisplay)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentSubmissionDisplay)

@@ -246,14 +246,14 @@ const fetchSubmission = (submissionID) => ({
     submissionID,
 })
 
-export const loadCurrentSubmission = (requiredFields=[]) => (dispatch, getState) => {
+export const loadCurrentSubmission = (requiredFields=[], { bypassCache = false }) => (dispatch, getState) => {
     const submissionID = getCurrentSubmissionID(getState())
     if ( !submissionID ) {
         return null
     }
     const submission = getCurrentSubmission(getState())
 
-    if (submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
+    if (!bypassCache && submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
         return null
     }
 
