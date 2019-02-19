@@ -8,6 +8,7 @@ class MESSAGES(Enum):
     NEW_SUBMISSION = 'New Submission'
     SCREENING = 'Screening'
     TRANSITION = 'Transition'
+    BATCH_TRANSITION = 'Batch Transition'
     DETERMINATION_OUTCOME = 'Determination Outcome'
     INVITED_TO_PROPOSAL = 'Invited To Proposal'
     REVIEWERS_UPDATED = 'Reviewers Updated'

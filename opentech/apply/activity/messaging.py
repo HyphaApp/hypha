@@ -44,6 +44,7 @@ neat_related = {
     MESSAGES.UPDATE_LEAD: 'old_lead',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
+    MESSAGES.BATCH_TRANSITION: 'transitions',
     MESSAGES.APPLICANT_EDIT: 'revision',
     MESSAGES.EDIT: 'revision',
     MESSAGES.COMMENT: 'comment',
@@ -182,6 +183,7 @@ class ActivityAdapter(AdapterBase):
     always_send = True
     messages = {
         MESSAGES.TRANSITION: 'handle_transition',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
@@ -248,6 +250,12 @@ class ActivityAdapter(AdapterBase):
             })
 
         return staff_message
+
+    def handle_batch_transition(self, transitions, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            old_phase = transitions[submission.phase]
+            return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
 
     def send_message(self, message, user, submission, submissions, **kwargs):
         from .models import Activity, PUBLIC

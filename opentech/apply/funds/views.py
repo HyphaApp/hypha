@@ -136,20 +136,37 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
         transitions = form.cleaned_data.get('action')
 
         failed = []
+        phase_changes = {}
         for submission in submissions:
             valid_actions = {action for action, _ in submission.get_actions_for_user(self.request.user)}
-            transition = (valid_actions & set(transitions)).pop()
             try:
-                submission.perform_transition(transition, self.request.user, request=self.request)
-            except PermissionDenied:
+                transition = (valid_actions & set(transitions)).pop()
+                submission.perform_transition(
+                    transition,
+                    self.request.user,
+                    request=self.request,
+                    notify=False,
+                )
+            except (PermissionDenied, KeyError):
                 failed.append(submission)
+            else:
+                phase_changes[submission.phase] = transitions[transition]
 
         if failed:
             messages.warning(
                 self.request,
-                _('You do no have permission to do that to: ') +
+                _('Failed to update: ') +
                 ', '.join(str(submission) for submission in failed)
             )
+
+        messenger(
+            MESSAGES.BATCH_TRANSITION,
+            user=self.request.user,
+            request=self.request,
+            submissions=submissions.exclude(id__in=[submission.id for submission in failed]),
+            related=phase_changes,
+        )
+
         return super().form_valid(form)
 
 

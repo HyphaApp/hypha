@@ -735,14 +735,13 @@ def get_determination_transitions():
 
 def get_actions_mapping():
     # Maps action names to the phase they originate from
-    transitions = defaultdict(lambda: {'display': '', 'phases': []})
+    transitions = defaultdict(lambda: {'display': '', 'transitions': {}})
     for phase_name, phase in PHASES:
         for transition_name, transition in phase.transitions.items():
             transition_display = transition['display']
             transition_key = slugify(transition_display)
-            transitions[transition_key].setdefault('transitions', []).append(transition_name)
+            transitions[transition_key]['transitions'][transition_name] = phase
             transitions[transition_key]['display'] = transition_display
-            transitions[transition_key]['phases'].append(phase_name)
 
     return transitions
 
