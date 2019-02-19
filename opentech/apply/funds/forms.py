@@ -27,12 +27,18 @@ class ProgressSubmissionForm(forms.ModelForm):
 
 class BatchProgressSubmissionForm(forms.Form):
     action = forms.ChoiceField(label='Take action')
+    submissions = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         choices = [(action, detail['display']) for action, detail in ACTION_MAPPING.items()]
         self.fields['action'].choices = choices
+
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
 
 class ScreeningSubmissionForm(forms.ModelForm):

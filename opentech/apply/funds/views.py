@@ -27,7 +27,6 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.models import User
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
@@ -133,7 +132,12 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
     context_name = 'batch_progress_form'
 
     def form_valid(self, form):
-        print('wooooop')
+        submissions = form.cleaned_data['submissions']
+        action = form.cleaned_data.get('action')
+
+        for submission in submissions:
+            self.submission.perform_transition(action, self.request.user, request=self.request)
+
         return super().form_valid(form)
 
 
