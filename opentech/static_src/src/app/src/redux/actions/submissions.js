@@ -50,8 +50,20 @@ export const setCurrentSubmissionRound = id => ({
     id,
 });
 
+
+export const loadSubmissionFromURL = () => (dispatch, getState) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('submission')) {
+        const activeId = Number(urlParams.get('submission'));
+        return dispatch(setCurrentSubmission(activeId));
+    }
+    return null;
+}
+
+
 export const setCurrentSubmission = id => (dispatch, getState) => {
     const submissionID = getCurrentSubmissionID(getState())
+
     if (id && submissionID !== id) {
         dispatch(push(`?submission=${id}`));
     } else if (!id) {

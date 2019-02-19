@@ -3,29 +3,33 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 
 import Switcher from '@components/Switcher';
-import { setCurrentSubmission } from '@actions/submissions';
+import { loadSubmissionFromURL } from '@actions/submissions';
 
 class SwitcherApp extends React.Component {
     static propTypes = {
         pageContent: PropTypes.node.isRequired,
         detailComponent: PropTypes.node.isRequired,
         switcherSelector: PropTypes.string.isRequired,
-        setCurrentItem: PropTypes.func,
+        startOpen: PropTypes.bool,
+        processParams: PropTypes.func.isRequired,
+    };
+
+    state = {
+        detailOpened: false,
+        mounting: true,
     };
 
     componentDidMount() {
-        const urlParams = new URLSearchParams(window.location.search);
+        this.setState({
+            mounting: false
+        })
 
-        if (urlParams.has('submission')) {
-            this.openDetail();
-
-            // pass in method to this.setActive
-            const activeId = Number(urlParams.get('submission'));
-            this.props.setCurrentItem(activeId);
+        const success = this.props.processParams()
+        if (success) {
+            this.openDetail()
         }
-    }
 
-    state = { detailOpened: false };
+    }
 
     openDetail = () => {
         document.body.classList.add('app-open');
@@ -48,6 +52,9 @@ class SwitcherApp extends React.Component {
     }
 
     render() {
+        if ( this.state.mounting ) {
+            return null
+        }
         return (
             <>
                 <Switcher selector={this.props.switcherSelector} open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
@@ -61,7 +68,7 @@ class SwitcherApp extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    setCurrentItem: id => dispatch(setCurrentSubmission(id)),
+    processParams: id => dispatch(loadSubmissionFromURL()),
 });
 
 export default connect(null, mapDispatchToProps)(SwitcherApp);
