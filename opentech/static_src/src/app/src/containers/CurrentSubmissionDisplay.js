@@ -26,7 +26,7 @@ const hasSubmissionUpdated = (prevSubmission, submission) => {
 const  CurrentSubmissionDisplay = props => {
     const { submission, submissionID } = props
 
-    const { start, stop } = useInterval(() => loadData(props), 2000)
+    const { start, stop } = useInterval(() => loadData(props), 30000)
 
     const [initialSubmissionLoaded, setInitialSubmissionLoaded] = useState(false)
     const [localSubmission, setSubmission] = useState(undefined);
