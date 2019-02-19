@@ -458,6 +458,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.EDIT: 'messages/email/edit.html',
         MESSAGES.TRANSITION: 'messages/email/transition.html',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
@@ -476,6 +477,17 @@ class EmailAdapter(AdapterBase):
             'subject': self.get_subject(message_type, submission),
         }
 
+    def handle_batch_transition(self, transitions, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            old_phase = transitions[submission.phase]
+            return self.render_message(
+                'messages/email/transition.html',
+                submission=submission,
+                old_phase=old_phase,
+                **kwargs
+            )
+
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
         submission = kwargs['submission']
@@ -486,7 +498,7 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.READY_FOR_REVIEW:
             return self.reviewers(submission)
 
-        if message_type == MESSAGES.TRANSITION:
+        if message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]:
             # Only notify the applicant if the new phase can be seen within the workflow
             if not submission.phase.permissions.can_view(submission.user):
                 return []
