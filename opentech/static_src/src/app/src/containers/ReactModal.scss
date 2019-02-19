@@ -1,0 +1,55 @@
+.react-modal {
+    position: relative;
+
+    &__header-bar {
+        color: $color--white;
+        background-color: $color--dark-blue;
+        padding: 1rem;
+        text-align: center;
+        margin: 0;
+    }
+
+    &__inner {
+        padding: 1.5rem;
+
+        p {
+            margin: 0 0 1rem;
+        }
+    }
+
+    &__close {
+        position: absolute;
+        top: .5rem;
+        right: .5rem;
+        appearance: none;
+        color: $color--white;
+        background: none;
+        border: 0;
+        font-weight: $weight--bold;
+        font-size: 1.5rem;
+        background-color: transparent;
+        transition: background-color $quick-transition, color $quick-transition;
+        border-radius: 50%;
+
+        &:hover,
+        &:focus {
+            cursor: pointer;
+            background-color: $color--white;
+            color: $color--default;
+        }
+    }
+}
+
+// sass-lint:disable-all
+.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity $transition;
+}
+
+.ReactModal__Overlay--after-open {
+    opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+    opacity: 0;
+}
