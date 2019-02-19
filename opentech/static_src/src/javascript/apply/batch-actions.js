@@ -7,6 +7,7 @@
     const $allCheckboxInput = $('.js-batch-select-all');
     const $batchButtons = $('.js-batch-button');
     const $batchProgress = $('.js-batch-progress');
+    const $actionOptions = $('#id_action option');
     const $batchTitlesList = $('.js-batch-titles');
     const $batchTitleCount = $('.js-batch-title-count');
     const $hiddenIDlist = $('#id_submission_ids');
@@ -33,6 +34,7 @@
 
         toggleBatchActions();
         updateCount();
+        updateProgressButton();
     });
 
     $checkbox.change(function () {
@@ -46,6 +48,8 @@
         if (!$(this).is(':checked') && $allCheckboxInput.is(':checked')) {
             resetCheckAllInput();
         }
+
+        updateProgressButton();
     });
 
     // append selected project titles to batch update reviewer modal
@@ -56,20 +60,7 @@
     });
 
     $batchProgress.click(function () {
-        const $actionOptions = $('#id_action option');
-        var actions = $actionOptions.map(function() { return this.value; }).get();
-        $checkbox.filter(':checked').each(function () {
-            let newActions = $(this).parents('tr').find('.js-actions').data('actions');
-            actions = actions.filter(action => newActions.includes(action));
-        });
-        $actionOptions.each(function() {
-            if (!actions.includes(this.value)) {
-                $(this).attr("disabled", "disabled");
-            } else {
-                $(this).removeAttr("disabled");
-            }
-        });
-        $actionOptions.filter(':enabled:first').prop('selected', true);;
+        updateProgressButton();
     });
 
     // show/hide the list of actions
@@ -110,6 +101,30 @@
         $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
         $hiddenIDlist.val(selectedIDs.join(','));
     }
+
+    function updateProgressButton() {
+        var actions = $actionOptions.map(function () { return this.value; }).get();
+        $checkbox.filter(':checked').each(function () {
+            let newActions = $(this).parents('tr').find('.js-actions').data('actions');
+            actions = actions.filter(action => newActions.includes(action));
+        });
+        $actionOptions.each(function () {
+            if (!actions.includes(this.value)) {
+                $(this).attr('disabled', 'disabled');
+            }
+            else {
+                $(this).removeAttr('disabled');
+            }
+        });
+        $actionOptions.filter(':enabled:first').prop('selected', true);
+        if (actions.length === 0) {
+            $batchProgress.attr('disabled', 'disabled');
+        }
+        else {
+            $batchProgress.removeAttr('disabled');
+        }
+    }
+
 
     function toggleBatchActions() {
         if ($('.js-batch-select:checked').length) {
