@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import EmptyPanel from '@components/EmptyPanel';
-
 const Review = ({ review }) => {
     const { reviewUrl, author, score, recommendation } = review
 
@@ -29,7 +27,7 @@ Review.propTypes = {
 const ReviewBlock = ({ review }) => {
     const renderReviews = () => {
         if (review.reviews.length === 0) {
-            return <EmptyPanel column="reviews" />
+            return <p>No reviews found.</p>
         }
 
         return review.reviews.map(review =>
