@@ -54,7 +54,7 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING
+from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
@@ -168,6 +168,18 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
             submissions=succeeded_submissions,
             related=phase_changes,
         )
+
+        ready_for_review = [
+            phase for phase in transitions
+            if phase in review_statuses
+        ]
+        if ready_for_review:
+            messenger(
+                MESSAGES.BATCH_READY_FOR_REVIEW,
+                user=self.request.user,
+                request=self.request,
+                submissions=succeeded_submissions.filter(status__in=ready_for_review),
+            )
 
         return super().form_valid(form)
 

@@ -1,0 +1,12 @@
+{% extends "messages/email/base.html" %}
+{% block salutation %}Dear Reviewer,{% endblock %}
+
+{% block content %}
+New proposals have been added to your review list.
+{% for submission in submissions %}
+
+Title: {{ submission.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% endfor %}
+
+{% endblock %}

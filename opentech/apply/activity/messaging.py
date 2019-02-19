@@ -304,6 +304,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
+        MESSAGES.READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>'
     }
 
@@ -403,6 +404,13 @@ class SlackAdapter(AdapterBase):
             )
         )
 
+    def batch_notify_reviewers(self, submissions, **kwargs):
+        kwargs.pop('submission')
+        return '. '.join(
+            self.notify_reviewers(submission, **kwargs)
+            for submission in submissions
+        )
+
     def slack_id(self, user):
         if user.slack:
             return f'<{user.slack}>'
@@ -463,6 +471,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
+        MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
     }
 
@@ -505,6 +514,24 @@ class EmailAdapter(AdapterBase):
             if not submission.phase.permissions.can_view(submission.user):
                 return []
         return [submission.user.email]
+
+    def batch_recipients(self, message_type, submissions, **kwargs):
+        if message_type != MESSAGES.READY_FOR_REVIEW:
+            return super().batch_recipients(message_type, submissions, **kwargs)
+
+        reviewers_to_message = defaultdict(list)
+        for submission in submissions:
+            reviewers = self.reviewers(submission)
+            for reviewer in reviewers:
+                reviewers_to_message[reviewer].append(submission)
+
+        return [
+            {
+                'recipients': [reviewer],
+                'submissions': submissions,
+            } for reviewer, submissions in reviewers_to_message.items()
+        ]
+
 
     def reviewers(self, submission):
         return [
