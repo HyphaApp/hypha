@@ -403,6 +403,10 @@
         margin-bottom: .2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
+
+        .modal--update-reviewers & {
+            margin-bottom: 1rem;
+        }
     }
 
     .address {
