@@ -1,6 +1,6 @@
 {% load review_tags %}
 <table class="reviews-sidebar js-reviews-sidebar">
-    {% if top_reviews %}
+    {% if reviews_exist %}
         <tr class="tr tr--subchild light-grey-bg">
             <th colspan="2"></th>
             <th>{{ recommendation|traffic_light }}</th>
@@ -8,7 +8,7 @@
         </tr>
     {% endif %}
 
-    {% if not reviews_exist %}
+    {% if not assigned_staff %}
         <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
     {% endif %}
 

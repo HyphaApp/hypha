@@ -690,6 +690,10 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def without_roles(self):
         return self.filter(role__isnull=True)
 
+    def staff(self):
+        User = get_user_model()
+        return self.filter(reviewer__in=User.objects.staff())
+
 
 class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
