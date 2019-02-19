@@ -738,9 +738,10 @@ def get_actions_mapping():
     transitions = defaultdict(lambda: {'display': '', 'phases': []})
     for phase_name, phase in PHASES:
         for transition_name, transition in phase.transitions.items():
-            transition_name = transition['display']
-            transition_key = slugify(transition_name)
-            transitions[transition_key]['display'] = transition_name
+            transition_display = transition['display']
+            transition_key = slugify(transition_display)
+            transitions[transition_key].setdefault('transitions', []).append(transition_name)
+            transitions[transition_key]['display'] = transition_display
             transitions[transition_key]['phases'].append(phase_name)
 
     return transitions

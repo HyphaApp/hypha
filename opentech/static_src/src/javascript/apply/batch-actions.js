@@ -10,7 +10,7 @@
     const $actionOptions = $('#id_action option');
     const $batchTitlesList = $('.js-batch-titles');
     const $batchTitleCount = $('.js-batch-title-count');
-    const $hiddenIDlist = $('#id_submissions');
+    const $hiddenIDlist = $('.js-submissions-id');
     const $toggleBatchList = $('.js-toggle-batch-list');
     const activeClass = 'batch-actions-enabled';
     const closedClass = 'is-closed';

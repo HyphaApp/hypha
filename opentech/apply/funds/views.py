@@ -133,11 +133,23 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        action = form.cleaned_data.get('action')
+        transitions = form.cleaned_data.get('action')
 
+        failed = []
         for submission in submissions:
-            self.submission.perform_transition(action, self.request.user, request=self.request)
+            valid_actions = {action for action, _ in submission.get_actions_for_user(self.request.user)}
+            transition = (valid_actions & set(transitions)).pop()
+            try:
+                submission.perform_transition(transition, self.request.user, request=self.request)
+            except PermissionDenied:
+                failed.append(submission)
 
+        if failed:
+            messages.warning(
+                self.request,
+                _('You do no have permission to do that to: ') +
+                ', '.join(str(submission) for submission in failed)
+            )
         return super().form_valid(form)
 
 

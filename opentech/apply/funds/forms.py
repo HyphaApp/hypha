@@ -27,7 +27,7 @@ class ProgressSubmissionForm(forms.ModelForm):
 
 class BatchProgressSubmissionForm(forms.Form):
     action = forms.ChoiceField(label='Take action')
-    submissions = forms.CharField(widget=forms.HiddenInput())
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -39,6 +39,11 @@ class BatchProgressSubmissionForm(forms.Form):
         value = self.cleaned_data['submissions']
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    def clean_action(self):
+        value = self.cleaned_data['action']
+        action = ACTION_MAPPING[value]['transitions']
+        return action
 
 
 class ScreeningSubmissionForm(forms.ModelForm):
@@ -214,7 +219,7 @@ class BatchUpdateReviewersForm(forms.Form):
         queryset=User.objects.staff(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
     )
-    submissions = forms.CharField(widget=forms.HiddenInput())
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
