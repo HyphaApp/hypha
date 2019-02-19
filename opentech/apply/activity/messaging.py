@@ -532,7 +532,6 @@ class EmailAdapter(AdapterBase):
             } for reviewer, submissions in reviewers_to_message.items()
         ]
 
-
     def reviewers(self, submission):
         return [
             reviewer.email
