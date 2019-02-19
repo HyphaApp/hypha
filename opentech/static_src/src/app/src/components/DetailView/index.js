@@ -7,16 +7,21 @@ import { clearCurrentSubmission } from '@actions/submissions';
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
 import SlideOutLeft from '@components/Transitions/SlideOutLeft'
-import { getCurrentSubmissionID } from '@selectors/submissions';
+
+import FullScreenLoadingPanel from '@components/FullScreenLoadingPanel';
 
 import './style.scss';
 
 class DetailView extends Component {
     static propTypes = {
         listing: PropTypes.element.isRequired,
-        submissionID: PropTypes.number,
+        showSubmision: PropTypes.bool,
         windowSize: PropTypes.objectOf(PropTypes.number),
         clearSubmission: PropTypes.func.isRequired,
+        isLoading: PropTypes.bool,
+        errorMessage: PropTypes.string,
+        isEmpty: PropTypes.bool,
+        isErrored: PropTypes.bool,
     };
 
     isMobile = (width) => (width ? width : this.props.windowSize.windowWidth) < 1024
@@ -26,13 +31,30 @@ class DetailView extends Component {
     }
 
     render() {
-        const { listing, submissionID } = this.props;
+        const { listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage } = this.props;
 
-        const activeSubmision = !!submissionID;
+        if (isErrored) {
+            return (
+                <div className="loading-panel">
+                    <h5>Something went wrong!</h5>
+                    <p>{errorMessage}</p>
+                </div>
+            )
+        } else if (!isLoading && isEmpty) {
+            return (
+                <div className="loading-panel">
+                    <h5>No submissions available</h5>
+                </div>
+            )
+        }
+
+        if (!this.props.windowSize.windowWidth) {
+            return null
+        }
 
         if (this.isMobile()) {
             var activeDisplay;
-            if (activeSubmision) {
+            if (showSubmision) {
                 activeDisplay = (
                     <SlideInRight key={"display"}>
                         { this.renderDisplay() }
@@ -45,31 +67,29 @@ class DetailView extends Component {
                     </SlideOutLeft>
                 )
             }
-
-            return (
-                <div className="detail-view">
-                    { activeDisplay }
-                </div>
-            )
         } else {
-            return (
-                <div className="detail-view">
+            activeDisplay = (
+                <>
                     {listing}
-                    { this.renderDisplay() }
-                </div>
+                    {this.renderDisplay()}
+                </>
             )
         }
-
+        return (
+            <>
+                {isLoading &&
+                    <FullScreenLoadingPanel />
+                }
+                <div className="detail-view">
+                    {activeDisplay}
+                </div>
+            </>
+        )
     }
 }
-
-const mapStateToProps = state => ({
-    submissionID: getCurrentSubmissionID(state),
-});
 
 const mapDispatchToProps = {
     clearSubmission: clearCurrentSubmission
 }
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(withWindowSizeListener(DetailView));
+export default connect(null, mapDispatchToProps)(withWindowSizeListener(DetailView));

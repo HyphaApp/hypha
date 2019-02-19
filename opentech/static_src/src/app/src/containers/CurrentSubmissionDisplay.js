@@ -32,13 +32,10 @@ class CurrentSubmissionDisplay extends React.Component {
 
     render () {
         const { submission } = this.props
-        if ( !submission ) {
-            return <p>Loading</p>
-        }
         return <SubmissionDisplay
-                   submission={submission}
-                   isLoading={submission.isFetching}
-                   isError={submission.isErrored} />
+                    submission={submission}
+                    isLoading={!submission || submission.isFetching}
+                    isError={submission && submission.isErrored} />
     }
 
 }
