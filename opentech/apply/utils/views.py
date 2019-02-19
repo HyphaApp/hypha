@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
+from django.http import HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.views import defaults
 from django.views.generic import View
@@ -34,7 +35,9 @@ class ViewDispatcher(View):
         elif self.reviewer_check(request):
             view = self.reviewer_view
 
-        return view.as_view()(request, *args, **kwargs)
+        if view:
+            return view.as_view()(request, *args, **kwargs)
+        return HttpResponseForbidden()
 
 
 class DelegatableBase(ContextMixin):
