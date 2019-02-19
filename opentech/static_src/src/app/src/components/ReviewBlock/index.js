@@ -5,11 +5,11 @@ const Review = ({ review }) => {
     const { reviewUrl, author, score, recommendation } = review
 
     return (
-        <p>
-            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>
-                {author} - {score} - {recommendation.display}
-            </a>
-        </p>
+        <li className="reviews-sidebar__item">
+            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>{author}</a>
+            <div>{recommendation.display}</div>
+            <div>{score}</div>
+        </li>
     )
 }
 
@@ -40,21 +40,26 @@ const ReviewBlock = ({ review }) => {
         }
 
         return (
-            <>
+            <ul className="reviews-sidebar">
                 {review.recommendation.display &&
-                    <p>Recommendation: {review.recommendation.display}</p>
-                }
-                {!isNaN(parseFloat(review.score)) &&
-                    <p>Score: {review.score}</p>
+                    <li className="reviews-sidebar__item reviews-sidebar__item--header">
+                        <div></div>
+                        {review.recommendation.display &&
+                            <div>{review.recommendation.display}</div>
+                        }
+                        {!isNaN(parseFloat(review.score)) &&
+                            <div>{review.score}</div>
+                        }
+                    </li>
                 }
                 {renderReviews()}
-            </>
+            </ul>
         )
     }
 
     return (
         <div>
-            <h1>Reviews &amp; assigness</h1>
+            <h5>Reviews &amp; assigness</h5>
             {renderReviewBody()}
         </div>
     )
