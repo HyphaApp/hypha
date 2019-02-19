@@ -109,10 +109,9 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         currently saved to that submission.
         Send out a message of updates.
         """
-        reviewers = User.objects.filter(id__in=form.cleaned_data['staff_reviewers'])
+        reviewers = form.cleaned_data['staff_reviewers']
 
-        submission_ids = form.cleaned_data['submission_ids']
-        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+        submissions = form.cleaned_data['submissions']
 
         for submission in submissions:
             submission.reviewers.add(*reviewers)

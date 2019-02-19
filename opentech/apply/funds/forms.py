@@ -208,12 +208,13 @@ class BatchUpdateReviewersForm(forms.Form):
         queryset=User.objects.staff(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
     )
-    submission_ids = forms.CharField(widget=forms.HiddenInput())
+    submissions = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
 
-    def clean_submission_ids(self):
-        value = self.cleaned_data['submission_ids']
-        return [int(submission) for submission in value.split(',')]
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)
