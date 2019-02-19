@@ -735,7 +735,7 @@ def get_determination_transitions():
 
 def get_action_mapping(workflow):
     # Maps action names to the phase they originate from
-    transitions = defaultdict(lambda: {'display': '', 'transitions': {}})
+    transitions = defaultdict(lambda: {'display': '', 'transitions': []})
     if workflow:
         phases = workflow.items()
     else:
@@ -744,7 +744,7 @@ def get_action_mapping(workflow):
         for transition_name, transition in phase.transitions.items():
             transition_display = transition['display']
             transition_key = slugify(transition_display)
-            transitions[transition_key]['transitions'][transition_name] = phase
+            transitions[transition_key]['transitions'].append(transition_name)
             transitions[transition_key]['display'] = transition_display
 
     return transitions

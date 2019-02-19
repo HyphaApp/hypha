@@ -139,6 +139,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
         phase_changes = {}
         for submission in submissions:
             valid_actions = {action for action, _ in submission.get_actions_for_user(self.request.user)}
+            old_phase = submission.phase
             try:
                 transition = (valid_actions & set(transitions)).pop()
                 submission.perform_transition(
@@ -150,7 +151,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
             except (PermissionDenied, KeyError):
                 failed.append(submission)
             else:
-                phase_changes[submission.phase] = transitions[transition]
+                phase_changes[submission] = old_phase
 
         if failed:
             messages.warning(
@@ -159,11 +160,12 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
                 ', '.join(str(submission) for submission in failed)
             )
 
+        succeeded_submissions = submissions.exclude(id__in=[submission.id for submission in failed])
         messenger(
             MESSAGES.BATCH_TRANSITION,
             user=self.request.user,
             request=self.request,
-            submissions=submissions.exclude(id__in=[submission.id for submission in failed]),
+            submissions=succeeded_submissions,
             related=phase_changes,
         )
 
@@ -278,15 +280,14 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
         BatchProgressSubmissionView,
     ]
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         self.status = kwargs.get('status')
         status_data = self.status_mapping[self.status]
         self.status_name = status_data['name']
         self.statuses = status_data['statuses']
         if self.status not in self.status_mapping:
             raise Http404(_("No statuses match the requested value"))
-
-        return super().get(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         return super().get_filterset_kwargs(filterset_class, limit_statuses=self.statuses, **kwargs)

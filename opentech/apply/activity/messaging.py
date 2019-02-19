@@ -257,7 +257,7 @@ class ActivityAdapter(AdapterBase):
     def handle_batch_transition(self, transitions, submissions, **kwargs):
         kwargs.pop('submission')
         for submission in submissions:
-            old_phase = transitions[submission.phase]
+            old_phase = transitions[submission]
             return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
 
     def send_message(self, message, user, submission, submissions, **kwargs):
@@ -373,7 +373,7 @@ class SlackAdapter(AdapterBase):
         submissions_text = [
             ': '.join([
                 self.slack_links(links, [submission]),
-                f'{transitions[submission.phase].display_name} → {submission.phase}',
+                f'{transitions[submission].display_name} → {submission.phase}',
             ])
             for submission in submissions
         ]
@@ -482,7 +482,7 @@ class EmailAdapter(AdapterBase):
     def handle_batch_transition(self, transitions, submissions, **kwargs):
         kwargs.pop('submission')
         for submission in submissions:
-            old_phase = transitions[submission.phase]
+            old_phase = transitions[submission]
             return self.render_message(
                 'messages/email/transition.html',
                 submission=submission,
