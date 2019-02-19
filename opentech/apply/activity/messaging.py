@@ -200,11 +200,14 @@ class ActivityAdapter(AdapterBase):
     def recipients(self, message_type, **kwargs):
         return [None]
 
-    def extra_kwargs(self, message_type, submission, **kwargs):
+    def extra_kwargs(self, message_type, submission, submissions, **kwargs):
         from .models import INTERNAL
         if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
             return {'visibility': INTERNAL}
-        if message_type == MESSAGES.TRANSITION and not submission.phase.permissions.can_view(submission.user):
+        is_transition = message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]
+
+        submission = submission or submissions[0]
+        if is_transition and not submission.phase.permissions.can_view(submission.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': INTERNAL}
         return {}
