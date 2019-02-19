@@ -120,6 +120,7 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
     role_icon = tables.Column(verbose_name="Role")
 
     class Meta(BaseAdminSubmissionsTable.Meta):
+        sequence = ('...', 'role_icon', 'comments')
         orderable = False
 
     def render_role_icon(self, value):
