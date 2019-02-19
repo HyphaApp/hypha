@@ -142,38 +142,34 @@ class ReviewOpinionFormView(SingleObjectMixin, FormView):
     form_class = ReviewOpinionForm
     model = Review
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
         self.object = self.get_object()
+        response = super().form_valid(form)
+        opinion = form.cleaned_data['opinion']
+        existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
+        if existing_review:
+            existing_review.opinion = opinion
+            existing_review.save()
+        else:
+            ReviewOpinion.objects.create(
+                opinion=opinion,
+                author=self.request.user,
+                review=self.object)
 
-        form = self.get_form()
-        if form.is_valid():
-            opinion = form.cleaned_data['opinion']
-            # TODO: update_or_create is failing here for me, so I'm doing this the long way ...
-            existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
-            if existing_review:
-                existing_review.opinion = opinion
-                existing_review.save()
-            else:
-                ReviewOpinion.objects.create(
-                    opinion=opinion,
-                    author=self.request.user,
-                    review=self.object)
-
-            if opinion == AGREE:
-                opinion_verb = 'agrees'
-            else:
-                opinion_verb = 'disagrees'
-            messenger(
-                MESSAGES.REVIEW_OPINION,
-                request=self.request,
-                user=self.request.user,
-                opinion_verb=opinion_verb,
-                reviewer=self.object.author,
-                submission=self.object.submission,
-                related=self.object,
-            )
-
-        return super().post(request, *args, **kwargs)
+        if opinion == AGREE:
+            opinion_verb = 'agrees'
+        else:
+            opinion_verb = 'disagrees'
+        messenger(
+            MESSAGES.REVIEW_OPINION,
+            request=self.request,
+            user=self.request.user,
+            opinion_verb=opinion_verb,
+            reviewer=self.object.author,
+            submission=self.object.submission,
+            related=self.object,
+        )
+        return response
 
     def get_success_url(self):
         return reverse('apply:submissions:reviews:review', args=(self.object.submission.pk, self.object.id,))
