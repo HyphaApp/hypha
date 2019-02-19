@@ -34,15 +34,17 @@
     {{ object.output_answers|submission_links }}
 </div>
 
-<form method="post">
-    {% csrf_token %}
+{% if opinion_choices %}
+    <form method="post">
+        {% csrf_token %}
 
-    {% for choice in opinion_choices %}
-        <button name="opinion" type="submit" value="{{ choice.value }}"
-            class="button button--primary button--bottom-space {{ choice.disabled_class }}" {% if choice.disabled %}disabled{% endif %}>
-            {{ choice.label }}
-        </button>
-    {% endfor %}
-</form>
+        {% for choice in opinion_choices %}
+            <button name="opinion" type="submit" value="{{ choice.value }}"
+                class="button button--primary button--bottom-space {{ choice.disabled_class }}" {% if choice.disabled %}disabled{% endif %}>
+                {{ choice.label }}
+            </button>
+        {% endfor %}
+    </form>
+{% endif %}
 
 {% endblock %}
