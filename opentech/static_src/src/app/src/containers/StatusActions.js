@@ -128,7 +128,11 @@ class StatusActions extends React.Component {
         if (submission === undefined || submission.actions === undefined) {
             return null;
         } else if (submission.actions.length === 0) {
-            return <button className="button button--primary button--full-width" disabled={true}>Update status (no actions)</button>
+            return (
+                <div className="status-actions">
+                    <button className="button button--primary button--full-width is-disabled" disabled={true}>Update status (no actions)</button>
+                </div>
+            )
         }
 
         return (
