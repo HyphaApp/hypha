@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import './styles.scss';
+
 const Review = ({ review }) => {
     const { reviewUrl, author, score, recommendation } = review
 
@@ -58,7 +60,7 @@ const ReviewBlock = ({ review }) => {
     }
 
     return (
-        <div>
+        <div className="review-block">
             <h5>Reviews &amp; assigness</h5>
             {renderReviewBody()}
         </div>
