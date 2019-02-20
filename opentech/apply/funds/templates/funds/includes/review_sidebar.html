@@ -29,8 +29,8 @@
     {% endfor %}
 
     {% if object.stage.has_external_review %}
-        <hr class="reviews-sidebar__split">
         {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
+            <hr class="reviews-sidebar__split">
 
             {% for review_data in reviews_block.external_reviewed %}
                 {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer %}
