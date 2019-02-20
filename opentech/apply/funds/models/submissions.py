@@ -553,6 +553,10 @@ class ApplicationSubmission(
     def reviewers_not_reviewed(self):
         return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
 
+    @property
+    def partners_not_reviewed(self):
+        return self.missing_reviewers.partners().exclude(id__in=self.staff_not_reviewed)
+
     def reviewed_by(self, user):
         return self.reviews.submitted().filter(author=user).exists()
 
@@ -561,6 +565,9 @@ class ApplicationSubmission(
             return True
 
         if user in self.reviewers_not_reviewed:
+            return True
+
+        if user in self.partners_not_reviewed:
             return True
 
         return False

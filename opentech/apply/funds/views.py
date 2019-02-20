@@ -486,7 +486,11 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 @method_decorator(login_required, name='dispatch')
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user:
+        if request.user.is_partner:
+            partner_has_access = self.get_object().partners.filter(pk=request.user.pk).exists()
+            if not partner_has_access:
+                raise PermissionDenied
+        elif request.user != self.get_object().user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
