@@ -20,7 +20,7 @@
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term %}
+    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_batch_actions=False %}
     {% render_table table %}
 </div>
 
