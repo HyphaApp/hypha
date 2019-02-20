@@ -134,7 +134,10 @@ class DelegatedViewMixin(View):
         return cls.context_name, form
 
     def get_success_url(self):
-        return self.request.path
+        query = self.request.GET.urlencode()
+        if query:
+            query = '?' + query
+        return self.request.path + query
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):

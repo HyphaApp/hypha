@@ -73,4 +73,4 @@ class CommentFormView(DelegatedViewMixin, CreateView):
     @classmethod
     def contribute_form(cls, instance, user):
         # We dont want to pass the submission as the instance
-        return super().contribute_form(None, user=user)
+        return super().contribute_form(instance=None, user=user)
