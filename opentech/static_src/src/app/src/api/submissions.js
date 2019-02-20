@@ -8,7 +8,6 @@ export function fetchSubmissionsByRound(id) {
     };
 }
 
-
 export function fetchSubmission(id) {
     return {
         path: `/apply/api/submissions/${id}/`,
@@ -24,4 +23,16 @@ export function fetchSubmissionsByStatuses(statuses) {
         path:'/apply/api/submissions/',
         params,
     };
+}
+
+export function executeSubmissionAction(submissionID, action) {
+    return {
+        path: `/apply/api/submissions/${submissionID}/actions/`,
+        method: 'POST',
+        options: {
+            body: {
+                action,
+            }
+        }
+    }
 }

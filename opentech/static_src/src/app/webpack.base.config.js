@@ -72,7 +72,6 @@ module.exports = (webpackEnv) => {
                 }
             ]
         },
-
         resolve: {
             modules: ['node_modules', './src'],
             extensions: ['.js', '.jsx'],
@@ -85,6 +84,7 @@ module.exports = (webpackEnv) => {
                 '@actions': path.resolve(__dirname, 'src/redux/actions'),
                 '@middleware': path.resolve(__dirname, 'src/redux/middleware'),
                 '@api': path.resolve(__dirname, 'src/api'),
+                '@utils': path.resolve(__dirname, 'src/utils'),
             }
         }
     }

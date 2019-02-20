@@ -29,7 +29,8 @@ devConfig.devServer = {
     hotOnly: true,
     host: 'localhost',
     port: 3000,
-    overlay: true
+    overlay: true,
+    disableHostCheck: true,
 }
 
 devConfig.devtool = 'source-map'
