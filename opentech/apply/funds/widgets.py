@@ -1,6 +1,6 @@
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
-from django_select2.forms import Select2Widget, Select2MultipleWidget
+from django_select2.forms import Select2MultipleWidget
 
 
 class Select2MultiCheckboxesWidget(Select2MultipleWidget):

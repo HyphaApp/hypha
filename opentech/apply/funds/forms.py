@@ -1,12 +1,13 @@
 from django import forms
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
+from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
 from opentech.apply.utils.image import generate_image_url
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
-from .widgets import Select2MultiCheckboxesWidget, Select2Widget
+from .widgets import Select2MultiCheckboxesWidget
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -112,6 +113,8 @@ class UpdateReviewersForm(forms.ModelForm):
             self.fields.pop('reviewer_reviewers')
 
     def render_icon(self, image):
+        if not image:
+            return ''
         filter_spec = 'fill-20x20'
         return generate_image_url(image, filter_spec)
 
