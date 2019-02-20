@@ -243,6 +243,7 @@ class ReviewListView(ListView):
 
         # Add the header rows
         review_data['title'] = {'question': '', 'answers': list()}
+        review_data['opinions'] = {'question': 'Opinions', 'answers': list()}
         review_data['score'] = {'question': 'Overall Score', 'answers': list()}
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
         review_data['revision'] = {'question': 'Revision', 'answers': list()}
@@ -252,6 +253,10 @@ class ReviewListView(ListView):
 
         for i, review in enumerate(self.object_list):
             review_data['title']['answers'].append('<a href="{}">{}</a>'.format(review.get_absolute_url(), review.author))
+            opinions = ''
+            for opinion in review.opinions.all():
+                opinions += '<li>{} {}s</li>'.format(opinion.author, opinion.get_opinion_display())
+            review_data['opinions']['answers'].append('<ul>{}</ul>'.format(opinions))
             review_data['score']['answers'].append(str(review.get_score_display()))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
             review_data['comments']['answers'].append(review.get_comments_display(include_question=False))

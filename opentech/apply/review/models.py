@@ -187,5 +187,4 @@ class ReviewOpinion(models.Model):
 
     def get_author_role(self):
         role = self.review.submission.assigned.with_roles().filter(reviewer=self.author).first()
-        role = role.role if role else None
-        return role
+        return role.role if role else None
