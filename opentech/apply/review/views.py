@@ -51,11 +51,23 @@ class ReviewContextMixin:
                 else:
                     key = 'external_not_reviewed'
 
-            reviews_block[key].append({
+            review_info_dict = {
                 'reviewer': reviewer,
                 'review': review,
                 'role': role,
-            })
+            }
+            opinions_list = []
+            if review and review.opinions:
+                for opinion in review.opinions.all():
+                    author_role = self.object.assigned.with_roles().filter(reviewer=opinion.author).first()
+                    role = author_role.role if author_role else None
+                    opinions_list.append({
+                        'author': opinion.author,
+                        'opinion': opinion.get_opinion_display(),
+                        'role': role,
+                    })
+                review_info_dict['opinions'] = opinions_list
+            reviews_block[key].append(review_info_dict)
 
         # Calculate the recommendation based on role and staff reviews
         recommendation = self.object.reviews.by_staff().recommendation()

@@ -31,3 +31,15 @@
         <td>{{ review.get_score_display }}</td>
     {% endif %}
 </tr>
+{% for opinion in opinions %}
+<tr class="tr--subchild">
+    <td class="reviews-sidebar__author" colspan="2">
+        <span>
+            {{ opinion.author }}
+            {% if opinion.role %}{% image opinion.role.icon max-12x12 %}{% endif %}
+        </span>
+    </td>
+    <td></td>
+    <td>{{ opinion.opinion }}</td>
+</tr>
+{% endfor %}
