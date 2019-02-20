@@ -12,6 +12,7 @@ from opentech.apply.funds.tables import (
     SubmissionsTable,
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
+    STATUSES_ACTIVE_FILTER_LIST,
 )
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -42,7 +43,10 @@ class AdminDashboardView(TemplateView):
         # Staff reviewer's reviewed submissions for 'Previous reviews' block
         filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
 
-        return render(request, 'dashboard/dashboard.html', {
+        # Filter for all active statuses.
+        active_statuses_filter = '&status=' + '&status='.join(STATUSES_ACTIVE_FILTER_LIST)
+
+        context = {
             'open_rounds': open_rounds,
             'open_query': open_query,
             'closed_rounds': closed_rounds,
@@ -54,7 +58,10 @@ class AdminDashboardView(TemplateView):
             'my_reviewed': my_reviewed,
             'display_more_reviewed': display_more_reviewed,
             'filter': filterset,
-        })
+            'active_statuses_filter': active_statuses_filter,
+        }
+
+        return render(request, 'dashboard/dashboard.html', context)
 
     def get_my_reviews(self, user, qs):
         my_review_qs = qs.in_review_for(user).order_by('-submit_time')
@@ -98,6 +105,9 @@ class ReviewerDashboardView(TemplateView):
         # Reviewer's reviewed submissions and filters for 'Previous reviews' block
         filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
 
+        # Filter for all active statuses.
+        active_statuses_filter = '&status=' + '&status='.join(STATUSES_ACTIVE_FILTER_LIST)
+
         context = {
             'my_review': my_review,
             'in_review_count': my_review_qs.count(),
@@ -105,6 +115,7 @@ class ReviewerDashboardView(TemplateView):
             'my_reviewed': my_reviewed,
             'display_more_reviewed': display_more_reviewed,
             'filter': filterset,
+            'active_statuses_filter': active_statuses_filter,
         }
 
         return render(request, 'dashboard/reviewer_dashboard.html', context)

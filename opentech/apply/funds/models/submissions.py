@@ -30,7 +30,7 @@ from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
     DETERMINATION_RESPONSE_PHASES,
-    get_review_statuses,
+    get_review_activ_statuses,
     INITIAL_STATE,
     PHASES,
     review_statuses,
@@ -81,7 +81,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(status__in=review_statuses)
 
     def in_review_for(self, user, assigned=True):
-        user_review_statuses = get_review_statuses(user)
+        user_review_statuses = get_review_activ_statuses(user)
         qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
