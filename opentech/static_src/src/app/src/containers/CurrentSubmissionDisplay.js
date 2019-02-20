@@ -76,7 +76,7 @@ const  CurrentSubmissionDisplay = props => {
             ' else.'
         )
         return <p>
-            {msg} <button onClick={handleUpdateSubmission}>Refresh</button>
+            {msg} <button onClick={handleUpdateSubmission}>Show updated</button>
         </p>
     }
 
