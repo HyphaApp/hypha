@@ -1,0 +1,9 @@
+.full-screen-loading-panel {
+    position: fixed;
+    background: $color--white;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: var(--header-admin-height);
+    z-index: 30;
+}

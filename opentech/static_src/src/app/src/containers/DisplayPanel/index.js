@@ -7,9 +7,6 @@ import { clearCurrentSubmission } from '@actions/submissions';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
-    getSubmissionErrorState,
-    getSubmissionLoadingState,
-
 } from '@selectors/submissions';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
@@ -22,8 +19,6 @@ class DisplayPanel extends React.Component  {
     static propTypes = {
         submissionID: PropTypes.number,
         loadSubmission: PropTypes.func,
-        isLoading: PropTypes.bool,
-        isError: PropTypes.bool,
         clearSubmission: PropTypes.func.isRequired,
         windowSize: PropTypes.objectOf(PropTypes.number)
     };
@@ -82,8 +77,6 @@ class DisplayPanel extends React.Component  {
 }
 
 const mapStateToProps = state => ({
-    isLoading: getSubmissionLoadingState(state),
-    isError: getSubmissionErrorState(state),
     submissionID: getCurrentSubmissionID(state),
     submission: getCurrentSubmission(state),
 });

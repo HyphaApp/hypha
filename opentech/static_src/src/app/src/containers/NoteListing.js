@@ -48,8 +48,8 @@ const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage,
     return (
         <Listing
             isLoading={ isLoading }
-            isError={ isErrored }
-            error={ errorMessage }
+            isErrored={ isErrored }
+            errorMessage={ errorMessage }
             handleRetry={ handleRetry }
             renderItem={ renderItem }
             items={ noteIDs }
