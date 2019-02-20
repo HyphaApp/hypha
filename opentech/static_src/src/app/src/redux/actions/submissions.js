@@ -82,7 +82,7 @@ export const loadSubmissionFromURL = () => (dispatch, getState) => {
 export const setCurrentSubmission = id => (dispatch, getState) => {
     const submissionID = getCurrentSubmissionID(getState())
 
-    if (id && submissionID !== id) {
+    if (id !== null  && submissionID !== id) {
         dispatch(push(`?submission=${id}`));
     } else if (!id) {
         dispatch(push('?'));
@@ -129,7 +129,8 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state))).then(() => {
         const state = getState()
         const ids = getCurrentRoundSubmissionIDs(state)
-        if (!ids.includes(getCurrentSubmissionID(state))) {
+        const currentSubmissionID = getCurrentSubmissionID(state)
+        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
             dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
             return dispatch(setCurrentSubmission(null))
         }
@@ -195,7 +196,8 @@ export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
     return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state))).then(() => {
         const state = getState()
         const ids = getSubmissionIDsForCurrentStatuses(state)
-        if (!ids.includes(getCurrentSubmissionID(state))) {
+        const currentSubmissionID = getCurrentSubmissionID(state)
+        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
             dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
             return dispatch(setCurrentSubmission(null))
         }
