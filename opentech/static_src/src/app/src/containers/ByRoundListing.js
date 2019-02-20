@@ -38,7 +38,7 @@ class ByRoundListing extends React.Component {
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
-        rounds: PropTypes.array,
+        rounds: PropTypes.object,
         isLoading: PropTypes.bool,
         errorMessage: PropTypes.string,
     };
@@ -90,8 +90,7 @@ class ByRoundListing extends React.Component {
 const mapStateToProps = (state) => ({
     statuses: getCurrentStatuses(state),
     submissions: getCurrentStatusesSubmissions(state),
-    isErrored: getRoundsErrored(state),
-    errorMessage: getByStatusesError(state),
+    isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
         getByStatusesLoading(state) ||
         getRoundsFetching(state)
