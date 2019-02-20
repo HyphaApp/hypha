@@ -19,7 +19,9 @@ export default class GroupedListing extends React.Component {
         order: PropTypes.arrayOf(PropTypes.shape({
             key: PropTypes.string.isRequired,
             display: PropTypes.string.isRequired,
-            values: PropTypes.arrayOf(PropTypes.number),
+            values: PropTypes.arrayOf(
+                PropTypes.oneOf(PropTypes.number, PropTypes.string),
+            )
         })),
         onItemSelection: PropTypes.func,
         shouldSelectFirst: PropTypes.bool,
@@ -47,7 +49,7 @@ export default class GroupedListing extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         // Order items
-        if (this.props.items !== prevProps.items) {
+        if (this.props.items !== prevProps.items || this.props.order !== prevProps.order) {
             this.orderItems();
         }
 
