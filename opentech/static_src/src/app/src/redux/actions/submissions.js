@@ -41,6 +41,10 @@ export const FAIL_LOADING_SUBMISSION = 'FAIL_LOADING_SUBMISSION';
 export const UPDATE_SUBMISSION = 'UPDATE_SUBMISSION';
 export const CLEAR_CURRENT_SUBMISSION = 'CLEAR_CURRENT_SUBMISSION';
 
+// Execute submission action
+export const START_EXECUTING_SUBMISSION_ACTION = 'START_EXECUTING_SUBMISSION_ACTION';
+export const FAIL_EXECUTING_SUBMISSION_ACTION = 'FAIL_EXECUTING_SUBMISSION_ACTION';
+
 // Notes
 export const ADD_NOTE_FOR_SUBMISSION = 'ADD_NOTE_FOR_SUBMISSION';
 
@@ -171,3 +175,15 @@ export const appendNoteIDForSubmission = (submissionID, noteID) => ({
     submissionID,
     noteID,
 });
+
+export const executeSubmissionAction = (submissionID, action) => ({
+    [CALL_API]: {
+        types: [
+            START_EXECUTING_SUBMISSION_ACTION,
+            UPDATE_SUBMISSION,
+            FAIL_EXECUTING_SUBMISSION_ACTION
+        ],
+        endpoint: api.executeSubmissionAction(submissionID, action),
+    },
+    submissionID,
+})

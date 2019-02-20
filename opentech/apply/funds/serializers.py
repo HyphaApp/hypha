@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django_bleach.templatetags.bleach_tags import bleach_value
 
 from opentech.apply.activity.models import Activity
+from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from .models import ApplicationSubmission, RoundsAndLabs
 
@@ -12,10 +13,28 @@ markdown = mistune.Markdown()
 class ActionSerializer(serializers.Field):
     def to_representation(self, instance):
         actions = instance.get_actions_for_user(self.context['request'].user)
-        return {
-            transition: action
-            for transition, action in actions
-        }
+        representation = []
+        for transition, action in actions:
+            action_dict = {
+                'value': transition,
+                'display': action
+            }
+
+            # Sometimes the status does not exist in the
+            # determination matrix.
+            try:
+                redirect = DeterminationCreateOrUpdateView.should_redirect(
+                    self.context['request'], instance, transition)
+            except KeyError:
+                redirect = None
+            if redirect:
+                action_dict['type'] = 'redirect'
+                action_dict['target'] = redirect.url
+            else:
+                action_dict['type'] = 'submit'
+
+            representation.append(action_dict)
+        return representation
 
 
 class ReviewSummarySerializer(serializers.Field):
@@ -66,10 +85,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
+    phase = serializers.CharField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'meta_questions', 'questions', 'actions', 'review')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -99,11 +119,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
-    actions = ActionSerializer(source='*')
+    actions = ActionSerializer(source='*', read_only=True)
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'actions',)
+        fields = ('id', 'actions')
 
 
 class RoundLabDetailSerializer(serializers.ModelSerializer):
