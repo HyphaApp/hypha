@@ -3,8 +3,9 @@
 <ul>
 {% for opinion in opinions %}
     <li>
+        {{ opinion.author }}
         {% if opinion.get_author_role %}{% image opinion.get_author_role.icon max-12x12 %}{% endif %}
-        {{ opinion.author }} {{ opinion.get_opinion_display }}s
+        {{ opinion.get_opinion_display }}s
     </li>
 {% endfor %}
 </ul>
