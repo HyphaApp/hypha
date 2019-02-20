@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView
+from django.views.generic import DetailView, CreateView
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
@@ -25,6 +25,16 @@ def get_form_for_stage(submission):
     forms = [ConceptDeterminationForm, ProposalDeterminationForm]
     index = submission.workflow.stages.index(submission.stage)
     return forms[index]
+
+
+@method_decorator(staff_required, name='dispatch')
+class BatchDeterminationCreateView(CreateView):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['submissions'] = self.request.GET.get('submissions')
+        kwargs['action'] = self.request.GET.get('action')
+        return kwargs
 
 
 @method_decorator(staff_required, name='dispatch')
