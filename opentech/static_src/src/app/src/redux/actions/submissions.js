@@ -20,6 +20,11 @@ import {
     getCurrentRoundSubmissionIDs,
 } from '@selectors/rounds';
 
+import {
+    MESSAGE_TYPES,
+    addMessage,
+} from '@actions/messages';
+
 
 // Round
 export const UPDATE_ROUND = 'UPDATE_ROUND';
@@ -125,6 +130,7 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
         const state = getState()
         const ids = getCurrentRoundSubmissionIDs(state)
         if (!ids.includes(getCurrentSubmissionID(state))) {
+            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
             return dispatch(setCurrentSubmission(null))
         }
     })
@@ -190,6 +196,7 @@ export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
         const state = getState()
         const ids = getSubmissionIDsForCurrentStatuses(state)
         if (!ids.includes(getCurrentSubmissionID(state))) {
+            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
             return dispatch(setCurrentSubmission(null))
         }
     })
