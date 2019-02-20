@@ -101,6 +101,8 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         activities = self.model.activities.field.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
+        roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
+            submission=OuterRef('id'), reviewer=user)
 
         reviews = self.model.reviews.field.model.objects.filter(submission=OuterRef('id'))
 
@@ -130,6 +132,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
                 output_field=IntegerField(),
             ),
+            role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
             'reviews__author'
         ).select_related(
@@ -686,6 +689,10 @@ class AssignedReviewersQuerySet(models.QuerySet):
 
     def without_roles(self):
         return self.filter(role__isnull=True)
+
+    def staff(self):
+        User = get_user_model()
+        return self.filter(reviewer__in=User.objects.staff())
 
 
 class AssignedReviewers(models.Model):

@@ -3,12 +3,14 @@ from django.urls import include, path
 from django.contrib import admin
 from django.views.decorators.cache import cache_control
 from django.views.generic import TemplateView
+from django.conf.urls import url
 
 from wagtail.utils.urlpatterns import decorate_urlpatterns
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.images.views.serve import ServeView
 
 from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
@@ -60,6 +62,10 @@ if settings.DEBUG or settings.ENABLE_STYLEGUIDE:
         # Add styleguide
         path('styleguide/', TemplateView.as_view(template_name='styleguide.html')),
     ]
+
+urlpatterns += [
+    url(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$', ServeView.as_view(), name='wagtailimages_serve'),
+]
 
 urlpatterns += [
     path('', include(wagtail_urls)),

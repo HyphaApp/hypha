@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
+from opentech.apply.funds.models import AssignedReviewers
 from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -160,8 +161,6 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
 @receiver(post_save, sender=Review)
 def update_submission_reviewers_list(sender, **kwargs):
-    from opentech.apply.funds.models import AssignedReviewers
-
     review = kwargs.get('instance')
 
     # Make sure the reviewer is in the reviewers list on the submission

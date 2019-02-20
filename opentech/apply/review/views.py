@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -21,11 +23,48 @@ from .models import Review
 
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
-        staff_reviews = self.object.reviews.by_staff().select_related('author')
-        reviewer_reviews = self.object.reviews.by_reviewers().exclude(id__in=staff_reviews).select_related('author')
+        assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
+        reviews = self.object.reviews.all().select_related('author')
+
+        reviews_dict = {}
+        for review in reviews:
+            reviews_dict[review.author.pk] = review
+
+        reviews_block = defaultdict(list)
+        for assigned_reviewer in assigned:
+            reviewer = assigned_reviewer.reviewer
+            role = assigned_reviewer.role
+            review = reviews_dict.get(reviewer.pk, None)
+            if role:
+                if review:
+                    key = 'role_reviewed'
+                else:
+                    key = 'role_not_reviewed'
+            elif reviewer.is_apply_staff:
+                if review:
+                    key = 'staff_reviewed'
+                else:
+                    key = 'staff_not_reviewed'
+            else:
+                if review:
+                    key = 'external_reviewed'
+                else:
+                    key = 'external_not_reviewed'
+
+            reviews_block[key].append({
+                'reviewer': reviewer,
+                'review': review,
+                'role': role,
+            })
+
+        # Calculate the recommendation based on role and staff reviews
+        recommendation = self.object.reviews.by_staff().recommendation()
+
         return super().get_context_data(
-            staff_reviews=staff_reviews,
-            reviewer_reviews=reviewer_reviews,
+            reviews_block=reviews_block,
+            recommendation=recommendation,
+            reviews_exist=reviews.count(),
+            assigned_staff=assigned.staff().exists(),
             **kwargs,
         )
 
