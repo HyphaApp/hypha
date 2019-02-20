@@ -40,9 +40,9 @@ const GroupByStatusDetailView = ({ addMessage, currentSubmission, round, isError
             return;
         }
 
-        const { status } = currentSubmission
+        const { status, changedLocally } = currentSubmission
 
-        if (currentStatus && status !== currentStatus) {
+        if (currentStatus && status !== currentStatus && !changedLocally) {
             addMessage(
                 'The status of this application has changed by another user.',
                 MESSAGE_TYPES.INFO

@@ -281,4 +281,5 @@ export const executeSubmissionAction = (submissionID, action) => ({
         endpoint: api.executeSubmissionAction(submissionID, action),
     },
     submissionID,
+    changedLocally: true,
 })
