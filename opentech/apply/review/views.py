@@ -63,14 +63,13 @@ class ReviewContextMixin:
                     'role': role,
                 }
                 opinions_list = []
-                if review and review.opinions:
+                if review:
+                    # Loop through all opinions and include the current author's role for this submission
                     for opinion in review.opinions.all():
-                        author_role = self.object.assigned.with_roles().filter(reviewer=opinion.author).first()
-                        role = author_role.role if author_role else None
                         opinions_list.append({
                             'author': opinion.author,
                             'opinion': opinion.get_opinion_display(),
-                            'role': role,
+                            'role': opinion.get_author_role(),
                         })
                     review_info_dict['opinions'] = opinions_list
                 reviews_block[key].append(review_info_dict)

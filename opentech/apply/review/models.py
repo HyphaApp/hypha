@@ -184,3 +184,8 @@ class ReviewOpinion(models.Model):
     @property
     def opinion_display(self):
         return self.get_opinion_display()
+
+    def get_author_role(self):
+        role = self.review.submission.assigned.with_roles().filter(reviewer=self.author).first()
+        role = role.role if role else None
+        return role
