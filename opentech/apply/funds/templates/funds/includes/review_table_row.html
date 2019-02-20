@@ -1,33 +1,31 @@
 {% load wagtailimages_tags %}
 
-<tr class="tr--subchild {{ class }} {% if missing %}no-response{% endif %}">
+<li class="reviews-sidebar__item {{ class }} {% if missing %}no-response{% endif %}">
     {% if missing %}
-        <td class="reviews-sidebar__author" colspan="2">
-            <span>
-                {{ reviewer }}
-                {% if role %}{% image role.icon max-12x12 %}{% endif %}
-            </span>
-        </td>
-        <td>-</td>
-        <td>-</td>
+        <div class="reviews-sidebar__name">
+            <span>{{ reviewer }}</span>
+            {% if role %}{% image role.icon max-12x12 %}{% endif %}
+        </div>
+        <div>-</div>
+        <div>-</div>
     {% else %}
-        <td class="reviews-sidebar__author" colspan="2">
-            {% if request.user.is_apply_staff or request.user == reviewer %}
+        {% if request.user.is_apply_staff or request.user == reviewer %}
+            <div>
                 <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
-                    <span>
-                        {{ reviewer }}
+                    <div class="reviews-sidebar__name">
+                        <span>{{ reviewer }}</span>
                         {% if role %}{% image role.icon max-12x12 %}{% endif %}
-                    </span>
+                    </div>
                 </a>
                 <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
-            {% else %}
-                <span>
-                    {{ reviewer }}
-                    {% if role %}{% image role.icon max-12x12 %}{% endif %}
-                </span>
-            {% endif %}
-        </td>
-        <td>{{ review.get_recommendation_display }}</td>
-        <td>{{ review.get_score_display }}</td>
+            </div>
+        {% else %}
+            <div class="reviews-sidebar__name">
+                <span>{{ reviewer }}</span>
+                {% if role %}{% image role.icon max-12x12 %}{% endif %}
+            </div>
+        {% endif %}
+        <div>{{ review.get_recommendation_display }}</div>
+        <div>{{ review.get_score_display }}</div>
     {% endif %}
-</tr>
+</li>

@@ -1,15 +1,15 @@
 {% load review_tags %}
-<table class="reviews-sidebar js-reviews-sidebar">
+<ul class="reviews-sidebar js-reviews-sidebar">
     {% if reviews_exist %}
-        <tr class="tr tr--subchild light-grey-bg">
-            <th colspan="2"></th>
-            <th>{{ recommendation|traffic_light }}</th>
-            <th></th>
-        </tr>
+        <li class="reviews-sidebar__item reviews-sidebar__item--header">
+            <div></div>
+            <div>{{ recommendation|traffic_light }}</div>
+            <div></div>
+        </li>
     {% endif %}
 
     {% if not assigned_staff %}
-        <tr><td colspan="4" class="reviews-sidebar__no-reviews">No reviews yet</td></tr>
+        <li class="reviews-sidebar__no-reviews">No reviews yet</li>
     {% endif %}
 
     {% for review_data in reviews_block.role_reviewed %}
@@ -29,7 +29,7 @@
     {% endfor %}
 
     {% if object.stage.has_external_review %}
-        <tr class="tr tr--subchild"><td colspan="4"><hr></td></tr>
+        <hr class="reviews-sidebar__split">
         {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
 
             {% for review_data in reviews_block.external_reviewed %}
@@ -37,11 +37,10 @@
             {% endfor %}
 
             {% for review_data in reviews_block.external_not_reviewed %}
-                {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True class="hidden"  %}
+                {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True class="is-hidden" %}
             {% endfor %}
 
-            <tr><td colspan="4"><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></td></tr>
+            <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></li>
         {% endif %}
     {% endif %}
-
-</table>
+</ul>

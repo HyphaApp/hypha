@@ -3,7 +3,7 @@
     'use strict';
 
     // get all the reviewers that are missing
-    const reviewers = Array.prototype.slice.call($('.js-reviews-sidebar').find('tr.hidden.no-response'));
+    const reviewers = Array.prototype.slice.call($('.js-reviews-sidebar').find('.is-hidden.no-response'));
 
     $('.js-toggle-reviewers').click(function (e) {
         e.preventDefault();
@@ -24,7 +24,7 @@
     // show/hide the reviewers
     function toggleReviewers(reviewers) {
         reviewers.forEach(reviewer => {
-            $(reviewer).toggleClass('hidden');
+            $(reviewer).toggleClass('is-hidden');
         });
     }
 
