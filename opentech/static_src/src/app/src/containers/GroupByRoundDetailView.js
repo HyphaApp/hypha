@@ -39,7 +39,7 @@ class GroupByRoundDetailView extends React.Component {
                 isLoading={isLoading}
                 showSubmision={activeSubmision}
                 isErrored={isErrored}
-                errorMessage={isErrored ? "Something went wrong" : ""}
+                errorMessage={errorMessage || "Something went wrong"}
             />
         );
     }

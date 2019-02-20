@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 import Switcher from '@components/Switcher';
 import MessagesContainer from '@containers/MessagesContainer'
-import { setCurrentSubmission } from '@actions/submissions';
 import { loadSubmissionFromURL } from '@actions/submissions';
 
 
