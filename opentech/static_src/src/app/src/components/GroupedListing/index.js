@@ -45,17 +45,6 @@ export default class GroupedListing extends React.Component {
         this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const propsToCheck = ['items', 'isLoading', 'isErrored', 'activeItem']
-        if ( propsToCheck.some(prop => nextProps[prop] !== this.props[prop])) {
-            return true
-        }
-        if ( nextState.orderedItems !== this.state.orderedItems ) {
-            return true
-        }
-        return false
-    }
-
     componentDidUpdate(prevProps, prevState) {
         // Order items
         if (this.props.items !== prevProps.items) {
