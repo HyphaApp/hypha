@@ -11,16 +11,28 @@
                 <div class="actions-bar__inner actions-bar__inner--batch-actions">
                     <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
 
-                    <button data-fancybox data-src="#batch-progress" class="button button--action button--batch-status js-batch-button js-batch-progress" type="button">Status</button>
+                    <button
+                        data-fancybox
+                        type="button"
+                        data-src="#batch-progress"
+                        class="button button--action button--change-status js-batch-button js-batch-progress"
+                        data-tooltip="Status changes can't be applied to submissions with different current status."
+                    >
+                        <svg><use xlink:href="#arrow-split"></use></svg>
+                        Status
+                    </button>
 
-                    <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-button" type="button">Reviewers</button>
+                    <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
+                        <svg><use xlink:href="#add-person"></use></svg>
+                        Reviewers
+                    </button>
                 </div>
             {% endif %}
         </div>
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
-            <button class="button button--filters button--contains-icons button--action js-toggle-filters">Filters</button>
+            <button class="button button--filters js-toggle-filters">Filters</button>
 
             {% if use_search|default:False %}
             <form method="get" role="search" class="form form--search-desktop js-search-form">
