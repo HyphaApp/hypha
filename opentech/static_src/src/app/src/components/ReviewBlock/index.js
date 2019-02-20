@@ -36,6 +36,22 @@ const ReviewBlock = ({ review }) => {
             <Review key={review.id} {...{ review }} />)
     }
 
+    const renderTrafficLight = () => {
+        const verdict = review.recommendation.display;
+        const letter = verdict.charAt(0)
+
+        let modifierClass;
+        if (verdict === 'No') {
+            modifierClass = 'red'
+        } else if (verdict === 'Yes') {
+            modifierClass = 'green'
+        } else if (verdict === 'Maybe') {
+            modifierClass = 'amber'
+        }
+
+        return <div aria-label="Traffic light score" className={`traffic-light traffic-light--${modifierClass}`}>{letter}</div>
+    }
+
     const renderReviewBody = () => {
         if (review === undefined) {
             return null
@@ -47,7 +63,7 @@ const ReviewBlock = ({ review }) => {
                     <li className="reviews-sidebar__item reviews-sidebar__item--header">
                         <div></div>
                         {review.recommendation.display &&
-                            <div>{review.recommendation.display}</div>
+                            renderTrafficLight()
                         }
                         {!isNaN(parseFloat(review.score)) &&
                             <div>{review.score}</div>
