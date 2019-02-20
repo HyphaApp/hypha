@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, DetailView
@@ -253,10 +254,12 @@ class ReviewListView(ListView):
 
         for i, review in enumerate(self.object_list):
             review_data['title']['answers'].append('<a href="{}">{}</a>'.format(review.get_absolute_url(), review.author))
-            opinions = ''
-            for opinion in review.opinions.all():
-                opinions += '<li>{} {}s</li>'.format(opinion.author, opinion.get_opinion_display())
-            review_data['opinions']['answers'].append('<ul>{}</ul>'.format(opinions))
+            if review.opinions:
+                opinions_template = get_template('review/includes/review_opinions_list.html')
+                opinions_html = opinions_template.render({'opinions': review.opinions.all()})
+                review_data['opinions']['answers'].append(opinions_html)
+            else:
+                review_data['opinions']['answers'].append("")
             review_data['score']['answers'].append(str(review.get_score_display()))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
             review_data['comments']['answers'].append(review.get_comments_display(include_question=False))
