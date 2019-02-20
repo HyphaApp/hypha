@@ -66,7 +66,7 @@ class ByRoundListing extends React.Component {
                               display: rounds[parseInt(round)].title,
                               key: `round-${round}`,
                               position: i,
-                              values: [round],
+                              values: [parseInt(round)],
                           }));
     }
 

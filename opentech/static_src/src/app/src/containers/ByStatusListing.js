@@ -61,7 +61,7 @@ class ByStatusListing extends React.Component {
             const existing = accumulator[key] || {}
             const existingValues = existing.values || []
             const position = existing.position || idx
-            accumulator[key] = {key, display, position, values: [...existingValues, value]}
+            accumulator[key] = {key, display, position, values: [...existingValues, parseInt(value)]}
             return accumulator
         }, {})
         const arrayOrder = Object.values(order).sort((a,b) => a.position - b.position)
