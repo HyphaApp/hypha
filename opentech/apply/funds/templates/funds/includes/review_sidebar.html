@@ -13,19 +13,19 @@
     {% endif %}
 
     {% for review_data in reviews_block.role_reviewed %}
-        {% include 'funds/includes/review_table_row.html' with review=review_data.review reviewer=review_data.reviewer role=review_data.role %}
+        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer role=review_data.role %}
     {% endfor %}
 
     {% for review_data in reviews_block.staff_reviewed %}
-        {% include 'funds/includes/review_table_row.html' with review=review_data.review reviewer=review_data.reviewer %}
+        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer %}
     {% endfor %}
 
     {% for review_data in reviews_block.role_not_reviewed %}
-        {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer role=review_data.role missing=True %}
+        {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer role=review_data.role missing=True %}
     {% endfor %}
 
     {% for review_data in reviews_block.staff_not_reviewed %}
-        {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True %}
+        {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True %}
     {% endfor %}
 
     {% if object.stage.has_external_review %}
@@ -33,11 +33,11 @@
         {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
 
             {% for review_data in reviews_block.external_reviewed %}
-                {% include 'funds/includes/review_table_row.html' with review=review_data.review reviewer=review_data.reviewer %}
+                {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer %}
             {% endfor %}
 
             {% for review_data in reviews_block.external_not_reviewed %}
-                {% include 'funds/includes/review_table_row.html' with reviewer=review_data.reviewer missing=True class="is-hidden" %}
+                {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True class="is-hidden" %}
             {% endfor %}
 
             <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></li>
