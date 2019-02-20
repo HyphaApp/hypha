@@ -115,6 +115,31 @@ class SummarySubmissionsTable(BaseAdminSubmissionsTable):
         orderable = False
 
 
+class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
+    """ Adds Role Assigned to the 'Waiting for My Review' table """
+    role_icon = tables.Column(verbose_name="Role")
+
+    class Meta(BaseAdminSubmissionsTable.Meta):
+        sequence = ('...', 'role_icon', 'comments')
+        orderable = False
+
+    def render_role_icon(self, value):
+        from django.urls import reverse
+        from wagtail.images.views.serve import generate_signature
+        from opentech.images.models import CustomImage
+
+        if value:
+            image = CustomImage.objects.filter(id=value).first()
+            if image:
+                filter_spec = 'fill-20x20'
+                signature = generate_signature(image.id, filter_spec)
+                url = reverse('wagtailimages_serve', args=(signature, image.id, filter_spec))
+                url += image.file.name[len('original_images/'):]
+                return format_html(f'<img alt="{image.title}" height="20" width="20" src="{url}">')
+
+        return ''
+
+
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 

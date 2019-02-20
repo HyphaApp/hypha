@@ -2,12 +2,20 @@
     <div class="actions-bar">
         {# Left #}
         <div class="actions-bar__inner actions-bar__inner--left">
-            <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
-            <form action="" class="js-batch-update-status">
-                <button class="button button--action button--change-status" type="submit">Change status</button>
-            </form>
+            {% if heading %}
+                <h4 class="heading heading--normal heading--no-margin">{{ heading }}</h4>
+            {% endif %}
 
-            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-update-reviewers" type="submit">Reviewers</button>
+            {% if use_batch_actions %}
+                <div class="actions-bar__inner actions-bar__inner--batch-actions">
+                    <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
+                    <form action="" class="js-batch-update-status">
+                        <button class="button button--action button--change-status" type="submit">Change status</button>
+                    </form>
+
+                    <button data-fancybox data-src="#batch-update-reviewers" class="button button--action button--reviewers js-batch-update-reviewers" type="button">Reviewers</button>
+                </div>
+            {% endif %}
         </div>
 
         {# Right #}

@@ -26,6 +26,16 @@
         }
 
         &--left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        &--right {
+            align-items: flex-end;
+        }
+
+        &--batch-actions {
             display: none;
 
             @include media-query(tablet-landscape) {
@@ -33,6 +43,7 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity $quick-transition;
+                margin: 20px 0 0;
 
                 .batch-actions-enabled & {
                     opacity: 1;

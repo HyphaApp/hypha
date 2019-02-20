@@ -215,7 +215,7 @@
 
         @include media-query(tablet-landscape) {
             background: none;
-            padding: 0;
+            padding: 10px;
             border: 0;
             align-items: center;
             justify-content: flex-start;

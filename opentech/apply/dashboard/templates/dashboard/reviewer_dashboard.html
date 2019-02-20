@@ -19,20 +19,13 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
-    <div>
-
+    <div class="wrapper wrapper--bottom-space">
         {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more %}
-
     </div>
 
-    <div>
+    <div class="wrapper wrapper--bottom-space">
         {% if my_reviewed.data %}
-
-            <h4 class="heading heading--normal">
-                Your previous reviews
-            </h4>
-
-            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True use_batch_actions=False heading="Your previous reviews" %}
             {% render_table my_reviewed %}
 
             {% if display_more_reviewed %}

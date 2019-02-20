@@ -11,6 +11,7 @@ from opentech.apply.funds.tables import (
     SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
     SummarySubmissionsTable,
+    SummarySubmissionsTableWithRole,
 )
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -57,7 +58,7 @@ class AdminDashboardView(TemplateView):
 
     def get_my_reviews(self, user, qs):
         my_review_qs = qs.in_review_for(user).order_by('-submit_time')
-        my_review_table = SummarySubmissionsTable(my_review_qs[:5], prefix='my-review-')
+        my_review_table = SummarySubmissionsTableWithRole(my_review_qs[:5], prefix='my-review-')
         display_more = (my_review_qs.count() > 5)
 
         return my_review_qs, my_review_table, display_more
