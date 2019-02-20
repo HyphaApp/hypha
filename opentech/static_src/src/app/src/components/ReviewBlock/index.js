@@ -61,7 +61,7 @@ const ReviewBlock = ({ review }) => {
 
     return (
         <div className="review-block">
-            <h5>Reviews &amp; assigness</h5>
+            <h5>Reviews &amp; assignees</h5>
             {renderReviewBody()}
         </div>
     )
