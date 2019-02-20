@@ -16,6 +16,7 @@ from opentech.apply.review.blocks import RecommendationBlock, RecommendationComm
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.users.models import User
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
@@ -30,44 +31,49 @@ class ReviewContextMixin:
         for review in reviews:
             reviews_dict[review.author.pk] = review
 
+        # Get all the authors of opinions, these authors should not show up in the 'xxx_not_reviewed' lists
+        opinion_authors = set(User.objects.filter(
+            pk__in=ReviewOpinion.objects.filter(review__submission=self.object).values('author__pk')))
+
         reviews_block = defaultdict(list)
         for assigned_reviewer in assigned:
             reviewer = assigned_reviewer.reviewer
             role = assigned_reviewer.role
             review = reviews_dict.get(reviewer.pk, None)
+            key = None
             if role:
                 if review:
                     key = 'role_reviewed'
-                else:
+                elif reviewer not in opinion_authors:
                     key = 'role_not_reviewed'
             elif reviewer.is_apply_staff:
                 if review:
                     key = 'staff_reviewed'
-                else:
+                elif review not in opinion_authors:
                     key = 'staff_not_reviewed'
             else:
                 if review:
                     key = 'external_reviewed'
-                else:
+                elif review not in opinion_authors:
                     key = 'external_not_reviewed'
-
-            review_info_dict = {
-                'reviewer': reviewer,
-                'review': review,
-                'role': role,
-            }
-            opinions_list = []
-            if review and review.opinions:
-                for opinion in review.opinions.all():
-                    author_role = self.object.assigned.with_roles().filter(reviewer=opinion.author).first()
-                    role = author_role.role if author_role else None
-                    opinions_list.append({
-                        'author': opinion.author,
-                        'opinion': opinion.get_opinion_display(),
-                        'role': role,
-                    })
-                review_info_dict['opinions'] = opinions_list
-            reviews_block[key].append(review_info_dict)
+            if key:  # Do not add this reviewer to any list if they haven't reviewed but have left an opinion
+                review_info_dict = {
+                    'reviewer': reviewer,
+                    'review': review,
+                    'role': role,
+                }
+                opinions_list = []
+                if review and review.opinions:
+                    for opinion in review.opinions.all():
+                        author_role = self.object.assigned.with_roles().filter(reviewer=opinion.author).first()
+                        role = author_role.role if author_role else None
+                        opinions_list.append({
+                            'author': opinion.author,
+                            'opinion': opinion.get_opinion_display(),
+                            'role': role,
+                        })
+                    review_info_dict['opinions'] = opinions_list
+                reviews_block[key].append(review_info_dict)
 
         # Calculate the recommendation based on role and staff reviews
         recommendation = self.object.reviews.by_staff().recommendation()
