@@ -20,7 +20,7 @@ export default class GroupedListing extends React.Component {
             key: PropTypes.string.isRequired,
             display: PropTypes.string.isRequired,
             values: PropTypes.arrayOf(
-                PropTypes.oneOf(PropTypes.number, PropTypes.string),
+                PropTypes.oneOf([PropTypes.number, PropTypes.string]),
             )
         })),
         onItemSelection: PropTypes.func,
