@@ -7,7 +7,7 @@ import notes from '@reducers/notes';
 import messages from '@reducers/messages';
 import statuses from '@reducers/statuses';
 
-export default combineReducers({
+export default (history) => combineReducers({
     router: connectRouter(history),
     notes,
     messages,

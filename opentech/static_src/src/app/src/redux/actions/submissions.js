@@ -69,24 +69,58 @@ export const setCurrentSubmissionRound = id => ({
 });
 
 
-export const loadSubmissionFromURL = () => (dispatch, getState) => {
-    const urlParams = new URLSearchParams(window.location.search);
+export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
+    const urlParams = new URLSearchParams(params);
     if (urlParams.has('submission')) {
         const activeId = Number(urlParams.get('submission'));
-        return dispatch(setCurrentSubmission(activeId));
+        const submissionID = getCurrentSubmissionID(getState());
+
+        if (activeId !== null  && submissionID !== activeId) {
+            dispatch(setCurrentSubmission(activeId));
+        }
+        return true;
     }
-    return null;
-}
+    return false;
+};
+
+
+
+export const clearCurrentSubmissionParam = () => (dispatch, getState) => {
+    const state = getState();
+    if (state.router.location.search !== '') {
+        return dispatch(push({search: ''}));
+    }
+};
+
+
+const setSubmissionParam = (id) => (dispatch, getState) => {
+    const state = getState();
+    const submissionID = getCurrentSubmissionID(state);
+
+    const urlParams = new URLSearchParams(state.router.location.search);
+    const urlID = Number(urlParams.get('submission'));
+
+    const shouldSet = !urlID && !!id;
+    const shouldUpdate = id !== null  && submissionID !== id && urlID !== id;
+
+    if (shouldSet || shouldUpdate) {
+        dispatch(push({search: `?submission=${id}`}));
+    } else if (id === null) {
+        dispatch(clearCurrentSubmissionParam());
+    }
+
+};
+
+
+export const setCurrentSubmissionParam = () => (dispatch, getState) => {
+    const submissionID = getCurrentSubmissionID(getState());
+    return dispatch(setSubmissionParam(submissionID));
+};
+
 
 
 export const setCurrentSubmission = id => (dispatch, getState) => {
-    const submissionID = getCurrentSubmissionID(getState())
-
-    if (id !== null  && submissionID !== id) {
-        dispatch(push(`?submission=${id}`));
-    } else if (!id) {
-        dispatch(push('?'));
-    }
+    dispatch(setSubmissionParam(id));
 
     return dispatch({
         type: SET_CURRENT_SUBMISSION,
