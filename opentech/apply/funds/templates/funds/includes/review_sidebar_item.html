@@ -1,0 +1,42 @@
+{% load wagtailimages_tags %}
+
+<li class="reviews-sidebar__item {{ class }} {% if missing %}no-response{% endif %}">
+    {% if missing %}
+        <div class="reviews-sidebar__name">
+            <span>{{ reviewer }}</span>
+            {% if role %}{% image role.icon max-12x12 %}{% endif %}
+        </div>
+        <div>-</div>
+        <div>-</div>
+    {% else %}
+        {% if request.user.is_apply_staff or request.user == reviewer %}
+            <div>
+                <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
+                    <div class="reviews-sidebar__name">
+                        <span>{{ reviewer }}</span>
+                        {% if role %}{% image role.icon max-12x12 %}{% endif %}
+                    </div>
+                </a>
+                <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
+            </div>
+        {% else %}
+            <div class="reviews-sidebar__name">
+                <span>{{ reviewer }}</span>
+                {% if role %}{% image role.icon max-12x12 %}{% endif %}
+            </div>
+        {% endif %}
+        <div>{{ review.get_recommendation_display }}</div>
+        <div>{{ review.get_score_display }}</div>
+    {% endif %}
+</li>
+
+{% for opinion in review.opinions.all %}
+<li class="reviews-sidebar__item {{ class }}">
+    <div class="reviews-sidebar__name">
+        <span>{{ opinion.author }}</span>
+        {% if opinion.get_author_assignment %}{% image opinion.get_author_assignment.icon max-12x12 %}{% endif %}
+    </div>
+    <div></div>
+    <div>{{ opinion.get_opinion_display }}</div>
+</li>
+{% endfor %}
