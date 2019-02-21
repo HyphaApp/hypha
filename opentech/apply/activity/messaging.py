@@ -393,7 +393,7 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def notify_reviewers(self, submission, links, **kwargs):
+    def notify_reviewers(self, submission, link, **kwargs):
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
             if submission.phase.permissions.can_review(reviewer):
@@ -405,16 +405,17 @@ class SlackAdapter(AdapterBase):
 
         return (
             '<{link}|{submission.title}> is ready for review. The following are assigned as reviewers: {reviewers}'.format(
-                link=links[submission.id],
+                link=link,
                 reviewers=reviewers,
                 submission=submission,
             )
         )
 
-    def batch_notify_reviewers(self, submissions, **kwargs):
+    def batch_notify_reviewers(self, submissions, links, **kwargs):
         kwargs.pop('submission')
+        kwargs.pop('link')
         return '. '.join(
-            self.notify_reviewers(submission, **kwargs)
+            self.notify_reviewers(submission, link=links[submission.id], **kwargs)
             for submission in submissions
         )
 
