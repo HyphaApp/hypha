@@ -264,7 +264,7 @@ class ActivityAdapter(AdapterBase):
     def handle_batch_transition(self, transitions, submissions, **kwargs):
         kwargs.pop('submission')
         for submission in submissions:
-            old_phase = transitions[submission]
+            old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
 
     def send_message(self, message, user, submission, submissions, **kwargs):
@@ -381,7 +381,7 @@ class SlackAdapter(AdapterBase):
         submissions_text = [
             ': '.join([
                 self.slack_links(links, [submission]),
-                f'{transitions[submission].display_name} → {submission.phase}',
+                f'{transitions[submission.id].display_name} → {submission.phase}',
             ])
             for submission in submissions
         ]
@@ -499,7 +499,7 @@ class EmailAdapter(AdapterBase):
     def handle_batch_transition(self, transitions, submissions, **kwargs):
         kwargs.pop('submission')
         for submission in submissions:
-            old_phase = transitions[submission]
+            old_phase = transitions[submission.id]
             return self.render_message(
                 'messages/email/transition.html',
                 submission=submission,
@@ -583,14 +583,14 @@ class DjangoMessagesAdapter(AdapterBase):
     def batch_transition(self, submissions, transitions, **kwargs):
         base_message = 'Successfully updated:'
         transition = '{submission} [{old_display} → {new_display}].'
-        transitions = [
+        transition_messages = [
             transition.format(
                 submission=submission.title,
-                old_display=transitions[submission],
+                old_display=transitions[submission.id],
                 new_display=submission.phase,
             ) for submission in submissions
         ]
-        messages = [base_message, *transitions]
+        messages = [base_message, *transition_messages]
         return ' '.join(messages)
 
     def recipients(self, *args, **kwargs):

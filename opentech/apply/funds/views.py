@@ -151,7 +151,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
             except (PermissionDenied, KeyError):
                 failed.append(submission)
             else:
-                phase_changes[submission] = old_phase
+                phase_changes[submission.id] = old_phase
 
         if failed:
             messages.warning(
