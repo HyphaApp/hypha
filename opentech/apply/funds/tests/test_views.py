@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import json
 
 from django.test import TestCase
+from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
@@ -215,7 +216,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         }
         data.update(
             **{
-                f'role_reviewer_{str(role)}': reviewer.id
+                f'role_reviewer_{slugify(str(role))}': reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles)
             }
         )
