@@ -5,7 +5,7 @@ from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFac
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
-from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory
+from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory, ReviewOpinionFactory
 from ..models import Review, ReviewOpinion
 from ..options import NA, AGREE
 
@@ -207,6 +207,33 @@ class ReviewDetailTestCase(BaseViewTestCase):
         response = self.get_page(review)
         self.assertContains(response, submission.title)
         self.assertContains(response, "<p>Yes</p>")
+
+    def test_review_detail_opinion(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        review = ReviewFactory(submission=submission, author=self.user, recommendation_yes=True)
+        ReviewOpinionFactory(review=review, author=staff, opinion_disagree=True)
+        response = self.get_page(review)
+        self.assertContains(response, "Disagrees")
+
+
+class ReviewListTestCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'list'
+
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.submission.id}
+
+    def test_review_list_opinion(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+        review = ReviewFactory(submission=submission, author=self.user, recommendation_yes=True)
+        ReviewOpinionFactory(review=review, author=staff, opinion_disagree=True)
+        response = self.get_page(review)
+        response_opinion = response.context['review_data']['opinions']['answers'][0]
+        self.assertIn("Disagrees", response_opinion)
+        self.assertIn(str(staff), response_opinion)
 
 
 class StaffReviewOpinionCase(BaseViewTestCase):
