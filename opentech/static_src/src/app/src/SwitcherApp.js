@@ -33,7 +33,6 @@ class SwitcherApp extends React.Component {
             mounting: false
         })
 
-        console.log(this.props.searchParam)
         const success = this.props.processParams(this.props.searchParam)
         if (success) {
             this.openDetail()
