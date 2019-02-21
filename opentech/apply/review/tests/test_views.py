@@ -263,10 +263,12 @@ class StaffReviewOpinionCase(BaseViewTestCase):
     def test_can_add_opinion_to_others_review(self):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
-        self.post_page(review, {'agree': AGREE})
-        self.assertTrue(review.opinions.first().opinion_display in Activity.objects.first().message)
+        response = self.post_page(review, {'agree': AGREE})
+        self.assertTrue('agrees' in Activity.objects.first().message)
         self.assertEqual(ReviewOpinion.objects.all().count(), 1)
         self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)
+        url = self.url_from_pattern('apply:submissions:reviews:review', kwargs={'submission_pk': self.submission.pk, 'pk': review.id})
+        self.assertRedirects(response, url)
 
     def test_disagree_opinion_redirects_to_review_form(self):
         staff = StaffFactory()
