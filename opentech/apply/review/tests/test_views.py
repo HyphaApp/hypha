@@ -267,3 +267,25 @@ class StaffReviewOpinionCase(BaseViewTestCase):
         self.assertTrue(review.opinions.first().opinion_display in Activity.objects.first().message)
         self.assertEqual(ReviewOpinion.objects.all().count(), 1)
         self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)
+
+
+class NonStaffReviewOpinionCase(BaseViewTestCase):
+    user_factory = UserFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+    def test_cant_see_review_or_post_opinion_to_it(self):
+        staff = StaffFactory()
+        review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
+        response = self.get_page(review)
+        self.assertEqual(response.status_code, 403)
+        response = self.post_page(review, {'agree': AGREE})
+        self.assertEqual(response.status_code, 403)
