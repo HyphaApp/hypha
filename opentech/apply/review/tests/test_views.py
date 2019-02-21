@@ -282,10 +282,8 @@ class NonStaffReviewOpinionCase(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}
 
-    def test_cant_see_review_or_post_opinion_to_it(self):
+    def nonstaff_cant_post_opinion_to_review(self):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
-        response = self.get_page(review)
-        self.assertEqual(response.status_code, 403)
         response = self.post_page(review, {'agree': AGREE})
         self.assertEqual(response.status_code, 403)
