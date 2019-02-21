@@ -494,14 +494,17 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             )
 
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
-        transition = self.transitions[action.pop()]
-
-        self.object.perform_transition(
-            transition.target,
-            self.request.user,
-            request=self.request,
-            notify=not (revision or submitting_proposal),  # Use the other notification
-        )
+        try:
+            transition = self.transitions[action.pop()]
+        except KeyError:
+            pass
+        else:
+            self.object.perform_transition(
+                transition.target,
+                self.request.user,
+                request=self.request,
+                notify=not (revision or submitting_proposal),  # Use the other notification
+            )
 
         return HttpResponseRedirect(self.get_success_url())
 
