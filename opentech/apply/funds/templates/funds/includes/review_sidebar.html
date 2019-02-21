@@ -13,11 +13,11 @@
     {% endif %}
 
     {% for review_data in reviews_block.role_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer role=review_data.role %}
+        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer role=review_data.role opinions=review_data.opinions %}
     {% endfor %}
 
     {% for review_data in reviews_block.staff_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer %}
+        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer opinions=review_data.opinions %}
     {% endfor %}
 
     {% for review_data in reviews_block.role_not_reviewed %}
@@ -29,11 +29,11 @@
     {% endfor %}
 
     {% if object.stage.has_external_review %}
-        {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
-            <hr class="reviews-sidebar__split">
 
+    {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
+        <hr class="reviews-sidebar__split">
             {% for review_data in reviews_block.external_reviewed %}
-                {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer %}
+                {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer opinions=review_data.opinions %}
             {% endfor %}
 
             {% for review_data in reviews_block.external_not_reviewed %}
