@@ -20,6 +20,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.review.options import AGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -85,6 +86,8 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
+            # If this user has agreed with a review, then they have reviewed this submission already
+            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
         return qs.distinct()
 
     def reviewed_by(self, user):
