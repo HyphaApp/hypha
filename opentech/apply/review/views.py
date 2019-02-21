@@ -54,7 +54,7 @@ class ReviewContextMixin:
             else:
                 if review:
                     key = 'external_reviewed'
-                elif review not in opinion_authors:
+                else:
                     key = 'external_not_reviewed'
             if key:  # Do not add this reviewer to any list if they haven't reviewed but have left an opinion
                 review_info_dict = {
