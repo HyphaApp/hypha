@@ -561,6 +561,7 @@ class DjangoMessagesAdapter(AdapterBase):
 
     messages = {
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
+        MESSAGES.BATCH_TRANSITION: 'batch_transition',
     }
 
     def batch_reviewers_updated(self, added, submissions, **kwargs):
@@ -570,6 +571,19 @@ class DjangoMessagesAdapter(AdapterBase):
             ' to ' +
             ', '.join(['"{}"'.format(submission.title) for submission in submissions])
         )
+
+    def batch_transition(self, submissions, transitions, **kwargs):
+        base_message = 'Successfully updated:'
+        transition = '{submission} [{old_display} → {new_display}].'
+        transitions = [
+            transition.format(
+                submission=submission.title,
+                old_display=transitions[submission],
+                new_display=submission.phase,
+            ) for submission in submissions
+        ]
+        messages = [base_message, *transitions]
+        return ' '.join(messages)
 
     def recipients(self, *args, **kwargs):
         return [None]
