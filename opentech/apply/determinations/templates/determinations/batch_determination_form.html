@@ -6,4 +6,24 @@
         <h2 class="heading heading--no-margin">Add Batch Determination</h2>
     </div>
 </div>
+
+{% if submissions %}
+    <div class="list-reveal list-reveal--determination">
+        <div class="list-reveal__item list-reveal__item--meta list-reveal__item--determination" aria-live="polite">
+            <span>Determining {{ submissions.length }} submissions</span>
+            <a href="#" class="list-reveal__link js-toggle-batch-list">Show</a>
+        </div>
+        <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
+            {% for submission in submissions %}
+            <a href="{% url "funds:submissions:detail" submission.id %}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
+                    {{ submission.title }}
+                    <svg class="list-reveal__open-icon">
+                        <use xlink:href="#open-in-new-tab"></use>
+                    </svg>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
 {% endblock %}

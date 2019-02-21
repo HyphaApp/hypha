@@ -71,6 +71,9 @@ class BatchDeterminationCreateView(CreateView):
     def get_form_class(self):
         return get_form_for_stages(self.get_submissions())
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(submissions=self.get_submissions(), **kwargs)
+
     @classmethod
     def should_redirect(cls, request, submissions, actions):
         excluded = []
