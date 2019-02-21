@@ -107,6 +107,9 @@ class ReviewQuerySet(models.QuerySet):
         else:
             return MAYBE
 
+    def opinions(self):
+        return ReviewOpinion.objects.filter(review__id__in=self.values_list('id'))
+
 
 class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')

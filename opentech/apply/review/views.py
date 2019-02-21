@@ -33,8 +33,7 @@ class ReviewContextMixin:
             reviews_dict[review.author.pk] = review
 
         # Get all the authors of opinions, these authors should not show up in the 'xxx_not_reviewed' lists
-        opinion_authors = set(User.objects.filter(
-            pk__in=ReviewOpinion.objects.filter(review__submission=self.object).values('author__pk')))
+        opinion_authors = User.objects.filter(pk__in=self.object.reviews.opinions().values('author')).distinct()
 
         reviews_block = defaultdict(list)
         for assigned_reviewer in assigned:
