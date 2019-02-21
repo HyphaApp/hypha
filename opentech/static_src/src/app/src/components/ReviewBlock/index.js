@@ -3,15 +3,41 @@ import PropTypes from 'prop-types'
 
 import './styles.scss';
 
+const Opinion = ({ opinion }) => (
+    <li className="reviews-sidebar__item reviews-sidebar__item--decision">
+        <div className="reviews-sidebar__name">
+            <span>{opinion.author}</span>
+            <img src={opinion.icon} />
+        </div>
+        <div></div>
+        <div className={`reviews-sidebar__outcome ${opinion.opinion.toLowerCase()}`}>{opinion.opinion}</div>
+    </li>
+)
+
+Opinion.propTypes = {
+    opinion: PropTypes.object,
+}
+
 const Review = ({ review }) => {
-    const { reviewUrl, author, score, recommendation } = review
+    const { reviewUrl, author, score, recommendation, opinions } = review
+    const hasOpinions = opinions.length > 0;
 
     return (
-        <li className="reviews-sidebar__item">
-            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>{author}</a>
-            <div>{recommendation.display}</div>
-            <div>{score}</div>
-        </li>
+        <>
+            <li className="reviews-sidebar__item">
+                <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>{author}</a>
+                <div>{recommendation.display}</div>
+                <div>{score}</div>
+            </li>
+
+            {hasOpinions &&
+                <ul className="reviews-sidebar__decision">
+                    {opinions.map((opinion, i) => {
+                        return <Opinion key={i} {...{ opinion }} />
+                    })}
+                </ul>
+            }
+        </>
     )
 }
 

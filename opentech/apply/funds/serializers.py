@@ -53,7 +53,13 @@ class ReviewSummarySerializer(serializers.Field):
                 {
                     'id': review.id,
                     'author': str(review.author),
+                    'icon': 'https://fillmurray.com/12/12',
                     'score': review.score,
+                    'opinions': [{
+                        'author': str(opinion.author),
+                        'opinion': opinion.get_opinion_display(),
+                        'icon': 'https://fillmurray.com/12/12',
+                    } for opinion in review.opinions.all()],
                     'recommendation': {
                         'value': review.recommendation,
                         'display': review.get_recommendation_display(),
