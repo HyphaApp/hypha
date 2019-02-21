@@ -15,26 +15,86 @@ from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
 from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
 
-from .forms import ConceptDeterminationForm, ProposalDeterminationForm
+from .forms import (
+    BatchConceptDeterminationForm,
+    BatchProposalDeterminationForm,
+    ConceptDeterminationForm,
+    ProposalDeterminationForm,
+)
 from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
 
-from .utils import can_create_determination, can_edit_determination, has_final_determination, transition_from_outcome
+from .utils import (
+    can_create_determination,
+    can_edit_determination,
+    has_final_determination,
+    outcome_from_actions,
+    transition_from_outcome,
+)
 
 
-def get_form_for_stage(submission):
-    forms = [ConceptDeterminationForm, ProposalDeterminationForm]
+def get_form_for_stages(submissions):
+    forms = [
+        get_form_for_stage(submission, batch=True)
+        for submission in submissions
+    ]
+    if len(set(forms)) != 1:
+        raise ValueError('Submissions expect different forms - please contact and admin')
+
+    return forms[0]
+
+
+def get_form_for_stage(submission, batch=False):
+    if batch:
+        forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
+    else:
+        forms = [ConceptDeterminationForm, ProposalDeterminationForm]
     index = submission.workflow.stages.index(submission.stage)
     return forms[index]
 
 
 @method_decorator(staff_required, name='dispatch')
 class BatchDeterminationCreateView(CreateView):
+    template_name = 'determinations/batch_determination_form.html'
+
+    def get_submissions(self):
+        ids = [int(pk) for pk in self.request.GET.get('submissions').split(',')]
+        return ApplicationSubmission.objects.filter(id__in=ids)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['submissions'] = self.request.GET.get('submissions')
+        kwargs['submissions'] = self.get_submissions()
         kwargs['action'] = self.request.GET.get('action')
+        kwargs.pop('instance')
         return kwargs
+
+    def get_form_class(self):
+        return get_form_for_stages(self.get_submissions())
+
+    @classmethod
+    def should_redirect(cls, request, submissions, actions):
+        excluded = []
+        for submission in submissions:
+            if has_final_determination(submission):
+                excluded.append(submission)
+
+        if all(action in DETERMINATION_OUTCOMES for action in actions):
+            if excluded:
+                messages.warning(
+                    request,
+                    _('A determination already exists for the following submissions and they have been excluded: {submissions}').format(
+                        submissions=', '.join([submission.title for submission in excluded]),
+                    )
+                )
+
+            submissions = submissions.exclude(id__in=[submission.id for submission in excluded])
+            action = outcome_from_actions(actions)
+            return HttpResponseRedirect(
+                reverse_lazy('apply:submissions:determinations:batch') +
+                "?action=" + action + "&submissions=" + ','.join([str(submission.id) for submission in submissions])
+            )
+        else:
+            raise ValueError('Inconsistent states provided')
 
 
 @method_decorator(staff_required, name='dispatch')
