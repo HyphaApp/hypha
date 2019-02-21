@@ -62,16 +62,6 @@ class ReviewContextMixin:
                     'review': review,
                     'role': role,
                 }
-                opinions_list = []
-                if review:
-                    # Loop through all opinions and include the current author's role for this submission
-                    for opinion in review.opinions.all():
-                        opinions_list.append({
-                            'author': opinion.author,
-                            'opinion': opinion.get_opinion_display(),
-                            'role': opinion.get_author_role(),
-                        })
-                    review_info_dict['opinions'] = opinions_list
                 reviews_block[key].append(review_info_dict)
 
         # Calculate the recommendation based on role and staff reviews
