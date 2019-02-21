@@ -52,6 +52,14 @@ neat_related = {
 }
 
 
+def is_transition(message_type):
+    return message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]
+
+
+def is_ready_for_review(message_type):
+    return message_type in [MESSAGES.READY_FOR_REVIEW, MESSAGES.BATCH_READY_FOR_REVIEW]
+
+
 class AdapterBase:
     messages = {}
     always_send = False
@@ -204,10 +212,9 @@ class ActivityAdapter(AdapterBase):
         from .models import INTERNAL
         if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
             return {'visibility': INTERNAL}
-        is_transition = message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]
 
         submission = submission or submissions[0]
-        if is_transition and not submission.phase.permissions.can_view(submission.user):
+        if is_transition(message_type) and not submission.phase.permissions.can_view(submission.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': INTERNAL}
         return {}
@@ -304,7 +311,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
-        MESSAGES.READY_FOR_REVIEW: 'batch_notify_reviewers',
+        MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>'
     }
 
@@ -386,7 +393,7 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def notify_reviewers(self, submission, **kwargs):
+    def notify_reviewers(self, submission, links, **kwargs):
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
             if submission.phase.permissions.can_review(reviewer):
@@ -398,9 +405,9 @@ class SlackAdapter(AdapterBase):
 
         return (
             '<{link}|{submission.title}> is ready for review. The following are assigned as reviewers: {reviewers}'.format(
+                link=links[submission.id],
                 reviewers=reviewers,
                 submission=submission,
-                **kwargs
             )
         )
 
@@ -477,7 +484,7 @@ class EmailAdapter(AdapterBase):
 
     def get_subject(self, message_type, submission):
         if submission:
-            if message_type == MESSAGES.READY_FOR_REVIEW:
+            if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {submission.title}'.format(submission=submission)
             else:
                 subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
@@ -506,17 +513,17 @@ class EmailAdapter(AdapterBase):
             return self.render_message('messages/email/comment.html', **kwargs)
 
     def recipients(self, message_type, submission, **kwargs):
-        if message_type == MESSAGES.READY_FOR_REVIEW:
+        if is_ready_for_review(message_type):
             return self.reviewers(submission)
 
-        if message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]:
+        if is_transition(message_type):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not submission.phase.permissions.can_view(submission.user):
                 return []
         return [submission.user.email]
 
     def batch_recipients(self, message_type, submissions, **kwargs):
-        if message_type != MESSAGES.READY_FOR_REVIEW:
+        if not is_ready_for_review(message_type):
             return super().batch_recipients(message_type, submissions, **kwargs)
 
         reviewers_to_message = defaultdict(list)
