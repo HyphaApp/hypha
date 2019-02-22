@@ -180,3 +180,7 @@ class ReviewOpinion(models.Model):
 
     class Meta:
         unique_together = ('author', 'review')
+
+    @property
+    def opinion_display(self):
+        return self.get_opinion_display()

@@ -1,10 +1,12 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
+from django.utils.html import escape
 
 from opentech.apply.review.options import NA
 from opentech.apply.stream_forms.forms import StreamBaseForm
 
 from .models import Review, ReviewOpinion
+from .options import OPINION_CHOICES
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -86,13 +88,52 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
             return NA
 
 
+class SubmitButtonWidget(forms.Widget):
+    def render(self, name, value, attrs=None):
+        disabled = 'disabled' if attrs.get('disabled') else ''
+        return '<input type="submit" name="{name}" value="{value}" class="button button--primary button--bottom-space" {disabled}>'.format(
+            disabled=disabled,
+            name=escape(name),
+            value=escape(name.title()),
+        )
+
+
+class OpinionField(forms.IntegerField):
+    def __init__(self, *args, opinion, **kwargs):
+        kwargs["widget"] = SubmitButtonWidget
+        self.opinion = opinion
+        kwargs['label'] = ''
+        super().__init__(*args, **kwargs)
+
+    def clean(self, value):
+        if value:
+            return self.opinion
+
+
 class ReviewOpinionForm(forms.ModelForm):
-    agree = forms.IntegerField()
+    opinion = forms.IntegerField(required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = ReviewOpinion
-        fields = ()
+        fields = ('opinion',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for value, opinion in OPINION_CHOICES:
+            self.fields[opinion.lower()] = OpinionField(
+                label=opinion.title(),
+                opinion=value,
+                disabled=self.instance.opinion == value,
+            )
 
     def clean(self):
         cleaned_data = super().clean()
-        cleaned_data['opinion'] = cleaned_data['agree']
+        opinions = [cleaned_data.get(opinion.lower()) for _, opinion in OPINION_CHOICES]
+        valid_opinions = [opinion for opinion in opinions if opinion is not None]
+        if len(valid_opinions) > 1:
+            self.add_error(None, 'Cant submit both an agreement and disagreement')
+        cleaned_data = {'opinion': valid_opinions[0]}
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        return super().save(*args, **kwargs)

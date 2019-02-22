@@ -6,8 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, DetailView, FormView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic import CreateView, ListView, DetailView
 
 from wagtail.core.blocks import RichTextBlock
 
@@ -144,24 +143,17 @@ class ReviewDisplay(DetailView):
     model = Review
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.get_object().author != self.request.user:
-            existing_opinion = ReviewOpinion.objects.filter(
-                author=self.request.user, review=self.get_object()).first()
-            opinion_choices = []
-            for value, label in OPINION_CHOICES:
-                button_dict = {
-                    'value': value,
-                    'label': label,
-                    'disabled': False,
-                }
-                if existing_opinion and existing_opinion.opinion == value:
-                    button_dict['disabled'] = True
-                    button_dict['disabled_class'] = 'is-disabled'
-                opinion_choices.append(button_dict)
-
-            context['opinion_choices'] = opinion_choices
-        return context
+        review = self.get_object()
+        if review.author != self.request.user:
+            consensus_form = ReviewOpinionForm(
+                instance=review.opinions.filter(author=self.request.user).first(),
+            )
+        else:
+            consensus_form = None
+        return super().get_context_data(
+            form=consensus_form,
+            **kwargs,
+        )
 
     def dispatch(self, request, *args, **kwargs):
         review = self.get_object()
@@ -176,42 +168,35 @@ class ReviewDisplay(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ReviewOpinionFormView(SingleObjectMixin, FormView):
+class ReviewOpinionFormView(CreateView):
     template_name = 'review/review_detail.html'
     form_class = ReviewOpinionForm
     model = Review
 
-    def form_valid(self, form):
+    def get_form_kwargs(self):
         self.object = self.get_object()
-        response = super().form_valid(form)
-        opinion = form.cleaned_data['opinion']
-        existing_review = ReviewOpinion.objects.filter(author=self.request.user, review=self.object).first()
-        if existing_review:
-            existing_review.opinion = opinion
-            existing_review.save()
-        else:
-            ReviewOpinion.objects.create(
-                opinion=opinion,
-                author=self.request.user,
-                review=self.object)
+        kwargs = super().get_form_kwargs()
+        instance = kwargs['instance']
+        kwargs['instance'] = instance.opinions.filter(author=self.request.user).first()
+        return kwargs
 
-        if opinion == AGREE:
-            opinion_verb = 'agrees'
-        else:
-            opinion_verb = 'disagrees'
+    def form_valid(self, form):
+        self.review = self.get_object()
+        form.instance.author = self.request.user
+        form.instance.review = self.review
+        response = super().form_valid(form)
+
         messenger(
             MESSAGES.REVIEW_OPINION,
             request=self.request,
             user=self.request.user,
-            opinion_verb=opinion_verb,
-            reviewer=self.object.author,
-            submission=self.object.submission,
-            related=self.object,
+            submission=self.review.submission,
+            related=form.instance,
         )
         return response
 
     def get_success_url(self):
-        return reverse('apply:submissions:reviews:review', args=(self.object.submission.pk, self.object.id,))
+        return self.review.get_absolute_url()
 
 
 @method_decorator(login_required, name='dispatch')
