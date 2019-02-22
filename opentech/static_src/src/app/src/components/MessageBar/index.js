@@ -10,7 +10,7 @@ const MessageBar = ({ message, type, onDismiss }) => {
         <li className={`messages__text ${modifierClass}`}>
             <div className="messages__inner">
                 <p className="messages__copy">{message}</p>
-                {onDismiss && <button className="messages__button" onClick={onDismiss}>Ok</button>}
+                {onDismiss && <button className="button messages__button" onClick={onDismiss}>Ok</button>}
             </div>
         </li>
     )
