@@ -9,6 +9,7 @@
         cursor: pointer;
     }
 
+    &:disabled,
     &.is-disabled {
         pointer-events: none;
         opacity: .5;
