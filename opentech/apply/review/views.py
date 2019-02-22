@@ -162,7 +162,7 @@ class ReviewDisplay(DetailView):
             raise PermissionDenied
 
         if review.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:reviews:form', args=(review.submission.id,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
 
