@@ -16,7 +16,6 @@ class MetaCategoryAdmin(ModelAdmin):
     model = MetaCategory
 
     menu_icon = 'tag'
-    menu_order = 800
 
     list_per_page = 50
     list_display = ('get_as_listing_header', 'get_parent')

@@ -121,7 +121,7 @@ class MetaCategoryForm(WagtailAdminModelForm):
             self.fields['parent'].empty_label = 'N/A - Root Category'
             self.fields['parent'].widget = forms.HiddenInput()
 
-            self.fields['name'].label += ' (Root)'
+            self.fields['name'].label += ' (Root - First category can be named root)'
         elif instance.id:
             self.fields['parent'].initial = instance.get_parent()
 
