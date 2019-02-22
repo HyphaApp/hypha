@@ -56,15 +56,22 @@ def get_form_for_stage(submission, batch=False):
 class BatchDeterminationCreateView(CreateView):
     template_name = 'determinations/batch_determination_form.html'
 
+    def get_action(self):
+        return self.request.GET.get('action', '')
+
     def get_submissions(self):
-        ids = [int(pk) for pk in self.request.GET.get('submissions').split(',')]
+        submission_ids = self.request.GET.get('submissions').split(',')
+        try:
+            ids = [int(pk) for pk in submission_ids]
+        except ValueError:
+            ids = []
         return ApplicationSubmission.objects.filter(id__in=ids)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
-        kwargs['action'] = self.request.GET.get('action')
+        kwargs['action'] = self.get_action()
         kwargs.pop('instance')
         return kwargs
 
@@ -72,7 +79,12 @@ class BatchDeterminationCreateView(CreateView):
         return get_form_for_stages(self.get_submissions())
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(submissions=self.get_submissions(), **kwargs)
+        action_name = 'INVITE TO PROPOSAL'
+        return super().get_context_data(
+            action_name=action_name,
+            submissions=self.get_submissions(),
+            **kwargs,
+        )
 
     @classmethod
     def should_redirect(cls, request, submissions, actions):

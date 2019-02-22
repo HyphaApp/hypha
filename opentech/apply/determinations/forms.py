@@ -134,6 +134,7 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     def __init__(self, *args, submissions, initial={}, **kwargs):
         initial.update(submissions=submissions.values_list('id', flat=True))
         super().__init__(*args, initial=initial, **kwargs)
+        self.fields['outcome'].widget = forms.HiddenInput()
 
 
 class BaseConceptDeterminationForm(forms.Form):
