@@ -11,7 +11,7 @@ from wagtail.core.fields import StreamField
 
 from opentech.apply.funds.models import AssignedReviewers
 from opentech.apply.funds.models.mixins import AccessFormData
-from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES
+from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES, OPINION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
@@ -168,3 +168,19 @@ def update_submission_reviewers_list(sender, **kwargs):
         submission=review.submission,
         reviewer=review.author,
     )
+
+
+class ReviewOpinion(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='opinions')
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+    )
+    opinion = models.IntegerField(choices=OPINION_CHOICES)
+
+    class Meta:
+        unique_together = ('author', 'review')
+
+    @property
+    def opinion_display(self):
+        return self.get_opinion_display()

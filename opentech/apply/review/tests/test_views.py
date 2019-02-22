@@ -1,12 +1,13 @@
 from django.urls import reverse
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory
-from ..models import Review
-from ..options import NA
+from ..models import Review, ReviewOpinion
+from ..options import NA, AGREE
 
 
 class StaffReviewsTestCase(BaseViewTestCase):
@@ -206,3 +207,36 @@ class ReviewDetailTestCase(BaseViewTestCase):
         response = self.get_page(review)
         self.assertContains(response, submission.title)
         self.assertContains(response, "<p>Yes</p>")
+
+
+class StaffReviewOpinionCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+    def test_can_see_opinion_buttons_on_others_review(self):
+        staff = StaffFactory()
+        review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
+        response = self.get_page(review)
+        self.assertContains(response, 'name="agree"')
+
+    def test_cant_see_opinion_buttons_on_self_review(self):
+        review = ReviewFactory(submission=self.submission, author=self.user, recommendation_yes=True)
+        response = self.get_page(review)
+        self.assertNotContains(response, 'name="agree"')
+
+    def test_can_add_opinion_to_others_review(self):
+        staff = StaffFactory()
+        review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
+        self.post_page(review, {'agree': AGREE})
+        self.assertTrue(review.opinions.first().opinion_display in Activity.objects.first().message)
+        self.assertEqual(ReviewOpinion.objects.all().count(), 1)
+        self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)

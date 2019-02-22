@@ -49,6 +49,7 @@ neat_related = {
     MESSAGES.EDIT: 'revision',
     MESSAGES.COMMENT: 'comment',
     MESSAGES.SCREENING: 'old_status',
+    MESSAGES.REVIEW_OPINION: 'opinion',
 }
 
 
@@ -202,7 +203,8 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
-        MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}'
+        MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}',
+        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}'
     }
 
     def recipients(self, message_type, **kwargs):
@@ -311,8 +313,10 @@ class SlackAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
+        MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>',
+        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
-        MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>'
+
     }
 
     def __init__(self):

@@ -6,14 +6,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView
 
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
-from opentech.apply.review.forms import ReviewModelForm
+from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import CreateOrUpdateView
@@ -24,7 +24,7 @@ from .models import Review
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
         assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
-        reviews = self.object.reviews.all().select_related('author')
+        reviews = self.object.reviews.submitted().select_related('author')
 
         reviews_dict = {}
         for review in reviews:
@@ -138,9 +138,21 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
-@method_decorator(login_required, name='dispatch')
-class ReviewDetailView(DetailView):
+class ReviewDisplay(DetailView):
     model = Review
+
+    def get_context_data(self, **kwargs):
+        review = self.get_object()
+        if review.author != self.request.user:
+            consensus_form = ReviewOpinionForm(
+                instance=review.opinions.filter(author=self.request.user).first(),
+            )
+        else:
+            consensus_form = None
+        return super().get_context_data(
+            form=consensus_form,
+            **kwargs,
+        )
 
     def dispatch(self, request, *args, **kwargs):
         review = self.get_object()
@@ -150,9 +162,51 @@ class ReviewDetailView(DetailView):
             raise PermissionDenied
 
         if review.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:reviews:form', args=(review.submission.id,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
 
         return super().dispatch(request, *args, **kwargs)
+
+
+class ReviewOpinionFormView(CreateView):
+    template_name = 'review/review_detail.html'
+    form_class = ReviewOpinionForm
+    model = Review
+
+    def get_form_kwargs(self):
+        self.object = self.get_object()
+        kwargs = super().get_form_kwargs()
+        instance = kwargs['instance']
+        kwargs['instance'] = instance.opinions.filter(author=self.request.user).first()
+        return kwargs
+
+    def form_valid(self, form):
+        self.review = self.get_object()
+        form.instance.author = self.request.user
+        form.instance.review = self.review
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.REVIEW_OPINION,
+            request=self.request,
+            user=self.request.user,
+            submission=self.review.submission,
+            related=form.instance,
+        )
+        return response
+
+    def get_success_url(self):
+        return self.review.get_absolute_url()
+
+
+@method_decorator(login_required, name='dispatch')
+class ReviewDetailView(DetailView):
+    def get(self, request, *args, **kwargs):
+        view = ReviewDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = ReviewOpinionFormView.as_view()
+        return view(request, *args, **kwargs)
 
 
 @method_decorator(staff_required, name='dispatch')

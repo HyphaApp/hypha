@@ -33,4 +33,12 @@
 
     {{ object.output_answers|submission_links }}
 </div>
+
+{% if form %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+    </form>
+{% endif %}
+
 {% endblock %}
