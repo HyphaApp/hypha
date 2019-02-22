@@ -6,6 +6,7 @@ from opentech.apply.users.models import User
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget, Select2IconWidget
+from .workflow import get_action_mapping
 
 
 class ProgressSubmissionForm(forms.ModelForm):
@@ -22,6 +23,29 @@ class ProgressSubmissionForm(forms.ModelForm):
         action_field = self.fields['action']
         action_field.choices = choices
         self.should_show = bool(choices)
+
+
+class BatchProgressSubmissionForm(forms.Form):
+    action = forms.ChoiceField(label='Take action')
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
+
+    def __init__(self, *args, round=None, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        workflow = round and round.workflow
+        self.action_mapping = get_action_mapping(workflow)
+        choices = [(action, detail['display']) for action, detail in self.action_mapping.items()]
+        self.fields['action'].choices = choices
+
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    def clean_action(self):
+        value = self.cleaned_data['action']
+        action = self.action_mapping[value]['transitions']
+        return action
 
 
 class ScreeningSubmissionForm(forms.ModelForm):
@@ -197,8 +221,12 @@ class BatchUpdateReviewersForm(forms.Form):
         queryset=User.objects.staff(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
     )
-    submission_ids = forms.CharField(widget=forms.HiddenInput())
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
-    def clean_submission_ids(self):
-        value = self.cleaned_data['submission_ids']
-        return [int(submission) for submission in value.split(',')]
+    def __init__(self, *args, user=None, round=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)

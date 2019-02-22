@@ -247,13 +247,13 @@ class TestActivityAdapter(TestCase):
 
     def test_internal_transition_kwarg_for_invisible_transition(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion')
-        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission)
+        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission, submissions=None)
 
         self.assertEqual(kwargs['visibility'], INTERNAL)
 
     def test_public_transition_kwargs(self):
         submission = ApplicationSubmissionFactory()
-        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission)
+        kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, submission=submission, submissions=None)
 
         self.assertNotIn('visibility', kwargs)
 

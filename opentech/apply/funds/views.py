@@ -27,12 +27,12 @@ from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.models import User
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import (
     BatchUpdateReviewersForm,
+    BatchProgressSubmissionForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
     UpdateReviewersForm,
@@ -54,7 +54,7 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING
+from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
@@ -108,10 +108,9 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
         currently saved to that submission.
         Send out a message of updates.
         """
-        reviewers = User.objects.filter(id__in=form.cleaned_data['staff_reviewers'])
+        reviewers = form.cleaned_data['staff_reviewers']
 
-        submission_ids = form.cleaned_data['submission_ids']
-        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+        submissions = form.cleaned_data['submissions']
 
         for submission in submissions:
             submission.reviewers.add(*reviewers)
@@ -123,6 +122,64 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
             submissions=submissions,
             added=reviewers,
         )
+
+        return super().form_valid(form)
+
+
+@method_decorator(staff_required, name='dispatch')
+class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
+    form_class = BatchProgressSubmissionForm
+    context_name = 'batch_progress_form'
+
+    def form_valid(self, form):
+        submissions = form.cleaned_data['submissions']
+        transitions = form.cleaned_data.get('action')
+
+        failed = []
+        phase_changes = {}
+        for submission in submissions:
+            valid_actions = {action for action, _ in submission.get_actions_for_user(self.request.user)}
+            old_phase = submission.phase
+            try:
+                transition = (valid_actions & set(transitions)).pop()
+                submission.perform_transition(
+                    transition,
+                    self.request.user,
+                    request=self.request,
+                    notify=False,
+                )
+            except (PermissionDenied, KeyError):
+                failed.append(submission)
+            else:
+                phase_changes[submission.id] = old_phase
+
+        if failed:
+            messages.warning(
+                self.request,
+                _('Failed to update: ') +
+                ', '.join(str(submission) for submission in failed)
+            )
+
+        succeeded_submissions = submissions.exclude(id__in=[submission.id for submission in failed])
+        messenger(
+            MESSAGES.BATCH_TRANSITION,
+            user=self.request.user,
+            request=self.request,
+            submissions=succeeded_submissions,
+            related=phase_changes,
+        )
+
+        ready_for_review = [
+            phase for phase in transitions
+            if phase in review_statuses
+        ]
+        if ready_for_review:
+            messenger(
+                MESSAGES.BATCH_READY_FOR_REVIEW,
+                user=self.request.user,
+                request=self.request,
+                submissions=succeeded_submissions.filter(status__in=ready_for_review),
+            )
 
         return super().form_valid(form)
 
@@ -182,7 +239,8 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
 class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
-        BatchUpdateReviewersView
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
     ]
 
 
@@ -199,10 +257,16 @@ class SubmissionListView(ViewDispatcher):
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
-        BatchUpdateReviewersView
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
     ]
 
     excluded_fields = ('round', 'lead', 'fund')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['round'] = self.obj
+        return kwargs
 
     def get_queryset(self):
         # We want to only show lab or Rounds in this view, their base class is Page
@@ -220,19 +284,22 @@ class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, Del
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionsByStatus(BaseAdminSubmissionsTable):
+class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
+    form_views = [
+        BatchUpdateReviewersView,
+        BatchProgressSubmissionView,
+    ]
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         self.status = kwargs.get('status')
         status_data = self.status_mapping[self.status]
         self.status_name = status_data['name']
         self.statuses = status_data['statuses']
         if self.status not in self.status_mapping:
             raise Http404(_("No statuses match the requested value"))
-
-        return super().get(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         return super().get_filterset_kwargs(filterset_class, limit_statuses=self.statuses, **kwargs)
