@@ -1,15 +1,29 @@
+import { push } from 'connected-react-router'
 import { CALL_API } from '@middleware/api'
 
 import api from '@api';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getCurrentStatusesSubmissions
+} from '@selectors/submissions';
+
+import {
+    getCurrentStatuses,
+    getSubmissionIDsForCurrentStatuses,
+} from '@selectors/statuses';
+
+import {
+    getRounds,
     getCurrentRoundID,
     getCurrentRound,
     getCurrentRoundSubmissionIDs,
-    getRounds,
-    getSubmissionsByGivenStatuses,
-} from '@selectors/submissions';
+} from '@selectors/rounds';
+
+import {
+    MESSAGE_TYPES,
+    addMessage,
+} from '@actions/messages';
 
 
 // Round
@@ -30,9 +44,10 @@ export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
 
 // Submissions by statuses
-export const UPDATE_SUBMISSIONS_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
-export const START_LOADING_SUBMISSIONS_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
-export const FAIL_LOADING_SUBMISSIONS_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
+export const SET_CURRENT_STATUSES = "SET_CURRENT_STATUSES_FOR_SUBMISSIONS";
+export const UPDATE_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
+export const START_LOADING_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
+export const FAIL_LOADING_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
 
 // Submissions
 export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
@@ -53,10 +68,65 @@ export const setCurrentSubmissionRound = id => ({
     id,
 });
 
-export const setCurrentSubmission = id => ({
-    type: SET_CURRENT_SUBMISSION,
-    id,
-});
+
+export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
+    const urlParams = new URLSearchParams(params);
+    if (urlParams.has('submission')) {
+        const activeId = Number(urlParams.get('submission'));
+        const submissionID = getCurrentSubmissionID(getState());
+
+        if (activeId !== null  && submissionID !== activeId) {
+            dispatch(setCurrentSubmission(activeId));
+        }
+        return true;
+    }
+    return false;
+};
+
+
+
+export const clearCurrentSubmissionParam = () => (dispatch, getState) => {
+    const state = getState();
+    if (state.router.location.search !== '') {
+        return dispatch(push({search: ''}));
+    }
+};
+
+
+const setSubmissionParam = (id) => (dispatch, getState) => {
+    const state = getState();
+    const submissionID = getCurrentSubmissionID(state);
+
+    const urlParams = new URLSearchParams(state.router.location.search);
+    const urlID = Number(urlParams.get('submission'));
+
+    const shouldSet = !urlID && !!id;
+    const shouldUpdate = id !== null  && submissionID !== id && urlID !== id;
+
+    if (shouldSet || shouldUpdate) {
+        dispatch(push({search: `?submission=${id}`}));
+    } else if (id === null) {
+        dispatch(clearCurrentSubmissionParam());
+    }
+
+};
+
+
+export const setCurrentSubmissionParam = () => (dispatch, getState) => {
+    const submissionID = getCurrentSubmissionID(getState());
+    return dispatch(setSubmissionParam(submissionID));
+};
+
+
+
+export const setCurrentSubmission = id => (dispatch, getState) => {
+    dispatch(setSubmissionParam(id));
+
+    return dispatch({
+        type: SET_CURRENT_SUBMISSION,
+        id,
+    })
+};
 
 
 export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
@@ -81,6 +151,7 @@ export const loadRounds = () => (dispatch, getState) => {
     return dispatch(fetchRounds())
 }
 
+
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentRoundSubmissionIDs(state)
@@ -89,7 +160,15 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
         return null
     }
 
-    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state)))
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state))).then(() => {
+        const state = getState()
+        const ids = getCurrentRoundSubmissionIDs(state)
+        const currentSubmissionID = getCurrentSubmissionID(state)
+        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
+            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
+            return dispatch(setCurrentSubmission(null))
+        }
+    })
 }
 
 
@@ -118,29 +197,45 @@ const fetchSubmissionsByRound = (roundID) => ({
 })
 
 
-const fetchSubmissionsByStatuses = statuses => {
+export const setCurrentStatuses = (statuses) => (dispatch) => {
     if(!Array.isArray(statuses)) {
         throw new Error("Statuses have to be an array of statuses");
     }
 
+    return dispatch({
+        type: SET_CURRENT_STATUSES,
+        statuses,
+    });
+};
+
+
+const fetchSubmissionsByStatuses = (statuses) => {
     return {
         [CALL_API]: {
-            types: [ START_LOADING_SUBMISSIONS_BY_STATUSES, UPDATE_SUBMISSIONS_BY_STATUSES, FAIL_LOADING_SUBMISSIONS_BY_STATUSES],
+            types: [ START_LOADING_BY_STATUSES, UPDATE_BY_STATUSES, FAIL_LOADING_BY_STATUSES],
             endpoint: api.fetchSubmissionsByStatuses(statuses),
         },
         statuses,
     };
 };
 
-export const loadSubmissionsOfStatuses = statuses => (dispatch, getState) => {
+export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
     const state = getState()
-    const submissions = getSubmissionsByGivenStatuses(statuses)(state)
+    const submissions = getCurrentStatusesSubmissions(state)
 
     if ( submissions && submissions.length !== 0 ) {
         return null
     }
 
-    return dispatch(fetchSubmissionsByStatuses(statuses))
+    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state))).then(() => {
+        const state = getState()
+        const ids = getSubmissionIDsForCurrentStatuses(state)
+        const currentSubmissionID = getCurrentSubmissionID(state)
+        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
+            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
+            return dispatch(setCurrentSubmission(null))
+        }
+    })
 }
 
 const fetchSubmission = (submissionID) => ({

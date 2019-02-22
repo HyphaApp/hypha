@@ -19,7 +19,9 @@ export default class GroupedListing extends React.Component {
         order: PropTypes.arrayOf(PropTypes.shape({
             key: PropTypes.string.isRequired,
             display: PropTypes.string.isRequired,
-            values: PropTypes.arrayOf(PropTypes.string),
+            values: PropTypes.arrayOf(
+                PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+            )
         })),
         onItemSelection: PropTypes.func,
         shouldSelectFirst: PropTypes.bool,
@@ -28,7 +30,6 @@ export default class GroupedListing extends React.Component {
     static defaultProps = {
         shouldSelectFirst: true,
     }
-
 
     state = {
         orderedItems: [],
@@ -46,29 +47,17 @@ export default class GroupedListing extends React.Component {
         this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const propsToCheck = ['items', 'isLoading', 'isErrored']
-        if ( propsToCheck.some(prop => nextProps[prop] !== this.props[prop])) {
-            return true
-        }
-        if ( nextState.orderedItems !== this.state.orderedItems ) {
-            return true
-        }
-        return false
-    }
-
     componentDidUpdate(prevProps, prevState) {
         // Order items
-        if (this.props.items !== prevProps.items) {
+        if (this.props.items !== prevProps.items || this.props.order !== prevProps.order) {
             this.orderItems();
         }
 
         if ( this.props.shouldSelectFirst ){
-            const oldItem = prevProps.activeItem
             const newItem = this.props.activeItem
 
-            // If we have never activated a submission, get the first item
-            if ( !newItem && !oldItem ) {
+            // If we dont have an active item, then get one
+            if ( !newItem ) {
                 const firstGroup = this.state.orderedItems[0]
                 if ( firstGroup && firstGroup.items[0] ) {
                     this.setState({firstUpdate: false})

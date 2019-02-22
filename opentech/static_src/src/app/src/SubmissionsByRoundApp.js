@@ -20,18 +20,18 @@ class SubmissionsByRoundApp extends React.Component {
     }
 
     render() {
-        return <SwitcherApp
+        return (
+            <SwitcherApp
                 detailComponent={<GroupByStatusDetailView />}
                 switcherSelector={'submissions-by-round-app-react-switcher'}
-                pageContent={this.props.pageContent} />;
+                pageContent={this.props.pageContent} />
+        )
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setSubmissionRound: id => {
-            dispatch(setCurrentSubmissionRound(id));
-        },
+        setSubmissionRound: id => {dispatch(setCurrentSubmissionRound(id));},
     }
 };
 
