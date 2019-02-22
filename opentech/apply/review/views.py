@@ -24,7 +24,7 @@ from .models import Review
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
         assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
-        reviews = self.object.reviews.all().select_related('author')
+        reviews = self.object.reviews.submitted().select_related('author')
 
         reviews_dict = {}
         for review in reviews:
