@@ -237,6 +237,7 @@
         &:disabled {
             color: $color--mid-dark-grey;
             cursor: not-allowed;
+            pointer-events: all; // to show the tooltip on hover
 
             // tooltip
             &::before {
