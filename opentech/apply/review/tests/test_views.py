@@ -273,7 +273,7 @@ class StaffReviewOpinionCase(BaseViewTestCase):
     def test_disagree_opinion_redirects_to_review_form(self):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
-        response = self.post_page(review, {'agree': DISAGREE})
+        response = self.post_page(review, {'disagree': DISAGREE})
         url = self.url_from_pattern('funds:submissions:reviews:form', kwargs={'submission_pk': self.submission.id})
         self.assertRedirects(response, url)
 
