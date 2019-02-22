@@ -5,6 +5,36 @@
         margin: 0;
     }
 
+    &--opinion {
+        position: relative;
+        font-size: 14px;
+        border-top: 1px solid $color--mid-grey;
+        border-bottom: 1px solid $color--mid-grey;
+        margin: 10px 0;
+        padding: 5px 0;
+        max-width: 150px;
+
+        #{$root}__item--opinion:first-child {
+            span:last-child {
+                &::before,
+                &::after {
+                    position: absolute;
+                    top: -15px;
+                    right: 5px;
+                }
+
+                &::after {
+                    @include triangle(top, $color--mist, 6px);
+                    top: -13px;
+                }
+
+                &::before {
+                    @include triangle(top, $color--mid-grey, 6px);
+                }
+            }
+        }
+    }
+
     &__item {
         &--reviewer {
             display: flex;
@@ -30,10 +60,19 @@
                     text-align: right;
                 }
             }
+
+            #{$root}__item--opinion & {
+                font-weight: $weight--normal;
+            }
         }
 
         &--reviewer-outcome {
             color: $color--tomato;
+            position: relative;
+
+            &.agree {
+                color: $color--green;
+            }
         }
     }
 }

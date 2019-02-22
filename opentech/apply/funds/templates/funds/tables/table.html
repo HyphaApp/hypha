@@ -40,10 +40,18 @@
                                         <span class="list__item list__item--reviewer-outcome">{{ review.get_recommendation_display }}</span>
                                     </li>
                                     {% for opinion in review.opinions.all %}
-                                    <li class="list__item list__item--reviewer">
-                                        <span class="list__item--reviewer-name">{{ opinion.author }}</span>
-                                        <span class="list__item list__item--reviewer-outcome">{{ opinion.get_opinion_display }}</span>
-                                    </li>
+                                        {% if forloop.first %}
+                                            <ul class="list list--opinion">
+                                        {% endif %}
+
+                                            <li class="list__item list__item--reviewer list__item--opinion">
+                                                <span class="list__item--reviewer-name">{{ opinion.author }}</span>
+                                                <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display }}</span>
+                                            </li>
+
+                                        {% if forloop.last %}
+                                            </ul>
+                                        {% endif %}
                                     {% endfor %}
                                 {% endfor %}
                             </ul>
