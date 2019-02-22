@@ -115,7 +115,7 @@ class MetaCategoryForm(WagtailAdminModelForm):
         super().__init__(*args, **kwargs)
         instance = kwargs['instance']
 
-        if instance.is_root() or MetaCategory.objects.count() is 0:
+        if instance.is_root() or MetaCategory.objects.count() == 0:
             self.fields['parent'].disabled = True
             self.fields['parent'].required = False
             self.fields['parent'].empty_label = 'N/A - Root Category'
@@ -133,7 +133,7 @@ class MetaCategoryForm(WagtailAdminModelForm):
             return instance
 
         if instance.id is None:
-            if MetaCategory.objects.all().count() is 0:
+            if MetaCategory.objects.all().count() == 0:
                 MetaCategory.add_root(instance=instance)
             else:
                 instance = parent.add_child(instance=instance)
