@@ -264,7 +264,7 @@ class StaffReviewOpinionCase(BaseViewTestCase):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
         response = self.post_page(review, {'agree': AGREE})
-        self.assertTrue('agrees' in Activity.objects.first().message)
+        self.assertTrue(review.opinions.first().opinion_display in Activity.objects.first().message)
         self.assertEqual(ReviewOpinion.objects.all().count(), 1)
         self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)
         url = self.url_from_pattern('apply:submissions:reviews:review', kwargs={'submission_pk': self.submission.pk, 'pk': review.id})
