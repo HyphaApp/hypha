@@ -203,7 +203,7 @@ class ReviewOpinionFormView(CreateView):
         )
 
         if opinion.opinion == DISAGREE:
-            return HttpResponseRedirect(reverse('apply:submissions:reviews:form', args=(self.review.submission.pk,)))
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(self.review.submission.pk,)))
         else:
             return response
 
