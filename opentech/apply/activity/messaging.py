@@ -212,7 +212,13 @@ class ActivityAdapter(AdapterBase):
 
     def extra_kwargs(self, message_type, submission, submissions, **kwargs):
         from .models import INTERNAL
-        if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING, MESSAGES.REVIEW_OPINION]:
+        if message_type in [
+                MESSAGES.OPENED_SEALED,
+                MESSAGES.REVIEWERS_UPDATED,
+                MESSAGES.SCREENING,
+                MESSAGES.REVIEW_OPINION,
+                MESSAGES.BATCH_REVIEWERS_UPDATED,
+        ]:
             return {'visibility': INTERNAL}
 
         submission = submission or submissions[0]
