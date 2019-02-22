@@ -18,6 +18,8 @@ from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningS
 from opentech.apply.funds.workflow import STATUSES
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 from opentech.apply.utils.image import generate_image_url
+from opentech.images.models import CustomImage
+
 from .widgets import Select2MultiCheckboxesWidget
 
 
