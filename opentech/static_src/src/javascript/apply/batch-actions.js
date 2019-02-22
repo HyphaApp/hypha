@@ -11,9 +11,25 @@
     const $batchTitlesList = $('.js-batch-titles');
     const $batchTitleCount = $('.js-batch-title-count');
     const $hiddenIDlist = $('.js-submissions-id');
+    const $batchDetermineSend = $('.js-batch-determine-send');
+    const $batchDetermineConfirm = $('.js-batch-determine-confirm');
+    const $batchDetermineForm = $batchDetermineSend.parent('form');
     const $toggleBatchList = $('.js-toggle-batch-list');
     const activeClass = 'batch-actions-enabled';
     const closedClass = 'is-closed';
+
+    $batchDetermineSend.click(function (e) {
+        if(!$batchDetermineForm[0].checkValidity()) {
+            $batchDetermineForm.submit();
+            e.preventDefault();
+        }
+    });
+
+    $batchDetermineConfirm.click(function (e) {
+        debugger;
+        $batchDetermineForm.find(':submit').click();
+        e.preventDefault();
+    });
 
     $(window).on('load', function () {
         toggleBatchActions();

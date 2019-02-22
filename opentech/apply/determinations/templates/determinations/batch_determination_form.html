@@ -34,8 +34,9 @@
 {% endblock %}
 
 {% block form_buttons %}
-<input data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary" type="button" value="Send" />
+<input data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button" value="Send" />
 {% include "determinations/includes/batch_determination_confirmation.html" with count=submissions.count %}
+<input type="submit" value="Submit" name="submit" style="display: none" />
 {% endblock %}
 
 {% block extra_js %}
