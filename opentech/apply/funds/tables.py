@@ -1,3 +1,4 @@
+import json
 import textwrap
 
 from django import forms
@@ -25,6 +26,12 @@ def make_row_class(record):
     return css_class
 
 
+def render_actions(table, record):
+    user = table.context['user']
+    actions = record.get_actions_for_user(user)
+    return json.dumps([slugify(action) for _, action in actions])
+
+
 def render_title(record):
     return textwrap.shorten(record.title, width=30, placeholder="...")
 
@@ -33,7 +40,7 @@ class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submissions:detail', text=render_title, args=[A('pk')], orderable=True, attrs={'td': {'data-tooltip': lambda record: record.title, 'class': 'js-title'}})
     submit_time = tables.DateColumn(verbose_name="Submitted")
-    phase = tables.Column(verbose_name="Status", order_by=('status',))
+    phase = tables.Column(verbose_name="Status", order_by=('status',), attrs={'td': {'data-actions': render_actions, 'class': 'js-actions'}})
     stage = tables.Column(verbose_name="Type", order_by=('status',))
     fund = tables.Column(verbose_name="Fund", accessor='page')
     comments = tables.Column(accessor='comment_count', verbose_name="Comments")

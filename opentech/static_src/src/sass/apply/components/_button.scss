@@ -242,9 +242,7 @@
         }
     }
 
-    &--change-status {
-        display: none;
-
+    &--batch-status {
         &::before {
             background-image: url('./../../images/arrow-split.svg');
             transform: rotate(90deg);

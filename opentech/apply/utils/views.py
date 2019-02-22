@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
+from django.http import HttpResponseForbidden
 from django.utils.decorators import method_decorator
 from django.views import defaults
 from django.views.generic import View
@@ -34,7 +35,9 @@ class ViewDispatcher(View):
         elif self.reviewer_check(request):
             view = self.reviewer_view
 
-        return view.as_view()(request, *args, **kwargs)
+        if view:
+            return view.as_view()(request, *args, **kwargs)
+        return HttpResponseForbidden()
 
 
 class DelegatableBase(ContextMixin):
@@ -45,11 +48,12 @@ class DelegatableBase(ContextMixin):
     """
     form_prefix = 'form-submitted-'
 
-    def get_form_args(self):
-        return (None, None)
+    def get_form_kwargs(self):
+        return {}
 
     def get_context_data(self, **kwargs):
-        forms = dict(form_view.contribute_form(*self.get_form_args()) for form_view in self.form_views)
+        form_kwargs = self.get_form_kwargs()
+        forms = dict(form_view.contribute_form(**form_kwargs) for form_view in self.form_views)
 
         return super().get_context_data(
             form_prefix=self.form_prefix,
@@ -71,8 +75,11 @@ class DelegatableBase(ContextMixin):
 
 
 class DelegateableView(DelegatableBase):
-    def get_form_args(self):
-        return self.object, self.request.user
+    def get_form_kwargs(self):
+        return {
+            'user': self.request.user,
+            'instance': self.object,
+        }
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -83,6 +90,11 @@ class DelegateableView(DelegatableBase):
 
 
 class DelegateableListView(DelegatableBase):
+    def get_form_kwargs(self):
+        return {
+            'user': self.request.user,
+        }
+
     def post(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         return super().post(request, *args, **kwargs)
@@ -96,8 +108,7 @@ class DelegatedViewMixin(View):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if self.is_model_form():
-            kwargs['user'] = self.request.user
+        kwargs['user'] = self.request.user
         return kwargs
 
     def get_form(self, *args, **kwargs):
@@ -117,16 +128,16 @@ class DelegatedViewMixin(View):
         return issubclass(cls.form_class, ModelForm)
 
     @classmethod
-    def contribute_form(cls, submission, user):
-        if cls.is_model_form():
-            form = cls.form_class(instance=submission, user=user)
-        else:
-            form = cls.form_class()  # This is for the batch update, we don't pass in the user or a single submission
+    def contribute_form(cls, **kwargs):
+        form = cls.form_class(**kwargs)
         form.name = cls.context_name
         return cls.context_name, form
 
     def get_success_url(self):
-        return self.request.path
+        query = self.request.GET.urlencode()
+        if query:
+            query = '?' + query
+        return self.request.path + query
 
 
 class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):

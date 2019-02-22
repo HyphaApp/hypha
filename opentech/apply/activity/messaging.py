@@ -44,11 +44,20 @@ neat_related = {
     MESSAGES.UPDATE_LEAD: 'old_lead',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
+    MESSAGES.BATCH_TRANSITION: 'transitions',
     MESSAGES.APPLICANT_EDIT: 'revision',
     MESSAGES.EDIT: 'revision',
     MESSAGES.COMMENT: 'comment',
     MESSAGES.SCREENING: 'old_status',
 }
+
+
+def is_transition(message_type):
+    return message_type in [MESSAGES.TRANSITION, MESSAGES.BATCH_TRANSITION]
+
+
+def is_ready_for_review(message_type):
+    return message_type in [MESSAGES.READY_FOR_REVIEW, MESSAGES.BATCH_READY_FOR_REVIEW]
 
 
 class AdapterBase:
@@ -182,6 +191,7 @@ class ActivityAdapter(AdapterBase):
     always_send = True
     messages = {
         MESSAGES.TRANSITION: 'handle_transition',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
@@ -198,11 +208,13 @@ class ActivityAdapter(AdapterBase):
     def recipients(self, message_type, **kwargs):
         return [None]
 
-    def extra_kwargs(self, message_type, submission, **kwargs):
+    def extra_kwargs(self, message_type, submission, submissions, **kwargs):
         from .models import INTERNAL
         if message_type in [MESSAGES.OPENED_SEALED, MESSAGES.REVIEWERS_UPDATED, MESSAGES.SCREENING]:
             return {'visibility': INTERNAL}
-        if message_type == MESSAGES.TRANSITION and not submission.phase.permissions.can_view(submission.user):
+
+        submission = submission or submissions[0]
+        if is_transition(message_type) and not submission.phase.permissions.can_view(submission.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': INTERNAL}
         return {}
@@ -249,6 +261,12 @@ class ActivityAdapter(AdapterBase):
 
         return staff_message
 
+    def handle_batch_transition(self, transitions, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            old_phase = transitions[submission.id]
+            return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
+
     def send_message(self, message, user, submission, submissions, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
@@ -287,11 +305,13 @@ class SlackAdapter(AdapterBase):
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
+        MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>'
     }
 
@@ -299,6 +319,12 @@ class SlackAdapter(AdapterBase):
         super().__init__()
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
+
+    def slack_links(self, links, submissions):
+        return ', '.join(
+            f'<{links[submission.id]}|{submission.title}>'
+            for submission in submissions
+        )
 
     def extra_kwargs(self, message_type, **kwargs):
         submission = kwargs['submission']
@@ -341,10 +367,7 @@ class SlackAdapter(AdapterBase):
         return ' '.join(message)
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
-        submissions_text = ', '.join(
-            f'<{links[submission.id]}|{submission.title}>'
-            for submission in submissions
-        )
+        submissions_text = self.slack_links(links, submissions)
         reviewers_text = ', '.join([str(user) for user in added])
         return (
             '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
@@ -354,7 +377,23 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def notify_reviewers(self, submission, **kwargs):
+    def handle_batch_transition(self, user, links, submissions, transitions, **kwargs):
+        submissions_text = [
+            ': '.join([
+                self.slack_links(links, [submission]),
+                f'{transitions[submission.id].display_name} → {submission.phase}',
+            ])
+            for submission in submissions
+        ]
+        submissions_links = ','.join(submissions_text)
+        return (
+            '{user} has transitioned the following submissions: {submissions_links}'.format(
+                user=user,
+                submissions_links=submissions_links,
+            )
+        )
+
+    def notify_reviewers(self, submission, link, **kwargs):
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
             if submission.phase.permissions.can_review(reviewer):
@@ -366,10 +405,18 @@ class SlackAdapter(AdapterBase):
 
         return (
             '<{link}|{submission.title}> is ready for review. The following are assigned as reviewers: {reviewers}'.format(
+                link=link,
                 reviewers=reviewers,
                 submission=submission,
-                **kwargs
             )
+        )
+
+    def batch_notify_reviewers(self, submissions, links, **kwargs):
+        kwargs.pop('submission')
+        kwargs.pop('link')
+        return '. '.join(
+            self.notify_reviewers(submission, link=links[submission.id], **kwargs)
+            for submission in submissions
         )
 
     def slack_id(self, user):
@@ -429,14 +476,16 @@ class EmailAdapter(AdapterBase):
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.EDIT: 'messages/email/edit.html',
         MESSAGES.TRANSITION: 'messages/email/transition.html',
+        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
+        MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
     }
 
     def get_subject(self, message_type, submission):
         if submission:
-            if message_type == MESSAGES.READY_FOR_REVIEW:
+            if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {submission.title}'.format(submission=submission)
             else:
                 subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
@@ -447,6 +496,17 @@ class EmailAdapter(AdapterBase):
             'subject': self.get_subject(message_type, submission),
         }
 
+    def handle_batch_transition(self, transitions, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            old_phase = transitions[submission.id]
+            return self.render_message(
+                'messages/email/transition.html',
+                submission=submission,
+                old_phase=old_phase,
+                **kwargs
+            )
+
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
         submission = kwargs['submission']
@@ -454,14 +514,31 @@ class EmailAdapter(AdapterBase):
             return self.render_message('messages/email/comment.html', **kwargs)
 
     def recipients(self, message_type, submission, **kwargs):
-        if message_type == MESSAGES.READY_FOR_REVIEW:
+        if is_ready_for_review(message_type):
             return self.reviewers(submission)
 
-        if message_type == MESSAGES.TRANSITION:
+        if is_transition(message_type):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not submission.phase.permissions.can_view(submission.user):
                 return []
         return [submission.user.email]
+
+    def batch_recipients(self, message_type, submissions, **kwargs):
+        if not is_ready_for_review(message_type):
+            return super().batch_recipients(message_type, submissions, **kwargs)
+
+        reviewers_to_message = defaultdict(list)
+        for submission in submissions:
+            reviewers = self.reviewers(submission)
+            for reviewer in reviewers:
+                reviewers_to_message[reviewer].append(submission)
+
+        return [
+            {
+                'recipients': [reviewer],
+                'submissions': submissions,
+            } for reviewer, submissions in reviewers_to_message.items()
+        ]
 
     def reviewers(self, submission):
         return [
@@ -492,6 +569,7 @@ class DjangoMessagesAdapter(AdapterBase):
 
     messages = {
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
+        MESSAGES.BATCH_TRANSITION: 'batch_transition',
     }
 
     def batch_reviewers_updated(self, added, submissions, **kwargs):
@@ -501,6 +579,19 @@ class DjangoMessagesAdapter(AdapterBase):
             ' to ' +
             ', '.join(['"{}"'.format(submission.title) for submission in submissions])
         )
+
+    def batch_transition(self, submissions, transitions, **kwargs):
+        base_message = 'Successfully updated:'
+        transition = '{submission} [{old_display} → {new_display}].'
+        transition_messages = [
+            transition.format(
+                submission=submission.title,
+                old_display=transitions[submission.id],
+                new_display=submission.phase,
+            ) for submission in submissions
+        ]
+        messages = [base_message, *transition_messages]
+        return ' '.join(messages)
 
     def recipients(self, *args, **kwargs):
         return [None]
