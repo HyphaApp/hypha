@@ -1,0 +1,13 @@
+{% load wagtailimages_tags %}
+
+{% if opinions %}
+	<ul>
+	{% for opinion in opinions %}
+	    <li>
+	        {{ opinion.author }}
+	        {% if opinion.get_author_assignment %}{% image opinion.get_author_assignment.icon max-12x12 %}{% endif %}
+	        {{ opinion.get_opinion_display }}s
+	    </li>
+	{% endfor %}
+	</ul>
+{% endif %}

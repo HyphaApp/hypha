@@ -23,7 +23,11 @@
         <tr class="reviews-list__tr">
             <th class="reviews-list__th">{{ answers.question }}</th>
             {% for answer in answers.answers %}
-                <td class="reviews-list__td">{{ answer|bleach }}</td>
+                {% if answers.question == "Opinions" %}
+                    <td class="reviews-list__td">{{ answer }}</td>
+                {% else %}
+                    <td class="reviews-list__td">{{ answer|bleach }}</td>
+                {% endif %}
             {% endfor %}
         </tr>
     {% endfor %}

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, DetailView
@@ -16,6 +17,7 @@ from opentech.apply.review.blocks import RecommendationBlock, RecommendationComm
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.users.models import User
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
@@ -30,32 +32,37 @@ class ReviewContextMixin:
         for review in reviews:
             reviews_dict[review.author.pk] = review
 
+        # Get all the authors of opinions, these authors should not show up in the 'xxx_not_reviewed' lists
+        opinion_authors = User.objects.filter(pk__in=self.object.reviews.opinions().values('author')).distinct()
+
         reviews_block = defaultdict(list)
         for assigned_reviewer in assigned:
             reviewer = assigned_reviewer.reviewer
             role = assigned_reviewer.role
             review = reviews_dict.get(reviewer.pk, None)
+            key = None
             if role:
                 if review:
                     key = 'role_reviewed'
-                else:
+                elif reviewer not in opinion_authors:
                     key = 'role_not_reviewed'
             elif reviewer.is_apply_staff:
                 if review:
                     key = 'staff_reviewed'
-                else:
+                elif review not in opinion_authors:
                     key = 'staff_not_reviewed'
             else:
                 if review:
                     key = 'external_reviewed'
                 else:
                     key = 'external_not_reviewed'
-
-            reviews_block[key].append({
-                'reviewer': reviewer,
-                'review': review,
-                'role': role,
-            })
+            if key:  # Do not add this reviewer to any list if they haven't reviewed but have left an opinion
+                review_info_dict = {
+                    'reviewer': reviewer,
+                    'review': review,
+                    'role': role,
+                }
+                reviews_block[key].append(review_info_dict)
 
         # Calculate the recommendation based on role and staff reviews
         recommendation = self.object.reviews.by_staff().recommendation()
@@ -226,6 +233,7 @@ class ReviewListView(ListView):
 
         # Add the header rows
         review_data['title'] = {'question': '', 'answers': list()}
+        review_data['opinions'] = {'question': 'Opinions', 'answers': list()}
         review_data['score'] = {'question': 'Overall Score', 'answers': list()}
         review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
         review_data['revision'] = {'question': 'Revision', 'answers': list()}
@@ -235,6 +243,9 @@ class ReviewListView(ListView):
 
         for i, review in enumerate(self.object_list):
             review_data['title']['answers'].append('<a href="{}">{}</a>'.format(review.get_absolute_url(), review.author))
+            opinions_template = get_template('review/includes/review_opinions_list.html')
+            opinions_html = opinions_template.render({'opinions': review.opinions.select_related('author').all()})
+            review_data['opinions']['answers'].append(opinions_html)
             review_data['score']['answers'].append(str(review.get_score_display()))
             review_data['recommendation']['answers'].append(review.get_recommendation_display())
             review_data['comments']['answers'].append(review.get_comments_display(include_question=False))

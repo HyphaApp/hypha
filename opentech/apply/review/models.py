@@ -107,6 +107,9 @@ class ReviewQuerySet(models.QuerySet):
         else:
             return MAYBE
 
+    def opinions(self):
+        return ReviewOpinion.objects.filter(review__id__in=self.values_list('id'))
+
 
 class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
@@ -184,3 +187,7 @@ class ReviewOpinion(models.Model):
     @property
     def opinion_display(self):
         return self.get_opinion_display()
+
+    def get_author_role(self):
+        assignment = self.review.submission.assigned.with_roles().filter(reviewer=self.author).first()
+        return assignment.role if assignment else None
