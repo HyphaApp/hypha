@@ -1,15 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import './styles.scss';
+
 const Review = ({ review }) => {
     const { reviewUrl, author, score, recommendation } = review
 
     return (
-        <p>
-            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>
-                {author} - {score} - {recommendation.display}
-            </a>
-        </p>
+        <li className="reviews-sidebar__item">
+            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>{author}</a>
+            <div>{recommendation.display}</div>
+            <div>{score}</div>
+        </li>
     )
 }
 
@@ -34,27 +36,48 @@ const ReviewBlock = ({ review }) => {
             <Review key={review.id} {...{ review }} />)
     }
 
+    const renderTrafficLight = () => {
+        const verdict = review.recommendation.display;
+        const letter = verdict.charAt(0)
+
+        let modifierClass;
+        if (verdict === 'No') {
+            modifierClass = 'red'
+        } else if (verdict === 'Yes') {
+            modifierClass = 'green'
+        } else if (verdict === 'Maybe') {
+            modifierClass = 'amber'
+        }
+
+        return <div aria-label="Traffic light score" className={`traffic-light traffic-light--${modifierClass}`}>{letter}</div>
+    }
+
     const renderReviewBody = () => {
         if (review === undefined) {
             return null
         }
 
         return (
-            <>
+            <ul className="reviews-sidebar">
                 {review.recommendation.display &&
-                    <p>Recommendation: {review.recommendation.display}</p>
-                }
-                {!isNaN(parseFloat(review.score)) &&
-                    <p>Score: {review.score}</p>
+                    <li className="reviews-sidebar__item reviews-sidebar__item--header">
+                        <div></div>
+                        {review.recommendation.display &&
+                            renderTrafficLight()
+                        }
+                        {!isNaN(parseFloat(review.score)) &&
+                            <div>{review.score}</div>
+                        }
+                    </li>
                 }
                 {renderReviews()}
-            </>
+            </ul>
         )
     }
 
     return (
-        <div>
-            <h1>Reviews &amp; assigness</h1>
+        <div className="review-block">
+            <h5>Reviews &amp; assignees</h5>
             {renderReviewBody()}
         </div>
     )
