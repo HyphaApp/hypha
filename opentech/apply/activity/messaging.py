@@ -591,6 +591,7 @@ class DjangoMessagesAdapter(AdapterBase):
     messages = {
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
     }
 
     def batch_reviewers_updated(self, added, submissions, **kwargs):
@@ -613,6 +614,16 @@ class DjangoMessagesAdapter(AdapterBase):
         ]
         messages = [base_message, *transition_messages]
         return ' '.join(messages)
+
+    def batch_determinations(self, submissions, determinations, **kwargs):
+        outcome = determinations[0].clean_outcome
+
+        base_message = f'Successfully determined as {outcome}: '
+        submissions_text = [
+            str(submission.title) for submission in submissions
+        ]
+        return base_message + ', '.join(submissions_text)
+
 
     def recipients(self, *args, **kwargs):
         return [None]
