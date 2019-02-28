@@ -126,7 +126,7 @@ class BatchDeterminationTestCase(BaseViewTestCase):
     def test_can_submit_batch_determination(self):
         submissions = ApplicationSubmissionFactory.create_batch(4)
 
-        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions])
+        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions]) + '&action=rejected'
         data = {
             'submissions': [submission.id for submission in submissions],
             'data': 'some data',

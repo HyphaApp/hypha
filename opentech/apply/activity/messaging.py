@@ -41,6 +41,7 @@ def reviewers_message(reviewers):
 
 neat_related = {
     MESSAGES.DETERMINATION_OUTCOME: 'determination',
+    MESSAGES.BATCH_DETERMINATION_OUTCOME: 'determinations',
     MESSAGES.UPDATE_LEAD: 'old_lead',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
@@ -309,6 +310,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
@@ -393,6 +395,21 @@ class SlackAdapter(AdapterBase):
         return (
             '{user} has transitioned the following submissions: {submissions_links}'.format(
                 user=user,
+                submissions_links=submissions_links,
+            )
+        )
+
+    def handle_batch_determination(self, submissions, links, determinations, **kwargs):
+        submissions_links = ','.join([
+            self.slack_links(links, [submission])
+            for submission in submissions
+        ])
+
+        outcome = determinations[0].clean_outcome
+
+        return (
+            'Determinations of {outcome} was sent for: {submissions_links}'.format(
+                outcome=outcome,
                 submissions_links=submissions_links,
             )
         )

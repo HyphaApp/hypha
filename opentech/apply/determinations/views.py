@@ -89,9 +89,21 @@ class BatchDeterminationCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         submissions = self.get_submissions()
+        determinations = form.instances
+        messenger(
+            MESSAGES.BATCH_DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.request.user,
+            submissions=submissions,
+            related=determinations,
+        )
+        determinations = {
+            determination.submission.id: determination
+            for determination in determinations
+        }
         for submission in submissions:
-            transition = transition_from_outcome(int(form.cleaned_data.get('outcome')), submission)
-            determination = submission.determinations.first()
+            transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
+            determination = determinations[submission.id]
 
             if determination.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
@@ -202,7 +214,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 submission=self.object.submission,
                 related=self.object,
             )
-            transition = transition_from_outcome(int(form.cleaned_data.get('outcome')), self.submission)
+            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment

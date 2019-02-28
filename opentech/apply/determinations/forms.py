@@ -39,6 +39,10 @@ class BaseDeterminationForm:
     def data_fields(self):
         return []
 
+    def clean_outcome(self):
+        # Enforce outcome as an int
+        return int(self.cleaned_data['outcome'])
+
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data['data'] = {
@@ -154,23 +158,27 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     def __init__(self, *args, submissions, initial={}, **kwargs):
         initial.update(submissions=submissions.values_list('id', flat=True))
         super().__init__(*args, initial=initial, **kwargs)
-        self.fields['outcome'].widget = forms.HiddenInput()
 
-    def save(self):
+    def _post_clean(self):
         submissions = self.cleaned_data['submissions']
         data = {
             field: self.cleaned_data[field]
             for field in ['author', 'data', 'outcome']
         }
 
-        determinations = [
+        self.instances = [
             Determination(
                 submission=submission,
                 **data,
             )
             for submission in submissions
         ]
-        Determination.objects.bulk_create(determinations)
+
+        return super()._post_clean()
+
+    def save(self):
+        determinations = Determination.objects.bulk_create(self.instances)
+        self.instances = determinations
         return determinations
 
 
