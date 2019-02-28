@@ -88,7 +88,10 @@ class BatchDeterminationCreateView(CreateView):
         return get_form_for_stages(self.get_submissions())
 
     def get_context_data(self, **kwargs):
-        action_name = 'INVITE TO PROPOSAL'
+        outcome = TRANSITION_DETERMINATION[self.get_action()]
+        submission = self.get_submissions()[0]
+        transition = transition_from_outcome(outcome, submission)
+        action_name = submission.workflow[transition].display_name
         return super().get_context_data(
             action_name=action_name,
             submissions=self.get_submissions(),
@@ -147,7 +150,8 @@ class BatchDeterminationCreateView(CreateView):
             action = outcome_from_actions(actions)
             return HttpResponseRedirect(
                 reverse_lazy('apply:submissions:determinations:batch') +
-                "?action=" + action + "&submissions=" + ','.join([str(submission.id) for submission in submissions])
+                "?action=" + action +
+                "&submissions=" + ','.join([str(submission.id) for submission in submissions])
             )
         elif set(actions) != non_determine_states:
             raise ValueError('Inconsistent states provided - please talk to an admin')

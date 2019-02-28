@@ -33,7 +33,7 @@ class BaseDeterminationForm:
             initial.update(outcome=TRANSITION_DETERMINATION[action])
         except KeyError:
             pass
-        initial.update(author=user.id)
+        initial.update(author=user)
         super().__init__(*args, initial=initial, **kwargs)
 
     def data_fields(self):
@@ -147,6 +147,7 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     author = forms.ModelChoiceField(
         queryset=User.objects.staff(),
         widget=forms.ModelChoiceField.hidden_widget,
+        required=True,
     )
 
     def data_fields(self):
@@ -158,6 +159,7 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     def __init__(self, *args, submissions, initial={}, **kwargs):
         initial.update(submissions=submissions.values_list('id', flat=True))
         super().__init__(*args, initial=initial, **kwargs)
+        self.fields['outcome'].widget = forms.HiddenInput()
 
     def _post_clean(self):
         submissions = self.cleaned_data['submissions']

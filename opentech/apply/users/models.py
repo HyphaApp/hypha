@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +10,9 @@ from .utils import send_activation_email
 
 class UserQuerySet(models.QuerySet):
     def staff(self):
-        return self.filter(groups__name=STAFF_GROUP_NAME)
+        return self.filter(
+            Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
+        )
 
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME)
