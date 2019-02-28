@@ -137,7 +137,8 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
 
         try:
             redirect = BatchDeterminationCreateView.should_redirect(self.request, submissions, transitions)
-        except ValueError:
+        except ValueError as e:
+            messages.warning(self.request, 'Could not determine: ' + str(e))
             return self.form_invalid(form)
         else:
             if redirect:

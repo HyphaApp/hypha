@@ -2,6 +2,9 @@ from unittest import mock
 
 from opentech.apply.funds.models import ApplicationSubmission
 
+from opentech.apply.determinations.tests.factories import (
+    DeterminationFactory
+)
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     InvitedToProposalFactory,
@@ -72,6 +75,21 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         other_submission = self.refresh(other_submission)
         self.assertEqual(submission.status, 'internal_review')
         self.assertEqual(other_submission.status, 'proposal_internal_review')
+
+    def test_mixed_determine_notifies(self):
+        submission = ApplicationSubmissionFactory()
+        dismissed_submission = ApplicationSubmissionFactory(status='rejected')
+        DeterminationFactory(submission=dismissed_submission, rejected=True, submitted=True)
+        action = 'dismiss'
+        response = self.post_page(data=self.data(action, [submission, dismissed_submission]))
+        self.assertEqual(len(response.context['messages']), 1)
+
+    def test_determine_redirects(self):
+        submission = ApplicationSubmissionFactory()
+        action = 'dismiss'
+        response = self.post_page(data=self.data(action, [submission]))
+        redirect_url = self.url_from_pattern('apply:submissions:determinations:batch', absolute=False)
+        self.assertEqual(response.request['PATH_INFO'][:len(redirect_url)], redirect_url)
 
     @mock.patch('opentech.apply.funds.views.messenger')
     def test_messenger_not_called_with_failed(self, patched):

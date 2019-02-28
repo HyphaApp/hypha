@@ -133,7 +133,8 @@ class BatchDeterminationCreateView(CreateView):
             if has_final_determination(submission):
                 excluded.append(submission)
 
-        if all(action in DETERMINATION_OUTCOMES for action in actions):
+        non_determine_states = set(actions) - set(DETERMINATION_OUTCOMES.keys())
+        if not any(non_determine_states):
             if excluded:
                 messages.warning(
                     request,
@@ -148,8 +149,8 @@ class BatchDeterminationCreateView(CreateView):
                 reverse_lazy('apply:submissions:determinations:batch') +
                 "?action=" + action + "&submissions=" + ','.join([str(submission.id) for submission in submissions])
             )
-        else:
-            raise ValueError('Inconsistent states provided')
+        elif set(actions) != non_determine_states:
+            raise ValueError('Inconsistent states provided - please talk to an admin')
 
     def get_success_url(self):
         return reverse_lazy('apply:submissions:list')
