@@ -123,6 +123,19 @@ class BatchDeterminationTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:determinations:{}'
     base_view_name = 'batch'
 
+    def test_cant_access_without_submissions(self):
+        url = self.url(None) + '?action=rejected'
+        response = self.client.get(url, follow=True, secure=True)
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+        self.assertEqual(len(response.context['messages']), 1)
+
+    def test_cant_access_without_action(self):
+        submission = ApplicationSubmissionFactory()
+        url = self.url(None) + '?submissions=' + str(submission.id)
+        response = self.client.get(url, follow=True, secure=True)
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+        self.assertEqual(len(response.context['messages']), 1)
+
     def test_can_submit_batch_determination(self):
         submissions = ApplicationSubmissionFactory.create_batch(4)
 

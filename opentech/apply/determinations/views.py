@@ -56,15 +56,24 @@ def get_form_for_stage(submission, batch=False):
 class BatchDeterminationCreateView(CreateView):
     template_name = 'determinations/batch_determination_form.html'
 
+    def dispatch(self, *args, **kwargs):
+        if not self.get_action() or not self.get_submissions():
+            messages.warning(self.request, 'Improperly configured request, please try again.')
+            return HttpResponseRedirect(self.get_success_url())
+        return super().dispatch(*args, **kwargs)
+
     def get_action(self):
         return self.request.GET.get('action', '')
 
     def get_submissions(self):
-        submission_ids = self.request.GET.get('submissions').split(',')
+        try:
+            submission_ids = self.request.GET.get('submissions').split(',')
+        except AttributeError:
+            return None
         try:
             ids = [int(pk) for pk in submission_ids]
         except ValueError:
-            ids = []
+            return None
         return ApplicationSubmission.objects.filter(id__in=ids)
 
     def get_form_kwargs(self):
