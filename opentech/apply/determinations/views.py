@@ -101,7 +101,11 @@ class BatchDeterminationCreateView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         submissions = self.get_submissions()
-        determinations = form.instances
+        determinations = {
+            determination.submission.id: determination
+            for determination in form.instances
+        }
+
         messenger(
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
@@ -109,10 +113,7 @@ class BatchDeterminationCreateView(CreateView):
             submissions=submissions,
             related=determinations,
         )
-        determinations = {
-            determination.submission.id: determination
-            for determination in determinations
-        }
+
         for submission in submissions:
             transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
             determination = determinations[submission.id]

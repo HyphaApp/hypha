@@ -199,6 +199,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPLICANT_EDIT: 'Edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
@@ -237,6 +238,14 @@ class ActivityAdapter(AdapterBase):
     def batch_reviewers_updated(self, added, **kwargs):
         return 'Batch ' + self.reviewers_updated(added, **kwargs)
 
+    def batch_determination(self, submissions, determinations, **kwargs):
+        submission = submissions[0]
+        determination = determinations[submission.id]
+        return self.messages[MESSAGES.DETERMINATION_OUTCOME].format(
+            determination=determination,
+            submission=submission,
+        )
+
     def handle_transition(self, old_phase, submission, **kwargs):
         base_message = 'Progressed from {old_display} to {new_display}'
 
@@ -274,18 +283,24 @@ class ActivityAdapter(AdapterBase):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
 
-        related = kwargs['related']
-        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
-        if has_correct_fields and isinstance(related, models.Model):
-            related_object = related
-        else:
-            related_object = None
-
         try:
             # If this was a batch action we want to pull out the submission
             submission = submissions[0]
         except IndexError:
             pass
+
+        related = kwargs['related']
+        if isinstance(related, dict):
+            try:
+                related = related[submission.id]
+            except KeyError:
+                pass
+
+        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
+        if has_correct_fields and isinstance(related, models.Model):
+            related_object = related
+        else:
+            related_object = None
 
         Activity.actions.create(
             user=user,
@@ -405,7 +420,7 @@ class SlackAdapter(AdapterBase):
             for submission in submissions
         ])
 
-        outcome = determinations[0].clean_outcome
+        outcome = determinations[submissions[0].id].clean_outcome
 
         return (
             'Determinations of {outcome} was sent for: {submissions_links}'.format(
@@ -616,7 +631,7 @@ class DjangoMessagesAdapter(AdapterBase):
         return ' '.join(messages)
 
     def batch_determinations(self, submissions, determinations, **kwargs):
-        outcome = determinations[0].clean_outcome
+        outcome = determinations[submissions[0].id].clean_outcome
 
         base_message = f'Successfully determined as {outcome}: '
         submissions_text = [
