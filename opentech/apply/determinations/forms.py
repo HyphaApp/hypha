@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
@@ -10,6 +11,8 @@ from .models import (
     TRANSITION_DETERMINATION,
 )
 from .utils import determination_actions
+
+User = get_user_model()
 
 
 class RichTextField(forms.CharField):
@@ -25,21 +28,6 @@ class RequiredRichTextField(forms.CharField):
 
 
 class BaseDeterminationForm:
-    class Meta:
-        fields = ['outcome', 'message', 'submission', 'author', 'data']
-
-        widgets = {
-            'submission': forms.HiddenInput(),
-            'author': forms.HiddenInput(),
-            'data': forms.HiddenInput(),
-        }
-
-        error_messages = {
-            NON_FIELD_ERRORS: {
-                'unique_together': "You have already created a determination for this submission",
-            }
-        }
-
     def __init__(self, *args, user, initial, action, **kwargs):
         try:
             initial.update(outcome=TRANSITION_DETERMINATION[action])
@@ -48,13 +36,17 @@ class BaseDeterminationForm:
         initial.update(author=user.id)
         super().__init__(*args, initial=initial, **kwargs)
 
+    def data_fields(self):
+        return []
+
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data['data'] = {
             key: value
             for key, value in cleaned_data.items()
-            if key not in self._meta.fields
+            if key in self.data_fields()
         }
+        return cleaned_data
 
     @classmethod
     def get_detailed_response(cls, saved_data):
@@ -77,9 +69,27 @@ class BaseDeterminationForm:
 class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
     draft_button_name = "save_draft"
 
-    class Meta(BaseDeterminationForm.Meta):
+    class Meta:
         model = Determination
         fields = ['outcome', 'message', 'submission', 'author', 'data']
+
+        widgets = {
+            'submission': forms.HiddenInput(),
+            'author': forms.HiddenInput(),
+            'data': forms.HiddenInput(),
+        }
+
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': "You have already created a determination for this submission",
+            }
+        }
+
+    def data_fields(self):
+        return [
+            field for field in self.fields
+            if field not in self._meta.fields
+        ]
 
     def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
@@ -127,14 +137,41 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
 
 class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     submissions = forms.ModelMultipleChoiceField(
-        widget=forms.HiddenInput(),
         queryset=ApplicationSubmission.objects.active(),
+        widget=forms.ModelMultipleChoiceField.hidden_widget,
     )
+    author = forms.ModelChoiceField(
+        queryset=User.objects.staff(),
+        widget=forms.ModelChoiceField.hidden_widget,
+    )
+
+    def data_fields(self):
+        return [
+            field for field in self.fields
+            if field not in ['submissions', 'outcome', 'author']
+        ]
 
     def __init__(self, *args, submissions, initial={}, **kwargs):
         initial.update(submissions=submissions.values_list('id', flat=True))
         super().__init__(*args, initial=initial, **kwargs)
         self.fields['outcome'].widget = forms.HiddenInput()
+
+    def save(self):
+        submissions = self.cleaned_data['submissions']
+        data = {
+            field: self.cleaned_data[field]
+            for field in ['author', 'data', 'outcome']
+        }
+
+        determinations = [
+            Determination(
+                submission=submission,
+                **data,
+            )
+            for submission in submissions
+        ]
+        Determination.objects.bulk_create(determinations)
+        return determinations
 
 
 class BaseConceptDeterminationForm(forms.Form):

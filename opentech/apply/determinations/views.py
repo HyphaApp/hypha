@@ -86,6 +86,25 @@ class BatchDeterminationCreateView(CreateView):
             **kwargs,
         )
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        submissions = self.get_submissions()
+        for submission in submissions:
+            transition = transition_from_outcome(int(form.cleaned_data.get('outcome')), submission)
+            determination = submission.determinations.first()
+
+            if determination.outcome == NEEDS_MORE_INFO:
+                # We keep a record of the message sent to the user in the comment
+                Activity.comments.create(
+                    message=determination.stripped_message,
+                    user=self.request.user,
+                    submission=submission,
+                    related_object=determination,
+                )
+
+            submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+        return response
+
     @classmethod
     def should_redirect(cls, request, submissions, actions):
         excluded = []
@@ -110,6 +129,9 @@ class BatchDeterminationCreateView(CreateView):
             )
         else:
             raise ValueError('Inconsistent states provided')
+
+    def get_success_url(self):
+        return reverse_lazy('apply:submissions:list')
 
 
 @method_decorator(staff_required, name='dispatch')
