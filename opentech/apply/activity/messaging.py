@@ -514,6 +514,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'messages/email/transition.html',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
@@ -540,6 +541,17 @@ class EmailAdapter(AdapterBase):
                 'messages/email/transition.html',
                 submission=submission,
                 old_phase=old_phase,
+                **kwargs
+            )
+
+    def batch_determination(self, determinations, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            determination = determinations[submission.id]
+            return self.render_message(
+                'messages/email/determination.html',
+                submission=submission,
+                determination=determination,
                 **kwargs
             )
 
@@ -638,7 +650,6 @@ class DjangoMessagesAdapter(AdapterBase):
             str(submission.title) for submission in submissions
         ]
         return base_message + ', '.join(submissions_text)
-
 
     def recipients(self, *args, **kwargs):
         return [None]
