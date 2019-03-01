@@ -1,0 +1,25 @@
+.submission-link {
+    border-top: 1px solid $color--light-mid-grey;
+    margin: 0 20px;
+    padding: 20px 0;
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        font-weight: $weight--semibold;
+        transition: border $transition;
+        border-bottom: 1px solid transparent;
+
+        &:focus,
+        &:hover {
+            border-bottom: 1px solid $color--primary;
+        }
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+        margin-left: 5px;
+        fill: $color--primary;
+    }
+}

@@ -15,6 +15,7 @@ import AddNoteForm from '@containers/AddNoteForm';
 import NoteListing from '@containers/NoteListing';
 import StatusActions from '@containers/StatusActions';
 import Tabber, {Tab} from '@components/Tabber'
+import SubmissionLink from '@components/SubmissionLink';
 import './style.scss';
 
 class DisplayPanel extends React.Component  {
@@ -26,11 +27,8 @@ class DisplayPanel extends React.Component  {
     };
 
     render() {
-        const { windowSize: {windowWidth: width}, submissionID } = this.props;
-        const { clearSubmission } = this.props;
-
+        const { windowSize: { windowWidth: width }, submissionID, clearSubmission } = this.props;
         const isMobile = width < 1024;
-        const submissionLink = "/apply/submissions/" + submissionID + "/";
 
         const submission = <CurrentSubmissionDisplay />
 
@@ -42,6 +40,7 @@ class DisplayPanel extends React.Component  {
             <Tab button="Status" key="status">
                 <StatusActions submissionID={submissionID} />
                 <ReviewInformation submissionID={submissionID} />
+                <SubmissionLink submissionID={submissionID} />
             </Tab>
         ]
 
@@ -61,7 +60,6 @@ class DisplayPanel extends React.Component  {
                     <div className="display-panel__column">
                         <div className="display-panel__header display-panel__header--spacer"></div>
                         <div className="display-panel__body display-panel__body--center">
-                            <a target="_blank" rel="noopener noreferrer" href={ submissionLink }>Open in new tab</a>
                             { submission }
                         </div>
                     </div>
