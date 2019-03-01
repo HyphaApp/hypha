@@ -697,12 +697,6 @@ active_statuses = [
     if 'accepted' not in status and 'rejected' not in status and 'invited' not in status
 ]
 
-STATUSES_ACTIVE = defaultdict(set)
-
-for key, value in PHASES:
-    if 'accepted' not in value.display_name.lower() and 'dismissed' not in value.display_name.lower() and 'invited' not in value.display_name.lower():
-        STATUSES_ACTIVE[value.display_name].add(key)
-
 
 def get_review_active_statuses(user=None):
     reviews = set()

@@ -12,7 +12,7 @@ from opentech.apply.funds.tables import (
     SubmissionsTable,
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
-    STATUSES_ACTIVE_FILTER_LIST,
+    review_filter_for_user,
 )
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -44,7 +44,7 @@ class AdminDashboardView(TemplateView):
         filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
 
         # Filter for all active statuses.
-        active_statuses_filter = '&status=' + '&status='.join(STATUSES_ACTIVE_FILTER_LIST)
+        active_statuses_filter = '&status='.join(review_filter_for_user(request.user))
 
         context = {
             'open_rounds': open_rounds,
@@ -106,7 +106,7 @@ class ReviewerDashboardView(TemplateView):
         filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
 
         # Filter for all active statuses.
-        active_statuses_filter = '&status=' + '&status='.join(STATUSES_ACTIVE_FILTER_LIST)
+        active_statuses_filter = '&status='.join(review_filter_for_user(request.user))
 
         context = {
             'my_review': my_review,
