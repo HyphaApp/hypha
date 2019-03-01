@@ -80,7 +80,11 @@ class LinkFields(models.Model):
 
 # Related pages
 class RelatedPage(Orderable, models.Model):
-    page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    page = models.ForeignKey(
+        'wagtailcore.Page',
+        on_delete=models.CASCADE,
+        related_name='+',
+    )
 
     class Meta:
         abstract = True

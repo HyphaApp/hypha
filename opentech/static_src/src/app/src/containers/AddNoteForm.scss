@@ -31,7 +31,6 @@ $submit-button-height: 60px;
 
         @include media-query(tablet-landscape) {
             height: 100%;
-            padding-bottom: 95px;
         }
     }
 
@@ -47,6 +46,7 @@ $submit-button-height: 60px;
         font-size: 18px;
         height: $submit-button-height;
         opacity: 1;
+        z-index: 20;
     }
 
     textarea,
