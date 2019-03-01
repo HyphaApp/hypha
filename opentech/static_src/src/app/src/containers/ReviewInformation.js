@@ -62,14 +62,14 @@ const ReviewInformation = ({ data }) => {
     const orderedNonStaff = orderPeople(nonStaff);
 
     return (
-        <>
-            <h1>Reviews &amp; assigness</h1>
+        <div className="review-block">
+            <h5>Reviews &amp; assigness</h5>
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
                 {renderReviewBlock(orderedStaff)}
                 <hr />
                 {renderReviewBlock(orderedNonStaff)}
             </ReviewBlock>
-        </>
+        </div>
     )
 }
 

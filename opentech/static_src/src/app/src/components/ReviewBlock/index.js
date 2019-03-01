@@ -80,7 +80,7 @@ const ReviewBlock = ({ children, recommendation, score }) => {
     }
 
     return (
-        <ul>
+        <ul className="reviews-sidebar">
             {recommendation &&
                 <li className="reviews-sidebar__item reviews-sidebar__item--header">
                     <div></div>
