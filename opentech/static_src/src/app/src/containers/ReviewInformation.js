@@ -31,7 +31,7 @@ const ReviewInformation = ({ data }) => {
     }
 
     const renderReviewBlock = (reviewers) => {
-        return <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
+        return <>
             {reviewers.map(reviewer => {
                 const review = data.reviews.filter(review => review.authorId === reviewer.id)[0];
 
@@ -55,7 +55,7 @@ const ReviewInformation = ({ data }) => {
                     })}
                 </Review>
             })}
-        </ReviewBlock>
+        </>
     }
 
     const orderedStaff = orderPeople(staff);
@@ -64,8 +64,11 @@ const ReviewInformation = ({ data }) => {
     return (
         <>
             <h1>Reviews &amp; assigness</h1>
-            {renderReviewBlock(orderedStaff)}
-            {renderReviewBlock(orderedNonStaff)}
+            <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
+                {renderReviewBlock(orderedStaff)}
+                <hr />
+                {renderReviewBlock(orderedNonStaff)}
+            </ReviewBlock>
         </>
     )
 }
