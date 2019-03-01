@@ -59,8 +59,6 @@ const DisplayPanel = props => {
     const isMobile = width < 1024;
     const submissionLink = "/apply/submissions/" + submissionID + "/";
 
-    const submissionDisplay = <CurrentSubmissionDisplay />
-
     let tabs = [
         <Tab button="Notes" key="note">
             <NoteListing submissionID={submissionID} />
@@ -77,7 +75,7 @@ const DisplayPanel = props => {
         tabs = [
             <Tab button="Back" key="back" handleClick={ clearSubmission } />,
             <Tab button="Application" key="application">
-                { submission }
+                <CurrentSubmissionDisplay />
             </Tab>,
             ...tabs
         ]
@@ -90,7 +88,7 @@ const DisplayPanel = props => {
                     <div className="display-panel__header display-panel__header--spacer"></div>
                     <div className="display-panel__body display-panel__body--center">
                         <a target="_blank" rel="noopener noreferrer" href={ submissionLink }>Open in new tab</a>
-                        { submissionDisplay }
+                        <CurrentSubmissionDisplay />
                     </div>
                 </div>
             )}
