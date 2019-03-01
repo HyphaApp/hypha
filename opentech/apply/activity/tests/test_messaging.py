@@ -321,7 +321,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     @responses.activate
     def test_cant_send_with_no_room(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message', '')
+        submission = ApplicationSubmissionFactory()
+        adapter.send_message('my message', '', submission)
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -331,7 +332,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     @responses.activate
     def test_cant_send_with_no_url(self):
         adapter = SlackAdapter()
-        adapter.send_message('my message', '')
+        submission = ApplicationSubmissionFactory()
+        adapter.send_message('my message', '', submission)
         self.assertEqual(len(responses.calls), 0)
 
     @override_settings(
@@ -341,14 +343,35 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     @responses.activate
     def test_correct_payload(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
+        submission = ApplicationSubmissionFactory()
         adapter = SlackAdapter()
         message = 'my message'
-        adapter.send_message(message, '')
+        adapter.send_message(message, '', submission)
         self.assertEqual(len(responses.calls), 1)
         self.assertDictEqual(
             json.loads(responses.calls[0].request.body),
             {
-                'room': self.target_room,
+                'room': [self.target_room],
+                'message': message,
+            }
+        )
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_round_slack_channel(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        submission = ApplicationSubmissionFactory(page__slack_channel='dummy')
+        adapter = SlackAdapter()
+        message = 'my message'
+        adapter.send_message(message, '', submission)
+        self.assertEqual(len(responses.calls), 1)
+        self.assertDictEqual(
+            json.loads(responses.calls[0].request.body),
+            {
+                'room': [self.target_room, '#dummy'],
                 'message': message,
             }
         )

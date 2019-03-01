@@ -428,37 +428,29 @@ class SlackAdapter(AdapterBase):
             return f'<{user.slack}>'
         return ''
 
-    def slack_channel(self, submission):
+    def slack_channels(self, submission):
+        target_rooms = [self.target_room]
         try:
-            target_rooms = submission.get_from_parent('slack_channel').split(',')
+            extra_rooms = submission.get_from_parent('slack_channel').split(',')
         except AttributeError:
-            # If not a submission object, set room to default.
-            target_rooms = self.target_room
+            # Not a submission object, no extra rooms.
+            pass
         else:
-            if not target_rooms:
-                # If no custom room, set to default.
-                target_rooms = self.target_room
-            else:
-                # Always send a copy to the default channel as well.
-                target_rooms.append(self.target_room)
+            target_rooms.extend(extra_rooms)
 
         # Make sure each channel name starts with a "#".
-        for i, target_room in enumerate(target_rooms):
-            if target_room and not target_room.startswith('#'):
-                target_rooms[i] = f"#{target_room}"
+        target_rooms = [
+            room if room.startswith('#') else '#' + room
+            for room in target_rooms
+            if room
+        ]
 
         return target_rooms
 
-    def send_message(self, message, recipient, **kwargs):
-        try:
-            submission = kwargs['submission']
-        except Exception:
-            # If no submission, set room to default.
-            target_rooms = self.target_room
-        else:
-            target_rooms = self.slack_channel(submission)
+    def send_message(self, message, recipient, submission, **kwargs):
+        target_rooms = self.slack_channels(submission)
 
-        if not self.destination or not target_rooms:
+        if not self.destination or not any(target_rooms):
             errors = list()
             if not self.destination:
                 errors.append('Destination URL')
