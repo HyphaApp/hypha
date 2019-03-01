@@ -704,7 +704,7 @@ for key, value in PHASES:
         STATUSES_ACTIVE[value.display_name].add(key)
 
 
-def get_review_activ_statuses(user=None):
+def get_review_active_statuses(user=None):
     reviews = set()
 
     for phase_name, phase in PHASES:
