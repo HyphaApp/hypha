@@ -16,7 +16,7 @@ const Opinion = ({ author, opinion }) => (
 
 Opinion.propTypes = {
     author: PropTypes.string,
-    opinion: PropTypes.string,
+    opinion: PropTypes.object,
 }
 
 export const AssignedToReview = ({ author }) => {
