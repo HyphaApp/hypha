@@ -3,20 +3,20 @@ import PropTypes from 'prop-types'
 
 import './styles.scss';
 
-const Opinion = ({ author, opinion }) => (
+export const Opinion = ({ author, opinion }) => (
     <li className="reviews-sidebar__item reviews-sidebar__item--decision">
         <div className="reviews-sidebar__name">
             <span>{author}</span>
             {/* <img src={opinion.author.role.icon} /> */}
         </div>
         <div></div>
-        <div className={`reviews-sidebar__outcome ${opinion.opinion.toLowerCase()}`}>{opinion.opinion}</div>
+        <div className={`reviews-sidebar__outcome ${opinion.toLowerCase()}`}>{opinion}</div>
     </li>
 )
 
 Opinion.propTypes = {
     author: PropTypes.string,
-    opinion: PropTypes.object,
+    opinion: PropTypes.string,
 }
 
 export const AssignedToReview = ({ author }) => {
@@ -33,8 +33,8 @@ AssignedToReview.propTypes = {
     author: PropTypes.string,
 }
 
-export const Review = ({ url, author, score, recommendation, opinions }) => {
-    const hasOpinions = opinions.length > 0;
+export const Review = ({ url, author, score, recommendation, children }) => {
+    const hasOpinions = children.length > 0;
 
     return (
         <>
@@ -46,13 +46,7 @@ export const Review = ({ url, author, score, recommendation, opinions }) => {
 
             {hasOpinions &&
                 <ul className="reviews-sidebar__decision">
-                    {opinions.map((opinion, i) => {
-                        return <Opinion
-                            key={i}
-                            author={author}
-                            opinion={opinion}
-                        />
-                    })}
+                    {children}
                 </ul>
             }
         </>
@@ -66,7 +60,7 @@ Review.propTypes = {
         display: PropTypes.string.isRequired,
     }).isRequired,
     url: PropTypes.string.isRequired,
-    opinions: PropTypes.arrayOf(PropTypes.object),
+    children: PropTypes.node,
 }
 
 const ReviewBlock = ({ children, recommendation, score }) => {
