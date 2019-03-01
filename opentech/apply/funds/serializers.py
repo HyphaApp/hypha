@@ -49,16 +49,26 @@ class ReviewSummarySerializer(serializers.Field):
                 'value': recommendation,
                 'display': dict(RECOMMENDATION_CHOICES).get(recommendation)
             },
+            'assigned': [
+                {
+                    'id': assigned.reviewer.id,
+                    'name': str(assigned.reviewer),
+                    'role': {
+                        'icon': assigned.role and 'https://fillmurray.com/12/12',
+                        'name': assigned.role and assigned.role.name,
+                        'order': assigned.role and assigned.role.order,
+                    },
+                    'is_staff': assigned.reviewer.is_apply_staff,
+                } for assigned in instance.assigned.all()
+            ],
             'reviews': [
                 {
                     'id': review.id,
-                    'author': str(review.author),
-                    'icon': 'https://fillmurray.com/12/12',
+                    'author_id': review.author.id,
                     'score': review.score,
                     'opinions': [{
-                        'author': str(opinion.author),
+                        'author_id': opinion.author.id,
                         'opinion': opinion.get_opinion_display(),
-                        'icon': 'https://fillmurray.com/12/12',
                     } for opinion in review.opinions.all()],
                     'recommendation': {
                         'value': review.recommendation,
