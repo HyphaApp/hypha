@@ -181,11 +181,8 @@ class UpdateReviewersForm(forms.ModelForm):
         }
         for role, reviewer in assigned_roles.items():
             if reviewer:
-                AssignedReviewers.objects.update_or_create(
-                    submission=instance,
-                    role=role,
-                    defaults={'reviewer': reviewer},
-                )
+                AssignedReviewers.objects.filter(submission=instance, role=role).delete()
+                AssignedReviewers.objects.update_or_create(submission=instance, reviewer=reviewer, defaults={'role': role})
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
