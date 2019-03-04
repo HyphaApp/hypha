@@ -3,6 +3,7 @@ from opentech.apply.funds.tests.factories import (
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
 )
+from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory, StaffFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
@@ -68,6 +69,16 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, submission.title)
         self.assertEquals(response.context['in_review_count'], 1)
+
+    def test_waiting_for_review_after_agreement_is_empty(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[staff, self.user])
+        review = ReviewFactory(submission=submission, author=staff, recommendation_yes=True)
+        ReviewOpinionFactory(review=review, author=self.user, opinion_agree=True)
+        response = self.get_page()
+        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, "Nice! You're all caught up.")
+        self.assertEquals(response.context['in_review_count'], 0)
 
 
 class TestReviewerDashboard(BaseViewTestCase):
