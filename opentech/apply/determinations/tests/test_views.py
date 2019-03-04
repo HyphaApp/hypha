@@ -1,5 +1,5 @@
 from opentech.apply.activity.models import Activity
-from opentech.apply.determinations.models import ACCEPTED
+from opentech.apply.determinations.models import ACCEPTED, REJECTED
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.utils.testing import BaseViewTestCase
@@ -116,6 +116,72 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertRedirects(response, self.factory.get(url, secure=True).build_absolute_uri(url))
         self.assertEqual(submission_original.status, 'invited_to_proposal')
         self.assertEqual(submission_next.status, 'draft_proposal')
+
+
+class BatchDeterminationTestCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'batch'
+
+    def test_cant_access_without_submissions(self):
+        url = self.url(None) + '?action=rejected'
+        response = self.client.get(url, follow=True, secure=True)
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+        self.assertEqual(len(response.context['messages']), 1)
+
+    def test_cant_access_without_action(self):
+        submission = ApplicationSubmissionFactory()
+        url = self.url(None) + '?submissions=' + str(submission.id)
+        response = self.client.get(url, follow=True, secure=True)
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+        self.assertEqual(len(response.context['messages']), 1)
+
+    def test_can_submit_batch_determination(self):
+        submissions = ApplicationSubmissionFactory.create_batch(4)
+
+        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions]) + '&action=rejected'
+        data = {
+            'submissions': [submission.id for submission in submissions],
+            'data': 'some data',
+            'outcome': REJECTED,
+            'message': 'Sorry',
+            'author': self.user.id,
+        }
+
+        response = self.client.post(url, data, secure=True, follow=True)
+
+        for submission in submissions:
+            submission = self.refresh(submission)
+            self.assertEqual(submission.status, 'rejected')
+            self.assertEqual(submission.determinations.count(), 1)
+
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+
+    def test_message_created_if_determination_exists(self):
+        submissions = ApplicationSubmissionFactory.create_batch(2)
+
+        DeterminationFactory(submission=submissions[0], accepted=True, is_draft=False)
+
+        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions]) + '&action=rejected'
+        data = {
+            'submissions': [submission.id for submission in submissions],
+            'data': 'some data',
+            'outcome': REJECTED,
+            'message': 'Sorry',
+            'author': self.user.id,
+        }
+
+        response = self.client.post(url, data, secure=True, follow=True)
+
+        self.assertEqual(submissions[0].determinations.count(), 1)
+        self.assertEqual(submissions[0].determinations.first().outcome, ACCEPTED)
+
+        self.assertEqual(submissions[1].determinations.count(), 1)
+        self.assertEqual(submissions[1].determinations.first().outcome, REJECTED)
+
+        # 5 base - 2 x django messages, 1 x activity feed, 1 x email, 1 x slack
+        # plus 1 extra for unable to determine
+        self.assertEqual(len(response.context['messages']), 6)
 
 
 class UserDeterminationFormTestCase(BaseViewTestCase):

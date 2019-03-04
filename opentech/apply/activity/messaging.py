@@ -41,6 +41,7 @@ def reviewers_message(reviewers):
 
 neat_related = {
     MESSAGES.DETERMINATION_OUTCOME: 'determination',
+    MESSAGES.BATCH_DETERMINATION_OUTCOME: 'determinations',
     MESSAGES.UPDATE_LEAD: 'old_lead',
     MESSAGES.NEW_REVIEW: 'review',
     MESSAGES.TRANSITION: 'old_phase',
@@ -198,6 +199,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPLICANT_EDIT: 'Edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
@@ -236,6 +238,14 @@ class ActivityAdapter(AdapterBase):
     def batch_reviewers_updated(self, added, **kwargs):
         return 'Batch ' + self.reviewers_updated(added, **kwargs)
 
+    def batch_determination(self, submissions, determinations, **kwargs):
+        submission = submissions[0]
+        determination = determinations[submission.id]
+        return self.messages[MESSAGES.DETERMINATION_OUTCOME].format(
+            determination=determination,
+            submission=submission,
+        )
+
     def handle_transition(self, old_phase, submission, **kwargs):
         base_message = 'Progressed from {old_display} to {new_display}'
 
@@ -273,18 +283,24 @@ class ActivityAdapter(AdapterBase):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
 
-        related = kwargs['related']
-        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
-        if has_correct_fields and isinstance(related, models.Model):
-            related_object = related
-        else:
-            related_object = None
-
         try:
             # If this was a batch action we want to pull out the submission
             submission = submissions[0]
         except IndexError:
             pass
+
+        related = kwargs['related']
+        if isinstance(related, dict):
+            try:
+                related = related[submission.id]
+            except KeyError:
+                pass
+
+        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
+        if has_correct_fields and isinstance(related, models.Model):
+            related_object = related
+        else:
+            related_object = None
 
         Activity.actions.create(
             user=user,
@@ -309,6 +325,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
         MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
@@ -397,6 +414,21 @@ class SlackAdapter(AdapterBase):
             )
         )
 
+    def handle_batch_determination(self, submissions, links, determinations, **kwargs):
+        submissions_links = ','.join([
+            self.slack_links(links, [submission])
+            for submission in submissions
+        ])
+
+        outcome = determinations[submissions[0].id].clean_outcome
+
+        return (
+            'Determinations of {outcome} was sent for: {submissions_links}'.format(
+                outcome=outcome,
+                submissions_links=submissions_links,
+            )
+        )
+
     def notify_reviewers(self, submission, link, **kwargs):
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
@@ -478,6 +510,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'messages/email/transition.html',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
@@ -504,6 +537,17 @@ class EmailAdapter(AdapterBase):
                 'messages/email/transition.html',
                 submission=submission,
                 old_phase=old_phase,
+                **kwargs
+            )
+
+    def batch_determination(self, determinations, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            determination = determinations[submission.id]
+            return self.render_message(
+                'messages/email/determination.html',
+                submission=submission,
+                determination=determination,
                 **kwargs
             )
 
@@ -570,6 +614,7 @@ class DjangoMessagesAdapter(AdapterBase):
     messages = {
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
     }
 
     def batch_reviewers_updated(self, added, submissions, **kwargs):
@@ -592,6 +637,15 @@ class DjangoMessagesAdapter(AdapterBase):
         ]
         messages = [base_message, *transition_messages]
         return ' '.join(messages)
+
+    def batch_determinations(self, submissions, determinations, **kwargs):
+        outcome = determinations[submissions[0].id].clean_outcome
+
+        base_message = f'Successfully determined as {outcome}: '
+        submissions_text = [
+            str(submission.title) for submission in submissions
+        ]
+        return base_message + ', '.join(submissions_text)
 
     def recipients(self, *args, **kwargs):
         return [None]

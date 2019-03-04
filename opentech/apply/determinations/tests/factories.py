@@ -10,7 +10,8 @@ class DeterminationDataFactory(factory.DictFactory):
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
         submission = kwargs.pop('submission')
-        form = get_form_for_stage(submission)(user=submission.lead, submission=submission)
+        action = kwargs.pop('action')
+        form = get_form_for_stage(submission)(user=submission.lead, action=action, submission=submission)
         form_fields = {}
 
         form_fields = {
@@ -37,6 +38,9 @@ class DeterminationFactory(factory.DjangoModelFactory):
 
     outcome = NEEDS_MORE_INFO
     message = factory.Faker('sentence')
-    data = factory.Dict({'submission': factory.SelfAttribute('..submission')}, dict_factory=DeterminationDataFactory)
+    data = factory.Dict({
+        'submission': factory.SelfAttribute('..submission'),
+        'action': factory.SelfAttribute('..outcome'),
+    }, dict_factory=DeterminationDataFactory)
 
     is_draft = True

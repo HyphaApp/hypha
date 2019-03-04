@@ -41,9 +41,9 @@ submission_urls = ([
     ])),
     path('<int:submission_pk>/', include([
         path('', include('opentech.apply.review.urls', namespace="reviews")),
-        path('', include('opentech.apply.determinations.urls', namespace="determinations")),
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
+    path('', include('opentech.apply.determinations.urls', namespace="determinations")),
     path('<slug:status>/', SubmissionsByStatus.as_view(), name='status'),
 ], 'submissions')
 
