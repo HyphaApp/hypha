@@ -80,6 +80,7 @@ const answerTypes = {
     'rich_text': RichTextAnswer,
     'address': AddressAnswer,
     'category': BasicListAnswer,
+
     // Files
     'file': FileAnswer,
     'multi_file': MultiFileAnswer,

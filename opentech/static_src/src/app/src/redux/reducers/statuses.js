@@ -5,6 +5,7 @@ import {
     UPDATE_BY_STATUSES,
     START_LOADING_BY_STATUSES,
     FAIL_LOADING_BY_STATUSES,
+    UPDATE_SUBMISSION,
 } from '@actions/submissions';
 
 
@@ -29,6 +30,16 @@ function submissionsByStatuses(state = {}, action) {
                     }
                     return accumulator
                 }, state)
+            };
+        case UPDATE_SUBMISSION:
+            state = Object.entries(state).reduce(
+                (accumulator, [status, ids]) => {
+                    accumulator[status] = ids.filter(id => id !== action.data.id);
+                    return accumulator;
+                }, {});
+            return {
+                ...state,
+                [action.data.status]: [...(state[action.data.status] || []), action.data.id],
             };
         default:
             return state
