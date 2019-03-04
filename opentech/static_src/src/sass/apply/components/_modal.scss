@@ -2,11 +2,7 @@
     $root: &;
     display: none;
     width: calc(100% - 40px);
-    padding: 20px;
-
-    &--secondary {
-        padding: 0;
-    }
+    padding: 0;
 
     @include media-query(small-tablet) {
         width: 580px;
@@ -16,9 +12,13 @@
     &__header-bar {
         color: $color--white;
         background-color: $color--dark-blue;
-        margin: -24px -24px 0;
+        margin: -24px -24px 20px;
         padding: 15px;
         text-align: center;
+
+        &--no-bottom-space {
+            margin-bottom: 0;
+        }
     }
 
     &__list {

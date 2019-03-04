@@ -9,12 +9,14 @@ import {
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
-    getCurrentRound,
-    getCurrentRoundID,
     getCurrentRoundSubmissions,
     getCurrentSubmissionID,
     getSubmissionsByRoundError,
 } from '@selectors/submissions';
+import {
+    getCurrentRound,
+    getCurrentRoundID,
+} from '@selectors/rounds';
 
 
 const loadData = props => {
@@ -55,7 +57,7 @@ class ByStatusListing extends React.Component {
         const slugify = value => value.toLowerCase().replace(/\s/g, '-')
         const workflow = round.workflow
         const order = workflow.reduce((accumulator, {display, value}, idx) => {
-            const key = slugify(display);
+            const key = slugify(value);
             const existing = accumulator[key] || {}
             const existingValues = existing.values || []
             const position = existing.position || idx

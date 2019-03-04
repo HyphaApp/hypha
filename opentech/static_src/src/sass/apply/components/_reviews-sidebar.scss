@@ -1,64 +1,67 @@
+// also used within the React app in /components/ReviewBlock
 .reviews-sidebar {
     $root: &;
     margin-bottom: 20px;
     font-weight: $weight--bold;
 
-    tbody {
-        tr {
-            border: 0;
-
-            &:hover {
-                box-shadow: none;
-            }
-
-            @include media-query(tablet-portrait) {
-                border-bottom: 0;
-            }
-
-            > th {
-                font-size: inherit;
-                font-weight: $weight--bold;
-            }
-
-            > td {
-                display: table-cell;
-                height: auto;
-            }
-
-            th,
-            td,
-            td:last-child,
-            td:first-child {
-                padding: 10px;
-            }
-
-            &:only-child {
-                > td {
-                    padding: 0;
-                }
-            }
-
-            &.no-response {
-                color: $color--black-20;
-            }
-        }
+    &__decision {
+        position: relative;
+        font-size: 14px;
+        border-top: 1px solid $color--mid-grey;
+        border-bottom: 1px solid $color--mid-grey;
+        margin-bottom: 20px;
+        padding-top: 10px;
     }
 
-    &__author {
-        span {
-            position: relative;
-            z-index: 1;
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            background: $color--white;
+    &__item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        @supports(display: grid) {
+            display: grid;
+            grid-template-columns: 50% 25% 25%;
+            grid-gap: 5px;
         }
 
-        &:hover {
-            span {
-                display: inline;
-                overflow: visible;
+        &--decision {
+            margin-bottom: 10px;
+            font-weight: $weight--semibold;
+
+            &:first-child {
+
+                #{$root}__outcome {
+                    &::before,
+                    &::after {
+                        position: absolute;
+                        top: -23px;
+                        left: 5px;
+                    }
+
+                    &::after {
+                        @include triangle(top, $color--white, 8px);
+                        top: -21px;
+                    }
+
+                    &::before {
+                        @include triangle(top, $color--mid-grey, 8px);
+                    }
+                }
             }
+        }
+
+        &--header {
+            background-color: $color--light-grey;
+            padding: 10px;
+            align-items: center;
+        }
+
+        &.is-hidden {
+            display: none;
+        }
+
+        &.no-response {
+            color: $color--black-20;
         }
     }
 
@@ -68,5 +71,40 @@
 
     &__no-reviews {
         color: $color--mid-grey;
+    }
+
+    &__name {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: $color--white;
+
+        &:hover {
+            display: inline-flex;
+            overflow: visible;
+        }
+
+        img {
+            margin-left: 7px;
+        }
+    }
+
+    &__outcome {
+        position: relative;
+
+        &.agree {
+            color: $color--green;
+        }
+
+        &.disagree {
+            color: $color--tomato;
+        }
+    }
+
+    &__split {
+        margin-bottom: 20px;
     }
 }

@@ -21,6 +21,7 @@ from opentech.apply.users.models import User
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
+from .options import DISAGREE
 
 
 class ReviewContextMixin:
@@ -191,15 +192,20 @@ class ReviewOpinionFormView(CreateView):
         form.instance.author = self.request.user
         form.instance.review = self.review
         response = super().form_valid(form)
+        opinion = form.instance
 
         messenger(
             MESSAGES.REVIEW_OPINION,
             request=self.request,
             user=self.request.user,
             submission=self.review.submission,
-            related=form.instance,
+            related=opinion,
         )
-        return response
+
+        if opinion.opinion == DISAGREE:
+            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(self.review.submission.pk,)))
+        else:
+            return response
 
     def get_success_url(self):
         return self.review.get_absolute_url()

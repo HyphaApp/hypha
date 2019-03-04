@@ -24,7 +24,7 @@ from opentech.apply.activity.views import (
     DelegatedViewMixin,
 )
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
+from opentech.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
@@ -134,6 +134,15 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
         transitions = form.cleaned_data.get('action')
+
+        try:
+            redirect = BatchDeterminationCreateView.should_redirect(self.request, submissions, transitions)
+        except ValueError as e:
+            messages.warning(self.request, 'Could not determine: ' + str(e))
+            return self.form_invalid(form)
+        else:
+            if redirect:
+                return redirect
 
         failed = []
         phase_changes = {}
@@ -607,14 +616,17 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             )
 
         action = set(self.request.POST.keys()) & set(self.transitions.keys())
-        transition = self.transitions[action.pop()]
-
-        self.object.perform_transition(
-            transition.target,
-            self.request.user,
-            request=self.request,
-            notify=not (revision or submitting_proposal),  # Use the other notification
-        )
+        try:
+            transition = self.transitions[action.pop()]
+        except KeyError:
+            pass
+        else:
+            self.object.perform_transition(
+                transition.target,
+                self.request.user,
+                request=self.request,
+                notify=not (revision or submitting_proposal),  # Use the other notification
+            )
 
         return HttpResponseRedirect(self.get_success_url())
 

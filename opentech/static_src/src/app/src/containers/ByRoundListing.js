@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import GroupedListing from '@components/GroupedListing';
 import {
     loadRounds,
-    loadSubmissionsOfStatuses,
+    loadSubmissionsForCurrentStatus,
     setCurrentSubmission,
 } from '@actions/submissions';
 import {
@@ -14,11 +14,14 @@ import {
     getRoundsErrored,
 } from '@selectors/rounds';
 import {
-    getSubmissionsByGivenStatuses,
     getCurrentSubmissionID,
-    getByGivenStatusesError,
-    getByGivenStatusesLoading,
+    getCurrentStatusesSubmissions,
 } from '@selectors/submissions';
+import {
+    getCurrentStatuses,
+    getByStatusesLoading,
+    getByStatusesError,
+} from '@selectors/statuses';
 
 
 const loadData = props => {
@@ -28,28 +31,27 @@ const loadData = props => {
 
 class ByRoundListing extends React.Component {
     static propTypes = {
-        submissionStatuses: PropTypes.arrayOf(PropTypes.string),
+        statuses: PropTypes.arrayOf(PropTypes.string),
         loadSubmissions: PropTypes.func,
         submissions: PropTypes.arrayOf(PropTypes.object),
         isErrored: PropTypes.bool,
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
-        rounds: PropTypes.array,
+        rounds: PropTypes.object,
         isLoading: PropTypes.bool,
         errorMessage: PropTypes.string,
     };
 
     componentDidMount() {
-        // Update items if round ID is defined.
-        if ( this.props.submissionStatuses ) {
+        if ( this.props.statuses) {
             loadData(this.props)
         }
     }
 
     componentDidUpdate(prevProps) {
-        const { submissionStatuses } = this.props;
-        if (!submissionStatuses.every(v => prevProps.submissionStatuses.includes(v))) {
+        const { statuses} = this.props;
+        if (!statuses.every(v => prevProps.statuses.includes(v))) {
             loadData(this.props)
         }
     }
@@ -64,7 +66,7 @@ class ByRoundListing extends React.Component {
                               display: rounds[parseInt(round)].title,
                               key: `round-${round}`,
                               position: i,
-                              values: [round],
+                              values: [parseInt(round)],
                           }));
     }
 
@@ -85,20 +87,20 @@ class ByRoundListing extends React.Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-    submissions: getSubmissionsByGivenStatuses(ownProps.submissionStatuses)(state),
-    isErrored: getRoundsErrored(state),
-    errorMessage: getByGivenStatusesError(ownProps.submissionStatuses)(state),
+const mapStateToProps = (state) => ({
+    statuses: getCurrentStatuses(state),
+    submissions: getCurrentStatusesSubmissions(state),
+    isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
-        getByGivenStatusesLoading(ownProps.submissionStatuses)(state) ||
+        getByStatusesLoading(state) ||
         getRoundsFetching(state)
     ),
     activeSubmission: getCurrentSubmissionID(state),
     rounds: getRounds(state),
 })
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-    loadSubmissions: () => dispatch(loadSubmissionsOfStatuses(ownProps.submissionStatuses)),
+const mapDispatchToProps = (dispatch) => ({
+    loadSubmissions: () => dispatch(loadSubmissionsForCurrentStatus()),
     loadRounds: () => dispatch(loadRounds()),
     setCurrentItem: id => dispatch(setCurrentSubmission(id)),
 });

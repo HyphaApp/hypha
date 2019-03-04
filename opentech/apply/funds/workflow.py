@@ -161,6 +161,10 @@ reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_c
 
 applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
+staff_applicant_edit_permissions = make_permissions(edit=[staff_can, applicant_can])
+
+staff_edit_permissions = make_permissions(edit=[staff_can])
+
 
 Request = Stage('Request', False)
 
@@ -259,7 +263,7 @@ SingleStageDefinition = [
             'display': 'Accepted',
             'future': 'Application Outcome',
             'stage': Request,
-            'permissions': no_permissions,
+            'permissions': staff_applicant_edit_permissions,
         },
         'rejected': {
             'display': 'Dismissed',
@@ -383,7 +387,7 @@ SingleStageExternalDefinition = [
             'display': 'Accepted',
             'future': 'Application Outcome',
             'stage': RequestExt,
-            'permissions': no_permissions,
+            'permissions': staff_applicant_edit_permissions,
         },
         'ext_rejected': {
             'display': 'Dismissed',
@@ -625,7 +629,7 @@ DoubleStageDefinition = [
             'display': 'Accepted',
             'future': 'Final Determination',
             'stage': Proposal,
-            'permissions': no_permissions,
+            'permissions': staff_applicant_edit_permissions,
         },
         'proposal_rejected': {
             'display': 'Dismissed',
@@ -692,6 +696,18 @@ active_statuses = [
     status for status, _ in PHASES
     if 'accepted' not in status and 'rejected' not in status and 'invited' not in status
 ]
+
+
+def get_review_active_statuses(user=None):
+    reviews = set()
+
+    for phase_name, phase in PHASES:
+        if phase_name in active_statuses:
+            if user is None:
+                reviews.add(phase_name)
+            elif phase.permissions.can_review(user):
+                reviews.add(phase_name)
+    return reviews
 
 
 def get_review_statuses(user=None):

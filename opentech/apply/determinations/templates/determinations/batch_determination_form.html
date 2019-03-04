@@ -1,0 +1,47 @@
+{% extends "determinations/base_determination_form.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block header %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h2 class="heading heading--no-margin">Add Batch Determination - {{ action_name }}</h2>
+    </div>
+</div>
+{% endblock %}
+
+{% block determination_information %}
+<div class="list-reveal list-reveal--determination">
+    <div class="list-reveal__item list-reveal__item--meta list-reveal__item--determination" aria-live="polite">
+        <span>Determining {{ submissions.count }} submission{{ submissions.count|pluralize }} as "{{ action_name }}"</span>
+        <a href="#" class="list-reveal__link js-toggle-batch-list">Show</a>
+    </div>
+    <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
+        {% for submission in submissions %}
+        <a href="{% url "funds:submissions:detail" submission.id %}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
+                {{ submission.title }}
+                <svg class="list-reveal__open-icon">
+                    <use xlink:href="#open-in-new-tab"></use>
+                </svg>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block form_buttons %}
+<input data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button" value="Send" />
+{% include "determinations/includes/batch_determination_confirmation.html" with count=submissions.count %}
+<input type="submit" value="Submit" name="submit" style="display: none" />
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+<script src="{% static 'js/apply/batch-actions.js' %}"></script>
+<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+{% endblock %}

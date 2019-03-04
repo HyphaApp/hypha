@@ -10,6 +10,7 @@ class MESSAGES(Enum):
     TRANSITION = 'Transition'
     BATCH_TRANSITION = 'Batch Transition'
     DETERMINATION_OUTCOME = 'Determination Outcome'
+    BATCH_DETERMINATION_OUTCOME = 'Batch Determination Outcome'
     INVITED_TO_PROPOSAL = 'Invited To Proposal'
     REVIEWERS_UPDATED = 'Reviewers Updated'
     BATCH_REVIEWERS_UPDATED = 'Batch Reviewers Updated'

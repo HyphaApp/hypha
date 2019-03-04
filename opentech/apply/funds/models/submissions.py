@@ -20,6 +20,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.determinations.models import Determination
 from opentech.apply.review.options import AGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
@@ -31,7 +32,7 @@ from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
     DETERMINATION_RESPONSE_PHASES,
-    get_review_statuses,
+    get_review_active_statuses,
     INITIAL_STATE,
     PHASES,
     review_statuses,
@@ -82,7 +83,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(status__in=review_statuses)
 
     def in_review_for(self, user, assigned=True):
-        user_review_statuses = get_review_statuses(user)
+        user_review_statuses = get_review_active_statuses(user)
         qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
@@ -95,6 +96,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
+
+    def undetermined(self):
+        determined_submissions = Determination.objects.filter(submission__in=self).final().values('submission')
+        return self.exclude(pk__in=determined_submissions)
 
     def current(self):
         # Applications which have the current stage active (have not been progressed)

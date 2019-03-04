@@ -7,7 +7,7 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory, ReviewOpinionFactory
 from ..models import Review, ReviewOpinion
-from ..options import NA, AGREE
+from ..options import NA, AGREE, DISAGREE
 
 
 class StaffReviewsTestCase(BaseViewTestCase):
@@ -263,10 +263,19 @@ class StaffReviewOpinionCase(BaseViewTestCase):
     def test_can_add_opinion_to_others_review(self):
         staff = StaffFactory()
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
-        self.post_page(review, {'agree': AGREE})
+        response = self.post_page(review, {'agree': AGREE})
         self.assertTrue(review.opinions.first().opinion_display in Activity.objects.first().message)
         self.assertEqual(ReviewOpinion.objects.all().count(), 1)
         self.assertEqual(ReviewOpinion.objects.first().opinion, AGREE)
+        url = self.url_from_pattern('apply:submissions:reviews:review', kwargs={'submission_pk': self.submission.pk, 'pk': review.id})
+        self.assertRedirects(response, url)
+
+    def test_disagree_opinion_redirects_to_review_form(self):
+        staff = StaffFactory()
+        review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
+        response = self.post_page(review, {'disagree': DISAGREE})
+        url = self.url_from_pattern('funds:submissions:reviews:form', kwargs={'submission_pk': self.submission.id})
+        self.assertRedirects(response, url)
 
 
 class NonStaffReviewOpinionCase(BaseViewTestCase):

@@ -19,7 +19,7 @@ const ListAnswer = ({Wrapper, answers}) => {
     )
 };
 ListAnswer.propTypes = {
-    Wrapper: PropTypes.element,
+    Wrapper: PropTypes.func,
     ...arrayAnswerType,
 }
 
@@ -43,7 +43,12 @@ const FileAnswer = ({answer}) => (
 FileAnswer.propTypes = fileType
 
 const MultiFileAnswer = ({answer}) => <ListAnswer Wrapper={FileAnswer} answers={answer} />;
-MultiFileAnswer.propTypes = {answer: PropTypes.arrayOf(fileType)}
+MultiFileAnswer.propTypes = {
+    answer: PropTypes.arrayOf(PropTypes.shape({
+        filename: PropTypes.string.isRequired,
+        url:PropTypes.string.isRequired,
+    }))
+}
 
 const AddressAnswer = ({answer}) => (
     <div>{
@@ -71,6 +76,7 @@ const answerTypes = {
     'radios': BasicAnswer,
 
     // SPECIAL
+    'checkboxes': BasicListAnswer,
     'rich_text': RichTextAnswer,
     'address': AddressAnswer,
     'category': BasicListAnswer,

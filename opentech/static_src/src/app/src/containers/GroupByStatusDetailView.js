@@ -6,12 +6,14 @@ import DetailView from '@components/DetailView';
 import ByStatusListing from '@containers/ByStatusListing';
 
 import {
-    getCurrentRound,
     getSubmissionsByRoundError,
     getCurrentRoundSubmissions,
     getCurrentSubmissionID,
     getSubmissionErrorState,
 } from '@selectors/submissions';
+import {
+    getCurrentRound,
+} from '@selectors/rounds';
 
 
 class GroupByStatusDetailView extends React.Component {

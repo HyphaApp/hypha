@@ -31,12 +31,20 @@
 </li>
 
 {% for opinion in review.opinions.all %}
-<li class="reviews-sidebar__item {{ class }}">
-    <div class="reviews-sidebar__name">
-        <span>{{ opinion.author }}</span>
-        {% if opinion.get_author_assignment %}{% image opinion.get_author_assignment.icon max-12x12 %}{% endif %}
-    </div>
-    <div></div>
-    <div>{{ opinion.get_opinion_display }}</div>
-</li>
+    {% if forloop.first %}
+        <ul class="reviews-sidebar__decision">
+    {% endif %}
+            <li class="reviews-sidebar__item reviews-sidebar__item--decision">
+                <div class="reviews-sidebar__name">
+                    <span>{{ opinion.author }}</span>
+                    {% with role=opinion.get_author_role %}
+                        {% if role %}{% image role.icon max-12x12 %}{% endif %}
+                    {% endwith %}
+                </div>
+                <div></div>
+                <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display}}</div>
+            </li>
+    {% if forloop.last %}
+        </ul>
+    {% endif %}
 {% endfor %}
