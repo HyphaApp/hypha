@@ -1,11 +1,17 @@
 import mistune
-from rest_framework import serializers
+
+from django.contrib.auth import get_user_model
+
 from django_bleach.templatetags.bleach_tags import bleach_value
+from rest_framework import serializers
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
+from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from .models import ApplicationSubmission, RoundsAndLabs
+
+User = get_user_model()
 
 markdown = mistune.Markdown()
 
@@ -37,47 +43,78 @@ class ActionSerializer(serializers.Field):
         return representation
 
 
-class ReviewSummarySerializer(serializers.Field):
-    def to_representation(self, instance):
-        reviews = instance.reviews.select_related('author')
-        recommendation = reviews.recommendation()
+class OpinionSerializer(serializers.ModelSerializer):
+    author_id = serializers.ReadOnlyField(source='author.id')
+    opinion = serializers.ReadOnlyField(source='get_opinion_display')
 
+    class Meta:
+        model = ReviewOpinion
+        fields = ('author_id', 'opinion')
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author_id = serializers.ReadOnlyField(source='author.id')
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+    opinions = OpinionSerializer(read_only=True, many=True)
+    recommendation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Review
+        fields = ('id', 'score', 'author_id', 'url', 'opinions', 'recommendation')
+
+    def get_recommendation(self, obj):
         return {
-            'count': len(reviews),
-            'score': reviews.score(),
-            'recommendation': {
-                'value': recommendation,
-                'display': dict(RECOMMENDATION_CHOICES).get(recommendation)
-            },
-            'assigned': [
-                {
-                    'id': assigned.reviewer.id,
-                    'name': str(assigned.reviewer),
-                    'role': {
-                        'icon': assigned.role and 'https://fillmurray.com/12/12',
-                        'name': assigned.role and assigned.role.name,
-                        'order': assigned.role and assigned.role.order,
-                    },
-                    'is_staff': assigned.reviewer.is_apply_staff,
-                } for assigned in instance.assigned.all()
-            ],
-            'reviews': [
-                {
-                    'id': review.id,
-                    'author_id': review.author.id,
-                    'score': review.score,
-                    'opinions': [{
-                        'author_id': opinion.author.id,
-                        'opinion': opinion.get_opinion_display(),
-                    } for opinion in review.opinions.all()],
-                    'recommendation': {
-                        'value': review.recommendation,
-                        'display': review.get_recommendation_display(),
-                    },
-                    'review_url': review.get_absolute_url(),
-                } for review in reviews
-            ]
+            'value': obj.recommendation,
+            'display': obj.get_recommendation_display(),
         }
+
+
+class ReviewSummarySerializer(serializers.Serializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
+    count = serializers.ReadOnlyField(source='reviews.count')
+    score = serializers.ReadOnlyField(source='reviews.score')
+    assigned = ReviewSerializer(many=True, read_only=True)
+    recommendation = serializers.SerializerMethodField()
+    assigned = serializers.SerializerMethodField()
+
+    def get_recommendation(self, obj):
+        recommendation = obj.reviews.recommendation()
+        return {
+            'value': recommendation,
+            'display': dict(RECOMMENDATION_CHOICES).get(recommendation),
+        }
+
+    def get_assigned(self, obj):
+        assigned_reviewers = obj.assigned.select_related('reviewer', 'role')
+        response = [
+            {
+                'id': assigned.reviewer.id,
+                'name': str(assigned.reviewer),
+                'role': {
+                    'icon': assigned.role and assigned.role.icon_url('fill-12x12'),
+                    'name': assigned.role and assigned.role.name,
+                    'order': assigned.role and assigned.role.order,
+                },
+                'is_staff': assigned.reviewer.is_apply_staff,
+            } for assigned in assigned_reviewers
+        ]
+
+        opinionated_reviewers = ReviewOpinion.objects.filter(review__submission=obj).values('author').distinct()
+        extra_reviewers = opinionated_reviewers.exclude(author__in=assigned_reviewers.values('reviewer'))
+        response.extend([
+            {
+                'id': user.id,
+                'name': str(user),
+                'role': {
+                    'icon': None,
+                    'name': None,
+                    'order': None,
+                },
+                'is_staff': user.is_apply_staff,
+            } for user in User.objects.filter(id__in=extra_reviewers)
+        ])
+
+        return response
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
