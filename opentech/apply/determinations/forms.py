@@ -33,7 +33,7 @@ class BaseDeterminationForm:
             initial.update(outcome=TRANSITION_DETERMINATION[action])
         except KeyError:
             pass
-        initial.update(author=user)
+        initial.update(author=user.id)
         super().__init__(*args, initial=initial, **kwargs)
 
     def data_fields(self):
