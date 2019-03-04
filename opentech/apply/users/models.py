@@ -12,7 +12,7 @@ class UserQuerySet(models.QuerySet):
     def staff(self):
         return self.filter(
             Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
-        )
+        ).distinct()
 
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME)
