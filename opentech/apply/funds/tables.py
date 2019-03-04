@@ -15,12 +15,25 @@ from django_tables2.utils import A
 from wagtail.core.models import Page
 
 from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
-from opentech.apply.funds.workflow import STATUSES
+from opentech.apply.funds.workflow import STATUSES, get_review_active_statuses
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 from opentech.apply.utils.image import generate_image_url
 from opentech.images.models import CustomImage
 
 from .widgets import Select2MultiCheckboxesWidget
+
+
+def review_filter_for_user(user):
+    review_states = set(get_review_active_statuses(user))
+    statuses = [
+        name
+        for name, status in STATUSES.items()
+        if review_states & status
+    ]
+    return [
+        slugify(status)
+        for status in statuses
+    ]
 
 
 def make_row_class(record):

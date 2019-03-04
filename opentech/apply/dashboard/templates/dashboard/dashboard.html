@@ -23,7 +23,7 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
     <div class="wrapper wrapper--bottom-space">
-        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more %}
+        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more active_statuses_filter=active_statuses_filter %}
     </div>
 
     {% if closed_rounds or open_rounds %}
