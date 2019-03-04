@@ -141,7 +141,7 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
 
 class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     submissions = forms.ModelMultipleChoiceField(
-        queryset=ApplicationSubmission.objects.active(),
+        queryset=ApplicationSubmission.objects.all(),
         widget=forms.ModelMultipleChoiceField.hidden_widget,
     )
     author = forms.ModelChoiceField(
@@ -162,7 +162,7 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
         self.fields['outcome'].widget = forms.HiddenInput()
 
     def _post_clean(self):
-        submissions = self.cleaned_data['submissions']
+        submissions = self.cleaned_data['submissions'].undetermined()
         data = {
             field: self.cleaned_data[field]
             for field in ['author', 'data', 'outcome']

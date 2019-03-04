@@ -20,6 +20,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.determinations.models import Determination
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -92,6 +93,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
+
+    def undetermined(self):
+        determined_submissions = Determination.objects.filter(submission__in=self).final().values('submission')
+        return self.exclude(pk__in=determined_submissions)
 
     def current(self):
         # Applications which have the current stage active (have not been progressed)

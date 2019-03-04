@@ -57,6 +57,7 @@ class BatchDeterminationCreateView(CreateView):
     template_name = 'determinations/batch_determination_form.html'
 
     def dispatch(self, *args, **kwargs):
+        self._submissions = None
         if not self.get_action() or not self.get_submissions():
             messages.warning(self.request, 'Improperly configured request, please try again.')
             return HttpResponseRedirect(self.get_success_url())
@@ -66,15 +67,17 @@ class BatchDeterminationCreateView(CreateView):
         return self.request.GET.get('action', '')
 
     def get_submissions(self):
-        try:
-            submission_ids = self.request.GET.get('submissions').split(',')
-        except AttributeError:
-            return None
-        try:
-            ids = [int(pk) for pk in submission_ids]
-        except ValueError:
-            return None
-        return ApplicationSubmission.objects.filter(id__in=ids)
+        if not self._submissions:
+            try:
+                submission_ids = self.request.GET.get('submissions').split(',')
+            except AttributeError:
+                return None
+            try:
+                ids = [int(pk) for pk in submission_ids]
+            except ValueError:
+                return None
+            self._submissions = ApplicationSubmission.objects.filter(id__in=ids)
+        return self._submissions
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -99,8 +102,8 @@ class BatchDeterminationCreateView(CreateView):
         )
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         submissions = self.get_submissions()
+        response = super().form_valid(form)
         determinations = {
             determination.submission.id: determination
             for determination in form.instances
@@ -110,24 +113,31 @@ class BatchDeterminationCreateView(CreateView):
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
             user=self.request.user,
-            submissions=submissions,
+            submissions=submissions.filter(id__in=list(determinations)),
             related=determinations,
         )
 
         for submission in submissions:
-            transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
-            determination = determinations[submission.id]
-
-            if determination.outcome == NEEDS_MORE_INFO:
-                # We keep a record of the message sent to the user in the comment
-                Activity.comments.create(
-                    message=determination.stripped_message,
-                    user=self.request.user,
-                    submission=submission,
-                    related_object=determination,
+            try:
+                determination = determinations[submission.id]
+            except KeyError:
+                messages.warning(
+                    self.request,
+                    'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
                 )
+            else:
+                transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
 
-            submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+                if determination.outcome == NEEDS_MORE_INFO:
+                    # We keep a record of the message sent to the user in the comment
+                    Activity.comments.create(
+                        message=determination.stripped_message,
+                        user=self.request.user,
+                        submission=submission,
+                        related_object=determination,
+                    )
+
+                submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
         return response
 
     @classmethod

@@ -157,6 +157,32 @@ class BatchDeterminationTestCase(BaseViewTestCase):
 
         self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
 
+    def test_message_created_if_determination_exists(self):
+        submissions = ApplicationSubmissionFactory.create_batch(2)
+
+        DeterminationFactory(submission=submissions[0], accepted=True, is_draft=False)
+
+        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions]) + '&action=rejected'
+        data = {
+            'submissions': [submission.id for submission in submissions],
+            'data': 'some data',
+            'outcome': REJECTED,
+            'message': 'Sorry',
+            'author': self.user.id,
+        }
+
+        response = self.client.post(url, data, secure=True, follow=True)
+
+        self.assertEqual(submissions[0].determinations.count(), 1)
+        self.assertEqual(submissions[0].determinations.first().outcome, ACCEPTED)
+
+        self.assertEqual(submissions[1].determinations.count(), 1)
+        self.assertEqual(submissions[1].determinations.first().outcome, REJECTED)
+
+        # 5 base - 2 x django messages, 1 x activity feed, 1 x email, 1 x slack
+        # plus 1 extra for unable to determine
+        self.assertEqual(len(response.context['messages']), 6)
+
 
 class UserDeterminationFormTestCase(BaseViewTestCase):
     user_factory = UserFactory
