@@ -41,7 +41,7 @@ export const Review = ({ url, author, score, recommendation, children }) => {
             <li className="reviews-sidebar__item">
                 <a target="_blank" rel="noopener noreferrer" href={url}>{author}</a>
                 <div>{recommendation.display}</div>
-                <div>{score}</div>
+                <div>{parseFloat(score).toFixed(1)}</div>
             </li>
 
             {hasOpinions &&
@@ -88,7 +88,7 @@ const ReviewBlock = ({ children, recommendation, score }) => {
                         renderTrafficLight()
                     }
                     {!isNaN(parseFloat(score)) &&
-                        <div>{score}</div>
+                        <div>{parseFloat(score).toFixed(1)}</div>
                     }
                 </li>
             }
