@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { MESSAGE_TYPES, addMessage } from '@actions/messages';
 import { executeSubmissionAction } from '@actions/submissions';
 import Select from '@components/Select'
+import SidebarBlock from '@components/SidebarBlock'
 import { getSubmissionOfID } from '@selectors/submissions';
 import { redirect } from '@utils';
 
@@ -136,7 +137,7 @@ class StatusActions extends React.Component {
         }
 
         return (
-            <>
+            <SidebarBlock>
                 <Modal isOpen={this.state.modalVisible}
                     onRequestClose={this.closeStatusModal}
                     contentLabel="Update status"
@@ -148,7 +149,7 @@ class StatusActions extends React.Component {
                 <div className="status-actions">
                     <button className="button button--primary button--full-width" onClick={this.openStatusModal}>Update status</button>
                 </div>
-            </>
+            </SidebarBlock>
         );
     }
 }

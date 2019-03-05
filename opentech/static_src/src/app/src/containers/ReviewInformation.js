@@ -3,17 +3,19 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import LoadingPanel from '@components/LoadingPanel'
+import SidebarBlock from '@components/SidebarBlock'
 import ReviewBlock, { Review, AssignedToReview, Opinion } from '@components/ReviewBlock'
 
 import { getSubmissionOfID } from '@selectors/submissions'
 
 
-const ReviewInformation = ({ data }) => {
+const ReviewInformation = ({ submission }) => {
     const [showExternal, setShowExternal] = useState(false)
 
-    if (data === undefined) {
+    if (submission === undefined || !submission.review) {
         return <LoadingPanel />
     }
+    const data = submission.review
 
     const staff = [];
     const nonStaff = [];
@@ -79,8 +81,7 @@ const ReviewInformation = ({ data }) => {
     const [nonStaffReviewed, nonStaffNotReviewed] = orderPeople(nonStaff);
 
     return (
-        <div className="review-block">
-            <h5>Reviews &amp; assignees</h5>
+        <SidebarBlock title="Reviews &amp; assignees">
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
                 {renderReviewBlock(staffReviewed)}
                 {renderReviewBlock(staffNotReviewed)}
@@ -93,17 +94,17 @@ const ReviewInformation = ({ data }) => {
                     renderReviewBlock(nonStaffNotReviewed)
                 }
             </ReviewBlock>
-        </div>
+        </SidebarBlock>
     )
 }
 
 ReviewInformation.propTypes = {
-    data: PropTypes.object,
+    submission: PropTypes.object,
     submissionID: PropTypes.number.isRequired,
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    data: getSubmissionOfID(ownProps.submissionID)(state).review,
+    submission: getSubmissionOfID(ownProps.submissionID)(state),
 })
 
 export default connect(mapStateToProps)(ReviewInformation)
