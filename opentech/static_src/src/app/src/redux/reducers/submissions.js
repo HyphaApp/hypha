@@ -38,6 +38,7 @@ function submission(state={comments: []}, action) {
                 isExecutingAction: false,
                 isExecutingActionErrored: false,
                 executionActionError: undefined,
+                changedLocally: action.changedLocally === true
             };
         case UPDATE_NOTES:
             return {

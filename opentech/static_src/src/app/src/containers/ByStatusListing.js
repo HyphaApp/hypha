@@ -57,7 +57,7 @@ class ByStatusListing extends React.Component {
         const slugify = value => value.toLowerCase().replace(/\s/g, '-')
         const workflow = round.workflow
         const order = workflow.reduce((accumulator, {display, value}, idx) => {
-            const key = slugify(value);
+            const key = slugify(display);
             const existing = accumulator[key] || {}
             const existingValues = existing.values || []
             const position = existing.position || idx
