@@ -30,7 +30,10 @@ class ActionSerializer(serializers.Field):
             # determination matrix.
             try:
                 redirect = DeterminationCreateOrUpdateView.should_redirect(
-                    self.context['request'], instance, transition)
+                    None,
+                    instance,
+                    transition,
+                )
             except KeyError:
                 redirect = None
             if redirect:
