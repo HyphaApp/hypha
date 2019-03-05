@@ -9,6 +9,9 @@ import {
     getCurrentSubmissionID,
 } from '@selectors/submissions'
 import SubmissionDisplay from '@components/SubmissionDisplay';
+import MessagesList from '@components/MessagesList'
+import MessageBar from '@components/MessageBar'
+
 
 const loadData = props => {
     return props.loadCurrentSubmission(['questions'], { bypassCache: true })
@@ -76,10 +79,14 @@ const  CurrentSubmissionDisplay = props => {
     }
 
     const renderUpdatedMessage = () =>{
-        return <p>
-            {updateMessage}
-            <button onClick={handleUpdateSubmission}>Show updated</button>
-        </p>
+        return <MessagesList>
+            <MessageBar
+                    type='info'
+                    message={updateMessage}
+                    onDismiss={handleUpdateSubmission}
+                    dismissMessage="Show Updated"
+               />
+        </MessagesList>
     }
 
     return <>
