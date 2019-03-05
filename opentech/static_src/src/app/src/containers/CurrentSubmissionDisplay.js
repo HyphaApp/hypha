@@ -34,19 +34,16 @@ const  CurrentSubmissionDisplay = props => {
 
     const { start, stop } = useInterval(() => loadData(props), 30000)
 
-    const [initialSubmissionLoaded, setInitialSubmissionLoaded] = useState(false)
     const [localSubmission, setSubmission] = useState(undefined);
     const [updated, setUpdated] = useState(false);
     const [updateMessage, setUpdateMessage] = useState('')
 
     // Load newly selected submission.
     useEffect(() => {
-        setInitialSubmissionLoaded(false)
+        console.log('changing')
         setUpdated(false)
-        setSubmission(undefined)
         loadData(props)
         start()
-
         return () => stop()
     }, [submissionID])
 
@@ -56,14 +53,10 @@ const  CurrentSubmissionDisplay = props => {
             return;
         }
 
-        if (submissionID !== submission.id) {
-            return
-        }
-
-        if (!initialSubmissionLoaded) {
-            setInitialSubmissionLoaded(true)
+        if (!localSubmission || localSubmission.id !== submissionID) {
             setSubmission(submission)
         } else if (hasContentUpdated(localSubmission, submission)) {
+            console.log(true)
             setUpdated(true)
             setUpdateMessage('The contents of this application have been changed by someone else.')
         }
