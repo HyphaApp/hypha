@@ -63,9 +63,9 @@ class TestReviewerFormQueries(TestCase):
         self.assertTrue(form.is_valid())
 
         # 1 - Submission
-        # 8 - 1 per role (2 savepoint, 1 get, 1 update)
+        # 14 - 7 per role = 1 - delete  2 - savepoint  1 - get 1 - update 2 - release savepoint
         # 1 - check - orphaned
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(16):
             form.save()
 
     def test_queries_reviewers_swap(self):
