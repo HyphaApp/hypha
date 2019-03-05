@@ -142,7 +142,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
     phase = serializers.CharField()
-    screening = serializers.ReadOnlyField(source='screening_status')
+    screening = serializers.ReadOnlyField(source='screening_status.title')
 
     class Meta:
         model = ApplicationSubmission
