@@ -74,13 +74,22 @@ const ReviewInformation = ({ data }) => {
     const orderedStaff = orderPeople(staff);
     const orderedNonStaff = orderPeople(nonStaff);
 
+    if (orderedStaff.length === 0  && orderedNonStaff.length === 0) {
+        return <div className="review-block">
+            <h5>No Assigned Reviewers</h5>
+        </div>
+    }
     return (
         <div className="review-block">
-            <h5>Reviews &amp; assigness</h5>
+            <h5>Reviews &amp; assignees</h5>
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
                 {renderReviewBlock(orderedStaff)}
-                <hr />
-                {renderReviewBlock(orderedNonStaff)}
+                { orderedNonStaff.length !== 0 && (
+                    <>
+                        <hr />
+                        { renderReviewBlock(orderedNonStaff) }
+                    </>
+                )}
             </ReviewBlock>
         </div>
     )
