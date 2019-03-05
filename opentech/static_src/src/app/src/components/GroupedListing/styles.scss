@@ -1,5 +1,10 @@
 .grouped-listing {
-    height: calc(100vh -  var(--header-admin-height));
+    height: 98vh;
+
+    @include media-query(laptop-short) {
+        // allow for vertical scrolling on laptops
+        height: calc(100vh - var(--header-admin-height));
+    }
 
     display: flex;
     flex-direction: column;

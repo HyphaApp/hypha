@@ -1,4 +1,11 @@
 .application-display {
-    @include column-scrolling;
+    height: calc(100vh - #{$listing-header-height});
+    overflow-y: scroll;
     padding: 20px;
+
+    @include media-query(laptop-short) {
+        // allow for vertical scrolling on laptops
+        height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
+    }
+
 }
