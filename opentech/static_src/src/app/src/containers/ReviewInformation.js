@@ -2,12 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
+import LoadingPanel from '@components/LoadingPanel'
 import ReviewBlock, { Review, AssignedToReview, Opinion } from '@components/ReviewBlock'
 
 import { getSubmissionOfID } from '@selectors/submissions'
 
 
 const ReviewInformation = ({ data }) => {
+    if (data === undefined) {
+        return <LoadingPanel />
+    }
+
     const staff = [];
     const nonStaff = [];
     Object.values(data.assigned).map(key => key.isStaff ? staff.push(key) : nonStaff.push(key))
