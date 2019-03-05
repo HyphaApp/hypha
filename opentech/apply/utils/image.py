@@ -11,5 +11,5 @@ def generate_image_url(image, filter_spec):
 
 
 def generate_image_tag(image, filter_spec):
-    url = generate_image_url(image. filter_spec)
+    url = generate_image_url(image, filter_spec)
     return format_html(f'<img alt="{image.title}" src="{url}">')
