@@ -64,6 +64,17 @@ class StaffTestCase(BaseBatchReviewerTestCase):
             self.assertEqual(submission.assigned.first().reviewer, self.staff[0])
             self.assertEqual(submission.assigned.first().role, self.roles[0])
 
+    def test_can_reassign_from_other_role_reviewers(self):
+        AssignedWithRoleReviewersFactory(reviewer=self.staff[0], submission=self.submissions[0], role=self.roles[1])
+        AssignedWithRoleReviewersFactory(reviewer=self.staff[0], submission=self.submissions[1], role=self.roles[1])
+        submissions = self.submissions[0:2]
+        reviewer_roles = [self.staff[0]]
+        self.post_page(data=self.data(reviewer_roles, submissions))
+        for submission in submissions:
+            self.assertEqual(submission.assigned.count(), 1)
+            self.assertEqual(submission.assigned.first().reviewer, self.staff[0])
+            self.assertEqual(submission.assigned.first().role, self.roles[0])
+
     def test_doesnt_remove_if_already_reviewed(self):
         AssignedWithRoleReviewersFactory(reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0])
         ReviewFactory(author=self.staff[1], submission=self.submissions[0], draft=False)

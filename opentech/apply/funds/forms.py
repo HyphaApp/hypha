@@ -260,6 +260,13 @@ class BatchUpdateReviewersForm(forms.Form):
                     ).reviews.filter(author=assigned.reviewer).exists()
                 ]
 
+                # Being reassigned
+                AssignedReviewers.objects.filter(
+                    submission__in=submissions,
+                    role__isnull=False,
+                    reviewer=reviewer,
+                ).delete()
+
                 existing_assignments.update(reviewer=reviewer)
 
                 AssignedReviewers.objects.bulk_create(
