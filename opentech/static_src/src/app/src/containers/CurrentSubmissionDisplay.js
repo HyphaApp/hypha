@@ -40,7 +40,6 @@ const  CurrentSubmissionDisplay = props => {
 
     // Load newly selected submission.
     useEffect(() => {
-        console.log('changing')
         setUpdated(false)
         loadData(props)
         start()
@@ -56,7 +55,6 @@ const  CurrentSubmissionDisplay = props => {
         if (!localSubmission || localSubmission.id !== submissionID) {
             setSubmission(submission)
         } else if (hasContentUpdated(localSubmission, submission)) {
-            console.log(true)
             setUpdated(true)
             setUpdateMessage('The contents of this application have been changed by someone else.')
         }
