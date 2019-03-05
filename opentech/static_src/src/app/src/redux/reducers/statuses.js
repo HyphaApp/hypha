@@ -47,7 +47,7 @@ function submissionsByStatuses(state = {}, action) {
 }
 
 
-function statusFetchingState(state = {isFetching: true, isError: false}, action) {
+function statusFetchingState(state = {isFetching: false, isError: false}, action) {
     switch (action.type) {
         case FAIL_LOADING_BY_STATUSES:
             return {
