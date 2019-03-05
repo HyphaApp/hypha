@@ -54,7 +54,6 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .utils import save_reviewers_with_roles
 from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 
 
@@ -100,16 +99,8 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-
-        for submission in submissions:
-            save_reviewers_with_roles(
-                submission=submission,
-                role_fields=form.role_fields,
-                cleaned_data=form.cleaned_data,
-                alter_external_reviewers=False,
-                submitted_reviewers=None,
-            )
-        reviewers = submissions.first().assigned.with_roles().all()
+        form.save()
+        reviewers = []
 
         messenger(
             MESSAGES.BATCH_REVIEWERS_UPDATED,

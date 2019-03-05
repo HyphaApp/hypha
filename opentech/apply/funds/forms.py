@@ -4,10 +4,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
-from opentech.apply.utils.image import generate_image_tag
 
-from .models import ApplicationSubmission, ReviewerRole
-from .utils import render_icon, save_reviewers_with_roles
+from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
+from .utils import render_icon
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
 
@@ -152,7 +151,6 @@ class UpdateReviewersForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-<<<<<<< variant A
         """
         1. Update role reviewers
         2. Update non-role reviewers
@@ -191,15 +189,18 @@ class UpdateReviewersForm(forms.ModelForm):
                 ) for reviewer in reviewers
                 if reviewer.id not in remaining_reviewers
             )
->>>>>>> variant B
-======= end
 
-        instance = save_reviewers_with_roles(
-            submission=instance,
-            role_fields=self.role_fields,
-            cleaned_data=self.cleaned_data,
-            alter_external_reviewers=self.can_alter_external_reviewers(self.instance, self.user),
-            submitted_reviewers=self.submitted_reviewers,
+        # 3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form
+        orphaned_reviews = instance.reviews.exclude(
+            author__in=instance.assigned.values('reviewer')
+        ).select_related('author')
+
+        AssignedReviewers.objects.bulk_create(
+            AssignedReviewers(
+                submission=instance,
+                role=None,
+                reviewer=review.author
+            ) for review in orphaned_reviews
         )
 
         return instance
@@ -237,6 +238,47 @@ class BatchUpdateReviewersForm(forms.Form):
             self.add_error(None, _('Users cannot be assigned to multiple roles.'))
 
         return cleaned_data
+
+    def save(self):
+        submissions = self.cleaned_data['submissions']
+        assigned_roles = {
+            role: self.cleaned_data[field]
+            for field, role in self.role_fields.items()
+        }
+        for role, reviewer in assigned_roles.items():
+            if reviewer:
+                existing_assignments = AssignedReviewers.objects.filter(
+                    submission__in=submissions,
+                    role=role,
+                )
+
+                about_to_be_orphaned = [
+                    [assigned.reviewer, assigned.submission]
+                    for assigned in existing_assignments
+                    if submissions.get(
+                        pk=assigned.submission.pk
+                    ).reviews.filter(author=assigned.reviewer).exists()
+                ]
+
+                existing_assignments.update(reviewer=reviewer)
+
+                AssignedReviewers.objects.bulk_create(
+                    AssignedReviewers(
+                        role=role,
+                        reviewer=reviewer,
+                        submission=submission,
+                    ) for submission in submissions.exclude(pk__in=existing_assignments.values('submission'))
+                )
+
+                AssignedReviewers.objects.bulk_create(
+                    AssignedReviewers(
+                        role=None,
+                        reviewer=reviewer,
+                        submission=submission,
+                    ) for reviewer, submission in about_to_be_orphaned
+                )
+
+        return None
 
 
 def make_role_reviewer_fields():
