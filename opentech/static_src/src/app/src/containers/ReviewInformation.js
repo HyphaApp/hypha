@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState }from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
@@ -9,6 +9,8 @@ import { getSubmissionOfID } from '@selectors/submissions'
 
 
 const ReviewInformation = ({ data }) => {
+    const [showExternal, setShowExternal] = useState(false)
+
     if (data === undefined) {
         return <LoadingPanel />
     }
@@ -40,7 +42,7 @@ const ReviewInformation = ({ data }) => {
             )
         )
 
-        return [...hasReviewed, ...notOpinionated];
+        return [hasReviewed, notOpinionated];
     }
 
     const renderReviewBlock = (reviewers) => {
@@ -73,25 +75,23 @@ const ReviewInformation = ({ data }) => {
         </>
     }
 
-    const orderedStaff = orderPeople(staff);
-    const orderedNonStaff = orderPeople(nonStaff);
+    const [staffReviewed, staffNotReviewed] = orderPeople(staff);
+    const [nonStaffReviewed, nonStaffNotReviewed] = orderPeople(nonStaff);
 
-    if (orderedStaff.length === 0  && orderedNonStaff.length === 0) {
-        return <div className="review-block">
-            <h5>No Assigned Reviewers</h5>
-        </div>
-    }
     return (
         <div className="review-block">
             <h5>Reviews &amp; assignees</h5>
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
-                {renderReviewBlock(orderedStaff)}
-                { orderedNonStaff.length !== 0 && (
-                    <>
-                        <hr />
-                        { renderReviewBlock(orderedNonStaff) }
-                    </>
-                )}
+                {renderReviewBlock(staffReviewed)}
+                {renderReviewBlock(staffNotReviewed)}
+                <hr />
+                { renderReviewBlock(nonStaffReviewed) }
+                { nonStaffNotReviewed.length !== 0 &&
+                  <a onClick={() => setShowExternal(!showExternal)}>{showExternal ? "Hide assigned reviewers": "All assigned reviewers"}</a>
+                }
+                { showExternal &&
+                    renderReviewBlock(nonStaffNotReviewed)
+                }
             </ReviewBlock>
         </div>
     )
