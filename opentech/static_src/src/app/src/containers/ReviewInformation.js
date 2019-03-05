@@ -56,6 +56,7 @@ const ReviewInformation = ({ data }) => {
                     key={reviewer.id}
                     url={review.url}
                     author={reviewer.name}
+                    icon={reviewer.role.icon}
                     score={review.score}
                     recommendation={review.recommendation} >
                     {review.opinions.map((opinion, i) => {
@@ -63,6 +64,7 @@ const ReviewInformation = ({ data }) => {
                         return <Opinion
                             key={i}
                             author={author.name}
+                            icon={author.role.icon}
                             opinion={opinion.opinion}
                         />
                     })}
