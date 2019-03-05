@@ -1,4 +1,9 @@
 .grouped-listing {
+    height: calc(100vh -  var(--header-admin-height));
+
+    display: flex;
+    flex-direction: column;
+
     &__dropdown {
         @include submission-list-item;
         height: $listing-header-height;

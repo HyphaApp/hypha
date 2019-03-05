@@ -28,39 +28,19 @@ export default class Listing extends React.Component {
     renderListItems() {
         const {
             isErrored,
-            isLoading,
             items,
             renderItem,
-            column,
-            listRef,
         } = this.props;
-
-        if ( items.length === 0 ) {
-            if (isLoading) {
-                return (
-                    <div className="listing__list">
-                        <LoadingPanel />
-                    </div>
-                );
-            } else if (isErrored) {
-                return this.renderError();
-            } else {
-                return <EmptyPanel column={this.props.column} />;
-            }
-        }
 
         return (
             <>
-                { isLoading && <InlineLoading /> }
-                <ul className={`listing__list listing__list--${column}`} ref={listRef}>
-                    { isErrored && this.renderErrorItem() }
-                    {/* This seems to cause a bug when after updating a status
-                        of the only one item in the group, it does not
-                        dissapear from the old status*/}
-                    {/*<TransitionGroup component={null} >*/}
-                        {items.map(v => renderItem(v))}
-                    {/*</TransitionGroup>*/}
-                </ul>
+                { isErrored && this.renderErrorItem() }
+                {/* This seems to cause a bug when after updating a status
+                    of the only one item in the group, it does not
+                    dissapear from the old status*/}
+                {/*<TransitionGroup component={null} >*/}
+                    {items.map(v => renderItem(v))}
+                {/*</TransitionGroup>*/}
             </>
         );
     }
@@ -86,7 +66,7 @@ export default class Listing extends React.Component {
         const { handleRetry, isErrored, errorMessage, column } = this.props;
 
         return (
-            <div className={`listing__list listing__list--${column} is-blank`}>
+            <div className={`listing listing--${column} is-blank`}>
                 {isErrored && <p>{errorMessage}</p>}
 
                 {!handleRetry &&
@@ -108,10 +88,34 @@ export default class Listing extends React.Component {
     }
 
     render() {
+        const {
+            isErrored,
+            isLoading,
+            items,
+            column,
+            listRef,
+        } = this.props;
+
+
+        if ( items.length === 0 ) {
+            if (isLoading) {
+                return (
+                    <LoadingPanel />
+                );
+            } else if (isErrored) {
+                return this.renderError();
+            } else {
+                return <EmptyPanel column={this.props.column} />;
+            }
+        }
+
         return (
-            <div className="listing">
-                {this.renderListItems()}
-            </div>
+            <>
+                { isLoading && <InlineLoading /> }
+                <ul className={`listing listing--${column}`} ref={listRef}>
+                    {this.renderListItems()}
+                </ul>
+            </>
         );
     }
 }
