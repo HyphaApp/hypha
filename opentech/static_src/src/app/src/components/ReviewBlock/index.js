@@ -55,7 +55,7 @@ export const Review = ({ url, author, score, recommendation, children }) => {
 
 Review.propTypes = {
     author: PropTypes.string.isRequired,
-    score: PropTypes.number.isRequired,
+    score: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     recommendation: PropTypes.shape({
         display: PropTypes.string.isRequired,
     }).isRequired,

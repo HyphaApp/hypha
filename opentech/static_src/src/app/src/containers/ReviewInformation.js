@@ -54,7 +54,7 @@ const ReviewInformation = ({ data }) => {
 
                 return <Review
                     key={reviewer.id}
-                    url={review.reviewUrl}
+                    url={review.url}
                     author={reviewer.name}
                     score={review.score}
                     recommendation={review.recommendation} >
