@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
-from opentech.apply.utils.image import generate_image_url
+from opentech.apply.utils.image import generate_image_tag
 
 from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .widgets import Select2MultiCheckboxesWidget
@@ -140,7 +140,7 @@ class UpdateReviewersForm(forms.ModelForm):
         if not image:
             return ''
         filter_spec = 'fill-20x20'
-        return generate_image_url(image, filter_spec)
+        return generate_image_tag(image, filter_spec)
 
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]
@@ -181,11 +181,8 @@ class UpdateReviewersForm(forms.ModelForm):
         }
         for role, reviewer in assigned_roles.items():
             if reviewer:
-                AssignedReviewers.objects.update_or_create(
-                    submission=instance,
-                    role=role,
-                    defaults={'reviewer': reviewer},
-                )
+                AssignedReviewers.objects.filter(submission=instance, role=role).delete()
+                AssignedReviewers.objects.update_or_create(submission=instance, reviewer=reviewer, defaults={'role': role})
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form

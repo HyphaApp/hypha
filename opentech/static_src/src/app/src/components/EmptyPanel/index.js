@@ -12,7 +12,7 @@ export default class EmptyPanel extends React.Component {
         const { column } = this.props;
 
         return (
-            <div className={`listing__list listing__list--${column} is-blank`}>
+            <div className={`listing listing__list--${column} is-blank`}>
                 {column === 'notes' &&
                     <>
                         <div className="listing__blank-icon">

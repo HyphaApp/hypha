@@ -17,7 +17,7 @@ from wagtail.core.models import Page
 from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from opentech.apply.funds.workflow import STATUSES, get_review_active_statuses
 from opentech.apply.users.groups import STAFF_GROUP_NAME
-from opentech.apply.utils.image import generate_image_url
+from opentech.apply.utils.image import generate_image_tag
 from opentech.images.models import CustomImage
 
 from .widgets import Select2MultiCheckboxesWidget
@@ -151,7 +151,7 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
             image = CustomImage.objects.filter(id=value).first()
             if image:
                 filter_spec = 'fill-20x20'
-                return generate_image_url(image, filter_spec)
+                return generate_image_tag(image, filter_spec)
 
         return ''
 

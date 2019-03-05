@@ -3,96 +3,110 @@ import PropTypes from 'prop-types'
 
 import './styles.scss';
 
-const Review = ({ review }) => {
-    const { reviewUrl, author, score, recommendation } = review
+export const Opinion = ({ author, icon, opinion }) => (
+    <li className="reviews-sidebar__item reviews-sidebar__item--decision">
+        <div className="reviews-sidebar__name">
+            <span>{author}</span><img src={icon} />
+        </div>
+        <div></div>
+        <div className={`reviews-sidebar__outcome ${opinion.toLowerCase()}`}>{opinion}</div>
+    </li>
+)
 
+Opinion.propTypes = {
+    author: PropTypes.string,
+    icon: PropTypes.string,
+    opinion: PropTypes.string,
+}
+
+export const AssignedToReview = ({ author, icon }) => {
     return (
         <li className="reviews-sidebar__item">
-            <a target="_blank" rel="noopener noreferrer" href={reviewUrl}>{author}</a>
-            <div>{recommendation.display}</div>
-            <div>{score}</div>
+            <div className="reviews-sidebar__name">{author}<img src={icon} /></div>
+            <div>-</div>
+            <div>-</div>
         </li>
     )
 }
 
-Review.propTypes = {
-    review: PropTypes.shape({
-        author: PropTypes.string.isRequired,
-        score: PropTypes.number.isRequired,
-        recommendation: PropTypes.shape({
-            display: PropTypes.string.isRequired,
-        }).isRequired,
-        reviewUrl: PropTypes.string.isRequired,
-    }),
+AssignedToReview.propTypes = {
+    icon: PropTypes.string,
+    author: PropTypes.string,
 }
 
-const ReviewBlock = ({ review }) => {
-    const renderReviews = () => {
-        if (review.reviews.length === 0) {
-            return <p>No reviews found.</p>
-        }
+export const Review = ({ url, author, icon, score, recommendation, children }) => {
+    const hasOpinions = children.length > 0;
 
-        return review.reviews.map(review =>
-            <Review key={review.id} {...{ review }} />)
-    }
+    return (
+        <>
+            <li className="reviews-sidebar__item">
+                <a target="_blank" rel="noopener noreferrer" href={url}>
+                    <div className="reviews-sidebar__name">
+                        {author}<img src={icon} />
+                    </div>
+                </a>
+                <div>{recommendation.display}</div>
+                <div>{parseFloat(score).toFixed(1)}</div>
+            </li>
 
+            {hasOpinions &&
+                <ul className="reviews-sidebar__decision">
+                    {children}
+                </ul>
+            }
+        </>
+    )
+}
+
+Review.propTypes = {
+    author: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+    score: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    recommendation: PropTypes.shape({
+        display: PropTypes.string.isRequired,
+    }).isRequired,
+    url: PropTypes.string.isRequired,
+    children: PropTypes.node,
+}
+
+const ReviewBlock = ({ children, recommendation, score }) => {
     const renderTrafficLight = () => {
-        const verdict = review.recommendation.display;
-        const letter = verdict.charAt(0)
+        const letter = recommendation.charAt(0)
 
         let modifierClass;
-        if (verdict === 'No') {
+        if (recommendation === 'No') {
             modifierClass = 'red'
-        } else if (verdict === 'Yes') {
+        } else if (recommendation === 'Yes') {
             modifierClass = 'green'
-        } else if (verdict === 'Maybe') {
+        } else if (recommendation === 'Maybe') {
             modifierClass = 'amber'
         }
 
         return <div aria-label="Traffic light score" className={`traffic-light traffic-light--${modifierClass}`}>{letter}</div>
     }
 
-    const renderReviewBody = () => {
-        if (review === undefined) {
-            return null
-        }
-
-        return (
-            <ul className="reviews-sidebar">
-                {review.recommendation.display &&
-                    <li className="reviews-sidebar__item reviews-sidebar__item--header">
-                        <div></div>
-                        {review.recommendation.display &&
-                            renderTrafficLight()
-                        }
-                        {!isNaN(parseFloat(review.score)) &&
-                            <div>{review.score}</div>
-                        }
-                    </li>
-                }
-                {renderReviews()}
-            </ul>
-        )
-    }
-
     return (
-        <div className="review-block">
-            <h5>Reviews &amp; assignees</h5>
-            {renderReviewBody()}
-        </div>
+        <ul className="reviews-sidebar">
+            {recommendation &&
+                <li className="reviews-sidebar__item reviews-sidebar__item--header">
+                    <div></div>
+                    {recommendation &&
+                        renderTrafficLight()
+                    }
+                    {!isNaN(parseFloat(score)) &&
+                        <div>{parseFloat(score).toFixed(1)}</div>
+                    }
+                </li>
+            }
+            {children}
+        </ul>
     )
 }
 
 ReviewBlock.propTypes = {
-    review: PropTypes.shape({
-        score: PropTypes.number,
-        recommendation: PropTypes.shape({
-            display: PropTypes.string,
-        }),
-        reviews: PropTypes.arrayOf(PropTypes.shape({
-            id: PropTypes.number,
-        })),
-    }),
+    children: PropTypes.node,
+    score: PropTypes.number,
+    recommendation: PropTypes.string,
 }
 
 export default ReviewBlock

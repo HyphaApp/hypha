@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 
 import './styles.scss';
 
-export const Tab = ({button, children, handleClick}) => <div>{children}</div>
+export const Tab = ({button, children, handleClick}) => {
+    return <div className="tab">
+        {children}
+    </div>
+}
+
 Tab.propTypes = {
     button: PropTypes.node,
     children: PropTypes.node,
@@ -52,9 +57,7 @@ class Tabber extends Component {
                         })
                     }
                 </div>
-                <div className="tabber-tab__active">
-                    { children[this.state.activeTab] }
-                </div>
+                { children[this.state.activeTab] }
             </div>
         )
     }

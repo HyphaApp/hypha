@@ -50,3 +50,10 @@
         }
     }
 }
+
+.tab {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-admin-height) -  #{$listing-header-height});
+    overflow-y: auto;
+}
