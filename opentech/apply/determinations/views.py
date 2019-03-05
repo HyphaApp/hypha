@@ -262,19 +262,21 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 # We want to progress as normal so don't redirect through form
                 return False
             else:
-                # Add a helpful message to prompt them to select the correct option
-                messages.warning(
-                    request,
-                    _('A determination of "{current}" exists but you tried to progress as "{target}"').format(
-                        current=determination.get_outcome_display(),
-                        target=action,
+                if request:
+                    # Add a helpful message to prompt them to select the correct option
+                    messages.warning(
+                        request,
+                        _('A determination of "{current}" exists but you tried to progress as "{target}"').format(
+                            current=determination.get_outcome_display(),
+                            target=action,
+                        )
                     )
-                )
 
         if action in DETERMINATION_OUTCOMES:
             return HttpResponseRedirect(reverse_lazy(
                 'apply:submissions:determinations:form',
-                args=(submission.id,)) + "?action=" + action)
+                args=(submission.id,)) + "?action=" + action
+            )
 
 
 @method_decorator(staff_required, name='dispatch')
