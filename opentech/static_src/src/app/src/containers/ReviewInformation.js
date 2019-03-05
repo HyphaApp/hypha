@@ -29,16 +29,24 @@ const ReviewInformation = ({ data }) => {
         const notReviewed = [];
 
         people.map(person => {
-            data.reviews.filter(review => person.id === review.authorId)[0] ? hasReviewed.push(person) : notReviewed.push(person);
+            data.reviews.find(review => person.id === review.authorId) ? hasReviewed.push(person) : notReviewed.push(person);
         });
 
-        return [...hasReviewed, ...notReviewed];
+        const notOpinionated = notReviewed.filter(
+            person => !data.reviews.find(
+                review => review.opinions.find(
+                    opinion => opinion.authorId === person.id
+                )
+            )
+        )
+
+        return [...hasReviewed, ...notOpinionated];
     }
 
     const renderReviewBlock = (reviewers) => {
         return <>
             {reviewers.map(reviewer => {
-                const review = data.reviews.filter(review => review.authorId === reviewer.id)[0];
+                const review = data.reviews.find(review => review.authorId === reviewer.id);
 
                 if (!review) {
                     return <AssignedToReview key={reviewer.id + '-no-review'} author={reviewer.name} />
@@ -51,7 +59,7 @@ const ReviewInformation = ({ data }) => {
                     score={review.score}
                     recommendation={review.recommendation} >
                     {review.opinions.map((opinion, i) => {
-                        const author = data.assigned.filter(person => person.id === opinion.authorId)[0];
+                        const author = data.assigned.find(person => person.id === opinion.authorId);
                         return <Opinion
                             key={i}
                             author={author.name}
