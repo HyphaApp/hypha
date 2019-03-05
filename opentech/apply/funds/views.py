@@ -100,7 +100,10 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
         form.save()
-        reviewers = []
+        reviewers = [
+            [role, form.cleaned_data[field_name]]
+            for field_name, role in form.role_fields.items()
+        ]
 
         messenger(
             MESSAGES.BATCH_REVIEWERS_UPDATED,
