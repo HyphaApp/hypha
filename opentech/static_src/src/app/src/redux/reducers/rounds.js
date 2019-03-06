@@ -39,7 +39,7 @@ function submissions(state=submissionsDefaultState, action) {
 }
 
 
-function round(state={id: null, submissions: submissionsDefaultState, isFetching: false, workflow: []}, action) {
+function round(state={id: null, submissions: submissionsDefaultState, isFetching: false}, action) {
     switch(action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
