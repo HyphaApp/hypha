@@ -9,6 +9,7 @@ import {
     getCurrentSubmissionID,
 } from '@selectors/submissions'
 import SubmissionDisplay from '@components/SubmissionDisplay';
+import LoadingPanel from '@components/LoadingPanel'
 import MessagesList from '@components/MessagesList'
 import MessageBar from '@components/MessageBar'
 
@@ -66,7 +67,7 @@ const  CurrentSubmissionDisplay = props => {
     }
 
     if ( !localSubmission ) {
-        return <p>Loading</p>
+        return <LoadingPanel />
     }
 
     const renderUpdatedMessage = () =>{
