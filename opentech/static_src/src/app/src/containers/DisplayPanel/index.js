@@ -12,6 +12,7 @@ import {
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import ReviewInformation from '@containers/ReviewInformation'
+import ScreeningOutcome from '@containers/ScreeningOutcome'
 import AddNoteForm from '@containers/AddNoteForm'
 import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
@@ -59,14 +60,15 @@ const DisplayPanel = props => {
     const isMobile = width < 1024;
 
     let tabs = [
-        <Tab button="Notes" key="note">
-            <NoteListing submissionID={submissionID} />
-            <AddNoteForm submissionID={submissionID} />
-        </Tab>,
         <Tab button="Status" key="status">
+            <ScreeningOutcome submissionID={submissionID} />
             <StatusActions submissionID={submissionID} />
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
+        </Tab>,
+        <Tab button="Notes" key="note">
+            <NoteListing submissionID={submissionID} />
+            <AddNoteForm submissionID={submissionID} />
         </Tab>
     ]
 

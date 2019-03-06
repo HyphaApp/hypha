@@ -142,10 +142,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
     phase = serializers.CharField()
+    screening = serializers.ReadOnlyField(source='screening_status.title')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
