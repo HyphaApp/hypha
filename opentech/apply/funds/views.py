@@ -97,23 +97,13 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
-    def form_invalid(self, form):
-        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
-        return super().form_invalid(form)
-
     def form_valid(self, form):
-        """
-        Loop through all submissions selected on the page,
-        Add any reviewers that were selected,  only if they are not
-        currently saved to that submission.
-        Send out a message of updates.
-        """
-        reviewers = form.cleaned_data['staff_reviewers']
-
         submissions = form.cleaned_data['submissions']
-
-        for submission in submissions:
-            submission.reviewers.add(*reviewers)
+        form.save()
+        reviewers = [
+            [role, form.cleaned_data[field_name]]
+            for field_name, role in form.role_fields.items()
+        ]
 
         messenger(
             MESSAGES.BATCH_REVIEWERS_UPDATED,
@@ -122,8 +112,11 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
             submissions=submissions,
             added=reviewers,
         )
-
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
 
 @method_decorator(staff_required, name='dispatch')

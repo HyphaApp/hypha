@@ -4,9 +4,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
-from opentech.apply.utils.image import generate_image_tag
 
-from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
+from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
+from .utils import render_icon
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
 
@@ -100,23 +100,14 @@ class UpdateReviewersForm(forms.ModelForm):
             )
         }
 
-        staff_reviewers = User.objects.staff().only('full_name', 'pk')
-
         self.role_fields = {}
-        for role in ReviewerRole.objects.all().order_by('order'):
-            field_name = 'role_reviewer_' + slugify(str(role))
-            self.role_fields[field_name] = role
+        field_data = make_role_reviewer_fields()
 
-            self.fields[field_name] = forms.ModelChoiceField(
-                queryset=staff_reviewers,
-                widget=Select2Widget(attrs={
-                    'data-placeholder': 'Select a reviewer',
-                }),
-                required=False,
-                label=mark_safe(self.render_icon(role.icon) + f'{role.name} Reviewer'),
-            )
-            # Pre-populate form field
-            self.fields[field_name].initial = assigned_roles.get(role)
+        for data in field_data:
+            field_name = data['field_name']
+            self.fields[field_name] = data['field']
+            self.role_fields[field_name] = data['role']
+            self.fields[field_name].initial = assigned_roles.get(data['role'])
 
         self.submitted_reviewers = User.objects.filter(
             id__in=self.instance.reviews.values('author'),
@@ -136,12 +127,6 @@ class UpdateReviewersForm(forms.ModelForm):
         else:
             self.fields.pop('reviewer_reviewers')
 
-    def render_icon(self, image):
-        if not image:
-            return ''
-        filter_spec = 'fill-20x20'
-        return generate_image_tag(image, filter_spec)
-
     def prepare_field(self, field_name, initial, excluded):
         field = self.fields[field_name]
         field.queryset = field.queryset.exclude(id__in=excluded)
@@ -155,7 +140,7 @@ class UpdateReviewersForm(forms.ModelForm):
         role_reviewers = [
             user
             for field, user in self.cleaned_data.items()
-            if field != 'reviewer_reviewers'
+            if field in self.role_fields
         ]
 
         # If any of the users match and are set to multiple roles, throw an error
@@ -222,16 +207,105 @@ class UpdateReviewersForm(forms.ModelForm):
 
 
 class BatchUpdateReviewersForm(forms.Form):
-    staff_reviewers = forms.ModelMultipleChoiceField(
-        queryset=User.objects.staff(),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Staff'}),
-    )
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
     def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.role_fields = {}
+        field_data = make_role_reviewer_fields()
+
+        for data in field_data:
+            field_name = data['field_name']
+            self.fields[field_name] = data['field']
+            self.role_fields[field_name] = data['role']
+
     def clean_submissions(self):
         value = self.cleaned_data['submissions']
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        role_reviewers = [
+            user
+            for field, user in self.cleaned_data.items()
+            if field in self.role_fields
+        ]
+
+        # If any of the users match and are set to multiple roles, throw an error
+        if len(role_reviewers) != len(set(role_reviewers)) and any(role_reviewers):
+            self.add_error(None, _('Users cannot be assigned to multiple roles.'))
+
+        return cleaned_data
+
+    def save(self):
+        submissions = self.cleaned_data['submissions']
+        assigned_roles = {
+            role: self.cleaned_data[field]
+            for field, role in self.role_fields.items()
+        }
+        for role, reviewer in assigned_roles.items():
+            if reviewer:
+                existing_assignments = AssignedReviewers.objects.filter(
+                    submission__in=submissions,
+                    role=role,
+                )
+
+                about_to_be_orphaned = [
+                    [assigned.reviewer, assigned.submission]
+                    for assigned in existing_assignments
+                    if submissions.get(
+                        pk=assigned.submission.pk
+                    ).reviews.filter(author=assigned.reviewer).exists()
+                ]
+
+                # Being reassigned
+                AssignedReviewers.objects.filter(
+                    submission__in=submissions,
+                    role__isnull=False,
+                    reviewer=reviewer,
+                ).delete()
+
+                existing_assignments.update(reviewer=reviewer)
+
+                AssignedReviewers.objects.bulk_create(
+                    AssignedReviewers(
+                        role=role,
+                        reviewer=reviewer,
+                        submission=submission,
+                    ) for submission in submissions.exclude(pk__in=existing_assignments.values('submission'))
+                )
+
+                AssignedReviewers.objects.bulk_create(
+                    AssignedReviewers(
+                        role=None,
+                        reviewer=reviewer,
+                        submission=submission,
+                    ) for reviewer, submission in about_to_be_orphaned
+                )
+
+        return None
+
+
+def make_role_reviewer_fields():
+    role_fields = []
+    staff_reviewers = User.objects.staff().only('full_name', 'pk')
+
+    for role in ReviewerRole.objects.all().order_by('order'):
+        field_name = 'role_reviewer_' + slugify(str(role))
+        field = forms.ModelChoiceField(
+            queryset=staff_reviewers,
+            widget=Select2Widget(attrs={
+                'data-placeholder': 'Select a reviewer',
+            }),
+            required=False,
+            label=mark_safe(render_icon(role.icon) + f'{role.name} Reviewer'),
+        )
+        role_fields.append({
+            'role': role,
+            'field': field,
+            'field_name': field_name,
+        })
+
+    return role_fields

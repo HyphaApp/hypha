@@ -242,7 +242,13 @@ class ActivityAdapter(AdapterBase):
         return ' '.join(message)
 
     def batch_reviewers_updated(self, added, **kwargs):
-        return 'Batch ' + self.reviewers_updated(added, **kwargs)
+        base = ['Batch Reviewers Updated.']
+        base.extend([
+            f'{str(user)} as {role.name}.'
+            for role, user in added
+            if user
+        ])
+        return ' '.join(base)
 
     def batch_determination(self, submissions, determinations, **kwargs):
         submission = submissions[0]
@@ -395,7 +401,11 @@ class SlackAdapter(AdapterBase):
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = self.slack_links(links, submissions)
-        reviewers_text = ', '.join([str(user) for user in added])
+        reviewers_text = ' '.join([
+            f'{str(user)} as {role.name},'
+            for role, user in added
+            if user
+        ])
         return (
             '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
                 user=user,
@@ -624,9 +634,15 @@ class DjangoMessagesAdapter(AdapterBase):
     }
 
     def batch_reviewers_updated(self, added, submissions, **kwargs):
+        reviewers_text = ' '.join([
+            f'{str(user)} as {role.name},'
+            for role, user in added
+            if user
+        ])
+
         return (
             'Batch reviewers added: ' +
-            ', '.join([str(user) for user in added]) +
+            reviewers_text +
             ' to ' +
             ', '.join(['"{}"'.format(submission.title) for submission in submissions])
         )
