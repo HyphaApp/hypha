@@ -1,5 +1,5 @@
 .listing {
-    overflow-y: scroll;
+    overflow-y: overlay;
     flex-grow: 3;
 
     @include target-ie11 {

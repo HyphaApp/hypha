@@ -53,7 +53,7 @@ class ByStatusListing extends React.Component {
     }
 
     prepareOrder(round) {
-        if ( !round ) { return []}
+        if ( !round || !round.workflow) { return []}
         const slugify = value => value.toLowerCase().replace(/\s/g, '-')
         const workflow = round.workflow
         const order = workflow.reduce((accumulator, {display, value}, idx) => {

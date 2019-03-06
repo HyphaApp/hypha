@@ -63,10 +63,14 @@ export const FAIL_EXECUTING_SUBMISSION_ACTION = 'FAIL_EXECUTING_SUBMISSION_ACTIO
 // Notes
 export const ADD_NOTE_FOR_SUBMISSION = 'ADD_NOTE_FOR_SUBMISSION';
 
-export const setCurrentSubmissionRound = id => ({
-    type: SET_CURRENT_SUBMISSION_ROUND,
-    id,
-});
+export const setCurrentSubmissionRound = (id) => (dispatch) => {
+    dispatch({
+        type: SET_CURRENT_SUBMISSION_ROUND,
+        id,
+    });
+
+    return dispatch(loadCurrentRoundSubmissions());
+};
 
 
 export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
@@ -202,10 +206,12 @@ export const setCurrentStatuses = (statuses) => (dispatch) => {
         throw new Error("Statuses have to be an array of statuses");
     }
 
-    return dispatch({
+    dispatch({
         type: SET_CURRENT_STATUSES,
         statuses,
     });
+
+    return dispatch(loadSubmissionsForCurrentStatus());
 };
 
 

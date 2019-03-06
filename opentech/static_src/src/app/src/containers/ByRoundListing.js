@@ -58,8 +58,9 @@ class ByRoundListing extends React.Component {
 
     prepareOrder = () => {
         const { isLoading, rounds, submissions } = this.props;
-        if (isLoading)
+        if (isLoading || Object.entries(rounds).length === 0) {
             return []
+        }
         return submissions.sort((a, b) => a.id - b.id )
                           .map(submission => submission.round)
                           .filter((round, index, arr) => arr.indexOf(round) === index)
