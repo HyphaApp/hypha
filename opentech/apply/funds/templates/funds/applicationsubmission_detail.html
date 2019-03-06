@@ -94,29 +94,31 @@
                 {% block reviews %}
                 {% endblock %}
 
-                {% if other_submissions or object.previous or object.next %}
-                    <div class="sidebar__inner">
-                        <h5>Related submissions</h5>
-                        {% if object.previous %}
-                            <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">View linked {{ object.previous.stage }}</a></p>
-                        {% endif %}
-
-                        {% if object.next %}
-                            <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">View linked {{ object.next.stage }}</a></p>
-                        {% endif %}
-
-                        {% for submission in other_submissions %}
-                            {% if forloop.first %}
-                            <h6 class="heading heading--light-grey heading--uppercase">Past Submissions</h6>
-                            <ul>
+                {% block related %}
+                    {% if other_submissions or object.previous or object.next %}
+                        <div class="sidebar__inner">
+                            <h5>Related submissions</h5>
+                            {% if object.previous %}
+                                <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">View linked {{ object.previous.stage }}</a></p>
                             {% endif %}
-                            <li><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></li>
-                            {% if forloop.last %}
-                            </ul>
+
+                            {% if object.next %}
+                                <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">View linked {{ object.next.stage }}</a></p>
                             {% endif %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+
+                            {% for submission in other_submissions %}
+                                {% if forloop.first %}
+                                <h6 class="heading heading--light-grey heading--uppercase">Past Submissions</h6>
+                                <ul>
+                                {% endif %}
+                                <li><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></li>
+                                {% if forloop.last %}
+                                </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endblock %}
             </aside>
         </div>
     </div>

@@ -70,7 +70,7 @@ class UpdateReviewersForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         reviewers = self.instance.reviewers.all()
-        self.submitted_reviewers = User.objects.filter(id__in=self.instance.reviews.values('author'))
+        self.submitted_reviewers = User.objects.reviewers().filter(id__in=self.instance.reviews.values('author'))
 
         self.prepare_field('staff_reviewers', reviewers, self.submitted_reviewers)
         if self.can_alter_external_reviewers(self.instance, self.user):
@@ -111,3 +111,35 @@ class BatchUpdateReviewersForm(forms.Form):
     def clean_submission_ids(self):
         value = self.cleaned_data['submission_ids']
         return [int(submission) for submission in value.split(',')]
+
+
+class UpdatePartnersForm(forms.ModelForm):
+    partner_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.partners(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Partners'}),
+        label='Partners',
+        required=False,
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        partners = self.instance.partners.all()
+        self.submitted_partners = User.objects.partners().filter(id__in=self.instance.reviews.values('author'))
+
+        partner_field = self.fields['partner_reviewers']
+        partner_field.queryset = partner_field.queryset.exclude(id__in=self.submitted_partners)
+        partner_field.initial = partners
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+
+        instance.partners.set(
+            self.cleaned_data['partner_reviewers'] |
+            self.submitted_partners
+        )
+        return instance

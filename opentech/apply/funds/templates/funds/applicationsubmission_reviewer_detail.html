@@ -1,0 +1,30 @@
+{% extends "funds/applicationsubmission_detail.html" %}
+{% load static workflow_tags review_tags determination_tags %}
+
+{% block reviews %}
+    <div class="sidebar__inner">
+        <h5>Reviews &amp; assignees</h5>
+
+        {% include 'funds/includes/review_table.html' %}
+
+        <div class="wrapper wrapper--sidebar-buttons">
+            {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block determination %}
+    {% include 'determinations/includes/determination_block.html' with submission=object %}
+{% endblock %}
+
+{% block related %}
+{% endblock %}
+
+{% block extra_js %}
+    {{ reviewer_form.media.js }}
+    {{ comment_form.media.js }}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-reviewers.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-sidebar.js' %}"></script>
+    <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
+{% endblock %}
