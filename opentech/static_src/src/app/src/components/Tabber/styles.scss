@@ -57,9 +57,11 @@
     overflow-y: auto;
     height: calc(100vh - #{$listing-header-height});
 
-    @include media-query(laptop-short) {
-        // allow for vertical scrolling on laptops
+    @include media-query(tablet-landscape) {
         height: calc(100vh - var(--header-admin-height) - #{$listing-header-height});
     }
 
+    @include media-query(laptop-short) {
+        height: calc(100vh - #{$listing-header-height});
+    }
 }

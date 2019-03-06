@@ -1,13 +1,15 @@
 .grouped-listing {
-    height: 98vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 
-    @include media-query(laptop-short) {
-        // allow for vertical scrolling on laptops
+    @include media-query(tablet-landscape) {
         height: calc(100vh - var(--header-admin-height));
     }
 
-    display: flex;
-    flex-direction: column;
+    @include media-query(laptop-short) {
+        height: 100vh;
+    }
 
     &__dropdown {
         @include submission-list-item;
