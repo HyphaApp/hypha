@@ -23,9 +23,11 @@ class ReviewContextMixin:
     def get_context_data(self, **kwargs):
         staff_reviews = self.object.reviews.by_staff().select_related('author')
         reviewer_reviews = self.object.reviews.by_reviewers().exclude(id__in=staff_reviews).select_related('author')
+        partner_reviews = self.object.reviews.by_partners().exclude(id__in=staff_reviews).select_related('author')
         return super().get_context_data(
             staff_reviews=staff_reviews,
             reviewer_reviews=reviewer_reviews,
+            partner_reviews=partner_reviews,
             **kwargs,
         )
 

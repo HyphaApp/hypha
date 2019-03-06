@@ -78,6 +78,9 @@ class ReviewQuerySet(models.QuerySet):
     def by_reviewers(self):
         return self.submitted().filter(author__in=User.objects.reviewers())
 
+    def by_partners(self):
+        return self.submitted().filter(author__in=User.objects.partners())
+
     def staff_score(self):
         return self.by_staff().score()
 
