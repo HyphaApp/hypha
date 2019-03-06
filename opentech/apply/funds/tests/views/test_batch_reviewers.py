@@ -8,7 +8,6 @@ from opentech.apply.funds.tests.factories import (
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
-    UserFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
