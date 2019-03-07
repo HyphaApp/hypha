@@ -99,6 +99,7 @@ class ReviewSummarySerializer(serializers.Serializer):
                     'order': assigned.role and assigned.role.order,
                 },
                 'is_staff': assigned.reviewer.is_apply_staff,
+                'is_partner': assigned.reviewer.is_partner,
             } for assigned in assigned_reviewers
         ]
 
@@ -114,6 +115,7 @@ class ReviewSummarySerializer(serializers.Serializer):
                     'order': None,
                 },
                 'is_staff': user.is_apply_staff,
+                'is_partner': user.is_partner,
             } for user in User.objects.filter(id__in=extra_reviewers)
         ])
 
