@@ -132,7 +132,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     subpage_types = []  # type: ignore
 
-    # Adds validation around forms & workflows.
+    # Adds validation for making start_date required
     base_form_class = RoundBasePageAdminForm
 
     lead = models.ForeignKey(

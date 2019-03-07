@@ -21,6 +21,5 @@ def before_create_page(request, parent_page, page_class):
 @hooks.register('before_copy_page')
 def before_copy_round_page(request, page):
     if isinstance(page.specific, RoundBase) and request.method == 'POST':
-        # Change before copy view of Round page for POST request.
-        # Required to clear start_date and end_date from the page being copied.
+        # Custom view to clear start_date and end_date from the copy being created.
         return custom_admin_round_copy_view(request, page)
