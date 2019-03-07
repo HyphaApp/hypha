@@ -131,9 +131,10 @@
         width: 50%;
         padding: 10px 0;
         text-align: center;
+        margin-right: 20px;
 
-        &:first-child {
-            margin-right: 20px;
+        &:last-child {
+            margin-right: 0;
         }
     }
 

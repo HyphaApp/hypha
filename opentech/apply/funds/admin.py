@@ -10,7 +10,7 @@ from .admin_helpers import (
     RoundFundChooserView,
 )
 from .models import ApplicationForm, FundType, LabType, RequestForPartners, Round, SealedRound
-from opentech.apply.categories.admin import CategoryAdmin
+from opentech.apply.categories.admin import CategoryAdmin, MetaCategoryAdmin
 
 
 class BaseRoundAdmin(ModelAdmin):
@@ -113,4 +113,5 @@ class ApplyAdminGroup(ModelAdminGroup):
         CategoryAdmin,
         ScreeningStatusAdmin,
         ReviewerRoleAdmin,
+        MetaCategoryAdmin,
     )

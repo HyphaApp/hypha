@@ -183,3 +183,6 @@ class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
     reviewer_view = ReviewerDashboardView
     applicant_view = ApplicantDashboardView
+
+    def reviewer_check(self, request):
+        return request.user.is_reviewer

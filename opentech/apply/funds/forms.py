@@ -309,3 +309,35 @@ def make_role_reviewer_fields():
         })
 
     return role_fields
+
+
+class UpdatePartnersForm(forms.ModelForm):
+    partner_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.partners(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Partners'}),
+        label='Partners',
+        required=False,
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        partners = self.instance.partners.all()
+        self.submitted_partners = User.objects.partners().filter(id__in=self.instance.reviews.values('author'))
+
+        partner_field = self.fields['partner_reviewers']
+        partner_field.queryset = partner_field.queryset.exclude(id__in=self.submitted_partners)
+        partner_field.initial = partners
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+
+        instance.partners.set(
+            self.cleaned_data['partner_reviewers'] |
+            self.submitted_partners
+        )
+        return instance

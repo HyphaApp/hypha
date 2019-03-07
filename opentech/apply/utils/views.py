@@ -25,7 +25,7 @@ class ViewDispatcher(View):
         return request.user.is_apply_staff
 
     def reviewer_check(self, request):
-        return request.user.is_reviewer
+        return request.user.is_reviewer or request.user.is_partner
 
     def dispatch(self, request, *args, **kwargs):
         view = self.applicant_view

@@ -37,6 +37,7 @@ from .forms import (
     ScreeningSubmissionForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
+    UpdatePartnersForm,
 )
 from .models import (
     ApplicationSubmission,
@@ -404,6 +405,31 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
+class UpdatePartnersView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UpdatePartnersForm
+    context_name = 'partner_form'
+
+    def form_valid(self, form):
+        old_partners = set(self.get_object().partners.all())
+        response = super().form_valid(form)
+        new_partners = set(form.instance.partners.all())
+
+        added = new_partners - old_partners
+        removed = old_partners - new_partners
+
+        messenger(
+            MESSAGES.PARTNERS_UPDATED,
+            request=self.request,
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            added=added,
+            removed=removed,
+        )
+        return response
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
@@ -413,6 +439,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
+        UpdatePartnersView,
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -432,6 +459,21 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
             public_page=public_page,
             **kwargs,
         )
+
+
+class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+    template_name_suffix = '_reviewer_detail'
+    model = ApplicationSubmission
+    form_views = [CommentFormView]
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        # Only allow partners in the submission they are added as partners
+        if request.user.is_partner:
+            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+            if not partner_has_access:
+                raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
 
 @method_decorator(staff_required, 'dispatch')
@@ -507,12 +549,8 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, Deta
 
 class SubmissionDetailView(ViewDispatcher):
     admin_view = AdminSubmissionDetailView
+    reviewer_view = ReviewerSubmissionDetailView
     applicant_view = ApplicantSubmissionDetailView
-
-    def admin_check(self, request):
-        if request.user.is_reviewer:
-            return True
-        return super().admin_check(request)
 
 
 class BaseSubmissionEditView(UpdateView):
@@ -570,7 +608,12 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 @method_decorator(login_required, name='dispatch')
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user:
+        submission = self.get_object()
+        if request.user.is_partner:
+            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+            if not partner_has_access:
+                raise PermissionDenied
+        elif request.user != submission.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 

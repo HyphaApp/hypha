@@ -203,6 +203,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
+        MESSAGES.PARTNERS_UPDATED: 'partners_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}',
@@ -220,6 +221,7 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.SCREENING,
                 MESSAGES.REVIEW_OPINION,
                 MESSAGES.BATCH_REVIEWERS_UPDATED,
+                MESSAGES.PARTNERS_UPDATED,
         ]:
             return {'visibility': INTERNAL}
 
@@ -291,6 +293,18 @@ class ActivityAdapter(AdapterBase):
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
 
+    def partners_updated(self, added, removed, **kwargs):
+        message = ['Partners updated.']
+        if added:
+            message.append('Added:')
+            message.append(', '.join([str(user) for user in added]) + '.')
+
+        if removed:
+            message.append('Removed:')
+            message.append(', '.join([str(user) for user in removed]) + '.')
+
+        return ' '.join(message)
+
     def send_message(self, message, user, submission, submissions, **kwargs):
         from .models import Activity, PUBLIC
         visibility = kwargs.get('visibility', PUBLIC)
@@ -334,6 +348,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
+        MESSAGES.PARTNERS_UPDATED: '{user} has updated the partners on <{link}|{submission.title}>',
         MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',

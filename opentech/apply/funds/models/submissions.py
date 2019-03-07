@@ -27,7 +27,7 @@ from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, WorkflowHelpers
+from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, LIMIT_TO_PARTNERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -318,6 +318,12 @@ class ApplicationSubmission(
         blank=True,
         through='AssignedReviewers',
     )
+    partners = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='submissions_partner',
+        limit_choices_to=LIMIT_TO_PARTNERS,
+        blank=True,
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -552,7 +558,10 @@ class ApplicationSubmission(
 
     @property
     def missing_reviewers(self):
-        return self.reviewers.exclude(id__in=self.reviews.submitted().values('author'))
+        reviews_submitted = self.reviews.submitted().values('author')
+        reviewers = self.reviewers.exclude(id__in=reviews_submitted)
+        partners = self.partners.exclude(id__in=reviews_submitted)
+        return reviewers | partners
 
     @property
     def staff_not_reviewed(self):
@@ -562,6 +571,10 @@ class ApplicationSubmission(
     def reviewers_not_reviewed(self):
         return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
 
+    @property
+    def partners_not_reviewed(self):
+        return self.missing_reviewers.partners().exclude(id__in=self.staff_not_reviewed)
+
     def reviewed_by(self, user):
         return self.reviews.submitted().filter(author=user).exists()
 
@@ -570,6 +583,9 @@ class ApplicationSubmission(
             return True
 
         if user in self.reviewers_not_reviewed:
+            return True
+
+        if user in self.partners_not_reviewed:
             return True
 
         return False

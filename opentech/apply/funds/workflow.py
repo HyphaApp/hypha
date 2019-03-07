@@ -142,6 +142,8 @@ applicant_can = lambda user: user.is_applicant  # NOQA
 
 reviewer_can = lambda user: user.is_reviewer  # NOQA
 
+partner_can = lambda user: user.is_partner # NOQA
+
 
 def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
     return {
@@ -157,7 +159,7 @@ default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
 
 hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can])
 
-reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can])
+reviewer_review_permissions = make_permissions(edit=[staff_can, partner_can], review=[staff_can, reviewer_can, partner_can])
 
 applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
