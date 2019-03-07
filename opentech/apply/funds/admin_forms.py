@@ -7,12 +7,6 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        start_date = cleaned_data['start_date']
-        print(start_date)
-        if start_date is None:
-            print('Hola')
-            self.add_error('start_date', 'Please enter start date.')
-
         workflow = WORKFLOWS[cleaned_data['workflow_name']]
         application_forms = self.formsets['forms']
         review_forms = self.formsets['review_forms']
