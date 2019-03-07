@@ -10,6 +10,9 @@ from wagtail.core.models import Page
 
 
 def custom_admin_round_copy_view(request, page):
+    # Custom view to handle copied Round pages.
+    # https://github.com/wagtail/wagtail/blob/124827911463f0cb959edbb9d8d5685578540bd3/wagtail/admin/views/pages.py#L824
+
     # Parent page defaults to parent of source page
     parent_page = page.get_parent()
 
