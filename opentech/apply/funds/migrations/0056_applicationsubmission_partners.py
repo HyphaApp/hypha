@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0050_roundsandlabs'),
+        ('funds', '0055_reviewers_rename'),
     ]
 
     operations = [
