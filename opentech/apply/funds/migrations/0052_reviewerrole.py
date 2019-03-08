@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('images', '0003_customimage_drupal_id'),
-        ('funds', '0050_roundsandlabs'),
+        ('funds', '0051_applicationsubmission_partners'),
     ]
 
     operations = [

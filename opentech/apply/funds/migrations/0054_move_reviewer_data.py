@@ -21,7 +21,7 @@ def move_reviewer_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0052_assigned_reviewers_pre'),
+        ('funds', '0053_assigned_reviewers_pre'),
     ]
 
     operations = [

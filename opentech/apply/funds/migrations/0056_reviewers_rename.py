@@ -6,12 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0053_move_reviewer_data'),
+        ('funds', '0055_remove_applicationsubmission_reviewers'),
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name='applicationsubmission',
-            name='reviewers',
+            old_name='reviewers_new',
+            new_name='reviewers',
         ),
     ]
