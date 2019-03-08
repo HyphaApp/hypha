@@ -8,7 +8,8 @@
         afterClose: function () {
             if ($('.django-select2-checkboxes').length) {
                 $('.django-select2-checkboxes').select2('close');
-            }        }
+            }
+        }
     });
 
     // Close any open select2 dropdowns when inside a modal

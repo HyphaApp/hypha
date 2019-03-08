@@ -52,6 +52,11 @@ class ReviewContextMixin:
                     key = 'staff_reviewed'
                 elif review not in opinion_authors:
                     key = 'staff_not_reviewed'
+            elif reviewer.is_partner:
+                if review:
+                    key = 'partner_reviewed'
+                elif review not in opinion_authors:
+                    key = 'partner_not_reviewed'
             else:
                 if review:
                     key = 'external_reviewed'

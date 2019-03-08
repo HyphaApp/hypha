@@ -19,14 +19,13 @@
     const closedClass = 'is-closed';
 
     $batchDetermineSend.click(function (e) {
-        if(!$batchDetermineForm[0].checkValidity()) {
+        if (!$batchDetermineForm[0].checkValidity()) {
             $batchDetermineForm.submit();
             e.preventDefault();
         }
     });
 
     $batchDetermineConfirm.click(function (e) {
-        debugger;
         $batchDetermineForm.find(':submit').click();
         e.preventDefault();
     });

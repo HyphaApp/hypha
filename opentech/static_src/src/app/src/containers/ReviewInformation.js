@@ -19,7 +19,16 @@ const ReviewInformation = ({ submission }) => {
 
     const staff = [];
     const nonStaff = [];
-    Object.values(data.assigned).map(key => key.isStaff ? staff.push(key) : nonStaff.push(key))
+    const partner = [];
+    Object.values(data.assigned).map(person => {
+        if (person.isStaff) {
+            staff.push(person)
+        } else if(person.is_partner){
+            partner.push(person)
+        } else {
+            nonStaff.push(person)
+        }
+    })
 
     const orderPeople = (people) => {
         people.sort((a,b) => {
@@ -77,22 +86,38 @@ const ReviewInformation = ({ submission }) => {
         </>
     }
 
-    const [staffReviewed, staffNotReviewed] = orderPeople(staff);
-    const [nonStaffReviewed, nonStaffNotReviewed] = orderPeople(nonStaff);
+
+    const renderNormal = (people) => {
+        const [peopleReviewed, peopleNotReviewed] = orderPeople(people);
+        return <>
+            {renderReviewBlock(peopleReviewed)}
+            {renderReviewBlock(peopleNotReviewed)}
+        </>
+    }
+
+    const renderCollapsed = (people) => {
+        const [peopleReviewed, peopleNotReviewed] = orderPeople(people);
+        return <>
+            { renderReviewBlock(peopleReviewed) }
+            { peopleNotReviewed.length !== 0 &&
+              <a onClick={() => setShowExternal(!showExternal)}>{showExternal ? "Hide assigned reviewers": "All assigned reviewers"}</a>
+            }
+            { showExternal &&
+              renderReviewBlock(peopleNotReviewed)
+            }
+        </>
+    }
 
     return (
         <SidebarBlock title="Reviews &amp; assignees">
+            { partner.length === 0 && staff.length === 0 && nonStaff.length === 0 && <h5>No reviews available</h5>}
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
-                {renderReviewBlock(staffReviewed)}
-                {renderReviewBlock(staffNotReviewed)}
-                <hr />
-                { renderReviewBlock(nonStaffReviewed) }
-                { nonStaffNotReviewed.length !== 0 &&
-                  <a onClick={() => setShowExternal(!showExternal)}>{showExternal ? "Hide assigned reviewers": "All assigned reviewers"}</a>
-                }
-                { showExternal &&
-                    renderReviewBlock(nonStaffNotReviewed)
-                }
+                { renderNormal(staff) }
+                { staff.length !== 0 && partner.length !== 0 && <hr /> }
+                { renderNormal(partner) }
+                { (partner.length !== 0 || staff.length !== 0) && nonStaff.length !== 0 && <hr /> }
+                { renderCollapsed(nonStaff) }
+
             </ReviewBlock>
         </SidebarBlock>
     )

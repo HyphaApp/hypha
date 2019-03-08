@@ -28,9 +28,10 @@ class TestReviewerFormQueries(TestCase):
         submission = InvitedToProposalFactory(lead=user, workflow_stages=2)
 
         # Reviewers
+        # Partners
         # Assigned Reviewers
         # Roles
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             form = UpdateReviewersForm(user=user, instance=submission)
 
         # 3 x Staff - 1 per Role
