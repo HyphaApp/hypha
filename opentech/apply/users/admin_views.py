@@ -22,6 +22,10 @@ delete_user_perm = "{0}.delete_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_
 @any_permission_required(add_user_perm, change_user_perm, delete_user_perm)
 @vary_on_headers('X-Requested-With')
 def index(request):
+    """
+    Override wagtail's users index view to filter by full_name
+    https://github.com/wagtail/wagtail/blob/af69cb4a544a1b9be1339546be62ff54b389730e/wagtail/users/views/users.py#L47
+    """
     q = None
     is_searching = False
 
@@ -47,7 +51,7 @@ def index(request):
                 if 'email' in model_fields:
                     conditions |= Q(email__icontains=term)
 
-                # Custom code for filter by full_name
+                # filter by full_name
                 if 'full_name' in model_fields:
                     conditions |= Q(full_name__icontains=term)
 
