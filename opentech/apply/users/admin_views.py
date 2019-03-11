@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import render
@@ -8,8 +7,6 @@ from django.views.decorators.vary import vary_on_headers
 from wagtail.admin.forms import SearchForm
 from wagtail.admin.utils import any_permission_required
 from wagtail.core.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
-from wagtail.users.forms import UserCreationForm, UserEditForm
-from wagtail.utils.loading import get_custom_form
 from wagtail.utils.pagination import paginate
 
 User = get_user_model()
@@ -20,22 +17,6 @@ User = get_user_model()
 add_user_perm = "{0}.add_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
 change_user_perm = "{0}.change_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
 delete_user_perm = "{0}.delete_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
-
-
-def get_user_creation_form():
-    form_setting = 'WAGTAIL_USER_CREATION_FORM'
-    if hasattr(settings, form_setting):
-        return get_custom_form(form_setting)
-    else:
-        return UserCreationForm
-
-
-def get_user_edit_form():
-    form_setting = 'WAGTAIL_USER_EDIT_FORM'
-    if hasattr(settings, form_setting):
-        return get_custom_form(form_setting)
-    else:
-        return UserEditForm
 
 
 @any_permission_required(add_user_perm, change_user_perm, delete_user_perm)
