@@ -7,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME
 from .utils import send_activation_email
 
+from wagtail.search import index
+
 
 class UserQuerySet(models.QuerySet):
     def staff(self):
@@ -60,7 +62,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return user, created
 
 
-class User(AbstractUser):
+class User(index.Indexed, AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
     slack = models.CharField(
@@ -82,6 +84,11 @@ class User(AbstractUser):
     last_name = None
 
     objects = UserManager()
+
+    search_fields = [
+        index.SearchField('email', partial_match=True),
+        index.SearchField('full_name', partial_match=True),
+    ]
 
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
