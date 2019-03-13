@@ -428,7 +428,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 # Bleach Settings
-BLEACH_ALLOWED_TAGS = ['h2', 'h3', 'p', 'b', 'i', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'br', 'span']
+BLEACH_ALLOWED_TAGS = ['a', 'b', 'big', 'blockquote', 'br', 'cite', 'code', 'dd', 'del', 'dl', 'dt', 'em', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'ins', 'li', 'ol', 'p', 'pre', 'small', 'span', 'strong', 'sub', 'sup', 'ul']
 
 BLEACH_ALLOWED_ATTRIBUTES = ['href', 'title', 'class']
 
