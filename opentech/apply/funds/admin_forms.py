@@ -35,3 +35,14 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
 
                 for form in valid_forms[number_of_stages:]:
                     form.add_error('form', 'Exceeds required number of forms for stage, please remove.')
+
+
+class RoundBasePageAdminForm(WagtailAdminPageForm):
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start_date = cleaned_data['start_date']
+        if not start_date:
+            self.add_error('start_date', 'Please select start date.')
+
+        return cleaned_data

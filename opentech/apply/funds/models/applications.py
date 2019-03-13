@@ -34,7 +34,7 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.core.models import Page, PageManager, PageQuerySet
 
-from ..admin_forms import WorkflowFormAdminForm
+from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 
 from .submissions import ApplicationSubmission
@@ -132,6 +132,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     subpage_types = []  # type: ignore
 
+    # Adds validation for making start_date required
+    base_form_class = RoundBasePageAdminForm
+
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
@@ -144,7 +147,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
-    start_date = models.DateField(default=date.today)
+    start_date = models.DateField(null=True, blank=True, default=date.today)
     end_date = models.DateField(
         blank=True,
         null=True,
@@ -230,18 +233,20 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     def clean(self):
         super().clean()
 
-        if self.end_date and self.start_date > self.end_date:
+        conflict_query = ()
+
+        if self.start_date and self.end_date and self.start_date > self.end_date:
             raise ValidationError({
                 'end_date': 'End date must come after the start date',
             })
 
-        if self.end_date:
+        if self.start_date and self.end_date:
             conflict_query = (
                 Q(start_date__range=[self.start_date, self.end_date]) |
                 Q(end_date__range=[self.start_date, self.end_date]) |
                 Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
             )
-        else:
+        elif self.start_date:
             conflict_query = (
                 Q(start_date__lte=self.start_date, end_date__isnull=True) |
                 Q(end_date__gte=self.start_date)
@@ -255,24 +260,25 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # don't need parent page, we are an actual object now.
             base_query = RoundBase.objects.sibling_of(self)
 
-        conflicting_rounds = base_query.filter(
-            conflict_query
-        ).exclude(id=self.id)
+        if conflict_query:
+            conflicting_rounds = base_query.filter(
+                conflict_query
+            ).exclude(id=self.id)
 
-        if conflicting_rounds.exists():
-            error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
-                '<br>'.join([
-                    f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
-                    for round in conflicting_rounds]
-                )
-            ))
-            error = {
-                'start_date': error_message,
-            }
-            if self.end_date:
-                error['end_date'] = error_message
+            if conflicting_rounds.exists():
+                error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
+                    '<br>'.join([
+                        f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
+                        for round in conflicting_rounds]
+                    )
+                ))
+                error = {
+                    'start_date': error_message,
+                }
+                if self.end_date:
+                    error['end_date'] = error_message
 
-            raise ValidationError(error)
+                raise ValidationError(error)
 
     def serve(self, request):
         if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
