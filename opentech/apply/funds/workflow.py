@@ -70,6 +70,7 @@ class Phase:
     public_name = phase name displayed to applicants in the system
     future_name = phase_name displayed to applicants if they haven't passed this stage
     """
+
     def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
         self.name = name
         self.display_name = display
@@ -142,7 +143,9 @@ applicant_can = lambda user: user.is_applicant  # NOQA
 
 reviewer_can = lambda user: user.is_reviewer  # NOQA
 
-partner_can = lambda user: user.is_partner # NOQA
+partner_can = lambda user: user.is_partner  # NOQA
+
+community_can = lambda user: user.is_community_reviewer  # NOQA
 
 
 def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
@@ -161,6 +164,8 @@ hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[s
 
 reviewer_review_permissions = make_permissions(edit=[staff_can, partner_can], review=[staff_can, reviewer_can, partner_can])
 
+community_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can, community_can])
+
 applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
 
 staff_applicant_edit_permissions = make_permissions(edit=[staff_can, applicant_can])
@@ -171,6 +176,8 @@ staff_edit_permissions = make_permissions(edit=[staff_can])
 Request = Stage('Request', False)
 
 RequestExt = Stage('RequestExt', True)
+
+RequestCom = Stage('RequestCom', True)
 
 Concept = Stage('Concept', False)
 
@@ -394,6 +401,154 @@ SingleStageExternalDefinition = [
         'ext_rejected': {
             'display': 'Dismissed',
             'stage': RequestExt,
+            'permissions': no_permissions,
+        },
+    },
+]
+
+
+SingleStageCommunityDefinition = [
+    {
+        INITIAL_STATE: {
+            'transitions': {
+                'com_internal_review': 'Open Review',
+                'com_open_call': 'Open Call (public)',
+                'com_community_review': 'Open Community Review',
+                'com_rejected': 'Dismiss',
+                'com_more_info': 'Request More Information',
+                'com_determination': 'Ready For Determination',
+            },
+            'display': 'Screening',
+            'public': 'Application Received',
+            'stage': RequestCom,
+            'permissions': default_permissions,
+        },
+        'com_more_info': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'More information required',
+            'stage': RequestCom,
+            'permissions': applicant_edit_permissions,
+        },
+        'com_open_call': {
+            'transitions': {
+                'com_rejected': 'Dismiss',
+                'com_more_info': 'Request More Information',
+            },
+            'display': 'Open Call (public)',
+            'stage': RequestCom,
+            'permissions': staff_edit_permissions,
+        },
+    },
+    {
+        'com_community_review': {
+            'transitions': {
+                'com_internal_review': 'Open Review',
+                'com_rejected': 'Dismiss',
+            },
+            'display': 'Community Review',
+            'public': 'OTF Review',
+            'stage': RequestCom,
+            'permissions': community_review_permissions,
+        },
+    },
+    {
+        'com_internal_review': {
+            'transitions': {
+                'com_post_review_discussion': 'Close Review',
+            },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': RequestCom,
+            'permissions': default_permissions,
+        },
+    },
+    {
+        'com_post_review_discussion': {
+            'transitions': {
+                'com_external_review': 'Open AC review',
+                'com_rejected': 'Dismiss',
+                'com_post_review_more_info': 'Request More Information',
+                'com_determination': 'Ready For Determination',
+            },
+            'display': 'Ready For Discussion',
+            'stage': RequestCom,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'com_post_review_more_info': {
+            'transitions': {
+                'com_post_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'More information required',
+            'stage': RequestCom,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'com_external_review': {
+            'transitions': {
+                'com_post_external_review_discussion': 'Close Review',
+            },
+            'display': 'Advisory Council Review',
+            'stage': RequestCom,
+            'permissions': reviewer_review_permissions,
+        },
+    },
+    {
+        'com_post_external_review_discussion': {
+            'transitions': {
+                'com_accepted': 'Accept',
+                'com_rejected': 'Dismiss',
+                'com_post_external_review_more_info': 'Request More Information',
+                'com_determination': 'Ready For Determination',
+            },
+            'display': 'Ready For Discussion',
+            'stage': RequestCom,
+            'permissions': hidden_from_applicant_permissions,
+        },
+        'com_post_external_review_more_info': {
+            'transitions': {
+                'com_post_external_review_discussion': {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'More information required',
+            'stage': RequestCom,
+            'permissions': applicant_edit_permissions,
+        },
+    },
+    {
+        'com_determination': {
+            'transitions': {
+                'com_accepted': 'Accept',
+                'com_rejected': 'Dismiss',
+            },
+            'display': 'Ready for Determination',
+            'permissions': hidden_from_applicant_permissions,
+            'stage': RequestCom,
+        },
+    },
+    {
+        'com_accepted': {
+            'display': 'Accepted',
+            'future': 'Application Outcome',
+            'stage': RequestCom,
+            'permissions': staff_applicant_edit_permissions,
+        },
+        'com_rejected': {
+            'display': 'Dismissed',
+            'stage': RequestCom,
             'permissions': no_permissions,
         },
     },
@@ -660,12 +815,15 @@ Request = Workflow('Request', 'single', **phase_data(SingleStageDefinition))
 
 RequestExternal = Workflow('Request with external review', 'single_ext', **phase_data(SingleStageExternalDefinition))
 
+RequestCommunity = Workflow('Request with community review', 'single_com', **phase_data(SingleStageCommunityDefinition))
+
 ConceptProposal = Workflow('Concept & Proposal', 'double', **phase_data(DoubleStageDefinition))
 
 
 WORKFLOWS = {
     Request.admin_name: Request,
     RequestExternal.admin_name: RequestExternal,
+    RequestCommunity.admin_name: RequestCommunity,
     ConceptProposal.admin_name: ConceptProposal,
 }
 
@@ -733,6 +891,7 @@ DETERMINATION_RESPONSE_PHASES = [
     'concept_review_discussion',
     'post_external_review_discussion',
     'ext_post_external_review_discussion',
+    'com_post_external_review_discussion',
 ]
 
 
@@ -817,3 +976,7 @@ PHASES_MAPPING = {
         'statuses': phases_matching('rejected'),
     },
 }
+
+OPEN_CALL_PHASES = [
+    'com_open_call',
+]

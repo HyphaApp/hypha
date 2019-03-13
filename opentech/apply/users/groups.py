@@ -2,6 +2,7 @@ STAFF_GROUP_NAME = 'Staff'
 REVIEWER_GROUP_NAME = 'Reviewer'
 TEAMADMIN_GROUP_NAME = 'Team Admin'
 PARTNER_GROUP_NAME = 'Partner'
+COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
 
 GROUPS = [
     {
@@ -18,6 +19,10 @@ GROUPS = [
     },
     {
         'name': PARTNER_GROUP_NAME,
+        'permissions': [],
+    },
+    {
+        'name': COMMUNITY_REVIEWER_GROUP_NAME,
         'permissions': [],
     },
 ]
