@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0051_applicationsubmission_partners'),
+        ('funds', '0056_reviewers_rename'),
     ]
 
     operations = [
