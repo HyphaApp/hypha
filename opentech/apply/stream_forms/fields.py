@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.validators import FileExtensionValidator
 from django.forms import ClearableFileInput, FileField, CheckboxInput
 
 
@@ -63,7 +65,11 @@ class MultiFileField(FileField):
         cleared = value['cleared']
         if not files and not cleared:
             return initial
-        new = [FileField().clean(file, initial) for file in files]
+        new = [
+            FileField(validators=[
+                FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
+            ]).clean(file, initial) for file in files
+        ]
 
         if initial:
             old = [file for i, file in enumerate(initial) if i not in cleared]
@@ -71,3 +77,9 @@ class MultiFileField(FileField):
             old = []
 
         return old + new
+
+    def widget_attrs(self, widget):
+        attrs = super().widget_attrs(widget)
+        if isinstance(widget, MultiFileInput) and 'accept' not in widget.attrs:
+            attrs.setdefault('accept', settings.FILE_ACCEPT_ATTR_VALUE)
+        return attrs

@@ -3,7 +3,10 @@ import bleach
 from django_bleach.templatetags.bleach_tags import bleach_value
 
 from django import forms
+from django.conf import settings
+from django.core.validators import FileExtensionValidator
 from django.db.models import BLANK_CHOICE_DASH
+from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_text
 from django.utils.text import slugify
@@ -327,10 +330,19 @@ class FileFieldBlock(UploadableMediaBlock):
     You must implement this if you want to reuse it.
     """
     field_class = forms.FileField
+    widget = ClearableFileInput
 
     class Meta:
         label = _('File field')
         icon = 'download'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['validators'] = [
+            FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
+        ]
+        kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': settings.FILE_ACCEPT_ATTR_VALUE})
+        return kwargs
 
 
 class MultiFileFieldBlock(UploadableMediaBlock):
