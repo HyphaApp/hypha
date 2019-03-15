@@ -144,7 +144,7 @@ class UploadableMediaFactory(FormFieldBlockFactory):
         params = params.copy()
         params.setdefault('data', b'this is some content')
         file_name, file = cls.default_value()._make_content(params)
-        return SimpleUploadedFile(file_name, file.read())
+        return SimpleUploadedFile(file_name + '.pdf', file.read())
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
