@@ -318,10 +318,16 @@ class UploadableMediaBlock(OptionalFormFieldBlock):
 
 class ImageFieldBlock(UploadableMediaBlock):
     field_class = forms.ImageField
+    widget = ClearableFileInput
 
     class Meta:
         label = _('Image field')
         icon = 'image'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': 'image/*'})
+        return kwargs
 
 
 class FileFieldBlock(UploadableMediaBlock):

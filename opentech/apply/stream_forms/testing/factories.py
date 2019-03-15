@@ -143,8 +143,10 @@ class UploadableMediaFactory(FormFieldBlockFactory):
     def make_answer(cls, params=dict()):
         params = params.copy()
         params.setdefault('data', b'this is some content')
+        if params.get('filename') is None:
+            params['filename'] = 'example.pdf'
         file_name, file = cls.default_value()._make_content(params)
-        return SimpleUploadedFile(file_name + '.pdf', file.read())
+        return SimpleUploadedFile(file_name, file.read())
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
