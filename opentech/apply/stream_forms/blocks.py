@@ -384,6 +384,10 @@ class FormFieldsBlock(StreamBlock):
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
     multi_file = MultiFileFieldBlock(group=_('Fields'))
+    group = BooleanBlock(
+        group=_('Custom'), label=_('Group fields'), template='stream_forms/render_group_field.html',
+        icon='group', help_text='This field will not render on the page. Only helps to group fields.'
+    )
 
     class Meta:
         label = _('Form fields')

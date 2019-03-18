@@ -16,13 +16,22 @@ class BaseStreamForm:
     def get_form_fields(self):
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
+        group_counter = 1
         for struct_child in field_blocks:
             block = struct_child.block
             struct_value = struct_child.value
+
             if isinstance(block, FormFieldBlock):
-                form_fields[struct_child.id] = block.get_field(struct_value)
+                field_from_block = block.get_field(struct_value)
+                field_from_block.group = group_counter
+                form_fields[struct_child.id] = field_from_block
+            elif struct_child.block_type != 'group':
+                field_wrapper = BlockFieldWrapper(struct_child)
+                field_wrapper.group = group_counter
+                form_fields[struct_child.id] = field_wrapper
             else:
-                form_fields[struct_child.id] = BlockFieldWrapper(struct_child)
+                group_counter += 1
+
         return form_fields
 
     def get_form_class(self):

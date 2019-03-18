@@ -32,9 +32,13 @@
 
             {% for field in form %}
               {% if field.field %}
-                {% include "forms/includes/field.html" %}
+                <div class="field-group-{{ field.field.group }}">
+                    {% include "forms/includes/field.html" %}
+                </div>
               {% else %}
-                {{ field }}
+                <div class="field-group-{{ field.group }}">
+                    {{ field }}
+                </div>
               {% endif %}
             {% endfor %}
             <input class="link link--button-secondary" type="submit" value="{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}" />
