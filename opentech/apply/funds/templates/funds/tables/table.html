@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <ul class="list list--no-margin">
-                                {% for review in submission.reviews.all %}
+                                {% for review in submission.reviews.submitted %}
                                     <li class="list__item list__item--reviewer">
                                         <span class="list__item--reviewer-name">{{ review.author }}</span>
                                         <span class="list__item list__item--reviewer-outcome">{{ review.get_recommendation_display }}</span>
@@ -53,6 +53,12 @@
                                             </ul>
                                         {% endif %}
                                     {% endfor %}
+                                {% endfor %}
+                                {% for reviewer in submission.staff_not_reviewed %}
+                                    <li class="list__item list__item--reviewer">
+                                        <span class="list__item--reviewer-name">{{ reviewer }}</span>
+                                        <span class="list__item list__item--reviewer-outcome">&mdash;</span>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </td>
