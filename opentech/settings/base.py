@@ -438,6 +438,12 @@ BLEACH_STRIP_TAGS = True
 
 BLEACH_STRIP_COMMENTS = True
 
+# File Field settings
+FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
+
+# Accept attribute in input tag of type file needs filename extensions, starting with a period (".") character.
+FILE_ACCEPT_ATTR_VALUE = ", ".join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
+
 # Hijack Settings
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
