@@ -190,7 +190,11 @@ class GroupToggleBlock(FormFieldBlock):
     required = BooleanBlock(label=_('Required'), default=True)
     choices = ListBlock(
         CharBlock(label=_('Choice')),
-        help_text='Please create only two choices for toggle. Additional choices will be ignored.'
+        help_text=(
+            'Please create only two choices for toggle. '
+            'First choice will revel the group and the second hide it. '
+            'Additional choices will be ignored.'
+        )
     )
 
     field_class = forms.ChoiceField
