@@ -31,15 +31,17 @@
             {% csrf_token %}
 
             {% for field in form %}
-              {% if field.field %}
-                <div class="field-group-{{ field.field.group }}">
-                    {% include "forms/includes/field.html" %}
-                </div>
-              {% else %}
-                <div class="field-group-{{ field.group }}">
-                    {{ field }}
-                </div>
-              {% endif %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" with is_application=True %}
+                {% else %}
+                    {% if field.group_number and field.group_number > 1 %}
+                        <div class="field-group-{{ field.group_number }} hidden">
+                            {{ field }}
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% endif %}
             {% endfor %}
             <input class="link link--button-secondary" type="submit" value="{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}" />
         </form>
@@ -50,4 +52,5 @@
 {% block extra_js %}
     <script src="{% static 'js/apply/mailgun-validator.js' %}"></script>
     <script src="{% static 'js/apply/file-uploads.js' %}"></script>
+    <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
 {% endblock %}

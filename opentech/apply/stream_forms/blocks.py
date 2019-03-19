@@ -186,6 +186,38 @@ class RadioButtonsFieldBlock(OptionalFormFieldBlock):
         return kwargs
 
 
+class GroupToggleBlock(FormFieldBlock):
+    required = BooleanBlock(label=_('Required'), default=True)
+    choices = ListBlock(
+        CharBlock(label=_('Choice')),
+        help_text='Please create only two choices for toggle. Additional choices will be ignored.'
+    )
+
+    field_class = forms.ChoiceField
+    widget = forms.RadioSelect
+
+    class Meta:
+        label = _('Group fields')
+        icon = 'group'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        field_choices = [
+            (choice, choice)
+            for choice in struct_value['choices']
+        ]
+        if len(field_choices) > 2:
+            # For toggle we need only two choices
+            field_choices = field_choices[:2]
+        elif len(field_choices) < 2:
+            field_choices = [
+                ('yes', 'Yes'),
+                ('no', 'No'),
+            ]
+        kwargs['choices'] = field_choices
+        return kwargs
+
+
 class DropdownFieldBlock(RadioButtonsFieldBlock):
     widget = forms.Select
 
@@ -384,10 +416,7 @@ class FormFieldsBlock(StreamBlock):
     image = ImageFieldBlock(group=_('Fields'))
     file = FileFieldBlock(group=_('Fields'))
     multi_file = MultiFileFieldBlock(group=_('Fields'))
-    group = BooleanBlock(
-        group=_('Custom'), label=_('Group fields'), template='stream_forms/render_group_field.html',
-        icon='group', help_text='This field will not render on the page. Only helps to group fields.'
-    )
+    group_toggle = GroupToggleBlock(group=_("Custom"))
 
     class Meta:
         label = _('Form fields')
