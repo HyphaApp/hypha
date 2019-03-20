@@ -210,10 +210,11 @@ class GroupToggleBlock(FormFieldBlock):
             (choice, choice)
             for choice in struct_value['choices']
         ]
-        if len(field_choices) > 2:
+        total_choices = len(field_choices)
+        if total_choices > 2:
             # For toggle we need only two choices
             field_choices = field_choices[:2]
-        elif len(field_choices) < 2:
+        elif total_choices < 2:
             field_choices = [
                 ('yes', 'Yes'),
                 ('no', 'No'),
