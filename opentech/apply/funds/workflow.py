@@ -473,6 +473,7 @@ DoubleStageDefinition = [
         'concept_determination': {
             'transitions': {
                 'invited_to_proposal': 'Invite to Proposal',
+                'concept_review_more_info': 'Request More Information',
                 'concept_rejected': 'Dismiss',
             },
             'display': 'Ready for Preliminary Determination',
