@@ -19,7 +19,7 @@
 
     &__td {
         max-width: 340px;
-        min-width: 340px;
+        min-width: 240px;
         padding: 20px;
     }
 
@@ -31,8 +31,6 @@
 
         &:first-child {
             width: 160px;
-            max-width: 160px;
-            min-width: 160px;
             background-color: $color--light-mid-grey;
         }
     }
