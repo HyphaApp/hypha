@@ -33,6 +33,17 @@ class QuoteBlock(blocks.StructBlock):
         template = "blocks/quote_block.html"
 
 
+class AwesomeTableWidgetBlock(blocks.StructBlock):
+    table_id = blocks.CharBlock(
+        classname="title",
+        help_text='Please enter only table id from embed code. Table widget code creates automatically.'
+    )
+
+    class Meta:
+        icon = "table"
+        template = "blocks/awesome_table_widget_block.html"
+
+
 # Main streamfield block to be inherited by Pages
 class StoryBlock(blocks.StreamBlock):
     heading = blocks.CharBlock(classname="full title", icon='title')
@@ -45,6 +56,7 @@ class StoryBlock(blocks.StreamBlock):
         template="blocks/call_to_action_block.html"
     )
     document = DocumentBlock()
+    awesome_table_widget = AwesomeTableWidgetBlock()
 
     class Meta:
         template = "blocks/stream_block.html"

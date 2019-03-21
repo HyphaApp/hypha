@@ -97,7 +97,7 @@ class NewsPage(BasePage):
         "news item appears to have been published."
     )
     introduction = models.TextField(blank=True)
-    body = StreamField(StoryBlock())
+    body = StreamField(StoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
