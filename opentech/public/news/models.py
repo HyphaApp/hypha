@@ -16,7 +16,8 @@ from wagtail.admin.edit_handlers import (
 from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage
-from opentech.public.utils.blocks import StoryBlock
+
+from .blocks import NewsStoryBlock
 
 
 class NewsType(models.Model):
@@ -97,7 +98,7 @@ class NewsPage(BasePage):
         "news item appears to have been published."
     )
     introduction = models.TextField(blank=True)
-    body = StreamField(StoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
+    body = StreamField(NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
