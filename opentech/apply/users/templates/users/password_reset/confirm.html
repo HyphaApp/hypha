@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% block header_modifier %}header--light-bg{% endblock %}
-{% block page_title %}Set your new password{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small wrapper--bottom-space">
+{% if validlink %}
+    <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
     <form class="form" method="post" novalidate>
         {% if form.non_field_errors %}
             <ul class="errorlist">
@@ -31,5 +33,8 @@
 
         <button class="link link--button-secondary" type="submit">{% trans 'Reset password' %}</button>
     </form>
+{% else %}
+<p>{% trans "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset." %}</p>
+{% endif %}
 </div>
 {% endblock %}
