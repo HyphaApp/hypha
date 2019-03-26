@@ -20,6 +20,8 @@ from wagtail.core.fields import StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
+from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.workflow import OPEN_CALL_PHASES
 from opentech.public.utils.models import (
     BasePage,
     RelatedPage,
@@ -236,4 +238,37 @@ class LabIndex(BasePage):
 
         context = super().get_context(request, *args, **kwargs)
         context.update(subpages=labs)
+        return context
+
+
+class OpenCallIndexPage(BasePage):
+    subpage_types = []
+    parent_page_types = ['home.HomePage']
+
+    introduction = models.TextField(blank=True)
+
+    content_panels = BasePage.content_panels + [
+        FieldPanel('introduction'),
+    ]
+
+    search_fields = BasePage.search_fields + [
+        index.SearchField('introduction'),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        open_call_submissions = ApplicationSubmission.objects.filter(status__in=OPEN_CALL_PHASES)
+        per_page = settings.DEFAULT_PER_PAGE
+        page_number = request.GET.get('page')
+        paginator = Paginator(open_call_submissions, per_page)
+
+        try:
+            open_call_submissions = paginator.page(page_number)
+        except PageNotAnInteger:
+            open_call_submissions = paginator.page(1)
+        except EmptyPage:
+            open_call_submissions = paginator.page(paginator.num_pages)
+
+        context['open_call_submissions'] = open_call_submissions
+
         return context

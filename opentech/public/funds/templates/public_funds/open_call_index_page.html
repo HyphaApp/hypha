@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<div class="wrapper wrapper--small wrapper--inner-space-medium">
+    {% if page.introduction %}
+        <h4 class="heading heading--listings-introduction">{{ page.introduction }}</h4>
+    {% endif %}
+
+    <div class="wrapper wrapper--listings">
+
+        {% if open_call_submissions %}
+            {% for submission in open_call_submissions %}
+                <div class="listing listing--not-a-link">
+                    <h4 class="listing__title">{{ submission.title }}</h4>
+                    <a class="listing__button" href="{% pageurl submission.page %}">Build it</a>
+                </div>
+
+            {% endfor %}
+
+            {% include "includes/pagination.html" with paginator_page=open_call_submissions %}
+
+        {% else %}
+            {# no items on this page #}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
