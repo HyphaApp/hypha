@@ -13,20 +13,7 @@
             {% for submission in open_call_submissions %}
                 <div class="listing listing--not-a-link">
                     <h4 class="listing__title">{{ submission.title }}</h4>
-                    <a class="listing__button" href="{% pageurl submission.page %}?open_call_submission={{ submission.id }}">Build it</a>
-                </div>
-                <div>
-                    <div>
-                        <h4>Project Duration</h4>
-                        {{ submission.get_duration_display }}
-                    </div>
-                    <div>
-                        <h4>Name</h4>
-                        {{ submission.get_full_name_display }}
-                    </div>
-                    <div class="rich-text rich-text--answers">
-                        {{ submission.output_first_group_answers }}
-                    </div>
+                    <a class="listing__button" href="{% pageurl submission.page %}">Build it</a>
                 </div>
 
             {% endfor %}

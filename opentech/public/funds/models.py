@@ -257,8 +257,7 @@ class OpenCallIndexPage(BasePage):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        open_call_submissions = ApplicationSubmission.objects.filter(
-            status__in=OPEN_CALL_PHASES).select_related('page').order_by('-submit_time')
+        open_call_submissions = ApplicationSubmission.objects.filter(status__in=OPEN_CALL_PHASES)
         per_page = settings.DEFAULT_PER_PAGE
         page_number = request.GET.get('page')
         paginator = Paginator(open_call_submissions, per_page)
