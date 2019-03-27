@@ -20,6 +20,19 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+**Priority**
+- High (keeping you from completing day-to-day tasks)
+- Medium (slowing you down)
+- Low priority (annoying, would be nice to not see)
+
+**Affected roles**
+- Staff
+- Applicants
+- Reviewers
+- Partners
+- Developers
+- General public
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
