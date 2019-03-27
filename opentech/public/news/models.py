@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
+from pagedown.widgets import PagedownWidget
 
 from wagtail.core.models import Orderable
 from wagtail.core.fields import StreamField
@@ -130,7 +131,7 @@ class NewsIndex(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction')
+        FieldPanel('introduction', widget=PagedownWidget())
     ]
 
     def get_context(self, request, *args, **kwargs):
