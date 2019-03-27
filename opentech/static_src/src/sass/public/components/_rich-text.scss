@@ -1,8 +1,27 @@
 .rich-text {
     margin-bottom: 2rem;
+    word-break: break-word;
 
     .form & {
         margin-bottom: 0;
+    }
+
+    &--answers {
+        > section {
+            margin: 0 0 1rem;
+
+            p:first-of-type {
+                margin-top: 0;
+            }
+
+            p:empty {
+                margin: 0;
+            }
+        }
+
+        h4 {
+            margin: 0;
+        }
     }
 
     a {
