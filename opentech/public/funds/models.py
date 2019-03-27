@@ -56,7 +56,7 @@ class BaseApplicationPage(BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction'),
+        FieldPanel('introduction', widget=PagedownWidget()),
         StreamFieldPanel('body'),
         InlinePanel('related_pages', label="Related pages"),
     ]
