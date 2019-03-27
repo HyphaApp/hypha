@@ -13,7 +13,7 @@
             {% for submission in open_call_submissions %}
                 <div class="listing listing--not-a-link">
                     <h4 class="listing__title">{{ submission.title }}</h4>
-                    <a class="listing__button" href="{% pageurl submission.page %}">Build it</a>
+                    <a class="listing__button" href="{% pageurl submission.page %}?open_call_submission={{ submission.id }}">Build it</a>
                 </div>
                 <div>
                     <div>

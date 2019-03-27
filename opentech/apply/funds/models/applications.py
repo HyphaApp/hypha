@@ -17,6 +17,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce, Length
+from django.shortcuts import render
 
 from django.http import Http404
 from django.utils.functional import cached_property
@@ -36,6 +37,7 @@ from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
+from ..workflow import OPEN_CALL_PHASES
 
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
@@ -280,9 +282,59 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
                 raise ValidationError(error)
 
-    def serve(self, request):
+    def get_form_parameters(self, request=None):
+        form_parameters = {}
+        initial_values = {}
+
+        if request:
+            copy_open_submission = request.GET.get('open_call_submission')
+            if copy_open_submission:
+                submission_class = self.get_submission_class()
+                try:
+                    submission = submission_class.objects.get(id=copy_open_submission)
+                    if self.get_parent().id == submission.page.id:
+                        first_group_blocks = submission.first_group_normal_blocks
+                        for field_id in first_group_blocks:
+                            field_data = submission.data(field_id)
+                            initial_values[field_id] = field_data
+
+                        form_parameters['initial'] = initial_values
+
+                except (submission_class.DoesNotExist, ValueError):
+                    pass
+
+        return form_parameters
+
+    def get_form(self, *args, **kwargs):
+        form_class = self.get_form_class()
+        request = kwargs.pop('request', None)
+        if request:
+            form_params = self.get_form_parameters(request=request)
+        else:
+            form_params = self.get_form_parameters()
+        form_params.update(kwargs)
+
+        return form_class(*args, **form_params)
+
+    def serve(self, request, *args, **kwargs):
         if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
-            return super().serve(request)
+            # Overriding serve method to pass request to get_form method
+            if request.method == 'POST':
+                form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
+
+                if form.is_valid():
+                    form_submission = self.process_form_submission(form)
+                    return self.render_landing_page(request, form_submission, *args, **kwargs)
+            else:
+                form = self.get_form(page=self, user=request.user, request=request)
+
+            context = self.get_context(request)
+            context['form'] = form
+            return render(
+                request,
+                self.get_template(request),
+                context
+            )
 
         # We hide the round as only the open round is used which is displayed through the
         # fund page
