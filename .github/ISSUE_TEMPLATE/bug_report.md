@@ -2,10 +2,18 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
+
+_**PLEASE DO NOT INCLUDE SENSITIVE INFORMATION**_
+[Use this form](https://docs.google.com/forms/d/e/1FAIpQLSdcn68IgWuk5-YyXF8ZuVK5Dxj5az6eemmLlqDsghJwEmxY6A/viewform). if you need to include the following information:
+- Account name or name of person
+- Account email
+- Any personally identifying information
+- Title of submission (app URLs alone are OK)
+- When in doubt, use the above form.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
