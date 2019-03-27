@@ -37,7 +37,6 @@ from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
-from ..workflow import OPEN_CALL_PHASES
 
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
