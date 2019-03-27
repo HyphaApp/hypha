@@ -13,7 +13,7 @@ html {
 */
 @mixin heading-text {
     margin: 0 0 1rem;
-    font-family: $font--primary;
+    font-family: $font--headings;
     font-style: inherit;
     font-weight: $weight--bold;
 }
@@ -68,45 +68,65 @@ small, .milli {
 
 // thin
 @font-face {
-    font-family: 'proxima-nova';
+    font-family: 'montserrat';
     font-style: normal;
     font-weight: 200;
-    src: url('../../fonts/proxima-nova/proxima-nova-thin.woff') format('woff');
+    src: url('../../fonts/montserrat/Montserrat-Thin.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
 // regular
 @font-face {
-    font-family: 'proxima-nova';
+    font-family: 'montserrat';
     font-style: normal;
     font-weight: 400;
-    src: url('../../fonts/proxima-nova/proxima-nova-regular.woff') format('woff');
+    src: url('../../fonts/montserrat/Montserrat-Regular.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
 // semibold
 @font-face {
-    font-family: 'proxima-nova';
+    font-family: 'montserrat';
     font-style: normal;
     font-weight: 600;
-    src: url('../../fonts/proxima-nova/proxima-nova-semibold.woff') format('woff');
+    src: url('../../fonts/montserrat/Montserrat-SemiBold.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
 // bold
 @font-face {
-    font-family: 'proxima-nova';
+    font-family: 'montserrat';
     font-style: normal;
     font-weight: 700;
-    src: url('../../fonts/proxima-nova/proxima-nova-bold.woff') format('woff');
+    src: url('../../fonts/montserrat/Montserrat-Bold.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
 
 // black
 @font-face {
-    font-family: 'proxima-nova';
+    font-family: 'montserrat';
     font-style: normal;
     font-weight: 800;
-    src: url('../../fonts/proxima-nova/proxima-nova-black.woff') format('woff');
+    src: url('../../fonts/montserrat/Montserrat-Black.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+
+
+// regular
+@font-face {
+    font-family: 'noto-sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../../fonts/noto-sans/NotoSans.woff') format('woff');
+    text-rendering: optimizeLegibility;
+}
+
+// bold
+@font-face {
+    font-family: 'noto-sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('../../fonts/noto-sans/NotoSans-Bold.woff') format('woff');
     text-rendering: optimizeLegibility;
 }
