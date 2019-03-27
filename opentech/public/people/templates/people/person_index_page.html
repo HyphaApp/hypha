@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags %}
+{% load wagtailcore_tags markdown_tags bleach_tags %}
 {% block body_class %}light-grey-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small wrapper--inner-space-medium">
     {% if page.introduction %}
-        <h4 class="heading heading--listings-introduction">{{ page.introduction }}</h4>
+        <h4 class="heading heading--listings-introduction">{{ page.introduction|markdown|bleach }}</h4>
     {% endif %}
 
         <form class="form" method="GET">
