@@ -4,7 +4,7 @@ from django.core.files import File
 from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import (
-    FileFieldBlock, FormFieldBlock, ImageFieldBlock, MultiFileFieldBlock
+    FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
 )
 from opentech.apply.utils.blocks import SingleIncludeMixin
 
@@ -125,6 +125,14 @@ class AccessFormData:
                 yield field_id
 
     @property
+    def first_group_question_field_ids(self):
+        for field_id, field in self.fields.items():
+            if isinstance(field.block, GroupToggleBlock):
+                break
+            elif isinstance(field.block, FormFieldBlock):
+                yield field_id
+
+    @property
     def raw_fields(self):
         # Field ids to field class mapping - similar to raw_data
         return {
@@ -157,6 +165,14 @@ class AccessFormData:
             if field_id not in self.named_blocks
         ]
 
+    @property
+    def first_group_normal_blocks(self):
+        return [
+            field_id
+            for field_id in self.first_group_question_field_ids
+            if field_id not in self.named_blocks
+        ]
+
     def serialize(self, field_id):
         field = self.field(field_id)
         data = self.data(field_id)
@@ -180,6 +196,12 @@ class AccessFormData:
             for field_id in self.normal_blocks
         ]
 
+    def render_first_group_answers(self):
+        return [
+            self.render_answer(field_id, include_question=True)
+            for field_id in self.first_group_normal_blocks
+        ]
+
     def render_text_blocks_answers(self):
         # Returns a list of the rendered answers of type text
         return [
@@ -191,3 +213,6 @@ class AccessFormData:
     def output_answers(self):
         # Returns a safe string of the rendered answers
         return mark_safe(''.join(self.render_answers()))
+
+    def output_first_group_answers(self):
+        return mark_safe(''.join(self.render_first_group_answers()))

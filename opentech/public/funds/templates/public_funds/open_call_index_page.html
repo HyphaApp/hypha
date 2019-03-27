@@ -15,6 +15,19 @@
                     <h4 class="listing__title">{{ submission.title }}</h4>
                     <a class="listing__button" href="{% pageurl submission.page %}">Build it</a>
                 </div>
+                <div>
+                    <div>
+                        <h5>Project Duration</h5>
+                        {{ submission.get_duration_display }}
+                    </div>
+                    <div>
+                        <h5>Name</h5>
+                        {{ submission.get_full_name_display }}
+                    </div>
+                    <div class="rich-text rich-text--answers">
+                        {{ submission.output_first_group_answers }}
+                    </div>
+                </div>
 
             {% endfor %}
 
