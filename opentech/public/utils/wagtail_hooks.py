@@ -1,4 +1,7 @@
+from django.contrib.staticfiles.templatetags.staticfiles import static
+
 from wagtail.contrib.modeladmin.options import ModelAdminGroup, ModelAdmin, modeladmin_register
+from wagtail.core import hooks
 
 from opentech.public.news.models import NewsType
 from opentech.public.people.models import PersonType
@@ -21,3 +24,10 @@ class TaxonomiesModelAdminGroup(ModelAdminGroup):
 
 
 modeladmin_register(TaxonomiesModelAdminGroup)
+
+
+@hooks.register('insert_editor_css')
+def editor_css():
+    link = '<link rel="stylesheet" href="{}">\n'
+    path = static('css/apply/wagtail_editor.css')
+    return link.format(path)

@@ -6,6 +6,8 @@ from django.db import models
 from django.utils.deconstruct import deconstructible
 
 from modelcluster.fields import ParentalKey
+from pagedown.widgets import PagedownWidget
+
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -91,7 +93,7 @@ class FundIndex(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction')
+        FieldPanel('introduction', widget=PagedownWidget())
     ]
 
     def get_context(self, request, *args, **kwargs):
@@ -216,7 +218,7 @@ class LabIndex(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction')
+        FieldPanel('introduction', widget=PagedownWidget())
     ]
 
     def get_context(self, request, *args, **kwargs):

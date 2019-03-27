@@ -3,6 +3,8 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 from modelcluster.fields import ParentalKey
+from pagedown.widgets import PagedownWidget
+
 from wagtail.admin.edit_handlers import (
     FieldPanel, StreamFieldPanel,
     InlinePanel
@@ -42,7 +44,7 @@ class IndexPage(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction'),
+        FieldPanel('introduction', widget=PagedownWidget()),
     ]
 
     search_fields = BasePage.search_fields + [

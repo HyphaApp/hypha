@@ -4,6 +4,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.conf import settings
 
 from modelcluster.fields import ParentalKey
+from pagedown.widgets import PagedownWidget
 
 from wagtail.core.models import Orderable, PageManager, PageQuerySet
 from wagtail.core.fields import StreamField
@@ -201,7 +202,7 @@ class PersonIndexPage(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction'),
+        FieldPanel('introduction', widget=PagedownWidget()),
     ]
 
     search_fields = BasePage.search_fields + [
