@@ -14,7 +14,7 @@
             {% for submission in open_call_submissions %}
                 <div class="listing listing--with-button">
                     <h3 class="title">{{ submission.title }}</h3>
-                    <a class="button listing__button" href="{% pageurl submission.page %}" target="_blank">Build it</a>
+                    <a class="button listing__button" href="{% pageurl submission.page %}?open_call_submission={{ submission.id }}" target="_blank">Build it</a>
                     <div class="rich-text rich-text--answers">
                         <section>
                             <h4>Name</h4>

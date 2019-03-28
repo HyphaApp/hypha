@@ -292,7 +292,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 title_block_id = submission.named_blocks.get('title')
                 if title_block_id:
                     field_data = submission.data(title_block_id)
-                    initial_values[title_block_id] = field_data
+                    initial_values[title_block_id] = field_data + ' (please edit)'
 
                 for field_id in submission.first_group_normal_text_blocks:
                     field_data = submission.data(field_id)
