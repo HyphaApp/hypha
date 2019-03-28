@@ -303,8 +303,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 for toggle_block_id, toggle_field in submission.group_toggle_blocks:
                     try:
                         initial_values[toggle_block_id] = toggle_field.value['choices'][0]
-                    except (KeyError, IndexError):
+                    except IndexError:
+                        initial_values[toggle_block_id] = 'yes'
+                    except KeyError:
                         pass
+
         except (submission_class.DoesNotExist, ValueError):
             pass
 
