@@ -295,8 +295,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                     field_data = submission.data(title_block_id)
                     initial_values[title_block_id] = field_data
 
-                first_group_text_blocks = submission.first_group_normal_text_blocks
-                for field_id in first_group_text_blocks:
+                for field_id in submission.first_group_normal_text_blocks:
                     field_data = submission.data(field_id)
                     initial_values[field_id] = field_data
 
