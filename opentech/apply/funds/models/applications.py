@@ -292,7 +292,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 submission_class = self.get_submission_class()
                 try:
                     submission = submission_class.objects.get(id=copy_open_submission)
-                    if self.get_parent() == submission.page and submission.status in OPEN_CALL_PHASES:
+                    if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
                         first_group_text_blocks = submission.first_group_normal_text_blocks
                         for field_id in first_group_text_blocks:
                             field_data = submission.data(field_id)
