@@ -311,23 +311,21 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
         return initial_values
 
-    def get_form_parameters(self, request=None):
+    def get_form_parameters(self, submission_id=None):
         form_parameters = {}
 
-        if request:
-            copy_open_submission = request.GET.get('open_call_submission')
-            if copy_open_submission:
-                initial_values = self.get_initial_data_open_call_submission(copy_open_submission)
-                if initial_values:
-                    form_parameters['initial'] = initial_values
+        if submission_id:
+            initial_values = self.get_initial_data_open_call_submission(submission_id)
+            if initial_values:
+                form_parameters['initial'] = initial_values
 
         return form_parameters
 
     def get_form(self, *args, **kwargs):
         form_class = self.get_form_class()
-        request = kwargs.pop('request', None)
-        if request:
-            form_params = self.get_form_parameters(request=request)
+        submission_id = kwargs.pop('submission_id', None)
+        if submission_id:
+            form_params = self.get_form_parameters(submission_id=submission_id)
         else:
             form_params = self.get_form_parameters()
         form_params.update(kwargs)
@@ -336,7 +334,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def serve(self, request, *args, **kwargs):
         if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
-            # Overriding serve method to pass request to get_form method
+            # Overriding serve method to pass submission id to get_form method
+            copy_open_submission = request.GET.get('open_call_submission')
             if request.method == 'POST':
                 form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
 
@@ -344,11 +343,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                     form_submission = self.process_form_submission(form)
                     return self.render_landing_page(request, form_submission, *args, **kwargs)
             else:
-                form = self.get_form(page=self, user=request.user, request=request)
+                form = self.get_form(page=self, user=request.user, submission_id=copy_open_submission)
 
             context = self.get_context(request)
             context['form'] = form
-            copy_open_submission = request.GET.get('open_call_submission')
             context['show_all_group_fields'] = True if copy_open_submission else False
             return render(
                 request,
