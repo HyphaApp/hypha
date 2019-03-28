@@ -168,6 +168,12 @@ class AccessFormData:
         ]
 
     @property
+    def group_toggle_blocks(self):
+        for field_id, field in self.fields.items():
+            if isinstance(field.block, GroupToggleBlock):
+                yield field_id, field
+
+    @property
     def first_group_normal_text_blocks(self):
         return [
             field_id

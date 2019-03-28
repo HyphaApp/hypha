@@ -39,6 +39,7 @@ from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
 from ..workflow import OPEN_CALL_PHASES
 
+from .mixins import UnusedFieldException
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
 
@@ -289,11 +290,22 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             submission_class = self.get_submission_class()
             submission = submission_class.objects.get(id=submission_id)
             if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
+                title_block_id = submission.named_blocks.get('title')
+                if title_block_id:
+                    field_data = submission.data(title_block_id)
+                    initial_values[title_block_id] = field_data
+
                 first_group_text_blocks = submission.first_group_normal_text_blocks
                 for field_id in first_group_text_blocks:
                     field_data = submission.data(field_id)
                     initial_values[field_id] = field_data
 
+                # Select first item in the Group toggle blocks
+                for toggle_block_id, toggle_field in submission.group_toggle_blocks:
+                    try:
+                        initial_values[toggle_block_id] = toggle_field.value['choices'][0]
+                    except (KeyError, IndexError):
+                        pass
         except (submission_class.DoesNotExist, ValueError):
             pass
 
@@ -336,6 +348,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
             context = self.get_context(request)
             context['form'] = form
+            copy_open_submission = request.GET.get('open_call_submission')
+            context['show_all_group_fields'] = True if copy_open_submission else False
             return render(
                 request,
                 self.get_template(request),
