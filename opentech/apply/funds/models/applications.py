@@ -282,26 +282,32 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
                 raise ValidationError(error)
 
+    def get_initial_data_open_call_submission(self, submission_id):
+        initial_values = {}
+
+        try:
+            submission_class = self.get_submission_class()
+            submission = submission_class.objects.get(id=submission_id)
+            if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
+                first_group_text_blocks = submission.first_group_normal_text_blocks
+                for field_id in first_group_text_blocks:
+                    field_data = submission.data(field_id)
+                    initial_values[field_id] = field_data
+
+        except (submission_class.DoesNotExist, ValueError):
+            pass
+
+        return initial_values
+
     def get_form_parameters(self, request=None):
         form_parameters = {}
-        initial_values = {}
 
         if request:
             copy_open_submission = request.GET.get('open_call_submission')
             if copy_open_submission:
-                submission_class = self.get_submission_class()
-                try:
-                    submission = submission_class.objects.get(id=copy_open_submission)
-                    if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
-                        first_group_text_blocks = submission.first_group_normal_text_blocks
-                        for field_id in first_group_text_blocks:
-                            field_data = submission.data(field_id)
-                            initial_values[field_id] = field_data
-
-                        form_parameters['initial'] = initial_values
-
-                except (submission_class.DoesNotExist, ValueError):
-                    pass
+                initial_values = self.get_initial_data_open_call_submission(copy_open_submission)
+                if initial_values:
+                    form_parameters['initial'] = initial_values
 
         return form_parameters
 
