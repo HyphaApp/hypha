@@ -37,6 +37,7 @@ from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
+from ..workflow import OPEN_CALL_PHASES
 
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
@@ -291,7 +292,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 submission_class = self.get_submission_class()
                 try:
                     submission = submission_class.objects.get(id=copy_open_submission)
-                    if self.get_parent().id == submission.page.id:
+                    if self.get_parent() == submission.page and submission.status in OPEN_CALL_PHASES:
                         first_group_blocks = submission.first_group_normal_blocks
                         for field_id in first_group_blocks:
                             field_data = submission.data(field_id)
