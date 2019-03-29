@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch
+from django.db.models import Case, Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch, When
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -23,7 +23,7 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import Review, ReviewOpinion
-from opentech.apply.review.options import AGREE
+from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -132,7 +132,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
-        reviews = self.model.reviews.field.model.objects.filter(submission=OuterRef('id'))
+        review_model = self.model.reviews.field.model
+        reviews = review_model.objects.filter(submission=OuterRef('id'))
+        opinions = review_model.opinions.field.model.objects.filter(review__submission=OuterRef('id'))
 
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
@@ -144,8 +146,15 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 ),
                 0,
             ),
-            review_count=Subquery(
-                reviews.values('submission').annotate(count=Count('pk')).values('count'),
+            review_count=Coalesce(
+                Subquery(
+                    reviews.values('submission').annotate(count=Count('pk')).values('count'),
+                    output_field=IntegerField(),
+                ),
+                0,
+            ),
+            opinion_disagree=Subquery(
+                opinions.filter(opinion=DISAGREE).values('review').annotate(count=Count('pk')).values('count'),
                 output_field=IntegerField(),
             ),
             review_staff_count=Subquery(
@@ -156,9 +165,14 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 reviews.submitted().values('submission').annotate(count=Count('pk')).values('count'),
                 output_field=IntegerField(),
             ),
-            review_recommendation=Subquery(
-                reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
-                output_field=IntegerField(),
+            review_recommendation=Case(
+                When(opinion_disagree__gt=0, then=MAYBE),
+                default=Subquery(
+                    reviews.submitted().values('submission').annotate(
+                        calc_recommendation=Sum('recommendation') / Count('recommendation'),
+                    ).values('calc_recommendation'),
+                    output_field=IntegerField(),
+                )
             ),
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
