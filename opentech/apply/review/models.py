@@ -18,7 +18,7 @@ from .blocks import (
     ScoreFieldBlock,
     VisibilityBlock,
 )
-from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, AGREE, DISAGREE, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
+from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, DISAGREE, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
 
 
 class ReviewFormFieldsMixin(models.Model):
