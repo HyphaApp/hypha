@@ -18,7 +18,7 @@ from .blocks import (
     ScoreFieldBlock,
     VisibilityBlock,
 )
-from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
+from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, AGREE, DISAGREE, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
 
 
 class ReviewFormFieldsMixin(models.Model):
@@ -102,7 +102,19 @@ class ReviewQuerySet(models.QuerySet):
         return self.exclude(score=NA).aggregate(models.Avg('score'))['score__avg']
 
     def recommendation(self):
-        recommendations = self.values_list('recommendation', flat=True)
+        reviews = self.values_list('id', 'recommendation', 'opinions__opinion')
+
+        outcome = {}
+        for review_id, review, opinion in reviews:
+            current_outcome = outcome.get(review_id, review)
+            if opinion == DISAGREE:
+                new_outcome = MAYBE
+            else:
+                new_outcome = current_outcome
+            outcome[review_id] = new_outcome
+
+        recommendations = outcome.values()
+
         try:
             recommendation = sum(recommendations) / len(recommendations)
         except ZeroDivisionError:
