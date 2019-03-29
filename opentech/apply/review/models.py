@@ -102,19 +102,12 @@ class ReviewQuerySet(models.QuerySet):
         return self.exclude(score=NA).aggregate(models.Avg('score'))['score__avg']
 
     def recommendation(self):
-        reviews = self.values_list('id', 'recommendation', 'opinions__opinion')
+        opinions = self.values_list('opinions__opinion', flat=True)
 
-        outcome = {}
-        for review_id, review, opinion in reviews:
-            current_outcome = outcome.get(review_id, review)
-            if opinion == DISAGREE:
-                new_outcome = MAYBE
-            else:
-                new_outcome = current_outcome
-            outcome[review_id] = new_outcome
+        if any(opinion == DISAGREE for opinion in opinions):
+            return MAYBE
 
-        recommendations = outcome.values()
-
+        recommendations = self.values_list('recommendation', flat=True)
         try:
             recommendation = sum(recommendations) / len(recommendations)
         except ZeroDivisionError:
