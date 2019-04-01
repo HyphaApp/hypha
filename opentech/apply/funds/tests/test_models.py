@@ -19,6 +19,7 @@ from opentech.apply.users.tests.factories import StaffFactory
 
 from .factories import (
     ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
@@ -502,6 +503,18 @@ class TestRequestForPartners(TestCase):
 
 
 class TestForTableQueryset(TestCase):
+    def test_assigned_but_not_reviewed(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        AssignedReviewersFactory(submission=submission, reviewer=staff)
+
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, None)
+        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, 0)
+        self.assertEqual(submission.review_recommendation, None)
+
     def test_review_outcome(self):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory()
@@ -510,6 +523,7 @@ class TestForTableQueryset(TestCase):
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, None)
         self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, 1)
         self.assertEqual(submission.review_recommendation, NO)
 
     def test_disagree_review_is_maybe(self):
@@ -520,7 +534,26 @@ class TestForTableQueryset(TestCase):
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, 1)
-        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
+        self.assertEqual(submission.review_recommendation, MAYBE)
+
+    def test_dont_double_count_review_and_opinion(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        review = ReviewFactory(submission=submission, author=staff)
+        opinion = ReviewOpinionFactory(opinion_disagree=True, review=review)
+
+        # Another pair of review/opinion
+        review_two = ReviewFactory(author=opinion.author, submission=submission)
+        ReviewOpinionFactory(opinion_disagree=True, author=staff, review=review_two)
+
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, 2)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
         self.assertEqual(submission.review_recommendation, MAYBE)
 
     def test_submissions_dont_conflict(self):
@@ -535,10 +568,12 @@ class TestForTableQueryset(TestCase):
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, 1)
-        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
         self.assertEqual(submission.review_recommendation, MAYBE)
 
         submission = qs[1]
         self.assertEqual(submission.opinion_disagree, None)
         self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, 1)
         self.assertEqual(submission.review_recommendation, NO)
