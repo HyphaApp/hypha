@@ -1,6 +1,6 @@
 from copy import copy
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
@@ -10,7 +10,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView, UpdateView
+from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -750,3 +750,20 @@ class RoundListView(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return RoundsAndLabs.objects.with_progress()
+
+
+@method_decorator(permission_required('funds.delete_applicationsubmission', raise_exception=True), name='dispatch')
+class SubmissionDeleteView(DeleteView):
+    model = ApplicationSubmission
+    success_url = reverse_lazy('funds:submissions:list')
+
+    def delete(self, request, *args, **kwargs):
+        submission = self.get_object()
+        messenger(
+            MESSAGES.DELETE_SUBMISSION,
+            user=request.user,
+            request=request,
+            submission=submission,
+        )
+        response = super().delete(request, *args, **kwargs)
+        return response

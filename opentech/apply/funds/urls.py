@@ -11,6 +11,7 @@ from .views import (
     SubmissionListView,
     SubmissionOverviewView,
     SubmissionSealedView,
+    SubmissionDeleteView,
 )
 from .api_views import (
     CommentList,
@@ -38,6 +39,7 @@ submission_urls = ([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
+        path('delete/', SubmissionDeleteView.as_view(), name="delete"),
     ])),
     path('<int:submission_pk>/', include([
         path('', include('opentech.apply.review.urls', namespace="reviews")),
