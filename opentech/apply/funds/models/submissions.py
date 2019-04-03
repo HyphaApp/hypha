@@ -39,6 +39,7 @@ from ..workflow import (
     STAGE_CHANGE_ACTIONS,
     UserPermissions,
     WORKFLOWS,
+    COMMUNITY_REVIEW_PHASES,
 )
 
 
@@ -557,6 +558,10 @@ class ApplicationSubmission(
             self.save()
 
     @property
+    def community_review(self):
+        return self.status in COMMUNITY_REVIEW_PHASES
+
+    @property
     def missing_reviewers(self):
         reviews_submitted = self.reviews.submitted().values('author')
         reviewers = self.reviewers.exclude(id__in=reviews_submitted)
@@ -586,6 +591,9 @@ class ApplicationSubmission(
             return True
 
         if user in self.partners_not_reviewed:
+            return True
+
+        if user.is_community_reviewer and self.community_review and not self.reviewed_by(user):
             return True
 
         return False

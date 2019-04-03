@@ -473,6 +473,9 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
             partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
             if not partner_has_access:
                 raise PermissionDenied
+        # Only allow community reviewers in submission with a community review state.
+        if request.user.is_community_reviewer and not submission.community_review:
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
