@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import Http404
@@ -17,6 +19,10 @@ def search(request):
 
     # Search
     if search_query:
+        # Allow only word characters and spaces in search query.
+        words = re.findall('\w+', search_query.strip())
+        search_query = ' '.join(words)
+
         public_site = request.site.root_page
 
         search_results = Page.objects.live().descendant_of(
