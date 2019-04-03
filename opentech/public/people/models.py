@@ -218,7 +218,7 @@ class PersonIndexPage(BasePage):
             'person_types__person_type',
         )
 
-        if request.GET.get('person_type'):
+        if request.GET.get('person_type') and request.GET.get('person_type').isdigit():
             people = people.filter(person_types__person_type=request.GET.get('person_type'))
 
         if not request.GET.get('include_inactive') == 'true':

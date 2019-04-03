@@ -142,7 +142,7 @@ class NewsIndex(BasePage):
             'authors__author',
         )
 
-        if request.GET.get('news_type'):
+        if request.GET.get('news_type') and request.GET.get('news_type').isdigit():
             news = news.filter(news_types__news_type=request.GET.get('news_type'))
 
         # Pagination
