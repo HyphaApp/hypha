@@ -38,6 +38,7 @@ def send_activation_email(user, site=None):
         'name': user.get_full_name(),
         'username': user.get_username(),
         'activation_path': activation_path,
+        'timeout_days': settings.PASSWORD_RESET_TIMEOUT_DAYS,
     }
 
     if site:

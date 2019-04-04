@@ -6,7 +6,7 @@ An account on the Open Technology Fund web site has been created. Activate your 
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
-This link can be used once to log in and will lead you to a page where you can set your password.
+This link can be used only once and will lead you to a page where you can set your password. It will remain active for {{ timeout_days }} days, so do it now.
 
 After setting your password, you will be able to log in at {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} in the future using:
 
