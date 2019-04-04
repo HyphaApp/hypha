@@ -52,6 +52,18 @@
         }
     }
 
+    &--with-button {
+        .button {
+            float:  right;
+        }
+
+        @include media-query(tablet-portrait) {
+            position: relative;
+            min-height: 180px;
+            padding: 30px;
+        }
+    }
+
     &__title {
         margin-bottom: 5px;
         line-height: 1.2;

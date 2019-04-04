@@ -35,7 +35,7 @@
                     {% include "forms/includes/field.html" with is_application=True %}
                 {% else %}
                     {% if field.group_number > 1 %}
-                        <div class="field-group-{{ field.group_number }}" style="display:none;">
+                        <div class="field-group-{{ field.group_number }}" {% if not show_all_group_fields %}style="display:none;"{% endif %}>
                             {{ field }}
                         </div>
                     {% else %}
@@ -52,5 +52,7 @@
 {% block extra_js %}
     <script src="{% static 'js/apply/mailgun-validator.js' %}"></script>
     <script src="{% static 'js/apply/file-uploads.js' %}"></script>
+    {% if not show_all_group_fields %}
     <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
+    {% endif %}
 {% endblock %}

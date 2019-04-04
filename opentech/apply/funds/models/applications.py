@@ -17,6 +17,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce, Length
+from django.shortcuts import render
 
 from django.http import Http404
 from django.utils.functional import cached_property
@@ -36,6 +37,7 @@ from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel, ReadOnlyInlinePanel
+from ..workflow import OPEN_CALL_PHASES
 
 from .submissions import ApplicationSubmission
 from .utils import admin_url, EmailForm, SubmittableStreamForm, WorkflowStreamForm, LIMIT_TO_REVIEWERS, LIMIT_TO_STAFF
@@ -280,9 +282,78 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
                 raise ValidationError(error)
 
-    def serve(self, request):
+    def get_initial_data_open_call_submission(self, submission_id):
+        initial_values = {}
+
+        try:
+            submission_class = self.get_submission_class()
+            submission = submission_class.objects.get(id=submission_id)
+            if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
+                title_block_id = submission.named_blocks.get('title')
+                if title_block_id:
+                    field_data = submission.data(title_block_id)
+                    initial_values[title_block_id] = field_data + ' (please edit)'
+
+                for field_id in submission.first_group_normal_text_blocks:
+                    field_data = submission.data(field_id)
+                    initial_values[field_id] = field_data
+
+                # Select first item in the Group toggle blocks
+                for toggle_block_id, toggle_field in submission.group_toggle_blocks:
+                    try:
+                        initial_values[toggle_block_id] = toggle_field.value['choices'][0]
+                    except IndexError:
+                        initial_values[toggle_block_id] = 'yes'
+                    except KeyError:
+                        pass
+
+        except (submission_class.DoesNotExist, ValueError):
+            pass
+
+        return initial_values
+
+    def get_form_parameters(self, submission_id=None):
+        form_parameters = {}
+
+        if submission_id:
+            initial_values = self.get_initial_data_open_call_submission(submission_id)
+            if initial_values:
+                form_parameters['initial'] = initial_values
+
+        return form_parameters
+
+    def get_form(self, *args, **kwargs):
+        form_class = self.get_form_class()
+        submission_id = kwargs.pop('submission_id', None)
+        if submission_id:
+            form_params = self.get_form_parameters(submission_id=submission_id)
+        else:
+            form_params = self.get_form_parameters()
+        form_params.update(kwargs)
+
+        return form_class(*args, **form_params)
+
+    def serve(self, request, *args, **kwargs):
         if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
-            return super().serve(request)
+            # Overriding serve method to pass submission id to get_form method
+            copy_open_submission = request.GET.get('open_call_submission')
+            if request.method == 'POST':
+                form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
+
+                if form.is_valid():
+                    form_submission = self.process_form_submission(form)
+                    return self.render_landing_page(request, form_submission, *args, **kwargs)
+            else:
+                form = self.get_form(page=self, user=request.user, submission_id=copy_open_submission)
+
+            context = self.get_context(request)
+            context['form'] = form
+            context['show_all_group_fields'] = True if copy_open_submission else False
+            return render(
+                request,
+                self.get_template(request),
+                context
+            )
 
         # We hide the round as only the open round is used which is displayed through the
         # fund page

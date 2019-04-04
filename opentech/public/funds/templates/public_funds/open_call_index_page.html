@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags markdown_tags bleach_tags %}
+{% block body_class %}light-grey-bg{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--small wrapper--inner-space-medium">
+    {% if page.introduction %}
+        <h4 class="heading heading--listings-introduction">{{ page.introduction|markdown|bleach }}</h4>
+    {% endif %}
+
+    <div class="wrapper wrapper--listings">
+
+        {% if open_call_submissions %}
+            {% for submission in open_call_submissions %}
+                <div class="listing listing--with-button">
+                    <h3 class="title">{{ submission.title }}</h3>
+                    <a class="button listing__button" href="{% pageurl submission.page %}?open_call_submission={{ submission.id }}" target="_blank">Build it</a>
+                    <div class="rich-text rich-text--answers">
+                        <section>
+                            <h4>Name</h4>
+                            <span>{{ submission.get_full_name_display }}</span>
+                        </section>
+
+                        {{ submission.output_first_group_text_answers }}
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% include "includes/pagination.html" with paginator_page=open_call_submissions %}
+
+        {% else %}
+            {# no items on this page #}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
