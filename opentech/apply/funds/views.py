@@ -468,6 +468,10 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        # If the requesting user submitted the application, return the Applicant view.
+        # Reviewers and partners may somtimes be appliants as well.
+        if submission.user == request.user:
+            return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow partners in the submission they are added as partners
         if request.user.is_partner:
             partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
