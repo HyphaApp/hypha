@@ -380,14 +380,14 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     def test_gets_lead_if_slack_set(self):
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory()
-        recipients = adapter.recipients(MESSAGES.COMMENT, submission)
+        recipients = adapter.recipients(MESSAGES.COMMENT, submission, related=None)
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @responses.activate
     def test_gets_blank_if_slack_not_set(self):
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory(lead__slack='')
-        recipients = adapter.recipients(MESSAGES.COMMENT, submission)
+        recipients = adapter.recipients(MESSAGES.COMMENT, submission, related=None)
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @override_settings(

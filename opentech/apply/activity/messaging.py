@@ -128,7 +128,7 @@ class AdapterBase:
             self.process_send(message_type, recipients, events, request, user, submissions=submissions, submission=None, related=related, **kwargs)
 
     def process(self, message_type, event, request, user, submission, related=None, **kwargs):
-        recipients = self.recipients(message_type, submission=submission, **kwargs)
+        recipients = self.recipients(message_type, submission=submission, related=related, **kwargs)
         self.process_send(message_type, recipients, [event], request, user, submission, related=related, **kwargs)
 
     def process_send(self, message_type, recipients, events, request, user, submission, submissions=list(), related=None, **kwargs):
@@ -159,10 +159,10 @@ class AdapterBase:
 
             if not settings.SEND_MESSAGES:
                 if recipient:
-                    message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
+                    debug_message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
                 else:
-                    message = '{}: {}'.format(self.adapter_type, message)
-                messages.add_message(request, messages.DEBUG, message)
+                    debug_message = '{}: {}'.format(self.adapter_type, message)
+                messages.add_message(request, messages.DEBUG, debug_message)
 
     def create_logs(self, message, recipient, *events):
         from .models import Message
@@ -388,8 +388,15 @@ class SlackAdapter(AdapterBase):
             'links': links,
         }
 
-    def recipients(self, message_type, submission, **kwargs):
-        return [self.slack_id(submission.lead)]
+    def recipients(self, message_type, submission, related, **kwargs):
+        recipients = [self.slack_id(submission.lead)]
+
+        # Notify second reviewer when first reviewer is done.
+        if message_type == MESSAGES.NEW_REVIEW:
+            if submission.assigned.with_roles().count() == 2 and related.author == submission.assigned.with_roles().first().reviewer:
+                recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
+
+        return recipients
 
     def batch_recipients(self, message_type, submissions, **kwargs):
         # We group the messages by lead
