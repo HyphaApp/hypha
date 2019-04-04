@@ -1,0 +1,24 @@
+{% extends "base-apply.html" %}
+{% load static %}
+
+{% block title %}Deleting: {{object.title }}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h2 class="heading heading--no-margin">Deleting: {{ object.title }}</h2>
+    </div>
+</div>
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper--sidebar--inner">
+        <form class="form" action="" method="post">
+            {% csrf_token %}
+            <p><strong>Are you sure you want to delete "{{ object }}"?</strong></p>
+            <p>All content related to this submission will also be deleted. This includes reviews, determinations and comments.</p>
+            <input class="button button--warning button--submit button--top-space" type="submit"value="Confirm" />
+        </form>
+    </div>
+</div>
+
+{% endblock %}

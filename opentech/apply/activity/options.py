@@ -22,6 +22,7 @@ class MESSAGES(Enum):
     PROPOSAL_SUBMITTED = 'Proposal Submitted'
     OPENED_SEALED = 'Opened Sealed Submission'
     REVIEW_OPINION = 'Review Opinion'
+    DELETE_SUBMISSION = 'Delete Submission'
 
     @classmethod
     def choices(cls):

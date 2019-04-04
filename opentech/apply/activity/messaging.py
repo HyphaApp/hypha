@@ -360,7 +360,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>',
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
-
+        MESSAGES.DELETE_SUBMISSION: '{user} has deleted {submission.title}',
     }
 
     def __init__(self):
