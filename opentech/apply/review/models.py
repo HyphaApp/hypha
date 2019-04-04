@@ -117,9 +117,6 @@ class ReviewQuerySet(models.QuerySet):
     def opinions(self):
         return ReviewOpinion.objects.filter(review__id__in=self.values_list('id'))
 
-    def visible_to(self, user):
-        return self.filter(visibility__in=self.model.visibility_for(user))
-
 
 class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
