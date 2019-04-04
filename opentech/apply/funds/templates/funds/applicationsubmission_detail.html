@@ -14,8 +14,16 @@
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
             <span>{% if public_page %}<a class="link--transparent link--underlined" href="{% pageurl public_page %}" >{{ object.page }}</a>{% else %}{{ object.page }}{% endif %}</span>
-            <span>{{ object.round }}</span>
-            <span>Lead: {{ object.lead }}</span>
+            {% if request.user.is_apply_staff and object.round %}
+                <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
+            {% else %}
+                <span>{{ object.round }}</span>
+            {% endif %}
+            {% if request.user.is_apply_staff %}
+                <span>Lead: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
+            {% else %}
+                <span>Lead: {{ object.lead }}</span>
+            {% endif %}
         </h5>
         {% status_bar object.workflow object.phase request.user same_stage=True%}
 
