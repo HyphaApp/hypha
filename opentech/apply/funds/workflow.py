@@ -980,3 +980,7 @@ PHASES_MAPPING = {
 OPEN_CALL_PHASES = [
     'com_open_call',
 ]
+
+COMMUNITY_REVIEW_PHASES = [
+    'com_community_review',
+]
