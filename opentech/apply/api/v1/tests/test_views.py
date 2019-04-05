@@ -11,7 +11,7 @@ from opentech.apply.users.tests.factories import UserFactory
 class TestCommentEdit(TestCase):
     def post_to_edit(self, comment_pk, message='my message'):
         return self.client.post(
-            reverse_lazy('funds:api:comments:edit', kwargs={'pk': comment_pk}),
+            reverse_lazy('api:v1:comments:edit', kwargs={'pk': comment_pk}),
             secure=True,
             data={'message': message},
         )
@@ -59,7 +59,7 @@ class TestCommentEdit(TestCase):
         self.client.force_login(user)
 
         response = self.client.post(
-            reverse_lazy('funds:api:comments:edit', kwargs={'pk': comment.pk}),
+            reverse_lazy('api:v1:comments:edit', kwargs={'pk': comment.pk}),
             secure=True,
             data={
                 'message': 'the new message',

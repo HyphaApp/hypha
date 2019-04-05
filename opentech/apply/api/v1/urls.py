@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from .views import (
+    CommentEdit,
     CommentList,
     CommentListCreate,
     RoundLabDetail,
@@ -25,5 +26,6 @@ urlpatterns = [
     ], 'rounds'))),
     path('comments/', include(([
         path('', CommentList.as_view(), name='list'),
+        path('<int:pk>/edit/', CommentEdit.as_view(), name='edit'),
     ], 'comments')))
 ]

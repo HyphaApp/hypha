@@ -20,16 +20,6 @@ from .views import (
     SubmissionUserFlaggedView,
     SubmissionStaffFlaggedView,
 )
-from .api_views import (
-    CommentEdit,
-    CommentList,
-    CommentListCreate,
-    RoundLabDetail,
-    RoundLabList,
-    SubmissionAction,
-    SubmissionList,
-    SubmissionDetail,
-)
 
 
 revision_urls = ([
@@ -67,23 +57,6 @@ submission_urls = ([
     path('', include('opentech.apply.flags.urls', namespace="flags")),
     path('<slug:status>/', SubmissionsByStatus.as_view(), name='status'),
 ], 'submissions')
-
-api_urls = ([
-    path('submissions/', include(([
-        path('', SubmissionList.as_view(), name='list'),
-        path('<int:pk>/', SubmissionDetail.as_view(), name='detail'),
-        path('<int:pk>/actions/', SubmissionAction.as_view(), name='actions'),
-        path('<int:pk>/comments/', CommentListCreate.as_view(), name='comments'),
-    ], 'submissions'))),
-    path('rounds/', include(([
-        path('', RoundLabList.as_view(), name='list'),
-        path('<int:pk>/', RoundLabDetail.as_view(), name='detail'),
-    ], 'rounds'))),
-    path('comments/', include(([
-        path('', CommentList.as_view(), name='list'),
-        path('<int:pk>/edit/', CommentEdit.as_view(), name='edit'),
-    ], 'comments')))
-], 'api')
 
 rounds_urls = ([
     path('', RoundListView.as_view(), name="list"),

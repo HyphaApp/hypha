@@ -11,7 +11,6 @@ from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
-from .models import ApplicationSubmission, RoundsAndLabs
 
 User = get_user_model()
 
@@ -202,7 +201,7 @@ class RoundLabSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
+    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments:edit')
     editable = serializers.SerializerMethodField()
     timestamp = TimestampField(read_only=True)
     edited = TimestampField(read_only=True)
@@ -220,7 +219,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
+    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments:edit')
     editable = serializers.SerializerMethodField()
     timestamp = TimestampField(read_only=True)
     edited = TimestampField(read_only=True)
