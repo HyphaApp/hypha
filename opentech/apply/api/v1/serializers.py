@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
+from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
@@ -112,7 +113,7 @@ class TimestampField(serializers.Field):
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
+    url = serializers.HyperlinkedIdentityField(view_name='api:v1:submissions:detail')
     round = serializers.SerializerMethodField()
     last_update = TimestampField()
 
