@@ -22,7 +22,7 @@ from opentech.apply.review.models import Review
 from opentech.apply.funds.models import FundType, LabType
 
 from .pagination import StandardResultsSetPagination
-from .permissions import IsApplyStaffUser
+from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
     CommentSerializer,
     CommentCreateSerializer,
@@ -33,8 +33,6 @@ from .serializers import (
     SubmissionListSerializer,
     SubmissionDetailSerializer,
 )
-from .permissions import IsApplyStaffUser, IsAuthor
-from .workflow import PHASES
 
 
 class RoundLabFilter(filters.ModelChoiceFilter):
