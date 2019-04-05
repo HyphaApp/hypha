@@ -392,7 +392,7 @@ class SlackAdapter(AdapterBase):
         recipients = [self.slack_id(submission.lead)]
 
         # Notify second reviewer when first reviewer is done.
-        if message_type == MESSAGES.NEW_REVIEW:
+        if message_type == MESSAGES.NEW_REVIEW and related:
             if submission.assigned.with_roles().count() == 2 and related.author == submission.assigned.with_roles().first().reviewer:
                 recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
 
