@@ -86,5 +86,4 @@ urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('rounds/', include(rounds_urls)),
     path('projects/', include(projects_urls)),
-    path('api/', include(api_urls)),
 ]

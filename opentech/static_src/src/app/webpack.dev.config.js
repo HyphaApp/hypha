@@ -15,7 +15,7 @@ devConfig.plugins = devConfig.plugins.concat([
     new webpack.NoEmitOnErrorsPlugin(),
     new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
     new webpack.EnvironmentPlugin({
-        API_BASE_URL: 'http://apply.localhost:8000/',
+        API_BASE_URL: 'http://apply.localhost:8000/api',
     }),
 ])
 

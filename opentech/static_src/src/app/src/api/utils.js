@@ -6,7 +6,7 @@ const getBaseUrl = () => {
 
 export function apiFetch({path, method = 'GET', params = new URLSearchParams, options = {}}) {
     const url = new URL(getBaseUrl());
-    url.pathname = path;
+    url.pathname = url.pathname + path;
 
     for (const [paramKey, paramValue] of getIteratorForParams(params)) {
         url.searchParams.append(paramKey, paramValue);

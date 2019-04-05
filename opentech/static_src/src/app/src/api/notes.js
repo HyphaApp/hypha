@@ -1,6 +1,6 @@
 export function fetchNotesForSubmission(submissionID, visibility = 'team') {
     return {
-        path: `/apply/api/submissions/${submissionID}/comments/`,
+        path: `/v1/submissions/${submissionID}/comments/`,
         params: {
             visibility,
             page_size: 1000,
@@ -11,7 +11,7 @@ export function fetchNotesForSubmission(submissionID, visibility = 'team') {
 
 export function fetchNewNotesForSubmission(submissionID, latestID, visibility = 'team') {
     return {
-        path: `/apply/api/submissions/${submissionID}/comments/`,
+        path: `/v1/submissions/${submissionID}/comments/`,
         params: {
             visibility,
             newer: latestID,
@@ -23,7 +23,7 @@ export function fetchNewNotesForSubmission(submissionID, latestID, visibility = 
 
 export function createNoteForSubmission(submissionID, note) {
     return {
-        path: `/apply/api/submissions/${submissionID}/comments/`,
+        path: `/v1/submissions/${submissionID}/comments/`,
         method: 'POST',
         options: {
             body: note,
