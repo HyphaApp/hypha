@@ -154,6 +154,56 @@ class ReviewerDashboardView(TemplateView):
         return super().get_context_data(**kwargs)
 
 
+class PartnerDashboardView(SingleTableView):
+    template_name = 'dashboard/partner_dashboard.html'
+    model = ApplicationSubmission
+    table_class = SubmissionsTable
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            user=self.request.user
+        ).inactive().current().for_table(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        my_active_submissions = self.model.objects.filter(
+            user=self.request.user
+        ).active().current().select_related('draft_revision')
+
+        my_active_submissions = [
+            submission.from_draft() for submission in my_active_submissions
+        ]
+
+        return super().get_context_data(
+            my_active_submissions=my_active_submissions,
+            **kwargs,
+        )
+
+
+class CommunityDashboardView(SingleTableView):
+    template_name = 'dashboard/community_dashboard.html'
+    model = ApplicationSubmission
+    table_class = SubmissionsTable
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            user=self.request.user
+        ).inactive().current().for_table(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        my_active_submissions = self.model.objects.filter(
+            user=self.request.user
+        ).active().current().select_related('draft_revision')
+
+        my_active_submissions = [
+            submission.from_draft() for submission in my_active_submissions
+        ]
+
+        return super().get_context_data(
+            my_active_submissions=my_active_submissions,
+            **kwargs,
+        )
+
+
 class ApplicantDashboardView(SingleTableView):
     template_name = 'dashboard/applicant_dashboard.html'
     model = ApplicationSubmission
@@ -182,7 +232,6 @@ class ApplicantDashboardView(SingleTableView):
 class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
     reviewer_view = ReviewerDashboardView
+    partner_view = PartnerDashboardView
+    community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
-
-    def reviewer_check(self, request):
-        return request.user.is_reviewer

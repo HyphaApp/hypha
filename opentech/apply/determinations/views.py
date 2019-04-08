@@ -335,5 +335,7 @@ class ApplicantDeterminationDetailView(DetailView):
 
 class DeterminationDetailView(ViewDispatcher):
     admin_view = AdminDeterminationDetailView
-    applicant_view = ApplicantDeterminationDetailView
     reviewer_view = ReviewerDeterminationDetailView
+    partner_view = ApplicantDeterminationDetailView
+    community_view = None
+    applicant_view = ApplicantDeterminationDetailView

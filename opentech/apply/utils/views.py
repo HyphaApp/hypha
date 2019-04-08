@@ -19,13 +19,21 @@ def page_not_found(request, exception=None, template_name='apply/404.html'):
 class ViewDispatcher(View):
     admin_view: View = None
     reviewer_view: View = None
+    partner_view: View = None
+    community_view: View = None
     applicant_view: View = None
 
     def admin_check(self, request):
         return request.user.is_apply_staff
 
     def reviewer_check(self, request):
-        return request.user.is_reviewer or request.user.is_partner or request.user.is_community_reviewer
+        return request.user.is_reviewer
+
+    def partner_check(self, request):
+        return request.user.is_partner
+
+    def community_check(self, request):
+        return request.user.is_community_reviewer
 
     def dispatch(self, request, *args, **kwargs):
         view = self.applicant_view
@@ -34,6 +42,10 @@ class ViewDispatcher(View):
             view = self.admin_view
         elif self.reviewer_check(request):
             view = self.reviewer_view
+        elif self.partner_check(request):
+            view = self.partner_view
+        elif self.community_check(request):
+            view = self.community_view
 
         if view:
             return view.as_view()(request, *args, **kwargs)
