@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum, Q
+from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -21,6 +21,7 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.models import Determination
+from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import AGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
@@ -143,7 +144,11 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             ),
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
-            'reviews__author'
+            Prefetch(
+                'reviews', queryset=Review.objects.select_related('author').prefetch_related(
+                    Prefetch('opinions', queryset=ReviewOpinion.objects.select_related('author'))
+                )
+            )
         ).select_related(
             'page',
             'round',
