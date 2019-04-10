@@ -19,11 +19,24 @@ from opentech.apply.users.urls import public_urlpatterns as user_urls
 def apply_cache_control(*patterns):
     # Cache-control
     cache_length = getattr(settings, 'CACHE_CONTROL_MAX_AGE', None)
+    cache_s_length = getattr(settings, 'CACHE_CONTROL_S_MAXAGE', None)
 
-    if cache_length:
+    if cache_length and not cache_s_length:
         patterns = decorate_urlpatterns(
             patterns,
             cache_control(max_age=cache_length)
+        )
+
+    if not cache_length and cache_s_length:
+        patterns = decorate_urlpatterns(
+            patterns,
+            cache_control(s_maxage=cache_s_length)
+        )
+
+    if cache_length and cache_s_length:
+        patterns = decorate_urlpatterns(
+            patterns,
+            cache_control(max_age=cache_length, s_maxage=cache_s_length)
         )
 
     return list(patterns)

@@ -212,11 +212,16 @@ else:
         }
     }
 
+# Set max-age header. See urls.py
+try:
+    CACHE_CONTROL_MAX_AGE = int(env.get('CACHE_CONTROL_MAX_AGE', 0))
+except ValueError:
+    pass
 
 # Set s-max-age header that is used by reverse proxy/front end cache. See
 # urls.py
 try:
-    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 600))
+    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 0))
 except ValueError:
     pass
 
