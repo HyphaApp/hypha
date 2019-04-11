@@ -10,6 +10,8 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
 from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView
 
 from django_filters.views import FilterView
@@ -196,6 +198,8 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
         return super().get_queryset().reviewed_by(self.request.user)
 
 
+@method_decorator(cache_page(60 * 30), name='dispatch')
+@method_decorator(vary_on_cookie, name='dispatch')
 @method_decorator(staff_required, name='dispatch')
 class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
@@ -251,6 +255,8 @@ class SubmissionReviewerListView(AllActivityContextMixin, BaseReviewerSubmission
     template_name = 'funds/submissions.html'
 
 
+@method_decorator(cache_page(60 * 30), name='dispatch')
+@method_decorator(vary_on_cookie, name='dispatch')
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
     reviewer_view = SubmissionReviewerListView
