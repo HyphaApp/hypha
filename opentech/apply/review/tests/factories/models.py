@@ -4,7 +4,7 @@ from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.users.tests.factories import StaffFactory
 
-from ...options import YES, NO, MAYBE, AGREE, DISAGREE
+from ...options import YES, NO, MAYBE, AGREE, DISAGREE, PRIVATE, REVIEWER
 from ...models import Review, ReviewForm, ReviewOpinion
 
 from . import blocks
@@ -24,6 +24,8 @@ class ReviewFactory(factory.DjangoModelFactory):
         recommendation_yes = factory.Trait(recommendation=YES)
         recommendation_maybe = factory.Trait(recommendation=MAYBE)
         draft = factory.Trait(is_draft=True)
+        visibility_private = factory.Trait(visibility=PRIVATE)
+        visibility_reviewer = factory.Trait(visibility=REVIEWER)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     revision = factory.SelfAttribute('submission.live_revision')

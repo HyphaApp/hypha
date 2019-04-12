@@ -5,12 +5,12 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
 from opentech.apply.funds.models.mixins import AccessFormData
-from opentech.apply.review.options import YES, NO, MAYBE, RECOMMENDATION_CHOICES, OPINION_CHOICES
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
 
@@ -19,8 +19,9 @@ from .blocks import (
     RecommendationBlock,
     RecommendationCommentsBlock,
     ScoreFieldBlock,
+    VisibilityBlock,
 )
-from .options import NA
+from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
 
 
 class ReviewFormFieldsMixin(models.Model):
@@ -36,6 +37,10 @@ class ReviewFormFieldsMixin(models.Model):
     @property
     def recommendation_field(self):
         return self._get_field_type(RecommendationBlock)
+
+    @property
+    def visibility_field(self):
+        return self._get_field_type(VisibilityBlock)
 
     @property
     def comment_field(self):
@@ -128,6 +133,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_("Creation time"), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    visibility = models.CharField(verbose_name=_("Visibility"), choices=VISIBILITY.items(), default=PRIVATE, max_length=10)
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
@@ -162,6 +168,10 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     def get_compare_url(self):
         return self.revision.get_compare_url_to_latest()
+
+    @cached_property
+    def reviewer_visibility(self):
+        return self.visibility == REVIEWER
 
 
 @receiver(post_save, sender=Review)

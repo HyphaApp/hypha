@@ -9,7 +9,7 @@
         <div>-</div>
         <div>-</div>
     {% else %}
-        {% if request.user.is_apply_staff or request.user == reviewer %}
+        {% if request.user == reviewer or request.user.is_reviewer and review.reviewer_visibility or request.user.is_apply_staff %}
             <div>
                 <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
                     <div class="reviews-sidebar__name">

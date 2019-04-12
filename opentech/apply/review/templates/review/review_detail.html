@@ -20,6 +20,10 @@
         <h5>Score</h5>
         <p>{{ review.score }}</p>
     </div>
+    <div>
+        <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
+        {{ review.get_visibility_display }}
+    </div>
     {% if not review.for_latest %}
         <div>
             <h5>Review was not against the latest version:</h5>

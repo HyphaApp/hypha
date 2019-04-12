@@ -6,7 +6,7 @@ from opentech.apply.review.options import NA
 from opentech.apply.stream_forms.forms import StreamBaseForm
 
 from .models import Review, ReviewOpinion
-from .options import OPINION_CHOICES
+from .options import OPINION_CHOICES, PRIVATE
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -18,13 +18,14 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     class Meta:
         model = Review
-        fields = ['recommendation', 'score', 'submission', 'author']
+        fields = ['recommendation', 'visibility', 'score', 'submission', 'author']
 
         widgets = {
             'recommendation': forms.HiddenInput(),
             'score': forms.HiddenInput(),
             'submission': forms.HiddenInput(),
             'author': forms.HiddenInput(),
+            'visibility': forms.HiddenInput(),
         }
 
         error_messages = {
@@ -65,6 +66,12 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         self.instance.score = self.calculate_score(self.cleaned_data)
         self.instance.recommendation = int(self.cleaned_data[self.instance.recommendation_field.id])
         self.instance.is_draft = self.draft_button_name in self.data
+        # Old review forms do not have the requred visability field.
+        # This will set visibility to PRIVATE by default.
+        try:
+            self.instance.visibility = self.cleaned_data[self.instance.visibility_field.id]
+        except AttributeError:
+            self.instance.visibility = PRIVATE
 
         self.instance.form_data = self.cleaned_data['form_data']
 
