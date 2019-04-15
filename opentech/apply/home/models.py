@@ -1,4 +1,3 @@
-from django.core.cache import caches
 from django.conf import settings
 from django.db import models
 from django.utils.decorators import method_decorator
