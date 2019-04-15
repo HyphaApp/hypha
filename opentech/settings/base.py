@@ -232,7 +232,7 @@ WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 try:
     CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 600))
 except ValueError:
-    pass
+    CACHE_CONTROL_S_MAXAGE = 600
 
 
 # Search
