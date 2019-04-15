@@ -2,7 +2,7 @@
     display: inline-block;
 
     &__deleted {
-        background-color: $color--pastel-red;
+        background-color: $color--light-pink;
 
         a {
             background-color: inherit;
@@ -10,7 +10,7 @@
     }
 
     &__added {
-        background-color: $color--pastel-green;
+        background-color: $color--light-green;
 
         a {
             background-color: inherit;
