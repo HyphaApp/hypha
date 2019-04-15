@@ -1,12 +1,16 @@
+from django.db import models
+from django.utils.decorators import method_decorator
+
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.models import Page
 from wagtail.search import index
 
-from django.db import models
+from wagtailcache.cache import cache_page
 
 from opentech.apply.funds.models import ApplicationBase, LabBase
 
 
+@method_decorator(cache_page, name='serve')
 class ApplyHomePage(Page):
     # Only allow creating HomePages at the root level
     parent_page_types = ['wagtailcore.Page']

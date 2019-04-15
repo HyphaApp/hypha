@@ -118,6 +118,7 @@ INSTALLED_APPS = [
     'django_fsm',
     'django_pwned_passwords',
     'rest_framework',
+    'wagtailcache',
 
     'hijack',
     'compat',
@@ -202,6 +203,12 @@ if 'REDIS_URL' in env:
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": env['REDIS_URL'],
+        },
+        "wagtailcache": {
+            "BACKEND": "wagtailcache.compat_backends.django_redis.RedisCache",
+            "LOCATION": env['REDIS_URL'],
+            'KEY_PREFIX': 'wagtailcache',
+            'TIMEOUT': 3600,
         }
     }
 else:
@@ -209,9 +216,16 @@ else:
         'default': {
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
             'LOCATION': 'database_cache',
+        },
+        'wagtailcache': {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'database_cache',
+            'KEY_PREFIX': 'wagtailcache',
+            'TIMEOUT': 3600,
         }
     }
 
+WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 
 # Set s-max-age header that is used by reverse proxy/front end cache. See
 # urls.py
