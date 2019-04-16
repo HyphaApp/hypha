@@ -198,6 +198,23 @@ DATABASES = {
 
 
 # Cache
+
+# Set max-age header.
+try:
+    CACHE_CONTROL_MAX_AGE = int(env.get('CACHE_CONTROL_MAX_AGE', 3600))
+except ValueError:
+    CACHE_CONTROL_MAX_AGE = 3600
+
+# Set s-max-age header that is used by reverse proxy/front end cache.
+try:
+    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 3600))
+except ValueError:
+    CACHE_CONTROL_S_MAXAGE = 3600
+
+# Set wagtail cache timeout (automatic cache refresh).
+WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_S_MAXAGE
+
+
 if 'REDIS_URL' in env:
     CACHES = {
         "default": {
@@ -208,7 +225,7 @@ if 'REDIS_URL' in env:
             "BACKEND": "wagtailcache.compat_backends.django_redis.RedisCache",
             "LOCATION": env['REDIS_URL'],
             'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': 3600,
+            'TIMEOUT': WAGTAIL_CACHE_TIMEOUT,
         }
     }
 else:
@@ -221,18 +238,23 @@ else:
             'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
             'LOCATION': 'database_cache',
             'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': 3600,
+            'TIMEOUT': WAGTAIL_CACHE_TIMEOUT,
         }
     }
 
 WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 
-# Set s-max-age header that is used by reverse proxy/front end cache. See
-# urls.py
-try:
-    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 600))
-except ValueError:
-    CACHE_CONTROL_S_MAXAGE = 600
+# Cloudflare cache
+if 'CLOUDFLARE_API_TOKEN' in env:
+    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
+    WAGTAILFRONTENDCACHE = {
+        'cloudflare': {
+            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
+            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
+            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
+        },
+    }
 
 
 # Search
@@ -580,19 +602,6 @@ if env.get('BASIC_AUTH_ENABLED', 'false').lower().strip() == 'true':
         BASIC_AUTH_WHITELISTED_IP_NETWORKS = (
             env['BASIC_AUTH_WHITELISTED_IP_NETWORKS'].split(',')
         )
-
-
-# Cloudflare cache
-if 'CLOUDFLARE_API_TOKEN' in env:
-    INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
-    WAGTAILFRONTENDCACHE = {
-        'cloudflare': {
-            'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
-            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
-            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
-            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
-        },
-    }
 
 
 if 'PRIMARY_HOST' in env:
