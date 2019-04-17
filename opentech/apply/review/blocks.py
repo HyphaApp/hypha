@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.review.fields import ScoredAnswerField
-from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
+from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
 from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
 from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
@@ -21,6 +21,11 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
         label = _('Score')
         icon = 'order'
         template = 'review/render_scored_answer_field.html'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['initial'] = ['', NA]
+        return kwargs
 
     def render(self, value, context=None):
         try:
