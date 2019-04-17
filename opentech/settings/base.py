@@ -212,8 +212,7 @@ except ValueError:
     CACHE_CONTROL_S_MAXAGE = 3600
 
 # Set wagtail cache timeout (automatic cache refresh).
-WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_S_MAXAGE
-
+WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
 
 if 'REDIS_URL' in env:
     CACHES = {
