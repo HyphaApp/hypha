@@ -104,4 +104,11 @@
         margin-left: 7px;
         stroke: $color--mid-grey;
     }
+
+    &--delete {
+        width: 12px;
+        margin-left: 7px;
+        fill: $color--tomato;
+    }
+
 }

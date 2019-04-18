@@ -51,6 +51,7 @@ neat_related = {
     MESSAGES.COMMENT: 'comment',
     MESSAGES.SCREENING: 'old_status',
     MESSAGES.REVIEW_OPINION: 'opinion',
+    MESSAGES.DELETE_REVIEW: 'review',
 }
 
 
@@ -361,6 +362,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.DELETE_SUBMISSION: '{user} has deleted {submission.title}',
+        MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{submission.title}>.',
     }
 
     def __init__(self):

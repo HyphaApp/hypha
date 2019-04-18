@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load bleach_tags submission_tags %}
-
+{% block title %}Review for {{ review.submission.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
@@ -30,6 +30,14 @@
             <p>
                 <a class="button button--primary" href="{{ review.get_compare_url }}">Compare</a>
             </p>
+        </div>
+    {% endif %}
+    {% if perms.funds.delete_review %}
+        <div>
+            <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
+                Delete
+                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+            </a>
         </div>
     {% endif %}
 </div>
