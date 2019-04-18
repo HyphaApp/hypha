@@ -355,7 +355,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
         MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
-        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.score}',
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
         MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>',
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}',

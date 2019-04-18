@@ -150,6 +150,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     def get_comments_display(self, include_question=True):
         return self.render_answer(self.comment_field.id, include_question=include_question)
 
+    @property
     def get_score_display(self):
         return '{:.1f}'.format(self.score) if self.score != NA else 'NA'
 
