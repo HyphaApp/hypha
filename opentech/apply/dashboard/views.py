@@ -108,6 +108,9 @@ class ReviewerDashboardView(TemplateView):
         # Filter for all active statuses.
         active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
 
+        # Applications by reviewer
+        my_submissions, my_inactive_submissions_table = self.get_my_submissions(request, qs)
+
         context = {
             'my_review': my_review,
             'in_review_count': my_review_qs.count(),
@@ -116,6 +119,8 @@ class ReviewerDashboardView(TemplateView):
             'display_more_reviewed': display_more_reviewed,
             'filter': filterset,
             'active_statuses_filter': active_statuses_filter,
+            'my_submissions': my_submissions,
+            'my_inactive_submissions_table': my_inactive_submissions_table,
         }
 
         return render(request, 'dashboard/reviewer_dashboard.html', context)
@@ -143,6 +148,20 @@ class ReviewerDashboardView(TemplateView):
         display_more_reviewed = (my_reviewed_qs.count() > 5)
 
         return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
+
+    def get_my_submissions(self, request, qs):
+        my_submissions = qs.filter(
+            user=request.user
+        ).active().current().select_related('draft_revision')
+
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions_qs, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
 
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
