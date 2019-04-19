@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from opentech.apply.activity.models import Activity
 from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory
+from opentech.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory, ReviewOpinionFactory
@@ -296,3 +296,26 @@ class NonStaffReviewOpinionCase(BaseViewTestCase):
         review = ReviewFactory(submission=self.submission, author=staff, recommendation_yes=True)
         response = self.post_page(review, {'agree': AGREE})
         self.assertEqual(response.status_code, 403)
+
+
+class ReviewDetailVisibilityTestCase(BaseViewTestCase):
+    user_factory = ReviewerFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+    def test_review_detail_visibility_private(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2)
+        review = ReviewFactory(submission=submission, author=self.user, visibility_private=True)
+        self.client.force_login(self.user_factory())
+        response = self.get_page(review)
+        self.assertEqual(response.status_code, 403)
+
+    def test_review_detail_visibility_reviewer(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2)
+        review = ReviewFactory(submission=submission, author=self.user, visibility_reviewer=True)
+        self.client.force_login(self.user_factory())
+        response = self.get_page(review)
+        self.assertEqual(response.status_code, 200)

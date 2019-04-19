@@ -6,7 +6,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.db import models
 from django.forms import FileField
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
 
 from modelcluster.fields import ParentalKey
 
@@ -40,6 +42,7 @@ class ExtendedFormBuilder(FormBuilder):
         return FileField(**options)
 
 
+@method_decorator(never_cache, name='serve')
 class FormPage(AbstractEmailForm, BasePage):
     form_builder = ExtendedFormBuilder
     subpage_types = []

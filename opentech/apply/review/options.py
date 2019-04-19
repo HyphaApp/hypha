@@ -29,3 +29,16 @@ OPINION_CHOICES = (
     (AGREE, 'Agree'),
     (DISAGREE, 'Disagree'),
 )
+
+PRIVATE = 'private'
+REVIEWER = 'reviewers'
+
+VISIBILILTY_HELP_TEXT = {
+    PRIVATE: 'Visible only to staff.',
+    REVIEWER: 'Visible to other reviewers and staff.',
+}
+
+VISIBILITY = {
+    PRIVATE: 'Private',
+    REVIEWER: 'Reviewers and Staff',
+}
