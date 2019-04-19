@@ -13,6 +13,7 @@ from opentech.apply.funds.tables import (
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
     review_filter_for_user,
+    PartnerSubmissionsTable
 )
 from opentech.apply.utils.views import ViewDispatcher
 
@@ -153,10 +154,10 @@ class ReviewerDashboardView(TemplateView):
         my_submissions = qs.filter(
             user=request.user
         ).active().current().select_related('draft_revision')
-
         my_submissions = [
             submission.from_draft() for submission in my_submissions
         ]
+
         my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
         my_inactive_submissions_table = ReviewerSubmissionsTable(
             my_inactive_submissions_qs, prefix='my-submissions-'
@@ -173,29 +174,57 @@ class ReviewerDashboardView(TemplateView):
         return super().get_context_data(**kwargs)
 
 
-class PartnerDashboardView(SingleTableView):
+class PartnerDashboardView(TemplateView):
     template_name = 'dashboard/partner_dashboard.html'
-    model = ApplicationSubmission
-    table_class = SubmissionsTable
 
-    def get_queryset(self):
-        return self.model.objects.filter(
-            user=self.request.user
-        ).inactive().current().for_table(self.request.user)
+    def get_partner_submissions(self, user, qs):
+        partner_submissions_qs = qs.partner_for(user).order_by('-submit_time')
+        partner_submissions_table = PartnerSubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
 
-    def get_context_data(self, **kwargs):
-        my_active_submissions = self.model.objects.filter(
-            user=self.request.user
+        return partner_submissions_qs, partner_submissions_table
+
+    def get_my_reviewed(self, request, qs):
+        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        my_reviewed_table = PartnerSubmissionsTable(my_reviewed_qs, prefix='my-reviewed-')
+
+        return my_reviewed_qs, my_reviewed_table
+
+    def get_my_submissions(self, request, qs):
+        my_submissions = qs.filter(
+            user=request.user
         ).active().current().select_related('draft_revision')
-
-        my_active_submissions = [
-            submission.from_draft() for submission in my_active_submissions
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
         ]
 
-        return super().get_context_data(
-            my_active_submissions=my_active_submissions,
-            **kwargs,
+        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = PartnerSubmissionsTable(
+            my_inactive_submissions_qs, prefix='my-submissions-'
         )
+        return my_submissions, my_inactive_submissions_table
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        # Submissions in which user added as partner
+        partner_submissions_qs, partner_submissions = self.get_partner_submissions(self.request.user, qs)
+
+        # Partner's reviewed submissions
+        my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
+
+        # Applications by partner
+        my_submissions, my_inactive_submissions_table = self.get_my_submissions(self.request, qs)
+
+        context.update({
+            'partner_submissions': partner_submissions,
+            'partner_submissions_count': partner_submissions_qs.count(),
+            'my_reviewed': my_reviewed,
+            'my_submissions': my_submissions,
+            'my_inactive_submissions_table': my_inactive_submissions_table,
+        })
+
+        return context
 
 
 class CommunityDashboardView(SingleTableView):

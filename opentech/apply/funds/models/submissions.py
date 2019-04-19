@@ -96,6 +96,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def reviewed_by(self, user):
         return self.filter(reviews__author=user)
 
+    def partner_for(self, user):
+        return self.filter(partners=user)
+
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
 

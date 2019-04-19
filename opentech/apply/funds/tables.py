@@ -93,6 +93,11 @@ class ReviewerSubmissionsTable(SubmissionsTable):
         orderable = False
 
 
+class PartnerSubmissionsTable(SubmissionsTable):
+    class Meta(SubmissionsTable.Meta):
+        orderable = False
+
+
 class LabeledCheckboxColumn(tables.CheckBoxColumn):
     def wrap_with_label(self, checkbox, for_value):
         return format_html(
