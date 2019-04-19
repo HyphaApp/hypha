@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static wagtailcore_tags workflow_tags statusbar_tags %}
+{% load static statusbar_tags workflow_tags wagtailcore_tags %}
 
 {% block title %}Submission Dashboard{% endblock %}
 
@@ -18,40 +18,60 @@
         </div>
     </div>
 </div>
+
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Your active submissions</h3>
-    {% for submission in my_active_submissions %}
-        <div class="wrapper wrapper--status-bar-outer">
-            <div class="wrapper wrapper--status-bar-inner">
-                <div>
-                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                    <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
-                </div>
-                {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
-            </div>
-            {% if request.user|has_edit_perm:submission %}
-                <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                    {% if submission.status == 'draft_proposal' %}
-                        Start your {{ submission.stage }} application
-                    {% else %}
-                        Edit
-                    {% endif %}
-                </a>
-            {% endif %}
+
+    <div class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">
+            Community review submissions <span class="heading heading--submission-count">{{ my_community_review_count }}</span>
+        </h4>
+
+        {% if my_community_review.data %}
+            {% render_table my_community_review %}
+        {% else %}
+            No submissions
+        {% endif %}
     </div>
-    {% empty %}
-        No active submissions
-    {% endfor %}
+
+    {% if my_reviewed.data %}
+        <div class="wrapper wrapper--bottom-space">
+            <h4 class="heading heading--normal">Your previous reviews</h4>
+            {% render_table my_reviewed %}
+        </div>
+    {% endif %}
+
+    <div class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">Your active submissions</h4>
+        {% for submission in my_submissions %}
+            <div class="wrapper wrapper--status-bar-outer">
+                <div class="wrapper wrapper--status-bar-inner">
+                    <div>
+                        <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
+                        <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+                    </div>
+                    {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
+                </div>
+                {% if request.user|has_edit_perm:submission %}
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                        {% if submission.status == 'draft_proposal' %}
+                            Start your {{ submission.stage }} application
+                        {% else %}
+                            Edit
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </div>
+        {% empty %}
+            No active submissions
+        {% endfor %}
+    </div>
+
+    {% if my_inactive_submissions_table.data %}
+        <div class="wrapper wrapper--bottom-space">
+            <h4 class="heading heading--normal">Submission history</h4>
+            {% render_table my_inactive_submissions_table %}
+        </div>
+    {% endif %}
 </div>
 
-{% if table.data %}
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <h3>Submission history</h3>
-        {% render_table table %}
-    </div>
-{% endif %}
-{% endblock %}
-
-{% block extra_js %}
-    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
 {% endblock %}

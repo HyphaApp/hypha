@@ -81,6 +81,11 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def inactive(self):
         return self.exclude(status__in=active_statuses)
 
+    def in_community_review(self, user):
+        qs = self.filter(Q(status__in=COMMUNITY_REVIEW_PHASES), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
+        qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
+        return qs.distinct()
+
     def in_review(self):
         return self.filter(status__in=review_statuses)
 
