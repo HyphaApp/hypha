@@ -480,7 +480,7 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
 
 
 class PartnerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
-    template_name_suffix = '_reviewer_detail'
+    template_name_suffix = '_partner_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]
 
@@ -491,15 +491,14 @@ class PartnerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Dele
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow partners in the submission they are added as partners
-        if request.user.is_partner:
-            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-            if not partner_has_access:
-                raise PermissionDenied
+        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+        if not partner_has_access:
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
 class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
-    template_name_suffix = '_reviewer_detail'
+    template_name_suffix = '_community_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]
 
@@ -652,11 +651,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if request.user.is_partner:
-            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-            if not partner_has_access:
-                raise PermissionDenied
-        elif request.user != submission.user:
+        if request.user != submission.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -711,9 +706,20 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+@method_decorator(login_required, name='dispatch')
+class PartnerSubmissionEditView(ApplicantSubmissionEditView):
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+        if not partner_has_access:
+            raise PermissionDenied
+        return super(ApplicantSubmissionEditView, self).dispatch(request, *args, **kwargs)
+
+
 class SubmissionEditView(ViewDispatcher):
     admin_view = AdminSubmissionEditView
     applicant_view = ApplicantSubmissionEditView
+    partner_view = PartnerSubmissionEditView
 
 
 @method_decorator(staff_required, name='dispatch')
