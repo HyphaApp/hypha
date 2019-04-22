@@ -34,6 +34,7 @@ from ..workflow import (
     active_statuses,
     DETERMINATION_RESPONSE_PHASES,
     get_review_active_statuses,
+    get_edit_or_review_active_statuses,
     INITIAL_STATE,
     PHASES,
     review_statuses,
@@ -102,7 +103,8 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(reviews__author=user)
 
     def partner_for(self, user):
-        return self.filter(partners=user)
+        user_edit_review_statuses = get_edit_or_review_active_statuses(user)
+        return self.filter(partners=user, status__in=user_edit_review_statuses)
 
     def awaiting_determination_for(self, user):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)

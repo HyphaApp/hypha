@@ -109,7 +109,7 @@ class ReviewerDashboardView(TemplateView):
         active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
 
         # Applications by reviewer
-        my_submissions, my_inactive_submissions_table = self.get_my_submissions(request, qs)
+        my_submissions, my_inactive_submissions = self.get_my_submissions(request, qs)
 
         context = {
             'my_review': my_review,
@@ -120,7 +120,7 @@ class ReviewerDashboardView(TemplateView):
             'filter': filterset,
             'active_statuses_filter': active_statuses_filter,
             'my_submissions': my_submissions,
-            'my_inactive_submissions_table': my_inactive_submissions_table,
+            'my_inactive_submissions': my_inactive_submissions,
         }
 
         return render(request, 'dashboard/reviewer_dashboard.html', context)
@@ -213,14 +213,14 @@ class PartnerDashboardView(TemplateView):
         my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions_table = self.get_my_submissions(self.request, qs)
+        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
 
         context.update({
             'partner_submissions': partner_submissions,
             'partner_submissions_count': partner_submissions_qs.count(),
             'my_reviewed': my_reviewed,
             'my_submissions': my_submissions,
-            'my_inactive_submissions_table': my_inactive_submissions_table,
+            'my_inactive_submissions': my_inactive_submissions,
         })
 
         return context
@@ -266,14 +266,14 @@ class CommunityDashboardView(TemplateView):
         my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions_table = self.get_my_submissions(self.request, qs)
+        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
 
         context.update({
             'my_community_review': my_community_review,
             'my_community_review_count': my_community_review_qs.count(),
             'my_reviewed': my_reviewed,
             'my_submissions': my_submissions,
-            'my_inactive_submissions_table': my_inactive_submissions_table,
+            'my_inactive_submissions': my_inactive_submissions,
         })
 
         return context

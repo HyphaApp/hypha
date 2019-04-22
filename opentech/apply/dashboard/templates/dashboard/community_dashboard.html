@@ -66,10 +66,10 @@
         {% endfor %}
     </div>
 
-    {% if my_inactive_submissions_table.data %}
+    {% if my_inactive_submissions.data %}
         <div class="wrapper wrapper--bottom-space">
             <h4 class="heading heading--normal">Submission history</h4>
-            {% render_table my_inactive_submissions_table %}
+            {% render_table my_inactive_submissions %}
         </div>
     {% endif %}
 </div>
