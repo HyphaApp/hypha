@@ -82,7 +82,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(status__in=active_statuses)
 
     def in_community_review(self, user):
-        qs = self.filter(Q(status__in=COMMUNITY_REVIEW_PHASES), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
+        qs = self.filter(Q(status__in=COMMUNITY_REVIEW_PHASES), ~Q(user=user), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
         qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
         return qs.distinct()
 
@@ -606,7 +606,7 @@ class ApplicationSubmission(
         if user in self.partners_not_reviewed:
             return True
 
-        if user.is_community_reviewer and self.community_review and not self.reviewed_by(user):
+        if user.is_community_reviewer and self.user != user and self.community_review and not self.reviewed_by(user):
             return True
 
         return False
