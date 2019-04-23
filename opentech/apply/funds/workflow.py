@@ -166,7 +166,7 @@ reviewer_review_permissions = make_permissions(edit=[staff_can, partner_can], re
 
 community_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can, community_can])
 
-applicant_edit_permissions = make_permissions(edit=[applicant_can], review=[staff_can])
+applicant_edit_permissions = make_permissions(edit=[applicant_can, partner_can], review=[staff_can])
 
 staff_applicant_edit_permissions = make_permissions(edit=[staff_can, applicant_can])
 
@@ -871,7 +871,7 @@ def get_review_active_statuses(user=None):
     return reviews
 
 
-def get_edit_or_review_active_statuses(user=None):
+def get_edit_review_active_statuses(user=None):
     statuses = set()
 
     for phase_name, phase in PHASES:
