@@ -710,6 +710,10 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
 class PartnerSubmissionEditView(ApplicantSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        # If the requesting user submitted the application, return the Applicant view.
+        # Partners may somtimes be appliants as well.
+        if submission.user == request.user:
+            return ApplicantSubmissionEditView.as_view()(request, *args, **kwargs)
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
         if not partner_has_access:
             raise PermissionDenied
