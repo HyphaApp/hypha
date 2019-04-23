@@ -871,18 +871,6 @@ def get_review_active_statuses(user=None):
     return reviews
 
 
-def get_edit_review_active_statuses(user=None):
-    statuses = set()
-
-    for phase_name, phase in PHASES:
-        if phase_name in active_statuses:
-            if user is None:
-                statuses.add(phase_name)
-            elif phase.permissions.can_review(user) or phase.permissions.can_edit(user):
-                statuses.add(phase_name)
-    return statuses
-
-
 def get_review_statuses(user=None):
     reviews = set()
 

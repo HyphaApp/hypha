@@ -55,7 +55,7 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses, get_edit_review_active_statuses
+from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
@@ -492,8 +492,7 @@ class PartnerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Dele
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow partners in the submission they are added as partners
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        user_edit_review_statuses = get_edit_review_active_statuses(request.user)
-        if not partner_has_access or submission.status not in user_edit_review_statuses:
+        if not partner_has_access:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
