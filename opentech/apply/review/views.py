@@ -1,6 +1,7 @@
 from collections import defaultdict
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -282,9 +283,13 @@ class ReviewListView(ListView):
         )
 
 
-@method_decorator(permission_required('review.delete_review', raise_exception=True), name='dispatch')
-class ReviewDeleteView(DeleteView):
+class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     model = Review
+    raise_exception = True
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user.has_perm('review.delete_review') or self.request.user == review.author
 
     def delete(self, request, *args, **kwargs):
         review = self.get_object()
