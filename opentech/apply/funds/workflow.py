@@ -148,7 +148,7 @@ partner_can = lambda user: user.is_partner  # NOQA
 community_can = lambda user: user.is_community_reviewer  # NOQA
 
 
-def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can]):
+def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can, partner_can, ]):
     return {
         'edit': edit,
         'review': review,
