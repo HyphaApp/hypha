@@ -37,6 +37,7 @@
         {% endif %}
     </div>
 
+    {% if my_submissions %}
     <div class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">Your active submissions</h4>
         {% for submission in my_submissions %}
@@ -58,10 +59,9 @@
                     </a>
                 {% endif %}
             </div>
-        {% empty %}
-            No active submissions
         {% endfor %}
     </div>
+    {% endif %}
 
     {% if my_inactive_submissions.data %}
         <div class="wrapper wrapper--bottom-space">
