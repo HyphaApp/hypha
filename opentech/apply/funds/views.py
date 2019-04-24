@@ -472,10 +472,6 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
         # Reviewers and partners may somtimes be appliants as well.
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
-        # Only allow reviewers in the submission they are added as reviewers or has reviewed earlier
-        reviewer_has_access = submission.reviewers.filter(pk=request.user.pk).exists() or submission.reviews.values('author').filter(author=request.user.pk)
-        if not reviewer_has_access:
-            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
