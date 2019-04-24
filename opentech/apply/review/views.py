@@ -171,9 +171,20 @@ class ReviewDisplay(DetailView):
         review = self.get_object()
         user = request.user
         author = review.author
+        submission = review.submission
+        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
 
-        if user != author and not (user.is_reviewer and review.reviewer_visibility) and not user.is_apply_staff:
-            raise PermissionDenied
+        if user.is_reviewer and not user.is_apply_staff:
+            if user != author and not review.reviewer_visibility:
+                raise PermissionDenied
+
+        elif user.is_partner:
+            if user != author and not (partner_has_access and review.reviewer_visibility):
+                raise PermissionDenied
+
+        elif user.is_community_reviewer:
+            if user != author and not (submission.community_review and review.reviewer_visibility):
+                raise PermissionDenied
 
         if review.is_draft:
             return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
