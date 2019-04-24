@@ -317,12 +317,11 @@ class ReviewerDeterminationDetailView(DetailView):
 class PartnerDeterminationDetailView(DetailView):
     model = Determination
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, pk=self.kwargs['pk'])
+    def get_queryset(self):
+        return super().get_queryset().filter(submission=self.submission)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, pk=self.kwargs['submission_pk'])
-        determination = self.get_object()
 
         if self.submission.user == request.user:
             return ApplicantDeterminationDetailView.as_view()(request, *args, **kwargs)
@@ -339,12 +338,11 @@ class PartnerDeterminationDetailView(DetailView):
 class CommunityDeterminationDetailView(DetailView):
     model = Determination
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, pk=self.kwargs['pk'])
+    def get_queryset(self):
+        return super().get_queryset().filter(submission=self.submission)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, pk=self.kwargs['submission_pk'])
-        determination = self.get_object()
 
         if self.submission.user == request.user:
             return ApplicantDeterminationDetailView.as_view()(request, *args, **kwargs)
