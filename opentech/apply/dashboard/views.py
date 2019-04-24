@@ -12,7 +12,7 @@ from opentech.apply.funds.tables import (
     SubmissionsTable,
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
-    review_filter_for_user
+    review_filter_for_user,
 )
 from opentech.apply.utils.views import ViewDispatcher
 
