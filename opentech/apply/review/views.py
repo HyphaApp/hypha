@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -151,8 +152,9 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
-class ReviewDisplay(DetailView):
+class ReviewDisplay(UserPassesTestMixin, DetailView):
     model = Review
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         review = self.get_object()
@@ -167,26 +169,32 @@ class ReviewDisplay(DetailView):
             **kwargs,
         )
 
-    def dispatch(self, request, *args, **kwargs):
+    def test_func(self):
         review = self.get_object()
-        user = request.user
+        user = self.request.user
         author = review.author
         submission = review.submission
-        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+        partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
         if user.is_apply_staff:
-            pass
-        elif user.is_reviewer:
-            if user != author and not review.reviewer_visibility:
-                raise PermissionDenied
-        elif user.is_partner:
-            if user != author and not (partner_has_access and review.reviewer_visibility):
-                raise PermissionDenied
-        elif user.is_community_reviewer:
-            if user != author and not (submission.community_review and review.reviewer_visibility):
-                raise PermissionDenied
-        else:
-            raise PermissionDenied
+            return True
+
+        if user == author:
+            return True
+
+        if user.is_reviewer and review.reviewer_visibility:
+            return True
+
+        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
+            return True
+
+        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+            return True
+
+        return False
+
+    def dispatch(self, request, *args, **kwargs):
+        review = self.get_object()
 
         if review.is_draft:
             return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
