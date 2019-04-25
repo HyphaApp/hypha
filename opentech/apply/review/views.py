@@ -202,7 +202,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ReviewOpinionFormView(CreateView):
+class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     template_name = 'review/review_detail.html'
     form_class = ReviewOpinionForm
     model = Review
@@ -213,6 +213,30 @@ class ReviewOpinionFormView(CreateView):
         instance = kwargs['instance']
         kwargs['instance'] = instance.opinions.filter(author=self.request.user).first()
         return kwargs
+
+    def test_func(self):
+        review = self.get_object()
+        user = self.request.user
+        author = review.author
+        submission = review.submission
+        partner_has_access = submission.partners.filter(pk=user.pk).exists()
+
+        if user.is_apply_staff:
+            return True
+
+        if user == author:
+            return False
+
+        if user.is_reviewer and review.reviewer_visibility:
+            return True
+
+        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
+            return True
+
+        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+            return True
+
+        return False
 
     def form_valid(self, form):
         self.review = self.get_object()
