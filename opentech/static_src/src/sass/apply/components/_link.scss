@@ -183,7 +183,8 @@
         }
     }
 
-    &--edit-submission {
+    &--edit-submission,
+    &--delete-submission {
         display: flex;
         align-items: center;
         font-weight: $weight--bold;

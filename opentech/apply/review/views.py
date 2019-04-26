@@ -1,13 +1,14 @@
 from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, DeleteView
 
 from wagtail.core.blocks import RichTextBlock
 
@@ -280,3 +281,28 @@ class ReviewListView(ListView):
             review_data=review_data,
             **kwargs
         )
+
+
+class ReviewDeleteView(UserPassesTestMixin, DeleteView):
+    model = Review
+    raise_exception = True
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user.has_perm('review.delete_review') or self.request.user == review.author
+
+    def delete(self, request, *args, **kwargs):
+        review = self.get_object()
+        messenger(
+            MESSAGES.DELETE_REVIEW,
+            user=request.user,
+            request=request,
+            submission=review.submission,
+            related=review,
+        )
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+    def get_success_url(self):
+        review = self.get_object()
+        return reverse_lazy('funds:submissions:detail', args=(review.submission.id,))

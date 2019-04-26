@@ -23,6 +23,7 @@ class MESSAGES(Enum):
     OPENED_SEALED = 'Opened Sealed Submission'
     REVIEW_OPINION = 'Review Opinion'
     DELETE_SUBMISSION = 'Delete Submission'
+    DELETE_REVIEW = 'Delete Review'
 
     @classmethod
     def choices(cls):

@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load bleach_tags submission_tags %}
-
+{% block title %}Review for {{ review.submission.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
@@ -24,6 +24,14 @@
         <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
         {{ review.get_visibility_display }}
     </div>
+    {% if perms.funds.delete_review or request.user == review.author %}
+        <div>
+            <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
+                Delete
+                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+            </a>
+        </div>
+    {% endif %}
     {% if not review.for_latest %}
         <div>
             <h5>Review was not against the latest version:</h5>
