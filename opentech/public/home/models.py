@@ -128,8 +128,14 @@ class HomePage(BasePage):
         yield from related
         selected = list(related.values_list('id', flat=True))
         extra_needed = self.NUM_RELATED - len(selected)
-        extra_qs = page_type.objects.public().live().exclude(id__in=selected)[:extra_needed]
-        yield from self.sorted_by_deadline(extra_qs)
+        extra_qs = page_type.objects.public().live().exclude(id__in=selected)
+        displayed = 0
+        for page in self.sorted_by_deadline(extra_qs):
+            if page.is_open:
+                yield page
+                displayed += 1
+            if displayed >= extra_needed:
+                break
 
     def sorted_by_deadline(self, qs):
         def sort_by_deadline(value):
