@@ -1,11 +1,9 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-from django.views.decorators.cache import cache_control
 from django.views.generic import TemplateView
 from django.conf.urls import url
 
-from wagtail.utils.urlpatterns import decorate_urlpatterns
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
@@ -14,19 +12,6 @@ from wagtail.images.views.serve import ServeView
 
 from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
-
-
-def apply_cache_control(*patterns):
-    # Cache-control
-    cache_length = getattr(settings, 'CACHE_CONTROL_MAX_AGE', None)
-
-    if cache_length:
-        patterns = decorate_urlpatterns(
-            patterns,
-            cache_control(max_age=cache_length)
-        )
-
-    return list(patterns)
 
 
 urlpatterns = [
@@ -70,8 +55,6 @@ urlpatterns += [
 urlpatterns += [
     path('', include(wagtail_urls)),
 ]
-
-urlpatterns = apply_cache_control(*urlpatterns)
 
 
 if settings.DEBUG and settings.DEBUGTOOLBAR:

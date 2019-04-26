@@ -22,3 +22,6 @@ CACHES = {
 # BASE_URL = 'http://otf.test'
 
 # SECRET_KEY = 'CHANGEME!!!'
+
+# Enable Wagtail Cache while developing
+# WAGTAIL_CACHE = True

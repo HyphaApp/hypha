@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import models
+from django.utils.decorators import method_decorator
 
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -15,6 +17,8 @@ from wagtail.core.models import Orderable, Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+
+from wagtailcache.cache import cache_page, WagtailCacheMixin
 
 
 class LinkFields(models.Model):
@@ -242,7 +246,8 @@ class SystemMessagesSettings(BaseSetting):
     ]
 
 
-class BasePage(SocialFields, ListingFields, Page):
+@method_decorator(cache_page, name='serve')
+class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
     show_in_menus_default = True
 
     header_image = models.ForeignKey(
@@ -265,6 +270,9 @@ class BasePage(SocialFields, ListingFields, Page):
         SocialFields.promote_panels +
         ListingFields.promote_panels
     )
+
+    def cache_control(self):
+        return f'public, s-maxage={settings.CACHE_CONTROL_S_MAXAGE}'
 
 
 class BaseFunding(Orderable):
