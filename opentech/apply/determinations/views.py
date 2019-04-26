@@ -314,6 +314,47 @@ class ReviewerDeterminationDetailView(DetailView):
 
 
 @method_decorator(login_required, name='dispatch')
+class PartnerDeterminationDetailView(DetailView):
+    model = Determination
+
+    def get_queryset(self):
+        return super().get_queryset().filter(submission=self.submission)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, pk=self.kwargs['submission_pk'])
+
+        if self.submission.user == request.user:
+            return ApplicantDeterminationDetailView.as_view()(request, *args, **kwargs)
+
+        # Only allow partners in the submission they are added as partners
+        partner_has_access = self.submission.partners.filter(pk=request.user.pk).exists()
+        if not partner_has_access:
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class CommunityDeterminationDetailView(DetailView):
+    model = Determination
+
+    def get_queryset(self):
+        return super().get_queryset().filter(submission=self.submission)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, pk=self.kwargs['submission_pk'])
+
+        if self.submission.user == request.user:
+            return ApplicantDeterminationDetailView.as_view()(request, *args, **kwargs)
+
+        # Only allow community reviewers in submission with a community review state.
+        if not self.submission.community_review:
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
 class ApplicantDeterminationDetailView(DetailView):
     model = Determination
 
@@ -335,5 +376,7 @@ class ApplicantDeterminationDetailView(DetailView):
 
 class DeterminationDetailView(ViewDispatcher):
     admin_view = AdminDeterminationDetailView
-    applicant_view = ApplicantDeterminationDetailView
     reviewer_view = ReviewerDeterminationDetailView
+    partner_view = PartnerDeterminationDetailView
+    community_view = CommunityDeterminationDetailView
+    applicant_view = ApplicantDeterminationDetailView

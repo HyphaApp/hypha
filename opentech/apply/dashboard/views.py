@@ -108,6 +108,9 @@ class ReviewerDashboardView(TemplateView):
         # Filter for all active statuses.
         active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
 
+        # Applications by reviewer
+        my_submissions, my_inactive_submissions = self.get_my_submissions(request, qs)
+
         context = {
             'my_review': my_review,
             'in_review_count': my_review_qs.count(),
@@ -116,6 +119,8 @@ class ReviewerDashboardView(TemplateView):
             'display_more_reviewed': display_more_reviewed,
             'filter': filterset,
             'active_statuses_filter': active_statuses_filter,
+            'my_submissions': my_submissions,
+            'my_inactive_submissions': my_inactive_submissions,
         }
 
         return render(request, 'dashboard/reviewer_dashboard.html', context)
@@ -144,6 +149,20 @@ class ReviewerDashboardView(TemplateView):
 
         return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
 
+    def get_my_submissions(self, request, qs):
+        my_submissions = qs.filter(
+            user=request.user
+        ).active().current().select_related('draft_revision')
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+
+        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions_qs, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
+
     def get_context_data(self, **kwargs):
         kwargs = super().get_context_data(**kwargs)
         search_term = self.request.GET.get('query')
@@ -152,6 +171,112 @@ class ReviewerDashboardView(TemplateView):
         )
 
         return super().get_context_data(**kwargs)
+
+
+class PartnerDashboardView(TemplateView):
+    template_name = 'dashboard/partner_dashboard.html'
+
+    def get_partner_submissions(self, user, qs):
+        partner_submissions_qs = qs.partner_for(user).order_by('-submit_time')
+        partner_submissions_table = ReviewerSubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
+
+        return partner_submissions_qs, partner_submissions_table
+
+    def get_my_reviewed(self, request, qs):
+        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs, prefix='my-reviewed-')
+
+        return my_reviewed_qs, my_reviewed_table
+
+    def get_my_submissions(self, request, qs):
+        my_submissions = qs.filter(
+            user=request.user
+        ).active().current().select_related('draft_revision')
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+
+        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions_qs, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        # Submissions in which user added as partner
+        partner_submissions_qs, partner_submissions = self.get_partner_submissions(self.request.user, qs)
+
+        # Partner's reviewed submissions
+        my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
+
+        # Applications by partner
+        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
+
+        context.update({
+            'partner_submissions': partner_submissions,
+            'partner_submissions_count': partner_submissions_qs.count(),
+            'my_reviewed': my_reviewed,
+            'my_submissions': my_submissions,
+            'my_inactive_submissions': my_inactive_submissions,
+        })
+
+        return context
+
+
+class CommunityDashboardView(TemplateView):
+    template_name = 'dashboard/community_dashboard.html'
+
+    def get_my_community_review(self, user, qs):
+        my_community_review_qs = qs.in_community_review(user).order_by('-submit_time')
+        my_community_review_table = ReviewerSubmissionsTable(my_community_review_qs, prefix='my-community-review-')
+
+        return my_community_review_qs, my_community_review_table
+
+    def get_my_reviewed(self, request, qs):
+        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs, prefix='my-reviewed-')
+
+        return my_reviewed_qs, my_reviewed_table
+
+    def get_my_submissions(self, request, qs):
+        my_submissions = qs.filter(
+            user=request.user
+        ).active().current().select_related('draft_revision')
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+
+        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions_qs, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        # Submissions in community review phase
+        my_community_review_qs, my_community_review = self.get_my_community_review(self.request.user, qs)
+
+        # Partner's reviewed submissions
+        my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
+
+        # Applications by partner
+        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
+
+        context.update({
+            'my_community_review': my_community_review,
+            'my_community_review_count': my_community_review_qs.count(),
+            'my_reviewed': my_reviewed,
+            'my_submissions': my_submissions,
+            'my_inactive_submissions': my_inactive_submissions,
+        })
+
+        return context
 
 
 class ApplicantDashboardView(SingleTableView):
@@ -182,7 +307,6 @@ class ApplicantDashboardView(SingleTableView):
 class DashboardView(ViewDispatcher):
     admin_view = AdminDashboardView
     reviewer_view = ReviewerDashboardView
+    partner_view = PartnerDashboardView
+    community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
-
-    def reviewer_check(self, request):
-        return request.user.is_reviewer

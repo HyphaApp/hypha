@@ -472,15 +472,65 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
         # Reviewers and partners may somtimes be appliants as well.
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
+
+
+class PartnerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+    template_name_suffix = '_partner_detail'
+    model = ApplicationSubmission
+    form_views = [CommentFormView]
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        # If the requesting user submitted the application, return the Applicant view.
+        # Reviewers and partners may somtimes be appliants as well.
+        if submission.user == request.user:
+            return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         # Only allow partners in the submission they are added as partners
-        if request.user.is_partner:
-            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-            if not partner_has_access:
-                raise PermissionDenied
-        # Only allow community reviewers in submission with a community review state.
-        if request.user.is_community_reviewer and not submission.community_review:
+        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+        if not partner_has_access:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+    template_name_suffix = '_community_detail'
+    model = ApplicationSubmission
+    form_views = [CommentFormView]
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        # If the requesting user submitted the application, return the Applicant view.
+        # Reviewers and partners may somtimes be appliants as well.
+        if submission.user == request.user:
+            return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
+        # Only allow community reviewers in submission with a community review state.
+        if not submission.community_review:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+    model = ApplicationSubmission
+    form_views = [CommentFormView]
+
+    def get_object(self):
+        return super().get_object().from_draft()
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        # This view is only for applicants.
+        if submission.user != request.user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SubmissionDetailView(ViewDispatcher):
+    admin_view = AdminSubmissionDetailView
+    reviewer_view = ReviewerSubmissionDetailView
+    partner_view = PartnerSubmissionDetailView
+    community_view = CommunitySubmissionDetailView
+    applicant_view = ApplicantSubmissionDetailView
 
 
 @method_decorator(staff_required, 'dispatch')
@@ -541,25 +591,6 @@ class SubmissionSealedView(DetailView):
             return HttpResponseRedirect(reverse_lazy('funds:submissions:sealed', args=(submission.id,)))
 
 
-class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
-    model = ApplicationSubmission
-    form_views = [CommentFormView]
-
-    def get_object(self):
-        return super().get_object().from_draft()
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.get_object().user != request.user:
-            raise PermissionDenied
-        return super().dispatch(request, *args, **kwargs)
-
-
-class SubmissionDetailView(ViewDispatcher):
-    admin_view = AdminSubmissionDetailView
-    reviewer_view = ReviewerSubmissionDetailView
-    applicant_view = ApplicantSubmissionDetailView
-
-
 class BaseSubmissionEditView(UpdateView):
     """
     Converts the data held on the submission into an editable format and knows how to save
@@ -616,11 +647,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
 class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if request.user.is_partner:
-            partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-            if not partner_has_access:
-                raise PermissionDenied
-        elif request.user != submission.user:
+        if request.user != submission.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -675,9 +702,24 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+@method_decorator(login_required, name='dispatch')
+class PartnerSubmissionEditView(ApplicantSubmissionEditView):
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        # If the requesting user submitted the application, return the Applicant view.
+        # Partners may somtimes be appliants as well.
+        if submission.user == request.user:
+            return ApplicantSubmissionEditView.as_view()(request, *args, **kwargs)
+        partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
+        if not partner_has_access:
+            raise PermissionDenied
+        return super(ApplicantSubmissionEditView, self).dispatch(request, *args, **kwargs)
+
+
 class SubmissionEditView(ViewDispatcher):
     admin_view = AdminSubmissionEditView
     applicant_view = ApplicantSubmissionEditView
+    partner_view = PartnerSubmissionEditView
 
 
 @method_decorator(staff_required, name='dispatch')

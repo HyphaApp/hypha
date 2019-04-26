@@ -152,8 +152,9 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
 
-class ReviewDisplay(DetailView):
+class ReviewDisplay(UserPassesTestMixin, DetailView):
     model = Review
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         review = self.get_object()
@@ -168,13 +169,32 @@ class ReviewDisplay(DetailView):
             **kwargs,
         )
 
+    def test_func(self):
+        review = self.get_object()
+        user = self.request.user
+        author = review.author
+        submission = review.submission
+        partner_has_access = submission.partners.filter(pk=user.pk).exists()
+
+        if user.is_apply_staff:
+            return True
+
+        if user == author:
+            return True
+
+        if user.is_reviewer and review.reviewer_visibility:
+            return True
+
+        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
+            return True
+
+        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+            return True
+
+        return False
+
     def dispatch(self, request, *args, **kwargs):
         review = self.get_object()
-        user = request.user
-        author = review.author
-
-        if user != author and not (user.is_reviewer and review.reviewer_visibility) and not user.is_apply_staff:
-            raise PermissionDenied
 
         if review.is_draft:
             return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
@@ -182,7 +202,7 @@ class ReviewDisplay(DetailView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class ReviewOpinionFormView(CreateView):
+class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     template_name = 'review/review_detail.html'
     form_class = ReviewOpinionForm
     model = Review
@@ -193,6 +213,30 @@ class ReviewOpinionFormView(CreateView):
         instance = kwargs['instance']
         kwargs['instance'] = instance.opinions.filter(author=self.request.user).first()
         return kwargs
+
+    def test_func(self):
+        review = self.get_object()
+        user = self.request.user
+        author = review.author
+        submission = review.submission
+        partner_has_access = submission.partners.filter(pk=user.pk).exists()
+
+        if user.is_apply_staff:
+            return True
+
+        if user == author:
+            return False
+
+        if user.is_reviewer and review.reviewer_visibility:
+            return True
+
+        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
+            return True
+
+        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+            return True
+
+        return False
 
     def form_valid(self, form):
         self.review = self.get_object()

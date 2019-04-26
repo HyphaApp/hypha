@@ -32,7 +32,7 @@ def status_bar(workflow, current_phase, user, css_class='', same_stage=False):
         'phases': phases,
         'current_phase': current_phase,
         'class': css_class,
-        'public': user.is_applicant,
+        'public': user.is_applicant or user.is_partner,
     }
 
 
