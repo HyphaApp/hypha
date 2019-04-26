@@ -195,6 +195,9 @@ class AccessFormData:
         except UnusedFieldException:
             return '-'
         data = self.data(field_id)
+        # Some migrated content have empty address.
+        if not data:
+            return '-'
         return field.render(context={'data': data, 'include_question': include_question})
 
     def render_answers(self):
