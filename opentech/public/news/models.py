@@ -123,6 +123,9 @@ class NewsPage(BasePage):
         else:
             return self.first_published_at
 
+    def get_absolute_url(self):
+        return self.full_url
+
 
 class NewsIndex(BasePage):
     subpage_types = ['NewsPage']
