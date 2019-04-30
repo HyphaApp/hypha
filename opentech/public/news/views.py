@@ -1,12 +1,17 @@
 from django.contrib.syndication.views import Feed
 
-from opentech.public.news.models import NewsPage, NewsType
+from wagtail.core.models import Site
+
+from opentech.public.news.models import NewsPage, NewsType, NewsIndex, NewsFeedSettings
 
 
 class NewsFeed(Feed):
-    link = "https://www.opentech.fund/news/"
-    title = "OTF – News, updates, and announcements"
-    description = "News, updates, and announcements from The Open Technology Fund"
+    site = Site.objects.get(is_default_site=True)
+    news_feed_settings = NewsFeedSettings.for_site(site=site)
+    news_index = NewsIndex.objects.first()
+    link = f"{site.root_url}/{news_index.slug}/"
+    title = news_feed_settings.news_title
+    description = news_feed_settings.news_description
 
     def items(self):
         return NewsPage.objects.live().order_by('-first_published_at')[:20]
@@ -22,19 +27,24 @@ class NewsFeed(Feed):
 
 
 class NewsTypesFeed(Feed):
-    link = "https://www.opentech.fund/news/"
+    site = Site.objects.get(is_default_site=True)
+    news_feed_settings = NewsFeedSettings.for_site(site=site)
+    news_index = NewsIndex.objects.first()
 
-    def get_object(self, request, type):
-        return NewsType.objects.get(id=type)
+    def get_object(self, request, news_type):
+        return NewsType.objects.get(id=news_type)
 
-    def title(self, type):
-        return f"OTF – News of type {type}"
+    def link(self, obj):
+        return f"{self.site.root_url}/{self.news_index.slug}/?news_type={obj.id}"
 
-    def description(self, type):
-        return f"News, updates, and announcements of type {type} from The Open Technology Fund"
+    def title(self, obj):
+        return self.news_feed_settings.news_per_type_title.format(news_type=obj)
 
-    def items(self, type):
-        return NewsPage.objects.live().filter(news_types__news_type=type).order_by('-first_published_at')[:20]
+    def description(self, obj):
+        return self.news_feed_settings.news_per_type_description.format(news_type=obj)
+
+    def items(self, obj):
+        return NewsPage.objects.live().filter(news_types__news_type=obj).order_by('-first_published_at')[:20]
 
     def item_title(self, item):
         return item.title

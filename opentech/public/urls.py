@@ -8,6 +8,6 @@ from .mailchimp import urls as newsletter_urls
 urlpatterns = [
     path('search/', search_views.search, name='search'),
     path('news/feed/', news_views.NewsFeed(), name='news_feed'),
-    path('news/<int:type>/feed/', news_views.NewsTypesFeed(), name='news_types_feed'),
+    path('news/<int:news_type>/feed/', news_views.NewsTypesFeed(), name='news_types_feed'),
     path('newsletter/', include(newsletter_urls))
 ]
