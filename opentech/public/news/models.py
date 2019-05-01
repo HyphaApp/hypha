@@ -175,5 +175,7 @@ class NewsFeedSettings(BaseSetting):
     news_title = models.CharField(max_length=255, help_text='The title of the main news feed.')
     news_description = models.CharField(max_length=255, help_text='The description of the main news feed.')
 
-    news_per_type_title = models.CharField(max_length=255, help_text='The title of the news feed by type. Use {news_type} to insert the type name.')
-    news_per_type_description = models.CharField(max_length=255, help_text='The description of the news feed by type. Use {news_type} to insert the type name.')
+    news_per_type_title = models.CharField(
+        max_length=255, help_text='The title of the news feed by type. Use {news_type} to insert the type name.')
+    news_per_type_description = models.CharField(
+        max_length=255, help_text='The description of the news feed by type. Use {news_type} to insert the type name.')
