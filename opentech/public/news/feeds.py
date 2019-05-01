@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib.syndication.views import Feed
+from django.core.cache import cache
 from django.db.models.functions import Coalesce
 from django.http import Http404
 
@@ -14,7 +16,21 @@ class NewsFeed(Feed):
         except Site.DoesNotExist:
             raise Http404
         self.news_feed_settings = NewsFeedSettings.for_site(site=self.site)
-        return super().__call__(request, *args, **kwargs)
+
+        cache_key = self.get_cache_key(*args, **kwargs)
+        response = cache.get(cache_key)
+
+        if response is None:
+            response = super().__call__(request, *args, **kwargs)
+            cache.set(cache_key, response, settings.FEED_CACHE_TIMEOUT)
+
+        return response
+
+    def get_cache_key(self, *args, **kwargs):
+        tag = ''
+        for key, value in kwargs.items():
+            tag += f"-{key}-{value}"
+        return f"{self.__class__.__module__}{tag}"
 
     def title(self):
         return self.news_feed_settings.news_title
@@ -56,7 +72,7 @@ class NewsTypeFeed(NewsFeed):
     def link(self, obj):
         news_index = NewsIndex.objects.live().public().first()
         if news_index:
-            return news_index.full_url + '?news_type={}'.format(obj.id)
+            return f"{news_index.full_url}?news_type={obj.id}"
         return self.site.root_url
 
     def items(self, obj):
