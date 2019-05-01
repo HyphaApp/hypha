@@ -214,6 +214,9 @@ except ValueError:
 # Set wagtail cache timeout (automatic cache refresh).
 WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
 
+# Set feed cache timeout (automatic cache refresh).
+FEED_CACHE_TIMEOUT = 600
+
 if 'REDIS_URL' in env:
     CACHES = {
         "default": {
