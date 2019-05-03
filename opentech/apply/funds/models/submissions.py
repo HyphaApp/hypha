@@ -566,6 +566,10 @@ class ApplicationSubmission(
                 form_data=self.form_data,
                 author=self.user,
             )
+
+            if hasattr(self, 'previous'):
+                self.partners.set(self.previous.partners.all())
+
             self.live_revision = first_revision
             self.draft_revision = first_revision
             self.save()
