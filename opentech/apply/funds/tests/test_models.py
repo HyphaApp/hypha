@@ -512,7 +512,7 @@ class TestForTableQueryset(TestCase):
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, None)
         self.assertEqual(submission.review_count, 1)
-        self.assertEqual(submission.review_submitted_count, 0)
+        self.assertEqual(submission.review_submitted_count, None)
         self.assertEqual(submission.review_recommendation, None)
 
     def test_review_outcome(self):
@@ -542,12 +542,12 @@ class TestForTableQueryset(TestCase):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory()
 
-        review = ReviewFactory(submission=submission, author=staff)
+        review = ReviewFactory(submission=submission, author__reviewer=staff, author__staff=True)
         opinion = ReviewOpinionFactory(opinion_disagree=True, review=review)
 
         # Another pair of review/opinion
         review_two = ReviewFactory(author=opinion.author, submission=submission)
-        ReviewOpinionFactory(opinion_disagree=True, author=staff, review=review_two)
+        ReviewOpinionFactory(opinion_disagree=True, author__reviewer=staff, author__staff=True, review=review_two)
 
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
@@ -567,12 +567,14 @@ class TestForTableQueryset(TestCase):
 
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
+        self.assertEqual(submission, submission_one)
         self.assertEqual(submission.opinion_disagree, 1)
         self.assertEqual(submission.review_count, 2)
         self.assertEqual(submission.review_submitted_count, 2)
         self.assertEqual(submission.review_recommendation, MAYBE)
 
         submission = qs[1]
+        self.assertEqual(submission, submission_two)
         self.assertEqual(submission.opinion_disagree, None)
         self.assertEqual(submission.review_count, 1)
         self.assertEqual(submission.review_submitted_count, 1)

@@ -22,6 +22,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
     'wagtail.contrib.styleguide',
 ]
 
+
 SECURE_SSL_REDIRECT = False
 
 # Change these in local.py.

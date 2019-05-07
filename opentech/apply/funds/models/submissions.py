@@ -53,11 +53,6 @@ from ..workflow import (
 )
 
 
-class SubqueryCount(Subquery):
-    template = "(SELECT count(*) FROM (%(subquery)s) _count)"
-    output_field = models.IntegerField()
-
-
 class JSONOrderable(models.QuerySet):
     json_field = ''
 
@@ -131,7 +126,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
     def for_table(self, user):
-        User = get_user_model()
         activities = self.model.activities.field.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
@@ -141,6 +135,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         review_model = self.model.reviews.field.model
         reviews = review_model.objects.filter(submission=OuterRef('id'))
         opinions = review_model.opinions.field.model.objects.filter(review__submission=OuterRef('id'))
+        reviewers = self.model.assigned.field.model.objects.filter(submission=OuterRef('id'))
 
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
@@ -158,20 +153,17 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 ).annotate(count=Count('*')).values('count')[:1],
                 output_field=IntegerField(),
             ),
-            review_staff_count=SubqueryCount(
-                User.objects.staff().filter(
-                    Q(submissions_reviewer=OuterRef('id')) | Q(reviewopinion__review__submission=OuterRef('id'))
-                ).distinct().values('pk')
+            review_staff_count=Subquery(
+                reviewers.staff().values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
             ),
-            review_count=SubqueryCount(
-                User.objects.filter(
-                    Q(submissions_reviewer=OuterRef('id')) | Q(reviewopinion__review__submission=OuterRef('id'))
-                ).distinct().values('pk')
+            review_count=Subquery(
+                reviewers.values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
             ),
-            review_submitted_count=SubqueryCount(
-                User.objects.filter(
-                    Q(review__submission=OuterRef('id')) | Q(reviewopinion__review__submission=OuterRef('id'))
-                ).distinct().values('pk')
+            review_submitted_count=Subquery(
+                reviewers.reviewed().values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
             ),
             review_recommendation=Case(
                 When(opinion_disagree__gt=0, then=MAYBE),

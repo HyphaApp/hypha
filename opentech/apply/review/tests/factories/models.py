@@ -2,7 +2,6 @@ import factory
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, AssignedReviewersFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
-from opentech.apply.users.tests.factories import StaffFactory
 
 from ...options import YES, NO, MAYBE, AGREE, DISAGREE, PRIVATE, REVIEWER
 from ...models import Review, ReviewForm, ReviewOpinion
