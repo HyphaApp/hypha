@@ -121,9 +121,10 @@ class ReviewQuerySet(models.QuerySet):
 class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
     revision = models.ForeignKey('funds.ApplicationRevision', on_delete=models.SET_NULL, related_name='reviews', null=True)
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+    author = models.OneToOneField(
+        'funds.AssignedReviewers',
+        related_name='review',
+        on_delete=models.CASCADE,
     )
 
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
@@ -190,8 +191,9 @@ def update_submission_reviewers_list(sender, **kwargs):
 class ReviewOpinion(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='opinions')
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        'funds.AssignedReviewers',
+        related_name='opinions',
+        on_delete=models.CASCADE,
     )
     opinion = models.IntegerField(choices=OPINION_CHOICES)
 

@@ -28,7 +28,7 @@ from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, LIMIT_TO_PARTNERS, WorkflowHelpers
+from .utils import LIMIT_TO_STAFF, LIMIT_TO_REVIEWER_GROUPS, LIMIT_TO_PARTNERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -744,7 +744,11 @@ class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        limit_choices_to=LIMIT_TO_REVIEWER_GROUPS,
+    )
+    type = models.ForeignKey(
+        'auth.Group',
+        on_delete=models.PROTECT,
     )
     submission = models.ForeignKey(
         ApplicationSubmission,
@@ -761,7 +765,7 @@ class AssignedReviewers(models.Model):
     objects = AssignedReviewersQuerySet.as_manager()
 
     class Meta:
-        unique_together = ('submission', 'role')
+        unique_together = (('submission', 'role'), ('submission', 'reviewer'))
 
     def __str__(self):
         return f'{self.reviewer} as {self.role}'
