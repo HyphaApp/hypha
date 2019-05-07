@@ -1,3 +1,5 @@
+from urllib import parse
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -61,6 +63,7 @@ class BatchDeterminationCreateView(CreateView):
         if not self.get_action() or not self.get_submissions():
             messages.warning(self.request, 'Improperly configured request, please try again.')
             return HttpResponseRedirect(self.get_success_url())
+
         return super().dispatch(*args, **kwargs)
 
     def get_action(self):
@@ -162,13 +165,17 @@ class BatchDeterminationCreateView(CreateView):
             return HttpResponseRedirect(
                 reverse_lazy('apply:submissions:determinations:batch') +
                 "?action=" + action +
-                "&submissions=" + ','.join([str(submission.id) for submission in submissions])
+                "&submissions=" + ','.join([str(submission.id) for submission in submissions]) +
+                "&next=" + parse.quote_plus(request.get_full_path()),
             )
         elif set(actions) != non_determine_states:
             raise ValueError('Inconsistent states provided - please talk to an admin')
 
     def get_success_url(self):
-        return reverse_lazy('apply:submissions:list')
+        try:
+            return self.request.GET['next']
+        except KeyError:
+            return reverse_lazy('apply:submissions:list')
 
 
 @method_decorator(staff_required, name='dispatch')
