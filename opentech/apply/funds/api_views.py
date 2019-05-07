@@ -53,7 +53,7 @@ class SubmissionsFilter(filters.FilterSet):
 
 
 class SubmissionList(generics.ListAPIView):
-    queryset = ApplicationSubmission.objects.current()
+    queryset = ApplicationSubmission.objects.current().with_latest_update()
     serializer_class = SubmissionListSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
