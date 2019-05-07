@@ -214,7 +214,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))
@@ -225,4 +225,11 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'message', 'visibility')
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited')
+
+
+class CommentEditSerializer(CommentCreateSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta(CommentCreateSerializer.Meta):
+        read_only_fields = ('visibility', 'edited',)
