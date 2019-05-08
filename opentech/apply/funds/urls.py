@@ -14,6 +14,7 @@ from .views import (
     SubmissionDeleteView,
 )
 from .api_views import (
+    CommentEdit,
     CommentList,
     CommentListCreate,
     RoundLabDetail,
@@ -62,6 +63,7 @@ api_urls = ([
     ], 'rounds'))),
     path('comments/', include(([
         path('', CommentList.as_view(), name='list'),
+        path('<int:pk>/edit/', CommentEdit.as_view(), name='edit'),
     ], 'comments')))
 ], 'api')
 
