@@ -3,10 +3,16 @@
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
     </div>
-    <div class="feed__content">
-        <div class="feed__meta">
+    <div class="feed__content js-feed-content">
+        <div class="feed__meta js-feed-meta">
             <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
             <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> – {{ activity.timestamp|date:"Y-m-d H:i" }}</p>
+            <p class="feed__meta-item">
+                <a class="link link--edit-submission is-active js-edit-comment" href="{% url 'funds:submissions:edit' object.id %}">
+                    Edit
+                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                </a>
+            </p>
             {% if activity.private %}
                 <p class="feed__meta-item feed__meta-item--right">
                     <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
@@ -19,7 +25,11 @@
                 updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
 
-            {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+            <div class="feed__comment js-comment" data-comment="{{activity.message}}">
+                {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+            </div>
+
+            <div class="js-edit-form"></div>
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}
