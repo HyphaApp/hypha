@@ -1,5 +1,3 @@
-import datetime
-
 import mistune
 
 from django.contrib.auth import get_user_model
@@ -123,9 +121,11 @@ class ReviewSummarySerializer(serializers.Serializer):
 
         return response
 
+
 class TimestampField(serializers.Field):
     def to_representation(self, value):
         return value.timestamp()
+
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
