@@ -65,7 +65,12 @@ class ReadOnlyPanel(EditHandler):
         if callable(value):
             value = value()
 
-        self.form.initial[self.attr] = value
+        # Add initial value only when an object is present. Display nothing when a new page is being
+        # created. As it is a read-only panel and creates confusion when default values are displayed.
+        if self.instance.id:
+            self.form.initial[self.attr] = value
+        else:
+            self.form.initial[self.attr] = '-'
         self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
         return {
             'self': self,
