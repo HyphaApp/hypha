@@ -34,6 +34,8 @@ const ReviewInformation = ({ submission }) => {
         people.sort((a,b) => {
             if (a.role.order === null) {
                 return 100;
+            } else if (b.role.order === null) {
+                return -1;
             }
             return a.role.order - b.role.order;
         })
