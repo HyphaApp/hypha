@@ -110,7 +110,7 @@
 
                 {% block related %}
                     {% if other_submissions or object.previous or object.next %}
-                        <div class="sidebar__inner">
+                        <div class="sidebar__inner related-sidebar">
                             <h5>Related submissions</h5>
                             {% if object.previous %}
                                 <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">View linked {{ object.previous.stage }}</a></p>
