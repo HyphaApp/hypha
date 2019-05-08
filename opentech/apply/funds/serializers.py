@@ -122,13 +122,19 @@ class ReviewSummarySerializer(serializers.Serializer):
         return response
 
 
+class TimestampField(serializers.Field):
+    def to_representation(self, value):
+        return value.timestamp()
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
     round = serializers.SerializerMethodField()
+    last_update = TimestampField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status', 'url', 'round')
+        fields = ('id', 'title', 'status', 'url', 'round', 'last_update')
 
     def get_round(self, obj):
         """

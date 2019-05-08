@@ -115,18 +115,23 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
 
-    def for_table(self, user):
+    def with_latest_update(self):
         activities = self.model.activities.field.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
+        return self.annotate(
+            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
+            last_update=Subquery(latest_activity.values('timestamp')[:1]),
+        )
+
+    def for_table(self, user):
+        activities = self.model.activities.field.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
         reviews = self.model.reviews.field.model.objects.filter(submission=OuterRef('id'))
 
-        return self.annotate(
-            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
-            last_update=Subquery(latest_activity.values('timestamp')[:1]),
+        return self.with_latest_update().annotate(
             comment_count=Coalesce(
                 Subquery(
                     comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
