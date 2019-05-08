@@ -1,5 +1,6 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 from opentech.apply.activity.models import Activity, PUBLIC, PRIVATE
 from opentech.apply.activity.tests.factories import CommentFactory
@@ -30,16 +31,23 @@ class TestCommentEdit(TestCase):
 
         response = self.post_to_edit(comment.pk, new_message)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(Activity.objects.count(), 2)
 
         comment.refresh_from_db()
+
+        # Match the behaviour of DRF
+        time = comment.timestamp.astimezone(timezone.get_current_timezone()).isoformat()
+        if time.endswith('+00:00'):
+            time = time[:-6] + 'Z'
+
+        self.assertEqual(time, response.json()['timestamp'])
         self.assertFalse(comment.current)
         self.assertEqual(response.json()['message'], new_message)
 
     def test_incorrect_id_denied(self):
         response = self.post_to_edit(10000)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403, response.json())
 
     def test_does_nothing_if_same_message(self):
         user = UserFactory()
@@ -63,5 +71,20 @@ class TestCommentEdit(TestCase):
             },
         )
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(response.json()['visibility'], PRIVATE)
+
+    def test_out_of_order_does_nothing(self):
+        user = UserFactory()
+        comment = CommentFactory(user=user)
+        self.client.force_login(user)
+
+        new_message = 'hi there'
+        newer_message = 'hello there'
+
+        response_one = self.post_to_edit(comment.pk, new_message)
+        response_two = self.post_to_edit(comment.pk, newer_message)
+
+        self.assertEqual(response_one.status_code, 200, response_one.json())
+        self.assertEqual(response_two.status_code, 404, response_two.json())
+        self.assertEqual(Activity.objects.count(), 2)

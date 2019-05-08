@@ -11,6 +11,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='activity',
+            name='timestamp',
+            field=models.DateTimeField(),
+        ),
         migrations.AddField(
             model_name='activity',
             name='current',

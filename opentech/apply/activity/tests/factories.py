@@ -1,6 +1,7 @@
 import uuid
 
 import factory
+from django.utils import timezone
 
 from opentech.apply.activity.models import Activity, Event, INTERNAL, Message, MESSAGES, REVIEWER
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -18,6 +19,7 @@ class CommentFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
     message = factory.Faker('sentence')
+    timestamp = factory.LazyFunction(timezone.now)
 
     @classmethod
     def _get_manager(cls, model_class):
