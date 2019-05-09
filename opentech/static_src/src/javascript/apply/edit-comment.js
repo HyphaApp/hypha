@@ -70,9 +70,7 @@
             body: JSON.stringify({
                 message: editedComment
             })
-
-        }).then(response => response.json())
-        .then(data => {
+        }).then(response => response.json()).then(data => {
             updateComment(commentContainer, data.id, data.message);
             updateLastEdited(this, data.edited);
             showComment(this);
