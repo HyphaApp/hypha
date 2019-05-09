@@ -16,6 +16,8 @@
     $(editButton).click(function (e) {
         e.preventDefault();
 
+        closeAllEditors();
+
         const editBlockWrapper = $(this).closest(feedContent).find(editBlock);
         const commentWrapper = $(this).closest(feedContent).find(comment);
         const commentContents = $(commentWrapper).data('comment');
@@ -105,4 +107,11 @@
     const updateComment = (el, id, newComment) => {
         $(el).html(newComment).data('comment', newComment).data('id', id);
     };
+
+    const closeAllEditors = () => {
+        $(comment).show();
+        $(pageDown).remove();
+        $(editButton).show();
+    };
+
 })(jQuery);
