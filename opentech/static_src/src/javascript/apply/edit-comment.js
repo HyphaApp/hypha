@@ -23,7 +23,7 @@
         const commentContents = $(commentWrapper).data('comment');
 
         // hide the edit link and original comment
-        $(this).hide();
+        $(this).parent().hide();
         $(commentWrapper).hide();
 
         const markup = `
@@ -86,7 +86,7 @@
     };
 
     const showEditButton = (el) => {
-        $(el).closest(editBlock).siblings(feedMeta).find(editButton).show();
+        $(el).closest(editBlock).siblings(feedMeta).find(editButton).parent().show();
     };
 
     const hidePageDownEditor = (el) => {
@@ -109,7 +109,7 @@
     const closeAllEditors = () => {
         $(comment).show();
         $(pageDown).remove();
-        $(editButton).show();
+        $(editButton).parent().show();
     };
 
 })(jQuery);
