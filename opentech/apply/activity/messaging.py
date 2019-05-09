@@ -556,6 +556,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
+        MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
+        MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
     }
 
     def get_subject(self, message_type, submission):
@@ -607,6 +609,11 @@ class EmailAdapter(AdapterBase):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not submission.phase.permissions.can_view(submission.user):
                 return []
+
+        if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
+            partners = kwargs['added']
+            return [partner.email for partner in partners]
+
         return [submission.user.email]
 
     def batch_recipients(self, message_type, submissions, **kwargs):
@@ -632,6 +639,18 @@ class EmailAdapter(AdapterBase):
             for reviewer in submission.missing_reviewers.all()
             if submission.phase.permissions.can_review(reviewer) and not reviewer.is_apply_staff
         ]
+
+    def partners_updated_applicant(self, added, removed, **kwargs):
+        if added:
+            return self.render_message(
+                'messages/email/partners_update_applicant.html',
+                added=added,
+                **kwargs
+            )
+
+    def partners_updated_partner(self, added, removed, **kwargs):
+        for partner in added:
+            return self.render_message('messages/email/partners_update_partner.html', **kwargs)
 
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)

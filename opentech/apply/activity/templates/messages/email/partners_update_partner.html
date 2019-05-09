@@ -1,0 +1,9 @@
+{% extends "messages/email/base.html" %}
+{% block salutation %}Dear Partner,{% endblock %}
+
+{% block content %}
+You have been added as a partner the following submission.
+
+Title: {{ submission.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% endblock %}

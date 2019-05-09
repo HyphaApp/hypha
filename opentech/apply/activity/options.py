@@ -15,6 +15,7 @@ class MESSAGES(Enum):
     REVIEWERS_UPDATED = 'Reviewers Updated'
     BATCH_REVIEWERS_UPDATED = 'Batch Reviewers Updated'
     PARTNERS_UPDATED = 'Partners Updated'
+    PARTNERS_UPDATED_PARTNER = 'Partners Updated Partner'
     READY_FOR_REVIEW = 'Ready For Review'
     BATCH_READY_FOR_REVIEW = 'Batch Ready For Review'
     NEW_REVIEW = 'New Review'
