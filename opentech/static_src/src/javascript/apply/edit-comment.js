@@ -97,9 +97,11 @@
         $(el).closest(editBlock).siblings(comment).show();
     };
 
-    // TODO - parse date
     const updateLastEdited = (el, date) => {
-        $(el).closest(feedContent).find(lastEdited).html(date);
+        const parsedDate = new Date(date).toISOString().split('T')[0];
+        const time = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+        $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
     const updateComment = (el, id, newComment) => {
