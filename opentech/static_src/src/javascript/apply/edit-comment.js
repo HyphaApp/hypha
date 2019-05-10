@@ -57,6 +57,8 @@
         const commentContainer = $(this).closest(editBlock).siblings(comment);
         const id = $(commentContainer).attr('data-id');
         const editedComment = $(this).closest(pageDown).find('.wmd-preview').html();
+        const commentMD = $(this).closest(editBlock).find('textarea').val();
+        $(commentContainer).attr('data-comment', commentMD);
 
         // TODO - get correct URL
         const url = `${window.location.origin}/apply/api/comments/${id}/edit/`;
@@ -105,7 +107,8 @@
     };
 
     const updateComment = (el, id, newComment) => {
-        $(el).html(newComment).data('comment', newComment).data('id', id);
+        $(el).attr('data-id', id);
+        $(el).html(newComment);
     };
 
     const closeAllEditors = () => {
