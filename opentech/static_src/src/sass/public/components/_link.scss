@@ -1,8 +1,13 @@
 .link {
+    &:disabled,
+    &.is-disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
     &--button {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
-
 
         &--narrow {
             @include button--narrow;
