@@ -113,11 +113,11 @@
         $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
-    const updateComment = (el, id, newComment, editUrl, newCommentMD) => {
+    const updateComment = (el, id, comment, editUrl, commentMarkdown) => {
+        $(el).html(comment);
         $(el).attr('data-id', id);
-        $(el).html(newComment);
-        $(el).attr('data-comment', newCommentMD);
         $(el).attr('data-edit-url', editUrl);
+        $(el).attr('data-comment', commentMarkdown);
     };
 
     const closeAllEditors = () => {
