@@ -9,6 +9,7 @@
     const lastEdited = '.js-last-edited';
     const editButton = '.js-edit-comment';
     const feedContent = '.js-feed-content';
+    const commentError = '.js-comment-error';
     const cancelEditButton = '.js-cancel-edit';
     const submitEditButton = '.js-submit-edit';
 
@@ -50,6 +51,9 @@
         showComment(this);
         showEditButton(this);
         hidePageDownEditor(this);
+        if ((commentError).length) {
+            hideError();
+        }
     });
 
     // handle submit
@@ -58,7 +62,6 @@
         const id = $(commentContainer).attr('data-id');
         const editedComment = $(this).closest(pageDown).find('.wmd-preview').html();
         const commentMD = $(this).closest(editBlock).find('textarea').val();
-        $(commentContainer).attr('data-comment', commentMD);
 
         // TODO - get correct URL
         const url = `${window.location.origin}/apply/api/comments/${id}/edit/`;
@@ -72,8 +75,15 @@
             body: JSON.stringify({
                 message: editedComment
             })
-        }).then(response => response.json()).then(data => {
-            updateComment(commentContainer, data.id, data.message);
+        }).then(response => {
+            if (response.status === 404) {
+                $(this).closest(editBlock).append('<p class="wrapper--error js-comment-error"><b>Update unsuccessful</b>. This comment has been edited elsewhere - please refresh to get the latest updates.</p>');
+                $(this).attr('disabled', true);
+                return;
+            }
+            return response.json();
+        }).then(data => {
+            updateComment(commentContainer, data.id, data.message, commentMD);
             updateLastEdited(this, data.edited);
             showComment(this);
             showEditButton(this);
@@ -106,9 +116,10 @@
         $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
-    const updateComment = (el, id, newComment) => {
+    const updateComment = (el, id, newComment, newCommentMD) => {
         $(el).attr('data-id', id);
         $(el).html(newComment);
+        $(el).attr('data-comment', newCommentMD);
     };
 
     const closeAllEditors = () => {
@@ -116,5 +127,7 @@
         $(pageDown).remove();
         $(editButton).parent().show();
     };
+
+    const hideError = () => $(commentError).remove();
 
 })(jQuery);
