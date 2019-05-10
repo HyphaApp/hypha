@@ -82,7 +82,7 @@ class ActionManager(ActivityBaseManager):
 
 
 class Activity(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)

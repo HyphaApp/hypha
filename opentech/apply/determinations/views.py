@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView
@@ -135,6 +136,7 @@ class BatchDeterminationCreateView(CreateView):
                     # We keep a record of the message sent to the user in the comment
                     Activity.comments.create(
                         message=determination.stripped_message,
+                        timestamp=timezone.now(),
                         user=self.request.user,
                         submission=submission,
                         related_object=determination,
@@ -252,6 +254,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 # We keep a record of the message sent to the user in the comment
                 Activity.comments.create(
                     message=self.object.stripped_message,
+                    timestamp=timezone.now(),
                     user=self.request.user,
                     submission=self.submission,
                     related_object=self.object,
