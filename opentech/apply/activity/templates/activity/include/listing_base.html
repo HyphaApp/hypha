@@ -7,17 +7,21 @@
         <div class="feed__meta js-feed-meta">
             <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
             <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> – {{ activity.timestamp|date:"Y-m-d H:i" }}</p>
-            {% if activity.user == request.user %}
-                <p class="feed__meta-item feed__meta-item--edit-button">
-                    <a class="link link--edit-submission is-active js-edit-comment" href="#">
-                        Edit
-                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                    </a>
-                </p>
+
+            {% if editable %}
+                {% if activity.user == request.user %}
+                    <p class="feed__meta-item feed__meta-item--edit-button">
+                        <a class="link link--edit-submission is-active js-edit-comment" href="#">
+                            Edit
+                            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                        </a>
+                    </p>
+                {% endif %}
+                {% if activity.edited %}
+                    <p class="feed__meta-item feed__meta-item--last-edited">(Last edited: <span class="js-last-edited">{{ activity.edited|date:"Y-m-d H:i" }}</span>)</p>
+                {% endif %}
             {% endif %}
-            {% if activity.edited %}
-                <p class="feed__meta-item feed__meta-item--last-edited">(Last edited: <span class="js-last-edited">{{ activity.edited|date:"Y-m-d H:i" }}</span>)</p>
-            {% endif %}
+
             {% if activity.private %}
                 <p class="feed__meta-item feed__meta-item--right">
                     <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
@@ -25,16 +29,21 @@
                 </p>
             {% endif %}
         </div>
+
         <p class="feed__heading">
             {% if submission_title %}
                 updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
 
-            <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message|to_markdown}}">
-                {{ activity|display_for:request.user|submission_links|markdown|bleach }}
-            </div>
+            {% if editable %}
+                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message|to_markdown}}">
+                    {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+                </div>
 
-            <div class="js-edit-block" aria-live="polite"></div>
+                <div class="js-edit-block" aria-live="polite"></div>
+            {% else %}
+                {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+            {% endif %}
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}
