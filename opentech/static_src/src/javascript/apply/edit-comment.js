@@ -59,14 +59,11 @@
     // handle submit
     $(document).on('click', submitEditButton, function () {
         const commentContainer = $(this).closest(editBlock).siblings(comment);
-        const id = $(commentContainer).attr('data-id');
         const editedComment = $(this).closest(pageDown).find('.wmd-preview').html();
         const commentMD = $(this).closest(editBlock).find('textarea').val();
+        const editUrl = $(commentContainer).attr('data-edit-url');
 
-        // TODO - get correct URL
-        const url = `${window.location.origin}/apply/api/comments/${id}/edit/`;
-
-        fetch(url, {
+        fetch(editUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,7 +80,7 @@
             }
             return response.json();
         }).then(data => {
-            updateComment(commentContainer, data.id, data.message, commentMD);
+            updateComment(commentContainer, data.id, data.message, data.edit_url, commentMD);
             updateLastEdited(this, data.edited);
             showComment(this);
             showEditButton(this);
@@ -116,10 +113,11 @@
         $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
-    const updateComment = (el, id, newComment, newCommentMD) => {
+    const updateComment = (el, id, newComment, editUrl, newCommentMD) => {
         $(el).attr('data-id', id);
         $(el).html(newComment);
         $(el).attr('data-comment', newCommentMD);
+        $(el).attr('data-edit-url', editUrl);
     };
 
     const closeAllEditors = () => {

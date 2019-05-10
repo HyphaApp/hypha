@@ -36,7 +36,7 @@
             {% endif %}
 
             {% if editable %}
-                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message|to_markdown}}">
+                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message|to_markdown}}" data-edit-url="{% url 'funds:api:comments:edit' pk=activity.pk %}">
                     {{ activity|display_for:request.user|submission_links|markdown|bleach }}
                 </div>
 
