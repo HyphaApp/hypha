@@ -30,7 +30,7 @@
                 updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
             {% endif %}
 
-            <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message}}">
+            <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity.message|to_markdown}}">
                 {{ activity|display_for:request.user|submission_links|markdown|bleach }}
             </div>
 
