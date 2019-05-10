@@ -20,7 +20,7 @@
 
         const editBlockWrapper = $(this).closest(feedContent).find(editBlock);
         const commentWrapper = $(this).closest(feedContent).find(comment);
-        const commentContents = $(commentWrapper).data('comment');
+        const commentContents = $(commentWrapper).attr('data-comment');
 
         // hide the edit link and original comment
         $(this).parent().hide();
@@ -55,7 +55,7 @@
     // handle submit
     $(document).on('click', submitEditButton, function () {
         const commentContainer = $(this).closest(editBlock).siblings(comment);
-        const id = $(commentContainer).data('id');
+        const id = $(commentContainer).attr('data-id');
         const editedComment = $(this).closest(pageDown).find('.wmd-preview').html();
 
         // TODO - get correct URL
