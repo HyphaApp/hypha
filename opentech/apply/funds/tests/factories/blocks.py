@@ -46,7 +46,7 @@ class DurationBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_answer(cls, params=dict()):
-        choices = list(blocks.DurationBlock.DURATION_OPTIONS.keys())
+        choices = list(blocks.DurationBlock.DURATION_MONTH_OPTIONS.keys())
         return random.choice(choices)
 
 

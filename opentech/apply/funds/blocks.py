@@ -3,6 +3,8 @@ import json
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from wagtail.core import blocks
+
 from addressfield.fields import AddressField
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 from opentech.apply.stream_forms.blocks import FormFieldsBlock
@@ -103,7 +105,27 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
     name = 'duration'
     description = 'Duration'
 
-    DURATION_OPTIONS = {
+    WEEKS = 'weeks'
+    MONTHS = 'months'
+    DURATION_TYPE_CHOICES = (
+        (WEEKS, 'Weeks'),
+        (MONTHS, 'Months')
+    )
+    DURATION_WEEK_OPTIONS = {
+        1: "1 week",
+        2: "2 weeks",
+        3: "3 weeks",
+        4: "4 weeks",
+        5: "5 weeks",
+        6: "6 weeks",
+        7: "7 weeks",
+        8: "8 weeks",
+        9: "9 weeks",
+        10: "10 weeks",
+        11: "11 weeks",
+        12: "12 weeks",
+    }
+    DURATION_MONTH_OPTIONS = {
         1: "1 month",
         2: "2 months",
         3: "3 months",
@@ -120,14 +142,26 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
         24: "24 months",
     }
     field_class = forms.ChoiceField
+    duration_type = blocks.ChoiceBlock(
+        help_text=(
+            'Duration type is used to display duration choices in Weeks or Months in application forms. '
+            'Be careful, changing the duration type in the active round can result in data inconsistency.'
+        ),
+        choices=DURATION_TYPE_CHOICES, default=MONTHS,
+    )
 
-    def get_field_kwargs(self, *args, **kwargs):
-        field_kwargs = super().get_field_kwargs(*args, **kwargs)
-        field_kwargs['choices'] = self.DURATION_OPTIONS.items()
+    def get_field_kwargs(self, struct_value, *args, **kwargs):
+        field_kwargs = super().get_field_kwargs(struct_value, *args, **kwargs)
+        if struct_value['duration_type'] == self.WEEKS:
+            field_kwargs['choices'] = self.DURATION_WEEK_OPTIONS.items()
+        else:
+            field_kwargs['choices'] = self.DURATION_MONTH_OPTIONS.items()
         return field_kwargs
 
     def prepare_data(self, value, data, serialize):
-        return self.DURATION_OPTIONS[int(data)]
+        if value['duration_type'] == self.WEEKS:
+            return self.DURATION_WEEK_OPTIONS[int(data)]
+        return self.DURATION_MONTH_OPTIONS[int(data)]
 
     class Meta:
         icon = 'date'
