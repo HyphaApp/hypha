@@ -41,4 +41,15 @@
             border-left: 2px solid $color--dark-blue;
         }
     }
+
+    &__edit {
+        color: $color--dark-blue;
+        padding-left: 10px;
+        margin-left: 10px;
+        border-left: 2px solid $color--mid-grey;
+
+        svg {
+            fill: $color--dark-blue;
+        }
+    }
 }
