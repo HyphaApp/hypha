@@ -7,6 +7,7 @@ import {
     FAIL_FETCHING_NOTES,
     START_CREATING_NOTE_FOR_SUBMISSION,
     FAIL_CREATING_NOTE_FOR_SUBMISSION,
+    UPDATE_EDIT_NOTE,
 } from '@actions/notes';
 
 function notesFetching(state = false, action) {
@@ -114,10 +115,20 @@ function notesByID(state = {}, action) {
     }
 }
 
+function editingNote(state=false, action) {
+    switch (action.type) {
+        case UPDATE_EDIT_NOTE:
+            return action.value;
+        default:
+            return state;
+    }
+}
+
 export default combineReducers({
     byID: notesByID,
     isFetching: notesFetching,
     error: notesErrored,
     createError: notesFailedCreating,
     isCreating: notesCreating,
+    isEditing: editingNote,
 });

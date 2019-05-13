@@ -8,6 +8,7 @@ export default class NoteListingItem extends React.Component {
         user: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
         timestamp: PropTypes.string.isRequired,
+        handleEditNote: PropTypes.func.isRequired,
     };
 
     parseUser() {
@@ -21,12 +22,19 @@ export default class NoteListingItem extends React.Component {
     }
 
     render() {
-        const { timestamp, message } = this.props;
+        const { timestamp, message, handleEditNote } = this.props;
 
         return (
             <li className="note">
                 <p className="note__meta">
-                    <span>{this.parseUser()}</span>
+                    <span className="note__meta note__meta--inner">
+                        <span>{this.parseUser()}</span>
+                        <a onClick={() => handleEditNote()} className="note__edit" href="#">
+                            Edit
+                            <svg className="icon icon--pen"><use xlinkHref="#pen"></use></svg>
+                        </a>
+                    </span>
+
                     <span className="note__date">{timestamp}</span>
                 </p>
                 <div className="note__content" dangerouslySetInnerHTML={{__html: message}} />

@@ -7,6 +7,7 @@ export const FAIL_FETCHING_NOTES = 'FAIL_FETCHING_NOTES';
 export const START_FETCHING_NOTES = 'START_FETCHING_NOTES';
 export const UPDATE_NOTES = 'UPDATE_NOTES';
 export const UPDATE_NOTE = 'UPDATE_NOTE';
+export const UPDATE_EDIT_NOTE = 'UPDATE_EDIT_NOTE';
 
 export const START_CREATING_NOTE_FOR_SUBMISSION = 'START_CREATING_NOTE_FOR_SUBMISSION';
 export const FAIL_CREATING_NOTE_FOR_SUBMISSION = 'FAIL_CREATING_NOTE_FOR_SUBMISSION';
@@ -53,4 +54,9 @@ const fetchNewerNotes = (submissionID, latestID) => ({
         endpoint: api.fetchNewNotesForSubmission(submissionID, latestID),
     },
     submissionID,
+})
+
+export const handleEditNote = (value) => ({
+    type: UPDATE_EDIT_NOTE,
+    value
 })
