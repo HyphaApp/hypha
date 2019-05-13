@@ -7,9 +7,11 @@ register = template.Library()
 
 mistune_markdown = mistune.Markdown()
 
+
 @register.filter
 def markdown(value):
     return mistune_markdown(value)
+
 
 @register.filter
 def to_markdown(value):
