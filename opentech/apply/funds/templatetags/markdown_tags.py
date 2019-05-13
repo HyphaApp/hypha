@@ -13,4 +13,7 @@ def markdown(value):
 
 @register.filter
 def to_markdown(value):
+    # pass through markdown to ensure comment is a
+    # fully formed HTML block
+    value = markdown(value)
     return tomd.convert(value)
