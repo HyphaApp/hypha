@@ -1,57 +1,45 @@
 {% load review_tags %}
 <ul class="reviews-sidebar js-reviews-sidebar">
-    {% if reviews_exist %}
-        <li class="reviews-sidebar__item reviews-sidebar__item--header">
-            <div></div>
-            <div>{{ recommendation|traffic_light }}</div>
-            <div></div>
-        </li>
-    {% endif %}
+    <li class="reviews-sidebar__item reviews-sidebar__item--header">
+        <div></div>
+        <div>{{ recommendation|traffic_light }}</div>
+        <div></div>
+    </li>
 
-    {% if not assigned_staff %}
-        <li class="reviews-sidebar__no-reviews">No reviews yet</li>
-    {% endif %}
-
-    {% for review_data in reviews_block.role_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer role=review_data.role opinions=review_data.opinions %}
-    {% endfor %}
-
-    {% for review_data in reviews_block.staff_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer opinions=review_data.opinions %}
-    {% endfor %}
-
-    {% for review_data in reviews_block.role_not_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer role=review_data.role missing=True %}
-    {% endfor %}
-
-    {% for review_data in reviews_block.staff_not_reviewed %}
-        {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True %}
-    {% endfor %}
-
-    {% if reviews_block.partner_reviewed or reviews_block.partner_not_reviewed %}
+    {% if not staff_reviewers_exist %}
+        <li class="reviews-sidebar__no-reviews">No staff reviewers yet</li>
         <hr class="reviews-sidebar__split">
+    {% endif %}
 
-        {% for review_data in reviews_block.partner_reviewed %}
+    {% regroup assigned_reviewers by type as reviewers_list %}
+
+    {% for reviewer_type, reviewers in reviewers_list %}
+        {% if not forloop.first %}
+            {% ifchanged reviewer_type %}
+                <hr class="reviews-sidebar__split">
+            {% endifchanged %}
+        {% endif %}
+
+        {% for reviewer in reviewers %}
+            {% if reviewer_type.name in hidden_types %}
+                {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
+                {% if forloop.last %}
+                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></li>
+                {% endif %}
+             {% else %}
+                {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
+        {% for review_data in reviews_block.external_reviewed %}
             {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer opinions=review_data.opinions %}
         {% endfor %}
 
-        {% for review_data in reviews_block.partner_not_reviewed %}
-            {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True %}
+        {% for review_data in reviews_block.external_not_reviewed %}
+            {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True class="is-hidden" %}
         {% endfor %}
 
-    {% endif %}
-
-    {% if object.stage.has_external_review %}
-        {% if reviews_block.external_reviewed or reviews_block.external_not_reviewed %}
-            <hr class="reviews-sidebar__split">
-            {% for review_data in reviews_block.external_reviewed %}
-                {% include 'funds/includes/review_sidebar_item.html' with review=review_data.review reviewer=review_data.reviewer opinions=review_data.opinions %}
-            {% endfor %}
-            {% for review_data in reviews_block.external_not_reviewed %}
-            {% include 'funds/includes/review_sidebar_item.html' with reviewer=review_data.reviewer missing=True class="is-hidden" %}
-            {% endfor %}
-
-            <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></li>
-        {% endif %}
     {% endif %}
 </ul>

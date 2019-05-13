@@ -32,20 +32,19 @@ class AllActivityContextMixin:
 class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
+            # Do not prefetch on the related_object__author as the models
+            # are not homogeneous and this will fail
             'actions': Activity.actions.filter(submission=self.object).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__author',
                 'related_object__submission',
             ).visible_to(self.request.user),
             'comments': Activity.comments.filter(submission=self.object).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__author',
                 'related_object__submission',
             ).visible_to(self.request.user),
         }
-
         return super().get_context_data(**extra, **kwargs)
 
 

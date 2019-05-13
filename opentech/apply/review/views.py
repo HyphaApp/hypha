@@ -1,8 +1,7 @@
-from collections import defaultdict
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
@@ -18,7 +17,7 @@ from opentech.apply.review.blocks import RecommendationBlock, RecommendationComm
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.models import User
+from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
@@ -27,58 +26,38 @@ from .options import DISAGREE
 
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
-        assigned = self.object.assigned.order_by('role__order').select_related('reviewer')
-        reviews = self.object.reviews.submitted().select_related('author')
+        review_order = [
+            STAFF_GROUP_NAME,
+            COMMUNITY_REVIEWER_GROUP_NAME,
+            PARTNER_GROUP_NAME,
+            REVIEWER_GROUP_NAME,
+        ]
 
-        reviews_dict = {}
-        for review in reviews:
-            reviews_dict[review.author.pk] = review
-
-        # Get all the authors of opinions, these authors should not show up in the 'xxx_not_reviewed' lists
-        opinion_authors = User.objects.filter(pk__in=self.object.reviews.opinions().values('author')).distinct()
-
-        reviews_block = defaultdict(list)
-        for assigned_reviewer in assigned:
-            reviewer = assigned_reviewer.reviewer
-            role = assigned_reviewer.role
-            review = reviews_dict.get(reviewer.pk, None)
-            key = None
-            if role:
-                if review:
-                    key = 'role_reviewed'
-                elif reviewer not in opinion_authors:
-                    key = 'role_not_reviewed'
-            elif reviewer.is_apply_staff:
-                if review:
-                    key = 'staff_reviewed'
-                elif review not in opinion_authors:
-                    key = 'staff_not_reviewed'
-            elif reviewer.is_partner:
-                if review:
-                    key = 'partner_reviewed'
-                elif review not in opinion_authors:
-                    key = 'partner_not_reviewed'
-            else:
-                if review:
-                    key = 'external_reviewed'
-                else:
-                    key = 'external_not_reviewed'
-            if key:  # Do not add this reviewer to any list if they haven't reviewed but have left an opinion
-                review_info_dict = {
-                    'reviewer': reviewer,
-                    'review': review,
-                    'role': role,
-                }
-                reviews_block[key].append(review_info_dict)
+        ordering = [models.When(type__name=review_type, then=models.Value(i)) for i, review_type in enumerate(review_order)]
+        assigned_reviewers = self.object.assigned.annotate(
+            type_order=models.Case(
+                *ordering,
+                output_field=models.IntegerField(),
+            )
+        ).order_by(
+            'role__order',
+            'review',
+            'type_order'
+        ).select_related(
+            'reviewer',
+            'role',
+        )
+        if not self.object.stage.has_external_review:
+            assigned_reviewers = assigned_reviewers.staff()
 
         # Calculate the recommendation based on role and staff reviews
         recommendation = self.object.reviews.by_staff().recommendation()
 
         return super().get_context_data(
-            reviews_block=reviews_block,
+            hidden_types=[REVIEWER_GROUP_NAME],
+            staff_reviewers_exist=assigned_reviewers.staff().exists(),
+            assigned_reviewers=assigned_reviewers,
             recommendation=recommendation,
-            reviews_exist=reviews.count(),
-            assigned_staff=assigned.staff().exists(),
             **kwargs,
         )
 
@@ -160,7 +139,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         review = self.get_object()
         if review.author != self.request.user:
             consensus_form = ReviewOpinionForm(
-                instance=review.opinions.filter(author=self.request.user).first(),
+                instance=review.opinions.filter(author__reviewer=self.request.user).first(),
             )
         else:
             consensus_form = None

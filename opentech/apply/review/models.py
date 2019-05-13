@@ -13,6 +13,7 @@ from wagtail.core.fields import StreamField
 from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.models import User
+from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME
 
 from .blocks import (
     ReviewCustomFormFieldsBlock,
@@ -77,14 +78,17 @@ class ReviewQuerySet(models.QuerySet):
     def submitted(self):
         return self.filter(is_draft=False)
 
+    def _by_group(self, group):
+        return self.select_related('author__type').filter(author__type__name=group)
+
     def by_staff(self):
-        return self.submitted().filter(author__in=User.objects.staff())
+        return self.submitted()._by_group(STAFF_GROUP_NAME)
 
     def by_reviewers(self):
-        return self.submitted().filter(author__in=User.objects.reviewers())
+        return self.submitted()._by_group(REVIEWER_GROUP_NAME)
 
     def by_partners(self):
-        return self.submitted().filter(author__in=User.objects.partners())
+        return self.submitted()._by_group(PARTNER_GROUP_NAME)
 
     def staff_score(self):
         return self.by_staff().score()
@@ -203,7 +207,3 @@ class ReviewOpinion(models.Model):
     @property
     def opinion_display(self):
         return self.get_opinion_display()
-
-    def get_author_role(self):
-        assignment = self.review.submission.assigned.with_roles().filter(reviewer=self.author).first()
-        return assignment.role if assignment else None

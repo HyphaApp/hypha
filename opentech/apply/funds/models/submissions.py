@@ -28,7 +28,7 @@ from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import LIMIT_TO_STAFF, LIMIT_TO_REVIEWER_GROUPS, LIMIT_TO_PARTNERS, WorkflowHelpers
+from .utils import STAFF_GROUP_NAME, LIMIT_TO_STAFF, LIMIT_TO_REVIEWER_GROUPS, LIMIT_TO_PARTNERS, WorkflowHelpers
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -91,15 +91,16 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
-        qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
+        qs = self.select_related(reviews__author__reviewer)
+        qs = qs.filter(Q(status__in=user_review_statuses), ~Q(reviews__author__reviewer=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
-            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
+            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author__reviewer=user)
         return qs.distinct()
 
     def reviewed_by(self, user):
-        return self.filter(reviews__author=user)
+        return self.filter(reviews__author__reviewer=user)
 
     def partner_for(self, user):
         return self.filter(partners=user)
@@ -736,8 +737,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.filter(role__isnull=True)
 
     def staff(self):
-        User = get_user_model()
-        return self.filter(reviewer__in=User.objects.staff())
+        return self.filter(type__name=STAFF_GROUP_NAME)
 
 
 class AssignedReviewers(models.Model):
@@ -768,7 +768,7 @@ class AssignedReviewers(models.Model):
         unique_together = (('submission', 'role'), ('submission', 'reviewer'))
 
     def __str__(self):
-        return f'{self.reviewer} as {self.role}'
+        return f'{self.reviewer}'
 
     def __eq__(self, other):
         if not isinstance(other, models.Model):
