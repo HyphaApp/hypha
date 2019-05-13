@@ -22,6 +22,7 @@ export default class Listing extends React.Component {
         handleRetry: PropTypes.func,
         listRef: PropTypes.object,
         column: PropTypes.string,
+        isEditing: PropTypes.bool,
     };
 
     renderListItems() {
@@ -88,6 +89,7 @@ export default class Listing extends React.Component {
             items,
             column,
             listRef,
+            isEditing,
         } = this.props;
 
 
@@ -106,7 +108,7 @@ export default class Listing extends React.Component {
         return (
             <>
                 { isLoading && <InlineLoading /> }
-                <ul className={`listing listing--${column}`} ref={listRef}>
+                <ul className={`listing listing--${column} ${isEditing ? 'disabled' : ''}`} ref={listRef}>
                     {this.renderListItems()}
                 </ul>
             </>
