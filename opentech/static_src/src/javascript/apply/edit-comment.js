@@ -142,4 +142,11 @@
 
     const hideError = () => $(commentError).remove();
 
+    window.addEventListener('beforeunload', (e) => {
+        if ($(submitEditButton).length) {
+            e.preventDefault();
+            e.returnValue = 'It looks like you\'re still editing a comment. Are you sure you want to leave?';
+        }
+    });
+
 })(jQuery);
