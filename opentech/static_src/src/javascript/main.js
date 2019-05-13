@@ -3,9 +3,6 @@
 
     'use strict';
 
-    // Replace no-js with js class if js is enabled.
-    document.querySelector('html').classList.replace('no-js', 'js');
-
     let Search = class {
         static selector() {
             return '.js-search-toggle';
