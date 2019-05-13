@@ -51,7 +51,7 @@
         showComment(this);
         showEditButton(this);
         hidePageDownEditor(this);
-        if ((commentError).length) {
+        if ($(commentError).length) {
             hideError();
         }
     });
