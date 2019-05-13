@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { CSSTransition } from 'react-transition-group';
 
 import useInterval from "@rooks/use-interval"
 
@@ -37,13 +36,7 @@ const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage,
         }
     }
 
-    const renderItem = noteID => {
-        return (
-            <CSSTransition key={`note-${noteID}`} timeout={200} classNames="add-note">
-                <Note key={`note-${noteID}`} noteID={noteID} />
-            </CSSTransition>
-        );
-    }
+    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} />;
 
     return (
         <Listing
