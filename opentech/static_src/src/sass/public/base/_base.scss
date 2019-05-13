@@ -89,7 +89,7 @@ ol {
 
 .no-js-hidden,
 %no-js-hidden {
-    html.nojs & {
+    html.no-js & {
         @extend %is-hidden;
     }
 }

@@ -3,6 +3,9 @@
 
     'use strict';
 
+    // Replace no-js with js class if js is enabled.
+    document.querySelector('html').classList.replace('no-js', 'js');
+
     let Search = class {
         static selector() {
             return '.js-search-toggle';
@@ -104,9 +107,6 @@
         }
     };
 
-    // Replace no-js with js class if js is enabled.
-    document.querySelector('html').classList.replace('no-js', 'js');
-
     $(MobileMenu.selector()).each((index, el) => {
         new MobileMenu($(el), $('.js-mobile-menu-close'), $('.header__menus--mobile'), $('.header__search'));
     });
@@ -155,4 +155,5 @@
         const adminbarHeight = $('.admin-bar').outerHeight();
         document.documentElement.style.setProperty('--header-admin-height', headerHeight + adminbarHeight + 'px');
     });
+
 })(jQuery);
