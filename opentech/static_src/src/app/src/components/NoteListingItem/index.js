@@ -9,6 +9,7 @@ export default class NoteListingItem extends React.Component {
         message: PropTypes.string.isRequired,
         timestamp: PropTypes.string.isRequired,
         handleEditNote: PropTypes.func.isRequired,
+        disabled: PropTypes.bool,
     };
 
     parseUser() {
@@ -22,10 +23,10 @@ export default class NoteListingItem extends React.Component {
     }
 
     render() {
-        const { timestamp, message, handleEditNote } = this.props;
+        const { timestamp, message, handleEditNote, disabled } = this.props;
 
         return (
-            <li className="note">
+            <li className={`note ${disabled ? 'disabled' : ''}`}>
                 <p className="note__meta">
                     <span className="note__meta note__meta--inner">
                         <span>{this.parseUser()}</span>

@@ -13,11 +13,6 @@
         text-align: center;
     }
 
-    &.disabled {
-        opacity: .5;
-        pointer-events: none;
-    }
-
     // ensures the last item will be at the top of the column after navigating to it via the dropdown
     &--applications {
         padding-bottom: calc(100vh - var(--last-listing-item-height) - #{$listing-header-height});

@@ -12,7 +12,7 @@ import {
     getNotesErrorMessage,
     getNoteIDsForSubmissionOfID,
     getNotesFetchState,
-    getNoteEditingState
+    getNoteEditingStateForSubmission
 } from '@selectors/notes';
 
 
@@ -37,11 +37,10 @@ const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage
         }
     }
 
-    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} submissionID={submissionID} />;
+    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} submissionID={submissionID} disabled={!!editing} />;
 
     return (
         <Listing
-            editing={editing}
             isLoading={ isLoading }
             isErrored={ isErrored }
             errorMessage={ errorMessage }
@@ -73,7 +72,7 @@ const mapStateToProps = (state, ownProps) => ({
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
-    editing: getNoteEditingState(state),
+    editing: getNoteEditingStateForSubmission(ownProps.submissionID)(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

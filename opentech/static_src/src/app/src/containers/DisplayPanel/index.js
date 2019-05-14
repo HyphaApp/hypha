@@ -9,11 +9,13 @@ import {
     getCurrentSubmission,
     getCurrentSubmissionID,
 } from '@selectors/submissions'
+import { getNoteEditingStateForSubmission } from '@selectors/notes';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import ReviewInformation from '@containers/ReviewInformation'
 import ScreeningOutcome from '@containers/ScreeningOutcome'
 import AddNoteForm from '@containers/AddNoteForm'
+import EditNoteForm from '@containers/EditNoteForm'
 import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
 import Tabber, {Tab} from '@components/Tabber'
@@ -54,10 +56,9 @@ const DisplayPanel = props => {
         setCurrentStatus(status)
     })
 
-    const { windowSize: {windowWidth: width}  } = props;
-    const { clearSubmission } = props;
-
+    const { windowSize: { windowWidth: width }, clearSubmission, editing  } = props;
     const isMobile = width < 1024;
+    const isEditing = !!editing;
 
     let tabs = [
         <Tab button="Status" key="status">
@@ -68,7 +69,11 @@ const DisplayPanel = props => {
         </Tab>,
         <Tab button="Notes" key="note">
             <NoteListing submissionID={submissionID} />
-            <AddNoteForm submissionID={submissionID} />
+            {isEditing ? (
+                    <EditNoteForm submissionID={submissionID} />
+                ) : (
+                    <AddNoteForm submissionID={submissionID} />
+            )}
         </Tab>
     ]
 
@@ -111,11 +116,13 @@ DisplayPanel.propTypes = {
     clearSubmission: PropTypes.func.isRequired,
     windowSize: PropTypes.objectOf(PropTypes.number),
     addMessage: PropTypes.func,
+    editing: PropTypes.object,
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
     submissionID: getCurrentSubmissionID(state),
     submission: getCurrentSubmission(state),
+    editing: getNoteEditingStateForSubmission(ownProps.submissionID)(state),
 })
 
 const mapDispatchToProps = {

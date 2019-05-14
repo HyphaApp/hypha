@@ -122,7 +122,7 @@ function editingNote(state={}, action) {
                 ...state,
                 [action.submissionID] : {
                     id: action.messageID,
-                    text: action.message,
+                    message: action.message,
                 },
             };
         default:

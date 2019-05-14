@@ -10,6 +10,7 @@ class Note extends React.Component {
     static propTypes = {
         handleEditNote: PropTypes.func,
         submissionID: PropTypes.number,
+        disabled: PropTypes.bool,
         note: PropTypes.shape({
             user: PropTypes.string,
             timestamp: PropTypes.string,
@@ -18,11 +19,12 @@ class Note extends React.Component {
     };
 
     render() {
-        const { note, handleEditNote } = this.props;
+        const { note, handleEditNote, disabled } = this.props;
 
         const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
 
         return <NoteListingItem
+                disabled={disabled}
                 user={note.user}
                 message={note.message}
                 timestamp={date}
