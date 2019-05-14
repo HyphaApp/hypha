@@ -9,6 +9,7 @@ import { handleEditNote } from '@actions/notes';
 class Note extends React.Component {
     static propTypes = {
         handleEditNote: PropTypes.func,
+        submissionID: PropTypes.number,
         note: PropTypes.shape({
             user: PropTypes.string,
             timestamp: PropTypes.string,
@@ -25,18 +26,17 @@ class Note extends React.Component {
                 user={note.user}
                 message={note.message}
                 timestamp={date}
-                handleEditNote={handleEditNote}
+                handleEditNote={() => handleEditNote(note.message)}
         />;
     }
-
 }
 
 const mapStateToProps = (state, ownProps) => ({
     note: getNoteOfID(ownProps.noteID)(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-    handleEditNote: () => dispatch(handleEditNote(true)),
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    handleEditNote: (message) => dispatch(handleEditNote(ownProps.noteID, ownProps.submissionID, message)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Note);

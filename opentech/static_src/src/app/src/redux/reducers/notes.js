@@ -115,10 +115,16 @@ function notesByID(state = {}, action) {
     }
 }
 
-function editingNote(state=false, action) {
+function editingNote(state={}, action) {
     switch (action.type) {
         case UPDATE_EDIT_NOTE:
-            return action.value;
+            return {
+                ...state,
+                [action.submissionID] : {
+                    id: action.messageID,
+                    text: action.message,
+                },
+            };
         default:
             return state;
     }
@@ -130,5 +136,5 @@ export default combineReducers({
     error: notesErrored,
     createError: notesFailedCreating,
     isCreating: notesCreating,
-    isEditing: editingNote,
+    editing: editingNote,
 });

@@ -16,8 +16,7 @@ import {
 } from '@selectors/notes';
 
 
-const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading, isEditing }) => {
-
+const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading, editing }) => {
     const fetchNotes = () => loadNotes(submissionID)
 
     const {start, stop } = useInterval(fetchNotes, 30000)
@@ -38,11 +37,11 @@ const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage
         }
     }
 
-    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} />;
+    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} submissionID={submissionID} />;
 
     return (
         <Listing
-            isEditing={isEditing}
+            editing={editing}
             isLoading={ isLoading }
             isErrored={ isErrored }
             errorMessage={ errorMessage }
@@ -61,7 +60,7 @@ NoteListing.propTypes = {
     isErrored: PropTypes.bool,
     errorMessage: PropTypes.string,
     isLoading: PropTypes.bool,
-    isEditing: PropTypes.bool,
+    editing: PropTypes.object,
 };
 
 
@@ -74,7 +73,7 @@ const mapStateToProps = (state, ownProps) => ({
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
-    isEditing: getNoteEditingState(state),
+    editing: getNoteEditingState(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

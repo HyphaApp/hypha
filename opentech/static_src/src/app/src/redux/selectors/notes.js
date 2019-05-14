@@ -36,4 +36,4 @@ export const getNoteCreatingStateForSubmission = submissionID => createSelector(
     [getNoteCreatingState], creatingStates => creatingStates.includes(submissionID)
 );
 
-export const getNoteEditingState = state => state.notes.isEditing;
+export const getNoteEditingState = state => state.notes.editing

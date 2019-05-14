@@ -56,7 +56,9 @@ const fetchNewerNotes = (submissionID, latestID) => ({
     submissionID,
 })
 
-export const handleEditNote = (value) => ({
+export const handleEditNote = (messageID, submissionID, message) => ({
     type: UPDATE_EDIT_NOTE,
-    value
+    messageID,
+    submissionID,
+    message
 })
