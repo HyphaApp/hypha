@@ -8,6 +8,10 @@ import {
     START_CREATING_NOTE_FOR_SUBMISSION,
     FAIL_CREATING_NOTE_FOR_SUBMISSION,
     UPDATE_EDIT_NOTE,
+    START_EDITING_NOTE_FOR_SUBMISSION,
+    EDIT_NOTE,
+    FAIL_EDITING_NOTE_FOR_SUBMISSION
+
 } from '@actions/notes';
 
 function notesFetching(state = false, action) {
@@ -125,6 +129,13 @@ function editingNote(state={}, action) {
                     message: action.message,
                 },
             };
+        case START_EDITING_NOTE_FOR_SUBMISSION:
+        case EDIT_NOTE:
+            return {
+                ...state,
+                ...action.data,
+            }
+        case FAIL_EDITING_NOTE_FOR_SUBMISSION:
         default:
             return state;
     }

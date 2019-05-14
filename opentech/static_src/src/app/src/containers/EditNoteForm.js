@@ -43,9 +43,9 @@ class EditNoteForm extends React.Component {
     }
 
     onSubmit = (message, resetEditor) => {
-        this.props.submitNote(this.props.submissionID, {
+        this.props.submitNote({
+            ...this.props.editing,
             message,
-            visibility: 'internal',
         }).then(() => resetEditor());
     }
 }
@@ -55,8 +55,8 @@ const mapStateToProps = (state, ownProps) => ({
     isCreating: getNoteCreatingStateForSubmission(ownProps.submissionID)(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-    submitNote: (submissionID, note) => dispatch(createNoteForSubmission(submissionID, note)),
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    submitNote: (note) => dispatch(editNoteForSubmission(note)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditNoteForm);
