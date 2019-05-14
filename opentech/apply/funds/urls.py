@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from .views import (
     RevisionCompareView,
@@ -12,6 +12,7 @@ from .views import (
     SubmissionOverviewView,
     SubmissionSealedView,
     SubmissionDeleteView,
+    SubmissionPrivateMediaRedirectView,
 )
 from .api_views import (
     CommentEdit,
@@ -36,6 +37,7 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    re_path('documents/(.*)$', SubmissionPrivateMediaRedirectView.as_view(), name='private_media_redirect'),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),

@@ -1,8 +1,10 @@
 from copy import copy
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.core.files.storage import get_storage_class
 from django.db.models import Count, F, Q
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
@@ -10,7 +12,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView
+from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView, RedirectView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -812,3 +814,24 @@ class SubmissionDeleteView(DeleteView):
         )
         response = super().delete(request, *args, **kwargs)
         return response
+
+
+@method_decorator(login_required, name='dispatch')
+class SubmissionPrivateMediaRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        try:
+            file_name = args[0]
+            submission_id = int(file_name.split('/')[1])
+        except (IndexError, ValueError):
+            raise Http404
+
+        try:
+            ApplicationSubmission.objects.get(id=submission_id)
+        except ApplicationSubmission.DoesNotExist:
+            raise Http404
+
+        # If user can access submission detail view then show the media
+        can_access_detail_view = SubmissionDetailView.as_view()(self.request, pk=submission_id)
+
+        submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
+        return submission_storage.url(file_name) if can_access_detail_view.status_code == 200 else None
