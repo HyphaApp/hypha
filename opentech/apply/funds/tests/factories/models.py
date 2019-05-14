@@ -25,10 +25,10 @@ from opentech.apply.funds.models.forms import (
     RoundBaseReviewForm,
 )
 from opentech.apply.funds.workflow import ConceptProposal, Request
-
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.home.factories import ApplyHomePageFactory
+from opentech.apply.stream_forms.testing.factories import FormDataFactory
+from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
+from opentech.apply.users.tests.factories import StaffFactory, UserFactory, GroupFactory
 
 from . import blocks
 
@@ -249,13 +249,11 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     @factory.post_generation
     def reviewers(self, create, reviewers, **kwargs):
         if create and reviewers:
-            AssignedReviewers.objects.bulk_create(
-                AssignedReviewers(
+            for reviewer in reviewers:
+                AssignedReviewers.objects.get_or_create_for_user(
                     reviewer=reviewer,
                     submission=self,
-                    role=None
-                ) for reviewer in reviewers
-            )
+                )
 
 
 class ReviewerRoleFactory(factory.DjangoModelFactory):
@@ -269,10 +267,15 @@ class ReviewerRoleFactory(factory.DjangoModelFactory):
 class AssignedReviewersFactory(factory.DjangoModelFactory):
     class Meta:
         model = AssignedReviewers
+        django_get_or_create = ('submission', 'reviewer')
+
+    class Params:
+        staff = factory.Trait(type=factory.SubFactory(GroupFactory, name=STAFF_GROUP_NAME))
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     role = None
     reviewer = factory.SubFactory(StaffFactory)
+    type = factory.SubFactory(GroupFactory, name=REVIEWER_GROUP_NAME)
 
 
 class AssignedWithRoleReviewersFactory(AssignedReviewersFactory):

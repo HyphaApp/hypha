@@ -12,7 +12,7 @@ from django.views.generic import CreateView, ListView, DetailView, DeleteView
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.funds.models import ApplicationSubmission, AssignedReviewers
 from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -78,7 +78,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     template_name = 'review/review_form.html'
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, author=self.request.user)
+        return self.model.objects.get(submission=self.submission, author__reviewer=self.request.user)
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -115,13 +115,18 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
     def form_valid(self, form):
         form.instance.form_fields = self.get_defined_fields()
+        form.instance.author, _ = AssignedReviewers.objects.get_or_create_for_user(
+            submission=self.submission,
+            reviewer=self.request.user,
+        )
+
         response = super().form_valid(form)
 
         if not self.object.is_draft:
             messenger(
                 MESSAGES.NEW_REVIEW,
                 request=self.request,
-                user=self.object.author,
+                user=self.request.user,
                 submission=self.submission,
                 related=self.object,
             )
@@ -137,7 +142,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         review = self.get_object()
-        if review.author != self.request.user:
+        if review.author.reviewer != self.request.user:
             consensus_form = ReviewOpinionForm(
                 instance=review.opinions.filter(author__reviewer=self.request.user).first(),
             )
@@ -190,7 +195,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         self.object = self.get_object()
         kwargs = super().get_form_kwargs()
         instance = kwargs['instance']
-        kwargs['instance'] = instance.opinions.filter(author=self.request.user).first()
+        kwargs['instance'] = instance.opinions.filter(author__reviewer=self.request.user).first()
         return kwargs
 
     def test_func(self):
@@ -219,7 +224,11 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         self.review = self.get_object()
-        form.instance.author = self.request.user
+        author, _ = AssignedReviewers.objects.get_or_create_staff(
+            submission=self.review.submission,
+            reviewer=self.request.user,
+        )
+        form.instance.author = author
         form.instance.review = self.review
         response = super().form_valid(form)
         opinion = form.instance

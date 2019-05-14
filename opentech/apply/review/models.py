@@ -1,9 +1,6 @@
-from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +9,6 @@ from wagtail.core.fields import StreamField
 
 from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.stream_forms.models import BaseStreamForm
-from opentech.apply.users.models import User
 from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME
 
 from .blocks import (
@@ -178,18 +174,6 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     @cached_property
     def reviewer_visibility(self):
         return self.visibility == REVIEWER
-
-
-@receiver(post_save, sender=Review)
-def update_submission_reviewers_list(sender, **kwargs):
-    from opentech.apply.funds.models import AssignedReviewers
-    review = kwargs.get('instance')
-
-    # Make sure the reviewer is in the reviewers list on the submission
-    AssignedReviewers.objects.get_or_create(
-        submission=review.submission,
-        reviewer=review.author,
-    )
 
 
 class ReviewOpinion(models.Model):

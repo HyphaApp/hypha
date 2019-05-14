@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import json
 
-from django.test import TestCase
 from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, INTERNAL
@@ -289,7 +288,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         AssignedWithRoleReviewersFactory(role=self.roles[0], submission=submission, reviewer=self.staff[0])
 
         # Add a review from that staff reviewer
-        ReviewFactory(submission=submission, author=self.staff[0])
+        ReviewFactory(submission=submission, author__reviewer=self.staff[0], author__staff=True)
 
         # Assign a different reviewer to the same role
         self.post_form(submission, reviewer_roles=[self.staff[1]])
@@ -300,68 +299,30 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     def test_can_be_made_role_and_not_duplciated(self):
         submission = ApplicationSubmissionFactory()
 
-        ReviewFactory(submission=submission, author=self.staff[0])
+        ReviewFactory(submission=submission, author__reviewer=self.staff[0], author__staff=True)
 
         self.post_form(submission, reviewer_roles=[self.staff[0]])
         self.assertCountEqual(submission.reviewers.all(), [self.staff[0]])
 
     def test_can_remove_external_reviewer_and_review_remains(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
+        submission = InvitedToProposalFactory(lead=self.user)
         reviewer = self.reviewers[0]
         AssignedReviewersFactory(submission=submission, reviewer=reviewer)
-        ReviewFactory(submission=submission, author=reviewer)
+        ReviewFactory(submission=submission, author__reviewer=reviewer)
 
-        # Assign a different reviewer to the same role
         self.post_form(submission, reviewers=[])
 
         self.assertCountEqual(submission.reviewers.all(), [reviewer])
 
-
-class TestPostSaveOnReview(TestCase):
-    def test_external_reviewer_exists_after_review(self):
-        reviewer = ReviewerFactory()
-        submission = ApplicationSubmissionFactory()
-
-        # Add a review from a new reviewer who isn't assigned
-        ReviewFactory(submission=submission, author=reviewer)
-
-        self.assertCountEqual(submission.reviewers.all(), [reviewer])
-
-    def test_assigned_external_reviewer_exists_after_review(self):
-        reviewer = ReviewerFactory()
-        submission = ApplicationSubmissionFactory()
-
-        # Add a review from a new reviewer who is assigned
+    def test_can_add_external_reviewer_and_review_remains(self):
+        submission = InvitedToProposalFactory(lead=self.user)
+        reviewer = self.reviewers[0]
         AssignedReviewersFactory(submission=submission, reviewer=reviewer)
-        ReviewFactory(submission=submission, author=reviewer)
+        ReviewFactory(submission=submission, author__reviewer=reviewer)
 
-        self.assertCountEqual(submission.reviewers.all(), [reviewer])
+        self.post_form(submission, reviewers=[self.reviewers[1]])
 
-    def test_staff_reviewer_exists_after_submitting_review(self):
-        staff = StaffFactory()
-        submission = ApplicationSubmissionFactory()
-
-        ReviewFactory(submission=submission, author=staff)
-
-        self.assertCountEqual(submission.reviewers.all(), [staff])
-
-    def test_assigned_staff_reviewer_exists_after_review(self):
-        staff = StaffFactory()
-        submission = ApplicationSubmissionFactory()
-
-        AssignedReviewersFactory(submission=submission, reviewer=staff)
-        ReviewFactory(submission=submission, author=staff)
-
-        self.assertCountEqual(submission.reviewers.all(), [staff])
-
-    def test_role_reviewer_exists_after_review(self):
-        staff = StaffFactory()
-        submission = ApplicationSubmissionFactory()
-
-        AssignedWithRoleReviewersFactory(submission=submission, reviewer=staff)
-        ReviewFactory(submission=submission, author=staff)
-
-        self.assertCountEqual(submission.reviewers.all(), [staff])
+        self.assertCountEqual(submission.reviewers.all(), [reviewer, self.reviewers[1]])
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):

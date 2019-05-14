@@ -3,6 +3,7 @@ from functools import partialmethod
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -28,7 +29,15 @@ from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import STAFF_GROUP_NAME, LIMIT_TO_STAFF, LIMIT_TO_REVIEWER_GROUPS, LIMIT_TO_PARTNERS, WorkflowHelpers
+from .utils import (
+    LIMIT_TO_STAFF,
+    LIMIT_TO_REVIEWER_GROUPS,
+    LIMIT_TO_PARTNERS,
+    REVIEW_GROUPS,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+    WorkflowHelpers,
+)
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -91,7 +100,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
-        qs = self.select_related(reviews__author__reviewer)
+        qs = self.prefetch_related('reviews__author__reviewer')
         qs = qs.filter(Q(status__in=user_review_statuses), ~Q(reviews__author__reviewer=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
@@ -577,9 +586,9 @@ class ApplicationSubmission(
 
     @property
     def missing_reviewers(self):
-        reviews_submitted = self.reviews.submitted().values('author')
-        reviewers = self.reviewers.exclude(id__in=reviews_submitted)
-        partners = self.partners.exclude(id__in=reviews_submitted)
+        reviewers_submitted = self.assigned.reviewed().values('reviewer')
+        reviewers = self.reviewers.exclude(id__in=reviewers_submitted)
+        partners = self.partners.exclude(id__in=reviewers_submitted)
         return reviewers | partners
 
     @property
@@ -595,7 +604,7 @@ class ApplicationSubmission(
         return self.missing_reviewers.partners().exclude(id__in=self.staff_not_reviewed)
 
     def reviewed_by(self, user):
-        return self.reviews.submitted().filter(author=user).exists()
+        return self.assigned.reviewed().filter(reviewer=user).exists()
 
     def has_permission_to_review(self, user):
         if user.is_apply_staff:
@@ -736,8 +745,80 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def without_roles(self):
         return self.filter(role__isnull=True)
 
+    def reviewed(self):
+        return self.filter(
+            Q(opinions__isnull=False) | Q(Q(review__isnull=False) & Q(review__is_draft=False))
+        ).distinct()
+
+    def not_reviewed(self):
+        return self.filter(
+            Q(review__isnull=True) | Q(review__is_draft=True),
+            opinions__isnull=True,
+        ).distinct()
+
+    def never_tried_to_review(self):
+        # Different from not reviewed as draft reviews allowed
+        return self.filter(
+            review__isnull=True,
+            opinions__isnull=True,
+        ).distinct()
+
     def staff(self):
         return self.filter(type__name=STAFF_GROUP_NAME)
+
+    def get_or_create_for_user(self, submission, reviewer):
+        groups = set(reviewer.groups.values_list('name', flat=True)) & set(REVIEW_GROUPS)
+        if len(groups) > 1:
+            if PARTNER_GROUP_NAME in groups and reviewer in submission.partners.all():
+                groups = {PARTNER_GROUP_NAME}
+            elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
+                groups = {COMMUNITY_REVIEWER_GROUP_NAME}
+            elif review.author.is_staff:
+                groups = {STAFF_GROUP_NAME}
+            else:
+                groups = {REVIEWER_GROUP_NAME}
+        elif not groups:
+            groups = {REVIEWER_GROUP_NAME}
+
+        group = Group.objects.get(name=groups.pop())
+
+        return self.get_or_create(
+            submission=submission,
+            reviewer=reviewer,
+            type=group,
+        )
+
+    def get_or_create_staff(self, submission, reviewer):
+        return self.get_or_create(
+            submission=submission,
+            reviewer=reviewer,
+            type=Group.objects.get(name=STAFF_GROUP_NAME),
+        )
+
+    def bulk_create_reviewers(self, reviewers, submission):
+        group = Group.objects.get(name=REVIEWER_GROUP_NAME)
+        self.bulk_create(
+            self.model(
+                submission=submission,
+                role=None,
+                reviewer=reviewer,
+                type=group,
+            ) for reviewer in reviewers
+        )
+
+    def update_role(self, role, reviewer, *submissions):
+        # Remove role who didn't review
+        self.filter(submission__in=submissions, role=role).never_tried_to_review().delete()
+        # Anyone else we remove their role
+        self.filter(submission__in=submissions, role=role).update(role=None)
+        # Create/update the new role reviewers
+        group = Group.objects.get(name=STAFF_GROUP_NAME)
+        for submission in submissions:
+            self.update_or_create(
+                submission=submission,
+                reviewer=reviewer,
+                defaults={'role': role, 'type': group},
+            )
 
 
 class AssignedReviewers(models.Model):

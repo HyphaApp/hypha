@@ -301,7 +301,7 @@ class TestActivityAdapter(TestCase):
         review = ReviewFactory()
         self.adapter.send_message(
             'a message',
-            user=review.author,
+            user=review.author.reviewer,
             submission=review.submission,
             submissions=[],
             related=review,

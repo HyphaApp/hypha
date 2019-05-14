@@ -109,8 +109,8 @@ class UpdateReviewersForm(forms.ModelForm):
             self.role_fields[field_name] = data['role']
             self.fields[field_name].initial = assigned_roles.get(data['role'])
 
-        self.submitted_reviewers = User.objects.filter(
-            id__in=self.instance.reviews.values('author'),
+        submitted_reviewers = User.objects.filter(
+            id__in=self.instance.assigned.reviewed().values('reviewer'),
         )
 
         if self.can_alter_external_reviewers(self.instance, self.user):
@@ -119,7 +119,7 @@ class UpdateReviewersForm(forms.ModelForm):
             self.prepare_field(
                 'reviewer_reviewers',
                 initial=reviewers,
-                excluded=self.submitted_reviewers
+                excluded=submitted_reviewers
             )
 
             # Move the non-role reviewers field to the end of the field list
@@ -156,7 +156,6 @@ class UpdateReviewersForm(forms.ModelForm):
         2. Update non-role reviewers
             2a. Remove those not on form
             2b. Add in any new non-role reviewers selected
-        3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form
         """
 
         # 1. Update role reviewers
@@ -166,42 +165,24 @@ class UpdateReviewersForm(forms.ModelForm):
         }
         for role, reviewer in assigned_roles.items():
             if reviewer:
-                AssignedReviewers.objects.filter(submission=instance, role=role).delete()
-                AssignedReviewers.objects.update_or_create(submission=instance, reviewer=reviewer, defaults={'role': role})
+                AssignedReviewers.objects.update_role(role, reviewer, instance)
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
         if self.can_alter_external_reviewers(self.instance, self.user):
             reviewers = self.cleaned_data.get('reviewer_reviewers')
             assigned_reviewers = instance.assigned.without_roles()
-            assigned_reviewers.exclude(
-                reviewer__in=reviewers | self.submitted_reviewers
+            assigned_reviewers.never_tried_to_review().exclude(
+                reviewer__in=reviewers
             ).delete()
 
             remaining_reviewers = assigned_reviewers.values_list('reviewer_id', flat=True)
 
             # 2b. Add in any new non-role reviewers selected
-            AssignedReviewers.objects.bulk_create(
-                AssignedReviewers(
-                    submission=instance,
-                    role=None,
-                    reviewer=reviewer
-                ) for reviewer in reviewers
-                if reviewer.id not in remaining_reviewers
+            AssignedReviewers.objects.bulk_create_reviewers(
+                [reviewer for reviewer in reviewers if reviewer.id not in remaining_reviewers],
+                instance,
             )
-
-        # 3. Add in anyone who has already reviewed but who is not selected as a reviewer on the form
-        orphaned_reviews = instance.reviews.exclude(
-            author__in=instance.assigned.values('reviewer')
-        ).select_related('author')
-
-        AssignedReviewers.objects.bulk_create(
-            AssignedReviewers(
-                submission=instance,
-                role=None,
-                reviewer=review.author
-            ) for review in orphaned_reviews
-        )
 
         return instance
 
@@ -247,43 +228,7 @@ class BatchUpdateReviewersForm(forms.Form):
         }
         for role, reviewer in assigned_roles.items():
             if reviewer:
-                existing_assignments = AssignedReviewers.objects.filter(
-                    submission__in=submissions,
-                    role=role,
-                )
-
-                about_to_be_orphaned = [
-                    [assigned.reviewer, assigned.submission]
-                    for assigned in existing_assignments
-                    if submissions.get(
-                        pk=assigned.submission.pk
-                    ).reviews.filter(author=assigned.reviewer).exists()
-                ]
-
-                # Being reassigned
-                AssignedReviewers.objects.filter(
-                    submission__in=submissions,
-                    role__isnull=False,
-                    reviewer=reviewer,
-                ).delete()
-
-                existing_assignments.update(reviewer=reviewer)
-
-                AssignedReviewers.objects.bulk_create(
-                    AssignedReviewers(
-                        role=role,
-                        reviewer=reviewer,
-                        submission=submission,
-                    ) for submission in submissions.exclude(pk__in=existing_assignments.values('submission'))
-                )
-
-                AssignedReviewers.objects.bulk_create(
-                    AssignedReviewers(
-                        role=None,
-                        reviewer=reviewer,
-                        submission=submission,
-                    ) for reviewer, submission in about_to_be_orphaned
-                )
+                AssignedReviewers.objects.update_role(role, reviewer, *submissions)
 
         return None
 

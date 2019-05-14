@@ -49,8 +49,8 @@ class TestReviewerFormQueries(TestCase):
 
         form = UpdateReviewersForm(user=user, instance=submission)
 
-        AssignedWithRoleReviewersFactory(role=roles[0], submission=submission, reviewer=staff[0])
-        AssignedWithRoleReviewersFactory(role=roles[1], submission=submission, reviewer=staff[1])
+        AssignedWithRoleReviewersFactory(role=roles[0], submission=submission, reviewer=staff[0], staff=True)
+        AssignedWithRoleReviewersFactory(role=roles[1], submission=submission, reviewer=staff[1], staff=True)
 
         data = {}
         for field, user in zip(form.fields, staff):
@@ -64,9 +64,17 @@ class TestReviewerFormQueries(TestCase):
         self.assertTrue(form.is_valid())
 
         # 1 - Submission
-        # 14 - 7 per role = 1 - delete  2 - savepoint  1 - get 1 - update 2 - release savepoint
-        # 1 - check - orphaned
-        with self.assertNumQueries(16):
+        # 24 - 12 per role =
+        #    1 - delete role no review
+        #    1 - select review
+        #    2 - cascades
+        #    1 - update role with review
+        #    1 - auth group
+        #    2 - savepoint
+        #    1 - get
+        #    1 - update
+        #    2 - release savepoint
+        with self.assertNumQueries(25):
             form.save()
 
     def test_queries_reviewers_swap(self):
@@ -85,11 +93,13 @@ class TestReviewerFormQueries(TestCase):
         self.assertTrue(form.is_valid())
 
         # 1 - Submission
-        # 1 - Delete old
+        # 1 - Select Review
+        # 2 - Cascase
+        # 1 - Fetch data
         # 1 - Cache existing
+        # 1 - auth group
         # 1 - Add new
-        # 1 - check - orphaned
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(8):
             form.save()
 
     def test_queries_existing_reviews(self):
@@ -98,8 +108,8 @@ class TestReviewerFormQueries(TestCase):
 
         reviewers = ReviewerFactory.create_batch(4)
 
-        ReviewFactory(submission=submission, author=reviewers[0])
-        ReviewFactory(submission=submission, author=reviewers[1])
+        ReviewFactory(submission=submission, author__reviewer=reviewers[0])
+        ReviewFactory(submission=submission, author__reviewer=reviewers[1])
 
         data = {'reviewer_reviewers': [reviewer.id for reviewer in reviewers[2:]]}
 
@@ -111,6 +121,5 @@ class TestReviewerFormQueries(TestCase):
         # 1 - Delete old
         # 1 - Cache existing
         # 1 - Add new
-        # 1 - check - orphaned
         with self.assertNumQueries(5):
             form.save()

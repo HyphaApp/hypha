@@ -1,6 +1,6 @@
 import factory
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, AssignedReviewersFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.users.tests.factories import StaffFactory
 
@@ -29,7 +29,7 @@ class ReviewFactory(factory.DjangoModelFactory):
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     revision = factory.SelfAttribute('submission.live_revision')
-    author = factory.SubFactory(StaffFactory)
+    author = factory.SubFactory(AssignedReviewersFactory, submission=factory.SelfAttribute('..submission'))
     form_fields = factory.LazyAttribute(lambda o: o.submission.round.review_forms.first().fields)
     form_data = factory.SubFactory(
         ReviewFormDataFactory,
@@ -49,7 +49,7 @@ class ReviewOpinionFactory(factory.DjangoModelFactory):
         opinion_disagree = factory.Trait(opinion=DISAGREE)
 
     review = factory.SubFactory(ReviewFactory)
-    author = factory.SubFactory(StaffFactory)
+    author = factory.SubFactory(AssignedReviewersFactory, staff=True, submission=factory.SelfAttribute('..review.submission'))
     opinion = DISAGREE
 
 
