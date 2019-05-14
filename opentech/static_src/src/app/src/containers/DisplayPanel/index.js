@@ -122,7 +122,7 @@ DisplayPanel.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     submissionID: getCurrentSubmissionID(state),
     submission: getCurrentSubmission(state),
-    editing: getNoteEditingStateForSubmission(ownProps.submissionID)(state),
+    editing: getNoteEditingStateForSubmission(getCurrentSubmissionID(state))(state),
 })
 
 const mapDispatchToProps = {
