@@ -30,7 +30,7 @@ export default class NoteListingItem extends React.Component {
                 <p className="note__meta">
                     <span className="note__meta note__meta--inner">
                         <span>{this.parseUser()}</span>
-                        <a onClick={() => handleEditNote()} className="note__edit" href="#">
+                        <a onClick={(e) => handleEditNote(e.preventDefault())} className="note__edit" href="#">
                             Edit
                             <svg className="icon icon--pen"><use xlinkHref="#pen"></use></svg>
                         </a>
