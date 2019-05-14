@@ -59,6 +59,8 @@ from .tables import (
 )
 from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
+
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
@@ -833,5 +835,4 @@ class SubmissionPrivateMediaRedirectView(RedirectView):
         # If user can access submission detail view then show the media
         can_access_detail_view = SubmissionDetailView.as_view()(self.request, pk=submission_id)
 
-        submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
         return submission_storage.url(file_name) if can_access_detail_view.status_code == 200 else None
