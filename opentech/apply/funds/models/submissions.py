@@ -22,7 +22,7 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.models import Determination
-from opentech.apply.review.models import Review, ReviewOpinion
+from opentech.apply.review.models import ReviewOpinion
 from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
@@ -30,9 +30,11 @@ from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
 from .utils import (
+    COMMUNITY_REVIEWER_GROUP_NAME,
     LIMIT_TO_STAFF,
     LIMIT_TO_REVIEWER_GROUPS,
     LIMIT_TO_PARTNERS,
+    PARTNER_GROUP_NAME,
     REVIEW_GROUPS,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
@@ -167,7 +169,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 output_field=IntegerField(),
             ),
             review_submitted_count=Subquery(
-                reviewers.reviewed().values('submission').annotate(count=Count('pk')).values('count'),
+                reviewers.reviewed().values('submission').annotate(count=Count('pk', distinct=True)).values('count'),
                 output_field=IntegerField(),
             ),
             review_recommendation=Case(
@@ -182,10 +184,18 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
             Prefetch(
-                'reviews', queryset=Review.objects.select_related('author').prefetch_related(
-                    Prefetch('opinions', queryset=ReviewOpinion.objects.select_related('author'))
-                )
+                'assigned',
+                queryset=AssignedReviewers.objects.reviewed().review_order().prefetch_related(
+                    Prefetch('opinions', queryset=ReviewOpinion.objects.select_related('author__reviewer'))
+                ),
+                to_attr='has_reviewed'
+            ),
+            Prefetch(
+                'assigned',
+                queryset=AssignedReviewers.objects.not_reviewed().staff(),
+                to_attr='hasnt_reviewed'
             )
+
         ).select_related(
             'page',
             'round',
@@ -758,6 +768,37 @@ class ApplicationRevision(AccessFormData, models.Model):
 
 
 class AssignedReviewersQuerySet(models.QuerySet):
+    def review_order(self):
+        review_order = [
+            STAFF_GROUP_NAME,
+            PARTNER_GROUP_NAME,
+            COMMUNITY_REVIEWER_GROUP_NAME,
+            REVIEWER_GROUP_NAME,
+        ]
+
+        ordering = [
+            models.When(type__name=review_type, then=models.Value(i))
+            for i, review_type in enumerate(review_order)
+        ]
+        return self.exclude(
+            # Remove people from the list who are opinionated but
+            # didn't review, they appear elsewhere
+            opinions__isnull=False,
+            review__isnull=True,
+        ).annotate(
+            type_order=models.Case(
+                *ordering,
+                output_field=models.IntegerField(),
+            )
+        ).order_by(
+            'role__order',
+            'type_order',
+            'review',
+        ).select_related(
+            'reviewer',
+            'role',
+        )
+
     def with_roles(self):
         return self.filter(role__isnull=False)
 

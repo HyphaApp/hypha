@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
@@ -17,7 +16,7 @@ from opentech.apply.review.blocks import RecommendationBlock, RecommendationComm
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
+from opentech.apply.users.groups import REVIEWER_GROUP_NAME
 from opentech.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
@@ -26,27 +25,8 @@ from .options import DISAGREE
 
 class ReviewContextMixin:
     def get_context_data(self, **kwargs):
-        review_order = [
-            STAFF_GROUP_NAME,
-            COMMUNITY_REVIEWER_GROUP_NAME,
-            PARTNER_GROUP_NAME,
-            REVIEWER_GROUP_NAME,
-        ]
+        assigned_reviewers = self.object.assigned.review_order()
 
-        ordering = [models.When(type__name=review_type, then=models.Value(i)) for i, review_type in enumerate(review_order)]
-        assigned_reviewers = self.object.assigned.annotate(
-            type_order=models.Case(
-                *ordering,
-                output_field=models.IntegerField(),
-            )
-        ).order_by(
-            'role__order',
-            'review',
-            'type_order'
-        ).select_related(
-            'reviewer',
-            'role',
-        )
         if not self.object.stage.has_external_review:
             assigned_reviewers = assigned_reviewers.staff()
 

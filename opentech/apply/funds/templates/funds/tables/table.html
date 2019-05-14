@@ -1,5 +1,5 @@
 {% extends 'django_tables2/table.html' %}
-{% load django_tables2 table_tags review_tags %}
+{% load django_tables2 table_tags review_tags wagtailimages_tags %}
 
 {% block table.tbody.row %}
     <tr {{ row.attrs.as_html }}>
@@ -36,20 +36,27 @@
                         <td>
                             <strong>{{ submission.screening_status|default:"Awaiting Screen status" }}</strong>
                         </td>
+
                         <td>
                             <ul class="list list--no-margin">
-                                {% for review in submission.reviews.submitted %}
+                                {% for reviewer in submission.has_reviewed %}
                                     <li class="list__item list__item--reviewer">
-                                        <span class="list__item--reviewer-name">{{ review.author }}</span>
-                                        <span class="list__item list__item--reviewer-outcome">{{ review.get_recommendation_display }}</span>
+                                        <span class="list__item--reviewer-name">
+                                            {{ reviewer }}
+                                            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                                        </span>
+                                        <span class="list__item list__item--reviewer-outcome">{{ reviewer.review.get_recommendation_display }}</span>
                                     </li>
-                                    {% for opinion in review.opinions.all %}
+                                    {% for opinion in reviewer.review.opinions.all %}
                                         {% if forloop.first %}
                                             <ul class="list list--opinion">
                                         {% endif %}
 
                                             <li class="list__item list__item--reviewer list__item--opinion">
-                                                <span class="list__item--reviewer-name">{{ opinion.author }}</span>
+                                                <span class="list__item--reviewer-name">
+                                                    {{ opinion.author }}
+                                                    {% if opinion.author.role %}{% image opinion.author.role.icon max-12x12 %}{% endif %}
+                                                </span>
                                                 <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display }}</span>
                                             </li>
 
@@ -58,9 +65,12 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endfor %}
-                                {% for reviewer in submission.staff_not_reviewed %}
+                                {% for reviewer in submission.hasnt_reviewed %}
                                     <li class="list__item list__item--reviewer">
-                                        <span class="list__item--reviewer-name">{{ reviewer }}</span>
+                                        <span class="list__item--reviewer-name">
+                                            {{ reviewer }}
+                                            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
+                                        </span>
                                         <span class="list__item list__item--reviewer-outcome">&mdash;</span>
                                     </li>
                                 {% endfor %}

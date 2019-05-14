@@ -1,5 +1,6 @@
 .list {
     $root: &;
+    max-width: 290px;
 
     &--no-margin {
         margin: 0;
@@ -12,7 +13,6 @@
         border-bottom: 1px solid $color--mid-grey;
         margin: 10px 0;
         padding: 5px 0;
-        max-width: 150px;
 
         #{$root}__item--opinion:first-child {
             span:last-child {
@@ -39,14 +39,19 @@
         &--reviewer {
             display: flex;
             justify-content: space-between;
-            max-width: 150px;
         }
 
         &--reviewer-name {
-            max-width: 100px;
+            max-width: 190px;
             overflow: hidden;
             font-weight: $weight--bold;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+
+            > img {
+                margin-left: 10px;
+            }
 
             // show truncated emails on hover
             &:hover {
