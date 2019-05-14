@@ -27,14 +27,14 @@
 
         <script>document.querySelector('html').classList.replace('no-js', 'js');</script>
 
-        <link rel="stylesheet" href="{% static 'normalize.css' %}">
+        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
         <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
         {# Hijack styling #}
         <link rel="stylesheet" href="{% static 'hijack/hijack-styles.css' %}" />
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
-        <script src="{% static 'jquery.min.js' %}"></script>
+        <script src="{% static 'js/jquery.min.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
