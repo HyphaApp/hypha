@@ -27,7 +27,7 @@ class EditNoteForm extends React.Component {
     };
 
     render() {
-        const { error, isCreating } = this.props;
+        const { error, isCreating, editing } = this.props;
 
         return (
             <>
@@ -36,6 +36,7 @@ class EditNoteForm extends React.Component {
                     disabled={isCreating}
                     onSubmit={this.onSubmit}
                     instance="add-note-form"
+                    editing={editing}
                 />
             </>
         );

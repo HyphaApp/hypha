@@ -70,7 +70,7 @@ const DisplayPanel = props => {
         <Tab button="Notes" key="note">
             <NoteListing submissionID={submissionID} />
             {isEditing ? (
-                    <EditNoteForm submissionID={submissionID} />
+                    <EditNoteForm submissionID={submissionID} editing={editing} />
                 ) : (
                     <AddNoteForm submissionID={submissionID} />
             )}

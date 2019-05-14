@@ -34,11 +34,20 @@ export default class RichTextForm extends React.Component {
         value: PropTypes.string,
         instance: PropTypes.string,
         onSubmit: PropTypes.func,
+        editing: PropTypes.object,
     };
 
     state = {
         value: RichTextEditor.createEmptyValue(),
     };
+
+    componentDidMount() {
+        const {editing} = this.props;
+
+        if (editing) {
+            this.setState({ value: RichTextEditor.createValueFromString(editing.message, 'html') });
+        }
+    }
 
     resetEditor = () => {
         this.setState({value: RichTextEditor.createEmptyValue()});
@@ -58,13 +67,22 @@ export default class RichTextForm extends React.Component {
                     editorClassName="add-note-form__editor"
                     toolbarConfig={toolbarConfig}
                 />
-                <button
-                    disabled={this.isEmpty() || disabled}
-                    onClick={this.handleSubmit}
-                    className={`button ${instance}__button`}
-                >
-                    Submit
-                </button>
+                <div>
+                    <button
+                        disabled={this.isEmpty() || disabled}
+                        onClick={this.handleSubmit}
+                        className={`button ${instance}__button`}
+                    >
+                        Submit
+                    </button>
+                    <button
+                        disabled={this.isEmpty() || disabled}
+                        onClick={this.resetEditor}
+                        className={`button ${instance}__button`}
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
         );
     }
