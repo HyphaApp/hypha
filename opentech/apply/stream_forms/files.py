@@ -61,7 +61,13 @@ class StreamFieldFile(File):
     @property
     def url(self):
         if self.is_submission:
-            return reverse('apply:submissions:private_media_redirect', args=[self.name])
+            name_parts = self.name.split('/')
+            return reverse(
+                'apply:submissions:private_media_redirect', kwargs={
+                    'submission_id': name_parts[1], 'field_id': name_parts[2],
+                    'file_name': name_parts[3]
+                }
+            )
         return self.storage.url(self.name)
 
     @property

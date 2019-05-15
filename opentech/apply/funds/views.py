@@ -2,6 +2,8 @@ from copy import copy
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
@@ -58,6 +60,7 @@ from .tables import (
     SummarySubmissionsTable,
 )
 from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
+from .permissions import is_user_has_access_to_view_submission
 
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
@@ -818,21 +821,28 @@ class SubmissionDeleteView(DeleteView):
         return response
 
 
-@method_decorator(login_required, name='dispatch')
-class SubmissionPrivateMediaRedirectView(RedirectView):
+class SubmissionPrivateMediaRedirectView(UserPassesTestMixin, RedirectView):
+
     def get_redirect_url(self, *args, **kwargs):
-        try:
-            file_name = args[0]
-            submission_id = int(file_name.split('/')[1])
-        except (IndexError, ValueError):
-            raise Http404
+        submission_id = kwargs['submission_id']
+        field_id = kwargs['field_id']
+        file_name = kwargs['file_name']
+        file_name_with_path = f'submission/{submission_id}/{field_id}/{file_name}'
 
-        try:
-            ApplicationSubmission.objects.get(id=submission_id)
-        except ApplicationSubmission.DoesNotExist:
-            raise Http404
+        return submission_storage.url(file_name_with_path)
 
-        # If user can access submission detail view then show the media
-        can_access_detail_view = SubmissionDetailView.as_view()(self.request, pk=submission_id)
+    def test_func(self):
+        submission_id = self.kwargs['submission_id']
+        submission = get_object_or_404(ApplicationSubmission, id=submission_id)
 
-        return submission_storage.url(file_name) if can_access_detail_view.status_code == 200 else None
+        return is_user_has_access_to_view_submission(self.request.user, submission)
+
+    def handle_no_permission(self):
+        # This method can be removed after upgrading Django to 2.1
+        # https://github.com/django/django/commit/9b1125bfc7e2dc747128e6e7e8a2259ff1a7d39f
+        # In older versions, authenticated users who lacked permissions were
+        # redirected to the login page (which resulted in a loop) instead of
+        # receiving an HTTP 403 Forbidden response.
+        if self.raise_exception or self.request.user.is_authenticated:
+            raise PermissionDenied(self.get_permission_denied_message())
+        return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
