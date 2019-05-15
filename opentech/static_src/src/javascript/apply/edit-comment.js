@@ -73,10 +73,12 @@
                 message: editedComment
             })
         }).then(response => {
-            if (response.status === 404) {
-                $(this).closest(editBlock).append('<p class="wrapper--error js-comment-error">Update unsuccessful. This comment has been edited elsewhere. To get the latest updates please refresh the page, but note any unsaved changes will be lost by doing so.</p>');
-                $(this).attr('disabled', true);
-                return;
+            if (!response.ok) {
+                const error = Object.assign({}, response, {
+                    status: response.status,
+                    statusText: response.statusText
+                });
+                return Promise.reject(error);
             }
             return response.json();
         }).then(data => {
@@ -85,8 +87,20 @@
             showComment(this);
             showEditButton(this);
             hidePageDownEditor(this);
+        }).catch((error) => {
+            if (error.status === 404) {
+                handleError(this, 'Update unsuccessful. This comment has been edited elsewhere. To get the latest updates please refresh the page, but note any unsaved changes will be lost by doing so.');
+            }
+            else {
+                handleError(this, 'An error has occured. Please try again later.');
+            }
         });
     });
+
+    const handleError = (el, message) => {
+        $(el).closest(editBlock).append(`<p class="wrapper--error js-comment-error">${message}</p>`);
+        $(el).attr('disabled', true);
+    };
 
     const initEditor = () => {
         const converterOne = window.Markdown.getSanitizingConverter();
