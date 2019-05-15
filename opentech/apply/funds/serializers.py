@@ -217,10 +217,11 @@ class RoundLabSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()
+    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited')
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited', 'edit_url')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))
@@ -228,15 +229,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited')
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url')
         read_only_fields = ('timestamp', 'edited',)
 
 
 class CommentEditSerializer(CommentCreateSerializer):
-    user = serializers.StringRelatedField()
-
     class Meta(CommentCreateSerializer.Meta):
         read_only_fields = ('timestamp', 'visibility', 'edited',)
