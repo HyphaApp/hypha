@@ -74,7 +74,7 @@
             })
         }).then(response => {
             if (response.status === 404) {
-                $(this).closest(editBlock).append('<p class="wrapper--error js-comment-error"><b>Update unsuccessful</b>. This comment has been edited elsewhere - please refresh to get the latest updates.</p>');
+                $(this).closest(editBlock).append('<p class="wrapper--error js-comment-error">Update unsuccessful. This comment has been edited elsewhere. To get the latest updates please refresh the page, but note any unsaved changes will be lost by doing so.</p>');
                 $(this).attr('disabled', true);
                 return;
             }
