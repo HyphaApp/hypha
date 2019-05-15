@@ -123,12 +123,8 @@
     const updateLastEdited = (el, date) => {
         const parsedDate = new Date(date).toISOString().split('T')[0];
         const time = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-        if ($(el).closest(feedContent).find(lastEdited).length) {
-            $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
-        }
-        else {
-            $(`<p class="feed__meta-item feed__meta-item--last-edited">(Last edited: <span class="js-last-edited">${parsedDate} ${time}</span>)</p>`).insertAfter($(el).closest(feedContent).find(editButton).parent());
-        }
+        $(el).closest(feedContent).find(lastEdited).parent().attr('hidden', false);
+        $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
     const updateComment = (el, id, comment, editUrl, commentMarkdown) => {

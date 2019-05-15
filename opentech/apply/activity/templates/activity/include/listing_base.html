@@ -17,9 +17,9 @@
                         </a>
                     </p>
                 {% endif %}
-                {% if activity.edited %}
-                    <p class="feed__meta-item feed__meta-item--last-edited">(Last edited: <span class="js-last-edited">{{ activity.edited|date:"Y-m-d H:i" }}</span>)</p>
-                {% endif %}
+                <p class="feed__meta-item feed__meta-item--last-edited" {% if not activity.edited %} hidden {% endif %}>
+                    (Last edited: <span class="js-last-edited">{{ activity.edited|date:"Y-m-d H:i" }}</span>)
+                </p>
             {% endif %}
 
             {% if activity.private %}
