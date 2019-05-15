@@ -143,6 +143,8 @@ function editingNote(state={}, action) {
                     message: action.message,
                 },
             };
+        case REMOVE_NOTE:
+            return {};
         default:
             return state;
     }
