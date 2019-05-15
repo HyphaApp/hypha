@@ -29,12 +29,13 @@ class PrivateMediaStorage(S3Boto3Storage):
     file_overwrite = False
     querystring_auth = True
     url_protocol = 'https:'
+    internal_url = True
 
-    def url(self, name, parameters=None, expire=None, proxy_url=True):
-        if proxy_url:
+    def url(self, name, parameters=None, expire=None):
+        if self.internal_url:
             try:
                 name_parts = name.split('/')
-                # Create and return Proxy URL only for submissions
+                # Create and return internal URL only for submissions
                 if name_parts[0] == 'submission':
                     return reverse(
                         'apply:submissions:private_media_redirect', kwargs={
