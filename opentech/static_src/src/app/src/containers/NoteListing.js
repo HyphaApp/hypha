@@ -10,13 +10,13 @@ import Note from '@containers/Note';
 import {
     getNotesErrorState,
     getNotesErrorMessage,
-    getNoteIDsForSubmissionOfID,
+    getNotesForSubmission,
     getNotesFetchState,
     getNoteEditingStateForSubmission
 } from '@selectors/notes';
 
 
-const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading, editing }) => {
+const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, isLoading, editing }) => {
     const fetchNotes = () => loadNotes(submissionID)
 
     const {start, stop } = useInterval(fetchNotes, 30000)
@@ -37,7 +37,9 @@ const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage
         }
     }
 
-    const renderItem = noteID => <Note key={`note-${noteID}`} noteID={noteID} submissionID={submissionID} disabled={!!editing} />;
+    const orderedNotes = notes.sort((a,b) => a.timestamp - b.timestamp);
+
+    const renderItem = note => <Note key={`note-${note.id}`} noteID={note.id} submissionID={submissionID} disabled={!!editing} />;
 
     return (
         <Listing
@@ -46,7 +48,7 @@ const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage
             errorMessage={ errorMessage }
             handleRetry={ handleRetry }
             renderItem={ renderItem }
-            items={ noteIDs }
+            items={ orderedNotes }
             column="notes"
         />
     );
@@ -55,7 +57,7 @@ const NoteListing = ({ loadNotes, submissionID, noteIDs, isErrored, errorMessage
 NoteListing.propTypes = {
     loadNotes: PropTypes.func,
     submissionID: PropTypes.number,
-    noteIDs: PropTypes.array,
+    notes: PropTypes.array,
     isErrored: PropTypes.bool,
     errorMessage: PropTypes.string,
     isLoading: PropTypes.bool,
@@ -68,7 +70,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = (state, ownProps) => ({
-    noteIDs: getNoteIDsForSubmissionOfID(ownProps.submissionID)(state),
+    notes: getNotesForSubmission(ownProps.submissionID)(state),
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
