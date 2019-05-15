@@ -123,7 +123,7 @@
     const updateLastEdited = (el, date) => {
         const parsedDate = new Date(date).toISOString().split('T')[0];
         const time = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-
+        $(el).closest(feedContent).find(lastEdited).parent().attr('hidden', false);
         $(el).closest(feedContent).find(lastEdited).html(`${parsedDate} ${time}`);
     };
 
