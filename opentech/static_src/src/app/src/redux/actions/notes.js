@@ -78,7 +78,8 @@ const editNote = (note) => ({
     note
 })
 
-export const handleRemoveNote = (note) => ({
+export const handleRemoveNote = (submissionID, note) => ({
     type: REMOVE_NOTE,
+    submissionID,
     note
 })

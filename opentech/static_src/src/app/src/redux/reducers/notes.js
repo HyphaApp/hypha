@@ -144,7 +144,12 @@ function editingNote(state={}, action) {
                 },
             };
         case REMOVE_NOTE:
-            return {};
+            return Object.entries(state).reduce((result, [key, value]) => {
+                if (action.submissionID !== parseInt(key)) {
+                    result[key] = value
+                }
+                return result;
+            },{})
         default:
             return state;
     }

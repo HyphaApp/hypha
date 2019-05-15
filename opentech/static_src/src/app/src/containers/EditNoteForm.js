@@ -52,8 +52,7 @@ class EditNoteForm extends React.Component {
             message,
         }).then(() => {
             this.props.removeNoteFromSubmission(this.props.submissionID, this.props.editing);
-            this.props.removeEditedNote(this.props.editing);
-            resetEditor()
+            this.props.removeEditedNote(this.props.submissionID, this.props.editing);
         });
     }
 }
@@ -65,7 +64,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     submitNote: (note) => dispatch(editNoteForSubmission(note)),
-    removeEditedNote: (note) => dispatch(handleRemoveNote(note)),
+    removeEditedNote: (submissionID, note) => dispatch(handleRemoveNote(submissionID, note)),
     removeNoteFromSubmission: (submissionID, note) => dispatch(removeNoteFromSubmission(submissionID, note)),
 });
 
