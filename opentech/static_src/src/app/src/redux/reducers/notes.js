@@ -10,8 +10,8 @@ import {
     UPDATE_EDIT_NOTE,
     START_EDITING_NOTE_FOR_SUBMISSION,
     EDIT_NOTE,
-    FAIL_EDITING_NOTE_FOR_SUBMISSION
-
+    FAIL_EDITING_NOTE_FOR_SUBMISSION,
+    REMOVE_NOTE,
 } from '@actions/notes';
 
 function notesFetching(state = false, action) {
@@ -114,6 +114,20 @@ function notesByID(state = {}, action) {
                     data: action.data,
                 }),
             };
+        case START_EDITING_NOTE_FOR_SUBMISSION:
+        case EDIT_NOTE:
+            return {
+                ...state,
+                ...action.data,
+            }
+        case REMOVE_NOTE:
+            return Object.entries(state).reduce((result, [key, value]) => {
+                if (action.note.id !== value.id) {
+                    result[key] = value
+                }
+                return result;
+            }, {})
+        case FAIL_EDITING_NOTE_FOR_SUBMISSION:
         default:
             return state;
     }
@@ -129,13 +143,6 @@ function editingNote(state={}, action) {
                     message: action.message,
                 },
             };
-        case START_EDITING_NOTE_FOR_SUBMISSION:
-        case EDIT_NOTE:
-            return {
-                ...state,
-                ...action.data,
-            }
-        case FAIL_EDITING_NOTE_FOR_SUBMISSION:
         default:
             return state;
     }

@@ -25,6 +25,10 @@ import {
     addMessage,
 } from '@actions/messages';
 
+import {
+    fetchNewNotesForSubmission
+} from '@actions/notes';
+
 
 // Round
 export const UPDATE_ROUND = 'UPDATE_ROUND';
@@ -62,6 +66,7 @@ export const FAIL_EXECUTING_SUBMISSION_ACTION = 'FAIL_EXECUTING_SUBMISSION_ACTIO
 
 // Notes
 export const ADD_NOTE_FOR_SUBMISSION = 'ADD_NOTE_FOR_SUBMISSION';
+export const REMOVE_NOTE_FROM_SUBMISSION = 'REMOVE_NOTE_FROM_SUBMISSION'
 
 export const setCurrentSubmissionRound = (id) => (dispatch) => {
     dispatch({
@@ -289,3 +294,12 @@ export const executeSubmissionAction = (submissionID, action) => ({
     submissionID,
     changedLocally: true,
 })
+
+export const removeNoteFromSubmission = (submissionID, note) => (dispatch) => {
+    dispatch ({
+        type: REMOVE_NOTE_FROM_SUBMISSION,
+        submissionID,
+        note
+    })
+    return dispatch(fetchNewNotesForSubmission(submissionID))
+}

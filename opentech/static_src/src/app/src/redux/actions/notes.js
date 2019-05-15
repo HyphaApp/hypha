@@ -15,6 +15,7 @@ export const FAIL_CREATING_NOTE_FOR_SUBMISSION = 'FAIL_CREATING_NOTE_FOR_SUBMISS
 export const START_EDITING_NOTE_FOR_SUBMISSION = 'START_EDITING_NOTE_FOR_SUBMISSION';
 export const EDIT_NOTE = 'EDIT_NOTE';
 export const FAIL_EDITING_NOTE_FOR_SUBMISSION = 'FAIL_EDITING_NOTE_FOR_SUBMISSION';
+export const REMOVE_NOTE = 'REMOVE_NOTE';
 
 export const fetchNotesForSubmission = submissionID => (dispatch, getState) => {
     return dispatch(fetchNotes(submissionID))
@@ -71,8 +72,13 @@ export const editNoteForSubmission = (note) => (dispatch) => dispatch(editNote(n
 
 const editNote = (note) => ({
     [CALL_API]: {
-        types: [ START_EDITING_NOTE_FOR_SUBMISSION, EDIT_NOTE, FAIL_EDITING_NOTE_FOR_SUBMISSION ],
+        types: [ START_EDITING_NOTE_FOR_SUBMISSION, UPDATE_NOTE, FAIL_EDITING_NOTE_FOR_SUBMISSION ],
         endpoint: api.editNoteForSubmission(note),
     },
+    note
+})
+
+export const handleRemoveNote = (note) => ({
+    type: REMOVE_NOTE,
     note
 })

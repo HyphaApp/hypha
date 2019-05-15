@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { createNoteForSubmission } from '@actions/notes';
+import { editNoteForSubmission, handleRemoveNote } from '@actions/notes';
+import { removeNoteFromSubmission } from '@actions/submissions';
 import RichTextForm from '@components/RichTextForm';
 
 import {
@@ -24,6 +25,9 @@ class EditNoteForm extends React.Component {
             message: PropTypes.string,
         }),
         editing: PropTypes.object,
+        updateNotes: PropTypes.func,
+        removeEditedNote: PropTypes.func,
+        removeNoteFromSubmission: PropTypes.func,
     };
 
     render() {
@@ -46,7 +50,11 @@ class EditNoteForm extends React.Component {
         this.props.submitNote({
             ...this.props.editing,
             message,
-        }).then(() => resetEditor());
+        }).then(() => {
+            this.props.removeNoteFromSubmission(this.props.submissionID, this.props.editing);
+            this.props.removeEditedNote(this.props.editing);
+            resetEditor()
+        });
     }
 }
 
@@ -57,6 +65,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     submitNote: (note) => dispatch(editNoteForSubmission(note)),
+    removeEditedNote: (note) => dispatch(handleRemoveNote(note)),
+    removeNoteFromSubmission: (submissionID, note) => dispatch(removeNoteFromSubmission(submissionID, note)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditNoteForm);
