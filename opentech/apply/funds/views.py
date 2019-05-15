@@ -62,13 +62,7 @@ from .tables import (
 from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 from .permissions import is_user_has_access_to_view_submission
 
-private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
-submission_storage_class = get_storage_class(private_file_storage)
-
-if private_file_storage:
-    submission_storage = submission_storage_class(internal_url=False)
-else:
-    submission_storage = submission_storage_class()
+submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):

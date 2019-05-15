@@ -29,20 +29,18 @@ class PrivateMediaStorage(S3Boto3Storage):
     file_overwrite = False
     querystring_auth = True
     url_protocol = 'https:'
-    internal_url = True
+    is_submission = False
 
     def url(self, name, parameters=None, expire=None):
-        if self.internal_url:
+        if self.is_submission:
             try:
                 name_parts = name.split('/')
-                # Create and return internal URL only for submissions
-                if name_parts[0] == 'submission':
-                    return reverse(
-                        'apply:submissions:private_media_redirect', kwargs={
-                            'submission_id': name_parts[1], 'field_id': name_parts[2],
-                            'file_name': name_parts[3]
-                        }
-                    )
+                return reverse(
+                    'apply:submissions:private_media_redirect', kwargs={
+                        'submission_id': name_parts[1], 'field_id': name_parts[2],
+                        'file_name': name_parts[3]
+                    }
+                )
             except IndexError:
                 pass
 
