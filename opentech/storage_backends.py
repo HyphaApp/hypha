@@ -1,6 +1,7 @@
 from urllib import parse
 
 from django.conf import settings
+from django.urls import reverse
 from django.utils.encoding import filepath_to_uri
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -29,7 +30,21 @@ class PrivateMediaStorage(S3Boto3Storage):
     querystring_auth = True
     url_protocol = 'https:'
 
-    def url(self, name, parameters=None, expire=None):
+    def url(self, name, parameters=None, expire=None, proxy_url=True):
+        if proxy_url:
+            try:
+                name_parts = name.split('/')
+                # Create and return Proxy URL only for submissions
+                if name_parts[0] == 'submission':
+                    return reverse(
+                        'apply:submissions:private_media_redirect', kwargs={
+                            'submission_id': name_parts[1], 'field_id': name_parts[2],
+                            'file_name': name_parts[3]
+                        }
+                    )
+            except IndexError:
+                pass
+
         url = super().url(name, parameters, expire)
 
         if hasattr(settings, 'AWS_PRIVATE_CUSTOM_DOMAIN'):

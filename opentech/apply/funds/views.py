@@ -829,7 +829,7 @@ class SubmissionPrivateMediaRedirectView(UserPassesTestMixin, RedirectView):
         file_name = kwargs['file_name']
         file_name_with_path = f'submission/{submission_id}/{field_id}/{file_name}'
 
-        return submission_storage.url(file_name_with_path)
+        return submission_storage.url(file_name_with_path, proxy_url=False)
 
     def test_func(self):
         submission_id = self.kwargs['submission_id']

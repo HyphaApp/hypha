@@ -1,6 +1,5 @@
 import os
 
-from django.urls import reverse
 from django.core.files.base import File
 from django.core.files.storage import default_storage
 from django.core.serializers.json import DjangoJSONEncoder
@@ -17,12 +16,11 @@ class StreamFieldDataEncoder(DjangoJSONEncoder):
 
 
 class StreamFieldFile(File):
-    def __init__(self, *args, filename=None, storage=default_storage, is_submission=False, **kwargs):
+    def __init__(self, *args, filename=None, storage=default_storage, **kwargs):
         super().__init__(*args, **kwargs)
         self.storage = storage
         self.filename = filename or os.path.basename(self.name)
         self._committed = False
-        self.is_submission = is_submission
 
     def __str__(self):
         return self.filename
@@ -60,14 +58,6 @@ class StreamFieldFile(File):
 
     @property
     def url(self):
-        if self.is_submission:
-            name_parts = self.name.split('/')
-            return reverse(
-                'apply:submissions:private_media_redirect', kwargs={
-                    'submission_id': name_parts[1], 'field_id': name_parts[2],
-                    'file_name': name_parts[3]
-                }
-            )
         return self.storage.url(self.name)
 
     @property

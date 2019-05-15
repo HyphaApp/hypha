@@ -54,14 +54,14 @@ class AccessFormData:
         if isinstance(file, StreamFieldFile):
             return file
         if isinstance(file, File):
-            return StreamFieldFile(file, name=file.name, storage=submission_storage, is_submission=True)
+            return StreamFieldFile(file, name=file.name, storage=submission_storage)
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
         if 'path' in file:
             file['filename'] = file['name']
             file['name'] = file['path']
-        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage, is_submission=True)
+        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
 
     @classmethod
     def process_file(cls, file):
