@@ -41,11 +41,16 @@ class EditNoteForm extends React.Component {
                     disabled={isCreating}
                     onSubmit={this.onSubmit}
                     onCancel={() => clearNote(submissionID)}
+                    onChange={this.onChange}
                     instance="add-note-form"
                     initialValue={draftNote.message}
                 />
             </>
         );
+    }
+
+    onChange = (message) => {
+        this.props.storeNote(this.props.submissionID, message)
     }
 
     onSubmit = (message, resetEditor) => {
