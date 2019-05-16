@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { editNoteForSubmission, handleRemoveNote } from '@actions/notes';
 import { removeNoteFromSubmission } from '@actions/submissions';
+import { getDraftNoteForSubmission } from '@selectors/notes';
 import RichTextForm from '@components/RichTextForm';
 
 import {
@@ -19,19 +20,18 @@ class EditNoteForm extends React.Component {
         submissionID: PropTypes.number,
         error: PropTypes.any,
         isCreating: PropTypes.bool,
-        note: PropTypes.shape({
+        draftNote: PropTypes.shape({
             user: PropTypes.string,
             timestamp: PropTypes.string,
             message: PropTypes.string,
         }),
-        editing: PropTypes.object,
         updateNotes: PropTypes.func,
         removeEditedNote: PropTypes.func,
         removeNoteFromSubmission: PropTypes.func,
     };
 
     render() {
-        const { error, isCreating, editing } = this.props;
+        const { error, isCreating, draftNote} = this.props;
 
         return (
             <>
@@ -39,20 +39,25 @@ class EditNoteForm extends React.Component {
                 <RichTextForm
                     disabled={isCreating}
                     onSubmit={this.onSubmit}
+                    onCancel={this.clearEditingNote}
                     instance="add-note-form"
-                    editing={editing}
+                    initialValue={draftNote.message}
                 />
             </>
         );
     }
 
+    clearEditingNote = () => {
+        this.props.removeEditedNote(this.props.submissionID);
+    }
+
     onSubmit = (message, resetEditor) => {
         this.props.submitNote({
-            ...this.props.editing,
+            ...this.props.draftNote,
             message,
         }).then(() => {
-            this.props.removeNoteFromSubmission(this.props.submissionID, this.props.editing);
-            this.props.removeEditedNote(this.props.submissionID, this.props.editing);
+            this.props.removeNoteFromSubmission(this.props.submissionID, this.props.draftNote);
+            this.clearEditingNote()
         });
     }
 }
@@ -60,6 +65,7 @@ class EditNoteForm extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
     error: getNoteCreatingErrorForSubmission(ownProps.submissionID)(state),
     isCreating: getNoteCreatingStateForSubmission(ownProps.submissionID)(state),
+    draftNote: getDraftNoteForSubmission(ownProps.submissionID)(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

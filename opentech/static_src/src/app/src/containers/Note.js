@@ -29,6 +29,7 @@ class Note extends React.Component {
                 message={note.message}
                 timestamp={date}
                 handleEditNote={() => handleEditNote(note.message)}
+                editable={note.editable}
         />;
     }
 }

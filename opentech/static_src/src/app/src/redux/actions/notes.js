@@ -6,14 +6,14 @@ import api from '@api';
 export const FAIL_FETCHING_NOTES = 'FAIL_FETCHING_NOTES';
 export const START_FETCHING_NOTES = 'START_FETCHING_NOTES';
 export const UPDATE_NOTES = 'UPDATE_NOTES';
+export const CREATE_NOTE = 'CREATE_NOTE';
 export const UPDATE_NOTE = 'UPDATE_NOTE';
-export const UPDATE_EDIT_NOTE = 'UPDATE_EDIT_NOTE';
+export const STORE_NOTE = 'UPDATE_STORE_NOTE';
 
 export const START_CREATING_NOTE_FOR_SUBMISSION = 'START_CREATING_NOTE_FOR_SUBMISSION';
 export const FAIL_CREATING_NOTE_FOR_SUBMISSION = 'FAIL_CREATING_NOTE_FOR_SUBMISSION';
 
 export const START_EDITING_NOTE_FOR_SUBMISSION = 'START_EDITING_NOTE_FOR_SUBMISSION';
-export const EDIT_NOTE = 'EDIT_NOTE';
 export const FAIL_EDITING_NOTE_FOR_SUBMISSION = 'FAIL_EDITING_NOTE_FOR_SUBMISSION';
 export const REMOVE_NOTE = 'REMOVE_NOTE';
 
@@ -36,7 +36,7 @@ export const createNoteForSubmission = (submissionID, note) => (dispatch, getSta
 
 const createNote = (submissionID, note) => ({
     [CALL_API]: {
-        types: [ START_CREATING_NOTE_FOR_SUBMISSION, UPDATE_NOTE, FAIL_CREATING_NOTE_FOR_SUBMISSION],
+        types: [ START_CREATING_NOTE_FOR_SUBMISSION, CREATE_NOTE, FAIL_CREATING_NOTE_FOR_SUBMISSION],
         endpoint: api.createNoteForSubmission(submissionID, note),
     },
     submissionID,
@@ -61,12 +61,22 @@ const fetchNewerNotes = (submissionID, latestID) => ({
     submissionID,
 })
 
-export const handleEditNote = (messageID, submissionID, message) => ({
-    type: UPDATE_EDIT_NOTE,
+
+export const editingNote = (submissionID, messageID, message) => ({
+    type: STORE_NOTE,
     messageID,
     submissionID,
     message
 })
+
+
+export const writingNote = (submissionID, message) => ({
+    type: STORE_NOTE,
+    submissionID,
+    message
+
+})
+
 
 export const editNoteForSubmission = (note) => (dispatch) => dispatch(editNote(note))
 
@@ -78,8 +88,8 @@ const editNote = (note) => ({
     note
 })
 
-export const handleRemoveNote = (submissionID, note) => ({
+
+export const removedStoredNote = (submissionID) => ({
     type: REMOVE_NOTE,
     submissionID,
-    note
 })

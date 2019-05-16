@@ -164,7 +164,7 @@ class CommentList(generics.ListAPIView):
 
 
 class CommentListCreate(generics.ListCreateAPIView):
-    queryset = Activity.comments.all()
+    queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentCreateSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
@@ -198,7 +198,7 @@ class CommentEdit(
         mixins.CreateModelMixin,
         generics.GenericAPIView,
 ):
-    queryset = Activity.comments.all()
+    queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentEditSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsAuthor

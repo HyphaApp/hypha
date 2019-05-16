@@ -43,6 +43,6 @@ export const getNoteCreatingStateForSubmission = submissionID => createSelector(
 
 const getNoteEditingState = state => state.notes.editing;
 
-export const getNoteEditingStateForSubmission = submissionID => createSelector(
+export const getDraftNoteForSubmission = submissionID => createSelector(
     [getNoteEditingState], editing => editing[submissionID]
 );

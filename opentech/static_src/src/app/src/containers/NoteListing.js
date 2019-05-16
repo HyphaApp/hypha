@@ -12,7 +12,7 @@ import {
     getNotesErrorMessage,
     getNotesForSubmission,
     getNotesFetchState,
-    getNoteEditingStateForSubmission
+    getDraftNoteForSubmission,
 } from '@selectors/notes';
 
 
@@ -74,7 +74,7 @@ const mapStateToProps = (state, ownProps) => ({
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
-    editing: getNoteEditingStateForSubmission(ownProps.submissionID)(state),
+    editing: getDraftNoteForSubmission(ownProps.submissionID)(state),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

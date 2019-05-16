@@ -34,18 +34,21 @@ export default class RichTextForm extends React.Component {
         value: PropTypes.string,
         instance: PropTypes.string,
         onSubmit: PropTypes.func,
-        editing: PropTypes.object,
+        onChange: PropTypes.func,
+        onCancel: PropTypes.func,
+        initialValue: PropTypes.string,
     };
 
     state = {
         value: RichTextEditor.createEmptyValue(),
+        emptyState: RichTextEditor.createEmptyValue().toString('html'),
     };
 
     componentDidMount() {
-        const {editing} = this.props;
+        const {initialValue} = this.props
 
-        if (editing) {
-            this.setState({ value: RichTextEditor.createValueFromString(editing.message, 'html') });
+        if (initialValue) {
+            this.setState({ value: RichTextEditor.createValueFromString(initialValue, 'html') });
         }
     }
 
@@ -77,7 +80,7 @@ export default class RichTextForm extends React.Component {
                     </button>
                     <button
                         disabled={this.isEmpty() || disabled}
-                        onClick={this.resetEditor}
+                        onClick={this.handleCancel}
                         className={`button ${instance}__button`}
                     >
                         Cancel
@@ -91,8 +94,17 @@ export default class RichTextForm extends React.Component {
         return !this.state.value.getEditorState().getCurrentContent().hasText();
     }
 
-    handleValueChange = value => {
-        this.setState({value});
+    handleValueChange = (value) => {
+        const html = value.toString('html')
+        if (html !== this.state.emptyState ) {
+            this.props.onChange && this.props.onChange(html)
+            this.setState({value});
+        }
+    }
+
+    handleCancel = () => {
+        this.props.onCancel();
+        this.resetEditor()
     }
 
     handleSubmit = () => {
