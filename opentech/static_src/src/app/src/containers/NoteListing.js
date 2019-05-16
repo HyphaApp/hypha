@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import useInterval from "@rooks/use-interval"
 
-import { fetchNewNotesForSubmission } from '@actions/notes';
+import { fetchNewNotesForSubmission, editingNote } from '@actions/notes';
 import Listing from '@components/Listing';
-import Note from '@containers/Note';
+import NoteListingItem from '@components/NoteListingItem';
 import {
     getNotesErrorState,
     getNotesErrorMessage,
@@ -16,7 +16,7 @@ import {
 } from '@selectors/notes';
 
 
-const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, isLoading, editing }) => {
+const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, isLoading, editing, editNote }) => {
     const fetchNotes = () => loadNotes(submissionID)
 
     const {start, stop } = useInterval(fetchNotes, 30000)
@@ -39,7 +39,20 @@ const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, 
 
     const orderedNotes = notes.sort((a,b) => a.timestamp - b.timestamp);
 
-    const renderItem = note => <Note key={`note-${note.id}`} noteID={note.id} submissionID={submissionID} disabled={!!editing} />;
+    const renderItem = note => {
+        const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
+
+        return <NoteListingItem
+            author={note.user}
+            timestamp={date}
+            key={`note-${note.id}`}
+            message={note.message}
+            submissionID={submissionID}
+            disabled={!!editing}
+            editable={note.editable}
+            handleEditNote={() => editNote(note.id, note.message, submissionID)}
+        />;
+    }
 
     return (
         <Listing
@@ -56,6 +69,7 @@ const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, 
 
 NoteListing.propTypes = {
     loadNotes: PropTypes.func,
+    editNote: PropTypes.func,
     submissionID: PropTypes.number,
     notes: PropTypes.array,
     isErrored: PropTypes.bool,
@@ -67,6 +81,7 @@ NoteListing.propTypes = {
 
 const mapDispatchToProps = dispatch => ({
     loadNotes: submissionID => dispatch(fetchNewNotesForSubmission(submissionID)),
+    editNote: (id, message, submissionID) => dispatch(editingNote(id, message, submissionID)),
 });
 
 const mapStateToProps = (state, ownProps) => ({
@@ -75,6 +90,7 @@ const mapStateToProps = (state, ownProps) => ({
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
     editing: getDraftNoteForSubmission(ownProps.submissionID)(state),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -19,6 +19,12 @@ import './AddNoteForm.scss';
 
 
 const AddNoteForm = ({error, isCreating, draftNote, submitNote, storeNote, clearNote, submissionID}) => {
+    const [initialValue, updateInitialValue] = useState()
+
+    useEffect(() => {
+        updateInitialValue(draftNote && draftNote.message || '')
+    }, [submissionID])
+
     const onSubmit = (message, resetEditor) => {
         submitNote(submissionID, {
             message,
@@ -30,7 +36,7 @@ const AddNoteForm = ({error, isCreating, draftNote, submitNote, storeNote, clear
         <>
             {Boolean(error) && <p>{error}</p>}
             <RichTextForm
-                initialValue={draftNote && draftNote.message}
+                initialValue={initialValue}
                 disabled={isCreating}
                 onCancel={() => clearNote(submissionID)}
                 onChange={(message) => storeNote(submissionID, message)}

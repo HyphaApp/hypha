@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import RichTextEditor from 'react-rte';
 
@@ -22,92 +22,89 @@ const toolbarConfig = {
     ]
 };
 
-export default class RichTextForm extends React.Component {
-    static defaultProps = {
-        disabled: false,
-        initialValue: '',
-    };
 
-    static propTypes = {
-        disabled: PropTypes.bool.isRequired,
-        onValueChange: PropTypes.func,
-        value: PropTypes.string,
-        instance: PropTypes.string,
-        onSubmit: PropTypes.func,
-        onChange: PropTypes.func,
-        onCancel: PropTypes.func,
-        initialValue: PropTypes.string,
-    };
+const emptyState = RichTextEditor.createEmptyValue().toString('html')
 
-    state = {
-        value: RichTextEditor.createEmptyValue(),
-        emptyState: RichTextEditor.createEmptyValue().toString('html'),
-    };
 
-    componentDidMount() {
-        const {initialValue} = this.props
+const RichTextForm = ({initialValue, onChange, onCancel, onSubmit, instance, disabled}) => {
+    const [value, updateValue] = useState(RichTextEditor.createValueFromString(initialValue, 'html'))
 
-        if (initialValue) {
-            this.setState({ value: RichTextEditor.createValueFromString(initialValue, 'html') });
+    useEffect(() => {
+        updateValue(RichTextEditor.createValueFromString(initialValue, 'html'))
+    }, [initialValue])
+
+    const resetEditor = () => {
+        updateValue(RichTextEditor.createEmptyValue())
+    }
+
+    const isEmpty = () => {
+        return !value.getEditorState().getCurrentContent().hasText();
+    }
+
+    const handleValueChange = (newValue) => {
+        const html = newValue.toString('html')
+        if ( html !== emptyState || value.toString('html') !== emptyState ) {
+            onChange && onChange(html)
         }
+        updateValue(newValue)
     }
 
-    resetEditor = () => {
-        this.setState({value: RichTextEditor.createEmptyValue()});
+    const handleCancel = () => {
+        onCancel();
+        resetEditor()
     }
 
-    render() {
-        const { instance, disabled } = this.props;
+    const handleSubmit = () => {
+        onSubmit(value.toString('html'), resetEditor);
+    }
 
-        return (
-            <div className={ instance } >
-                <RichTextEditor
-                    disabled={ disabled }
-                    onChange={ this.handleValueChange }
-                    value={ this.state.value }
-                    className="add-note-form__container"
-                    toolbarClassName="add-note-form__toolbar"
-                    editorClassName="add-note-form__editor"
-                    toolbarConfig={toolbarConfig}
-                />
-                <div>
-                    <button
-                        disabled={this.isEmpty() || disabled}
-                        onClick={this.handleSubmit}
-                        className={`button ${instance}__button`}
-                    >
-                        Submit
-                    </button>
-                    <button
-                        disabled={this.isEmpty() || disabled}
-                        onClick={this.handleCancel}
-                        className={`button ${instance}__button`}
-                    >
-                        Cancel
-                    </button>
-                </div>
+    return (
+        <div className={ instance } >
+            <RichTextEditor
+                disabled={ disabled }
+                onChange={ handleValueChange }
+                value={ value }
+                className="add-note-form__container"
+                toolbarClassName="add-note-form__toolbar"
+                editorClassName="add-note-form__editor"
+                toolbarConfig={toolbarConfig}
+            />
+            <div>
+                <button
+                    disabled={isEmpty() || disabled}
+                    onClick={handleSubmit}
+                    className={`button ${instance}__button`}
+                >
+                    Submit
+                </button>
+                <button
+                    disabled={disabled}
+                    onClick={handleCancel}
+                    className={`button ${instance}__button`}
+                >
+                    Cancel
+                </button>
             </div>
-        );
-    }
+        </div>
+    );
 
-    isEmpty = () => {
-        return !this.state.value.getEditorState().getCurrentContent().hasText();
-    }
-
-    handleValueChange = (value) => {
-        const html = value.toString('html')
-        if (html !== this.state.emptyState ) {
-            this.props.onChange && this.props.onChange(html)
-            this.setState({value});
-        }
-    }
-
-    handleCancel = () => {
-        this.props.onCancel();
-        this.resetEditor()
-    }
-
-    handleSubmit = () => {
-        this.props.onSubmit(this.state.value.toString('html'), this.resetEditor);
-    }
 }
+
+RichTextForm.defaultProps = {
+    disabled: false,
+    initialValue: '',
+};
+
+RichTextForm.propTypes = {
+    disabled: PropTypes.bool.isRequired,
+    onValueChange: PropTypes.func,
+    value: PropTypes.string,
+    instance: PropTypes.string,
+    onSubmit: PropTypes.func,
+    onChange: PropTypes.func,
+    onCancel: PropTypes.func,
+    initialValue: PropTypes.string,
+};
+
+
+export default RichTextForm;

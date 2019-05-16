@@ -138,6 +138,7 @@ function editingNote(state={}, action) {
                 },
             };
         case CREATE_NOTE:
+        case UPDATE_NOTE:
         case REMOVE_NOTE:
             return Object.entries(state).reduce((result, [key, value]) => {
                 if (action.submissionID !== parseInt(key)) {

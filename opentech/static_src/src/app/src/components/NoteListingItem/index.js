@@ -5,7 +5,7 @@ import './styles.scss';
 
 export default class NoteListingItem extends React.Component {
     static propTypes = {
-        user: PropTypes.string.isRequired,
+        author: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
         timestamp: PropTypes.string.isRequired,
         handleEditNote: PropTypes.func.isRequired,
@@ -14,17 +14,18 @@ export default class NoteListingItem extends React.Component {
     };
 
     parseUser() {
-        const { user } = this.props;
+        const { author } = this.props;
 
-        if (user.length > 16) {
-            return `${user.substring(0, 16)}...`
+        if (author.length > 16) {
+            return `${author.substring(0, 16)}...`
         } else {
-            return user;
+            return author;
         }
     }
 
     render() {
         const { timestamp, message, handleEditNote, disabled, editable} = this.props;
+
 
         return (
             <li className={`note ${disabled ? 'disabled' : ''}`}>

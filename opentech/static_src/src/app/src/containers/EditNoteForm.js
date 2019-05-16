@@ -2,21 +2,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { editNoteForSubmission, handleRemoveNote } from '@actions/notes';
-import { removeNoteFromSubmission } from '@actions/submissions';
-import { getDraftNoteForSubmission } from '@selectors/notes';
-import RichTextForm from '@components/RichTextForm';
-
 import {
+    editNoteForSubmission,
+    removedStoredNote,
+    writingNote,
+} from '@actions/notes';
+import {
+    getDraftNoteForSubmission,
     getNoteCreatingErrorForSubmission,
     getNoteCreatingStateForSubmission,
 } from '@selectors/notes';
+import RichTextForm from '@components/RichTextForm';
 
 import './AddNoteForm.scss';
 
 class EditNoteForm extends React.Component {
     static propTypes = {
-        submitNote: PropTypes.func,
         submissionID: PropTypes.number,
         error: PropTypes.any,
         isCreating: PropTypes.bool,
@@ -25,13 +26,13 @@ class EditNoteForm extends React.Component {
             timestamp: PropTypes.string,
             message: PropTypes.string,
         }),
-        updateNotes: PropTypes.func,
-        removeEditedNote: PropTypes.func,
-        removeNoteFromSubmission: PropTypes.func,
+        submitNote: PropTypes.func,
+        storeNote: PropTypes.func,
+        clearNote: PropTypes.func,
     };
 
     render() {
-        const { error, isCreating, draftNote} = this.props;
+        const { error, isCreating, draftNote, clearNote, submissionID} = this.props;
 
         return (
             <>
@@ -39,7 +40,7 @@ class EditNoteForm extends React.Component {
                 <RichTextForm
                     disabled={isCreating}
                     onSubmit={this.onSubmit}
-                    onCancel={this.clearEditingNote}
+                    onCancel={() => clearNote(submissionID)}
                     instance="add-note-form"
                     initialValue={draftNote.message}
                 />
@@ -47,18 +48,11 @@ class EditNoteForm extends React.Component {
         );
     }
 
-    clearEditingNote = () => {
-        this.props.removeEditedNote(this.props.submissionID);
-    }
-
     onSubmit = (message, resetEditor) => {
         this.props.submitNote({
             ...this.props.draftNote,
             message,
-        }).then(() => {
-            this.props.removeNoteFromSubmission(this.props.submissionID, this.props.draftNote);
-            this.clearEditingNote()
-        });
+        }, this.props.submissionID);
     }
 }
 
@@ -69,9 +63,9 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    submitNote: (note) => dispatch(editNoteForSubmission(note)),
-    removeEditedNote: (submissionID, note) => dispatch(handleRemoveNote(submissionID, note)),
-    removeNoteFromSubmission: (submissionID, note) => dispatch(removeNoteFromSubmission(submissionID, note)),
+    submitNote: (note, submissionID) => dispatch(editNoteForSubmission(note, submissionID)),
+    storeNote: (submissionID, message) => dispatch(writingNote(submissionID, message)),
+    clearNote: (submissionID) => dispatch(removedStoredNote(submissionID)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditNoteForm);

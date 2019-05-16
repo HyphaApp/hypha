@@ -13,7 +13,7 @@ import {
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
-import { REMOVE_NOTE_FROM_SUBMISSION } from '@actions/submissions'
+
 
 function submission(state={comments: []}, action) {
     switch(action.type) {
@@ -61,9 +61,16 @@ function submission(state={comments: []}, action) {
                 isExecutingAction: false,
                 isExecutingActionErrored: true,
                 executionActionError: action.error
-            }
-        case CREATE_NOTE:
+            };
         case UPDATE_NOTE:
+            return {
+                ...state,
+                comments: [
+                    action.data.id,
+                    ...(state.comments.filter(comment => comment !== action.note.id) || []),
+                ]
+            };
+        case CREATE_NOTE:
             return {
                 ...state,
                 comments: [
@@ -71,11 +78,6 @@ function submission(state={comments: []}, action) {
                     ...(state.comments || []),
                 ]
             };
-        case REMOVE_NOTE_FROM_SUBMISSION:
-        return {
-            ...state,
-            comments: state.comments.filter(comment => comment !== action.note.id)
-        }
         default:
             return state;
     }
@@ -92,7 +94,6 @@ function submissionsByID(state = {}, action) {
         case UPDATE_NOTES:
         case START_EXECUTING_SUBMISSION_ACTION:
         case FAIL_EXECUTING_SUBMISSION_ACTION:
-        case REMOVE_NOTE_FROM_SUBMISSION:
             return {
                 ...state,
                 [action.submissionID]: submission(state[action.submissionID], action),

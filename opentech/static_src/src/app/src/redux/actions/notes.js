@@ -62,7 +62,7 @@ const fetchNewerNotes = (submissionID, latestID) => ({
 })
 
 
-export const editingNote = (submissionID, messageID, message) => ({
+export const editingNote = (messageID, message, submissionID) => ({
     type: STORE_NOTE,
     messageID,
     submissionID,
@@ -78,14 +78,15 @@ export const writingNote = (submissionID, message) => ({
 })
 
 
-export const editNoteForSubmission = (note) => (dispatch) => dispatch(editNote(note))
+export const editNoteForSubmission = (note, submissionID) => (dispatch) => dispatch(editNote(note, submissionID))
 
-const editNote = (note) => ({
+const editNote = (note, submissionID) => ({
     [CALL_API]: {
         types: [ START_EDITING_NOTE_FOR_SUBMISSION, UPDATE_NOTE, FAIL_EDITING_NOTE_FOR_SUBMISSION ],
         endpoint: api.editNoteForSubmission(note),
     },
-    note
+    note,
+    submissionID,
 })
 
 
