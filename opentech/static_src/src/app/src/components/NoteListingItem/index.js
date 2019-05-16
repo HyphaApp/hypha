@@ -11,6 +11,7 @@ export default class NoteListingItem extends React.Component {
         handleEditNote: PropTypes.func.isRequired,
         disabled: PropTypes.bool,
         editable: PropTypes.bool,
+        edited: PropTypes.string,
     };
 
     parseUser() {
@@ -24,8 +25,7 @@ export default class NoteListingItem extends React.Component {
     }
 
     render() {
-        const { timestamp, message, handleEditNote, disabled, editable} = this.props;
-
+        const { timestamp, message, handleEditNote, disabled, editable, edited} = this.props;
 
         return (
             <li className={`note ${disabled ? 'disabled' : ''}`}>
@@ -40,7 +40,10 @@ export default class NoteListingItem extends React.Component {
                         }
                     </span>
 
-                    <span className="note__date">{timestamp}</span>
+                    <span className="note__date">
+                        <span className="note__date_created">{timestamp}</span><br/>
+                        {edited && <span className="note__date_edited">(edited: {edited})</span>}
+                    </span>
                 </p>
                 <div className="note__content" dangerouslySetInnerHTML={{__html: message}} />
             </li>

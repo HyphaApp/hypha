@@ -37,10 +37,17 @@ const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, 
         }
     }
 
-    const orderedNotes = notes.sort((a,b) => a.timestamp - b.timestamp);
+    /* const time = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); */
+
+    const orderedNotes = notes.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     const renderItem = note => {
         const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
+        const edited = (
+            note.edited ?
+            new Date(note.edited).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
+            : null
+        )
 
         return <NoteListingItem
             author={note.user}
@@ -50,6 +57,7 @@ const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, 
             submissionID={submissionID}
             disabled={!!editing}
             editable={note.editable}
+            edited={edited}
             handleEditNote={() => editNote(note.id, note.message, submissionID)}
         />;
     }

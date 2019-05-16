@@ -1,6 +1,8 @@
 .note {
     margin: 20px;
+    margin-top: 0px;
     font-size: 14px;
+    border-top: 3px solid $color--light-grey;
 
     &.disabled {
         opacity: .5;
@@ -19,8 +21,16 @@
     }
 
     &__date {
-        color: $color--dark-blue;
         margin-left: 10px;
+
+        &_created {
+            color: $color--dark-blue;
+            float: right;
+        }
+
+        &_edited {
+            font-size: 12px;
+        }
     }
 
     &__content {
@@ -51,6 +61,7 @@
         color: $color--dark-blue;
         padding-left: 10px;
         margin-left: 10px;
+        max-height: 1.5rem;
         border-left: 2px solid $color--mid-grey;
 
         svg {
