@@ -224,7 +224,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
 
     def form_valid(self, form):
         self.review = self.get_object()
-        author, _ = AssignedReviewers.objects.get_or_create_staff(
+        author, _ = AssignedReviewers.objects.get_or_create_for_user(
             submission=self.review.submission,
             reviewer=self.request.user,
         )
