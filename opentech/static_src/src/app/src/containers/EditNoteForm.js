@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {
     editNoteForSubmission,
     removedStoredNote,
-    writingNote,
+    editingNote,
 } from '@actions/notes';
 import {
     getDraftNoteForSubmission,
@@ -22,8 +22,7 @@ class EditNoteForm extends React.Component {
         error: PropTypes.any,
         isCreating: PropTypes.bool,
         draftNote: PropTypes.shape({
-            user: PropTypes.string,
-            timestamp: PropTypes.string,
+            id: PropTypes.number,
             message: PropTypes.string,
         }),
         submitNote: PropTypes.func,
@@ -50,7 +49,7 @@ class EditNoteForm extends React.Component {
     }
 
     onChange = (message) => {
-        this.props.storeNote(this.props.submissionID, message)
+        this.props.storeNote(this.props.draftNote.id, message, this.props.submissionID)
     }
 
     onSubmit = (message, resetEditor) => {
@@ -69,7 +68,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     submitNote: (note, submissionID) => dispatch(editNoteForSubmission(note, submissionID)),
-    storeNote: (submissionID, message) => dispatch(writingNote(submissionID, message)),
+    storeNote: (submissionID, message) => dispatch(editingNote(submissionID, message)),
     clearNote: (submissionID) => dispatch(removedStoredNote(submissionID)),
 });
 
