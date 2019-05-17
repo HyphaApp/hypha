@@ -1,6 +1,5 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
-from django.utils import timezone
 
 from opentech.apply.activity.models import Activity, PUBLIC, PRIVATE
 from opentech.apply.activity.tests.factories import CommentFactory
