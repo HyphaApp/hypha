@@ -14,6 +14,7 @@ from wagtail.admin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage
@@ -123,6 +124,9 @@ class NewsPage(BasePage):
         else:
             return self.first_published_at
 
+    def get_absolute_url(self):
+        return self.full_url
+
 
 class NewsIndex(BasePage):
     subpage_types = ['NewsPage']
@@ -164,3 +168,14 @@ class NewsIndex(BasePage):
             ).distinct()
         )
         return context
+
+
+@register_setting
+class NewsFeedSettings(BaseSetting):
+    news_title = models.CharField(max_length=255, help_text='The title of the main news feed.')
+    news_description = models.CharField(max_length=255, help_text='The description of the main news feed.')
+
+    news_per_type_title = models.CharField(
+        max_length=255, help_text='The title of the news feed by type. Use {news_type} to insert the type name.')
+    news_per_type_description = models.CharField(
+        max_length=255, help_text='The description of the news feed by type. Use {news_type} to insert the type name.')

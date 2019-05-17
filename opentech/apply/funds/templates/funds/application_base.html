@@ -26,7 +26,8 @@
         {# the page has no open rounds and we arent on a round page #}
         <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
     {% else%}
-        <form class="form" action="" method="POST" enctype="multipart/form-data">
+        <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
+        <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
             {{ form.media }}
             {% csrf_token %}
 
@@ -43,13 +44,14 @@
                     {% endif %}
                 {% endif %}
             {% endfor %}
-            <input class="link link--button-secondary" type="submit" value="{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}" />
+            <button class="link link--button-secondary" type="submit" disabled>{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit{% endif %}</button>
         </form>
     {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'js/apply/application-form.js' %}"></script>
     <script src="{% static 'js/apply/mailgun-validator.js' %}"></script>
     <script src="{% static 'js/apply/file-uploads.js' %}"></script>
     {% if not show_all_group_fields %}

@@ -4,6 +4,7 @@ MCE_ATTRIBUTES = {
     'elementpath': False,
     'branding': False,
     'entity_encoding': 'raw',
+    'plugins': 'link image preview codesample table code lists',
     'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
     'style_formats': [
         {'title': 'Headers', 'items': [

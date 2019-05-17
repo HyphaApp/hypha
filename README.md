@@ -7,8 +7,6 @@ opentech.fund Wagtail site
 1. Push your branch to the remote.
 1. Edit details as necessary.
 
-
-
 If you need to preview work on `staging`, this can be merged and deployed manually without making a merge request. You can still make the merge request as above, but add a note to say that this is on `staging`, and not yet ready to be merged to `master`.
 
 # Setting up a local build

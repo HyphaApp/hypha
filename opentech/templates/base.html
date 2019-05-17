@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
+        {% block feedlinks %}{% endblock %}
 
         <!-- favicons -->
         {% comment %}
@@ -68,8 +69,12 @@
         {% include 'includes/messages.html' %}
 
         {% block header %}
-            {% image page.header_image fill-2560x410 as header_image %}
-            <header class="header header--standard {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if page.header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
+            {% if page.header_image %}
+                {% image page.header_image fill-2560x410 as header_image %}
+            {% elif page.get_parent.specific.header_image %}
+                {% image page.get_parent.specific.header_image fill-2560x410 as header_image %}
+            {% endif %}
+            <header class="header header--standard {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
 
                 {% block apply_button %}
                     {% include "includes/apply_button.html" %}
