@@ -89,6 +89,10 @@ export default class GroupedListing extends React.Component {
             items: values.reduce((acc, value) => acc.concat(groupedItems[value] || []), [])
         })).filter(({items}) => items.length !== 0)
 
+        orderedItems.map(value => {
+            value.items.sort((a,b) => a.lastUpdate > b.lastUpdate ? -1 : 1)
+        })
+
         this.setState({orderedItems});
     }
 

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from .models import INTERNAL, PUBLIC
 from .options import MESSAGES
@@ -332,6 +333,7 @@ class ActivityAdapter(AdapterBase):
         Activity.actions.create(
             user=user,
             submission=submission,
+            timestamp=timezone.now(),
             message=message,
             visibility=visibility,
             related_object=related_object,

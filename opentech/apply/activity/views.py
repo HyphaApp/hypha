@@ -1,4 +1,5 @@
 from django.views.generic import CreateView
+from django.utils import timezone
 
 from opentech.apply.utils.views import DelegatedViewMixin
 
@@ -57,6 +58,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.submission = self.kwargs['submission']
         form.instance.type = COMMENT
+        form.instance.timestamp = timezone.now()
         response = super().form_valid(form)
         messenger(
             MESSAGES.COMMENT,

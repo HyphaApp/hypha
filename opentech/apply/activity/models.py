@@ -59,7 +59,10 @@ class ActivityBaseManager(models.Manager):
         return super().create(**kwargs)
 
     def get_queryset(self):
-        return super().get_queryset().filter(type=self.type)
+        return super().get_queryset().filter(
+            type=self.type,
+            current=True,
+        )
 
 
 class CommentQueryset(BaseActivityQuerySet):
@@ -79,12 +82,17 @@ class ActionManager(ActivityBaseManager):
 
 
 class Activity(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
     message = models.TextField()
     visibility = models.CharField(choices=list(VISIBILITY.items()), default=PUBLIC, max_length=10)
+
+    # Fields for handling versioning of the comment activity models
+    edited = models.DateTimeField(default=None, null=True)
+    current = models.BooleanField(default=True)
+    previous = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
     # Fields for generic relations to other objects. related_object should implement `get_absolute_url`
     content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)

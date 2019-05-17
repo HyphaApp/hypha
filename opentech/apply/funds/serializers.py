@@ -122,13 +122,19 @@ class ReviewSummarySerializer(serializers.Serializer):
         return response
 
 
+class TimestampField(serializers.Field):
+    def to_representation(self, value):
+        return value.timestamp()
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='funds:api:submissions:detail')
     round = serializers.SerializerMethodField()
+    last_update = TimestampField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status', 'url', 'round')
+        fields = ('id', 'title', 'status', 'url', 'round', 'last_update')
 
     def get_round(self, obj):
         """
@@ -211,10 +217,11 @@ class RoundLabSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()
+    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility')
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited', 'edit_url')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))
@@ -222,7 +229,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
+    edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'message', 'visibility')
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url')
+        read_only_fields = ('timestamp', 'edited',)
+
+
+class CommentEditSerializer(CommentCreateSerializer):
+    class Meta(CommentCreateSerializer.Meta):
+        read_only_fields = ('timestamp', 'visibility', 'edited',)

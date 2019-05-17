@@ -89,6 +89,10 @@
         margin: 0 auto 2rem;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
+
+        .feed & {
+            margin: 0 0 1rem;
+        }
     }
 
     &--bottom-space {
