@@ -44,7 +44,7 @@ def add_reviewer_type(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0060_prepare_assigned_reviewers_for_data_migration'),
+        ('funds', '0061_prepare_assigned_reviewers_for_data_migration'),
     ]
 
     operations = [

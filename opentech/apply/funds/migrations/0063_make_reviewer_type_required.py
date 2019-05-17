@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0061_data_migrate_type_for_assigned_reviewers'),
+        ('funds', '0062_data_migrate_type_for_assigned_reviewers'),
     ]
 
     operations = [

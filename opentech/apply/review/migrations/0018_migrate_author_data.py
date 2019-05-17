@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('review', '0017_add_temp_author_field'),
-        ('funds', '0062_make_reviewer_type_required'),
+        ('funds', '0063_make_reviewer_type_required'),
         ('users', '0010_add_community_reviewer_group'),
     ]
 

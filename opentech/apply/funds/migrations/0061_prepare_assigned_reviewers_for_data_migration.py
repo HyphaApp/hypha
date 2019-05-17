@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('auth', '0009_alter_user_last_name_max_length'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0059_add_community_review_workflow'),
+        ('funds', '0060_add_duration_type_in_duration_block'),
     ]
 
     operations = [
