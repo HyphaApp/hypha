@@ -7,7 +7,18 @@ from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Case, Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch, When
+from django.db.models import (
+    Case,
+    Count,
+    IntegerField,
+    F,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    Sum,
+    When,
+)
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -791,9 +802,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
                 output_field=models.IntegerField(),
             )
         ).order_by(
-            'role__order',
+            F('role__order').asc(nulls_last=True),
             'type_order',
-            'review',
+            F('review__pk').asc(nulls_last=True),
         ).select_related(
             'reviewer',
             'role',
