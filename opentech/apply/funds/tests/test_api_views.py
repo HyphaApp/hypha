@@ -1,6 +1,5 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
-from django.utils import timezone
 
 from opentech.apply.activity.models import Activity, PUBLIC, PRIVATE
 from opentech.apply.activity.tests.factories import CommentFactory
@@ -36,10 +35,7 @@ class TestCommentEdit(TestCase):
 
         comment.refresh_from_db()
 
-        # Match the behaviour of DRF
-        time = comment.timestamp.astimezone(timezone.get_current_timezone()).isoformat()
-        if time.endswith('+00:00'):
-            time = time[:-6] + 'Z'
+        time = comment.timestamp.timestamp() * 1000
 
         self.assertEqual(time, response.json()['timestamp'])
         self.assertFalse(comment.current)

@@ -146,7 +146,12 @@ class CommentFilter(filters.FilterSet):
 
     class Meta:
         model = Activity
-        fields = ['submission', 'visibility', 'since', 'before', 'newer']
+        fields = ['visibility', 'since', 'before', 'newer']
+
+
+class AllCommentFilter(CommentFilter):
+    class Meta(CommentFilter.Meta):
+        fields = CommentFilter.Meta.fields + ['submission']
 
 
 class CommentList(generics.ListAPIView):
@@ -156,7 +161,7 @@ class CommentList(generics.ListAPIView):
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = CommentFilter
+    filter_class = AllCommentFilter
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
@@ -164,7 +169,7 @@ class CommentList(generics.ListAPIView):
 
 
 class CommentListCreate(generics.ListCreateAPIView):
-    queryset = Activity.comments.all()
+    queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentCreateSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
@@ -180,6 +185,7 @@ class CommentListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         obj = serializer.save(
+            timestamp=timezone.now(),
             type=COMMENT,
             user=self.request.user,
             submission_id=self.kwargs['pk']
@@ -198,7 +204,7 @@ class CommentEdit(
         mixins.CreateModelMixin,
         generics.GenericAPIView,
 ):
-    queryset = Activity.comments.all()
+    queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentEditSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsAuthor

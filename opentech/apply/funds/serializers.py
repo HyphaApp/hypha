@@ -124,7 +124,7 @@ class ReviewSummarySerializer(serializers.Serializer):
 
 class TimestampField(serializers.Field):
     def to_representation(self, value):
-        return value.timestamp()
+        return value.timestamp() * 1000
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
@@ -218,23 +218,34 @@ class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()
     edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
+    editable = serializers.SerializerMethodField()
+    timestamp = TimestampField(read_only=True)
+    edited = TimestampField(read_only=True)
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited', 'edit_url')
+        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited', 'edit_url', 'editable')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))
+
+    def get_editable(self, obj):
+        return self.context['request'].user == obj.user
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     edit_url = serializers.HyperlinkedIdentityField(view_name='funds:api:comments:edit')
+    editable = serializers.SerializerMethodField()
+    timestamp = TimestampField(read_only=True)
+    edited = TimestampField(read_only=True)
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url')
-        read_only_fields = ('timestamp', 'edited',)
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url', 'editable')
+
+    def get_editable(self, obj):
+        return self.context['request'].user == obj.user
 
 
 class CommentEditSerializer(CommentCreateSerializer):
