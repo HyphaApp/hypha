@@ -3,6 +3,7 @@ from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import Select2Widget
 
+from opentech.apply.categories.models import MetaCategory
 from opentech.apply.users.models import User
 
 from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
@@ -286,3 +287,26 @@ class UpdatePartnersForm(forms.ModelForm):
             self.submitted_partners
         )
         return instance
+
+
+class MetaCategoryMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        depth_line = '-' * (obj.get_depth() - 1)
+        return "{} {}".format(depth_line, super().label_from_instance(obj))
+
+
+class UpdateMetaCategoriesForm(forms.ModelForm):
+    meta_categories = MetaCategoryMultipleChoiceField(
+        queryset=MetaCategory.objects.all(),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Meta categories'}),
+        label='Meta categories',
+        required=False,
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
