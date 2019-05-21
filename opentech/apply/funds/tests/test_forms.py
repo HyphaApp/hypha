@@ -29,9 +29,10 @@ class TestReviewerFormQueries(TestCase):
 
         # Reviewers
         # Partners
+        # Meta categories
         # Assigned Reviewers
         # Roles
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             form = UpdateReviewersForm(user=user, instance=submission)
 
         # 3 x Staff - 1 per Role
