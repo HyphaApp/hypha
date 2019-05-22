@@ -1,6 +1,6 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 <a class="media-box {{ class }}" href="{% pageurl person %}">
-    {% image person.photo max-210x235 as person_photo %}
+    {% image person.photo fill-210x210 as person_photo %}
     {% include "utils/includes/media_box_icon.html" with page_icon=person_photo listing=True %}
 
     <div class="media-box__content">
