@@ -95,7 +95,9 @@
         </header>
 
         <main class="wrapper wrapper--large wrapper--main">
+            {% block content_wrapper %}
             {% block content %}{% endblock %}
+            {% endblock %}
         </main>
 
         <footer class="footer"></footer>

@@ -29,7 +29,10 @@
     {% if show_change_password and user.has_usable_password and not backends.associated %}
         <div class="profile__column">
             <h3>Change password</h3>
-            <a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a>
+            <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
+
+            <h3>Account Security</h3>
+            <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:profile' %}">Two-factor authentication settings</a></p>
         </div>
     {% endif %}
 

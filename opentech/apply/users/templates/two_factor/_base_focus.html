@@ -1,0 +1,17 @@
+{% extends "two_factor/_base.html" %}
+
+{% block content_wrapper %}
+    <div class="admin-bar">
+        <div class="admin-bar__inner admin-bar__inner--with-button">
+            <h3 class="admin-bar__heading">Welcome {{ user }}</h3>
+            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white">
+                Go to dashboard
+                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper--small wrapper--inner-space-medium">
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}

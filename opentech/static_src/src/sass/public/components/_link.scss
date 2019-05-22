@@ -36,6 +36,7 @@
         @include button(transparent, $color--darkest-blue);
         color: $color--white;
 
+        &:focus,
         &:hover {
             border: 1px solid transparent;
         }
