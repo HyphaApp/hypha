@@ -301,7 +301,7 @@ class UpdateMetaCategoriesForm(forms.ModelForm):
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Meta categories'}),
         label='Meta categories',
         required=False,
-        help_text='Meta categories are hierarchical in nature, - highlights the depth in the tree.'
+        help_text='Meta categories are hierarchical in nature, - highlights the depth in the tree.',
     )
 
     class Meta:
