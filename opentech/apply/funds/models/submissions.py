@@ -510,6 +510,7 @@ class ApplicationSubmission(
             raise ValueError('Incorrect State for transition')
 
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
+        prev_meta_categories = submission_in_db.meta_categories.all()
 
         self.id = None
         self.form_fields = self.get_from_parent('get_defined_fields')(target)
@@ -517,6 +518,7 @@ class ApplicationSubmission(
         self.live_revision = None
         self.draft_revision = None
         self.save()
+        self.meta_categories.set(prev_meta_categories)
 
         submission_in_db.next = self
         submission_in_db.save()
