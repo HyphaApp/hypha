@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
-from django.contrib.auth.views import redirect_to_login
 from django.views.generic import TemplateView
 from django.conf.urls import url
-from django.urls import reverse
 
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.admin import urls as wagtailadmin_urls
@@ -14,15 +12,18 @@ from wagtail.images.views.serve import ServeView
 
 from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
-
-
-def redirect_to_my_auth(request):
-    return redirect_to_login(reverse('wagtailadmin_home'), login_url='users_public:login')
-
+from opentech.apply.users.views import LoginView
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
-    path('admin/login/', redirect_to_my_auth, name='wagtailadmin_login'),
+    path(
+        'admin/login/',
+        LoginView.as_view(
+            template_name='users/login.html',
+            redirect_authenticated_user=True
+        ),
+        name='wagtailadmin_login'
+    ),
     path('admin/', include(wagtailadmin_urls)),
 
     path('documents/', include(wagtaildocs_urls)),

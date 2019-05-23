@@ -1,19 +1,24 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.models import BaseUserManager
-from django.shortcuts import redirect, render
+from django.contrib.auth.views import SuccessURLAllowedHostsMixin
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render, resolve_url
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
+from django.utils.http import is_safe_url, urlsafe_base64_decode
+from django.views.decorators.csrf import csrf_protect
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 
 from hijack.views import login_with_id
+from two_factor.views import LoginView as TwoFactorLoginView
 
 from wagtail.admin.views.account import password_management_enabled
 
@@ -22,6 +27,39 @@ from .forms import BecomeUserForm, ProfileForm
 
 
 User = get_user_model()
+
+
+class LoginView(SuccessURLAllowedHostsMixin, TwoFactorLoginView):
+    redirect_authenticated_user = False
+
+    @method_decorator(csrf_protect)
+    def dispatch(self, request, *args, **kwargs):
+        if self.redirect_authenticated_user and self.request.user.is_authenticated:
+            redirect_to = self.get_success_url()
+            if redirect_to == self.request.path:
+                raise ValueError(
+                    "Redirection loop for authenticated user detected. Check that "
+                    "your LOGIN_REDIRECT_URL doesn't point to a login page."
+                )
+            return HttpResponseRedirect(redirect_to)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        url = self.get_redirect_url()
+        return url or resolve_url(settings.LOGIN_REDIRECT_URL)
+
+    def get_redirect_url(self):
+        """Return the user-originating redirect URL if it's safe."""
+        redirect_to = self.request.POST.get(
+            self.redirect_field_name,
+            self.request.GET.get(self.redirect_field_name, '')
+        )
+        url_is_safe = is_safe_url(
+            url=redirect_to,
+            allowed_hosts=self.get_success_url_allowed_hosts(),
+            require_https=self.request.is_secure(),
+        )
+        return redirect_to if url_is_safe else ''
 
 
 @method_decorator(login_required, name='dispatch')
