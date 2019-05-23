@@ -58,12 +58,16 @@
             </p>
         {% endif %}
 
-        {% include "two_factor/_wizard_actions.html" %}
+        <div class="wrapper wrapper--inner-space-large">
+            {% include "two_factor/_wizard_actions.html" %}
+        </div>
       {% endif %}
     </form>
 
-    <div class="wrapper wrapper--inner-space-large">
-      <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">Log in with your OTF email</a>
-    </div>
+    {% if wizard.steps.current == 'auth' %}
+        <div class="wrapper wrapper--inner-space-large">
+          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">Log in with your OTF email</a>
+        </div>
+    {% endif %}
   </div>
 {% endblock %}
