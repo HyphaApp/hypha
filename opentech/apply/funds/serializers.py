@@ -9,6 +9,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
+from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 from .models import ApplicationSubmission, RoundsAndLabs
 
 User = get_user_model()
@@ -88,7 +89,7 @@ class ReviewSummarySerializer(serializers.Serializer):
         }
 
     def get_assigned(self, obj):
-        assigned_reviewers = obj.assigned.select_related('reviewer', 'role')
+        assigned_reviewers = obj.assigned.select_related('reviewer', 'role', 'type')
         response = [
             {
                 'id': assigned.id,
@@ -98,8 +99,8 @@ class ReviewSummarySerializer(serializers.Serializer):
                     'name': assigned.role and assigned.role.name,
                     'order': assigned.role and assigned.role.order,
                 },
-                'is_staff': assigned.reviewer.is_apply_staff,
-                'is_partner': assigned.reviewer.is_partner,
+                'is_staff': assigned.type.name == STAFF_GROUP_NAME,
+                'is_partner': assigned.type.name == PARTNER_GROUP_NAME,
             } for assigned in assigned_reviewers
         ]
         return response
