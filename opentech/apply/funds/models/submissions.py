@@ -180,7 +180,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 output_field=IntegerField(),
             ),
             review_submitted_count=Subquery(
-                reviewers.reviewed().values('submission').annotate(count=Count('pk', distinct=True)).values('count'),
+                reviewers.reviewed().exclude(opinions__opinion=DISAGREE).values('submission').annotate(
+                    count=Count('pk', distinct=True)
+                ).values('count'),
                 output_field=IntegerField(),
             ),
             review_recommendation=Case(
