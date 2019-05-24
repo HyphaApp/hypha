@@ -291,13 +291,13 @@ class UpdatePartnersForm(forms.ModelForm):
 
 class MetaCategoryMultipleChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        depth_line = '-' * (obj.get_depth() - 1)
+        depth_line = '-' * (obj.get_depth() - 2)
         return "{} {}".format(depth_line, super().label_from_instance(obj))
 
 
 class UpdateMetaCategoriesForm(forms.ModelForm):
     meta_categories = MetaCategoryMultipleChoiceField(
-        queryset=MetaCategory.objects.all(),
+        queryset=MetaCategory.get_root_descendants(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Meta categories'}),
         label='Meta categories',
         required=False,
