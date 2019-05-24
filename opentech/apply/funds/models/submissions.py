@@ -792,7 +792,10 @@ class AssignedReviewersQuerySet(models.QuerySet):
             else:
                 groups = {REVIEWER_GROUP_NAME}
         elif not groups:
-            groups = {REVIEWER_GROUP_NAME}
+            if assigned.reviewer.is_staff or assigned.reviewer.is_superuser:
+                groups = {STAFF_GROUP_NAME}
+            else:
+                groups = {REVIEWER_GROUP_NAME}
 
         group = Group.objects.get(name=groups.pop())
 
