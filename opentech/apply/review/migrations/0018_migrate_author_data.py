@@ -43,7 +43,7 @@ def add_to_assigned_reviewers(apps, schema_editor):
         assignment, _ = AssignedReviewer.objects.update_or_create(
             submission=review.submission,
             reviewer=review.author,
-            type=group,
+            defaults={'type': group},
         )
         review.author_temp = assignment
         review.save()
@@ -51,7 +51,7 @@ def add_to_assigned_reviewers(apps, schema_editor):
             opinion_assignment, _ = AssignedReviewer.objects.update_or_create(
                 submission=review.submission,
                 reviewer=opinion.author,
-                type=Group.objects.get(name=STAFF_GROUP_NAME),
+                defaults={'type': Group.objects.get(name=STAFF_GROUP_NAME)},
             )
             opinion.author_temp = opinion_assignment
             opinion.save()
