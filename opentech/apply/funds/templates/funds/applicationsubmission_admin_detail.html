@@ -39,6 +39,10 @@
     {% include 'funds/includes/screening_status_block.html' %}
 {% endblock %}
 
+{% block meta_categories %}
+    {% include 'funds/includes/meta_categories_block.html' %}
+{% endblock %}
+
 {% block determination %}
     {% include 'determinations/includes/determination_block.html' with submission=object %}
 {% endblock %}
