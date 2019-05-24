@@ -29,7 +29,7 @@ def add_reviewer_type(apps, schema_editor):
                 groups = {PARTNER_GROUP_NAME}
             elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
-            elif assigned.reviewer.is_staff:
+            elif review.author.is_staff or review.author.is_superuser:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
