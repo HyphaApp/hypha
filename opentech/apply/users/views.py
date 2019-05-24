@@ -13,7 +13,9 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_text
 from django.utils.http import is_safe_url, urlsafe_base64_decode
+from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 
@@ -32,7 +34,9 @@ User = get_user_model()
 class LoginView(SuccessURLAllowedHostsMixin, TwoFactorLoginView):
     redirect_authenticated_user = False
 
+    @method_decorator(sensitive_post_parameters())
     @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
         if self.redirect_authenticated_user and self.request.user.is_authenticated:
             redirect_to = self.get_success_url()
