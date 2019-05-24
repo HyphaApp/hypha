@@ -165,7 +165,7 @@ class ProjectIndexPage(BasePage):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        subpages = ProjectPage.objects.descendant_of(self).live().public().select_related('icon')
+        subpages = ProjectPage.objects.descendant_of(self).live().public().select_related('icon').order_by('-first_published_at')
         per_page = settings.DEFAULT_PER_PAGE
         page_number = request.GET.get('page')
         paginator = Paginator(subpages, per_page)
