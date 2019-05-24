@@ -101,16 +101,16 @@ function roundsByID(state = {}, action) {
 }
 
 
-function errorMessage(state = null, action) {
+function errorMessage(state = '', action) {
     switch(action.type) {
     case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
     case FAIL_LOADING_ROUND:
-        return action.message;
+        return action.message || '';
     case UPDATE_SUBMISSIONS_BY_ROUND:
     case START_LOADING_SUBMISSIONS_BY_ROUND:
     case UPDATE_ROUND:
     case START_LOADING_ROUND:
-        return null;
+        return '';
     default:
         return state;
     }

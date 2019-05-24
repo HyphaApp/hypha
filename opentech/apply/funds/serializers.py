@@ -60,6 +60,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     url = serializers.ReadOnlyField(source='get_absolute_url')
     opinions = OpinionSerializer(read_only=True, many=True)
     recommendation = serializers.SerializerMethodField()
+    score = serializers.ReadOnlyField(source='get_score_display')
 
     class Meta:
         model = Review
@@ -76,7 +77,6 @@ class ReviewSummarySerializer(serializers.Serializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     count = serializers.ReadOnlyField(source='reviews.count')
     score = serializers.ReadOnlyField(source='reviews.score')
-    assigned = ReviewSerializer(many=True, read_only=True)
     recommendation = serializers.SerializerMethodField()
     assigned = serializers.SerializerMethodField()
 
@@ -91,7 +91,7 @@ class ReviewSummarySerializer(serializers.Serializer):
         assigned_reviewers = obj.assigned.select_related('reviewer', 'role')
         response = [
             {
-                'id': assigned.reviewer.id,
+                'id': assigned.id,
                 'name': str(assigned.reviewer),
                 'role': {
                     'icon': assigned.role and assigned.role.icon_url('fill-12x12'),
@@ -102,23 +102,6 @@ class ReviewSummarySerializer(serializers.Serializer):
                 'is_partner': assigned.reviewer.is_partner,
             } for assigned in assigned_reviewers
         ]
-
-        opinionated_reviewers = ReviewOpinion.objects.filter(review__submission=obj).values('author').distinct()
-        extra_reviewers = opinionated_reviewers.exclude(author__in=assigned_reviewers.values('reviewer'))
-        response.extend([
-            {
-                'id': user.id,
-                'name': str(user),
-                'role': {
-                    'icon': None,
-                    'name': None,
-                    'order': None,
-                },
-                'is_staff': user.is_apply_staff,
-                'is_partner': user.is_partner,
-            } for user in User.objects.filter(id__in=extra_reviewers)
-        ])
-
         return response
 
 

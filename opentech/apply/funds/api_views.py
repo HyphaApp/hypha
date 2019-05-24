@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import (NotFound, PermissionDenied,
@@ -10,6 +10,7 @@ from opentech.api.pagination import StandardResultsSetPagination
 from opentech.apply.activity.models import Activity, COMMENT
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
+from opentech.apply.review.models import Review
 
 from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
@@ -64,7 +65,9 @@ class SubmissionList(generics.ListAPIView):
 
 
 class SubmissionDetail(generics.RetrieveAPIView):
-    queryset = ApplicationSubmission.objects.all()
+    queryset = ApplicationSubmission.objects.all().prefetch_related(
+        Prefetch('reviews', Review.objects.submitted()),
+    )
     serializer_class = SubmissionDetailSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
