@@ -180,7 +180,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 output_field=IntegerField(),
             ),
             review_submitted_count=Subquery(
-                reviewers.reviewed().exclude(opinions__opinion=DISAGREE).values('submission').annotate(
+                reviewers.reviewed().values('submission').annotate(
                     count=Count('pk', distinct=True)
                 ).values('count'),
                 output_field=IntegerField(),
@@ -820,13 +820,14 @@ class AssignedReviewersQuerySet(models.QuerySet):
 
     def reviewed(self):
         return self.filter(
-            Q(opinions__isnull=False) | Q(Q(review__isnull=False) & Q(review__is_draft=False))
+            Q(opinions__opinion=AGREE) |
+            Q(Q(review__isnull=False) & Q(review__is_draft=False))
         ).distinct()
 
     def not_reviewed(self):
         return self.filter(
             Q(review__isnull=True) | Q(review__is_draft=True),
-            opinions__isnull=True,
+            Q(opinions__isnull=True) | Q(opinions__opinion=DISAGREE),
         ).distinct()
 
     def never_tried_to_review(self):

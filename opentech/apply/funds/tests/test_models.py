@@ -535,7 +535,23 @@ class TestForTableQueryset(TestCase):
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, 1)
         self.assertEqual(submission.review_count, 2)
-        self.assertEqual(submission.review_submitted_count, 2)
+        # Reviewers that disagree are not counted
+        self.assertEqual(submission.review_submitted_count, 1)
+        self.assertEqual(submission.review_recommendation, MAYBE)
+
+    def test_opinionated_slash_confused_reviewer(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        review_one = ReviewFactory(submission=submission)
+        review_two = ReviewFactory(submission=submission)
+        ReviewOpinionFactory(opinion_disagree=True, review=review_one, author__reviewer=staff)
+        ReviewOpinionFactory(opinion_agree=True, review=review_two, author__reviewer=staff)
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, 1)
+        self.assertEqual(submission.review_count, 3)
+        # Reviewers that disagree are not counted
+        self.assertEqual(submission.review_submitted_count, 3)
         self.assertEqual(submission.review_recommendation, MAYBE)
 
     def test_dont_double_count_review_and_opinion(self):
@@ -570,7 +586,8 @@ class TestForTableQueryset(TestCase):
         self.assertEqual(submission, submission_one)
         self.assertEqual(submission.opinion_disagree, 1)
         self.assertEqual(submission.review_count, 2)
-        self.assertEqual(submission.review_submitted_count, 2)
+        # Reviewers that disagree are not counted
+        self.assertEqual(submission.review_submitted_count, 1)
         self.assertEqual(submission.review_recommendation, MAYBE)
 
         submission = qs[1]
