@@ -267,8 +267,11 @@ class ReviewListView(ListView):
         review_data['comments'] = {'question': 'Comments', 'answers': list()}
 
         responses = self.object_list.count()
+        ordered_reviewers = AssignedReviewers.objects.filter(submission=self.submission).reviewed().review_order()
 
-        for i, review in enumerate(self.object_list):
+        reviews = {review.author: review for review in self.object_list}
+        for i, reviewer in enumerate(ordered_reviewers):
+            review = reviews[reviewer]
             author = '<a href="{}"><span>{}</span></a>'.format(review.get_absolute_url(), review.author)
             if review.author.role:
                 author += generate_image_tag(review.author.role.icon, '12x12')
