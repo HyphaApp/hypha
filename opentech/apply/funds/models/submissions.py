@@ -802,11 +802,17 @@ class AssignedReviewersQuerySet(models.QuerySet):
             type_order=models.Case(
                 *ordering,
                 output_field=models.IntegerField(),
+            ),
+            has_review=models.Case(
+                models.When(review__isnull=True, then=models.Value(1)),
+                models.When(review__is_draft=True, then=models.Value(1)),
+                default=models.Value(0),
+                output_field=models.IntegerField(),
             )
         ).order_by(
-            F('role__order').asc(nulls_last=True),
             'type_order',
-            F('review__pk').asc(nulls_last=True),
+            'has_review',
+            F('role__order').asc(nulls_last=True),
         ).select_related(
             'reviewer',
             'role',
