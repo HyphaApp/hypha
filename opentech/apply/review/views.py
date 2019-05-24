@@ -18,6 +18,7 @@ from opentech.apply.stream_forms.models import BaseStreamForm
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.users.groups import REVIEWER_GROUP_NAME
 from opentech.apply.utils.views import CreateOrUpdateView
+from opentech.apply.utils.image import generate_image_tag
 
 from .models import Review
 from .options import DISAGREE
@@ -268,7 +269,12 @@ class ReviewListView(ListView):
         responses = self.object_list.count()
 
         for i, review in enumerate(self.object_list):
-            review_data['title']['answers'].append('<a href="{}">{}</a>'.format(review.get_absolute_url(), review.author))
+            author = '<a href="{}"><span>{}</span></a>'.format(review.get_absolute_url(), review.author)
+            if review.author.role:
+                author += generate_image_tag(review.author.role.icon, '12x12')
+            author = f'<div>{author}</div>'
+
+            review_data['title']['answers'].append(author)
             opinions_template = get_template('review/includes/review_opinions_list.html')
             opinions_html = opinions_template.render({'opinions': review.opinions.select_related('author').all()})
             review_data['opinions']['answers'].append(opinions_html)
