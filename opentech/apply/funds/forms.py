@@ -297,7 +297,7 @@ class MetaCategoryMultipleChoiceField(forms.ModelMultipleChoiceField):
 
 class UpdateMetaCategoriesForm(forms.ModelForm):
     meta_categories = MetaCategoryMultipleChoiceField(
-        queryset=MetaCategory.get_root_descendants(),
+        queryset=None,  # updated in init method
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Meta categories'}),
         label='Meta categories',
         required=False,
@@ -311,3 +311,4 @@ class UpdateMetaCategoriesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        self.fields['meta_categories'].queryset = MetaCategory.get_root_descendants()
