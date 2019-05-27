@@ -434,6 +434,16 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             added=added,
             removed=removed,
         )
+
+        messenger(
+            MESSAGES.PARTNERS_UPDATED_PARTNER,
+            request=self.request,
+            user=self.request.user,
+            submission=self.kwargs['submission'],
+            added=added,
+            removed=removed,
+        )
+
         return response
 
 
