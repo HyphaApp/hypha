@@ -36,7 +36,7 @@ class PrivateMediaStorage(S3Boto3Storage):
             try:
                 name_parts = name.split('/')
                 return reverse(
-                    'apply:submissions:private_media_redirect', kwargs={
+                    'apply:submissions:serve_private_media', kwargs={
                         'submission_id': name_parts[1], 'field_id': name_parts[2],
                         'file_name': name_parts[3]
                     }
