@@ -12,6 +12,7 @@ from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission, AssignedReviewers
+from opentech.apply.funds.workflow import INITIAL_STATE
 from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from opentech.apply.stream_forms.models import BaseStreamForm
@@ -111,6 +112,33 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 submission=self.submission,
                 related=self.object,
             )
+
+            submission_stepped_phases = self.submission.workflow.stepped_phases
+            if self.submission.status == INITIAL_STATE:
+                # Automatically transition the submission to "Internal review".
+                action = submission_stepped_phases[1][0].name
+                try:
+                    self.submission.perform_transition(
+                        action,
+                        self.request.user,
+                        request=self.request,
+                        notify=False,
+                    )
+                except (PermissionDenied, KeyError):
+                    pass
+            elif self.submission.status == submission_stepped_phases[1][0].name and self.submission.reviews.count() > 1:
+                # Automatically transition the submission to "Ready for discussion".
+                action = submission_stepped_phases[2][0].name
+                try:
+                    self.submission.perform_transition(
+                        action,
+                        self.request.user,
+                        request=self.request,
+                        notify=False,
+                    )
+                except (PermissionDenied, KeyError):
+                    pass
+
         return response
 
     def get_success_url(self):
