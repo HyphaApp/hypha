@@ -1,4 +1,5 @@
 {% extends "two_factor/_base.html" %}
+{% load static %}
 
 {% block content_wrapper %}
     <div class="admin-bar">
@@ -11,7 +12,12 @@
         </div>
     </div>
 
-    <div class="wrapper wrapper--small wrapper--inner-space-medium">
+    <div class="wrapper wrapper--small wrapper--inner-space-medium  two-factor">
         {% block content %}{% endblock %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/apply/two-factor-focus.js' %}"></script>
 {% endblock %}
