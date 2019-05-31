@@ -12,10 +12,18 @@ from wagtail.images.views.serve import ServeView
 
 from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
-
+from opentech.apply.users.views import LoginView
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),
+    path(
+        'admin/login/',
+        LoginView.as_view(
+            template_name='users/login.html',
+            redirect_authenticated_user=True
+        ),
+        name='wagtailadmin_login'
+    ),
     path('admin/', include(wagtailadmin_urls)),
 
     path('documents/', include(wagtaildocs_urls)),

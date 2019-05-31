@@ -15,7 +15,13 @@ from opentech.apply.stream_forms.files import StreamFieldFile
 __all__ = ['AccessFormData']
 
 
-submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
+private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
+submission_storage_class = get_storage_class(private_file_storage)
+
+if private_file_storage:
+    submission_storage = submission_storage_class(is_submission=True)
+else:
+    submission_storage = submission_storage_class()
 
 
 class UnusedFieldException(Exception):

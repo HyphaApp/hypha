@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { CSSTransition } from 'react-transition-group';
 
 import useInterval from "@rooks/use-interval"
 
-import { fetchNewNotesForSubmission } from '@actions/notes';
+import { fetchNewNotesForSubmission, editingNote } from '@actions/notes';
 import Listing from '@components/Listing';
-import Note from '@containers/Note';
+import NoteListingItem from '@components/NoteListingItem';
 import {
     getNotesErrorState,
     getNotesErrorMessage,
-    getNoteIDsForSubmissionOfID,
+    getNotesForSubmission,
     getNotesFetchState,
+    getDraftNoteForSubmission,
 } from '@selectors/notes';
 
 
-const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage, isLoading }) => {
+const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, isLoading, editing, editNote }) => {
     const fetchNotes = () => loadNotes(submissionID)
 
     const {start, stop } = useInterval(fetchNotes, 30000)
@@ -37,12 +37,29 @@ const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage,
         }
     }
 
-    const renderItem = noteID => {
-        return (
-            <CSSTransition key={`note-${noteID}`} timeout={200} classNames="add-note">
-                <Note key={`note-${noteID}`} noteID={noteID} />
-            </CSSTransition>
-        );
+    /* const time = new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); */
+
+    const orderedNotes = notes.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    const renderItem = note => {
+        const date = new Date(note.timestamp).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
+        const edited = (
+            note.edited ?
+            new Date(note.edited).toLocaleDateString('en-gb', {day: 'numeric', month: 'short', year:'numeric', timezone:'GMT'})
+            : null
+        )
+
+        return <NoteListingItem
+            author={note.user}
+            timestamp={date}
+            key={`note-${note.id}`}
+            message={note.message}
+            submissionID={submissionID}
+            disabled={!!editing}
+            editable={note.editable}
+            edited={edited}
+            handleEditNote={() => editNote(note.id, note.message, submissionID)}
+        />;
     }
 
     return (
@@ -52,7 +69,7 @@ const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage,
             errorMessage={ errorMessage }
             handleRetry={ handleRetry }
             renderItem={ renderItem }
-            items={ noteIDs }
+            items={ orderedNotes }
             column="notes"
         />
     );
@@ -60,23 +77,28 @@ const NoteListing = ({loadNotes, submissionID, noteIDs, isErrored, errorMessage,
 
 NoteListing.propTypes = {
     loadNotes: PropTypes.func,
+    editNote: PropTypes.func,
     submissionID: PropTypes.number,
-    noteIDs: PropTypes.array,
+    notes: PropTypes.array,
     isErrored: PropTypes.bool,
     errorMessage: PropTypes.string,
     isLoading: PropTypes.bool,
+    editing: PropTypes.object,
 };
 
 
 const mapDispatchToProps = dispatch => ({
     loadNotes: submissionID => dispatch(fetchNewNotesForSubmission(submissionID)),
+    editNote: (id, message, submissionID) => dispatch(editingNote(id, message, submissionID)),
 });
 
 const mapStateToProps = (state, ownProps) => ({
-    noteIDs: getNoteIDsForSubmissionOfID(ownProps.submissionID)(state),
+    notes: getNotesForSubmission(ownProps.submissionID)(state),
     isLoading: getNotesFetchState(state),
     isErrored: getNotesErrorState(state),
     errorMessage: getNotesErrorMessage(state),
+    editing: getDraftNoteForSubmission(ownProps.submissionID)(state),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NoteListing);

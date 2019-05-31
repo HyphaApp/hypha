@@ -101,6 +101,20 @@
             margin: 0 15px 0 0;
         }
 
+        &--edit-button {
+            border-left: 2px solid $color--mid-grey;
+            padding-left: 15px;
+        }
+
+        &--last-edited {
+            margin-right: 5px;
+            color: $color--mid-dark-grey;
+
+            span {
+                font-weight: $weight--normal;
+            }
+        }
+
         &--right {
             margin-left: auto;
         }

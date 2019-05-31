@@ -1,0 +1,9 @@
+{% extends "messages/email/base.html" %}
+{% block content %}
+New partner(s) has been added to your submission.
+{% for partner in added %}
+* {{ partner }}
+{% endfor %}
+Title: {{ submission.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% endblock %}

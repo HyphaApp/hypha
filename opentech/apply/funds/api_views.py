@@ -1,6 +1,8 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
+from django.db import transaction
 from django.db.models import Q, Prefetch
-from rest_framework import generics, permissions
+from django.utils import timezone
+from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import (NotFound, PermissionDenied,
                                        ValidationError)
@@ -16,13 +18,14 @@ from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
     CommentSerializer,
     CommentCreateSerializer,
+    CommentEditSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
     SubmissionListSerializer,
     SubmissionDetailSerializer,
 )
-from .permissions import IsApplyStaffUser
+from .permissions import IsApplyStaffUser, IsAuthor
 from .workflow import PHASES
 
 
@@ -54,7 +57,7 @@ class SubmissionsFilter(filters.FilterSet):
 
 
 class SubmissionList(generics.ListAPIView):
-    queryset = ApplicationSubmission.objects.current()
+    queryset = ApplicationSubmission.objects.current().with_latest_update()
     serializer_class = SubmissionListSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
@@ -146,7 +149,12 @@ class CommentFilter(filters.FilterSet):
 
     class Meta:
         model = Activity
-        fields = ['submission', 'visibility', 'since', 'before', 'newer']
+        fields = ['visibility', 'since', 'before', 'newer']
+
+
+class AllCommentFilter(CommentFilter):
+    class Meta(CommentFilter.Meta):
+        fields = CommentFilter.Meta.fields + ['submission']
 
 
 class CommentList(generics.ListAPIView):
@@ -156,7 +164,7 @@ class CommentList(generics.ListAPIView):
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = CommentFilter
+    filter_class = AllCommentFilter
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
@@ -164,7 +172,7 @@ class CommentList(generics.ListAPIView):
 
 
 class CommentListCreate(generics.ListCreateAPIView):
-    queryset = Activity.comments.all()
+    queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentCreateSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
@@ -180,6 +188,7 @@ class CommentListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         obj = serializer.save(
+            timestamp=timezone.now(),
             type=COMMENT,
             user=self.request.user,
             submission_id=self.kwargs['pk']
@@ -191,3 +200,38 @@ class CommentListCreate(generics.ListCreateAPIView):
             submission=obj.submission,
             related=obj,
         )
+
+
+class CommentEdit(
+        mixins.RetrieveModelMixin,
+        mixins.CreateModelMixin,
+        generics.GenericAPIView,
+):
+    queryset = Activity.comments.all().select_related('user')
+    serializer_class = CommentEditSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsAuthor
+    )
+
+    def post(self, request, *args, **kwargs):
+        return self.edit(request, *args, **kwargs)
+
+    @transaction.atomic
+    def edit(self, request, *args, **kwargs):
+        comment_to_edit = self.get_object()
+        comment_to_update = self.get_object()
+
+        comment_to_edit.previous = comment_to_update
+        comment_to_edit.pk = None
+        comment_to_edit.edited = timezone.now()
+
+        serializer = self.get_serializer(comment_to_edit, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if serializer.validated_data['message'] != comment_to_update.message:
+            self.perform_create(serializer)
+            comment_to_update.current = False
+            comment_to_update.save()
+            return Response(serializer.data)
+
+        return Response(self.get_serializer(comment_to_update).data)

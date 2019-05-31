@@ -1,6 +1,15 @@
+import urllib
+
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import RequestFactory
+from django.urls import reverse_lazy
+
 from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.models import ACCEPTED, REJECTED
+from opentech.apply.determinations.views import BatchDeterminationCreateView
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
+from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.utils.testing import BaseViewTestCase
 
@@ -123,6 +132,15 @@ class BatchDeterminationTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:determinations:{}'
     base_view_name = 'batch'
 
+    def dummy_request(self, path):
+        request = RequestFactory().get(path)
+        middleware = SessionMiddleware()
+        middleware.process_request(request)
+        request.session.save()
+        request.user = StaffFactory()
+        request._messages = FallbackStorage(request)
+        return request
+
     def test_cant_access_without_submissions(self):
         url = self.url(None) + '?action=rejected'
         response = self.client.get(url, follow=True, secure=True)
@@ -156,6 +174,32 @@ class BatchDeterminationTestCase(BaseViewTestCase):
             self.assertEqual(submission.determinations.count(), 1)
 
         self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+
+    def test_sets_next_on_redirect(self):
+        test_path = '/a/path/?with=query&a=sting'
+        request = RequestFactory().get('', PATH_INFO=test_path)
+        redirect = BatchDeterminationCreateView.should_redirect(
+            request,
+            ApplicationSubmission.objects.none(),
+            ['rejected'],
+        )
+        url = urllib.parse.urlparse(redirect.url)
+        query = urllib.parse.parse_qs(url.query)
+        next_path = urllib.parse.unquote_plus(query['next'][0])
+        self.assertEqual(next_path, test_path)
+
+    def test_success_redirects_if_exists(self):
+        test_path = '/a/path/?with=query&a=sting'
+        view = BatchDeterminationCreateView()
+        view.request = self.dummy_request('?next=' + urllib.parse.quote_plus(test_path))
+        redirect_url = view.get_success_url()
+        self.assertEqual(redirect_url, test_path)
+
+    def test_success_if_no_next(self):
+        view = BatchDeterminationCreateView()
+        view.request = self.dummy_request('')
+        redirect_url = view.get_success_url()
+        self.assertEqual(redirect_url, reverse_lazy('apply:submissions:list'))
 
     def test_message_created_if_determination_exists(self):
         submissions = ApplicationSubmissionFactory.create_batch(2)

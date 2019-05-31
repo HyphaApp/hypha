@@ -190,6 +190,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     template_name = 'review/review_detail.html'
     form_class = ReviewOpinionForm
     model = Review
+    raise_exception = True
 
     def get_form_kwargs(self):
         self.object = self.get_object()

@@ -12,7 +12,7 @@ import {
     FAIL_EXECUTING_SUBMISSION_ACTION,
 } from '@actions/submissions';
 
-import { UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
+import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
 function submission(state={comments: []}, action) {
@@ -61,8 +61,16 @@ function submission(state={comments: []}, action) {
                 isExecutingAction: false,
                 isExecutingActionErrored: true,
                 executionActionError: action.error
-            }
+            };
         case UPDATE_NOTE:
+            return {
+                ...state,
+                comments: [
+                    action.data.id,
+                    ...(state.comments.filter(comment => comment !== action.note.id) || []),
+                ]
+            };
+        case CREATE_NOTE:
             return {
                 ...state,
                 comments: [
@@ -81,6 +89,7 @@ function submissionsByID(state = {}, action) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
         case UPDATE_SUBMISSION:
+        case CREATE_NOTE:
         case UPDATE_NOTE:
         case UPDATE_NOTES:
         case START_EXECUTING_SUBMISSION_ACTION:

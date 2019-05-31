@@ -12,8 +12,10 @@ from .views import (
     SubmissionOverviewView,
     SubmissionSealedView,
     SubmissionDeleteView,
+    SubmissionPrivateMediaRedirectView,
 )
 from .api_views import (
+    CommentEdit,
     CommentList,
     CommentListCreate,
     RoundLabDetail,
@@ -35,6 +37,10 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    path(
+        'documents/submission/<int:submission_id>/<uuid:field_id>/<str:file_name>/',
+        SubmissionPrivateMediaRedirectView.as_view(), name='private_media_redirect'
+    ),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
@@ -62,6 +68,7 @@ api_urls = ([
     ], 'rounds'))),
     path('comments/', include(([
         path('', CommentList.as_view(), name='list'),
+        path('<int:pk>/edit/', CommentEdit.as_view(), name='edit'),
     ], 'comments')))
 ], 'api')
 

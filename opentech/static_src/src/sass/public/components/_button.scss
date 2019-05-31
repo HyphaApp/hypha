@@ -9,6 +9,23 @@
         cursor: pointer;
     }
 
+    &:disabled,
+    &.is-disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
+    &--primary {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+
+        .form--filters & {
+            width: 100%;
+            text-align: center;
+            height: 45px;
+        }
+    }
+
     &--left-space {
         margin-left: 20px;
     }
@@ -111,4 +128,3 @@
         }
     }
 }
-

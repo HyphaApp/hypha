@@ -5,29 +5,45 @@ import './styles.scss';
 
 export default class NoteListingItem extends React.Component {
     static propTypes = {
-        user: PropTypes.string.isRequired,
+        author: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
         timestamp: PropTypes.string.isRequired,
+        handleEditNote: PropTypes.func.isRequired,
+        disabled: PropTypes.bool,
+        editable: PropTypes.bool,
+        edited: PropTypes.string,
     };
 
     parseUser() {
-        const { user } = this.props;
+        const { author } = this.props;
 
-        if (user.length > 16) {
-            return `${user.substring(0, 16)}...`
+        if (author.length > 16) {
+            return `${author.substring(0, 16)}...`
         } else {
-            return user;
+            return author;
         }
     }
 
     render() {
-        const { timestamp, message } = this.props;
+        const { timestamp, message, handleEditNote, disabled, editable, edited} = this.props;
 
         return (
-            <li className="note">
+            <li className={`note ${disabled ? 'disabled' : ''}`}>
                 <p className="note__meta">
-                    <span>{this.parseUser()}</span>
-                    <span className="note__date">{timestamp}</span>
+                    <span className="note__meta note__meta--inner">
+                        <span>{this.parseUser()}</span>
+                        { editable &&
+                            <a onClick={(e) => handleEditNote(e.preventDefault())} className="note__edit" href="#">
+                                Edit
+                                <svg className="icon icon--pen"><use xlinkHref="#pen"></use></svg>
+                            </a>
+                        }
+                    </span>
+
+                    <span className="note__date">
+                        <span className="note__date_created">{timestamp}</span><br/>
+                        {edited && <span className="note__date_edited">(edited: {edited})</span>}
+                    </span>
                 </p>
                 <div className="note__content" dangerouslySetInnerHTML={{__html: message}} />
             </li>

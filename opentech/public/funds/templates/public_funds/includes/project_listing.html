@@ -1,12 +1,12 @@
 {% load wagtailcore_tags wagtailimages_tags %}
 <a class="media-box {{ class }}" href="{% pageurl project %}">
-    {% image project.icon max-210x235 as project_icon %}
+    {% image project.icon max-210x210 as project_icon %}
     {% include "utils/includes/media_box_icon.html" with page_icon=project_icon listing=True %}
 
     <div class="media-box__content">
         <h4>{{ project.title }}</h4>
         {% if project.listing_summary or project.introduction %}
-            <h5 class="media-box__teaser">{{ project.listing_summary|default:project.introduction|truncatechars_html:160 }}</h5>
+            <p class="media-box__teaser">{{ project.listing_summary|default:project.introduction|truncatechars_html:160 }}</p>
         {% endif %}
     </div>
 </a>

@@ -9,7 +9,6 @@
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
 
-
         &--narrow {
             @include button--narrow;
         }
@@ -25,6 +24,10 @@
 
     &--bold {
         font-weight: $weight--bold;
+    }
+
+    &--left-space {
+        margin-left: 20px;
     }
 
     &--download {
@@ -88,6 +91,14 @@
         &:focus,
         &:hover {
             border: 1px solid transparent;
+        }
+    }
+
+    &--button-long-text {
+        padding: 10px;
+
+        @include media-query(tablet-portrait) {
+            padding: 10px 60px;
         }
     }
 

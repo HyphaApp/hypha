@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-//import { TransitionGroup } from 'react-transition-group';
 
 import LoadingPanel from '@components/LoadingPanel';
 import InlineLoading from '@components/InlineLoading'
@@ -35,12 +34,7 @@ export default class Listing extends React.Component {
         return (
             <>
                 { isErrored && this.renderErrorItem() }
-                {/* This seems to cause a bug when after updating a status
-                    of the only one item in the group, it does not
-                    dissapear from the old status*/}
-                {/*<TransitionGroup component={null} >*/}
-                    {items.map(v => renderItem(v))}
-                {/*</TransitionGroup>*/}
+                {items.map(v => renderItem(v))}
             </>
         );
     }
@@ -95,7 +89,6 @@ export default class Listing extends React.Component {
             column,
             listRef,
         } = this.props;
-
 
         if ( items.length === 0 ) {
             if (isLoading) {

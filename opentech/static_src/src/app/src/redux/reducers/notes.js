@@ -1,12 +1,17 @@
 import { combineReducers } from 'redux';
 
 import {
+    CREATE_NOTE,
     UPDATE_NOTE,
     UPDATE_NOTES,
     START_FETCHING_NOTES,
     FAIL_FETCHING_NOTES,
     START_CREATING_NOTE_FOR_SUBMISSION,
     FAIL_CREATING_NOTE_FOR_SUBMISSION,
+    STORE_NOTE,
+    START_EDITING_NOTE_FOR_SUBMISSION,
+    FAIL_EDITING_NOTE_FOR_SUBMISSION,
+    REMOVE_NOTE,
 } from '@actions/notes';
 
 function notesFetching(state = false, action) {
@@ -43,6 +48,7 @@ function notesErrored(state = {errored: false, message: null}, action) {
 function note(state, action) {
     switch (action.type) {
         case UPDATE_NOTE:
+        case CREATE_NOTE:
             return {
                 ...state,
                 ...action.data,
@@ -55,12 +61,15 @@ function note(state, action) {
 function notesCreating(state = [], action) {
     switch (action.type) {
         case START_CREATING_NOTE_FOR_SUBMISSION:
+        case START_EDITING_NOTE_FOR_SUBMISSION:
             return [
                 ...state,
                 action.submissionID,
             ];
+        case CREATE_NOTE:
         case UPDATE_NOTE:
         case FAIL_CREATING_NOTE_FOR_SUBMISSION:
+        case FAIL_EDITING_NOTE_FOR_SUBMISSION:
             return state.filter(v => v !== action.submissionID);
         default:
             return state
@@ -71,13 +80,16 @@ function notesCreating(state = [], action) {
 function notesFailedCreating(state = {}, action) {
     switch (action.type) {
         case UPDATE_NOTE:
+        case CREATE_NOTE:
         case START_CREATING_NOTE_FOR_SUBMISSION:
+        case START_EDITING_NOTE_FOR_SUBMISSION:
             return Object.entries(state).reduce((acc, [k, v]) => {
                 if (parseInt(k) !== action.submissionID) {
                     acc[k] = v;
                 }
                 return acc;
             }, {});
+        case FAIL_EDITING_NOTE_FOR_SUBMISSION:
         case FAIL_CREATING_NOTE_FOR_SUBMISSION:
             return {
                 ...state,
@@ -101,6 +113,7 @@ function notesByID(state = {}, action) {
                     return newNotesAccumulator;
                 }, {}),
             };
+        case CREATE_NOTE:
         case UPDATE_NOTE:
             return {
                 ...state,
@@ -114,10 +127,35 @@ function notesByID(state = {}, action) {
     }
 }
 
+function editingNote(state={}, action) {
+    switch (action.type) {
+        case STORE_NOTE:
+            return {
+                ...state,
+                [action.submissionID] : {
+                    id: action.messageID,
+                    message: action.message,
+                },
+            };
+        case CREATE_NOTE:
+        case UPDATE_NOTE:
+        case REMOVE_NOTE:
+            return Object.entries(state).reduce((result, [key, value]) => {
+                if (action.submissionID !== parseInt(key)) {
+                    result[key] = value
+                }
+                return result;
+            },{})
+        default:
+            return state;
+    }
+}
+
 export default combineReducers({
     byID: notesByID,
     isFetching: notesFetching,
     error: notesErrored,
     createError: notesFailedCreating,
     isCreating: notesCreating,
+    editing: editingNote,
 });

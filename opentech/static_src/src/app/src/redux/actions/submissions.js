@@ -25,7 +25,6 @@ import {
     addMessage,
 } from '@actions/messages';
 
-
 // Round
 export const UPDATE_ROUND = 'UPDATE_ROUND';
 export const START_LOADING_ROUND = 'START_LOADING_ROUND';
