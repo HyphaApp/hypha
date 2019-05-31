@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% if wizard.steps.prev %}
+  <button name="wizard_goto_step" type="submit"
+          value="{{ wizard.steps.prev }}"
+          class="button button--primary">{% trans "Back" %}</button>
+{% else %}
+  <button disabled name="" type="button"
+          class="button button--primary">{% trans "Back" %}</button>
+{% endif %}
+
+<button type="submit" class="button button--primary">{% trans "Next" %}</button>
+
+{% if cancel_url %}
+  <a href="{% url 'users:account' %}"
+     class="link link--bold link--left-space">{% trans "Cancel" %}</a>
+{% endif %}

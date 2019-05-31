@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.urls import include, path
 
+from two_factor.urls import urlpatterns as tf_urls
+
 from .utils import views
 from .users import urls as users_urls
 from .dashboard import urls as dashboard_urls
@@ -14,6 +16,7 @@ urlpatterns = [
     path('', include(users_urls)),
     path('dashboard/', include(dashboard_urls)),
     path('hijack/', include('hijack.urls', 'hijack')),
+    path('', include(tf_urls, 'two_factor')),
 ]
 
 if settings.DEBUG:

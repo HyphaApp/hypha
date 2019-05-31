@@ -117,6 +117,10 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
+    'two_factor',
     'rest_framework',
     'wagtailcache',
 
@@ -147,6 +151,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
+    'django_otp.middleware.OTPMiddleware',
 
     'opentech.apply.users.middleware.SocialAuthExceptionMiddleware',
 
