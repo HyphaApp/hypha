@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('categories', '0002_metacategory'),
-        ('funds', '0060_add_duration_type_in_duration_block'),
+        ('funds', '0064_group_toggle_end_block'),
     ]
 
     operations = [
