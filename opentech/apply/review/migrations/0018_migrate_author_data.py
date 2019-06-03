@@ -36,7 +36,7 @@ def add_to_assigned_reviewers(apps, schema_editor):
             else:
                 groups = {REVIEWER_GROUP_NAME}
         elif not groups:
-            if assigned.reviewer.is_staff or assigned.reviewer.is_superuser:
+            if review.author.is_staff or review.author.is_superuser:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
