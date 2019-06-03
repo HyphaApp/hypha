@@ -1,7 +1,7 @@
 {% load wagtailimages_tags %}
 
 <li class="reviews-sidebar__item {% if hidden and  not reviewer.review %}is-hidden {% endif %}{% if not reviewer.review %}no-response {% endif %}">
-    {% if not reviewer.review %}
+    {% if not reviewer.review or reviewer.review.is_draft %}
         <div class="reviews-sidebar__name">
             <span>{{ reviewer}}</span>
             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
