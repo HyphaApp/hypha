@@ -73,8 +73,8 @@ class TestStaffDashboard(BaseViewTestCase):
     def test_waiting_for_review_after_agreement_is_empty(self):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[staff, self.user])
-        review = ReviewFactory(submission=submission, author=staff, recommendation_yes=True)
-        ReviewOpinionFactory(review=review, author=self.user, opinion_agree=True)
+        review = ReviewFactory(submission=submission, author__reviewer=staff, author__staff=True, recommendation_yes=True)
+        ReviewOpinionFactory(review=review, author__reviewer=self.user, opinion_agree=True)
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")

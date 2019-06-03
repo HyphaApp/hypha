@@ -1,43 +1,43 @@
 {% load wagtailimages_tags %}
 
-<li class="reviews-sidebar__item {{ class }} {% if missing %}no-response{% endif %}">
-    {% if missing %}
+<li class="reviews-sidebar__item {% if hidden and  not reviewer.review %}is-hidden {% endif %}{% if not reviewer.review %}no-response {% endif %}">
+    {% if not reviewer.review %}
         <div class="reviews-sidebar__name">
-            <span>{{ reviewer }}</span>
-            {% if role %}{% image role.icon max-12x12 %}{% endif %}
+            <span>{{ reviewer}}</span>
+            {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
         </div>
         <div>-</div>
         <div>-</div>
     {% else %}
         {% if request.user == reviewer or request.user.is_reviewer and review.reviewer_visibility or request.user.is_partner and review.reviewer_visibility or request.user.is_community_reviewer and review.reviewer_visibility or request.user.is_apply_staff %}
             <div>
-                <a href="{% url 'apply:submissions:reviews:review' submission_pk=review.submission.id pk=review.id %}">
+                <a href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
                     <div class="reviews-sidebar__name">
                         <span>{{ reviewer }}</span>
-                        {% if role %}{% image role.icon max-12x12 %}{% endif %}
+                        {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                     </div>
                 </a>
-                <div class="reviews-sidebar__date">{{ review.updated_at|date:"Y-m-d" }}</div>
+                <div class="reviews-sidebar__date">{{ reviewer.review.updated_at|date:"Y-m-d" }}</div>
             </div>
         {% else %}
             <div class="reviews-sidebar__name">
                 <span>{{ reviewer }}</span>
-                {% if role %}{% image role.icon max-12x12 %}{% endif %}
+                {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
             </div>
         {% endif %}
-        <div>{{ review.get_recommendation_display }}</div>
-        <div>{{ review.get_score_display }}</div>
+        <div>{{ reviewer.review.get_recommendation_display }}</div>
+        <div>{{ reviewer.review.get_score_display }}</div>
     {% endif %}
 </li>
 
-{% for opinion in review.opinions.all %}
+{% for opinion in reviewer.review.opinions.all %}
     {% if forloop.first %}
         <ul class="reviews-sidebar__decision">
     {% endif %}
             <li class="reviews-sidebar__item reviews-sidebar__item--decision">
                 <div class="reviews-sidebar__name">
                     <span>{{ opinion.author }}</span>
-                    {% with role=opinion.get_author_role %}
+                    {% with role=opinion.author.role %}
                         {% if role %}{% image role.icon max-12x12 %}{% endif %}
                     {% endwith %}
                 </div>

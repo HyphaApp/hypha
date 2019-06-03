@@ -9,6 +9,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
+from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 from .models import ApplicationSubmission, RoundsAndLabs
 
 User = get_user_model()
@@ -60,6 +61,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     url = serializers.ReadOnlyField(source='get_absolute_url')
     opinions = OpinionSerializer(read_only=True, many=True)
     recommendation = serializers.SerializerMethodField()
+    score = serializers.ReadOnlyField(source='get_score_display')
 
     class Meta:
         model = Review
@@ -76,7 +78,6 @@ class ReviewSummarySerializer(serializers.Serializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     count = serializers.ReadOnlyField(source='reviews.count')
     score = serializers.ReadOnlyField(source='reviews.score')
-    assigned = ReviewSerializer(many=True, read_only=True)
     recommendation = serializers.SerializerMethodField()
     assigned = serializers.SerializerMethodField()
 
@@ -88,37 +89,20 @@ class ReviewSummarySerializer(serializers.Serializer):
         }
 
     def get_assigned(self, obj):
-        assigned_reviewers = obj.assigned.select_related('reviewer', 'role')
+        assigned_reviewers = obj.assigned.select_related('reviewer', 'role', 'type')
         response = [
             {
-                'id': assigned.reviewer.id,
+                'id': assigned.id,
                 'name': str(assigned.reviewer),
                 'role': {
                     'icon': assigned.role and assigned.role.icon_url('fill-12x12'),
                     'name': assigned.role and assigned.role.name,
                     'order': assigned.role and assigned.role.order,
                 },
-                'is_staff': assigned.reviewer.is_apply_staff,
-                'is_partner': assigned.reviewer.is_partner,
+                'is_staff': assigned.type.name == STAFF_GROUP_NAME,
+                'is_partner': assigned.type.name == PARTNER_GROUP_NAME,
             } for assigned in assigned_reviewers
         ]
-
-        opinionated_reviewers = ReviewOpinion.objects.filter(review__submission=obj).values('author').distinct()
-        extra_reviewers = opinionated_reviewers.exclude(author__in=assigned_reviewers.values('reviewer'))
-        response.extend([
-            {
-                'id': user.id,
-                'name': str(user),
-                'role': {
-                    'icon': None,
-                    'name': None,
-                    'order': None,
-                },
-                'is_staff': user.is_apply_staff,
-                'is_partner': user.is_partner,
-            } for user in User.objects.filter(id__in=extra_reviewers)
-        ])
-
         return response
 
 

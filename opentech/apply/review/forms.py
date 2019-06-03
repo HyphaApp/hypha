@@ -18,13 +18,12 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     class Meta:
         model = Review
-        fields = ['recommendation', 'visibility', 'score', 'submission', 'author']
+        fields = ['recommendation', 'visibility', 'score', 'submission']
 
         widgets = {
             'recommendation': forms.HiddenInput(),
             'score': forms.HiddenInput(),
             'submission': forms.HiddenInput(),
-            'author': forms.HiddenInput(),
             'visibility': forms.HiddenInput(),
         }
 
@@ -34,9 +33,8 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
             }
         }
 
-    def __init__(self, *args, user, submission, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user=None, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
-        initial.update(author=user.id)
 
         if instance:
             for key, value in instance.form_data.items():

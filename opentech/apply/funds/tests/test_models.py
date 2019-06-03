@@ -12,10 +12,14 @@ from django.test import TestCase, override_settings
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
 from opentech.apply.funds.workflow import Request
+from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
+from opentech.apply.review.options import NO, MAYBE
 from opentech.apply.utils.testing import make_request
+from opentech.apply.users.tests.factories import StaffFactory
 
 from .factories import (
     ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
     LabFactory,
@@ -496,3 +500,82 @@ class TestRequestForPartners(TestCase):
         response = rfp.serve(request)
         self.assertNotContains(response, 'not accepting')
         self.assertContains(response, 'Submit')
+
+
+class TestForTableQueryset(TestCase):
+    def test_assigned_but_not_reviewed(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        AssignedReviewersFactory(submission=submission, reviewer=staff)
+
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, None)
+        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, None)
+        self.assertEqual(submission.review_recommendation, None)
+
+    def test_review_outcome(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        ReviewFactory(submission=submission)
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, None)
+        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, 1)
+        self.assertEqual(submission.review_recommendation, NO)
+
+    def test_disagree_review_is_maybe(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        review = ReviewFactory(submission=submission)
+        ReviewOpinionFactory(opinion_disagree=True, review=review)
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, 1)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
+        self.assertEqual(submission.review_recommendation, MAYBE)
+
+    def test_dont_double_count_review_and_opinion(self):
+        staff = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+
+        review = ReviewFactory(submission=submission, author__reviewer=staff, author__staff=True)
+        opinion = ReviewOpinionFactory(opinion_disagree=True, review=review)
+
+        # Another pair of review/opinion
+        review_two = ReviewFactory(author=opinion.author, submission=submission)
+        ReviewOpinionFactory(opinion_disagree=True, author__reviewer=staff, author__staff=True, review=review_two)
+
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission.opinion_disagree, 2)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
+        self.assertEqual(submission.review_recommendation, MAYBE)
+
+    def test_submissions_dont_conflict(self):
+        staff = StaffFactory()
+        submission_one = ApplicationSubmissionFactory()
+        submission_two = ApplicationSubmissionFactory()
+        review_one = ReviewFactory(submission=submission_one)
+        ReviewOpinionFactory(opinion_disagree=True, review=review_one)
+
+        ReviewFactory(submission=submission_two)
+
+        qs = ApplicationSubmission.objects.for_table(user=staff)
+        submission = qs[0]
+        self.assertEqual(submission, submission_one)
+        self.assertEqual(submission.opinion_disagree, 1)
+        self.assertEqual(submission.review_count, 2)
+        self.assertEqual(submission.review_submitted_count, 2)
+        self.assertEqual(submission.review_recommendation, MAYBE)
+
+        submission = qs[1]
+        self.assertEqual(submission, submission_two)
+        self.assertEqual(submission.opinion_disagree, None)
+        self.assertEqual(submission.review_count, 1)
+        self.assertEqual(submission.review_submitted_count, 1)
+        self.assertEqual(submission.review_recommendation, NO)

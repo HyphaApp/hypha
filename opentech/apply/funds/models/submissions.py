@@ -3,10 +3,11 @@ from functools import partialmethod
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
-from django.db.models import Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch
+from django.db.models import Case, Count, IntegerField, OuterRef, Subquery, Sum, Q, Prefetch, When
 from django.db.models.expressions import RawSQL, OrderBy
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
@@ -22,13 +23,21 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import Review, ReviewOpinion
-from opentech.apply.review.options import AGREE
+from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
-from .utils import LIMIT_TO_STAFF, LIMIT_TO_STAFF_AND_REVIEWERS, LIMIT_TO_PARTNERS, WorkflowHelpers
+from .utils import (
+    LIMIT_TO_STAFF,
+    LIMIT_TO_REVIEWER_GROUPS,
+    LIMIT_TO_PARTNERS,
+    REVIEW_GROUPS,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+    WorkflowHelpers,
+)
 from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
 from ..workflow import (
     active_statuses,
@@ -91,15 +100,16 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
-        qs = self.filter(Q(status__in=user_review_statuses), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
+        qs = self.prefetch_related('reviews__author__reviewer')
+        qs = qs.filter(Q(status__in=user_review_statuses), ~Q(reviews__author__reviewer=user) | Q(reviews__is_draft=True))
         if assigned:
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
-            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
+            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author__reviewer=user)
         return qs.distinct()
 
     def reviewed_by(self, user):
-        return self.filter(reviews__author=user)
+        return self.filter(reviews__author__reviewer=user)
 
     def partner_for(self, user):
         return self.filter(partners=user)
@@ -129,7 +139,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
-        reviews = self.model.reviews.field.model.objects.filter(submission=OuterRef('id'))
+        review_model = self.model.reviews.field.model
+        reviews = review_model.objects.filter(submission=OuterRef('id'))
+        opinions = review_model.opinions.field.model.objects.filter(review__submission=OuterRef('id'))
+        reviewers = self.model.assigned.field.model.objects.filter(submission=OuterRef('id'))
 
         return self.with_latest_update().annotate(
             comment_count=Coalesce(
@@ -139,21 +152,32 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 ),
                 0,
             ),
-            review_count=Subquery(
-                reviews.values('submission').annotate(count=Count('pk')).values('count'),
+            opinion_disagree=Subquery(
+                opinions.filter(opinion=DISAGREE).values(
+                    'review__submission'
+                ).annotate(count=Count('*')).values('count')[:1],
                 output_field=IntegerField(),
             ),
             review_staff_count=Subquery(
-                reviews.by_staff().values('submission').annotate(count=Count('pk')).values('count'),
+                reviewers.staff().values('submission').annotate(count=Count('pk')).values('count'),
+                output_field=IntegerField(),
+            ),
+            review_count=Subquery(
+                reviewers.values('submission').annotate(count=Count('pk')).values('count'),
                 output_field=IntegerField(),
             ),
             review_submitted_count=Subquery(
-                reviews.submitted().values('submission').annotate(count=Count('pk')).values('count'),
+                reviewers.reviewed().values('submission').annotate(count=Count('pk')).values('count'),
                 output_field=IntegerField(),
             ),
-            review_recommendation=Subquery(
-                reviews.submitted().values('submission').annotate(calc_recommendation=Sum('recommendation') / Count('recommendation')).values('calc_recommendation'),
-                output_field=IntegerField(),
+            review_recommendation=Case(
+                When(opinion_disagree__gt=0, then=MAYBE),
+                default=Subquery(
+                    reviews.submitted().values('submission').annotate(
+                        calc_recommendation=Sum('recommendation') / Count('recommendation'),
+                    ).values('calc_recommendation'),
+                    output_field=IntegerField(),
+                )
             ),
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).prefetch_related(
@@ -581,9 +605,9 @@ class ApplicationSubmission(
 
     @property
     def missing_reviewers(self):
-        reviews_submitted = self.reviews.submitted().values('author')
-        reviewers = self.reviewers.exclude(id__in=reviews_submitted)
-        partners = self.partners.exclude(id__in=reviews_submitted)
+        reviewers_submitted = self.assigned.reviewed().values('reviewer')
+        reviewers = self.reviewers.exclude(id__in=reviewers_submitted)
+        partners = self.partners.exclude(id__in=reviewers_submitted)
         return reviewers | partners
 
     @property
@@ -599,7 +623,7 @@ class ApplicationSubmission(
         return self.missing_reviewers.partners().exclude(id__in=self.staff_not_reviewed)
 
     def reviewed_by(self, user):
-        return self.reviews.submitted().filter(author=user).exists()
+        return self.assigned.reviewed().filter(reviewer=user).exists()
 
     def has_permission_to_review(self, user):
         if user.is_apply_staff:
@@ -740,16 +764,94 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def without_roles(self):
         return self.filter(role__isnull=True)
 
+    def reviewed(self):
+        return self.filter(
+            Q(opinions__isnull=False) | Q(Q(review__isnull=False) & Q(review__is_draft=False))
+        ).distinct()
+
+    def not_reviewed(self):
+        return self.filter(
+            Q(review__isnull=True) | Q(review__is_draft=True),
+            opinions__isnull=True,
+        ).distinct()
+
+    def never_tried_to_review(self):
+        # Different from not reviewed as draft reviews allowed
+        return self.filter(
+            review__isnull=True,
+            opinions__isnull=True,
+        ).distinct()
+
     def staff(self):
-        User = get_user_model()
-        return self.filter(reviewer__in=User.objects.staff())
+        return self.filter(type__name=STAFF_GROUP_NAME)
+
+    def get_or_create_for_user(self, submission, reviewer):
+        groups = set(reviewer.groups.values_list('name', flat=True)) & set(REVIEW_GROUPS)
+        if len(groups) > 1:
+            if PARTNER_GROUP_NAME in groups and reviewer in submission.partners.all():
+                groups = {PARTNER_GROUP_NAME}
+            elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
+                groups = {COMMUNITY_REVIEWER_GROUP_NAME}
+            elif review.author.is_apply_staff:
+                groups = {STAFF_GROUP_NAME}
+            else:
+                groups = {REVIEWER_GROUP_NAME}
+        elif not groups:
+            if assigned.reviewer.is_staff or assigned.reviewer.is_superuser:
+                groups = {STAFF_GROUP_NAME}
+            else:
+                groups = {REVIEWER_GROUP_NAME}
+
+        group = Group.objects.get(name=groups.pop())
+
+        return self.get_or_create(
+            submission=submission,
+            reviewer=reviewer,
+            type=group,
+        )
+
+    def get_or_create_staff(self, submission, reviewer):
+        return self.get_or_create(
+            submission=submission,
+            reviewer=reviewer,
+            type=Group.objects.get(name=STAFF_GROUP_NAME),
+        )
+
+    def bulk_create_reviewers(self, reviewers, submission):
+        group = Group.objects.get(name=REVIEWER_GROUP_NAME)
+        self.bulk_create(
+            self.model(
+                submission=submission,
+                role=None,
+                reviewer=reviewer,
+                type=group,
+            ) for reviewer in reviewers
+        )
+
+    def update_role(self, role, reviewer, *submissions):
+        # Remove role who didn't review
+        self.filter(submission__in=submissions, role=role).never_tried_to_review().delete()
+        # Anyone else we remove their role
+        self.filter(submission__in=submissions, role=role).update(role=None)
+        # Create/update the new role reviewers
+        group = Group.objects.get(name=STAFF_GROUP_NAME)
+        for submission in submissions:
+            self.update_or_create(
+                submission=submission,
+                reviewer=reviewer,
+                defaults={'role': role, 'type': group},
+            )
 
 
 class AssignedReviewers(models.Model):
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        limit_choices_to=LIMIT_TO_STAFF_AND_REVIEWERS,
+        limit_choices_to=LIMIT_TO_REVIEWER_GROUPS,
+    )
+    type = models.ForeignKey(
+        'auth.Group',
+        on_delete=models.PROTECT,
     )
     submission = models.ForeignKey(
         ApplicationSubmission,
@@ -766,10 +868,10 @@ class AssignedReviewers(models.Model):
     objects = AssignedReviewersQuerySet.as_manager()
 
     class Meta:
-        unique_together = ('submission', 'role')
+        unique_together = (('submission', 'role'), ('submission', 'reviewer'))
 
     def __str__(self):
-        return f'{self.reviewer} as {self.role}'
+        return f'{self.reviewer}'
 
     def __eq__(self, other):
         if not isinstance(other, models.Model):

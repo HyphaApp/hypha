@@ -76,8 +76,8 @@ class StaffTestCase(BaseBatchReviewerTestCase):
 
     def test_doesnt_remove_if_already_reviewed(self):
         AssignedWithRoleReviewersFactory(reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0])
-        ReviewFactory(author=self.staff[1], submission=self.submissions[0], draft=False)
-        ReviewFactory(author=self.staff[1], submission=self.submissions[1], draft=False)
+        ReviewFactory(author__reviewer=self.staff[1], author__staff=True, submission=self.submissions[0], draft=False)
+        ReviewFactory(author__reviewer=self.staff[1], author__staff=True, submission=self.submissions[1], draft=False)
         submissions = self.submissions[0:2]
         reviewer_roles = [self.staff[0]]
         self.post_page(data=self.data(reviewer_roles, submissions))
