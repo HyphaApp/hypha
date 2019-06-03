@@ -39,4 +39,4 @@ def can_review(user, submission):
 
 @register.filter
 def has_draft(user, submission):
-    return submission.can_review(user) and submission.reviews.filter(author=user, is_draft=True).exists()
+    return submission.can_review(user) and submission.assigned.draft_reviewed().filter(reviewer=user).exists()

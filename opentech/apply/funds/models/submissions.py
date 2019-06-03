@@ -609,7 +609,7 @@ class ApplicationSubmission(
         if creating:
             self.process_file_data(files)
             for reviewer in self.get_from_parent('reviewers').all():
-                AssignedReviewers.objects.create(
+                AssignedReviewers.objects.get_or_create_for_user(
                     reviewer=reviewer,
                     submission=self
                 )
@@ -830,6 +830,11 @@ class AssignedReviewersQuerySet(models.QuerySet):
             Q(Q(review__isnull=False) & Q(review__is_draft=False))
         ).distinct()
 
+    def draft_reviewed(self):
+        return self.filter(
+            Q(Q(review__isnull=False) & Q(review__is_draft=True))
+        ).distinct()
+
     def not_reviewed(self):
         return self.filter(
             Q(review__isnull=True) | Q(review__is_draft=True),
@@ -853,12 +858,12 @@ class AssignedReviewersQuerySet(models.QuerySet):
                 groups = {PARTNER_GROUP_NAME}
             elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
-            elif review.author.is_apply_staff:
+            elif reviewer.author.is_apply_staff:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
         elif not groups:
-            if assigned.reviewer.is_staff or assigned.reviewer.is_superuser:
+            if reviewer.is_staff or reviewer.is_superuser:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
