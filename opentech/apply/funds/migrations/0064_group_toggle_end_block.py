@@ -11,7 +11,7 @@ import wagtail.core.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0060_add_duration_type_in_duration_block'),
+        ('funds', '0063_make_reviewer_type_required'),
     ]
 
     operations = [
