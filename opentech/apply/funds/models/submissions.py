@@ -858,7 +858,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
                 groups = {PARTNER_GROUP_NAME}
             elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
-            elif reviewer.author.is_apply_staff:
+            elif reviewer.is_apply_staff:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
