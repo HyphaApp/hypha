@@ -446,26 +446,26 @@ SingleStageCommunityDefinition = [
         },
     },
     {
+        'com_internal_review': {
+            'transitions': {
+                'com_community_review': 'Open Community Review',
+                'com_post_review_discussion': 'Close Review',
+                'com_rejected': 'Dismiss',
+            },
+            'display': 'Internal Review',
+            'public': 'OTF Review',
+            'stage': RequestCom,
+            'permissions': default_permissions,
+        },
         'com_community_review': {
             'transitions': {
-                'com_internal_review': 'Open Review',
+                'com_post_review_discussion': 'Close Review',
                 'com_rejected': 'Dismiss',
             },
             'display': 'Community Review',
             'public': 'OTF Review',
             'stage': RequestCom,
             'permissions': community_review_permissions,
-        },
-    },
-    {
-        'com_internal_review': {
-            'transitions': {
-                'com_post_review_discussion': 'Close Review',
-            },
-            'display': 'Internal Review',
-            'public': 'OTF Review',
-            'stage': RequestCom,
-            'permissions': default_permissions,
         },
     },
     {

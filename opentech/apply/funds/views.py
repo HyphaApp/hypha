@@ -59,7 +59,7 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
+from .workflow import INITIAL_STATE, STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
 from .permissions import is_user_has_access_to_view_submission
 
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
@@ -408,6 +408,19 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             added=added,
             removed=removed,
         )
+
+        if added and self.object.status == INITIAL_STATE:
+            # Automatically transition the submission to "Internal review".
+            action = self.object.workflow.stepped_phases[1][0].name
+            try:
+                self.object.perform_transition(
+                    action,
+                    self.request.user,
+                    request=self.request,
+                    notify=False,
+                )
+            except (PermissionDenied, KeyError):
+                pass
 
         return response
 
