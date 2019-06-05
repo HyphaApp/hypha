@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from unidecode import unidecode
 from wagtail.core.blocks import (
     StructBlock, TextBlock, CharBlock, BooleanBlock, ListBlock, StreamBlock,
-    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock
+    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock, StaticBlock
 )
 
 from .fields import MultiFileField
@@ -203,6 +203,7 @@ class GroupToggleBlock(FormFieldBlock):
     class Meta:
         label = _('Group fields')
         icon = 'group'
+        help_text = 'Remember to end group using Group fields end block.'
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
@@ -221,6 +222,13 @@ class GroupToggleBlock(FormFieldBlock):
             ]
         kwargs['choices'] = field_choices
         return kwargs
+
+
+class GroupToggleEndBlock(StaticBlock):
+    class Meta:
+        label = 'Group fields end'
+        icon = 'group'
+        admin_text = 'End of Group fields Block'
 
 
 class DropdownFieldBlock(RadioButtonsFieldBlock):
@@ -422,6 +430,7 @@ class FormFieldsBlock(StreamBlock):
     file = FileFieldBlock(group=_('Fields'))
     multi_file = MultiFileFieldBlock(group=_('Fields'))
     group_toggle = GroupToggleBlock(group=_("Custom"))
+    group_toggle_end = GroupToggleEndBlock(group=_("Custom"))
 
     class Meta:
         label = _('Form fields')
