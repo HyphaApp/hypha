@@ -12,7 +12,7 @@ from .views import (
     SubmissionOverviewView,
     SubmissionSealedView,
     SubmissionDeleteView,
-    SubmissionPrivateMediaRedirectView,
+    SubmissionPrivateMediaView,
 )
 from .api_views import (
     CommentEdit,
@@ -39,7 +39,7 @@ submission_urls = ([
     path('all/', SubmissionListView.as_view(), name="list"),
     path(
         'documents/submission/<int:submission_id>/<uuid:field_id>/<str:file_name>/',
-        SubmissionPrivateMediaRedirectView.as_view(), name='private_media_redirect'
+        SubmissionPrivateMediaView.as_view(), name='serve_private_media'
     ),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
