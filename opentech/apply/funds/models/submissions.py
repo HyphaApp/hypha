@@ -631,7 +631,7 @@ class ApplicationSubmission(
         reviewers_submitted = self.assigned.reviewed().values('reviewer')
         reviewers = self.reviewers.exclude(id__in=reviewers_submitted)
         partners = self.partners.exclude(id__in=reviewers_submitted)
-        return reviewers | partners
+        return reviewers.union(partners)
 
     @property
     def staff_not_reviewed(self):
