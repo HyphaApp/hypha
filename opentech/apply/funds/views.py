@@ -411,18 +411,27 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             removed=removed,
         )
 
-        if added and self.object.status == INITIAL_STATE:
-            # Automatically transition the submission to "Internal review".
-            action = self.object.workflow.stepped_phases[1][0].name
-            try:
-                self.object.perform_transition(
-                    action,
-                    self.request.user,
-                    request=self.request,
-                    notify=False,
-                )
-            except (PermissionDenied, KeyError):
-                pass
+        if added:
+            # Automatic workflow actions.
+            action = None
+            if self.object.status == INITIAL_STATE:
+                # Automatically transition the application to "Internal review".
+                action = self.object.workflow.stepped_phases[1][0].name
+            elif self.object.status == 'proposal_discussion':
+                # Automatically transition the proposal to "Internal review".
+                action = 'proposal_internal_review'
+
+            # If action is set run perform_transition().
+            if action:
+                try:
+                    self.object.perform_transition(
+                        action,
+                        self.request.user,
+                        request=self.request,
+                        notify=False,
+                    )
+                except (PermissionDenied, KeyError):
+                    pass
 
         return response
 

@@ -113,22 +113,24 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 related=self.object,
             )
 
+            # Automatic workflow actions.
             submission_stepped_phases = self.submission.workflow.stepped_phases
+            action = None
             if self.submission.status == INITIAL_STATE:
-                # Automatically transition the submission to "Internal review".
+                # Automatically transition the application to "Internal review".
                 action = submission_stepped_phases[1][0].name
-                try:
-                    self.submission.perform_transition(
-                        action,
-                        self.request.user,
-                        request=self.request,
-                        notify=False,
-                    )
-                except (PermissionDenied, KeyError):
-                    pass
             elif self.submission.status == submission_stepped_phases[1][0].name and self.submission.reviews.count() > 1:
-                # Automatically transition the submission to "Ready for discussion".
+                # Automatically transition the application to "Ready for discussion".
                 action = submission_stepped_phases[2][0].name
+            elif self.submission.status == 'proposal_discussion':
+                # Automatically transition the proposal to "Internal review".
+                action = 'proposal_internal_review'
+            elif self.submission.status == 'external_review' and self.submission.reviews.count() > 1:
+                # Automatically transition the proposal to "Ready for discussion".
+                action = 'post_external_review_discussion'
+
+            # If action is set run perform_transition().
+            if action:
                 try:
                     self.submission.perform_transition(
                         action,
