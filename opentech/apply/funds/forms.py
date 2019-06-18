@@ -8,7 +8,7 @@ from opentech.apply.users.models import User
 
 from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
 from .utils import render_icon
-from .widgets import Select2MultiCheckboxesWidget
+from .widgets import Select2MultiCheckboxesWidget, MetaCategorySelect2Widget
 from .workflow import get_action_mapping
 
 
@@ -292,13 +292,14 @@ class UpdatePartnersForm(forms.ModelForm):
 class MetaCategoryMultipleChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         depth_line = '-' * (obj.get_depth() - 2)
-        return "{} {}".format(depth_line, super().label_from_instance(obj))
+        label = "{} {}".format(depth_line, super().label_from_instance(obj))
+        return {'label': label, 'disabled': not obj.is_leaf()}
 
 
 class UpdateMetaCategoriesForm(forms.ModelForm):
     meta_categories = MetaCategoryMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Meta categories'}),
+        widget=MetaCategorySelect2Widget(attrs={'data-placeholder': 'Meta categories'}),
         label='Meta categories',
         required=False,
         help_text='Meta categories are hierarchical in nature, - highlights the depth in the tree.',
