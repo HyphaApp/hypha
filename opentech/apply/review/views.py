@@ -125,7 +125,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             elif self.submission.status == 'proposal_discussion':
                 # Automatically transition the proposal to "Internal review".
                 action = 'proposal_internal_review'
-            elif self.submission.status == 'external_review' and self.submission.reviews.count() > 1:
+            elif self.submission.status == 'external_review' and self.submission.reviews.by_reviewers().count() > 1:
                 # Automatically transition the proposal to "Ready for discussion".
                 action = 'post_external_review_discussion'
 
