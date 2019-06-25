@@ -40,13 +40,14 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 class SubmissionsFilter(filters.FilterSet):
     round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
     status = filters.MultipleChoiceFilter(choices=PHASES)
-    active = filters.BooleanFilter(method='filter_active')
+    active = filters.BooleanFilter(method='filter_active', label='Active')
+    submit_date = filters.DateFromToRangeFilter(name='submit_time', label='Submit date')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('status', 'round', 'active')
+        fields = ('status', 'round', 'active', 'submit_date', )
 
-    def filter_active(self, value):
+    def filter_active(self, qs, name, value):
         if value is None:
             return qs
 
