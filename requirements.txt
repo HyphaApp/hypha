@@ -5,8 +5,7 @@
 # Test dependencies
 flake8
 factory_boy==2.9.2
-# wagtail_factories - waiting on merge and release form master branch
-git+git://github.com/mvantellingen/wagtail-factories.git#egg=wagtail_factories
+wagtail-factories==1.1.0
 responses==0.10.4
 
 # Monitor dependencies
