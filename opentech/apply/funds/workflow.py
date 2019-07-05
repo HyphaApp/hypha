@@ -222,6 +222,7 @@ SingleStageDefinition = [
     {
         'internal_review': {
             'transitions': {
+                INITIAL_STATE: 'Screening (back)',
                 'post_review_discussion': 'Close Review',
             },
             'display': 'Internal Review',
@@ -233,6 +234,7 @@ SingleStageDefinition = [
     {
         'post_review_discussion': {
             'transitions': {
+                'internal_review': 'Open Review (back)',
                 'accepted': 'Accept',
                 'rejected': 'Dismiss',
                 'determination': 'Ready For Determination',
@@ -314,6 +316,7 @@ SingleStageExternalDefinition = [
     {
         'ext_internal_review': {
             'transitions': {
+                INITIAL_STATE: 'Screening (back)',
                 'ext_post_review_discussion': 'Close Review',
             },
             'display': 'Internal Review',
@@ -325,6 +328,7 @@ SingleStageExternalDefinition = [
     {
         'ext_post_review_discussion': {
             'transitions': {
+                'ext_internal_review': 'Open Internal Review (back)',
                 'ext_external_review': 'Open AC review',
                 'ext_rejected': 'Dismiss',
                 'ext_post_review_more_info': 'Request More Information',
@@ -350,6 +354,7 @@ SingleStageExternalDefinition = [
     {
         'ext_external_review': {
             'transitions': {
+                'ext_post_review_discussion': 'Ready For Discussion (back)',
                 'ext_post_external_review_discussion': 'Close Review',
             },
             'display': 'Advisory Council Review',
@@ -360,6 +365,7 @@ SingleStageExternalDefinition = [
     {
         'ext_post_external_review_discussion': {
             'transitions': {
+                'ext_external_review': 'Open AC review (back)',
                 'ext_accepted': 'Accept',
                 'ext_rejected': 'Dismiss',
                 'ext_post_external_review_more_info': 'Request More Information',
@@ -439,8 +445,8 @@ SingleStageCommunityDefinition = [
         },
         'com_open_call': {
             'transitions': {
+                INITIAL_STATE: 'Screening (back)',
                 'com_rejected': 'Dismiss',
-                'com_more_info': 'Request More Information',
             },
             'display': 'Open Call (public)',
             'stage': RequestCom,
@@ -450,6 +456,7 @@ SingleStageCommunityDefinition = [
     {
         'com_internal_review': {
             'transitions': {
+                INITIAL_STATE: 'Screening (back)',
                 'com_community_review': 'Open Community Review',
                 'com_post_review_discussion': 'Close Review',
                 'com_rejected': 'Dismiss',
@@ -461,6 +468,7 @@ SingleStageCommunityDefinition = [
         },
         'com_community_review': {
             'transitions': {
+                'com_internal_review': 'Open Internal Review (back)',
                 'com_post_review_discussion': 'Close Review',
                 'com_rejected': 'Dismiss',
             },
@@ -473,6 +481,7 @@ SingleStageCommunityDefinition = [
     {
         'com_post_review_discussion': {
             'transitions': {
+                'com_internal_review': 'Open Internal Review (back)',
                 'com_external_review': 'Open AC review',
                 'com_rejected': 'Dismiss',
                 'com_post_review_more_info': 'Request More Information',
@@ -498,6 +507,7 @@ SingleStageCommunityDefinition = [
     {
         'com_external_review': {
             'transitions': {
+                'com_post_review_discussion': 'Ready For Discussion (back)',
                 'com_post_external_review_discussion': 'Close Review',
             },
             'display': 'Advisory Council Review',
@@ -508,6 +518,7 @@ SingleStageCommunityDefinition = [
     {
         'com_post_external_review_discussion': {
             'transitions': {
+                'com_external_review': 'Open AC review (back)',
                 'com_accepted': 'Accept',
                 'com_rejected': 'Dismiss',
                 'com_post_external_review_more_info': 'Request More Information',
@@ -591,6 +602,7 @@ DoubleStageDefinition = [
     {
         'concept_internal_review': {
             'transitions': {
+                INITIAL_STATE: 'Screening (back)',
                 'concept_review_discussion': 'Close Review',
                 'invited_to_proposal': 'Invite to Proposal',
             },
@@ -603,6 +615,7 @@ DoubleStageDefinition = [
     {
         'concept_review_discussion': {
             'transitions': {
+                'concept_internal_review': 'Open Review (back)',
                 'invited_to_proposal': 'Invite to Proposal',
                 'concept_rejected': 'Dismiss',
                 'concept_review_more_info': 'Request More Information',
@@ -704,6 +717,7 @@ DoubleStageDefinition = [
     {
         'proposal_internal_review': {
             'transitions': {
+                'proposal_discussion': 'Proposal Received (back)',
                 'post_proposal_review_discussion': 'Close Review',
             },
             'display': 'Internal Review',
@@ -715,6 +729,7 @@ DoubleStageDefinition = [
     {
         'post_proposal_review_discussion': {
             'transitions': {
+                'proposal_internal_review': 'Open Internal Review (back)',
                 'external_review': 'Open AC review',
                 'proposal_determination': 'Ready For Final Determination',
                 'proposal_rejected': 'Dismiss',
@@ -741,6 +756,7 @@ DoubleStageDefinition = [
     {
         'external_review': {
             'transitions': {
+                'post_proposal_review_discussion': 'Ready For Discussion (back)',
                 'post_external_review_discussion': 'Close Review',
             },
             'display': 'Advisory Council Review',
@@ -751,6 +767,7 @@ DoubleStageDefinition = [
     {
         'post_external_review_discussion': {
             'transitions': {
+                'external_review': 'Open AC review (back)',
                 'proposal_accepted': 'Accept',
                 'proposal_rejected': 'Dismiss',
                 'proposal_determination': 'Ready For Final Determination',

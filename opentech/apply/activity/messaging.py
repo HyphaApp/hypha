@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils import timezone
 
+from opentech.apply.funds.workflow import PHASES
+
 from .models import INTERNAL, PUBLIC
 from .options import MESSAGES
 from .tasks import send_mail
@@ -549,7 +551,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.EDIT: 'messages/email/edit.html',
-        MESSAGES.TRANSITION: 'messages/email/transition.html',
+        MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
@@ -573,16 +575,25 @@ class EmailAdapter(AdapterBase):
             'subject': self.get_subject(message_type, submission),
         }
 
-    def handle_batch_transition(self, transitions, submissions, **kwargs):
-        kwargs.pop('submission')
-        for submission in submissions:
-            old_phase = transitions[submission.id]
+    def handle_transition(self, old_phase, submission, **kwargs):
+        # Retrive status index to see if we are going forward or backward.
+        old_index = list(dict(PHASES).keys()).index(old_phase.name)
+        target_index = list(dict(PHASES).keys()).index(submission.status)
+        is_forward = old_index < target_index
+
+        if is_forward:
             return self.render_message(
                 'messages/email/transition.html',
                 submission=submission,
                 old_phase=old_phase,
                 **kwargs
             )
+
+    def handle_batch_transition(self, transitions, submissions, **kwargs):
+        kwargs.pop('submission')
+        for submission in submissions:
+            old_phase = transitions[submission.id]
+            return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
 
     def batch_determination(self, determinations, submissions, **kwargs):
         kwargs.pop('submission')
