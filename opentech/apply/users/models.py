@@ -96,6 +96,10 @@ class User(AbstractUser):
         return self.email
 
     @cached_property
+    def roles(self):
+        return list(self.groups.values_list('name', flat=True))
+
+    @cached_property
     def is_apply_staff(self):
         return self.groups.filter(name=STAFF_GROUP_NAME).exists() or self.is_superuser
 
