@@ -66,6 +66,27 @@
         }
     }
 
+    .field-group-wrapper {
+        padding:  .5rem;
+        margin-bottom:  1rem;
+        border:  1px solid $color--mid-grey;
+
+        &.highlighted {
+            animation: background-fade-highlight 2.5s ease-out;
+        }
+    }
+
+    @keyframes background-fade-highlight {
+        0% {
+            background-color: $color--sky-blue;
+        }
+
+        100% {
+            background-color: transparent;
+        }
+    }
+
+
     &__question {
         display: block;
         margin-bottom: .5em;
