@@ -9,6 +9,7 @@ from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import (NotFound, PermissionDenied,
                                        ValidationError)
+from rest_framework_api_key.permissions import HasAPIKey
 from django_filters import rest_framework as filters
 
 from opentech.api.pagination import StandardResultsSetPagination
@@ -69,7 +70,7 @@ class SubmissionList(generics.ListAPIView):
     queryset = ApplicationSubmission.objects.current().with_latest_update()
     serializer_class = SubmissionListSerializer
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = SubmissionsFilter
