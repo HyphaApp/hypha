@@ -67,7 +67,8 @@
     &__credits {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         flex-wrap: wrap;
-        margin: 3rem 0 0;
+        margin: 3rem 0;
     }
 }
