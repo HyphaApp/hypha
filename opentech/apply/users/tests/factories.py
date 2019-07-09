@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 
 import factory
 
-from ..groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from ..groups import APPLICANT_GROUP_NAME, REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 
 
 class GroupFactory(factory.DjangoModelFactory):
@@ -66,3 +66,10 @@ class ReviewerFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=REVIEWER_GROUP_NAME))
+
+
+class ApplicantFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=APPLICANT_GROUP_NAME))

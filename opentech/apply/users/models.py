@@ -1,12 +1,11 @@
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-
-from .groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
+from .groups import APPLICANT_GROUP_NAME, REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
 from .utils import send_activation_email
 
 
@@ -24,6 +23,9 @@ class UserQuerySet(models.QuerySet):
 
     def community_reviewers(self):
         return self.filter(groups__name=COMMUNITY_REVIEWER_GROUP_NAME)
+
+    def applicants(self):
+        return self.filter(groups__name=APPLICANT_GROUP_NAME)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -65,6 +67,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         user, created = self.get_or_create(defaults=defaults, **kwargs)
         if created:
             send_activation_email(user, site)
+            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+            user.groups.add(applicant_group)
+            user.save()
         return user, created
 
 
@@ -125,7 +130,7 @@ class User(AbstractUser):
 
     @cached_property
     def is_applicant(self):
-        return not self.is_apply_staff and not self.is_reviewer and not self.is_partner
+        return self.groups.filter(name=APPLICANT_GROUP_NAME).exists()
 
     class Meta:
         ordering = ('full_name', 'email')
