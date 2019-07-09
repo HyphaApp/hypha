@@ -19,6 +19,10 @@ class MetaCategoryButtonHelper(ButtonHelper):
 
     def add_child_button(self, pk, child_verbose_name, **kwargs):
         """Build a add child button, to easily add a child under category."""
+        instance = self.model.objects.get(pk=pk)
+        if instance.is_archived or instance.get_parent() and instance.get_parent().is_archived:
+            return
+
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames + ['icon', 'icon-plus'],
             add=kwargs.get('classnames_add'),

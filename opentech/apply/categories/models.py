@@ -2,14 +2,17 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
+    MultiFieldPanel,
 )
 from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.core.fields import RichTextField
 from wagtail.core.models import Orderable
 from wagtail.search import index
 
@@ -48,6 +51,15 @@ class MetaCategory(index.Indexed, MP_Node):
     name = models.CharField(
         max_length=50, unique=True, help_text='Keep the name short, ideally one word.'
     )
+    is_archived = models.BooleanField(default=False, verbose_name=_("Archived"))
+    help_text = RichTextField(features=[
+        'h2', 'h3', 'bold', 'italic', 'link', 'hr', 'ol', 'ul'], blank=True)
+    filter_on_dashboard = models.BooleanField(
+        default=True, help_text='Make available to filter on dashboard'
+    )
+    available_to_applications = models.BooleanField(
+        default=True, help_text='Make available for applications'
+    )
 
     # node tree specific fields and attributes
     node_order_index = models.IntegerField(blank=True, default=0, editable=False)
@@ -59,6 +71,15 @@ class MetaCategory(index.Indexed, MP_Node):
     panels = [
         FieldPanel('parent'),
         FieldPanel('name'),
+        FieldPanel('is_archived'),
+        MultiFieldPanel(
+            [
+                FieldPanel('help_text'),
+                FieldPanel('filter_on_dashboard'),
+                FieldPanel('available_to_applications'),
+            ],
+            heading="Options",
+        ),
     ]
 
     def get_as_listing_header(self):
@@ -70,6 +91,7 @@ class MetaCategory(index.Indexed, MP_Node):
                 'depth_minus_1': depth - 1,
                 'is_root': self.is_root(),
                 'name': self.name,
+                'is_archived': self.is_archived,
             }
         )
         return rendered
