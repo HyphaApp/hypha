@@ -2,6 +2,9 @@ from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db import transaction
 from django.db.models import Q, Prefetch
 from django.utils import timezone
+
+from wagtail.core.models import Page
+
 from rest_framework import generics, mixins, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import (NotFound, PermissionDenied,
@@ -13,6 +16,7 @@ from opentech.apply.activity.models import Activity, COMMENT
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.models import Review
+from opentech.apply.funds.models import FundType, LabType
 
 from .models import ApplicationSubmission, RoundsAndLabs
 from .serializers import (
@@ -40,13 +44,18 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 class SubmissionsFilter(filters.FilterSet):
     round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
     status = filters.MultipleChoiceFilter(choices=PHASES)
-    active = filters.BooleanFilter(method='filter_active')
+    active = filters.BooleanFilter(method='filter_active', label='Active')
+    submit_date = filters.DateFromToRangeFilter(name='submit_time', label='Submit date')
+    fund = filters.ModelMultipleChoiceFilter(
+        name='page', label='fund',
+        queryset=Page.objects.type(FundType) | Page.objects.type(LabType)
+    )
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('status', 'round', 'active')
+        fields = ('status', 'round', 'active', 'submit_date', 'fund', )
 
-    def filter_active(self, value):
+    def filter_active(self, qs, name, value):
         if value is None:
             return qs
 
