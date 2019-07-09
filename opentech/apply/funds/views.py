@@ -801,7 +801,7 @@ class RevisionCompareView(DetailView):
 
         # Compare all the required fields
         diffed_required = [
-            compare(*fields, should_bleach=False)
+            compare(*fields)
             for fields in zip(from_required, to_required)
         ]
         for field, diff in zip(self.object.named_blocks, diffed_required):
@@ -809,7 +809,7 @@ class RevisionCompareView(DetailView):
 
         # Compare all the answers
         diffed_text_fields_answers = [
-            compare(*fields, should_bleach=False)
+            compare(*fields)
             for fields in zip(from_rendered_text_fields, to_rendered_text_fields)
         ]
 
