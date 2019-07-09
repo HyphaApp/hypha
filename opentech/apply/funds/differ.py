@@ -29,16 +29,16 @@ def compare(answer_a, answer_b, should_bleach=True):
 
     if should_bleach:
         if isinstance(answer_a, str):
-            answer_a = bleach.clean(answer_a)
+            answer_a = bleach.clean(answer_a, tags=['section', 'h4', 'p', 'br'], attributes={}, strip=True)
         else:
             answer_a = str(answer_a)
 
         if isinstance(answer_b, str):
-            answer_b = bleach.clean(answer_b)
+            answer_b = bleach.clean(answer_b, tags=['section', 'h4', 'p', 'br'], attributes={}, strip=True)
         else:
             answer_b = str(answer_b)
 
-    diff = SequenceMatcher(lambda x: '\n' in x, answer_a, answer_b)
+    diff = SequenceMatcher(lambda x: '\n\r' in x, answer_a, answer_b)
     output = []
     added = []
     deleted = []

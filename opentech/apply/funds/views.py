@@ -809,7 +809,7 @@ class RevisionCompareView(DetailView):
 
         # Compare all the answers
         diffed_text_fields_answers = [
-            compare(*fields, should_bleach=False)
+            compare(*fields, should_bleach=True)
             for fields in zip(from_rendered_text_fields, to_rendered_text_fields)
         ]
 
