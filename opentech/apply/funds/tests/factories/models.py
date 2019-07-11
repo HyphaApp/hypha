@@ -28,7 +28,7 @@ from opentech.apply.funds.workflow import ConceptProposal, Request
 from opentech.apply.home.factories import ApplyHomePageFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory, GroupFactory
+from opentech.apply.users.tests.factories import StaffFactory, ApplicantFactory, GroupFactory
 
 from . import blocks
 
@@ -241,7 +241,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
         workflow_name=factory.SelfAttribute('..workflow_name'),
         lead=factory.SelfAttribute('..lead'),
     )
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(ApplicantFactory)
     lead = factory.SubFactory(StaffFactory)
     live_revision = None
     draft_revision = None

@@ -23,7 +23,7 @@ from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    UserFactory,
+    ApplicantFactory,
 )
 from opentech.apply.utils.testing import make_request
 from opentech.apply.utils.testing.tests import BaseViewTestCase
@@ -326,7 +326,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
-    user_factory = UserFactory
+    user_factory = ApplicantFactory
 
     @classmethod
     def setUpTestData(cls):
@@ -420,7 +420,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
-    user_factory = UserFactory
+    user_factory = ApplicantFactory
 
     def test_create_revisions_on_submit(self):
         submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2, user=self.user)

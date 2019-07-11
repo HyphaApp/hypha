@@ -4,11 +4,12 @@ register = template.Library()
 
 
 @register.inclusion_tag('funds/includes/status_bar.html')
-def status_bar(workflow, current_phase, user, css_class='', same_stage=False):
+def status_bar(workflow, current_phase, user, author=False, css_class='', same_stage=False):
 
     phases = workflow.phases_for(user)
+    is_applicant = user == author if author else user.is_applicant
 
-    if same_stage and not user.is_applicant:
+    if same_stage and not is_applicant:
         phases = [
             phase for phase in phases
             if phase.stage == current_phase.stage

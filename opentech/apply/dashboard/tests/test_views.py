@@ -4,12 +4,12 @@ from opentech.apply.funds.tests.factories import (
     InvitedToProposalFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory, StaffFactory
+from opentech.apply.users.tests.factories import ApplicantFactory, ReviewerFactory, StaffFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 
 class TestApplicantDashboard(BaseViewTestCase):
-    user_factory = UserFactory
+    user_factory = ApplicantFactory
     url_name = 'dashboard:{}'
     base_view_name = 'dashboard'
 
