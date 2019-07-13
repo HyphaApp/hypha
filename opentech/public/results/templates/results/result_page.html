@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
+
+{% block content %}
+
+    <div class="wrapper wrapper--flex">
+        <article class="section section--main">
+            {% if page.introduction %}
+                <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
+            {% endif %}
+
+            {% include_block page.body %}
+            {% include "includes/share.html" %}
+
+        </article>
+    </div>
+
+    {% include "includes/relatedcontent.html" with related_pages=page.related_projects.all title="Related Projects" %}
+    {% include "includes/relatedcontent.html" with related_pages=page.related_people.all title="Related People" %}
+    {% include "includes/relatedcontent.html" with related_pages=page.related_news.all title="Related News" %}
+    {% include "includes/relatedcontent.html" with related_pages=page.related_pages.all title="Related Pages" %}
+{% endblock %}
