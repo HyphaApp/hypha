@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.views import SuccessURLAllowedHostsMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render, resolve_url
@@ -113,12 +112,6 @@ class ActivationView(TemplateView):
         user = self.get_user(kwargs.get('uidb64'))
 
         if self.valid(user, kwargs.get('token')):
-            user.is_active = True
-            # Set a temp password so users who skip setting one can use the password reset function.
-            temp_pass = BaseUserManager().make_random_password(length=32)
-            user.set_password(temp_pass)
-            user.save()
-
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             return redirect('users:activate_password')
@@ -142,8 +135,7 @@ class ActivationView(TemplateView):
         """
         try:
             user = User.objects.get(**{
-                'pk': force_text(urlsafe_base64_decode(uidb64)),
-                'is_active': False
+                'pk': force_text(urlsafe_base64_decode(uidb64))
             })
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):

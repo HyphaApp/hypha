@@ -1,7 +1,6 @@
+from bleach.sanitizer import Cleaner
 from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
-
-import bleach
 
 from django.utils.html import format_html
 from django.utils.text import mark_safe
@@ -28,17 +27,18 @@ def compare(answer_a, answer_b, should_bleach=True):
         return answer_b
 
     if should_bleach:
+        cleaner = Cleaner(tags=['h4'], attributes={}, strip=True)
         if isinstance(answer_a, str):
-            answer_a = bleach.clean(answer_a)
+            answer_a = cleaner.clean(answer_a)
         else:
             answer_a = str(answer_a)
 
         if isinstance(answer_b, str):
-            answer_b = bleach.clean(answer_b)
+            answer_b = cleaner.clean(answer_b)
         else:
             answer_b = str(answer_b)
 
-    diff = SequenceMatcher(lambda x: '\n' in x, answer_a, answer_b)
+    diff = SequenceMatcher(None, answer_a, answer_b)
     output = []
     added = []
     deleted = []

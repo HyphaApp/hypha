@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Q
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -56,7 +58,10 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return self._create_user(email, password, **extra_fields)
 
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
-        defaults.update(is_active=False)
+        # Set a temp password so users can access the password reset function if needed.
+        temp_pass = BaseUserManager().make_random_password(length=32)
+        temp_pass_hash = make_password(temp_pass)
+        defaults.update(password=temp_pass_hash)
         user, created = self.get_or_create(defaults=defaults, **kwargs)
         if created:
             send_activation_email(user, site)
@@ -86,6 +91,9 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    def get_absolute_url(self):
+        return reverse('wagtailusers_users:edit', args=(self.id,))
+
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
 
@@ -94,6 +102,10 @@ class User(AbstractUser):
 
     def get_short_name(self):
         return self.email
+
+    @cached_property
+    def roles(self):
+        return list(self.groups.values_list('name', flat=True))
 
     @cached_property
     def is_apply_staff(self):
