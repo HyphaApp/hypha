@@ -329,7 +329,7 @@ class UpdateMetaCategoriesForm(forms.ModelForm):
         label='Meta categories',
         choices_groupby='get_parent',
         required=False,
-        help_text='Meta categories are hierarchical in nature, - highlights the depth in the tree.',
+        help_text='Meta categories are hierarchical in nature.',
     )
 
     class Meta:
