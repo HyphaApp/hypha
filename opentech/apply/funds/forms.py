@@ -1,6 +1,6 @@
 from functools import partial
 from itertools import groupby
-from operator import attrgetter, methodcaller
+from operator import methodcaller
 
 from django import forms
 from django.utils.text import mark_safe, slugify
