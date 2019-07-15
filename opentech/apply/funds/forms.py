@@ -2,8 +2,6 @@ from functools import partial
 from itertools import groupby
 from operator import attrgetter, methodcaller
 
-from django.forms.models import ModelChoiceIterator
-
 from django import forms
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
@@ -295,7 +293,7 @@ class UpdatePartnersForm(forms.ModelForm):
         return instance
 
 
-class GroupedModelChoiceIterator(ModelChoiceIterator):
+class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):
     def __init__(self, field, groupby):
         self.groupby = groupby
         super().__init__(field)
