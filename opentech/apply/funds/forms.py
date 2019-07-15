@@ -1,3 +1,9 @@
+from functools import partial
+from itertools import groupby
+from operator import attrgetter, methodcaller
+
+from django.forms.models import ModelChoiceIterator
+
 from django import forms
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
@@ -289,18 +295,41 @@ class UpdatePartnersForm(forms.ModelForm):
         return instance
 
 
-class MetaCategoryMultipleChoiceField(forms.ModelMultipleChoiceField):
+class GroupedModelChoiceIterator(ModelChoiceIterator):
+    def __init__(self, field, groupby):
+        self.groupby = groupby
+        super().__init__(field)
+
+    def __iter__(self):
+        if self.field.empty_label is not None:
+            yield ("", self.field.empty_label)
+        queryset = self.queryset
+        # Can't use iterator() when queryset uses prefetch_related()
+        if not queryset._prefetch_related_lookups:
+            queryset = queryset.iterator()
+        for group, objs in groupby(queryset, self.groupby):
+            yield (group, [self.choice(obj) for obj in objs])
+
+
+class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def __init__(self, *args, choices_groupby, **kwargs):
+        if isinstance(choices_groupby, str):
+            choices_groupby = methodcaller(choices_groupby)
+        elif not callable(choices_groupby):
+            raise TypeError('choices_groupby must either be a str or a callable accepting a single argument')
+        self.iterator = partial(GroupedModelChoiceIterator, groupby=choices_groupby)
+        super().__init__(*args, **kwargs)
+
     def label_from_instance(self, obj):
-        depth_line = '-' * (obj.get_depth() - 2)
-        label = "{} {}".format(depth_line, super().label_from_instance(obj))
-        return {'label': label, 'disabled': not obj.is_leaf()}
+        return {'label': super().label_from_instance(obj), 'disabled': not obj.is_leaf()}
 
 
 class UpdateMetaCategoriesForm(forms.ModelForm):
-    meta_categories = MetaCategoryMultipleChoiceField(
+    meta_categories = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
         widget=MetaCategorySelect2Widget(attrs={'data-placeholder': 'Meta categories'}),
         label='Meta categories',
+        choices_groupby='get_parent',
         required=False,
         help_text='Meta categories are hierarchical in nature, - highlights the depth in the tree.',
     )
@@ -312,4 +341,4 @@ class UpdateMetaCategoriesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['meta_categories'].queryset = MetaCategory.get_root_descendants()
+        self.fields['meta_categories'].queryset = MetaCategory.get_root_descendants().exclude(depth=2)
