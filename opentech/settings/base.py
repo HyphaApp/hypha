@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'opentech.public.news',
     'opentech.public.people',
     'opentech.public.projects',
+    'opentech.public.results',
     'opentech.public.search',
     'opentech.public.standardpages',
     'opentech.public.forms',
