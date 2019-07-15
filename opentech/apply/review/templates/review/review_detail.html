@@ -32,6 +32,14 @@
             </a>
         </div>
     {% endif %}
+    {% if perms.funds.change_review or request.user == review.author %}
+        <div>
+            <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
+                Edit
+                <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+            </a>
+        </div>
+    {% endif %}
     {% if not review.for_latest %}
         <div>
             <h5>Review was not against the latest version:</h5>
