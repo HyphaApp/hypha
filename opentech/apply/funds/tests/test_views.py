@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 
+from django.utils import timezone
 from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, INTERNAL
@@ -522,10 +523,10 @@ class TestRevisionList(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory()
 
         revision = ApplicationRevisionFactory(submission=submission)
-        ApplicationRevision.objects.filter(id=revision.id).update(timestamp=datetime.now() - timedelta(days=1))
+        ApplicationRevision.objects.filter(id=revision.id).update(timestamp=timezone.now() - timedelta(days=1))
 
         revision_older = ApplicationRevisionFactory(submission=submission)
-        ApplicationRevision.objects.filter(id=revision_older.id).update(timestamp=datetime.now() - timedelta(days=2))
+        ApplicationRevision.objects.filter(id=revision_older.id).update(timestamp=timezone.now() - timedelta(days=2))
 
         response = self.get_page(submission)
 
