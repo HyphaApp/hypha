@@ -103,6 +103,8 @@
                 {% if request.user.is_apply_staff %}
                     {% block screening_status %}
                     {% endblock %}
+                    {% block meta_categories %}
+                    {% endblock %}
                 {% endif %}
 
                 {% block reviews %}
