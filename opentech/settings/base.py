@@ -4,11 +4,10 @@ Django settings for opentech project.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import sys
-
 import dj_database_url
-import raven
-from raven.exceptions import InvalidGitRepository
+import sentry_sdk
+
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 env = os.environ.copy()
@@ -358,11 +357,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
-        # Send logs with level of at least ERROR to Sentry.
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        },
     },
     'formatters': {
         'verbose': {
@@ -371,27 +365,27 @@ LOGGING = {
     },
     'loggers': {
         'opentech': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'wagtail': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'django': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
         },
@@ -558,42 +552,12 @@ MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
 
 
-# Raven (sentry) configuration.
+# Sentry configuration.
 if 'SENTRY_DSN' in env:
-    INSTALLED_APPS += (
-        'raven.contrib.django.raven_compat',
+    sentry_sdk.init(
+        dsn=env['SENTRY_DSN'],
+        integrations=[DjangoIntegration()]
     )
-
-    RAVEN_CONFIG = {
-        'dsn': env['SENTRY_DSN'],
-        'tags': {},
-    }
-
-    # Specifying the programming language as a tag can be useful when
-    # e.g. javascript error logging is enabled within the same project,
-    # so that errors can be filtered by the programming language too.
-    # The 'lang' tag is just an arbitrarily chosen one; any other tags can be used as well.
-    # It has to overriden in javascript: Raven.setTagsContext({lang: 'javascript'});
-    RAVEN_CONFIG['tags']['lang'] = 'python'
-
-    # Prevent logging errors from the django shell.
-    # Errors from other managenent commands will be still logged.
-    if len(sys.argv) > 1 and sys.argv[1] in ['shell', 'shell_plus']:
-        RAVEN_CONFIG['ignore_exceptions'] = ['*']
-
-    # There's a chooser to toggle between environments at the top right corner on sentry.io
-    # Values are typically 'staging' or 'production' but can be set to anything else if needed.
-    # heroku config:set SENTRY_ENVIRONMENT=production
-    if 'SENTRY_ENVIRONMENT' in env:
-        RAVEN_CONFIG['environment'] = env['SENTRY_ENVIRONMENT']
-
-    try:
-        RAVEN_CONFIG['release'] = raven.fetch_git_sha(BASE_DIR)
-    except InvalidGitRepository:
-        try:
-            RAVEN_CONFIG['release'] = env['GIT_REV']
-        except KeyError:
-            pass
 
 
 # Basic auth settings
