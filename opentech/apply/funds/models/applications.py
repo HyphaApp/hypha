@@ -21,7 +21,7 @@ from django.shortcuts import render
 
 from django.http import Http404
 from django.utils.functional import cached_property
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalManyToManyField

@@ -29,7 +29,7 @@ def send_activation_email(user, site=None):
     token_generator = PasswordResetTokenGenerator()
     token = token_generator.make_token(user)
 
-    uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
 
     activation_path = reverse('users:activate', kwargs={'uidb64': uid, 'token': token})
 
