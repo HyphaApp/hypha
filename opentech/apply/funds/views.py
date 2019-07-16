@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect, Http404, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView, View
 
