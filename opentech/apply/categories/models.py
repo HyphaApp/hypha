@@ -57,8 +57,8 @@ class MetaCategory(index.Indexed, MP_Node):
     filter_on_dashboard = models.BooleanField(
         default=True, help_text='Make available to filter on dashboard'
     )
-    available_to_applications = models.BooleanField(
-        default=True, help_text='Make available for applications'
+    available_to_applicants = models.BooleanField(
+        default=False, help_text='Make available to applicants'
     )
 
     # node tree specific fields and attributes
@@ -71,12 +71,12 @@ class MetaCategory(index.Indexed, MP_Node):
     panels = [
         FieldPanel('parent'),
         FieldPanel('name'),
-        FieldPanel('is_archived'),
         MultiFieldPanel(
             [
+                FieldPanel('is_archived'),
                 FieldPanel('help_text'),
                 FieldPanel('filter_on_dashboard'),
-                FieldPanel('available_to_applications'),
+                FieldPanel('available_to_applicants'),
             ],
             heading="Options",
         ),
@@ -154,6 +154,14 @@ class MetaCategoryForm(WagtailAdminModelForm):
             self.fields['name'].label += ' (Root - First category can be named root)'
         elif instance.id:
             self.fields['parent'].initial = instance.get_parent()
+
+    def clean_parent(self):
+        parent = self.cleaned_data['parent']
+
+        if parent.is_archived:
+            raise forms.ValidationError('The parent is archived therefore can not add child under it.')
+
+        return parent
 
     def save(self, commit=True, *args, **kwargs):
         instance = super().save(commit=False, *args, **kwargs)
