@@ -24,7 +24,7 @@
         <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
         {{ review.get_visibility_display }}
     </div>
-    {% if perms.funds.delete_review or request.user == review.author %}
+    {% if perms.funds.delete_review or request.user == review.author.reviewer %}
         <div>
             <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
                 Delete
@@ -32,7 +32,7 @@
             </a>
         </div>
     {% endif %}
-    {% if perms.funds.change_review or request.user == review.author %}
+    {% if perms.funds.change_review or request.user == review.author.reviewer %}
         <div>
             <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
                 Edit

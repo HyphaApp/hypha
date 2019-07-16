@@ -61,7 +61,7 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.has_perm('review.change_review') or self.request.user == review.author
+        return self.request.user.has_perm('review.change_review') or self.request.user == review.author.reviewer
 
     def get_context_data(self, **kwargs):
         review = self.get_object()
@@ -217,7 +217,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
     def test_func(self):
         review = self.get_object()
         user = self.request.user
-        author = review.author
+        author = review.author.reviewer
         submission = review.submission
         partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
@@ -263,7 +263,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     def test_func(self):
         review = self.get_object()
         user = self.request.user
-        author = review.author
+        author = review.author.reviewer
         submission = review.submission
         partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
