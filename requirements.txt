@@ -4,9 +4,9 @@
 
 # Test dependencies
 flake8
-factory_boy==2.9.2
-wagtail-factories==1.1.0
-responses==0.10.4
+factory_boy==2.12.0
+wagtail-factories==2.0.0
+responses==0.10.6
 
 # Monitor dependencies
 scout-apm==2.0.1
