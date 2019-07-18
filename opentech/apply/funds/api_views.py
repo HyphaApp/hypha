@@ -1,35 +1,32 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db import transaction
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
-
+from django_filters import rest_framework as filters
+from rest_framework import generics, mixins, permissions
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.response import Response
 from wagtail.core.models import Page
 
-from rest_framework import generics, mixins, permissions
-from rest_framework.response import Response
-from rest_framework.exceptions import (NotFound, PermissionDenied,
-                                       ValidationError)
-from django_filters import rest_framework as filters
-
 from opentech.api.pagination import StandardResultsSetPagination
-from opentech.apply.activity.models import Activity, COMMENT
-from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.activity.messaging import MESSAGES, messenger
+from opentech.apply.activity.models import COMMENT, Activity
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
-from opentech.apply.review.models import Review
 from opentech.apply.funds.models import FundType, LabType
+from opentech.apply.review.models import Review
 
 from .models import ApplicationSubmission, RoundsAndLabs
+from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
-    CommentSerializer,
     CommentCreateSerializer,
     CommentEditSerializer,
+    CommentSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
-    SubmissionListSerializer,
     SubmissionDetailSerializer,
+    SubmissionListSerializer,
 )
-from .permissions import IsApplyStaffUser, IsAuthor
 from .workflow import PHASES
 
 

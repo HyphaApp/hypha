@@ -1,7 +1,5 @@
 import mistune
-
 from django.contrib.auth import get_user_model
-
 from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
@@ -10,6 +8,7 @@ from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.models import Review, ReviewOpinion
 from opentech.apply.review.options import RECOMMENDATION_CHOICES
 from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+
 from .models import ApplicationSubmission, RoundsAndLabs
 
 User = get_user_model()

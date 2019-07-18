@@ -1,10 +1,14 @@
 from opentech.apply.funds.tests.factories import (
-    ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    ApplicationSubmissionFactory,
     InvitedToProposalFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.users.tests.factories import UserFactory, ReviewerFactory, StaffFactory
+from opentech.apply.users.tests.factories import (
+    ReviewerFactory,
+    StaffFactory,
+    UserFactory,
+)
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 

@@ -1,9 +1,8 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
 
-from opentech.apply.activity.models import Activity, PUBLIC, PRIVATE
+from opentech.apply.activity.models import PRIVATE, PUBLIC, Activity
 from opentech.apply.activity.tests.factories import CommentFactory
-
 from opentech.apply.users.tests.factories import UserFactory
 
 

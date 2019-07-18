@@ -10,8 +10,8 @@ from django.db import models
 from django.db.models import (
     Case,
     Count,
-    IntegerField,
     F,
+    IntegerField,
     OuterRef,
     Prefetch,
     Q,
@@ -19,50 +19,48 @@ from django.db.models import (
     Sum,
     When,
 )
-from django.db.models.expressions import RawSQL, OrderBy
+from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
-
-from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
+from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
 from django_fsm.signals import post_transition
-
-from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
+from wagtail.core.fields import StreamField
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import ReviewOpinion
-from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
+from opentech.apply.review.options import AGREE, DISAGREE, MAYBE
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
+from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
+from ..workflow import (
+    COMMUNITY_REVIEW_PHASES,
+    DETERMINATION_RESPONSE_PHASES,
+    INITIAL_STATE,
+    PHASES,
+    STAGE_CHANGE_ACTIONS,
+    WORKFLOWS,
+    UserPermissions,
+    active_statuses,
+    get_review_active_statuses,
+    review_statuses,
+)
 from .mixins import AccessFormData
 from .utils import (
     COMMUNITY_REVIEWER_GROUP_NAME,
-    LIMIT_TO_STAFF,
-    LIMIT_TO_REVIEWER_GROUPS,
     LIMIT_TO_PARTNERS,
+    LIMIT_TO_REVIEWER_GROUPS,
+    LIMIT_TO_STAFF,
     PARTNER_GROUP_NAME,
     REVIEW_GROUPS,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
     WorkflowHelpers,
-)
-from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
-from ..workflow import (
-    active_statuses,
-    DETERMINATION_RESPONSE_PHASES,
-    get_review_active_statuses,
-    INITIAL_STATE,
-    PHASES,
-    review_statuses,
-    STAGE_CHANGE_ACTIONS,
-    UserPermissions,
-    WORKFLOWS,
-    COMMUNITY_REVIEW_PHASES,
 )
 
 

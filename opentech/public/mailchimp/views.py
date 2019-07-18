@@ -1,5 +1,4 @@
 import logging
-
 import uuid
 
 from django.conf import settings
@@ -10,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import RedirectView
 from django.views.generic.edit import FormMixin
-
 from mailchimp3 import MailChimp
 
 from .forms import NewsletterForm

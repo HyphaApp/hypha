@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from opentech.apply.funds.models import RoundsAndLabs
-
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     FundTypeFactory,

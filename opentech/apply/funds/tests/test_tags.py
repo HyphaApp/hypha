@@ -1,5 +1,5 @@
 from django.template import Context, Template
-from django.test import override_settings, TestCase
+from django.test import TestCase, override_settings
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 

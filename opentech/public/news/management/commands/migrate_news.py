@@ -1,28 +1,26 @@
 import argparse
 import json
-
 from datetime import datetime, timezone
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
-
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
 from wagtail.core.rich_text import RichText
 
-from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
+from opentech.apply.categories.models import Category, Option
 from opentech.apply.users.models import User
-from opentech.public.people.models import PersonPage
-from opentech.public.projects.models import ProjectPage
 from opentech.public.news.models import (
     NewsIndex,
     NewsPage,
     NewsPageAuthor,
-    NewsType,
     NewsPageNewsType,
     NewsProjectRelatedPage,
+    NewsType,
 )
+from opentech.public.people.models import PersonPage
+from opentech.public.projects.models import ProjectPage
 
 
 class Command(BaseCommand):

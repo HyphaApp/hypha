@@ -1,10 +1,9 @@
 from django import forms
-from tinymce import TinyMCE
-
 from django.forms import widgets
 from django.utils.safestring import mark_safe
+from tinymce import TinyMCE
 
-from opentech.apply.review.options import RATE_CHOICES, NA
+from opentech.apply.review.options import NA, RATE_CHOICES
 from opentech.apply.utils.options import MCE_ATTRIBUTES_SHORT
 
 

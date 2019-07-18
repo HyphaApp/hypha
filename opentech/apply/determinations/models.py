@@ -4,13 +4,12 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, ObjectList, TabbedInterface
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.fields import RichTextField
 
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
-
 
 REJECTED = 0
 NEEDS_MORE_INFO = 1

@@ -1,11 +1,6 @@
 from django.db import models
-
 from modelcluster.fields import ParentalKey
-
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    StreamFieldPanel,
-)
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Orderable
 

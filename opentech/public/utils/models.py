@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.decorators import method_decorator
-
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -11,14 +10,13 @@ from wagtail.admin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core import blocks
-from wagtail.core.fields import StreamField, RichTextField
+from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
-from wagtail.contrib.settings.models import BaseSetting, register_setting
-
-from wagtailcache.cache import cache_page, WagtailCacheMixin
+from wagtailcache.cache import WagtailCacheMixin, cache_page
 
 
 class LinkFields(models.Model):

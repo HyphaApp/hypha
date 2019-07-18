@@ -1,6 +1,11 @@
 from django.urls import path
 
-from .views import ReviewDetailView, ReviewListView, ReviewCreateOrUpdateView, ReviewDeleteView
+from .views import (
+    ReviewCreateOrUpdateView,
+    ReviewDeleteView,
+    ReviewDetailView,
+    ReviewListView,
+)
 
 app_name = 'reviews'
 

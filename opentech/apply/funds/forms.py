@@ -5,7 +5,7 @@ from django_select2.forms import Select2Widget
 
 from opentech.apply.users.models import User
 
-from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
+from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .utils import render_icon
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping

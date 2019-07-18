@@ -1,6 +1,5 @@
 import argparse
 import json
-
 from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
@@ -8,8 +7,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from opentech.apply.funds.models import ApplicationSubmission, Round, LabType
-from opentech.apply.funds.models.forms import RoundBaseReviewForm, LabBaseReviewForm
+from opentech.apply.funds.models import ApplicationSubmission, LabType, Round
+from opentech.apply.funds.models.forms import LabBaseReviewForm, RoundBaseReviewForm
 from opentech.apply.review.models import Review
 from opentech.apply.review.options import NA
 

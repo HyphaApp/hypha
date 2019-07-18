@@ -1,20 +1,18 @@
-from django.db import models
-from django.db.models.functions import Coalesce
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-
+from django.db import models
+from django.db.models.functions import Coalesce
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-
-from wagtail.core.models import Orderable
-from wagtail.core.fields import StreamField
 from wagtail.admin.edit_handlers import (
-    InlinePanel,
     FieldPanel,
+    InlinePanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Orderable
 from wagtail.search import index
 
 from opentech.public.utils.models import BasePage, RelatedPage

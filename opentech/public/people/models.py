@@ -1,26 +1,29 @@
-from django.db import models
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.conf import settings
-
+from django.db import models
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-
-from wagtail.core.models import Orderable, PageManager, PageQuerySet
-from wagtail.core.fields import StreamField
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel
+    StreamFieldPanel,
 )
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Orderable, PageManager, PageQuerySet
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin, RelatedPage
+from opentech.public.utils.models import (
+    BaseFunding,
+    BasePage,
+    FundingMixin,
+    RelatedPage,
+)
 
 
 class SocialMediaProfile(models.Model):

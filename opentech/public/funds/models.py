@@ -1,13 +1,11 @@
 from django.conf import settings
+from django.core import validators
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.core import validators
 from django.db import models
 from django.utils.deconstruct import deconstructible
-
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -22,10 +20,7 @@ from wagtail.search import index
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import OPEN_CALL_PHASES
-from opentech.public.utils.models import (
-    BasePage,
-    RelatedPage,
-)
+from opentech.public.utils.models import BasePage, RelatedPage
 
 from .blocks import FundBlock, LabBlock
 

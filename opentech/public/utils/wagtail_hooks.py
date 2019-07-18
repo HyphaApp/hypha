@@ -1,8 +1,10 @@
 from django.contrib.staticfiles.templatetags.staticfiles import static
-
-from wagtail.contrib.modeladmin.options import ModelAdminGroup, ModelAdmin, modeladmin_register
+from wagtail.contrib.modeladmin.options import (
+    ModelAdmin,
+    ModelAdminGroup,
+    modeladmin_register,
+)
 from wagtail.core import hooks
-
 from wagtailcache.cache import clear_cache
 
 from opentech.public.news.models import NewsType

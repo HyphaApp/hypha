@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.translation import ugettext as _
-
 from wagtail.contrib.modeladmin.forms import ParentChooserForm
 from wagtail.contrib.modeladmin.helpers import PageButtonHelper
 from wagtail.contrib.modeladmin.views import ChooseParentView

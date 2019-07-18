@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from opentech.apply.review.models import ReviewForm
+
 from .factories import ReviewFormFactory
 
 

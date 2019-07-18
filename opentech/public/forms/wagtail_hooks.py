@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.models import ContentType
-
 from wagtail.core import hooks
 
 from opentech.public.forms.models import FormPage

@@ -9,14 +9,14 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, CreateView
+from django.views.generic import CreateView, DetailView
 
+from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.models import Activity
-from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
-from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 
 from .forms import (
     BatchConceptDeterminationForm,
@@ -24,8 +24,12 @@ from .forms import (
     ConceptDeterminationForm,
     ProposalDeterminationForm,
 )
-from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
-
+from .models import (
+    NEEDS_MORE_INFO,
+    TRANSITION_DETERMINATION,
+    Determination,
+    DeterminationMessageSettings,
+)
 from .utils import (
     can_create_determination,
     can_edit_determination,

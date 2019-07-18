@@ -1,5 +1,5 @@
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 
 from .utils import can_use_oauth_check
 

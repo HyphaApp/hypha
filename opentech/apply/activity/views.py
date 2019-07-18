@@ -1,12 +1,11 @@
-from django.views.generic import CreateView
 from django.utils import timezone
+from django.views.generic import CreateView
 
 from opentech.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
-from .messaging import messenger, MESSAGES
-from .models import Activity, COMMENT
-
+from .messaging import MESSAGES, messenger
+from .models import COMMENT, Activity
 
 ACTIVITY_LIMIT = 50
 

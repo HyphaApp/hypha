@@ -10,7 +10,6 @@ import dj_database_url
 import raven
 from raven.exceptions import InvalidGitRepository
 
-
 env = os.environ.copy()
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
