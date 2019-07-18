@@ -1,3 +1,4 @@
+from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
@@ -26,6 +27,12 @@ class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
     list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed')
+
+
+    def fund(self, obj):
+        url = self.url_helper.get_action_url('edit', obj.fund.id)
+        url_tag = f'<a href="{url}">{obj.fund}</a>'
+        return mark_safe(url_tag)
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
