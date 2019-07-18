@@ -27,7 +27,7 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
-    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed', 'applications')
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed', 'applications', 'review_forms')
 
     def applications(self, obj):
         def build_urls(applications):
@@ -58,6 +58,19 @@ class RoundAdmin(BaseRoundAdmin):
         model_name = obj._meta.model_name
         url_name = f'{app_label}_{model_name}_modeladmin_edit'
         return reverse(url_name, args=[obj.id])
+
+    def review_forms(self, obj):
+        def build_urls(review_forms):
+            for review_form in review_forms:
+                url = self.get_other_admin_edit_url(review_form)
+                yield f'<a href="{url}">{review_form}</a>'
+
+        urls = list(build_urls(obj.review_forms.all()))
+
+        if not urls:
+            return
+
+        return mark_safe('<br />'.join(urls))
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
