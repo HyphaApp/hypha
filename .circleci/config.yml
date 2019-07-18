@@ -75,6 +75,7 @@ jobs:
           command: |
             . venv/bin/activate
             flake8 ./opentech
+            make sort
             python manage.py collectstatic --noinput --verbosity=0
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
