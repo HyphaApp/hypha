@@ -16,7 +16,6 @@ from opentech.apply.categories.admin import CategoryAdmin, MetaCategoryAdmin
 class BaseRoundAdmin(ModelAdmin):
     choose_parent_view_class = RoundFundChooserView
     choose_parent_template_name = 'funds/admin/parent_chooser.html'
-    list_display = ('title', 'fund', 'start_date', 'end_date')
     button_helper_class = ButtonsWithPreview
 
     def fund(self, obj):
@@ -26,6 +25,7 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed')
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
@@ -54,6 +54,7 @@ class SealedRoundAdmin(BaseRoundAdmin):
     model = SealedRound
     menu_icon = 'locked'
     menu_label = 'Sealed Rounds'
+    list_display = ('title', 'fund', 'start_date', 'end_date')
 
 
 class FundAdmin(ModelAdmin):
