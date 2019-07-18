@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
@@ -26,13 +27,37 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
-    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed')
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed', 'applications')
 
+    def applications(self, obj):
+        def build_urls(applications):
+            for application in applications:
+                url = self.get_other_admin_edit_url(application.form)
+                yield f'<a href="{url}">{application}</a>'
+
+        urls = list(build_urls(obj.forms.all()))
+
+        if not urls:
+            return
+
+        return mark_safe('<br />'.join(urls))
 
     def fund(self, obj):
         url = self.url_helper.get_action_url('edit', obj.fund.id)
         url_tag = f'<a href="{url}">{obj.fund}</a>'
         return mark_safe(url_tag)
+
+    def get_other_admin_edit_url(self, obj):
+        """
+        Build an admin URL for the given obj.
+
+        This builds a ModelAdmin URL for the given object, mirroring Wagtail's
+        ModelAdmin.url_helper.get_action_url but works for any ModelAdmin.
+        """
+        app_label = obj._meta.app_label
+        model_name = obj._meta.model_name
+        url_name = f'{app_label}_{model_name}_modeladmin_edit'
+        return reverse(url_name, args=[obj.id])
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
