@@ -30,11 +30,11 @@ class MultiFileInput(ClearableFileInput):
         except TypeError:
             return is_initial(value)
 
-    def render(self, name, value, attrs=dict()):
+    def render(self, name, value, attrs=dict(), renderer=None):
         if self.multiple:
             attrs['multiple'] = 'multiple'
 
-        return super().render(name, value, attrs)
+        return super().render(name, value, attrs, renderer)
 
     def value_from_datadict(self, data, files, name):
         if hasattr(files, 'getlist'):
