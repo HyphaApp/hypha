@@ -52,8 +52,6 @@
         <meta property="og:description" content="{{ page|social_text:request.site }}" />
         <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
 
-        <script>document.querySelector('html').classList.replace('no-js', 'js');</script>
-
         <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
         <link rel="stylesheet" href="{% static 'css/public/main.css' %}">
         {% block extra_css %}{% endblock %}
