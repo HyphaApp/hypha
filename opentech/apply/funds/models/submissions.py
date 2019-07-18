@@ -384,7 +384,6 @@ class ApplicationSubmission(
         related_name='submissions_reviewer',
         blank=True,
         through='AssignedReviewers',
-        through_fields=('submission', 'reviewer'),
     )
     partners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
