@@ -5,10 +5,6 @@ Django settings for opentech project.
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import dj_database_url
-import sentry_sdk
-
-from sentry_sdk.integrations.django import DjangoIntegration
-
 
 env = os.environ.copy()
 
@@ -550,14 +546,6 @@ AWS_MIGRATION_SECRET_ACCESS_KEY = env.get('AWS_MIGRATION_SECRET_ACCESS_KEY', '')
 
 MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
 MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
-
-
-# Sentry configuration.
-if 'SENTRY_DSN' in env:
-    sentry_sdk.init(
-        dsn=env['SENTRY_DSN'],
-        integrations=[DjangoIntegration()]
-    )
 
 
 # Basic auth settings
