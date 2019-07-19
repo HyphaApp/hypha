@@ -1,9 +1,13 @@
+from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
+from wagtail.tests.utils import WagtailTestUtils
 
-from opentech.apply.users.tests.factories import SuperUserFactory
 from opentech.apply.home.factories import ApplyHomePageFactory
+from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.users.tests.factories import SuperUserFactory
 
+from .factories.models import RoundFactory
 from .test_admin_form import form_data
 
 
@@ -42,3 +46,40 @@ class TestFundCreationView(TestCase):
         fund = self.create_page(2, same_forms=True)
         self.assertEqual(fund.forms.count(), 2)
         self.assertEqual(fund.review_forms.count(), 2)
+
+
+class TestRoundIndexView(WagtailTestUtils, TestCase):
+    def setUp(self):
+        user = self.create_test_user()
+        self.client.force_login(user)
+
+        group, _ = Group.objects.get_or_create(name=STAFF_GROUP_NAME)
+        group.user_set.add(user)
+
+        self.round = RoundFactory()
+
+    def test_application_links(self):
+        response = self.client.get('/admin/funds/round/', follow=True)
+
+        application_links = [
+            f'<a href="/admin/funds/applicationform/edit/{app.id}/">{app}</a>'
+            for app in self.round.forms.all()
+        ]
+        applications_cell = f'<td class="field-applications">{"".join(application_links)}</td>'
+        self.assertContains(response, applications_cell, html=True)
+
+    def test_number_of_rounds(self):
+        response = self.client.get('/admin/funds/round/', follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context_data["result_count"], 1)
+
+    def test_review_form_links(self):
+        response = self.client.get('/admin/funds/round/', follow=True)
+
+        review_form_links = [
+            f'<a href="/admin/funds/round/edit/{review_form.id}/">{review_form}</a>'
+            for review_form in self.round.review_forms.all()
+        ]
+        review_form_cell = f'<td class="field-review_forms">{"".join(review_form_links)}</td>'
+        self.assertContains(response, review_form_cell, html=True)
