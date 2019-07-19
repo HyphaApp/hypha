@@ -32,7 +32,7 @@ class RoundAdmin(BaseRoundAdmin):
     def applications(self, obj):
         def build_urls(applications):
             for application in applications:
-                url = self.get_other_admin_edit_url(application.form)
+                url = reverse('funds_applicationform_modeladmin_edit', args=[application.id])
                 yield f'<a href="{url}">{application}</a>'
 
         urls = list(build_urls(obj.forms.all()))
@@ -47,22 +47,10 @@ class RoundAdmin(BaseRoundAdmin):
         url_tag = f'<a href="{url}">{obj.fund}</a>'
         return mark_safe(url_tag)
 
-    def get_other_admin_edit_url(self, obj):
-        """
-        Build an admin URL for the given obj.
-
-        This builds a ModelAdmin URL for the given object, mirroring Wagtail's
-        ModelAdmin.url_helper.get_action_url but works for any ModelAdmin.
-        """
-        app_label = obj._meta.app_label
-        model_name = obj._meta.model_name
-        url_name = f'{app_label}_{model_name}_modeladmin_edit'
-        return reverse(url_name, args=[obj.id])
-
     def review_forms(self, obj):
         def build_urls(review_forms):
             for review_form in review_forms:
-                url = self.get_other_admin_edit_url(review_form)
+                url = reverse('funds_round_modeladmin_edit', args=[review_form.id])
                 yield f'<a href="{url}">{review_form}</a>'
 
         urls = list(build_urls(obj.review_forms.all()))
