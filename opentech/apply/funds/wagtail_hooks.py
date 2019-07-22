@@ -1,10 +1,12 @@
 from django.contrib.auth.models import Permission
-from wagtail.contrib.modeladmin.options import modeladmin_register
+
 from wagtail.core import hooks
+from wagtail.contrib.modeladmin.options import modeladmin_register
 
 from .admin import ApplyAdminGroup
 from .admin_views import custom_admin_round_copy_view
 from .models import RoundBase
+
 
 modeladmin_register(ApplyAdminGroup)
 

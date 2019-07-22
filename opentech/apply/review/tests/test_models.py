@@ -1,9 +1,8 @@
 from django.test import TestCase
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-
-from ..options import MAYBE, NO, YES
 from .factories import ReviewFactory, ReviewOpinionFactory
+from ..options import MAYBE, NO, YES
 
 
 class TestReviewQueryset(TestCase):

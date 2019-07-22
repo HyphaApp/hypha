@@ -2,6 +2,7 @@ from django import template
 
 from opentech.public.navigation.models import NavigationSettings
 
+
 register = template.Library()
 
 

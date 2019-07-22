@@ -4,8 +4,8 @@ import factory
 import wagtail_factories
 
 from opentech.apply.funds.models import (
-    ApplicationRevision,
     ApplicationSubmission,
+    ApplicationRevision,
     AssignedReviewers,
     FundType,
     LabType,
@@ -16,9 +16,9 @@ from opentech.apply.funds.models import (
     SealedRound,
 )
 from opentech.apply.funds.models.forms import (
+    ApplicationForm,
     ApplicationBaseForm,
     ApplicationBaseReviewForm,
-    ApplicationForm,
     LabBaseForm,
     LabBaseReviewForm,
     RoundBaseForm,
@@ -27,10 +27,11 @@ from opentech.apply.funds.models.forms import (
 from opentech.apply.funds.workflow import ConceptProposal, Request
 from opentech.apply.home.factories import ApplyHomePageFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
-from opentech.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
+from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
+from opentech.apply.users.tests.factories import StaffFactory, UserFactory, GroupFactory
 
 from . import blocks
+
 
 __all__ = [
     'FundTypeFactory',

@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from wagtail.core import hooks
 
 from opentech.apply.utils.notifications import slack_notify

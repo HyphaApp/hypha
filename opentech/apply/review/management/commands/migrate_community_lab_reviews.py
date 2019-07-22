@@ -1,6 +1,4 @@
-from opentech.apply.review.management.commands.migration_review_base import (
-    MigrateCommand,
-)
+from opentech.apply.review.management.commands.migration_review_base import MigrateCommand
 
 
 class Command(MigrateCommand):

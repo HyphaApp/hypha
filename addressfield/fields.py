@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 from .widgets import AddressWidget
 
+
 basepath = path.dirname(__file__)
 filepath = path.abspath(path.join(basepath, "static", "addressfield.min.json"))
 with open(filepath, encoding='utf8') as address_data:

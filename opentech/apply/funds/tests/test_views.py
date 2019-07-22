@@ -1,16 +1,16 @@
-import json
 from datetime import timedelta
+import json
 
 from django.utils import timezone
 from django.utils.text import slugify
 
-from opentech.apply.activity.models import INTERNAL, Activity
+from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
-    ApplicationRevisionFactory,
     ApplicationSubmissionFactory,
-    AssignedReviewersFactory,
+    ApplicationRevisionFactory,
     AssignedWithRoleReviewersFactory,
+    AssignedReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
     ReviewerRoleFactory,

@@ -1,24 +1,16 @@
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from opentech.apply.categories.admin import CategoryAdmin, MetaCategoryAdmin
 from opentech.apply.funds.models import ReviewerRole, ScreeningStatus
 from opentech.apply.review.admin import ReviewFormAdmin
 from opentech.apply.utils.admin import ListRelatedMixin
-
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
     RoundFundChooserView,
 )
-from .models import (
-    ApplicationForm,
-    FundType,
-    LabType,
-    RequestForPartners,
-    Round,
-    SealedRound,
-)
+from .models import ApplicationForm, FundType, LabType, RequestForPartners, Round, SealedRound
+from opentech.apply.categories.admin import CategoryAdmin, MetaCategoryAdmin
 
 
 class BaseRoundAdmin(ModelAdmin):

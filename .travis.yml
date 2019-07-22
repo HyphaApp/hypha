@@ -50,9 +50,6 @@ script:
   # Run python code style checks
   - flake8 ./opentech
 
-  # Check import sort order of Python files
-  - make sort
-
   # Collect static
   - python manage.py collectstatic --noinput --verbosity=0
 

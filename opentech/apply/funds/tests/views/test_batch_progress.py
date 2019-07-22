@@ -1,7 +1,10 @@
 from unittest import mock
 
-from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.models import ApplicationSubmission
+
+from opentech.apply.determinations.tests.factories import (
+    DeterminationFactory
+)
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     InvitedToProposalFactory,

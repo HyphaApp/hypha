@@ -1,9 +1,8 @@
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import override_settings, TestCase
 from django.urls import reverse
 
 from opentech.apply.utils.testing.tests import BaseViewTestCase
-
 from .factories import OAuthUserFactory, StaffFactory, UserFactory
 
 

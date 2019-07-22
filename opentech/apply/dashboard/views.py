@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 from django_tables2.views import SingleTableView
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs

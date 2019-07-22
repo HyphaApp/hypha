@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
