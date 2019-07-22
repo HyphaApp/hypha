@@ -2,7 +2,6 @@ from django.urls import path
 
 from .views import MailchimpSubscribeView
 
-
 app_name = 'newsletter'
 
 

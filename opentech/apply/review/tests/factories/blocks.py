@@ -1,11 +1,15 @@
 import json
 import random
+
 import factory
 
 from opentech.apply.review import blocks
-from opentech.apply.review.options import YES, MAYBE, NO, PRIVATE, REVIEWER
-from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
-    StreamFieldUUIDFactory
+from opentech.apply.review.options import MAYBE, NO, PRIVATE, REVIEWER, YES
+from opentech.apply.stream_forms.testing.factories import (
+    CharFieldBlockFactory,
+    FormFieldBlockFactory,
+    StreamFieldUUIDFactory,
+)
 from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['ReviewFormFieldsFactory', 'RecommendationBlockFactory', 'ScoreFieldBlockFactory']

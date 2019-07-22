@@ -1,6 +1,5 @@
 from opentech.apply.home.models import ApplyHomePage
 from opentech.public.home.models import HomePage
-
 from opentech.public.mailchimp.forms import NewsletterForm
 
 

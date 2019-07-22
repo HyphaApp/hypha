@@ -1,16 +1,18 @@
 from collections import Counter
-from pagedown.widgets import PagedownWidget
 
 import bleach
-
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
-from django.utils.translation import ugettext_lazy as _
 from django.utils.text import mark_safe
+from django.utils.translation import ugettext_lazy as _
+from pagedown.widgets import PagedownWidget
+from wagtail.core.blocks import StaticBlock, StreamBlock, StreamValue
 
-from wagtail.core.blocks import StaticBlock, StreamValue, StreamBlock
-
-from opentech.apply.stream_forms.blocks import FormFieldBlock, OptionalFormFieldBlock, TextFieldBlock
+from opentech.apply.stream_forms.blocks import (
+    FormFieldBlock,
+    OptionalFormFieldBlock,
+    TextFieldBlock,
+)
 from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
 

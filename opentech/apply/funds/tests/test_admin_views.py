@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from opentech.apply.users.tests.factories import SuperUserFactory
 from opentech.apply.home.factories import ApplyHomePageFactory
+from opentech.apply.users.tests.factories import SuperUserFactory
 
 from .test_admin_form import form_data
 

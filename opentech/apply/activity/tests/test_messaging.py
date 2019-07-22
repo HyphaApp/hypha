@@ -4,12 +4,10 @@ import json
 from unittest.mock import Mock, patch
 
 import responses
-
+from django.contrib.messages import get_messages
 from django.core import mail
 from django.test import TestCase, override_settings
-from django.contrib.messages import get_messages
 
-from opentech.apply.utils.testing import make_request
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
@@ -17,17 +15,18 @@ from opentech.apply.funds.tests.factories import (
 )
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
+from opentech.apply.utils.testing import make_request
 
-from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
-    AdapterBase,
+    MESSAGES,
     ActivityAdapter,
+    AdapterBase,
     EmailAdapter,
     MessengerBackend,
-    neat_related,
-    MESSAGES,
     SlackAdapter,
+    neat_related,
 )
+from ..models import INTERNAL, PUBLIC, Activity, Event, Message
 from .factories import CommentFactory, EventFactory, MessageFactory
 
 

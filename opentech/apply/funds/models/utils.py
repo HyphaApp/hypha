@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -10,12 +9,16 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.contrib.forms.models import AbstractEmailForm
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.stream_forms.models import AbstractStreamForm
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
+from opentech.apply.users.groups import (
+    COMMUNITY_REVIEWER_GROUP_NAME,
+    PARTNER_GROUP_NAME,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
 
 from ..workflow import WORKFLOWS
-
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,

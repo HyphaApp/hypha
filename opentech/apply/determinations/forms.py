@@ -2,14 +2,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.utils.options import RICH_TEXT_WIDGET
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.utils.options import RICH_TEXT_WIDGET
 
-from .models import (
-    Determination,
-    DETERMINATION_CHOICES,
-    TRANSITION_DETERMINATION,
-)
+from .models import DETERMINATION_CHOICES, TRANSITION_DETERMINATION, Determination
 from .utils import determination_actions
 
 User = get_user_model()

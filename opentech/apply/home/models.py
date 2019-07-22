@@ -1,12 +1,10 @@
 from django.conf import settings
 from django.db import models
 from django.utils.decorators import method_decorator
-
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.models import Page
 from wagtail.search import index
-
-from wagtailcache.cache import cache_page, WagtailCacheMixin
+from wagtailcache.cache import WagtailCacheMixin, cache_page
 
 from opentech.apply.funds.models import ApplicationBase, LabBase
 

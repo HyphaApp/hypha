@@ -1,11 +1,13 @@
 import factory
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, AssignedReviewersFactory
+from opentech.apply.funds.tests.factories import (
+    ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
+)
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 
-from ...options import YES, NO, MAYBE, AGREE, DISAGREE, PRIVATE, REVIEWER
 from ...models import Review, ReviewForm, ReviewOpinion
-
+from ...options import AGREE, DISAGREE, MAYBE, NO, PRIVATE, REVIEWER, YES
 from . import blocks
 
 __all__ = ['ReviewFactory', 'ReviewFormFactory', 'ReviewOpinionFactory']

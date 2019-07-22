@@ -1,5 +1,4 @@
 import json
-
 from datetime import date
 
 from django.contrib.auth import get_user_model
@@ -8,10 +7,12 @@ from django.db import transaction
 
 from opentech.apply.categories.models import Category
 from opentech.apply.funds.models import ApplicationForm, FundType, Round
-from opentech.apply.funds.models.forms import ApplicationBaseForm, ApplicationBaseReviewForm
-from opentech.apply.review.models import ReviewForm
-
+from opentech.apply.funds.models.forms import (
+    ApplicationBaseForm,
+    ApplicationBaseReviewForm,
+)
 from opentech.apply.home.models import ApplyHomePage
+from opentech.apply.review.models import ReviewForm
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 RR_ROUND_TITLE = 'Rapid Response (archive round)'

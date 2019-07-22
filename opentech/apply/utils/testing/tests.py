@@ -1,8 +1,7 @@
-from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.auth.models import AnonymousUser
-from django.test import override_settings, TestCase, RequestFactory
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
-
 
 request_factory = RequestFactory()
 

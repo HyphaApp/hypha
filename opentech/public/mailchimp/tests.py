@@ -1,12 +1,10 @@
-from urllib import parse
-from unittest import mock
 import re
-
-from django.test import override_settings, TestCase
-from django.urls import reverse
+from unittest import mock
+from urllib import parse
 
 import responses
-
+from django.test import TestCase, override_settings
+from django.urls import reverse
 
 any_url = re.compile(".")
 

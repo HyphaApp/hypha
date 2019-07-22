@@ -1,13 +1,12 @@
-from collections import defaultdict
 import json
 import uuid
-
-from django.core.files.uploadedfile import SimpleUploadedFile
+from collections import defaultdict
 
 import factory
+import wagtail_factories
+from django.core.files.uploadedfile import SimpleUploadedFile
 from wagtail.core.blocks import RichTextBlock
 from wagtail.core.rich_text import RichText
-import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 

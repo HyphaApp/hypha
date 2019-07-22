@@ -9,16 +9,31 @@ from wagtail.core.fields import StreamField
 
 from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.stream_forms.models import BaseStreamForm
-from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME
+from opentech.apply.users.groups import (
+    PARTNER_GROUP_NAME,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
 
 from .blocks import (
-    ReviewCustomFormFieldsBlock,
     RecommendationBlock,
     RecommendationCommentsBlock,
+    ReviewCustomFormFieldsBlock,
     ScoreFieldBlock,
     VisibilityBlock,
 )
-from .options import NA, YES, NO, MAYBE, RECOMMENDATION_CHOICES, DISAGREE, OPINION_CHOICES, VISIBILITY, PRIVATE, REVIEWER
+from .options import (
+    DISAGREE,
+    MAYBE,
+    NA,
+    NO,
+    OPINION_CHOICES,
+    PRIVATE,
+    RECOMMENDATION_CHOICES,
+    REVIEWER,
+    VISIBILITY,
+    YES,
+)
 
 
 class ReviewFormFieldsMixin(models.Model):

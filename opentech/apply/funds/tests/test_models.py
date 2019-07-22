@@ -1,21 +1,21 @@
-from datetime import date, timedelta
 import itertools
 import os
+from datetime import date, timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
-from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
+from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import Request
+from opentech.apply.review.options import MAYBE, NO
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.review.options import NO, MAYBE
-from opentech.apply.utils.testing import make_request
 from opentech.apply.users.tests.factories import StaffFactory
+from opentech.apply.utils.testing import make_request
 
 from .factories import (
     ApplicationSubmissionFactory,

@@ -1,9 +1,8 @@
 import argparse
 import json
 import os
-from urllib.parse import urlsplit
-
 from datetime import datetime, timezone
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -13,10 +12,10 @@ from django.db.utils import IntegrityError
 from django_fsm import FSMField
 from storages.backends.s3boto3 import S3Boto3Storage
 
-from opentech.apply.categories.models import Category, Option
 from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
-from opentech.apply.funds.models.forms import RoundBaseForm, LabBaseForm
+from opentech.apply.categories.models import Category, Option
+from opentech.apply.funds.models import ApplicationSubmission, FundType, LabType, Round
+from opentech.apply.funds.models.forms import LabBaseForm, RoundBaseForm
 from opentech.apply.funds.workflow import INITIAL_STATE
 
 

@@ -1,15 +1,27 @@
 import json
 
 from django import forms
-
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
 from wagtail.core.blocks import RichTextBlock
 
 from opentech.apply.review.fields import ScoredAnswerField
-from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
-from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
+from opentech.apply.review.options import (
+    NA,
+    PRIVATE,
+    RATE_CHOICE_NA,
+    RATE_CHOICES_DICT,
+    RECOMMENDATION_CHOICES,
+    VISIBILILTY_HELP_TEXT,
+    VISIBILITY,
+)
+from opentech.apply.stream_forms.blocks import (
+    CharFieldBlock,
+    CheckboxFieldBlock,
+    DropdownFieldBlock,
+    OptionalFormFieldBlock,
+    TextFieldBlock,
+)
 from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
 

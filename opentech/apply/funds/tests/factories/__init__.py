@@ -1,7 +1,6 @@
-from . import models
-from .models import * # noqa
-from . import blocks
+from . import blocks, models
 from .blocks import *  # noqa
+from .models import *  # noqa
 
 __all__ = []
 

@@ -1,19 +1,5 @@
 from django.urls import include, path
 
-from .views import (
-    RevisionCompareView,
-    RevisionListView,
-    RoundListView,
-    SubmissionsByRound,
-    SubmissionsByStatus,
-    SubmissionDetailView,
-    SubmissionEditView,
-    SubmissionListView,
-    SubmissionOverviewView,
-    SubmissionSealedView,
-    SubmissionDeleteView,
-    SubmissionPrivateMediaView,
-)
 from .api_views import (
     CommentEdit,
     CommentList,
@@ -21,10 +7,23 @@ from .api_views import (
     RoundLabDetail,
     RoundLabList,
     SubmissionAction,
-    SubmissionList,
     SubmissionDetail,
+    SubmissionList,
 )
-
+from .views import (
+    RevisionCompareView,
+    RevisionListView,
+    RoundListView,
+    SubmissionDeleteView,
+    SubmissionDetailView,
+    SubmissionEditView,
+    SubmissionListView,
+    SubmissionOverviewView,
+    SubmissionPrivateMediaView,
+    SubmissionsByRound,
+    SubmissionsByStatus,
+    SubmissionSealedView,
+)
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),

@@ -1,10 +1,9 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
-
 from faker import Faker
 
-from .files import StreamFieldFile
 from .fields import MultiFileField, MultiFileInput
+from .files import StreamFieldFile
 
 fake = Faker()
 
