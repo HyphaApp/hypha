@@ -1,3 +1,5 @@
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
@@ -16,7 +18,6 @@ from opentech.apply.categories.admin import CategoryAdmin, MetaCategoryAdmin
 class BaseRoundAdmin(ModelAdmin):
     choose_parent_view_class = RoundFundChooserView
     choose_parent_template_name = 'funds/admin/parent_chooser.html'
-    list_display = ('title', 'fund', 'start_date', 'end_date')
     button_helper_class = ButtonsWithPreview
 
     def fund(self, obj):
@@ -26,6 +27,38 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed', 'applications', 'review_forms')
+
+    def applications(self, obj):
+        def build_urls(applications):
+            for application in applications:
+                url = reverse('funds_applicationform_modeladmin_edit', args=[application.id])
+                yield f'<a href="{url}">{application}</a>'
+
+        urls = list(build_urls(obj.forms.all()))
+
+        if not urls:
+            return
+
+        return mark_safe('<br />'.join(urls))
+
+    def fund(self, obj):
+        url = self.url_helper.get_action_url('edit', obj.fund.id)
+        url_tag = f'<a href="{url}">{obj.fund}</a>'
+        return mark_safe(url_tag)
+
+    def review_forms(self, obj):
+        def build_urls(review_forms):
+            for review_form in review_forms:
+                url = reverse('funds_round_modeladmin_edit', args=[review_form.id])
+                yield f'<a href="{url}">{review_form}</a>'
+
+        urls = list(build_urls(obj.review_forms.all()))
+
+        if not urls:
+            return
+
+        return mark_safe('<br />'.join(urls))
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
@@ -54,6 +87,7 @@ class SealedRoundAdmin(BaseRoundAdmin):
     model = SealedRound
     menu_icon = 'locked'
     menu_label = 'Sealed Rounds'
+    list_display = ('title', 'fund', 'start_date', 'end_date')
 
 
 class FundAdmin(ModelAdmin):
