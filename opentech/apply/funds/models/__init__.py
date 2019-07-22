@@ -1,10 +1,11 @@
 from django.utils.translation import ugettext_lazy as _
 
-from .applications import ApplicationBase, LabBase, RoundBase, RoundsAndLabs  # NOQA
+from .applications import ApplicationBase, RoundBase, LabBase, RoundsAndLabs  # NOQA
 from .forms import ApplicationForm
 from .reviewer_role import ReviewerRole
 from .screening import ScreeningStatus
-from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
+from .submissions import ApplicationSubmission, AssignedReviewers, ApplicationRevision
+
 
 __all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole']
 

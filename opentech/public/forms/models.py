@@ -1,28 +1,25 @@
-import json
 import os
+import json
 
-from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 from django.db import models
 from django.forms import FileField
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
+
 from modelcluster.fields import ParentalKey
+
+from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    FieldRowPanel,
-    InlinePanel,
-    MultiFieldPanel,
+    FieldPanel, FieldRowPanel, MultiFieldPanel, InlinePanel
 )
 from wagtail.contrib.forms.forms import FormBuilder
 from wagtail.contrib.forms.models import (
-    FORM_FIELD_CHOICES,
-    AbstractEmailForm,
-    AbstractFormField,
+    AbstractEmailForm, AbstractFormField, FORM_FIELD_CHOICES
 )
-from wagtail.core.fields import RichTextField
 from wagtail.search import index
 
 from opentech.public.utils.models import BasePage

@@ -1,17 +1,18 @@
 from django.conf import settings
-from django.conf.urls import url
-from django.contrib import admin
 from django.urls import include, path
+from django.contrib import admin
 from django.views.generic import TemplateView
-from wagtail.admin import urls as wagtailadmin_urls
+from django.conf.urls import url
+
 from wagtail.contrib.sitemaps.views import sitemap
+from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
+from opentech.public import urls as public_urls
 from opentech.apply.users.urls import public_urlpatterns as user_urls
 from opentech.apply.users.views import LoginView
-from opentech.public import urls as public_urls
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),

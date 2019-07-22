@@ -1,6 +1,5 @@
 import json
 import random
-
 import factory
 
 from opentech.apply.funds import blocks
@@ -11,8 +10,8 @@ from opentech.apply.stream_forms.testing.factories import (
     ImageFieldBlockFactory,
     MultiFileFieldBlockFactory,
     NumberFieldBlockFactory,
-    ParagraphBlockFactory,
     RadioFieldBlockFactory,
+    ParagraphBlockFactory,
     StreamFieldUUIDFactory,
 )
 from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory

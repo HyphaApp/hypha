@@ -3,83 +3,66 @@ from copy import copy
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.db.models import Count, F, Q
-from django.http import Http404, HttpResponseRedirect, StreamingHttpResponse
+from django.http import HttpResponseRedirect, Http404, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import (
-    DeleteView,
-    DetailView,
-    FormView,
-    ListView,
-    UpdateView,
-    View,
-)
+from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView, View
+
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+
 from wagtail.core.models import Page
 
-from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import (
-    ActivityContextMixin,
     AllActivityContextMixin,
+    ActivityContextMixin,
     CommentFormView,
     DelegatedViewMixin,
 )
-from opentech.apply.determinations.views import (
-    BatchDeterminationCreateView,
-    DeterminationCreateOrUpdateView,
-)
+from opentech.apply.activity.messaging import messenger, MESSAGES
+from opentech.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import (
-    DelegateableListView,
-    DelegateableView,
-    ViewDispatcher,
-)
+from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .forms import (
-    BatchProgressSubmissionForm,
     BatchUpdateReviewersForm,
+    BatchProgressSubmissionForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
-    UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
+    UpdatePartnersForm,
 )
 from .models import (
-    ApplicationRevision,
     ApplicationSubmission,
-    LabBase,
-    RoundBase,
+    ApplicationRevision,
     RoundsAndLabs,
+    RoundBase,
+    LabBase
 )
-from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
     ReviewerSubmissionsTable,
-    RoundsFilter,
     RoundsTable,
+    RoundsFilter,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import (
-    INITIAL_STATE,
-    PHASES_MAPPING,
-    STAGE_CHANGE_ACTIONS,
-    review_statuses,
-)
+from .workflow import INITIAL_STATE, STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
+from .permissions import is_user_has_access_to_view_submission
 
 submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 

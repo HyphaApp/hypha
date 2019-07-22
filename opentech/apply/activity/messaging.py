@@ -1,11 +1,11 @@
 import json
+import requests
 from collections import defaultdict
 
-import requests
+from django.db import models
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -14,6 +14,7 @@ from opentech.apply.funds.workflow import PHASES
 from .models import INTERNAL, PUBLIC
 from .options import MESSAGES
 from .tasks import send_mail
+
 
 User = get_user_model()
 

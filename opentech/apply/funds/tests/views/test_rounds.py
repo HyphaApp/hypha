@@ -1,4 +1,8 @@
-from opentech.apply.funds.tests.factories import LabFactory, RoundFactory
+from opentech.apply.funds.tests.factories import (
+    LabFactory,
+    RoundFactory,
+)
+
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,

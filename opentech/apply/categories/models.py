@@ -2,13 +2,18 @@ from django import forms
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.template.loader import render_to_string
+
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from treebeard.mp_tree import MP_Node
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+)
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.core.models import Orderable
 from wagtail.search import index
+
+from treebeard.mp_tree import MP_Node
 
 
 class Option(Orderable):

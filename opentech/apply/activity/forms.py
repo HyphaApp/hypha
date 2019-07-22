@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
+
 from pagedown.widgets import PagedownWidget
 
-from .models import VISIBILILTY_HELP_TEXT, VISIBILITY, Activity
+from .models import Activity, VISIBILILTY_HELP_TEXT, VISIBILITY
 
 
 class CommentForm(forms.ModelForm):

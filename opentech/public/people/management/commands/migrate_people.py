@@ -2,34 +2,38 @@ import argparse
 import itertools
 import json
 import mimetypes
+
 from datetime import datetime, timezone
-from io import BytesIO
 from urllib.parse import urlsplit
+from io import BytesIO
+
+import requests
+from PIL import Image
 
 import bleach
-import requests
 from django.core.files.images import ImageFile
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
-from PIL import Image
+
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
 from wagtail.core.models import Page
 from wagtail.core.rich_text import RichText
 from wagtail.images import get_image_model
 
-from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.apply.categories.models import Category, Option
+from opentech.apply.categories.categories_seed import CATEGORIES
 from opentech.public.people.models import (
     Funding,
     FundReviewers,
     PersonContactInfomation,
-    PersonIndexPage,
     PersonPage,
-    PersonPagePersonType,
+    PersonIndexPage,
     PersonType,
+    PersonPagePersonType,
     SocialMediaProfile,
 )
+
 
 WagtailImage = get_image_model()
 

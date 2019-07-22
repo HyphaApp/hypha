@@ -1,9 +1,8 @@
 import logging
 
-from .base import *  # noqa
-
 logging.disable(logging.CRITICAL)
 
+from .base import *  # noqa
 
 # Should only include explicit testing settings
 

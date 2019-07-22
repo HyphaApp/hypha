@@ -1,18 +1,16 @@
 from django.conf import settings
+from django.utils.text import mark_safe
 from django.core.files import File
 from django.core.files.storage import get_storage_class
-from django.utils.text import mark_safe
 
 from opentech.apply.stream_forms.blocks import (
-    FileFieldBlock,
-    FormFieldBlock,
-    GroupToggleBlock,
-    ImageFieldBlock,
-    MultiFileFieldBlock,
-    UploadableMediaBlock,
+    FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
 )
-from opentech.apply.stream_forms.files import StreamFieldFile
 from opentech.apply.utils.blocks import SingleIncludeMixin
+
+from opentech.apply.stream_forms.blocks import UploadableMediaBlock
+from opentech.apply.stream_forms.files import StreamFieldFile
+
 
 __all__ = ['AccessFormData']
 

@@ -1,6 +1,7 @@
-import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+
+import factory
 
 from ..groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 

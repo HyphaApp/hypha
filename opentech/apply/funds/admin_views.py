@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
+
 from wagtail.admin import messages
 from wagtail.admin.forms import CopyForm
 from wagtail.admin.views.pages import get_valid_next_url_from_request

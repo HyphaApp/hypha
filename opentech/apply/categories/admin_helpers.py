@@ -1,4 +1,5 @@
 from django.contrib.admin.utils import quote
+
 from wagtail.contrib.modeladmin.helpers import ButtonHelper
 
 

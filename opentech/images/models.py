@@ -1,5 +1,9 @@
 from django.db import models
-from wagtail.images.models import AbstractImage, AbstractRendition, Image
+from wagtail.images.models import (
+    AbstractImage,
+    AbstractRendition,
+    Image,
+)
 
 
 # We define our own custom image class to replace wagtailimages.Image,

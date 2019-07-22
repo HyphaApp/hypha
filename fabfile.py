@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from fabric.api import env, get, lcd, local, prompt, roles, run, runs_once
+from fabric.api import lcd, roles, runs_once, run, local, env, prompt, get
+
 
 env.roledefs = {
     'production': [],
