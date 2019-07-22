@@ -8,8 +8,10 @@ from django.utils.text import slugify
 from ..groups import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
+    COMMUNITY_REVIEWER_GROUP_NAME,
+    PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
-    STAFF_GROUP_NAME,
+    STAFF_GROUP_NAME
 )
 
 
@@ -90,3 +92,17 @@ class ApplicantFactory(UserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=APPLICANT_GROUP_NAME))
+
+
+class CommunityReviewerFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=COMMUNITY_REVIEWER_GROUP_NAME))
+
+
+class PartnerFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=PARTNER_GROUP_NAME))

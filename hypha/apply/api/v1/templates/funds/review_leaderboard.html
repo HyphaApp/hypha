@@ -1,0 +1,30 @@
+{% extends "funds/base_submissions_table.html" %}
+
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block title %}Submissions{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--search">
+        {% block page_header %}
+            <div>
+                <h1 class="gamma heading heading--no-margin heading--bold">Reviewer Leaderboard</h1>
+                <h5>TAG LINE</h5>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% block table %}
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False heading="All Submissions" %}
+
+        {% render_table table %}
+        <div class="all-submissions-table__more">
+            <a href="{% url 'apply:submissions:list' %}">Show all</a>
+        </div>
+    {% endblock %}
+</div>
+{% endblock %}

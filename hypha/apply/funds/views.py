@@ -1,4 +1,5 @@
 from copy import copy
+from datetime import timedelta
 from statistics import mean
 
 from django.contrib import messages
@@ -6,10 +7,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, OuterRef, Q, Subquery
 from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -41,6 +43,7 @@ from hypha.apply.determinations.views import (
 )
 from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
+from hypha.apply.review.models import Review
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
@@ -76,6 +79,7 @@ from .models import (
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
+    LeaderboardTable,
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
@@ -1179,3 +1183,32 @@ class SubmissionResultView(FilterView):
             average = round(mean(values))
 
         return {'total': total, 'average': average}
+
+
+@method_decorator(login_required, name='dispatch')
+class ReviewLeaderboard(SingleTableMixin, FilterView):
+    table_class = LeaderboardTable
+    table_pagination = False
+    template_name = 'funds/review_leaderboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        is_staff = request.user.is_apply_staff
+        is_reviewer = request.user.is_reviewer
+
+        if not (is_staff or is_reviewer):
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_table_data(self):
+        ninety_days_ago = timezone.now() - timedelta(days=90)
+        this_year = timezone.now().year
+        last_year = timezone.now().year - 1
+        latest_reviews = Review.objects.filter(author__reviewer_id=OuterRef('pk')).order_by('-created_at')
+        return super().get_table_data().filter(submissions_reviewer__isnull=False).annotate(
+            total=Count('assignedreviewers__review'),
+            ninety_days=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__date__gte=ninety_days_ago)),
+            this_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=this_year)),
+            last_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=last_year)),
+            most_recent=Subquery(latest_reviews.values('id')[:1])
+        )
