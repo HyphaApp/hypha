@@ -37,6 +37,7 @@ from opentech.apply.utils.views import DelegateableListView, DelegateableView, V
 
 from .differ import compare
 from .forms import (
+    BatchUpdateSubmissionLeadForm,
     BatchUpdateReviewersForm,
     BatchProgressSubmissionForm,
     ProgressSubmissionForm,
@@ -101,6 +102,30 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             filter_action=self.filter_action,
             **kwargs,
         )
+
+
+@method_decorator(staff_required, name='dispatch')
+class BatchUpdateLeadView(DelegatedViewMixin, FormView):
+    form_class = BatchUpdateSubmissionLeadForm
+    context_name = 'batch_lead_form'
+
+    def form_valid(self, form):
+        new_lead = form.cleaned_data['lead']
+        submissions = form.cleaned_data['submissions']
+        form.save()
+
+        messenger(
+            MESSAGES.BATCH_UPDATE_LEAD,
+            request=self.request,
+            user=self.request.user,
+            submissions=submissions,
+            new_lead=new_lead,
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -252,6 +277,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
 class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]
@@ -270,6 +296,7 @@ class SubmissionListView(ViewDispatcher):
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]
@@ -301,6 +328,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]

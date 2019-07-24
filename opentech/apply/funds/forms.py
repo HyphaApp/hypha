@@ -82,6 +82,41 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
+class BatchUpdateSubmissionLeadForm(forms.Form):
+    lead = forms.ChoiceField(label='Lead')
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
+
+    def __init__(self, *args, round=None, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['lead'].choices = [(staff.id, staff) for staff in User.objects.staff()]
+
+    def clean_lead(self):
+        value = self.cleaned_data['lead']
+        return User.objects.get(id=value)
+
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    def save(self):
+        new_lead = self.cleaned_data['lead']
+        import logging
+        logger = logging.getLogger('opentech')
+        logger.debug(new_lead)
+        logger.debug(new_lead.id)
+        submissions = self.cleaned_data['submissions']
+
+        for submission in submissions:
+            # Onle save if the lead has changed.
+            if submission.lead != new_lead:
+                submission.lead = new_lead
+                submission.save()
+
+        return None
+
+
 class UpdateReviewersForm(forms.ModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
