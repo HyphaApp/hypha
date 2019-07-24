@@ -3,6 +3,7 @@ from enum import Enum
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'Update Lead'
+    BATCH_UPDATE_LEAD = 'Batch Update Lead'
     EDIT = 'Edit'
     APPLICANT_EDIT = "Applicant Edit"
     NEW_SUBMISSION = 'New Submission'
