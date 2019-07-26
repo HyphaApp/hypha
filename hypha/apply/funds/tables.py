@@ -23,7 +23,6 @@ from hypha.images.models import CustomImage
 
 from .widgets import Select2MultiCheckboxesWidget
 
-
 User = get_user_model()
 
 
@@ -361,6 +360,51 @@ class RoundsFilter(filters.FilterSet):
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     active = ActiveRoundFilter(label='Active')
     round_state = OpenRoundFilter(label='Open')
+
+
+class LeaderboardFilterForm(forms.ModelForm):
+    """
+    Form to "clean" a list of User objects to their PKs.
+
+    The Leaderboard table is a list of User objects, however we also want the
+    ability to filter down to N Users (reviewers).  Django filter is converting
+    the selected PKs to User objects, however we can't filter a User QuerySet
+    with User objects.  So this form converts back to a list of User PKs using
+    the clean_reviewer method.
+    """
+    class Meta:
+        fields = ["id"]
+        model = User
+
+    def clean_reviewer(self):
+        return [u.id for u in self.cleaned_data['reviewer']]
+
+
+class LeaderboardFilter(filters.FilterSet):
+    reviewer = Select2ModelMultipleChoiceFilter(
+        field_name='pk',
+        label='Reviewers',
+        queryset=get_reviewers,
+    )
+    funds = Select2ModelMultipleChoiceFilter(
+        field_name='submission__page',
+        label='Funds',
+        queryset=get_used_funds,
+    )
+    rounds = Select2ModelMultipleChoiceFilter(
+        field_name='submission__round',
+        label='Rounds',
+        queryset=get_used_rounds,
+    )
+
+    class Meta:
+        fields = [
+            'reviewer',
+            'funds',
+            'rounds',
+        ]
+        form = LeaderboardFilterForm
+        model = User
 
 
 class LeaderboardTable(tables.Table):
