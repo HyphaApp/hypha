@@ -3,8 +3,9 @@ from itertools import groupby
 from operator import methodcaller
 
 from django import forms
-from django.utils.text import mark_safe, slugify
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from django_select2.forms import Select2Widget
 
 from opentech.apply.categories.models import MetaCategory

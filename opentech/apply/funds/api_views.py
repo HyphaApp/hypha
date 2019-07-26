@@ -45,9 +45,9 @@ class SubmissionsFilter(filters.FilterSet):
     round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
     status = filters.MultipleChoiceFilter(choices=PHASES)
     active = filters.BooleanFilter(method='filter_active', label='Active')
-    submit_date = filters.DateFromToRangeFilter(name='submit_time', label='Submit date')
+    submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label='Submit date')
     fund = filters.ModelMultipleChoiceFilter(
-        name='page', label='fund',
+        field_name='page', label='fund',
         queryset=Page.objects.type(FundType) | Page.objects.type(LabType)
     )
 

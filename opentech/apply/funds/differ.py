@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
 from django.utils.html import format_html
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 
 
 def wrap_with_span(text, class_name):
