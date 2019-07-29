@@ -103,6 +103,7 @@
     &__info-text {
         @include media-query(tablet-landscape) {
             max-width: 65%;
+            margin-left: 3rem;
         }
     }
 
