@@ -24,6 +24,35 @@
         <h5>Address</h5>
         {{ object.get_address_display }}
     </div>
+
+    <!-- Example 'Show more' block
+        <a class="grid__reveal-link js-toggle-propsoal-info" href="#">Show more</a>
+        <div class="grid grid__hidden js-grid-hidden">
+            <div class="grid__cell--span-two">
+                <h5>Hidden field</h5>
+                Some address, some avenue, some city
+            </div>
+            <div>
+                <h5>Hidden field</h5>
+                $45000
+            </div>
+
+            <div>
+                <h5>Hidden field</h5>
+                12 months
+            </div>
+
+            <div>
+                <h5>Hidden field</h5>
+                John Doe
+            </div>
+
+            <div>
+                <h5>Hidden field</h5>
+                john@doe.com
+            </div>
+        </div>
+    -->
 </div>
 <div class="rich-text rich-text--answers">
     {{ object.output_answers }}
