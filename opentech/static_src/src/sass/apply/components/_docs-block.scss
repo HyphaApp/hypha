@@ -100,6 +100,29 @@
         }
     }
 
+    &__info-text {
+        @include media-query(tablet-landscape) {
+            max-width: 65%;
+        }
+    }
+
+    &__buttons {
+        padding: 0 1rem 1rem;
+
+        @include media-query(tablet-portrait) {
+            padding: 0 2rem 2rem;
+        }
+
+        .button {
+            padding: .5rem 1rem;
+            margin: 0 .5rem .5rem 0;
+
+            &:last-child {
+                margin: 0;
+            }
+        }
+    }
+
     &__document-list {
         width: 100%;
         margin-top: 1.5rem;
