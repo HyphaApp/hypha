@@ -360,9 +360,18 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
         except ApplicationSubmission.DoesNotExist:
             return self.form_invalid(form)
 
-        Project.create_from_submission(submission)
+        project, created = Project.create_from_submission(submission)
 
-        # TODO: message slack here
+        if not created:
+            return self.form_invalid(form)
+
+        messenger(
+            MESSAGES.CREATED_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            submission=submission,
+            project=project,
+        )
 
         return redirect('apply:submissions:detail', submission.id)
 

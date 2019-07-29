@@ -367,6 +367,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.DELETE_SUBMISSION: '{user} has deleted {submission.title}',
         MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{submission.title}>.',
+        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{project.name}>.',
     }
 
     def __init__(self):

@@ -11,13 +11,21 @@ class Project(models.Model):
 
     @classmethod
     def create_from_submission(cls, submission):
+        """
+        Create a Project from the given submission.
+
+        Returns a Project (or None) and a boolean to signify if the project was
+        created.
+        """
         # OneToOne relations on the targetted model cannot be accessed without
         # an exception when the relation doesn't exist (is None).  Since we
         # want to fail fast here, we can use hasattr instead.
         if hasattr(submission, 'project'):
-            raise Exception('Submission already has project')
+            return submission.project, False
 
-        Project.objects.create(
+        project = Project.objects.create(
             submission=submission,
             name=submission.title,
         )
+
+        return project, True
