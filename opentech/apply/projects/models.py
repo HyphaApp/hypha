@@ -1,0 +1,23 @@
+from django.db import models
+
+
+class Project(models.Model):
+    submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
+
+    name = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create_from_submission(cls, submission):
+        # OneToOne relations on the targetted model cannot be accessed without
+        # an exception when the relation doesn't exist (is None).  Since we
+        # want to fail fast here, we can use hasattr instead.
+        if hasattr(submission, 'project'):
+            raise Exception('Submission already has project')
+
+        Project.objects.create(
+            submission=submission,
+            name=submission.title,
+        )

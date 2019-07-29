@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'opentech.apply.determinations',
     'opentech.apply.stream_forms',
     'opentech.apply.utils',
+    'opentech.apply.projects.apps.ProjectsConfig',
 
     'opentech.public.funds',
     'opentech.public.home',
