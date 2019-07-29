@@ -15,7 +15,7 @@
             }
 
             $(this).toggleClass(activeClass);
-            $('.js-grid-hidden').toggleClass(activeClass);
+            $('.js-rich-text-hidden').toggleClass(activeClass);
         });
     }
 
