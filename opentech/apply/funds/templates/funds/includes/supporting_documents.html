@@ -31,7 +31,7 @@
                 <p class="docs-block__title">Supporting documents</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#">Upload new</a>
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
             </div>
             <p class="docs-block__info-text">Every project requires a XXXXXX and XXXXXX to be uploaded</p>
             <!-- Example document list
@@ -61,7 +61,19 @@
         </li>
     </ul>
     <div class="docs-block__buttons">
-        <a class="button button--primary" href="#">Submit for approval</a>
-        <a class="button button--primary" href="#">Ready for contracting</a>
+        <button class="button button--primary" href="#">Submit for approval</button>
+        <button class="button button--primary" href="#">Ready for contracting</button>
+    </div>
+</div>
+
+<div class="modal modal--secondary" id="upload-supporting-doc">
+    <h4 class="modal__header-bar">Upload a new document</h4>
+    <div class="wrapper--outer-space-medium">
+        <label for="upload-document">Choose a document to upload:</label>
+        <input type="file" id="upload-document">
+    </div>
+    <div class="modal__buttons">
+        <button class="button button--primary button--submit" type="submit" name="submit">Upload</button>
+        <button data-fancybox-close class="button button--submit button--white is-disabled">Cancel</button>
     </div>
 </div>
