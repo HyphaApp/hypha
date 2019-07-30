@@ -229,4 +229,23 @@
         display: block;
         margin: 0 10px 30px;
     }
+
+    &--reveal-proposal {
+        display: flex;
+        align-items: center;
+        margin: 0 0 1rem;
+
+        &::before {
+            @include triangle(top, $color--dark-blue, 7px);
+            margin-right: .7rem;
+            transition: transform $transition;
+            transform: rotate(180deg);
+        }
+
+        &.is-open {
+            &::before {
+                transform: rotate(0);
+            }
+        }
+    }
 }
