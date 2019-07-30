@@ -373,7 +373,7 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
             project=project,
         )
 
-        return redirect('apply:submissions:detail', submission.id)
+        return redirect(self.get_success_url())
 
 
 @method_decorator(staff_required, name='dispatch')
