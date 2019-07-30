@@ -1,3 +1,4 @@
+APPLICANT_GROUP_NAME = 'Applicant'
 STAFF_GROUP_NAME = 'Staff'
 REVIEWER_GROUP_NAME = 'Reviewer'
 TEAMADMIN_GROUP_NAME = 'Team Admin'
@@ -6,11 +7,15 @@ COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
 
 GROUPS = [
     {
-        'name': REVIEWER_GROUP_NAME,
+        'name': APPLICANT_GROUP_NAME,
         'permissions': [],
     },
     {
         'name': STAFF_GROUP_NAME,
+        'permissions': [],
+    },
+    {
+        'name': REVIEWER_GROUP_NAME,
         'permissions': [],
     },
     {
