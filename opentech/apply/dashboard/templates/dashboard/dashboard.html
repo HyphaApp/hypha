@@ -22,6 +22,29 @@
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
+
+    <!-- Example Stat Block markup
+        <div class="wrapper wrapper--bottom-space">
+            <div class="stat-block">
+                <a href="#" class="stat-block__item">
+                    <p class="stat-block__number">3</p>
+                    <p class="stat-block__text">Submissions waiting for your review</p>
+                    <div class="stat-block__view">View</div>
+                </a>
+                <a href="#" class="stat-block__item">
+                    <p class="stat-block__number">10</p>
+                    <p class="stat-block__text">Live projects under your management</p>
+                    <div class="stat-block__view">View</div>
+                </a>
+                <a href="#" class="stat-block__item">
+                    <p class="stat-block__number">4</p>
+                    <p class="stat-block__text">Requests for payment requiring your attention</p>
+                    <div class="stat-block__view">View</div>
+                </a>
+            </div>
+        </div>
+    -->
+
     <div class="wrapper wrapper--bottom-space">
         {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more active_statuses_filter=active_statuses_filter %}
     </div>
