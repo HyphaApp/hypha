@@ -240,27 +240,34 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def form_valid(self, form):
         super().form_valid(form)
 
-        if not self.object.is_draft:
-            messenger(
-                MESSAGES.DETERMINATION_OUTCOME,
-                request=self.request,
-                user=self.object.author,
-                submission=self.object.submission,
-                related=self.object,
+        if self.object.is_draft:
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            submission=self.object.submission,
+            related=self.object,
+        )
+        transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
+
+        if self.object.outcome == NEEDS_MORE_INFO:
+            # We keep a record of the message sent to the user in the comment
+            Activity.comments.create(
+                message=self.object.stripped_message,
+                timestamp=timezone.now(),
+                user=self.request.user,
+                submission=self.submission,
+                related_object=self.object,
             )
-            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
-            if self.object.outcome == NEEDS_MORE_INFO:
-                # We keep a record of the message sent to the user in the comment
-                Activity.comments.create(
-                    message=self.object.stripped_message,
-                    timestamp=timezone.now(),
-                    user=self.request.user,
-                    submission=self.submission,
-                    related_object=self.object,
-                )
-
-            self.submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+        self.submission.perform_transition(
+            transition,
+            self.request.user,
+            request=self.request,
+            notify=False,
+        )
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 
