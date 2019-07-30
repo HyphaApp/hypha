@@ -15,6 +15,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from opentech.apply.projects.models import Project
 from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
 
@@ -24,7 +25,7 @@ from .forms import (
     ConceptDeterminationForm,
     ProposalDeterminationForm,
 )
-from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
+from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION, ACCEPTED
 
 from .utils import (
     can_create_determination,
@@ -268,6 +269,9 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             request=self.request,
             notify=False,
         )
+
+        if self.object.outcome == ACCEPTED:
+            Project.create_from_submission(self.submission)
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 
