@@ -22,6 +22,11 @@
                         Status
                     </button>
 
+                    <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
+                        <svg><use xlink:href="#add-person"></use></svg>
+                        Lead
+                    </button>
+
                     <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
                         <svg><use xlink:href="#add-person"></use></svg>
                         Reviewers
@@ -64,5 +69,6 @@
     </form>
 </div>
 
+{% include "funds/includes/batch_update_lead_form.html" %}
 {% include "funds/includes/batch_update_reviewer_form.html" %}
 {% include "funds/includes/batch_progress_form.html" %}
