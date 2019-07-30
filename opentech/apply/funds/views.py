@@ -354,18 +354,13 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     model = Project
 
     def form_valid(self, form):
-        submission = form.cleaned_data['submission']
-
-        project, created = Project.create_from_submission(submission)
-
-        if not created:
-            return self.form_invalid(form)
+        project = form.save()
 
         messenger(
             MESSAGES.CREATED_PROJECT,
             request=self.request,
             user=self.request.user,
-            submission=submission,
+            submission=project.submission,
             project=project,
         )
 
