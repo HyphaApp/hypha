@@ -11,12 +11,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.db.models import Count, F, Q
 from django.http import HttpResponseRedirect, Http404, StreamingHttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, FormView, ListView, UpdateView, DeleteView, View
+from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView, View
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -31,6 +31,8 @@ from opentech.apply.activity.views import (
 )
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
+from opentech.apply.projects.forms import CreateProjectForm
+from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
@@ -375,6 +377,26 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class CreateProjectView(DelegatedViewMixin, CreateView):
+    context_name = 'project_form'
+    form_class = CreateProjectForm
+    model = Project
+
+    def form_valid(self, form):
+        project = form.save()
+
+        messenger(
+            MESSAGES.CREATED_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            submission=project.submission,
+            project=project,
+        )
+
+        return redirect(self.get_success_url())
+
+
+@method_decorator(staff_required, name='dispatch')
 class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = ScreeningSubmissionForm
@@ -518,6 +540,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateReviewersView,
         UpdatePartnersView,
         UpdateMetaCategoriesView,
+        CreateProjectView,
     ]
 
     def dispatch(self, request, *args, **kwargs):
