@@ -32,7 +32,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.categories.models import MetaCategory
+from opentech.apply.categories.models import MetaTerm
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import ReviewOpinion
 from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
@@ -393,8 +393,8 @@ class ApplicationSubmission(
         limit_choices_to=LIMIT_TO_PARTNERS,
         blank=True,
     )
-    meta_categories = models.ManyToManyField(
-        MetaCategory,
+    meta_terms = models.ManyToManyField(
+        MetaTerm,
         related_name='submissions',
         blank=True,
     )

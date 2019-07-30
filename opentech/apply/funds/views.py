@@ -44,7 +44,7 @@ from .forms import (
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
     UpdatePartnersForm,
-    UpdateMetaCategoriesForm,
+    UpdateMetaTermsForm,
 )
 from .models import (
     ApplicationSubmission,
@@ -524,10 +524,10 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class UpdateMetaCategoriesView(DelegatedViewMixin, UpdateView):
+class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
-    form_class = UpdateMetaCategoriesForm
-    context_name = 'meta_categories_form'
+    form_class = UpdateMetaTermsForm
+    context_name = 'meta_terms_form'
 
 
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
@@ -541,7 +541,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateReviewersView,
         UpdatePartnersView,
         CreateProjectView,
-        UpdateMetaCategoriesView,
+        UpdateMetaTermsView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

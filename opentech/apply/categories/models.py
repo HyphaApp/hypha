@@ -46,8 +46,8 @@ class Category(ClusterableModel):
         verbose_name_plural = 'Categories'
 
 
-class MetaCategory(index.Indexed, MP_Node):
-    """ Hierarchal "Meta" category """
+class MetaTerm(index.Indexed, MP_Node):
+    """ Hierarchal "Meta" terms """
     name = models.CharField(
         max_length=50, unique=True, help_text='Keep the name short, ideally one word.'
     )
@@ -85,7 +85,7 @@ class MetaCategory(index.Indexed, MP_Node):
     def get_as_listing_header(self):
         depth = self.get_depth()
         rendered = render_to_string(
-            'categories/admin/includes/meta_category_list_header.html',
+            'categories/admin/includes/meta_term_list_header.html',
             {
                 'depth': depth,
                 'depth_minus_1': depth - 1,
@@ -108,13 +108,13 @@ class MetaCategory(index.Indexed, MP_Node):
 
     def delete(self):
         if self.is_root():
-            raise PermissionDenied('Cannot delete root Category.')
+            raise PermissionDenied('Cannot delete root term.')
         else:
             super().delete()
 
     @classmethod
     def get_root_descendants(cls):
-        # Meta categories queryset without Root node
+        # Meta terms queryset without Root node
         root_node = cls.get_first_root_node()
         if root_node:
             return root_node.get_descendants()
@@ -124,20 +124,20 @@ class MetaCategory(index.Indexed, MP_Node):
         return self.name
 
     class Meta:
-        verbose_name = 'Meta Category'
-        verbose_name_plural = 'Meta Categories'
+        verbose_name = 'Meta Term'
+        verbose_name_plural = 'Meta Terms'
 
 
-class MetaCategoryChoiceField(forms.ModelChoiceField):
+class MetaTermChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         depth_line = '-' * (obj.get_depth() - 1)
         return "{} {}".format(depth_line, super().label_from_instance(obj))
 
 
-class MetaCategoryForm(WagtailAdminModelForm):
-    parent = MetaCategoryChoiceField(
+class MetaTermForm(WagtailAdminModelForm):
+    parent = MetaTermChoiceField(
         required=True,
-        queryset=MetaCategory.objects.all(),
+        queryset=MetaTerm.objects.all(),
         empty_label=None,
     )
 
@@ -145,20 +145,20 @@ class MetaCategoryForm(WagtailAdminModelForm):
         super().__init__(*args, **kwargs)
         instance = kwargs['instance']
 
-        if instance.is_root() or MetaCategory.objects.count() == 0:
+        if instance.is_root() or MetaTerm.objects.count() == 0:
             self.fields['parent'].disabled = True
             self.fields['parent'].required = False
-            self.fields['parent'].empty_label = 'N/A - Root Category'
+            self.fields['parent'].empty_label = 'N/A - Root Term'
             self.fields['parent'].widget = forms.HiddenInput()
 
-            self.fields['name'].label += ' (Root - First category can be named root)'
+            self.fields['name'].label += ' (Root - First term can be named root)'
         elif instance.id:
             self.fields['parent'].initial = instance.get_parent()
 
     def clean_parent(self):
         parent = self.cleaned_data['parent']
 
-        if parent.is_archived:
+        if parent and parent.is_archived:
             raise forms.ValidationError('The parent is archived therefore can not add child under it.')
 
         return parent
@@ -171,8 +171,8 @@ class MetaCategoryForm(WagtailAdminModelForm):
             return instance
 
         if instance.id is None:
-            if MetaCategory.objects.all().count() == 0:
-                MetaCategory.add_root(instance=instance)
+            if MetaTerm.objects.all().count() == 0:
+                MetaTerm.add_root(instance=instance)
             else:
                 instance = parent.add_child(instance=instance)
         else:
@@ -182,4 +182,4 @@ class MetaCategoryForm(WagtailAdminModelForm):
         return instance
 
 
-MetaCategory.base_form_class = MetaCategoryForm
+MetaTerm.base_form_class = MetaTermForm

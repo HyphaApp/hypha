@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from wagtail.contrib.modeladmin.views import CreateView
 
 
-class AddChildMetaCategoryViewClass(CreateView):
+class AddChildMetaTermViewClass(CreateView):
     """View class that can take an additional URL param for parent id."""
 
     parent_pk = None

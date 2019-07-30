@@ -22,7 +22,7 @@ class Select2MultiCheckboxesWidget(Select2MultipleWidget):
         return attrs
 
 
-class MetaCategorySelect2Widget(Select2MultipleWidget):
+class MetaTermSelect2Widget(Select2MultipleWidget):
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         disabled = False
