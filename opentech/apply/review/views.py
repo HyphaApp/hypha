@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, DeleteView
+from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
 
 from wagtail.core.blocks import RichTextBlock
 
@@ -51,6 +51,56 @@ def get_fields_for_stage(submission):
         return forms[index].form.form_fields
     except IndexError:
         return forms[0].form.form_fields
+
+
+class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
+    submission_form_class = ReviewModelForm
+    model = Review
+    template_name = 'review/review_edit_form.html'
+    raise_exception = True
+
+    def test_func(self):
+        review = self.get_object()
+        return self.request.user.has_perm('review.change_review') or self.request.user == review.author.reviewer
+
+    def get_context_data(self, **kwargs):
+        review = self.get_object()
+        return super().get_context_data(
+            submission=review.submission,
+            title="Edit Review",
+            **kwargs
+        )
+
+    def get_defined_fields(self):
+        review = self.get_object()
+        return get_fields_for_stage(review.submission)
+
+    def get_form_kwargs(self):
+        review = self.get_object()
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['submission'] = review.submission
+
+        if self.object:
+            kwargs['initial'] = self.object.form_data
+
+        return kwargs
+
+    def form_valid(self, form):
+        review = self.get_object()
+        messenger(
+            MESSAGES.EDIT_REVIEW,
+            user=self.request.user,
+            request=self.request,
+            submission=review.submission,
+            related=review,
+        )
+        response = super().form_valid(form)
+        return response
+
+    def get_success_url(self):
+        review = self.get_object()
+        return reverse_lazy('funds:submissions:detail', args=(review.submission.id,))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -167,7 +217,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
     def test_func(self):
         review = self.get_object()
         user = self.request.user
-        author = review.author
+        author = review.author.reviewer
         submission = review.submission
         partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
@@ -213,7 +263,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     def test_func(self):
         review = self.get_object()
         user = self.request.user
-        author = review.author
+        author = review.author.reviewer
         submission = review.submission
         partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
