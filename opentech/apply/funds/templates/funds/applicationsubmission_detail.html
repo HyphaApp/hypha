@@ -86,10 +86,13 @@
                         {% endif %}
                     </header>
 
-                    {% include "funds/includes/funding_block.html" %}
-                    {% include "funds/includes/payment_requests.html" %}
-
                     {% include "funds/includes/rendered_answers.html" %}
+
+                    <div class="wrapper wrapper--outer-space-large">
+                        {% include "funds/includes/funding_block.html" %}
+                        {% include "funds/includes/payment_requests.html" %}
+                        {% include "funds/includes/invoice_block.html" %}
+                    </div>
 
                     {# {% include "funds/includes/supporting_documents.html" %} #}
                 </article>
