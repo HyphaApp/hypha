@@ -1,8 +1,9 @@
 .payment-block {
     border: 1px solid $color--mid-grey;
     padding: 1rem;
+    margin-bottom: 1rem;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(mob-landscape) {
         padding: 2rem;
         max-width: 610px;
     }
@@ -23,7 +24,11 @@
 
     &__title {
         font-size: map-get($font-sizes, delta);
-        margin: 0;
+        margin: 0 0 1rem;
+
+        @include media-query(mob-landscape) {
+            margin: 0;
+        }
     }
 
     &__button {
@@ -32,7 +37,11 @@
 
     &__status {
         margin: 0;
-        font-weight: $weight--bold;
+
+        @include media-query(tablet-landscape) {
+            display: block;
+            font-weight: $weight--bold;
+        }
     }
 
     &__status-link {
@@ -45,6 +54,16 @@
 
     &__rejected-link {
         font-weight: $weight--bold;
+    }
+
+    &__mobile-label {
+        display: inline-block;
+        font-weight: $weight--bold;
+        white-space: pre;
+
+        @include media-query(tablet-landscape) {
+            display: none;
+        }
     }
 
     &__table {
@@ -87,7 +106,23 @@
             }
 
             td {
-                padding: 0 0 1rem;
+                padding: 0 0 .5rem;
+
+                &:first-child {
+                    padding: 1rem 0 .5rem;
+
+                    @include media-query(tablet-landscape) {
+                        padding: 1rem;
+                    }
+                }
+
+                &:last-child {
+                    padding: 0 0 1rem;
+
+                    @include media-query(tablet-landscape) {
+                        padding: 1rem;
+                    }
+                }
 
                 @include media-query(tablet-landscape) {
                     padding: 1rem;
