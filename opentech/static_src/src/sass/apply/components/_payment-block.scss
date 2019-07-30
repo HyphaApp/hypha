@@ -1,0 +1,112 @@
+.payment-block {
+    border: 1px solid $color--mid-grey;
+    padding: 1rem;
+
+    @include media-query(tablet-portrait) {
+        padding: 2rem;
+        max-width: 610px;
+    }
+
+    &__header {
+        margin-bottom: 1rem;
+
+        @include media-query(tablet-portrait) {
+            margin-bottom: 1.5rem;
+        }
+
+        @include media-query(mob-landscape) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    &__title {
+        font-size: map-get($font-sizes, delta);
+        margin: 0;
+    }
+
+    &__button {
+        padding: .7rem 1.2rem;
+    }
+
+    &__status {
+        margin: 0;
+        font-weight: $weight--bold;
+    }
+
+    &__status-link {
+        font-size: map-get($font-sizes, milli);
+    }
+
+    &__table {
+        thead {
+            display: none;
+            border-top: 2px solid $color--light-mid-grey;
+
+            @include media-query(tablet-landscape) {
+                display: table-header-group;
+            }
+
+            th {
+                color: $color--mid-dark-grey;
+                padding: 10px;
+
+                @include media-query(tablet-landscape) {
+                    text-align: center;
+                }
+            }
+        }
+
+        tbody {
+            font-size: map-get($font-sizes, zeta);
+
+            tr {
+                &:last-child {
+                    border-bottom: 0;
+                }
+            }
+
+            a {
+                text-decoration: underline;
+            }
+        }
+
+        tr {
+            border: 0;
+            border-bottom: 2px solid $color--light-grey;
+
+            &:hover {
+                box-shadow: none;
+            }
+
+            td {
+                padding: 0 0 1rem;
+
+                @include media-query(tablet-landscape) {
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+
+    &__table-amount {
+        width: 20%;
+        min-width: 90px;
+    }
+
+    &__table-status {
+        min-width: 160px;
+        width: 35%;
+    }
+
+    &__table-docs {
+        min-width: 180px;
+        width: 20%;
+    }
+
+    &__table-update {
+        min-width: 160px;
+        width: 25%;
+    }
+}

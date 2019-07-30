@@ -2,6 +2,7 @@
     background-color: $color--light-blue;
     color: $color--white;
     padding: 1rem;
+    margin-bottom: 1rem;
 
     @include media-query(mob-landscape) {
         padding: 2rem;
@@ -18,7 +19,7 @@
         }
 
         &:last-child {
-            margin-right: 0;
+            margin: 0;
         }
     }
 
