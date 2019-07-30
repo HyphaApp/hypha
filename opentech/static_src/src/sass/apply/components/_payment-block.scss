@@ -39,6 +39,14 @@
         font-size: map-get($font-sizes, milli);
     }
 
+    &__rejected {
+        text-align: center;
+    }
+
+    &__rejected-link {
+        font-weight: $weight--bold;
+    }
+
     &__table {
         thead {
             display: none;
@@ -56,16 +64,14 @@
                     text-align: center;
                 }
             }
+
+            tr {
+                border-color: $color--light-mid-grey;
+            }
         }
 
         tbody {
             font-size: map-get($font-sizes, zeta);
-
-            tr {
-                &:last-child {
-                    border-bottom: 0;
-                }
-            }
 
             a {
                 text-decoration: underline;
