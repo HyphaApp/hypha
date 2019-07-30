@@ -354,11 +354,7 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     model = Project
 
     def form_valid(self, form):
-        submission_id = form.cleaned_data['submission']
-        try:
-            submission = ApplicationSubmission.objects.get(pk=submission_id)
-        except ApplicationSubmission.DoesNotExist:
-            return self.form_invalid(form)
+        submission = form.cleaned_data['submission']
 
         project, created = Project.create_from_submission(submission)
 
