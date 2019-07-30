@@ -19,11 +19,4 @@ class CreateProjectForm(forms.Form):
 
     def save(self, *args, **kwargs):
         submission = self.cleaned_data['submission']
-        project, created = Project.create_from_submission(submission)
-
-        if not created:
-            raise forms.ValidationError(
-                f'Project for Submission ID={submission.id} already exists',
-            )
-
-        return project
+        return Project.create_from_submission(submission)

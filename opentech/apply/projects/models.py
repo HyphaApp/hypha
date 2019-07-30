@@ -15,21 +15,19 @@ class Project(models.Model):
         """
         Create a Project from the given submission.
 
-        Returns a Project (or None) and a boolean to signify if the project was
-        created.
+        Returns a new Project or the given ApplicationSubmissions existing
+        Project.
         """
         # OneToOne relations on the targetted model cannot be accessed without
         # an exception when the relation doesn't exist (is None).  Since we
         # want to fail fast here, we can use hasattr instead.
         if hasattr(submission, 'project'):
-            return submission.project, False
+            return submission.project
 
-        project = Project.objects.create(
+        return Project.objects.create(
             submission=submission,
             name=submission.title,
         )
-
-        return project, True
 
     def get_absolute_url(self):
         return reverse('apply:projects:detail', args=[self.id])
