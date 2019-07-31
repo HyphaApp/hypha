@@ -1,0 +1,45 @@
+.funding-block {
+    background-color: $color--light-blue;
+    color: $color--white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+
+    @include media-query(mob-landscape) {
+        padding: 2rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @include media-query(tablet-portrait) {
+        max-width: 610px;
+    }
+
+    &__item {
+        margin: 0 .5rem 1rem 0;
+
+        @include media-query(mob-landscape) {
+            margin: 0 .5rem 0 0;
+        }
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &__title {
+        margin: 0;
+    }
+
+    &__standout {
+        margin: 0;
+        font-size: map-get($font-sizes, delta);
+
+        @include media-query(small-tablet) {
+            font-size: map-get($font-sizes, beta);
+        }
+    }
+
+    &__meta {
+        margin: 0;
+    }
+}
