@@ -1,0 +1,154 @@
+{% extends "base-apply.html" %}
+
+{% load static  %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h1 class="beta heading heading--no-margin heading--bold">{{ object.name }}</h1>
+        {# {% status_bar object.workflow object.phase request.user same_stage=True%} #}
+
+        <div class="tabs js-tabs">
+            <div class="tabs__container">
+                <a class="tab__item" href="#details" data-tab="tab-1">
+                    Details
+                </a>
+
+                <a class="tab__item" href="#communications" data-tab="tab-2">
+                    Communications
+                </a>
+
+                <a class="tab__item" href="#activity-feed" data-tab="tab-3">
+                    Activity Feed
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+    <div class="tabs__content" id="tab-1">
+
+        <div class="wrapper wrapper--sidebar">
+            <article class="wrapper--sidebar--inner">
+                <header class="heading heading--submission-meta heading-text zeta">
+                    <span>Last edit: <strong>{{ object.updated_at.timestamp.date }} by {{ object.updated_by }}</strong></span>
+
+                    {# {% if request.user|has_edit_perm:object %} #}
+                    {% if request.user %}
+                    <a class="link link--edit-submission is-active" href="#">
+                        Edit
+                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                    </a>
+                    {% else %}
+                    <span class="link link--edit-submission">
+                        Edit
+                        <svg class="icon icon--padlock"><use xlink:href="#padlock"></use></svg>
+                    </span>
+                    {% endif %}
+                </header>
+
+                <h3>Project Information</h3>
+                <div class="grid grid--proposal-info">
+                    <div>
+                        <h5>Proposed start date</h5>
+                        <p>13 August 2019</p>
+                    </div>
+
+                    <div>
+                        <h5>Project Proposed end date</h5>
+                        <p>25 January 2020</p>
+                    </div>
+
+                    <div>
+                        <h5>Legal name</h5>
+                        <p>The Company</p>
+                    </div>
+
+                    <div>
+                        <h5>Email</h5>
+                        <a href="mailto:joe@lorumipsum.com">Joe@lorumipsum.com</a>
+                    </div>
+                </div>
+
+                {% include "application_projects/includes/supporting_documents.html" %}
+            </article>
+
+            <aside class="sidebar">
+                {% if mobile %}
+                    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+                {% endif %}
+
+                <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                    <h5>Actions to take</h5>
+
+                    <a data-fancybox
+                       data-src="#send-for-approval"
+                       class="button button--bottom-space button--primary button--full-width"
+                       href="#">
+                        Send for approval
+                    </a>
+
+                    <a data-fancybox
+                       data-src="#ready-for-contracting"
+                       class="button button--primary button--full-width"
+                       href="#">
+                        Ready for contracting
+                    </a>
+
+
+                    <p class="sidebar__separator">Assign</p>
+
+                    <a data-fancybox
+                       data-src="#update-program-manager"
+                       class="button button--bottom-space button--white button--full-width"
+                       href="#">
+                        Program Manager
+                    </a>
+
+                    <a data-fancybox
+                       data-src="#update-meta-categories"
+                       class="button button--bottom-space button--white button--full-width"
+                       href="#">
+                        Meta Categories
+                    </a>
+
+                </div>
+
+                <div class="sidebar__inner">
+                    <h5>Meta Categories</h5>
+
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    {# Tab 2 #}
+    <div class="tabs__content" id="tab-2">
+        <div class="feed">
+            {% include "activity/include/comment_form.html" %}
+            {% include "activity/include/comment_list.html" with editable=True %}
+        </div>
+    </div>
+
+    {# Tab 3 #}
+    <div class="tabs__content" id="tab-3">
+        <div class="feed">
+            {% include "activity/include/action_list.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}
