@@ -21,7 +21,7 @@
                 <td>
                     <span class="payment-block__mobile-label">Status:</span>
                     <span class="payment-block__status">Approved</span>
-                    <a class="payment-block__status-link" href="#">Change status</a>
+                    <a data-fancybox data-src="#change-payment-status" class="payment-block__status-link" href="#">Change status</a>
                 </td>
             </tr>
             <tr>
@@ -31,7 +31,7 @@
                 <td>
                     <span class="payment-block__mobile-label">Status:</span>
                     <span class="payment-block__status">Paid</span>
-                    <a class="payment-block__status-link" href="#">Change status</a>
+                    <a data-fancybox data-src="#change-payment-status" class="payment-block__status-link" href="#">Change status</a>
                 </td>
             </tr>
         </tbody>
@@ -68,4 +68,12 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<div class="modal modal--secondary" id="change-payment-status">
+    <h4 class="modal__header-bar">Change payment status</h4>
+    <div class="wrapper--outer-space-medium">
+        <p>Current status: <b>Approved</b></p>
+        {# {% include 'funds/includes/delegated_form_base.html' with form=some_form value='Update'%} #}
+    </div>
 </div>
