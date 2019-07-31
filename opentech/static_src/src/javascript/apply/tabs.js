@@ -59,7 +59,7 @@
             const tabName = url.split('#')[1];
             const match = this.findTab(tabName);
 
-            return tabName.length ? this.addTabClasses(match) : this.addTabClasses(null);
+            return tabName ? this.addTabClasses(match) : this.addTabClasses(null);
         }
 
         tabs(e) {
