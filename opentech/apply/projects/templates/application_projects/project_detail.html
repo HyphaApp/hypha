@@ -93,46 +93,9 @@
             </article>
 
             <aside class="sidebar">
-                {% if mobile %}
-                    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+                {% if request.user.is_apply_staff %}
+                {% block admin_sidebar %}{% endblock %}
                 {% endif %}
-
-                <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-
-                    <h5>Actions to take</h5>
-
-                    <a data-fancybox
-                       data-src="#send-for-approval"
-                       class="button button--bottom-space button--primary button--full-width"
-                       href="#">
-                        Send for approval
-                    </a>
-
-                    <a data-fancybox
-                       data-src="#ready-for-contracting"
-                       class="button button--primary button--full-width"
-                       href="#">
-                        Ready for contracting
-                    </a>
-
-
-                    <p class="sidebar__separator">Assign</p>
-
-                    <a data-fancybox
-                       data-src="#update-program-manager"
-                       class="button button--bottom-space button--white button--full-width"
-                       href="#">
-                        Program Manager
-                    </a>
-
-                    <a data-fancybox
-                       data-src="#update-meta-categories"
-                       class="button button--bottom-space button--white button--full-width"
-                       href="#">
-                        Meta Categories
-                    </a>
-
-                </div>
 
                 <div class="sidebar__inner">
                     <h5>Meta Categories</h5>

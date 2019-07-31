@@ -1,11 +1,19 @@
-from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 
-from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.views import ViewDispatcher
 
 from .models import Project
 
 
-@method_decorator(staff_required, name='dispatch')
-class ProjectDetailView(DetailView):
+class AdminProjectDetailView(DetailView):
     model = Project
+    template_name_suffix = '_admin_detail'
+
+
+class ApplicantProjectDetailView(DetailView):
+    model = Project
+
+
+class ProjectDetailView(ViewDispatcher):
+    admin_view = AdminProjectDetailView
+    applicant_view = ApplicantProjectDetailView
