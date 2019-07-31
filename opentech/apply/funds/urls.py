@@ -1,5 +1,7 @@
 from django.urls import include, path
 
+from opentech.apply.projects.urls import urlpatterns as projects_urls
+
 from .views import (
     RevisionCompareView,
     RevisionListView,
@@ -81,5 +83,6 @@ rounds_urls = ([
 urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('rounds/', include(rounds_urls)),
+    path('projects/', include((projects_urls, 'projects'))),
     path('api/', include(api_urls)),
 ]
