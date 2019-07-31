@@ -5,6 +5,9 @@
 
     @include media-query(mob-landscape) {
         padding: 2rem;
+    }
+
+    @include media-query(tablet-portrait) {
         max-width: 610px;
     }
 
@@ -107,6 +110,7 @@
 
             td {
                 padding: 0 0 .5rem;
+                word-break: break-word;
 
                 &:first-child {
                     padding: 1rem 0 .5rem;

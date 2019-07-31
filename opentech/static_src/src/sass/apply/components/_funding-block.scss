@@ -7,8 +7,11 @@
     @include media-query(mob-landscape) {
         padding: 2rem;
         display: flex;
-        max-width: 610px;
         justify-content: space-between;
+    }
+
+    @include media-query(tablet-portrait) {
+        max-width: 610px;
     }
 
     &__item {
