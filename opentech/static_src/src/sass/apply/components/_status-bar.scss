@@ -185,8 +185,12 @@
             .status-bar__item:last-of-type & {
                 left: -45px;
 
-                @include media-query(desktop) {
-                    left: -25px;
+                @include media-query(tablet-portrait) {
+                    left: -60px;
+                }
+
+                @include media-query(desktop-medium) {
+                    left: -35px;
                 }
             }
 
