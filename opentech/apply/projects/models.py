@@ -7,6 +7,11 @@ class Project(models.Model):
 
     name = models.TextField()
 
+    contact_legal_name = models.TextField(default='')
+    contact_email = models.TextField(default='')
+    contact_address = models.TextField(default='')
+    value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
     def __str__(self):
         return self.name
 
@@ -27,6 +32,10 @@ class Project(models.Model):
         return Project.objects.create(
             submission=submission,
             name=submission.title,
+            contact_email=submission.user.email,
+            contact_legal_name=submission.user.full_name,
+            contact_address=submission.form_data.get('address', ''),
+            value=submission.form_data.get('value', 0),
         )
 
     def get_absolute_url(self):

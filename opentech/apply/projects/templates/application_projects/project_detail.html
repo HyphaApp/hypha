@@ -66,12 +66,26 @@
 
                     <div>
                         <h5>Legal name</h5>
-                        <p>The Company</p>
+                        <p>{{ object.contact_legal_name|default:"-" }}</p>
                     </div>
 
                     <div>
                         <h5>Email</h5>
-                        <a href="mailto:joe@lorumipsum.com">Joe@lorumipsum.com</a>
+                        {% if object.contact_email %}
+                        <a href="mailto:{{ object.contact_email }}">{{ object.contact_email }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <h5>Address</h5>
+                        <p>{{ object.address|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Value</h5>
+                        <p>{{ object.value|default:"-" }}</p>
                     </div>
                 </div>
 
