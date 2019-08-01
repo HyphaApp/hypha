@@ -1,6 +1,13 @@
 {% extends "application_projects/project_detail.html" %}
 
+{% load static %}
+
 {% block admin_sidebar %}
+<div class="modal" id="assign-lead">
+    <h4 class="modal__header-bar">Assign Lead</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
+</div>
+
 {% if mobile %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
 {% endif %}
@@ -27,7 +34,7 @@
     <p class="sidebar__separator">Assign</p>
 
     <a data-fancybox
-       data-src="#update-program-manager"
+       data-src="#assign-lead"
        class="button button--bottom-space button--white button--full-width"
        href="#">
         Program Manager
@@ -41,4 +48,13 @@
     </a>
 
 </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 {% endblock %}
