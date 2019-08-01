@@ -45,6 +45,12 @@
                     padding-right: 0;
                 }
             }
+
+            &.comments {
+                @include media-query($table-breakpoint) {
+                    width: 110px;
+                }
+            }
         }
 
         tr {
