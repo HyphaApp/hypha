@@ -1,0 +1,60 @@
+{% extends "application_projects/project_detail.html" %}
+
+{% load static %}
+
+{% block admin_sidebar %}
+<div class="modal" id="assign-lead">
+    <h4 class="modal__header-bar">Assign Lead</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
+</div>
+
+{% if mobile %}
+    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+{% endif %}
+
+<div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+    <h5>Actions to take</h5>
+
+    <a data-fancybox
+       data-src="#send-for-approval"
+       class="button button--bottom-space button--primary button--full-width"
+       href="#">
+        Send for approval
+    </a>
+
+    <a data-fancybox
+       data-src="#ready-for-contracting"
+       class="button button--primary button--full-width"
+       href="#">
+        Ready for contracting
+    </a>
+
+
+    <p class="sidebar__separator">Assign</p>
+
+    <a data-fancybox
+       data-src="#assign-lead"
+       class="button button--bottom-space button--white button--full-width"
+       href="#">
+        Program Manager
+    </a>
+
+    <a data-fancybox
+       data-src="#update-meta-categories"
+       class="button button--bottom-space button--white button--full-width"
+       href="#">
+        Meta Categories
+    </a>
+
+</div>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+{% endblock %}
