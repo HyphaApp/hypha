@@ -62,7 +62,6 @@ from ..workflow import (
     review_statuses,
     STAGE_CHANGE_ACTIONS,
     UserPermissions,
-    WORKFLOWS,
     COMMUNITY_REVIEW_PHASES,
 )
 
@@ -251,9 +250,14 @@ def transition_id(target, phase):
     return '__'.join([transition_prefix, phase.stage.name.lower(), phase.name, target])
 
 
-class AddTransitions(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs, **kwargs):
-        for workflow in WORKFLOWS.values():
+class ApplicationTransitionField(FSMField):
+    def contribute_to_class(self, cls, name, **kwargs):
+        try:
+            workflows = cls.workflows
+        except AttributeError:
+            raise AttributeError("Base class must include 'workflows' on the class definition") from None
+
+        for workflow in workflows.values():
             for phase, data in workflow.items():
                 for transition_name, action in data.transitions.items():
                     method_name = transition_id(transition_name, data)
@@ -261,14 +265,14 @@ class AddTransitions(models.base.ModelBase):
                     permission_func = make_permission_check(action['permissions'])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = wrap_method(attrs.get(action.get('method'), lambda *args, **kwargs: None))
+                    transition_state = wrap_method(getattr(cls, action.get('method', ''), lambda *args, **kwargs: None))
                     # Provide a neat name for graph viz display
                     transition_state.__name__ = slugify(action['display'])
 
-                    conditions = [attrs[condition] for condition in action.get('conditions', [])]
+                    conditions = [getattr(cls, condition) for condition in action.get('conditions', [])]
                     # Wrap with transition decorator
                     transition_func = transition(
-                        attrs['status'],
+                        self,
                         source=phase,
                         target=transition_name,
                         permission=permission_func,
@@ -276,8 +280,8 @@ class AddTransitions(models.base.ModelBase):
                     )(transition_state)
 
                     # Attach to new class
-                    attrs[method_name] = transition_func
-                    attrs[permission_name] = permission_func
+                    setattr(cls, method_name, transition_func)
+                    setattr(cls, permission_name, permission_func)
 
         def get_transition(self, transition):
             try:
@@ -289,7 +293,7 @@ class AddTransitions(models.base.ModelBase):
                 # For the other workflow
                 return None
 
-        attrs['get_transition'] = get_transition
+        cls.get_transition = get_transition
 
         def get_actions_for_user(self, user):
             transitions = self.get_available_user_status_transitions(user)
@@ -299,7 +303,7 @@ class AddTransitions(models.base.ModelBase):
             ]
             yield from actions
 
-        attrs['get_actions_for_user'] = get_actions_for_user
+        cls.get_actions_for_user = get_actions_for_user
 
         def perform_transition(self, action, user, request=None, **kwargs):
             transition = self.get_transition(action)
@@ -314,7 +318,7 @@ class AddTransitions(models.base.ModelBase):
 
             self.progress_stage_when_possible(user, request, **kwargs)
 
-        attrs['perform_transition'] = perform_transition
+        cls.perform_transition = perform_transition
 
         def progress_stage_when_possible(self, user, request, notify=None, **kwargs):
             # Check to see if we can progress to a new stage from the current status
@@ -324,13 +328,22 @@ class AddTransitions(models.base.ModelBase):
                 except PermissionDenied:
                     pass
 
-        attrs['progress_stage_when_possible'] = progress_stage_when_possible
+        cls.progress_stage_when_possible = progress_stage_when_possible
 
-        return super().__new__(cls, name, bases, attrs, **kwargs)
+        super().contribute_to_class(cls, name, **kwargs)
 
 
-class ApplicationSubmissionMetaclass(AddTransitions):
+class ApplicationSubmissionMetaclass(models.base.ModelBase):
     def __new__(cls, name, bases, attrs, **kwargs):
+        # Move the TransitionField to the end so that we have all the methods
+        # on the model before adding it.
+        new_attrs = dict(attrs)
+        for key, value in attrs.items():
+            if isinstance(value, ApplicationTransitionField):
+                del new_attrs[key]
+                new_attrs[key] = value
+        attrs = new_attrs
+
         cls = super().__new__(cls, name, bases, attrs, **kwargs)
 
         # We want to access the redered display of the required fields.
@@ -408,7 +421,7 @@ class ApplicationSubmission(
     search_data = models.TextField()
 
     # Workflow inherited from WorkflowHelpers
-    status = FSMField(default=INITIAL_STATE, protected=True)
+    status = ApplicationTransitionField(default=INITIAL_STATE, protected=True)
 
     screening_status = models.ForeignKey(
         'funds.ScreeningStatus',

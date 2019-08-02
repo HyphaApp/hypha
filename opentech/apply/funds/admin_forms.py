@@ -1,10 +1,17 @@
 from collections import Counter
+from django.forms.fields import ChoiceField
 from wagtail.admin.forms import WagtailAdminPageForm
 
 from .workflow import WORKFLOWS
 
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):
+    workflow_name = ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['workflow_name'].choices = self._meta.model.WORKFLOW_CHOICES.items()
+
     def clean(self):
         cleaned_data = super().clean()
 

@@ -41,16 +41,22 @@ class WorkflowHelpers(models.Model):
     class Meta:
         abstract = True
 
+    workflows = WORKFLOWS
+
     WORKFLOW_CHOICES = {
         name: workflow.name
-        for name, workflow in WORKFLOWS.items()
+        for name, workflow in workflows.items()
     }
 
-    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name="Workflow")
+    workflow_name = models.CharField(max_length=100, default='single', verbose_name="Workflow")
+
+    @property
+    def get_workflow_name_display(self):
+        return str(self.workflow)
 
     @property
     def workflow(self):
-        return WORKFLOWS[self.workflow_name]
+        return self.workflows[self.workflow_name]
 
 
 class SubmittableStreamForm(AbstractStreamForm):

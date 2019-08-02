@@ -24,13 +24,14 @@ from opentech.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
-from opentech.apply.funds.workflow import ConceptProposal, Request
+from opentech.apply.funds.workflow import ConceptProposal, Request, WORKFLOWS
 from opentech.apply.home.factories import ApplyHomePageFactory
 from opentech.apply.stream_forms.testing.factories import FormDataFactory
 from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
 from opentech.apply.users.tests.factories import StaffFactory, ApplicantFactory, GroupFactory
 
 from . import blocks
+from . import workflow
 
 
 __all__ = [
@@ -54,6 +55,7 @@ __all__ = [
     'ReviewerRoleFactory',
     'TodayRoundFactory',
     'workflow_for_stages',
+    'WorkflowVariedApplicationSubmission',
 ]
 
 
@@ -64,7 +66,29 @@ def workflow_for_stages(stages):
     }[stages]
 
 
-class AbstractApplicationFactory(wagtail_factories.PageFactory):
+class WorkflowAbstractFactory(factory.Factory):
+    class Meta:
+        abstract = True
+
+    workflows = WORKFLOWS
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        workflows_to_add = kwargs.pop('workflows')
+        if workflows_to_add != WORKFLOWS:
+            workflows_to_add = {
+                workflows_to_add.name: workflows_to_add
+            }
+            class ProxyWorkflowClass(model_class):
+                class Meta:
+                    proxy = True
+
+                workflows = workflows_to_add
+            model_class = ProxyWorkflowClass
+
+        return super()._create(model_class, *args, **kwargs)
+
+class AbstractApplicationFactory(WorkflowAbstractFactory, wagtail_factories.PageFactory):
     class Meta:
         abstract = True
 
@@ -134,7 +158,7 @@ class ApplicationFormFactory(factory.DjangoModelFactory):
     form_fields = blocks.CustomFormFieldsFactory
 
 
-class RoundFactory(wagtail_factories.PageFactory):
+class RoundFactory(WorkflowAbstractFactory, wagtail_factories.PageFactory):
     class Meta:
         model = Round
 
@@ -225,6 +249,7 @@ class ApplicationFormDataFactory(FormDataFactory):
 
 class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     class Meta:
+        exclude = ('workflows',)
         model = ApplicationSubmission
 
     class Params:
@@ -233,6 +258,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
             status='rejected'
         )
 
+    workflows = WORKFLOWS
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(
         ApplicationFormDataFactory,
@@ -258,6 +284,23 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
                     reviewer=reviewer,
                     submission=self,
                 )
+
+
+class WorkflowVariedApplicationSubmission(WorkflowAbstractFactory, ApplicationSubmissionFactory):
+    class Meta:
+        model = ApplicationSubmission
+
+    class Params:
+        no_actions = factory.Trait(workflows__phases__0__actions=[])
+
+    workflows = workflow.WorkflowFactory()
+    workflow_name = factory.SelfAttribute('.workflows.name')
+    round = factory.SubFactory(
+        RoundFactory,
+        workflow_name=factory.SelfAttribute('..workflow_name'),
+        lead=factory.SelfAttribute('..lead'),
+        workflows=factory.SelfAttribute('..workflows'),
+    )
 
 
 class ReviewerRoleFactory(factory.DjangoModelFactory):

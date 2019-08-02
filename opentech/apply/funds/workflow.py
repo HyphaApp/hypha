@@ -34,6 +34,9 @@ class Workflow(dict):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return f'<Workflow: {self.name} {self.stages}>'
+
     @property
     def stages(self):
         stages = []
