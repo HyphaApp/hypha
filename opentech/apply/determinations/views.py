@@ -258,6 +258,10 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     related_object=self.object,
                 )
 
+            # Grab this before transitioning so we can decide to make a Project
+            # based on the Submissions current state, not it's post-transition one.
+            in_final_stage = self.submission.in_final_stage
+
             self.submission.perform_transition(
                 transition,
                 self.request.user,
@@ -265,7 +269,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 notify=False,
             )
 
-            if self.object.outcome == ACCEPTED:
+            if self.object.outcome == ACCEPTED and in_final_stage:
                 Project.create_from_submission(self.submission)
 
         messenger(
