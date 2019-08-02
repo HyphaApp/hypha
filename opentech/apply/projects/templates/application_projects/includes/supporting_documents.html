@@ -21,7 +21,9 @@
                 <p class="docs-block__title">Approval Form</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#">Create</a>
+                <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                    Create
+                </a>
             </div>
         </li>
 
