@@ -101,7 +101,11 @@
                         -
                         {% endif %}
                     </div>
+                </div>
 
+                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">Show more</a>
+
+                <div class="rich-text--hidden js-rich-text-hidden">
                     <div>
                         <h5>Address</h5>
                         <p>{{ object.contact_address|default:"-" }}</p>
@@ -157,4 +161,5 @@
 
 {% block extra_js %}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
 {% endblock %}
