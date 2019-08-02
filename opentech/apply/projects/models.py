@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import ugettext as _
 
 
 class Project(models.Model):
@@ -11,10 +12,16 @@ class Project(models.Model):
 
     title = models.TextField()
 
-    contact_legal_name = models.TextField(default='')
-    contact_email = models.TextField(default='')
-    contact_address = models.TextField(default='')
+    contact_legal_name = models.TextField(_('Person or Organisation name'), default='')
+    contact_email = models.TextField(_('Email'), default='')
+    contact_address = models.TextField(_('Address'), default='')
+    contact_phone = models.TextField(_('Phone'), default='')
     value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
+    proposed_end = models.DateTimeField(_('Proposed Start Date'), null=True)
+
+    # tracks updates to the Projects fields via the Project Application Form.
+    user_has_updated_details = models.BooleanField(default=False)
 
     activities = GenericRelation(
         'activity.Activity',
