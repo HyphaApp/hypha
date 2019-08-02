@@ -80,12 +80,12 @@
                 <div class="grid grid--proposal-info">
                     <div>
                         <h5>Proposed start date</h5>
-                        <p>13 August 2019</p>
+                        <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
                     </div>
 
                     <div>
                         <h5>Project Proposed end date</h5>
-                        <p>25 January 2020</p>
+                        <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
                     </div>
 
                     <div>
@@ -104,7 +104,12 @@
 
                     <div>
                         <h5>Address</h5>
-                        <p>{{ object.address|default:"-" }}</p>
+                        <p>{{ object.contact_address|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Phone</h5>
+                        <p>{{ object.phone|default:"-" }}</p>
                     </div>
 
                     <div>
