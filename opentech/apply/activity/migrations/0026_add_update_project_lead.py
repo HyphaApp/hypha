@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0024_add_created_project_event'),
+        ('activity', '0025_add_batch_lead_event'),
     ]
 
     operations = [
