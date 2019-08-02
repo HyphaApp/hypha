@@ -1,6 +1,9 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
+
+from opentech.apply.activity.models import Activity
 
 
 class Project(models.Model):
@@ -13,6 +16,12 @@ class Project(models.Model):
     contact_email = models.TextField(default='')
     contact_address = models.TextField(default='')
     value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+
+    activities = GenericRelation(
+        Activity,
+        content_type_field='source_content_type',
+        object_id_field='source_object_id',
+    )
 
     def __str__(self):
         return self.name

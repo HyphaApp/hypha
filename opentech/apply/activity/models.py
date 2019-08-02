@@ -85,7 +85,11 @@ class Activity(models.Model):
     timestamp = models.DateTimeField()
     type = models.CharField(choices=ACTIVITY_TYPES.items(), max_length=30)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    submission = models.ForeignKey('funds.ApplicationSubmission', related_name='activities', on_delete=models.CASCADE)
+
+    source_content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE, related_name='activity_source')
+    source_object_id = models.PositiveIntegerField(blank=True, null=True)
+    source = GenericForeignKey('source_content_type', 'source_object_id')
+
     message = models.TextField()
     visibility = models.CharField(choices=list(VISIBILITY.items()), default=PUBLIC, max_length=10)
 
@@ -95,9 +99,9 @@ class Activity(models.Model):
     previous = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
     # Fields for generic relations to other objects. related_object should implement `get_absolute_url`
-    content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField(blank=True, null=True)
-    related_object = GenericForeignKey('content_type', 'object_id')
+    related_content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE, related_name='activity_related')
+    related_object_id = models.PositiveIntegerField(blank=True, null=True)
+    related_object = GenericForeignKey('related_content_type', 'related_object_id')
 
     objects = models.Manager.from_queryset(ActivityQuerySet)()
     comments = CommentManger.from_queryset(CommentQueryset)()

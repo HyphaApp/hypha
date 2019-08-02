@@ -2,6 +2,7 @@ import os
 from functools import partialmethod
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
@@ -31,6 +32,7 @@ from django_fsm.signals import post_transition
 from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
+from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.categories.models import MetaCategory
 from opentech.apply.determinations.models import Determination
@@ -140,7 +142,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
     def with_latest_update(self):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
@@ -148,7 +150,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
@@ -395,6 +397,12 @@ class ApplicationSubmission(
         MetaCategory,
         related_name='submissions',
         blank=True,
+    )
+    activities = GenericRelation(
+        Activity,
+        content_type_field='source_content_type',
+        object_id_field='source_object_id',
+        related_query_name='submission',
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
