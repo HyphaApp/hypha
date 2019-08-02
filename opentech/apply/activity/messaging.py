@@ -56,6 +56,7 @@ neat_related = {
     MESSAGES.REVIEW_OPINION: 'opinion',
     MESSAGES.DELETE_REVIEW: 'review',
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
+    MESSAGES.EDIT_REVIEW: 'review',
 }
 
 
@@ -203,6 +204,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
         MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
+        MESSAGES.BATCH_UPDATE_LEAD: 'Batch Lead changed to {new_lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
@@ -349,6 +351,7 @@ class SlackAdapter(AdapterBase):
     messages = {
         MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
         MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old_lead} to {submission.lead} by {user}',
+        MESSAGES.BATCH_UPDATE_LEAD: 'handle_batch_lead',
         MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{submission.title}> by {user}',
         MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
         MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
@@ -370,6 +373,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{submission.title}>.',
         MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{project.name}>.',
         MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{project.name}> has been updated from {old_lead} to {project.lead} by {user}',
+        MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{submission.title}>.',
     }
 
     def __init__(self):
@@ -429,6 +433,16 @@ class SlackAdapter(AdapterBase):
             message.extend(reviewers_message(removed))
 
         return ' '.join(message)
+
+    def handle_batch_lead(self, submissions, links, user, new_lead, **kwargs):
+        submissions_text = self.slack_links(links, submissions)
+        return (
+            '{user} has batch changed lead to {new_lead} on: {submissions_text}'.format(
+                user=user,
+                submissions_text=submissions_text,
+                new_lead=new_lead,
+            )
+        )
 
     def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
         submissions_text = self.slack_links(links, submissions)

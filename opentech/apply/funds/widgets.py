@@ -20,3 +20,20 @@ class Select2MultiCheckboxesWidget(Select2MultipleWidget):
         attrs = super().build_attrs(*args, **kwargs)
         attrs['class'] = attrs['class'].replace('django-select2', 'django-select2-checkboxes')
         return attrs
+
+
+class MetaCategorySelect2Widget(Select2MultipleWidget):
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        disabled = False
+
+        if isinstance(label, dict):
+            label, disabled = label.get('label'), label.get('disabled')
+
+        option_dict = super().create_option(
+            name, value, label, selected, index, subindex=subindex, attrs=attrs
+        )
+
+        if disabled:
+            option_dict['attrs']['disabled'] = 'disabled'
+        return option_dict

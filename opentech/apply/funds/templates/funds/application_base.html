@@ -36,7 +36,7 @@
                     {% include "forms/includes/field.html" with is_application=True %}
                 {% else %}
                     {% if field.group_number > 1 %}
-                        <div class="field-group-{{ field.group_number }}" {% if not show_all_group_fields %}style="display:none;"{% endif %}>
+                        <div class="field-group-{{ field.group_number }}{% if not show_all_group_fields %} js-hidden{% endif %}">
                             {{ field }}
                         </div>
                     {% else %}

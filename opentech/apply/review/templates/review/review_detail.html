@@ -24,11 +24,19 @@
         <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
         {{ review.get_visibility_display }}
     </div>
-    {% if perms.funds.delete_review or request.user == review.author %}
+    {% if perms.funds.delete_review or request.user == review.author.reviewer %}
         <div>
             <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
                 Delete
                 <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+            </a>
+        </div>
+    {% endif %}
+    {% if perms.funds.change_review or request.user == review.author.reviewer %}
+        <div>
+            <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
+                Edit
+                <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
         </div>
     {% endif %}

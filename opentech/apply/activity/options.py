@@ -3,6 +3,7 @@ from enum import Enum
 
 class MESSAGES(Enum):
     UPDATE_LEAD = 'Update Lead'
+    BATCH_UPDATE_LEAD = 'Batch Update Lead'
     EDIT = 'Edit'
     APPLICANT_EDIT = "Applicant Edit"
     NEW_SUBMISSION = 'New Submission'
@@ -27,6 +28,7 @@ class MESSAGES(Enum):
     DELETE_REVIEW = 'Delete Review'
     CREATED_PROJECT = 'Created Project'
     UPDATE_PROJECT_LEAD = 'Update Project Lead'
+    EDIT_REVIEW = 'Edit Review'
 
     @classmethod
     def choices(cls):

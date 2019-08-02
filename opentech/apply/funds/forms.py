@@ -1,13 +1,18 @@
+from functools import partial
+from itertools import groupby
+from operator import methodcaller
+
 from django import forms
 from django.utils.text import mark_safe, slugify
 from django.utils.translation import ugettext_lazy as _
 from django_select2.forms import Select2Widget
 
+from opentech.apply.categories.models import MetaCategory
 from opentech.apply.users.models import User
 
 from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
 from .utils import render_icon
-from .widgets import Select2MultiCheckboxesWidget
+from .widgets import Select2MultiCheckboxesWidget, MetaCategorySelect2Widget
 from .workflow import get_action_mapping
 
 
@@ -75,6 +80,41 @@ class UpdateSubmissionLeadForm(forms.ModelForm):
         lead_field = self.fields['lead']
         lead_field.label = f'Update lead from { self.instance.lead } to'
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
+
+
+class BatchUpdateSubmissionLeadForm(forms.Form):
+    lead = forms.ChoiceField(label='Lead')
+    submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
+
+    def __init__(self, *args, round=None, **kwargs):
+        self.user = kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['lead'].choices = [(staff.id, staff) for staff in User.objects.staff()]
+
+    def clean_lead(self):
+        value = self.cleaned_data['lead']
+        return User.objects.get(id=value)
+
+    def clean_submissions(self):
+        value = self.cleaned_data['submissions']
+        submission_ids = [int(submission) for submission in value.split(',')]
+        return ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    def save(self):
+        new_lead = self.cleaned_data['lead']
+        import logging
+        logger = logging.getLogger('opentech')
+        logger.debug(new_lead)
+        logger.debug(new_lead.id)
+        submissions = self.cleaned_data['submissions']
+
+        for submission in submissions:
+            # Onle save if the lead has changed.
+            if submission.lead != new_lead:
+                submission.lead = new_lead
+                submission.save()
+
+        return None
 
 
 class UpdateReviewersForm(forms.ModelForm):
@@ -286,3 +326,52 @@ class UpdatePartnersForm(forms.ModelForm):
             self.submitted_partners
         )
         return instance
+
+
+class GroupedModelChoiceIterator(forms.models.ModelChoiceIterator):
+    def __init__(self, field, groupby):
+        self.groupby = groupby
+        super().__init__(field)
+
+    def __iter__(self):
+        if self.field.empty_label is not None:
+            yield ("", self.field.empty_label)
+        queryset = self.queryset
+        # Can't use iterator() when queryset uses prefetch_related()
+        if not queryset._prefetch_related_lookups:
+            queryset = queryset.iterator()
+        for group, objs in groupby(queryset, self.groupby):
+            yield (group, [self.choice(obj) for obj in objs])
+
+
+class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def __init__(self, *args, choices_groupby, **kwargs):
+        if isinstance(choices_groupby, str):
+            choices_groupby = methodcaller(choices_groupby)
+        elif not callable(choices_groupby):
+            raise TypeError('choices_groupby must either be a str or a callable accepting a single argument')
+        self.iterator = partial(GroupedModelChoiceIterator, groupby=choices_groupby)
+        super().__init__(*args, **kwargs)
+
+    def label_from_instance(self, obj):
+        return {'label': super().label_from_instance(obj), 'disabled': not obj.is_leaf()}
+
+
+class UpdateMetaCategoriesForm(forms.ModelForm):
+    meta_categories = GroupedModelMultipleChoiceField(
+        queryset=None,  # updated in init method
+        widget=MetaCategorySelect2Widget(attrs={'data-placeholder': 'Meta categories'}),
+        label='Meta categories',
+        choices_groupby='get_parent',
+        required=False,
+        help_text='Meta categories are hierarchical in nature.',
+    )
+
+    class Meta:
+        model = ApplicationSubmission
+        fields: list = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+        self.fields['meta_categories'].queryset = MetaCategory.get_root_descendants().exclude(depth=2)

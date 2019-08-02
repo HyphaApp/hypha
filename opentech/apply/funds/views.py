@@ -39,6 +39,7 @@ from opentech.apply.utils.views import DelegateableListView, DelegateableView, V
 
 from .differ import compare
 from .forms import (
+    BatchUpdateSubmissionLeadForm,
     BatchUpdateReviewersForm,
     BatchProgressSubmissionForm,
     ProgressSubmissionForm,
@@ -46,6 +47,7 @@ from .forms import (
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
     UpdatePartnersForm,
+    UpdateMetaCategoriesForm,
 )
 from .models import (
     ApplicationSubmission,
@@ -102,6 +104,30 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             filter_action=self.filter_action,
             **kwargs,
         )
+
+
+@method_decorator(staff_required, name='dispatch')
+class BatchUpdateLeadView(DelegatedViewMixin, FormView):
+    form_class = BatchUpdateSubmissionLeadForm
+    context_name = 'batch_lead_form'
+
+    def form_valid(self, form):
+        new_lead = form.cleaned_data['lead']
+        submissions = form.cleaned_data['submissions']
+        form.save()
+
+        messenger(
+            MESSAGES.BATCH_UPDATE_LEAD,
+            request=self.request,
+            user=self.request.user,
+            submissions=submissions,
+            new_lead=new_lead,
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -253,6 +279,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
 class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]
@@ -271,6 +298,7 @@ class SubmissionListView(ViewDispatcher):
 class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]
@@ -302,6 +330,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_status.html'
     status_mapping = PHASES_MAPPING
     form_views = [
+        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
     ]
@@ -493,6 +522,13 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
+class UpdateMetaCategoriesView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UpdateMetaCategoriesForm
+    context_name = 'meta_categories_form'
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
@@ -504,6 +540,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateReviewersView,
         UpdatePartnersView,
         CreateProjectView,
+        UpdateMetaCategoriesView,
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -772,10 +809,8 @@ class PartnerSubmissionEditView(ApplicantSubmissionEditView):
         submission = self.get_object()
         # If the requesting user submitted the application, return the Applicant view.
         # Partners may somtimes be appliants as well.
-        if submission.user == request.user:
-            return ApplicantSubmissionEditView.as_view()(request, *args, **kwargs)
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
-        if not partner_has_access:
+        if not partner_has_access and submission.user != request.user:
             raise PermissionDenied
         return super(ApplicantSubmissionEditView, self).dispatch(request, *args, **kwargs)
 
@@ -783,6 +818,7 @@ class PartnerSubmissionEditView(ApplicantSubmissionEditView):
 class SubmissionEditView(ViewDispatcher):
     admin_view = AdminSubmissionEditView
     applicant_view = ApplicantSubmissionEditView
+    reviewer_view = ApplicantSubmissionEditView
     partner_view = PartnerSubmissionEditView
 
 

@@ -90,6 +90,14 @@ class MetaCategory(index.Indexed, MP_Node):
         else:
             super().delete()
 
+    @classmethod
+    def get_root_descendants(cls):
+        # Meta categories queryset without Root node
+        root_node = cls.get_first_root_node()
+        if root_node:
+            return root_node.get_descendants()
+        return cls.objects.none()
+
     def __str__(self):
         return self.name
 

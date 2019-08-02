@@ -12,7 +12,7 @@ register = template.Library()
 
 @register.filter
 def display_author(activity, user):
-    if user.is_applicant and isinstance(activity.related_object, Review):
+    if activity.submission.user == user and isinstance(activity.related_object, Review):
         return 'Reviewer'
     return activity.user
 
