@@ -3,6 +3,7 @@ from urllib import parse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -244,6 +245,29 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         if self.object.is_draft:
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
+        with transaction.atomic():
+            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
+
+            if self.object.outcome == NEEDS_MORE_INFO:
+                # We keep a record of the message sent to the user in the comment
+                Activity.comments.create(
+                    message=self.object.stripped_message,
+                    timestamp=timezone.now(),
+                    user=self.request.user,
+                    submission=self.submission,
+                    related_object=self.object,
+                )
+
+            self.submission.perform_transition(
+                transition,
+                self.request.user,
+                request=self.request,
+                notify=False,
+            )
+
+            if self.object.outcome == ACCEPTED:
+                Project.create_from_submission(self.submission)
+
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
             request=self.request,
@@ -251,27 +275,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             submission=self.object.submission,
             related=self.object,
         )
-        transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
-
-        if self.object.outcome == NEEDS_MORE_INFO:
-            # We keep a record of the message sent to the user in the comment
-            Activity.comments.create(
-                message=self.object.stripped_message,
-                timestamp=timezone.now(),
-                user=self.request.user,
-                submission=self.submission,
-                related_object=self.object,
-            )
-
-        self.submission.perform_transition(
-            transition,
-            self.request.user,
-            request=self.request,
-            notify=False,
-        )
-
-        if self.object.outcome == ACCEPTED:
-            Project.create_from_submission(self.submission)
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 
