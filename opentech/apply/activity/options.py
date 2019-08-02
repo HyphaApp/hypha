@@ -26,6 +26,7 @@ class MESSAGES(Enum):
     DELETE_SUBMISSION = 'Delete Submission'
     DELETE_REVIEW = 'Delete Review'
     CREATED_PROJECT = 'Created Project'
+    UPDATE_PROJECT_LEAD = 'Update Project Lead'
 
     @classmethod
     def choices(cls):

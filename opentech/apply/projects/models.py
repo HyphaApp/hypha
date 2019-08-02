@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
 
 class Project(models.Model):
+    lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
 
     name = models.TextField()

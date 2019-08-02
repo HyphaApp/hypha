@@ -55,6 +55,7 @@ neat_related = {
     MESSAGES.SCREENING: 'old_status',
     MESSAGES.REVIEW_OPINION: 'opinion',
     MESSAGES.DELETE_REVIEW: 'review',
+    MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
 }
 
 
@@ -368,6 +369,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.DELETE_SUBMISSION: '{user} has deleted {submission.title}',
         MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{submission.title}>.',
         MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{project.name}>.',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{project.name}> has been updated from {old_lead} to {project.lead} by {user}',
     }
 
     def __init__(self):

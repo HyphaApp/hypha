@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
 
 from opentech.apply.users.tests.factories import (ReviewerFactory,
@@ -19,8 +18,8 @@ class TestProjectDetailView(TestCase):
         request = self.factory.get('/projects/1/')
         request.user = ReviewerFactory()
 
-        with self.assertRaises(PermissionDenied):
-            ProjectDetailView.as_view()(request, pk=self.project.pk)
+        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
+        self.assertEqual(response.status_code, 403)
 
     def test_staff_user_has_access(self):
         request = self.factory.get('/projects/1/')
@@ -40,5 +39,5 @@ class TestProjectDetailView(TestCase):
         request = self.factory.get('/projects/1/')
         request.user = UserFactory()
 
-        with self.assertRaises(PermissionDenied):
-            ProjectDetailView.as_view()(request, pk=self.project.pk)
+        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
+        self.assertEqual(response.status_code, 200)
