@@ -701,6 +701,17 @@ class ApplicationSubmission(
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
 
+    @property
+    def in_final_stage(self):
+        stages = self.workflow.stages
+
+        stage_index = stages.index(self.stage)
+
+        # adjust the index since list.index() is zero-based
+        adjusted_index = stage_index + 1
+
+        return adjusted_index == len(stages)
+
     # Methods for accessing data on the submission
 
     def get_data(self):

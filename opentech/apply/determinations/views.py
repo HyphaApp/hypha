@@ -3,6 +3,7 @@ from urllib import parse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -15,6 +16,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from opentech.apply.projects.models import Project
 from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
 
@@ -24,7 +26,7 @@ from .forms import (
     ConceptDeterminationForm,
     ProposalDeterminationForm,
 )
-from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
+from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION, ACCEPTED
 
 from .utils import (
     can_create_determination,
@@ -240,14 +242,10 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def form_valid(self, form):
         super().form_valid(form)
 
-        if not self.object.is_draft:
-            messenger(
-                MESSAGES.DETERMINATION_OUTCOME,
-                request=self.request,
-                user=self.object.author,
-                submission=self.object.submission,
-                related=self.object,
-            )
+        if self.object.is_draft:
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+
+        with transaction.atomic():
             transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
@@ -260,7 +258,27 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     related_object=self.object,
                 )
 
-            self.submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+            # Grab this before transitioning so we can decide to make a Project
+            # based on the Submissions current state, not it's post-transition one.
+            in_final_stage = self.submission.in_final_stage
+
+            self.submission.perform_transition(
+                transition,
+                self.request.user,
+                request=self.request,
+                notify=False,
+            )
+
+            if self.object.outcome == ACCEPTED and in_final_stage:
+                Project.create_from_submission(self.submission)
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            submission=self.object.submission,
+            related=self.object,
+        )
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 

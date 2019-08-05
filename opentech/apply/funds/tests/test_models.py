@@ -22,6 +22,7 @@ from .factories import (
     AssignedReviewersFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
+    InvitedToProposalFactory,
     LabFactory,
     RequestForPartnersFactory,
     RoundFactory,
@@ -451,6 +452,13 @@ class TestApplicationSubmission(TestCase):
 
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
+
+    def test_in_final_stage(self):
+        submission = InvitedToProposalFactory().previous
+        self.assertFalse(submission.in_final_stage)
+
+        submission = InvitedToProposalFactory()
+        self.assertTrue(submission.in_final_stage)
 
 
 class TestSubmissionRenderMethods(TestCase):
