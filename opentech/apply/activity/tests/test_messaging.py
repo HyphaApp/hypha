@@ -17,6 +17,7 @@ from opentech.apply.funds.tests.factories import (
 )
 from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
+from opentech.apply.projects.tests.factories import ProjectFactory
 
 from ..models import Activity, Event, Message, INTERNAL, PUBLIC
 from ..messaging import (
@@ -146,7 +147,9 @@ class TestBaseAdapter(AdapterMixin, TestCase):
         self.assertTrue(self.adapter.adapter_type in messages[0].message)
 
 
-class TestMessageBackend(TestCase):
+class TestMessageBackendApplication(TestCase):
+    source_factory = ApplicationSubmissionFactory
+
     def setUp(self):
         self.mocked_adapter = Mock(AdapterBase)
         self.backend = MessengerBackend
@@ -154,7 +157,7 @@ class TestMessageBackend(TestCase):
             'related': None,
             'request': None,
             'user': UserFactory(),
-            'source': ApplicationSubmissionFactory(),
+            'source': self.source_factory(),
         }
 
     def test_message_sent_to_adapter(self):
@@ -186,6 +189,10 @@ class TestMessageBackend(TestCase):
         self.assertEqual(Event.objects.first().type, MESSAGES.UPDATE_LEAD.name)
         self.assertEqual(Event.objects.first().get_type_display(), MESSAGES.UPDATE_LEAD.value)
         self.assertEqual(Event.objects.first().by, user)
+
+
+class TestMessageBackendProject(TestMessageBackendApplication):
+    source_factory = ProjectFactory
 
 
 @override_settings(SEND_MESSAGES=True)
