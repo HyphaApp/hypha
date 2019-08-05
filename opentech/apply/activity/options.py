@@ -29,6 +29,7 @@ class MESSAGES(Enum):
     CREATED_PROJECT = 'Created Project'
     UPDATE_PROJECT_LEAD = 'Update Project Lead'
     EDIT_REVIEW = 'Edit Review'
+    SEND_FOR_APPROVAL = 'Send for Approval'
 
     @classmethod
     def choices(cls):

@@ -9,8 +9,29 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
-from .forms import ProjectEditForm, UpdateProjectLeadForm
-from .models import Project, DocumentCategory
+from .forms import ProjectEditForm, SetPendingForm, UpdateProjectLeadForm
+from .models import DocumentCategory, Project
+
+
+@method_decorator(staff_required, name='dispatch')
+class SendForApprovalView(DelegatedViewMixin, UpdateView):
+    context_name = 'approval_form'
+    form_class = SetPendingForm
+    model = Project
+
+    def form_valid(self, form):
+        # lock project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.SEND_FOR_APPROVAL,
+            request=self.request,
+            user=self.request.user,
+            source=form.instance.submission,
+            project=form.instance,
+        )
+
+        return response
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -38,6 +59,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
     form_views = [
+        SendForApprovalView,
         UpdateLeadView,
         CommentFormView,
     ]

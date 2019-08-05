@@ -22,6 +22,16 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
+COMMITTED = 'committed'
+PROJECT_STATUS_CHOICES = [
+    (COMMITTED, 'Committed'),
+    ('contracting', 'Contracting'),
+    ('in_progress', 'In Progress'),
+    ('closing', 'Closing'),
+    ('complete', 'Complete'),
+]
+
+
 class Project(models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
@@ -42,7 +52,10 @@ class Project(models.Model):
     proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
-    is_pending_approval = models.BooleanField(default=False)
+    status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
+
+    # tracks read/write state of the Project
+    is_locked = models.BooleanField(default=False)
 
     # tracks updates to the Projects fields via the Project Application Form.
     user_has_updated_details = models.BooleanField(default=False)
@@ -94,6 +107,17 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse('apply:projects:detail', args=[self.id])
+
+    @property
+    def is_pending_approval(self):
+        """
+        Wrapper to expose the pending approval state
+
+        We don't want to expose a "Sent for Approval" state to the end User so
+        we infer it from the current status being "Comitted" and the Project
+        being locked.
+        """
+        return self.status == COMMITTED and self.is_locked
 
 
 class DocumentCategory(models.Model):

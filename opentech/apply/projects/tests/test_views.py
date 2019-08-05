@@ -4,7 +4,9 @@ from opentech.apply.users.tests.factories import (ReviewerFactory,
                                                   StaffFactory,
                                                   SuperUserFactory,
                                                   UserFactory)
+from opentech.apply.utils.testing.tests import BaseViewTestCase
 
+from ..forms import SetPendingForm
 from ..views import ProjectDetailView
 from .factories import ProjectFactory
 
@@ -41,3 +43,39 @@ class TestProjectDetailView(TestCase):
 
         response = ProjectDetailView.as_view()(request, pk=self.project.pk)
         self.assertEqual(response.status_code, 200)
+
+
+class TestSendForApprovalView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_send_for_approval_fails_when_project_is_locked(self):
+        project = ProjectFactory(is_locked=True)
+
+        # The view doesn't have any custom changes when form validation fails
+        # so check that directly.
+        form = SetPendingForm(instance=project)
+        self.assertFalse(form.is_valid())
+
+    def test_send_for_approval_fails_when_project_is_not_in_committed_state(self):
+        project = ProjectFactory(status='in_progress')
+
+        # The view doesn't have any custom changes when form validation fails
+        # so check that directly.
+        form = SetPendingForm(instance=project)
+        self.assertFalse(form.is_valid())
+
+    def test_send_for_approval_happy_path(self):
+        project = ProjectFactory(is_locked=False, status='committed')
+
+        response = self.post_page(project, {'form-submitted-approval_form': ''})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertTrue(project.is_locked)
+        self.assertEqual(project.status, 'committed')
