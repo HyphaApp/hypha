@@ -9,6 +9,19 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 
+class Approval(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE)
+    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['project', 'by']
+
+    def __str__(self):
+        return f'Approval of "{self.project.title}" by {self.by}'
+
+
 class Project(models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
@@ -29,6 +42,8 @@ class Project(models.Model):
     proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
+    is_pending_approval = models.BooleanField(default=False)
+
     # tracks updates to the Projects fields via the Project Application Form.
     user_has_updated_details = models.BooleanField(default=False)
 
@@ -38,6 +53,7 @@ class Project(models.Model):
         object_id_field='source_object_id',
         related_query_name='project',
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
