@@ -6,12 +6,13 @@ from django.db.models import F
 
 def submission_to_source(apps, schema_editor):
     Activity = apps.get_model('activity', 'Activity')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-    content_type = ContentType.objects.get(model='applicationsubmission', app_label='funds')
-    Activity.objects.update(
-        source_object_id=F('submission_id'),
-        source_content_type=content_type,
-    )
+    if Activity.objects.exists():
+        ContentType = apps.get_model('contenttypes', 'ContentType')
+        content_type = ContentType.objects.get(model='applicationsubmission', app_label='funds')
+        Activity.objects.update(
+            source_object_id=F('submission_id'),
+            source_content_type=content_type,
+        )
 
 
 def source_to_submission(apps, schema_editor):

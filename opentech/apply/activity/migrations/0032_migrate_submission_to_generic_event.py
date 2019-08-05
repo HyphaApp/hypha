@@ -6,17 +6,18 @@ from django.db.models import F
 
 def submission_to_source(apps, schema_editor):
     Event = apps.get_model('activity', 'Event')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-    content_type = ContentType.objects.get(model='applicationsubmission', app_label='funds')
-    Event.objects.update(
-        object_id=F('submission_id'),
-        content_type=content_type,
-    )
+    if Event.objects.exists():
+        ContentType = apps.get_model('contenttypes', 'ContentType')
+        content_type = ContentType.objects.get(model='applicationsubmission', app_label='funds')
+        Event.objects.update(
+            object_id=F('submission_id'),
+            content_type=content_type,
+        )
 
 
 def source_to_submission(apps, schema_editor):
-    Activity = apps.get_model('activity', 'Event')
-    Activity.objects.update(submission_id=F('object_id'))
+    Event = apps.get_model('activity', 'Event')
+    Event.objects.update(submission_id=F('object_id'))
 
 
 class Migration(migrations.Migration):
