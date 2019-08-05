@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.files.storage import get_storage_class
 from django.db.models import Count, F, Q
 from django.http import HttpResponseRedirect, Http404, StreamingHttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.text import mark_safe
@@ -383,17 +383,20 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     model = Project
 
     def form_valid(self, form):
-        project = form.save()
+        response = super().form_valid(form)
 
         messenger(
             MESSAGES.CREATED_PROJECT,
             request=self.request,
             user=self.request.user,
-            source=project.submission,
-            project=project,
+            source=self.object,
+            related=self.object.submission,
         )
 
-        return redirect(self.get_success_url())
+        return response
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 @method_decorator(staff_required, name='dispatch')

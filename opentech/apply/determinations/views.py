@@ -270,7 +270,14 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             )
 
             if self.object.outcome == ACCEPTED and in_final_stage:
-                Project.create_from_submission(self.submission)
+                project = Project.create_from_submission(self.submission)
+                messenger(
+                    MESSAGES.CREATED_PROJECT,
+                    request=self.request,
+                    user=self.request.user,
+                    source=project,
+                    related=project.submission,
+                )
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,

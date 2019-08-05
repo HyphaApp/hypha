@@ -55,8 +55,9 @@ neat_related = {
     MESSAGES.SCREENING: 'old_status',
     MESSAGES.REVIEW_OPINION: 'opinion',
     MESSAGES.DELETE_REVIEW: 'review',
-    MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
     MESSAGES.EDIT_REVIEW: 'review',
+    MESSAGES.CREATED_PROJECT: 'submission',
+    MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
 }
 
 
@@ -214,7 +215,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {source.screening_status}',
-        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}'
+        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
+        MESSAGES.CREATED_PROJECT: '{user} has created Project',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from from {old_lead} to {source.lead} by {user}',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -373,8 +376,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.DELETE_SUBMISSION: '{user} has deleted {source.title}',
         MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{source.title}>.',
-        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{project.name}>.',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{project.name}> has been updated from {old_lead} to {project.lead} by {user}',
+        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
         MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{source.title}>.',
     }
 
@@ -526,9 +529,13 @@ class SlackAdapter(AdapterBase):
         )
 
     def slack_id(self, user):
-        if user.slack:
-            return f'<{user.slack}>'
-        return ''
+        if user is None:
+            return ''
+
+        if not user.slack:
+            return ''
+
+        return f'<{user.slack}>'
 
     def slack_channels(self, source):
         target_rooms = [self.target_room]
@@ -593,7 +600,10 @@ class EmailAdapter(AdapterBase):
             if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {submission.title}'.format(submission=source)
             else:
-                subject = source.page.specific.subject or 'Your application to Open Technology Fund: {source.title}'.format(source=source)
+                try:
+                    subject = source.page.specific.subject or 'Your application to Open Technology Fund: {source.title}'.format(source=source)
+                except AttributeError:
+                    subject = 'Your Open Technology Fund Project: {source.title}'.format(source=source)
             return subject
 
     def extra_kwargs(self, message_type, source, sources, **kwargs):
