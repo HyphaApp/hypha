@@ -753,7 +753,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.TRANSITION,
             user=by,
             request=request,
-            submission=instance,
+            source=instance,
             related=old_phase,
         )
 
@@ -762,7 +762,7 @@ def log_status_update(sender, **kwargs):
                 MESSAGES.READY_FOR_REVIEW,
                 user=by,
                 request=request,
-                submission=instance,
+                source=instance,
             )
 
     if instance.status in STAGE_CHANGE_ACTIONS:
@@ -770,7 +770,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.INVITED_TO_PROPOSAL,
             request=request,
             user=by,
-            submission=instance,
+            source=instance,
         )
 
 

@@ -119,7 +119,7 @@ class BatchDeterminationCreateView(CreateView):
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
             user=self.request.user,
-            submissions=submissions.filter(id__in=list(determinations)),
+            sources=submissions.filter(id__in=list(determinations)),
             related=determinations,
         )
 
@@ -254,7 +254,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     message=self.object.stripped_message,
                     timestamp=timezone.now(),
                     user=self.request.user,
-                    submission=self.submission,
+                    source=self.submission,
                     related_object=self.object,
                 )
 
@@ -276,7 +276,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             MESSAGES.DETERMINATION_OUTCOME,
             request=self.request,
             user=self.object.author,
-            submission=self.object.submission,
+            source=self.object.submission,
             related=self.object,
         )
 

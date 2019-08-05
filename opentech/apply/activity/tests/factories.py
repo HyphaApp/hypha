@@ -16,7 +16,7 @@ class CommentFactory(factory.DjangoModelFactory):
         internal = factory.Trait(visibility=INTERNAL)
         reviewers = factory.Trait(visibility=REVIEWER)
 
-    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    source = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
     message = factory.Faker('sentence')
     timestamp = factory.LazyFunction(timezone.now)
@@ -32,7 +32,7 @@ class EventFactory(factory.DjangoModelFactory):
 
     type = factory.Iterator([choice[0] for choice in MESSAGES.choices()])
     by = factory.SubFactory(UserFactory)
-    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    source = factory.SubFactory(ApplicationSubmissionFactory)
 
 
 class MessageFactory(factory.DjangoModelFactory):

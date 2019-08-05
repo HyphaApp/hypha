@@ -143,7 +143,9 @@ class Event(models.Model):
     when = models.DateTimeField(auto_now_add=True)
     type = models.CharField(choices=MESSAGES.choices(), max_length=50)
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    submission = models.ForeignKey('funds.ApplicationSubmission', related_name='+', on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    source = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
         return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.submission.title])

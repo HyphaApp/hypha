@@ -28,7 +28,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             MESSAGES.UPDATE_PROJECT_LEAD,
             request=self.request,
             user=self.request.user,
-            submission=form.instance.submission,
+            source=form.instance.submission,
             related=old.lead,
             project=form.instance,
         )
