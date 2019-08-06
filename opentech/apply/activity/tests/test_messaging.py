@@ -53,12 +53,13 @@ class TestAdapter(AdapterBase):
 @override_settings(ROOT_URLCONF='opentech.apply.urls')
 class AdapterMixin(TestCase):
     adapter = None
+    source_factory = None
 
     def process_kwargs(self, message_type, **kwargs):
         if 'user' not in kwargs:
             kwargs['user'] = UserFactory()
         if 'source' not in kwargs:
-            kwargs['source'] = ApplicationSubmissionFactory()
+            kwargs['source'] = self.source_factory()
         if 'request' not in kwargs:
             kwargs['request'] = make_request()
         if message_type in neat_related:
@@ -68,14 +69,18 @@ class AdapterMixin(TestCase):
 
         return kwargs
 
-    def adapter_process(self, message_type, **kwargs):
+    def adapter_process(self, message_type, adapter=None, **kwargs):
+        if not adapter:
+            adapter = self.adapter
         kwargs = self.process_kwargs(message_type, **kwargs)
         event = EventFactory(source=kwargs['source'])
-        self.adapter.process(message_type, event=event, **kwargs)
+        adapter.process(message_type, event=event, **kwargs)
 
 
 @override_settings(SEND_MESSAGES=True)
 class TestBaseAdapter(AdapterMixin, TestCase):
+    source_factory = ApplicationSubmissionFactory
+
     def setUp(self):
         patched_class = patch.object(TestAdapter, 'send_message')
         self.mock_adapter = patched_class.start()
@@ -319,6 +324,8 @@ class TestActivityAdapter(TestCase):
 
 
 class TestSlackAdapter(AdapterMixin, TestCase):
+    source_factory = ApplicationSubmissionFactory
+
     target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
     target_room = '#<ROOM ID>'
 
@@ -431,6 +438,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
 
 @override_settings(SEND_MESSAGES=True)
 class TestEmailAdapter(AdapterMixin, TestCase):
+    source_factory = ApplicationSubmissionFactory
     adapter = EmailAdapter()
 
     def test_email_new_submission(self):
@@ -544,3 +552,93 @@ class TestAnyMailBehaviour(AdapterMixin, TestCase):
         message.refresh_from_db()
         self.assertTrue('rejected' in message.status)
         self.assertTrue('spam' in message.status)
+
+
+class TestAdaptersForProject(AdapterMixin, TestCase):
+    slack = SlackAdapter
+    activity = ActivityAdapter
+    source_factory = ProjectFactory
+    # Slack
+    target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
+    target_room = '#<ROOM ID>'
+
+    def test_activity_lead_change(self):
+        old_lead = UserFactory()
+        project = self.source_factory()
+        self.adapter_process(
+            MESSAGES.UPDATE_PROJECT_LEAD,
+            adapter=self.activity(),
+            source=project,
+            related=old_lead,
+        )
+        self.assertEqual(Activity.objects.count(), 1)
+        activity = Activity.objects.first()
+        self.assertIn(str(old_lead), activity.message)
+        self.assertIn(str(project.lead), activity.message)
+
+    def test_activity_lead_change_from_none(self):
+        project = self.source_factory()
+        self.adapter_process(
+            MESSAGES.UPDATE_PROJECT_LEAD,
+            adapter=self.activity(),
+            source=project,
+            related='Unassigned',
+        )
+        self.assertEqual(Activity.objects.count(), 1)
+        activity = Activity.objects.first()
+        self.assertIn(str('Unassigned'), activity.message)
+        self.assertIn(str(project.lead), activity.message)
+
+    def test_activity_created(self):
+        project = self.source_factory()
+        self.adapter_process(
+            MESSAGES.CREATED_PROJECT,
+            adapter=self.activity(),
+            source=project,
+            related=project.submission,
+        )
+        self.assertEqual(Activity.objects.count(), 1)
+        activity = Activity.objects.first()
+        self.assertEqual(None, activity.related_object)
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_slack_created(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        project = self.source_factory()
+        user = UserFactory()
+        self.adapter_process(
+            MESSAGES.CREATED_PROJECT,
+            adapter=self.slack(),
+            user=user,
+            source=project,
+            related=project.submission,
+        )
+        self.assertEqual(len(responses.calls), 1)
+        data = json.loads(responses.calls[0].request.body)
+        self.assertIn(str(user), data['message'])
+        self.assertIn(str(project), data['message'])
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_slack_lead_change(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        project = self.source_factory()
+        user = UserFactory()
+        self.adapter_process(
+            MESSAGES.UPDATE_PROJECT_LEAD,
+            adapter=self.slack(),
+            user=user,
+            source=project,
+            related=project.submission,
+        )
+        self.assertEqual(len(responses.calls), 1)
+        data = json.loads(responses.calls[0].request.body)
+        self.assertIn(str(user), data['message'])
+        self.assertIn(str(project), data['message'])

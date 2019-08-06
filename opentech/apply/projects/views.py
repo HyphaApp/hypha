@@ -4,6 +4,10 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
+from opentech.apply.activity.views import (
+    ActivityContextMixin,
+    CommentFormView,
+)
 from opentech.apply.utils.views import DelegateableView, DelegatedViewMixin
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import ViewDispatcher
@@ -28,16 +32,18 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             MESSAGES.UPDATE_PROJECT_LEAD,
             request=self.request,
             user=self.request.user,
-            source=form.instance.submission,
-            related=old.lead,
-            project=form.instance,
+            source=form.instance,
+            related=old.lead or 'Unassigned',
         )
 
         return response
 
 
-class AdminProjectDetailView(DelegateableView, DetailView):
-    form_views = [UpdateLeadView]
+class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
+    form_views = [
+        UpdateLeadView,
+        CommentFormView,
+    ]
     model = Project
     template_name_suffix = '_admin_detail'
 

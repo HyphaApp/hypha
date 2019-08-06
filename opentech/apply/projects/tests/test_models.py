@@ -12,4 +12,5 @@ class TestProjectModel(TestCase):
         project = Project.create_from_submission(submission)
 
         self.assertEquals(project.submission, submission)
-        self.assertEquals(project.name, submission.title)
+        self.assertEquals(project.title, submission.title)
+        self.assertEquals(project.user, submission.user)
