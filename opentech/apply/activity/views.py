@@ -14,15 +14,15 @@ ACTIVITY_LIMIT = 50
 class AllActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
-            'actions': Activity.actions.filter(submission__in=self.object_list).select_related(
+            'actions': Activity.actions.select_related(
                 'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],
-            'comments': Activity.comments.filter(submission__in=self.object_list).select_related(
+            'comments': Activity.comments.select_related(
                 'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],
-            'all_activity': Activity.objects.filter(submission__in=self.object_list).select_related(
+            'all_activity': Activity.objects.select_related(
                 'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],

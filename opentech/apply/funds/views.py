@@ -460,7 +460,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             MESSAGES.REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            source=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
@@ -508,7 +508,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            source=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
@@ -517,7 +517,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED_PARTNER,
             request=self.request,
             user=self.request.user,
-            source=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
