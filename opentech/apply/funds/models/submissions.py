@@ -2,6 +2,7 @@ import os
 from functools import partialmethod
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
@@ -140,7 +141,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
     def with_latest_update(self):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
@@ -148,7 +149,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
@@ -395,6 +396,12 @@ class ApplicationSubmission(
         MetaCategory,
         related_name='submissions',
         blank=True,
+    )
+    activities = GenericRelation(
+        'activity.Activity',
+        content_type_field='source_content_type',
+        object_id_field='source_object_id',
+        related_query_name='submission',
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
@@ -745,7 +752,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.TRANSITION,
             user=by,
             request=request,
-            submission=instance,
+            source=instance,
             related=old_phase,
         )
 
@@ -754,7 +761,7 @@ def log_status_update(sender, **kwargs):
                 MESSAGES.READY_FOR_REVIEW,
                 user=by,
                 request=request,
-                submission=instance,
+                source=instance,
             )
 
     if instance.status in STAGE_CHANGE_ACTIONS:
@@ -762,7 +769,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.INVITED_TO_PROPOSAL,
             request=request,
             user=by,
-            submission=instance,
+            source=instance,
         )
 
 

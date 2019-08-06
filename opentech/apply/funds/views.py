@@ -120,7 +120,7 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_UPDATE_LEAD,
             request=self.request,
             user=self.request.user,
-            submissions=submissions,
+            sources=submissions,
             new_lead=new_lead,
         )
         return super().form_valid(form)
@@ -147,7 +147,7 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submissions=submissions,
+            sources=submissions,
             added=reviewers,
         )
         return super().form_valid(form)
@@ -205,7 +205,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_TRANSITION,
             user=self.request.user,
             request=self.request,
-            submissions=succeeded_submissions,
+            sources=succeeded_submissions,
             related=phase_changes,
         )
 
@@ -218,7 +218,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
                 MESSAGES.BATCH_READY_FOR_REVIEW,
                 user=self.request.user,
                 request=self.request,
-                submissions=succeeded_submissions.filter(status__in=ready_for_review),
+                sources=succeeded_submissions.filter(status__in=ready_for_review),
             )
 
         return super().form_valid(form)
@@ -389,7 +389,7 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
             MESSAGES.CREATED_PROJECT,
             request=self.request,
             user=self.request.user,
-            submission=project.submission,
+            source=project.submission,
             project=project,
         )
 
@@ -410,7 +410,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             MESSAGES.SCREENING,
             request=self.request,
             user=self.request.user,
-            submission=self.object,
+            source=self.object,
             related=str(old.screening_status),
         )
         return response
@@ -430,7 +430,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             MESSAGES.UPDATE_LEAD,
             request=self.request,
             user=self.request.user,
-            submission=form.instance,
+            source=form.instance,
             related=old.lead,
         )
         return response
@@ -457,7 +457,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             MESSAGES.REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['submission'],
             added=added,
             removed=removed,
         )
@@ -505,7 +505,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['submission'],
             added=added,
             removed=removed,
         )
@@ -514,7 +514,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED_PARTNER,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['submission'],
             added=added,
             removed=removed,
         )
@@ -659,7 +659,7 @@ class SubmissionSealedView(DetailView):
             MESSAGES.OPENED_SEALED,
             request=self.request,
             user=self.request.user,
-            submission=submission,
+            source=submission,
         )
         self.request.session.setdefault('peeked', {})[str(submission.id)] = True
         # Dictionary updates do not trigger session saves. Force update
@@ -737,7 +737,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
                     MESSAGES.EDIT,
                     request=self.request,
                     user=self.request.user,
-                    submission=self.object,
+                    source=self.object,
                     related=revision,
                 )
 
@@ -776,14 +776,14 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 MESSAGES.PROPOSAL_SUBMITTED,
                 request=self.request,
                 user=self.request.user,
-                submission=self.object,
+                source=self.object,
             )
         elif revision:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
                 user=self.request.user,
-                submission=self.object,
+                source=self.object,
                 related=revision,
             )
 
@@ -908,7 +908,7 @@ class SubmissionDeleteView(DeleteView):
             MESSAGES.DELETE_SUBMISSION,
             user=request.user,
             request=request,
-            submission=submission,
+            source=submission,
         )
         response = super().delete(request, *args, **kwargs)
         return response

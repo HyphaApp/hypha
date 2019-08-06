@@ -15,15 +15,15 @@ class AllActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
             'actions': Activity.actions.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],
             'comments': Activity.comments.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],
             'all_activity': Activity.objects.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'source_content_type',
                 'user',
             )[:ACTIVITY_LIMIT],
         }
@@ -63,7 +63,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
             MESSAGES.COMMENT,
             request=self.request,
             user=self.request.user,
-            submission=self.object.submission,
+            source=self.object.submission,
             related=self.object,
         )
         return response

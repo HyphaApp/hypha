@@ -32,7 +32,7 @@
 
         <p class="feed__heading">
             {% if submission_title %}
-                updated <a href="{{ activity.submission.get_absolute_url }}">{{ activity.submission.title }}</a>
+                updated <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
             {% endif %}
 
             {% if editable %}
