@@ -3,8 +3,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
-from opentech.apply.activity.models import Activity
-
 
 class Project(models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
@@ -18,7 +16,7 @@ class Project(models.Model):
     value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
 
     activities = GenericRelation(
-        Activity,
+        'activity.Activity',
         content_type_field='source_content_type',
         object_id_field='source_object_id',
     )

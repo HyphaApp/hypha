@@ -32,7 +32,6 @@ from django_fsm.signals import post_transition
 from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
-from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.categories.models import MetaCategory
 from opentech.apply.determinations.models import Determination
@@ -399,7 +398,7 @@ class ApplicationSubmission(
         blank=True,
     )
     activities = GenericRelation(
-        Activity,
+        'activity.Activity',
         content_type_field='source_content_type',
         object_id_field='source_object_id',
         related_query_name='submission',
