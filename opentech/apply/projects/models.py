@@ -78,3 +78,15 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse('apply:projects:detail', args=[self.id])
+
+
+class DocumentCategory(models.Model):
+    name = models.CharField(max_length=254)
+    recommended_minimum = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name_plural = 'Document Categories'

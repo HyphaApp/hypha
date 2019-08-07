@@ -41,7 +41,18 @@
             <div class="docs-block__row-inner">
                 <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
             </div>
-            <p class="docs-block__info-text">Every project requires a XXXXXX and XXXXXX to be uploaded</p>
+            {% if remaining_document_categories %}
+            <div class="docs-block__info-text">
+                <p>
+                    Every project should include the following documents:
+                </p>
+                <ul>
+                    {% for category in remaining_document_categories %}
+                        <li>{{ category.name }} ({{ category.recommended_minimum }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
             <!-- Example document list
                 <ul class="docs-block__document-list">
                     <li class="docs-block__document">
