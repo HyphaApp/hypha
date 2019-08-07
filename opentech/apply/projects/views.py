@@ -10,7 +10,7 @@ from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
 from .forms import ProjectEditForm, UpdateProjectLeadForm
-from .models import Project
+from .models import Project, DocumentCategory
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -43,6 +43,12 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
     ]
     model = Project
     template_name_suffix = '_admin_detail'
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            remaining_document_categories=DocumentCategory.objects.all(),
+            **kwargs,
+        )
 
 
 class ApplicantProjectDetailView(DetailView):
