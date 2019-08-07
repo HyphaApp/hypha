@@ -22,6 +22,21 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
+def document_path(instance, filename):
+    return f'projects/{instance.project_id}/supporting_documents/{filename}'
+
+
+class PacketFile(models.Model):
+    category = models.ForeignKey("DocumentCategory", null=True, on_delete=models.CASCADE, related_name="packet_files")
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="packet_files")
+
+    title = models.TextField()
+    document = models.FileField(upload_to=document_path)
+
+    def __str__(self):
+        return f'Project file: {self.title}'
+
+
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
 PROJECT_STATUS_CHOICES = [
