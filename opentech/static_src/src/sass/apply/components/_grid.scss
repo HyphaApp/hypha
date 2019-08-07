@@ -62,7 +62,10 @@
             .wrapper--comments & {
                 max-width: 800px;
                 margin-bottom: 0;
-                grid-template-columns: repeat(auto-fit,  200px 200px);
+
+                @include media-query(mob-landscape) {
+                    grid-template-columns: repeat(auto-fit,  200px 200px);
+                }
             }
 
             + br {
