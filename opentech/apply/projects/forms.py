@@ -5,7 +5,7 @@ from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .models import Project, COMMITTED
+from .models import COMMITTED, Approval, Project
 
 
 class CreateProjectForm(forms.Form):
@@ -23,6 +23,16 @@ class CreateProjectForm(forms.Form):
     def save(self, *args, **kwargs):
         submission = self.cleaned_data['submission']
         return Project.create_from_submission(submission)
+
+
+class CreateApprovalForm(forms.ModelForm):
+    class Meta:
+        model = Approval
+        fields = ['id']
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class ProjectEditForm(forms.ModelForm):

@@ -23,9 +23,10 @@ class Approval(models.Model):
 
 
 COMMITTED = 'committed'
+CONTRACTING = 'contracting'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, 'Committed'),
-    ('contracting', 'Contracting'),
+    (CONTRACTING, 'Contracting'),
     ('in_progress', 'In Progress'),
     ('closing', 'Closing'),
     ('complete', 'Complete'),
@@ -109,7 +110,7 @@ class Project(models.Model):
         return reverse('apply:projects:detail', args=[self.id])
 
     @property
-    def is_pending_approval(self):
+    def can_send_for_approval(self):
         """
         Wrapper to expose the pending approval state
 
@@ -117,6 +118,7 @@ class Project(models.Model):
         we infer it from the current status being "Comitted" and the Project
         being locked.
         """
+        return self.status == COMMITTED and not self.is_locked
         return self.status == COMMITTED and self.is_locked
 
 

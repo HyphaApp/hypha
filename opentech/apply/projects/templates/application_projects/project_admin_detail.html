@@ -1,16 +1,22 @@
 {% extends "application_projects/project_detail.html" %}
 
+{% load approval_tools %}
 {% load static %}
 
 {% block admin_sidebar %}
 <div class="modal" id="send-for-approval">
     <h4 class="modal__header-bar">Request Approval</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=approval_form value='Request'%}
+    {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Request'%}
 </div>
 
 <div class="modal" id="assign-lead">
     <h4 class="modal__header-bar">Assign Lead</h4>
     {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
+</div>
+
+<div class="modal" id="add-approval">
+    <h4 class="modal__header-bar">Add Approval</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value='Approve'%}
 </div>
 
 {% if mobile %}
@@ -27,6 +33,16 @@
        class="button button--bottom-space button--primary button--full-width"
        href="#">
         Send for approval
+    </a>
+    {% endif %}
+
+    {% user_has_approved object request.user as has_approved %}
+    {% if object.is_pending_approval and not has_approved %}
+    <a data-fancybox
+       data-src="#add-approval"
+       class="button button--bottom-space button--primary button--full-width"
+       href="#">
+        Add approval
     </a>
     {% endif %}
 

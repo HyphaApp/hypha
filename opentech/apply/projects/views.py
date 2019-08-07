@@ -1,7 +1,10 @@
 from copy import copy
 
+from django.db import transaction
+from django.http import Http404
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -9,13 +12,46 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
-from .forms import ProjectEditForm, SetPendingForm, UpdateProjectLeadForm
-from .models import DocumentCategory, Project
+from .forms import (CreateApprovalForm, ProjectEditForm, SetPendingForm,
+                    UpdateProjectLeadForm)
+from .models import CONTRACTING, Approval, DocumentCategory, Project
+
+
+@method_decorator(staff_required, name='dispatch')
+class CreateApprovalView(DelegatedViewMixin, CreateView):
+    context_name = 'add_approval_form'
+    form_class = CreateApprovalForm
+    model = Approval
+
+    @transaction.atomic()
+    def form_valid(self, form):
+        try:
+            project = Project.objects.get(pk=self.kwargs['pk'])
+        except Project.DoesNotExist:
+            raise Http404("No Project found with ID={self.kwargs['pk']}")
+
+        Approval.objects.create(
+            by=self.request.user,
+            project=project,
+        )
+
+        project.is_locked = False
+        project.status = CONTRACTING
+        project.save(update_fields=['is_locked', 'status'])
+
+        messenger(
+            MESSAGES.APPROVE_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+        )
+
+        return redirect(project)
 
 
 @method_decorator(staff_required, name='dispatch')
 class SendForApprovalView(DelegatedViewMixin, UpdateView):
-    context_name = 'approval_form'
+    context_name = 'request_approval_form'
     form_class = SetPendingForm
     model = Project
 
@@ -59,9 +95,10 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
     form_views = [
+        CommentFormView,
+        CreateApprovalView,
         SendForApprovalView,
         UpdateLeadView,
-        CommentFormView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
