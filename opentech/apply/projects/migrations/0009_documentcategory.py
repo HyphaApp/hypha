@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0005_add_user_to_project'),
+        ('application_projects', '0008_add_value_validator'),
     ]
 
     operations = [
