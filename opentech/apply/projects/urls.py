@@ -1,7 +1,10 @@
-from django.urls import path
+from django.urls import include, path
 
-from .views import ProjectDetailView
+from .views import ProjectDetailView, ProjectEditView
 
 urlpatterns = [
-    path('<int:pk>/', ProjectDetailView.as_view(), name='detail'),
+    path('<int:pk>/', include([
+        path('', ProjectDetailView.as_view(), name='detail'),
+        path('edit/', ProjectEditView.as_view(), name="edit"),
+    ])),
 ]

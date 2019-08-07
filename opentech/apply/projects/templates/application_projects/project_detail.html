@@ -3,7 +3,7 @@
 {% load static  %}
 {% load wagtailcore_tags %}
 
-{% block title %}{{ object.title }}{% endblock %}
+{% block title %}{{ object.name }}{% endblock %}
 
 {% block body_class %}{% endblock %}
 
@@ -80,12 +80,12 @@
                 <div class="grid grid--proposal-info">
                     <div>
                         <h5>Proposed start date</h5>
-                        <p>13 August 2019</p>
+                        <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
                     </div>
 
                     <div>
                         <h5>Project Proposed end date</h5>
-                        <p>25 January 2020</p>
+                        <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
                     </div>
 
                     <div>
@@ -101,10 +101,19 @@
                         -
                         {% endif %}
                     </div>
+                </div>
 
+                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">Show more</a>
+
+                <div class="rich-text--hidden js-rich-text-hidden">
                     <div>
                         <h5>Address</h5>
-                        <p>{{ object.address|default:"-" }}</p>
+                        <p>{{ object.contact_address|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Phone</h5>
+                        <p>{{ object.phone|default:"-" }}</p>
                     </div>
 
                     <div>
@@ -152,4 +161,5 @@
 
 {% block extra_js %}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
 {% endblock %}

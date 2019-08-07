@@ -4,15 +4,12 @@ from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
-from opentech.apply.activity.views import (
-    ActivityContextMixin,
-    CommentFormView,
-)
-from opentech.apply.utils.views import DelegateableView, DelegatedViewMixin
+from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import ViewDispatcher
+from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
+                                        ViewDispatcher)
 
-from .forms import UpdateProjectLeadForm
+from .forms import ProjectEditForm, UpdateProjectLeadForm
 from .models import Project
 
 
@@ -55,3 +52,9 @@ class ApplicantProjectDetailView(DetailView):
 class ProjectDetailView(ViewDispatcher):
     admin_view = AdminProjectDetailView
     applicant_view = ApplicantProjectDetailView
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectEditView(UpdateView):
+    form_class = ProjectEditForm
+    model = Project
