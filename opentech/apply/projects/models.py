@@ -10,8 +10,8 @@ from django.utils.translation import ugettext as _
 
 
 class Approval(models.Model):
-    project = models.ForeignKey("Project", on_delete=models.CASCADE)
-    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="approvals")
+    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="approvals")
 
     created_at = models.DateTimeField(auto_now_add=True)
 
