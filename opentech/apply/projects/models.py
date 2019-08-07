@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
@@ -18,7 +19,7 @@ class Project(models.Model):
     contact_phone = models.TextField(_('Phone'), default='')
     value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
-    proposed_end = models.DateTimeField(_('Proposed Start Date'), null=True)
+    proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
     # tracks updates to the Projects fields via the Project Application Form.
     user_has_updated_details = models.BooleanField(default=False)
@@ -56,6 +57,16 @@ class Project(models.Model):
             contact_address=submission.form_data.get('address', ''),
             value=submission.form_data.get('value', 0),
         )
+
+    def clean(self):
+        if self.proposed_start is None:
+            return
+
+        if self.proposed_end is None:
+            return
+
+        if self.proposed_start > self.proposed_end:
+            raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
     def get_absolute_url(self):
         return reverse('apply:projects:detail', args=[self.id])
