@@ -1,3 +1,4 @@
+import decimal
 import json
 
 import factory
@@ -6,7 +7,6 @@ from django.utils import timezone
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.projects.models import Project
 from opentech.apply.users.tests.factories import UserFactory
-
 
 ADDRESS = {
     'country': 'GB',
@@ -43,7 +43,7 @@ class ProjectFactory(factory.DjangoModelFactory):
     contact_email = 'test@example.com'
     contact_address = json.dumps(ADDRESS)
     contact_phone = '555 1234'
-    value = 0
+    value = decimal.Decimal('100')
     proposed_start = factory.LazyFunction(timezone.now)
     proposed_end = factory.LazyFunction(timezone.now)
 

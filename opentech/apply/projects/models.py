@@ -1,6 +1,9 @@
+import decimal
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
@@ -17,7 +20,12 @@ class Project(models.Model):
     contact_email = models.TextField(_('Email'), default='')
     contact_address = models.TextField(_('Address'), default='')
     contact_phone = models.TextField(_('Phone'), default='')
-    value = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    value = models.DecimalField(
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
     proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
