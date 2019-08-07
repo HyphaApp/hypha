@@ -17,6 +17,7 @@
         {% include "funds/includes/update_lead_form.html" %}
         {% include "funds/includes/update_reviewer_form.html" %}
         {% include "funds/includes/update_partner_form.html" %}
+        {% include "funds/includes/create_project_form.html" %}
         {% include "funds/includes/update_meta_categories_form.html" %}
 {% endblock %}
 
@@ -33,6 +34,10 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block project %}
+    {% include 'funds/includes/project_block.html' %}
 {% endblock %}
 
 {% block screening_status %}
@@ -61,4 +66,6 @@
     <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
     <script src="{% static 'js/apply/toggle-related.js' %}"></script>
     <script src="{% static 'js/apply/edit-comment.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-payment-block.js' %}"></script>
 {% endblock %}

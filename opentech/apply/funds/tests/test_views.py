@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, INTERNAL
+from opentech.apply.projects.models import Project
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -29,7 +30,7 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing import make_request
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
-from ..models import ApplicationRevision
+from ..models import ApplicationRevision, ApplicationSubmission
 
 
 def prepare_form_data(submission, **kwargs):
@@ -197,6 +198,22 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_view_submission_screening_block(self):
         response = self.get_page(self.submission)
         self.assertContains(response, 'Screening Status')
+
+    def test_can_create_project(self):
+        # check submission doesn't already have a Project
+        with self.assertRaisesMessage(Project.DoesNotExist, 'ApplicationSubmission has no project.'):
+            self.submission.project
+
+        self.post_page(self.submission, {
+            'form-submitted-project_form': '',
+            'submission': self.submission.id,
+        })
+
+        project = Project.objects.order_by('-pk').first()
+        submission = ApplicationSubmission.objects.get(pk=self.submission.pk)
+
+        self.assertTrue(hasattr(submission, 'project'))
+        self.assertEquals(submission.project.id, project.id)
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):

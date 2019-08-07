@@ -87,12 +87,25 @@
                     </header>
 
                     {% include "funds/includes/rendered_answers.html" %}
+
+                    <div class="wrapper wrapper--outer-space-large">
+                        {% include "funds/includes/funding_block.html" %}
+                        {% include "funds/includes/payment_requests.html" %}
+                        {% include "funds/includes/invoice_block.html" %}
+                    </div>
+
+                    {# {% include "funds/includes/supporting_documents.html" %} #}
                 </article>
             {% endif %}
 
             <aside class="sidebar">
                 {% if request.user.is_apply_staff %}
                     {% block sidebar_forms %}
+                    {% endblock %}
+                {% endif %}
+
+                {% if request.user.is_apply_staff and object.project %}
+                    {% block project %}
                     {% endblock %}
                 {% endif %}
 

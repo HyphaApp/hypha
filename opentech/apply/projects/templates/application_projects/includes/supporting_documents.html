@@ -1,0 +1,79 @@
+<div class="docs-block wrapper--outer-space-large">
+    <div class="docs-block__header">
+        <h4 class="docs-block__heading">Supporting documents</h4>
+    </div>
+    <ul class="docs-block__inner">
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon is-complete"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Proposal</p>
+            </div>
+            <div class="docs-block__row-inner">
+                <a class="docs-block__link" href="#">View</a>
+                <a class="docs-block__link" href="#">Download</a>
+            </div>
+        </li>
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Approval Form</p>
+            </div>
+            <div class="docs-block__row-inner">
+                <a class="docs-block__link" href="#">Create</a>
+            </div>
+        </li>
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Supporting documents</p>
+            </div>
+            <div class="docs-block__row-inner">
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+            </div>
+            <p class="docs-block__info-text">Every project requires a XXXXXX and XXXXXX to be uploaded</p>
+            <!-- Example document list
+                <ul class="docs-block__document-list">
+                    <li class="docs-block__document">
+                        <div class="docs-block__document-inner">
+                            <p class="docs-block__document-info"><b>This is a document title</b></p>
+                            <p class="docs-block__document-info">This is a document type</p>
+                        </div>
+                        <div class="docs-block__document-inner">
+                            <a class="docs-block__document-link" href="#">Download</a>
+                            <a class="docs-block__document-link" href="#">Remove</a>
+                        </div>
+                    </li>
+                    <li class="docs-block__document">
+                        <div class="docs-block__document-inner">
+                            <p class="docs-block__document-info"><b>This is a document title</b></p>
+                            <p class="docs-block__document-info">This is a document type</p>
+                        </div>
+                        <div class="docs-block__document-inner">
+                            <a class="docs-block__document-link" href="#">Download</a>
+                            <a class="docs-block__document-link" href="#">Remove</a>
+                        </div>
+                    </li>
+                </ul>
+            -->
+        </li>
+    </ul>
+    <div class="docs-block__buttons">
+        <button class="button button--primary" href="#">Submit for approval</button>
+        <button class="button button--primary" href="#">Ready for contracting</button>
+    </div>
+</div>
+
+<div class="modal modal--secondary" id="upload-supporting-doc">
+    <h4 class="modal__header-bar">Upload a new document</h4>
+    <div class="wrapper--outer-space-medium">
+        <label for="upload-document">Choose a document to upload:</label>
+        <input type="file" id="upload-document">
+    </div>
+    <div class="modal__buttons">
+        <button class="button button--primary button--submit" type="submit" name="submit">Upload</button>
+        <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+    </div>
+</div>

@@ -1,0 +1,155 @@
+{% extends "base-apply.html" %}
+
+{% load static  %}
+{% load wagtailcore_tags %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h1 class="beta heading heading--no-margin heading--bold">{{ object.name }}</h1>
+        <h5 class="heading heading--meta">
+
+            <span>
+                {% if public_page %}
+                <a class="link--transparent link--underlined" href="{% pageurl public_page %}" >
+                    {{ object.submission.page }}
+                </a>
+                {% else %}
+                {{ object.submission.page }}
+                {% endif %}
+            </span>
+
+            {% if request.user.is_apply_staff %}
+            <span>
+                <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
+            </span>
+            {% else %}
+                <span>{{ object.submission.round }}</span>
+            {% endif %}
+
+            <span>Lead: {{ object.lead }}</span>
+
+        </h5>
+        {# {% status_bar object.workflow object.phase request.user same_stage=True%} #}
+
+        <div class="tabs js-tabs">
+            <div class="tabs__container">
+                <a class="tab__item" href="#details" data-tab="tab-1">
+                    Details
+                </a>
+
+                <a class="tab__item" href="#communications" data-tab="tab-2">
+                    Communications
+                </a>
+
+                <a class="tab__item" href="#activity-feed" data-tab="tab-3">
+                    Activity Feed
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+    <div class="tabs__content" id="tab-1">
+
+        <div class="wrapper wrapper--sidebar">
+            <article class="wrapper--sidebar--inner">
+                <header class="heading heading--submission-meta heading-text zeta">
+                    <span>Last edit: <strong>{{ object.updated_at.timestamp.date }} by {{ object.updated_by }}</strong></span>
+
+                    {# {% if request.user|has_edit_perm:object %} #}
+                    {% if request.user %}
+                    <a class="link link--edit-submission is-active" href="#">
+                        Edit
+                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                    </a>
+                    {% else %}
+                    <span class="link link--edit-submission">
+                        Edit
+                        <svg class="icon icon--padlock"><use xlink:href="#padlock"></use></svg>
+                    </span>
+                    {% endif %}
+                </header>
+
+                <h3>Project Information</h3>
+                <div class="grid grid--proposal-info">
+                    <div>
+                        <h5>Proposed start date</h5>
+                        <p>13 August 2019</p>
+                    </div>
+
+                    <div>
+                        <h5>Project Proposed end date</h5>
+                        <p>25 January 2020</p>
+                    </div>
+
+                    <div>
+                        <h5>Legal name</h5>
+                        <p>{{ object.contact_legal_name|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Email</h5>
+                        {% if object.contact_email %}
+                        <a href="mailto:{{ object.contact_email }}">{{ object.contact_email }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <h5>Address</h5>
+                        <p>{{ object.address|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Value</h5>
+                        <p>{{ object.value|default:"-" }}</p>
+                    </div>
+                </div>
+
+                {% include "application_projects/includes/supporting_documents.html" %}
+            </article>
+
+            <aside class="sidebar">
+                {% if request.user.is_apply_staff %}
+                {% block admin_sidebar %}{% endblock %}
+                {% endif %}
+
+                <div class="sidebar__inner">
+                    <h5>Meta Categories</h5>
+
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    {# Tab 2 #}
+    <div class="tabs__content" id="tab-2">
+        <div class="feed">
+            {% include "activity/include/comment_form.html" %}
+            {% include "activity/include/comment_list.html" with editable=True %}
+        </div>
+    </div>
+
+    {# Tab 3 #}
+    <div class="tabs__content" id="tab-3">
+        <div class="feed">
+            {% include "activity/include/action_list.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}

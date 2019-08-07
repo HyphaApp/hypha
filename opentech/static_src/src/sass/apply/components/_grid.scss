@@ -75,14 +75,12 @@
         }
 
         &--proposal-info {
-            padding-bottom: 30px;
-            margin: 0 0 30px;
-            border-bottom: 1px solid $color--mid-grey;
             grid-template-columns: 100%;
-            grid-gap: 10px; // sass-lint:disable-line no-misspelled-properties
+            grid-gap: 10px;
+            margin: 0 0 1rem;
 
             @include media-query(mob-landscape) {
-                margin: 0 0 30px;
+                margin: 0 0 1.5rem;
                 grid-template-columns: 1fr 1fr;
             }
 
