@@ -83,6 +83,17 @@
     </a>
 
 </div>
+
+{% if approvals %}
+<div class="sidebar__inner">
+    <h5>Approved By:</h5>
+
+    {% for approval in approvals %}
+    <p>{{ approval.by }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_css %}
