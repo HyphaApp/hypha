@@ -110,6 +110,10 @@ class Project(models.Model):
         return reverse('apply:projects:detail', args=[self.id])
 
     @property
+    def can_make_approval(self):
+        return self.is_locked and self.status == COMMITTED
+
+    @property
     def can_send_for_approval(self):
         """
         Wrapper to expose the pending approval state

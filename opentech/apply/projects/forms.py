@@ -64,6 +64,13 @@ class ProjectEditForm(forms.ModelForm):
         return super().save(*args, **kwargs)
 
 
+class RejectionForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, instance=None, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class SetPendingForm(forms.ModelForm):
     class Meta:
         fields = ['id']

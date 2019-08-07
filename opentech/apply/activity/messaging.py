@@ -220,6 +220,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from from {old_lead} to {source.lead} by {user}',
         MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on Project',
         MESSAGES.APPROVE_PROJECT: '{user} has approved Project "{source.title}"',
+        MESSAGES.REJECT_PROJECT: '{user} has rejected Project "{source.title}" with the comment: {comment}',
     }
 
     def recipients(self, message_type, **kwargs):

@@ -19,6 +19,11 @@
     {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value='Approve'%}
 </div>
 
+<div class="modal" id="reject-project">
+    <h4 class="modal__header-bar">Reject Project</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Reject'%}
+</div>
+
 {% if mobile %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
 {% endif %}
@@ -27,7 +32,7 @@
 
     <h5>Actions to take</h5>
 
-    {% if not object.is_pending_approval %}
+    {% if object.can_send_for_approval %}
     <a data-fancybox
        data-src="#send-for-approval"
        class="button button--bottom-space button--primary button--full-width"
@@ -37,12 +42,19 @@
     {% endif %}
 
     {% user_has_approved object request.user as has_approved %}
-    {% if object.is_pending_approval and not has_approved %}
+    {% if object.can_make_approval and not has_approved %}
     <a data-fancybox
        data-src="#add-approval"
        class="button button--bottom-space button--primary button--full-width"
        href="#">
         Add approval
+    </a>
+
+    <a data-fancybox
+       data-src="#reject-project"
+       class="button button--bottom-space button--primary button--full-width"
+       href="#">
+        Reject
     </a>
     {% endif %}
 

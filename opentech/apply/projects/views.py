@@ -4,7 +4,7 @@ from django.db import transaction
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, FormView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -12,8 +12,8 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
-from .forms import (CreateApprovalForm, ProjectEditForm, SetPendingForm,
-                    UpdateProjectLeadForm)
+from .forms import (CreateApprovalForm, ProjectEditForm, RejectionForm,
+                    SetPendingForm, UpdateProjectLeadForm)
 from .models import CONTRACTING, Approval, DocumentCategory, Project
 
 
@@ -46,6 +46,28 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
+        return redirect(project)
+
+
+@method_decorator(staff_required, name='dispatch')
+class RejectionView(DelegatedViewMixin, FormView):
+    context_name = 'rejection_form'
+    form_class = RejectionForm
+    model = Project
+
+    def form_valid(self, form):
+        try:
+            project = Project.objects.get(pk=self.kwargs['pk'])
+        except Project.DoesNotExist:
+            raise Http404("No Project found with ID={self.kwargs['pk']}")
+
+        messenger(
+            MESSAGES.REJECT_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            comment=form.cleaned_data['comment'],
+        )
         return redirect(project)
 
 
@@ -97,6 +119,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
     form_views = [
         CommentFormView,
         CreateApprovalView,
+        RejectionView,
         SendForApprovalView,
         UpdateLeadView,
     ]
