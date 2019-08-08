@@ -60,6 +60,7 @@ from ..workflow import (
     get_review_active_statuses,
     INITIAL_STATE,
     PHASES,
+    PHASES_MAPPING,
     review_statuses,
     STAGE_CHANGE_ACTIONS,
     UserPermissions,
@@ -707,6 +708,11 @@ class ApplicationSubmission(
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+
+    @property
+    def accepted_for_funding(self):
+        accepted = self.status in PHASES_MAPPING['accepted']['statuses']
+        return self.in_final_stage and accepted
 
     @property
     def in_final_stage(self):

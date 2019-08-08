@@ -5,14 +5,12 @@
 <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
     <h5>Actions to take</h5>
 
-    {% if not object.project %}
     <a data-fancybox
        data-src="#create-project"
-       class="button button--bottom-space button--primary button--full-width"
+       class="button button--bottom-space button--primary button--full-width {% if object.accepted_for_funding and not object.project %}is-not-disabled{% else %}is-disabled{% endif %}"
        href="#">
         Create Project
     </a>
-    {% endif %}
 
     <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width {% if screening_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Screen application</a>
 
