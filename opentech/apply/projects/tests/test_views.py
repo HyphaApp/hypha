@@ -11,6 +11,31 @@ from ..views import ProjectDetailView
 from .factories import ProjectFactory
 
 
+class TestCreateApprovalView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_creating_an_approval_happy_path(self):
+        project = ProjectFactory()
+        self.assertEqual(project.approvals.count(), 0)
+
+        response = self.post_page(project, {'form-submitted-add_approval_form': ''})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        approval = project.approvals.first()
+
+        self.assertEqual(project.approvals.count(), 1)
+        self.assertFalse(project.is_locked)
+        self.assertEqual(project.status, 'contracting')
+
+        self.assertEqual(approval.project_id, project.pk)
+
+
 class TestProjectDetailView(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
@@ -72,7 +97,7 @@ class TestSendForApprovalView(BaseViewTestCase):
     def test_send_for_approval_happy_path(self):
         project = ProjectFactory(is_locked=False, status='committed')
 
-        response = self.post_page(project, {'form-submitted-approval_form': ''})
+        response = self.post_page(project, {'form-submitted-request_approval_form': ''})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
