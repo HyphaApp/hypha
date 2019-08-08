@@ -3,7 +3,7 @@ from copy import copy
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, FormView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -12,8 +12,9 @@ from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
 from .forms import (CreateApprovalForm, ProjectEditForm, RejectionForm,
-                    SetPendingForm, UpdateProjectLeadForm, UploadDocumentForm)
-from .models import CONTRACTING, Approval, Project
+                    RemoveDocumentForm, SetPendingForm, UpdateProjectLeadForm,
+                    UploadDocumentForm)
+from .models import CONTRACTING, Approval, PacketFile, Project
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -61,6 +62,24 @@ class RejectionView(DelegatedViewMixin, UpdateView):
         self.object.save(update_fields=['is_locked'])
 
         return redirect(self.object)
+
+
+@method_decorator(staff_required, name='dispatch')
+class RemoveDocumentView(DelegatedViewMixin, FormView):
+    context_name = 'remove_document_form'
+    form_class = RemoveDocumentForm
+    model = Project
+
+    def form_valid(self, form):
+        document_id = form.cleaned_data["id"]
+        project = self.kwargs['object']
+
+        try:
+            project.packet_files.get(pk=document_id).delete()
+        except PacketFile.DoesNotExist:
+            pass
+
+        return redirect(project)
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -133,6 +152,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
         CommentFormView,
         CreateApprovalView,
         RejectionView,
+        RemoveDocumentView,
         SendForApprovalView,
         UpdateLeadView,
         UploadDocumentView,
