@@ -103,12 +103,5 @@
 
 <div class="modal" id="upload-supporting-doc">
     <h4 class="modal__header-bar">Upload a new document</h4>
-    <div class="wrapper--outer-space-medium">
-        <label for="upload-document">Choose a document to upload:</label>
-        <input type="file" id="upload-document">
-    </div>
-    <div class="modal__buttons">
-        <button class="button button--primary button--submit" type="submit" name="submit">Upload</button>
-        <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-    </div>
+    {% include 'funds/includes/delegated_form_base.html' with form=document_form value='Upload'%}
 </div>

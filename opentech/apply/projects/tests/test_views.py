@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from django.test import RequestFactory, TestCase
 
 from opentech.apply.users.tests.factories import (ReviewerFactory,
@@ -8,7 +10,7 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
 from ..views import ProjectDetailView
-from .factories import ProjectFactory
+from .factories import DocumentCategoryFactory, ProjectFactory
 
 
 class TestCreateApprovalView(BaseViewTestCase):
@@ -104,3 +106,31 @@ class TestSendForApprovalView(BaseViewTestCase):
 
         self.assertTrue(project.is_locked)
         self.assertEqual(project.status, 'committed')
+
+
+class TestUploadDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_upload_document(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'document.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-document_form': '',
+            'title': 'test document',
+            'category': category.id,
+            'document': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.packet_files.count(), 1)

@@ -12,7 +12,7 @@ from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
 from .forms import (CreateApprovalForm, ProjectEditForm, RejectionForm,
-                    SetPendingForm, UpdateProjectLeadForm)
+                    SetPendingForm, UpdateProjectLeadForm, UploadDocumentForm)
 from .models import CONTRACTING, Approval, DocumentCategory, Project
 
 
@@ -106,6 +106,28 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_required, name='dispatch')
+class UploadDocumentView(DelegatedViewMixin, CreateView):
+    context_name = 'document_form'
+    form_class = UploadDocumentForm
+    model = Project
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+        form.instance.project = project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPLOAD_DOCUMENT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            title=form.instance.title
+        )
+
+        return response
+
+
 class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
     form_views = [
         CommentFormView,
@@ -113,14 +135,18 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
         RejectionView,
         SendForApprovalView,
         UpdateLeadView,
+        UploadDocumentView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
 
     def get_context_data(self, **kwargs):
+        categories = (DocumentCategory.objects.exclude(packet_files__project=self.object)
+                                              .distinct())
+
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
-        context['remaining_document_categories'] = DocumentCategory.objects.all()
+        context['remaining_document_categories'] = categories
         return context
 
 

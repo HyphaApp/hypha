@@ -5,7 +5,7 @@ from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .models import COMMITTED, Approval, Project
+from .models import COMMITTED, Approval, PacketFile, Project
 
 
 class CreateProjectForm(forms.Form):
@@ -94,6 +94,16 @@ class SetPendingForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.is_locked = True
         return super().save(*args, **kwargs)
+
+
+class UploadDocumentForm(forms.ModelForm):
+    class Meta:
+        fields = ['title', 'category', 'document']
+        model = PacketFile
+        widgets = {'title': forms.TextInput()}
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class UpdateProjectLeadForm(forms.ModelForm):

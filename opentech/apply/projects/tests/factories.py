@@ -5,7 +5,7 @@ import factory
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.projects.models import Project
+from opentech.apply.projects.models import DocumentCategory, Project
 from opentech.apply.users.tests.factories import UserFactory
 
 ADDRESS = {
@@ -32,6 +32,14 @@ def address_to_form_data():
         'contact_address_3_1': ADDRESS['locality']['administrativearea'],
         'contact_address_3_2': ADDRESS['locality']['postal_code'],
     }
+
+
+class DocumentCategoryFactory(factory.DjangoModelFactory):
+    name = factory.Sequence('name {}'.format)
+    recommended_minimum = 1
+
+    class Meta:
+        model = DocumentCategory
 
 
 class ProjectFactory(factory.DjangoModelFactory):
