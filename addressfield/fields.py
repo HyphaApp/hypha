@@ -14,6 +14,10 @@ with open(filepath, encoding='utf8') as address_data:
 
 VALIDATION_DATA = {country['iso']: country for country in countries}
 
+ADDRESS_FIELDS_ORDER = [
+    'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
+]
+
 
 def flatten_data(data):
     flattened = dict()

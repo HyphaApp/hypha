@@ -1,6 +1,8 @@
 import collections
 import decimal
+import json
 
+from addressfield.fields import ADDRESS_FIELDS_ORDER
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
@@ -99,6 +101,14 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_address_display(self):
+        address = json.loads(self.contact_address)
+        return ', '.join(
+            address[field]
+            for field in ADDRESS_FIELDS_ORDER
+            if address[field]
+        )
 
     @classmethod
     def create_from_submission(cls, submission):

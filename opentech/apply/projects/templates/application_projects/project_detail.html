@@ -92,7 +92,7 @@
                 <div class="rich-text--hidden js-rich-text-hidden">
                     <div>
                         <h5>Address</h5>
-                        <p>{{ object.contact_address|default:"-" }}</p>
+                        <p>{{ object.get_address_display|default:"-"}}</p>
                     </div>
 
                     <div>
@@ -102,7 +102,7 @@
 
                     <div>
                         <h5>Value</h5>
-                        <p>{{ object.value|default:"-" }}</p>
+                        <p>${{ object.value|default:"-" }}</p>
                     </div>
                 </div>
 
