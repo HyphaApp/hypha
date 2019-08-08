@@ -23,7 +23,7 @@ class TestCreateApprovalView(BaseViewTestCase):
         project = ProjectFactory()
         self.assertEqual(project.approvals.count(), 0)
 
-        response = self.post_page(project, {'form-submitted-add_approval_form': ''})
+        response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': self.user.id})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()

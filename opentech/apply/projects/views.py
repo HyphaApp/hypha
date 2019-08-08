@@ -1,10 +1,9 @@
 from copy import copy
 
 from django.db import transaction
-from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView, FormView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -25,19 +24,9 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
 
     @transaction.atomic()
     def form_valid(self, form):
-        try:
-            project = Project.objects.get(pk=self.kwargs['pk'])
-        except Project.DoesNotExist:
-            raise Http404("No Project found with ID={self.kwargs['pk']}")
-
-        Approval.objects.create(
-            by=self.request.user,
-            project=project,
-        )
-
-        project.is_locked = False
-        project.status = CONTRACTING
-        project.save(update_fields=['is_locked', 'status'])
+        project = self.kwargs['object']
+        form.instance.project = project
+        response = super().form_valid(form)
 
         messenger(
             MESSAGES.APPROVE_PROJECT,
@@ -46,29 +35,32 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
-        return redirect(project)
+        project.is_locked = False
+        project.status = CONTRACTING
+        project.save(update_fields=['is_locked', 'status'])
+
+        return response
 
 
 @method_decorator(staff_required, name='dispatch')
-class RejectionView(DelegatedViewMixin, FormView):
+class RejectionView(DelegatedViewMixin, UpdateView):
     context_name = 'rejection_form'
     form_class = RejectionForm
     model = Project
 
     def form_valid(self, form):
-        try:
-            project = Project.objects.get(pk=self.kwargs['pk'])
-        except Project.DoesNotExist:
-            raise Http404("No Project found with ID={self.kwargs['pk']}")
-
         messenger(
-            MESSAGES.REJECT_PROJECT,
+            MESSAGES.REQUEST_PROJECT_CHANGE,
             request=self.request,
             user=self.request.user,
-            source=project,
+            source=self.object,
             comment=form.cleaned_data['comment'],
         )
-        return redirect(project)
+
+        self.object.is_locked = False
+        self.object.save(update_fields=['is_locked'])
+
+        return redirect(self.object)
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -85,8 +77,7 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             MESSAGES.SEND_FOR_APPROVAL,
             request=self.request,
             user=self.request.user,
-            source=form.instance.submission,
-            project=form.instance,
+            source=self.object,
         )
 
         return response

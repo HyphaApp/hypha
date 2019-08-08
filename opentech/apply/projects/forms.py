@@ -28,11 +28,13 @@ class CreateProjectForm(forms.Form):
 class CreateApprovalForm(forms.ModelForm):
     class Meta:
         model = Approval
-        fields = ['id']
-        widgets = {'id': forms.HiddenInput()}
+        fields = ['by']
+        widgets = {'by': forms.HiddenInput()}
 
     def __init__(self, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        initial = kwargs.pop('initial', {})
+        initial.update(by=user)
+        super().__init__(*args, initial=initial, **kwargs)
 
 
 class ProjectEditForm(forms.ModelForm):

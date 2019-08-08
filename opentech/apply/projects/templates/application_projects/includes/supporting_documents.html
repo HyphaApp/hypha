@@ -23,13 +23,20 @@
                 <p class="docs-block__title">Approval Form</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
-                    {% if object.user_has_updated_details %}
-                    Edit
-                    {% else %}
-                    Create
-                    {% endif %}
-                </a>
+                {% if object.editable %}
+                    <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                        {% if object.user_has_updated_details %}
+                        Edit
+                        {% else %}
+                        Create
+                        {% endif %}
+                    </a>
+                {% endif %}
+                {% if object.user_has_updated_details %}
+                    <a class="docs-block__link" href="#">
+                        View
+                    </a>
+                {% endif %}
             </div>
         </li>
 
@@ -38,9 +45,11 @@
                 <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
                 <p class="docs-block__title">Supporting documents</p>
             </div>
-            <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
-            </div>
+            {% if object.editable %}
+                <div class="docs-block__row-inner">
+                    <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+                </div>
+            {% endif %}
             {% if remaining_document_categories %}
             <div class="docs-block__info-text">
                 <p>
@@ -80,8 +89,15 @@
         </li>
     </ul>
     <div class="docs-block__buttons">
-        <button class="button button--primary" href="#">Submit for approval</button>
-        <button class="button button--primary" href="#">Ready for contracting</button>
+        {% if object.can_send_for_approval %}
+            <a data-fancybox
+            data-src="#send-for-approval"
+            class="button button--primary"
+            href="#">
+                Submit for Approval
+            </a>
+        {% endif %}
+        <!-- <button class="button button--primary" href="#">Ready for contracting</button> -->
     </div>
 </div>
 
