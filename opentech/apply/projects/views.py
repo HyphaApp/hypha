@@ -13,7 +13,7 @@ from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
 
 from .forms import (CreateApprovalForm, ProjectEditForm, RejectionForm,
                     SetPendingForm, UpdateProjectLeadForm, UploadDocumentForm)
-from .models import CONTRACTING, Approval, DocumentCategory, Project
+from .models import CONTRACTING, Approval, Project
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -141,12 +141,9 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
     template_name_suffix = '_admin_detail'
 
     def get_context_data(self, **kwargs):
-        categories = (DocumentCategory.objects.exclude(packet_files__project=self.object)
-                                              .distinct())
-
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
-        context['remaining_document_categories'] = categories
+        context['remaining_document_categories'] = self.object.get_missing_document_categories()
         return context
 
 

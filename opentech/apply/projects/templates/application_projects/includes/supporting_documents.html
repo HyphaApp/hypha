@@ -56,8 +56,8 @@
                     Every project should include the following documents:
                 </p>
                 <ul>
-                    {% for category in remaining_document_categories %}
-                        <li>{{ category.name }} ({{ category.recommended_minimum }})</li>
+                    {% for missing in remaining_document_categories %}
+                        <li>{{ missing.category.name }} ({{ missing.difference }})</li>
                     {% endfor %}
                 </ul>
             </div>

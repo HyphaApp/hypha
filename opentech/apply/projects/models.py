@@ -1,3 +1,4 @@
+import collections
 import decimal
 
 from django.conf import settings
@@ -143,6 +144,24 @@ class Project(models.Model):
         """
         correct_state = self.status == COMMITTED and not self.is_locked
         return correct_state and self.user_has_updated_details
+
+    def get_missing_document_categories(self):
+        """
+        Get the number of documents required to meet each DocumentCategorys minimum
+        """
+        # Count the number of documents in each category currently
+        existing_categories = DocumentCategory.objects.filter(packet_files__project=self)
+        counter = collections.Counter(existing_categories)
+
+        # Find the difference between the current count and recommended count
+        for category in DocumentCategory.objects.all():
+            current_count = counter[category]
+            difference = category.recommended_minimum - current_count
+            if difference > 0:
+                yield {
+                    'category': category,
+                    'difference': difference,
+                }
 
 
 class DocumentCategory(models.Model):
