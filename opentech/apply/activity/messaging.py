@@ -419,7 +419,7 @@ class SlackAdapter(AdapterBase):
         if message_type == MESSAGES.SEND_FOR_APPROVAL:
             return [
                 self.slack_id(user)
-                for slack_id in User.objects.approvers()
+                for user in User.objects.approvers()
                 if self.slack_id(user)
             ]
 
