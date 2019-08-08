@@ -218,6 +218,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
         MESSAGES.CREATED_PROJECT: '{user} has created Project',
         MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from from {old_lead} to {source.lead} by {user}',
+        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on Project',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -379,6 +380,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{source.title}>.',
         MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
         MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{source.title}>.',
+        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on project <{link}|{source.title}>.',
     }
 
     def __init__(self):
@@ -407,6 +409,13 @@ class SlackAdapter(AdapterBase):
         }
 
     def recipients(self, message_type, source, related, **kwargs):
+        if message_type == MESSAGES.SEND_FOR_APPROVAL:
+            return [
+                self.slack_id(user)
+                for slack_id in User.objects.approvers()
+                if self.slack_id(user)
+            ]
+
         recipients = [self.slack_id(source.lead)]
 
         # Notify second reviewer when first reviewer is done.

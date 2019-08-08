@@ -3,6 +3,11 @@
 {% load static %}
 
 {% block admin_sidebar %}
+<div class="modal" id="send-for-approval">
+    <h4 class="modal__header-bar">Request Approval</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=approval_form value='Request'%}
+</div>
+
 <div class="modal" id="assign-lead">
     <h4 class="modal__header-bar">Assign Lead</h4>
     {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
@@ -16,12 +21,14 @@
 
     <h5>Actions to take</h5>
 
+    {% if not object.is_pending_approval %}
     <a data-fancybox
        data-src="#send-for-approval"
        class="button button--bottom-space button--primary button--full-width"
        href="#">
         Send for approval
     </a>
+    {% endif %}
 
     <a data-fancybox
        data-src="#ready-for-contracting"
