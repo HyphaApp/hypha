@@ -409,6 +409,13 @@ class SlackAdapter(AdapterBase):
         }
 
     def recipients(self, message_type, source, related, **kwargs):
+        if message_type == MESSAGES.SEND_FOR_APPROVAL:
+            return [
+                self.slack_id(user)
+                for slack_id in User.objects.approvers()
+                if self.slack_id(user)
+            ]
+
         recipients = [self.slack_id(source.lead)]
 
         # Notify second reviewer when first reviewer is done.
