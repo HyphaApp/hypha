@@ -134,6 +134,14 @@ class Project(models.Model):
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
+    def editable_by(self, user):
+        if self.editable:
+            return True
+
+        # Approver can edit it when they are approving
+        return user.is_approver and self.can_make_approval
+
+    @property
     def editable(self):
         # Someone must lead the project to make changes
         return self.lead and not self.is_locked

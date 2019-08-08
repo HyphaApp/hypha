@@ -56,26 +56,10 @@
 
 <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     <div class="tabs__content" id="tab-1">
-
+        {% block notifications %}
+        {% endblock %}
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <header class="heading heading--submission-meta heading-text zeta">
-                    <span>Last edit: <strong>{{ object.updated_at.timestamp.date }} by {{ object.updated_by }}</strong></span>
-
-                    {# {% if request.user|has_edit_perm:object %} #}
-                    {% if request.user %}
-                    <a class="link link--edit-submission is-active" href="#">
-                        Edit
-                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                    </a>
-                    {% else %}
-                    <span class="link link--edit-submission">
-                        Edit
-                        <svg class="icon icon--padlock"><use xlink:href="#padlock"></use></svg>
-                    </span>
-                    {% endif %}
-                </header>
-
                 <h3>Project Information</h3>
                 <div class="grid grid--proposal-info">
                     <div>
@@ -128,9 +112,7 @@
                 {#     {% include "funds/includes/invoice_block.html" %} #}
                 {# </div> #}
 
-                {% if request.user.is_apply_staff %}
-                    {% include "application_projects/includes/supporting_documents.html" %}
-                {% endif %}
+                {% include "application_projects/includes/supporting_documents.html" %}
             </article>
 
             <aside class="sidebar">

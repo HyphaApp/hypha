@@ -15,8 +15,4 @@ def user_can_approve_project(project, user):
 
 @register.simple_tag
 def user_can_edit_project(project, user):
-    if project.editable:
-        return True
-
-    # Approver can edit it when they are approving
-    return user.is_approver and project.can_make_approval
+    return project.editable_by(user)

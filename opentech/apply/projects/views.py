@@ -1,5 +1,6 @@
 from copy import copy
 
+from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -11,10 +12,17 @@ from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
                                         ViewDispatcher)
 
-from .forms import (CreateApprovalForm, ProjectEditForm, RejectionForm,
-                    RemoveDocumentForm, SetPendingForm, UpdateProjectLeadForm,
-                    UploadDocumentForm)
-from .models import CONTRACTING, Approval, PacketFile, Project
+from .forms import (
+    CreateApprovalForm,
+    ProjectApprovalForm,
+    ProjectEditForm,
+    RejectionForm,
+    RemoveDocumentForm,
+    SetPendingForm,
+    UpdateProjectLeadForm,
+    UploadDocumentForm,
+)
+from .models import CONTRACTING, Approval, DocumentCategory, Project, PacketFile
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -167,8 +175,20 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
         return context
 
 
-class ApplicantProjectDetailView(DetailView):
+class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
+    form_views = [
+        CommentFormView,
+    ]
+
     model = Project
+    template_name_suffix = '_applicant_detail'
+
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        # This view is only for applicants.
+        if project.user != request.user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProjectDetailView(ViewDispatcher):
@@ -176,7 +196,33 @@ class ProjectDetailView(ViewDispatcher):
     applicant_view = ApplicantProjectDetailView
 
 
-@method_decorator(staff_required, name='dispatch')
-class ProjectEditView(UpdateView):
+class ProjectApprovalEditView(UpdateView):
+    form_class = ProjectApprovalForm
+    model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.object.editable_by(request.user):
+            messages.info(self.request, _('You are not allowed to edit the project at this time'))
+            return redirect(self.object)
+
+
+class ApplicantProjectEditView(UpdateView):
     form_class = ProjectEditForm
     model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        # This view is only for applicants.
+        if project.user != request.user:
+            raise PermissionDenied
+
+        if not self.object.editable_by(request.user):
+            messages.info(self.request, _('You are not allowed to edit the project at this time'))
+            return redirect(self.object)
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+class ProjectEditView(ViewDispatcher):
+    admin_view = ProjectApprovalEditView
+    applicant_view = ApplicantProjectEditView
