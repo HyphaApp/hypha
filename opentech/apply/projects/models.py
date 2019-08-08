@@ -106,6 +106,10 @@ class Project(models.Model):
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
+    def editable(self):
+        # Someone must lead the project to make changes
+        return self.lead and not self.is_locked
+
     def get_absolute_url(self):
         return reverse('apply:projects:detail', args=[self.id])
 
@@ -122,8 +126,8 @@ class Project(models.Model):
         we infer it from the current status being "Comitted" and the Project
         being locked.
         """
-        return self.status == COMMITTED and not self.is_locked
-        return self.status == COMMITTED and self.is_locked
+        correct_state = self.status == COMMITTED and not self.is_locked
+        return correct_state and self.user_has_updated_details
 
 
 class DocumentCategory(models.Model):

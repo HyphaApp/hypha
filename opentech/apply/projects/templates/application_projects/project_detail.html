@@ -128,7 +128,9 @@
                 {#     {% include "funds/includes/invoice_block.html" %} #}
                 {# </div> #}
 
-                {% include "application_projects/includes/supporting_documents.html" %}
+                {% if request.user.is_apply_staff %}
+                    {% include "application_projects/includes/supporting_documents.html" %}
+                {% endif %}
             </article>
 
             <aside class="sidebar">

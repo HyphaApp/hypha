@@ -14,14 +14,14 @@
     {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
 </div>
 
-<div class="modal" id="add-approval">
+<div class="modal" id="approve">
     <h4 class="modal__header-bar">Add Approval</h4>
     {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value='Approve'%}
 </div>
 
-<div class="modal" id="reject-project">
-    <h4 class="modal__header-bar">Reject Project</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Reject'%}
+<div class="modal" id="request-project-changes">
+    <h4 class="modal__header-bar">Request Changes</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
 {% if mobile %}
@@ -37,33 +37,33 @@
        data-src="#send-for-approval"
        class="button button--bottom-space button--primary button--full-width"
        href="#">
-        Send for approval
+        Submit for Approval
     </a>
     {% endif %}
 
-    {% user_has_approved object request.user as has_approved %}
-    {% if object.can_make_approval and not has_approved %}
-    <a data-fancybox
-       data-src="#add-approval"
-       class="button button--bottom-space button--primary button--full-width"
-       href="#">
-        Add approval
-    </a>
+    {% if object.can_make_approval %}
+        {% user_can_approve_project object request.user as user_can_approve %}
+        <a data-fancybox
+            data-src="#approve"
+            class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+            href="#">
+            Approve
+        </a>
 
-    <a data-fancybox
-       data-src="#reject-project"
-       class="button button--bottom-space button--primary button--full-width"
-       href="#">
-        Reject
-    </a>
+        <a data-fancybox
+            data-src="#request-project-changes"
+           class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+            href="#">
+            Request changes
+        </a>
     {% endif %}
 
-    <a data-fancybox
-       data-src="#ready-for-contracting"
-       class="button button--primary button--full-width"
-       href="#">
-        Ready for contracting
-    </a>
+    <!-- <a data-fancybox -->
+    <!-- data-src="#ready-for-contracting" -->
+    <!-- class="button button--primary button--full-width" -->
+    <!-- href="#"> -->
+    <!-- Ready for contracting -->
+    <!-- </a> -->
 
 
     <p class="sidebar__separator">Assign</p>
@@ -75,12 +75,12 @@
         Lead
     </a>
 
-    <a data-fancybox
-       data-src="#update-meta-categories"
-       class="button button--bottom-space button--white button--full-width"
-       href="#">
-        Meta Categories
-    </a>
+    <!-- <a data-fancybox -->
+    <!-- data-src="#update-meta-categories" -->
+    <!-- class="button button--bottom-space button--white button--full-width" -->
+    <!-- href="#"> -->
+    <!-- Meta Categories -->
+    <!-- </a> -->
 
 </div>
 
@@ -89,7 +89,7 @@
     <h5>Approved By:</h5>
 
     {% for approval in approvals %}
-    <p>{{ approval.by }}</p>
+    <p>{{ approval.by }} - {{ approval.created_at|date:"Y-m-d" }}</p>
     {% endfor %}
 </div>
 {% endif %}
