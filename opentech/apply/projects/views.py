@@ -120,7 +120,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
-        context['remaining_document_categories']: DocumentCategory.objects.all()
+        context['remaining_document_categories'] = DocumentCategory.objects.all()
         return context
 
 
