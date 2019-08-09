@@ -589,7 +589,7 @@ class TestForTableQueryset(TestCase):
 
         ReviewFactory(submission=submission_two)
 
-        qs = ApplicationSubmission.objects.for_table(user=staff)
+        qs = ApplicationSubmission.objects.order_by('pk').for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission, submission_one)
         self.assertEqual(submission.opinion_disagree, 1)
