@@ -21,6 +21,7 @@ env:
   global:
     - DJANGO_SETTINGS_MODULE=opentech.settings.test
     - DATABASE_URL=postgres://postgres@localhost/test_db
+    - PROJECTS_ENABLED=true
 
 before_script:
   # Create a database
