@@ -1,9 +1,11 @@
 from copy import copy
 
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, DetailView, FormView, UpdateView
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -201,9 +203,11 @@ class ProjectApprovalEditView(UpdateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        if not self.object.editable_by(request.user):
+        project = self.get_object()
+        if not project.editable_by(request.user):
             messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(self.object)
+            return redirect(project)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ApplicantProjectEditView(UpdateView):
@@ -216,9 +220,9 @@ class ApplicantProjectEditView(UpdateView):
         if project.user != request.user:
             raise PermissionDenied
 
-        if not self.object.editable_by(request.user):
+        if not project.editable_by(request.user):
             messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(self.object)
+            return redirect(project)
 
         return super().dispatch(request, *args, **kwargs)
 

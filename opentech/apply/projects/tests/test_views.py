@@ -1,17 +1,24 @@
 from io import BytesIO
 
+from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
 
-from opentech.apply.users.tests.factories import (ReviewerFactory,
-                                                  StaffFactory,
-                                                  SuperUserFactory,
-                                                  UserFactory)
+from opentech.apply.users.tests.factories import (
+    ApproverFactory,
+    ReviewerFactory,
+    StaffFactory,
+    SuperUserFactory,
+    UserFactory,
+)
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..views import ProjectDetailView
-from .factories import (DocumentCategoryFactory, PacketFileFactory,
-                        ProjectFactory)
+from ..views import ProjectDetailView, ProjectEditView
+from .factories import (
+    DocumentCategoryFactory,
+    PacketFileFactory,
+    ProjectFactory,
+)
 
 
 class TestCreateApprovalView(BaseViewTestCase):
@@ -69,7 +76,16 @@ class TestProjectDetailView(TestCase):
         request = self.factory.get('/projects/1/')
         request.user = UserFactory()
 
-        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
+        with self.assertRaises(PermissionDenied):
+            ProjectDetailView.as_view()(request, pk=self.project.pk)
+
+    def test_owner_has_access(self):
+        owner = UserFactory()
+        request = self.factory.get('/projects/1/')
+        request.user = owner
+        project = ProjectFactory(user=owner)
+
+        response = ProjectDetailView.as_view()(request, pk=project.pk)
         self.assertEqual(response.status_code, 200)
 
 
@@ -164,3 +180,100 @@ class TestUploadDocumentView(BaseViewTestCase):
         project.refresh_from_db()
 
         self.assertEqual(project.packet_files.count(), 1)
+
+
+class BaseProjectEditTestCase(BaseViewTestCase):
+    url_name = 'funds:projects:{}'
+    base_view_name = 'edit'
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+
+class TestUserProjectEditView(BaseProjectEditTestCase):
+    user_factory = UserFactory
+
+    def test_does_not_have_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_owner_has_access(self):
+        project = ProjectFactory(user=self.user)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_no_lead_redirects(self):
+        project = ProjectFactory(user=self.user, lead=None)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.url(project, 'detail'))
+
+    def test_locked_redirects(self):
+        project = ProjectFactory(user=self.user, is_locked=True)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.url(project, 'detail'))
+
+
+class TestStaffProjectEditView(BaseProjectEditTestCase):
+    user_factory = StaffFactory
+
+    def test_staff_user_has_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_no_lead_redirects(self):
+        project = ProjectFactory(user=self.user, lead=None)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.url(project, 'detail'))
+
+    def test_locked_redirects(self):
+        project = ProjectFactory(user=self.user, is_locked=True)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.url(project, 'detail'))
+
+
+class TestApproverProjectEditView(BaseProjectEditTestCase):
+    user_factory = ApproverFactory
+
+    def test_approver_has_access_locked(self):
+        project = ProjectFactory(is_locked=True)
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestSuperProjectEditView(BaseProjectEditTestCase):
+    user_factory = StaffFactory
+
+    def test_has_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestReviewerProjectEditView(BaseProjectEditTestCase):
+    user_factory = ReviewerFactory
+
+    def test_does_not_have_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.redirect_chain, [])

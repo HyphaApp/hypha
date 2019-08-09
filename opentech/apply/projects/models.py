@@ -105,9 +105,9 @@ class Project(models.Model):
     def get_address_display(self):
         address = json.loads(self.contact_address)
         return ', '.join(
-            address[field]
+            address.get(field)
             for field in ADDRESS_FIELDS_ORDER
-            if address[field]
+            if address.get(field)
         )
 
     @classmethod
