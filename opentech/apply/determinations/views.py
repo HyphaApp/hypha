@@ -248,6 +248,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 submission=self.object.submission,
                 related=self.object,
             )
+            proposal_form = form.cleaned_data.get('proposal_form')
             transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
@@ -260,7 +261,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     related_object=self.object,
                 )
 
-            self.submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+            self.submission.perform_transition(
+                transition, self.request.user, request=self.request, notify=False, proposal_form=proposal_form)
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 
