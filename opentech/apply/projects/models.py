@@ -1,6 +1,8 @@
 import collections
 import decimal
+import json
 
+from addressfield.fields import ADDRESS_FIELDS_ORDER
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
@@ -100,6 +102,14 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    def get_address_display(self):
+        address = json.loads(self.contact_address)
+        return ', '.join(
+            address.get(field)
+            for field in ADDRESS_FIELDS_ORDER
+            if address.get(field)
+        )
+
     @classmethod
     def create_from_submission(cls, submission):
         """
@@ -134,6 +144,14 @@ class Project(models.Model):
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
+    def editable_by(self, user):
+        if self.editable:
+            return True
+
+        # Approver can edit it when they are approving
+        return user.is_approver and self.can_make_approval
+
+    @property
     def editable(self):
         # Someone must lead the project to make changes
         return self.lead and not self.is_locked

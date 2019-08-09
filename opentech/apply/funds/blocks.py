@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from wagtail.core import blocks
 
-from addressfield.fields import AddressField
+from addressfield.fields import AddressField, ADDRESS_FIELDS_ORDER
 from opentech.apply.categories.blocks import CategoryQuestionBlock
 from opentech.apply.stream_forms.blocks import FormFieldsBlock
 from opentech.apply.utils.blocks import (
@@ -69,18 +69,15 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
         # Based on the fields listed in addressfields/widgets.py
         return ', '.join(
             data[field]
-            for field in order_fields
+            for field in ADDRESS_FIELDS_ORDER
             if data[field]
         )
 
     def prepare_data(self, value, data, serialize):
-        order_fields = [
-            'thoroughfare', 'premise', 'localityname', 'administrativearea', 'postalcode', 'country'
-        ]
         data = json.loads(data)
         data = {
             field: data[field]
-            for field in order_fields
+            for field in ADDRESS_FIELDS_ORDER
         }
 
         if serialize:

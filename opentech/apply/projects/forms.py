@@ -61,6 +61,8 @@ class ProjectEditForm(forms.ModelForm):
             'proposed_start': forms.DateInput,
         }
 
+
+class ProjectApprovalForm(ProjectEditForm):
     def save(self, *args, **kwargs):
         self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)

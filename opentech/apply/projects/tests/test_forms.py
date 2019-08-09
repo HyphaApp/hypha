@@ -1,10 +1,10 @@
 from django.test import TestCase
 
-from ..forms import ProjectEditForm
+from ..forms import ProjectApprovalForm
 from .factories import ProjectFactory, address_to_form_data
 
 
-class TestProjectEditForm(TestCase):
+class TestProjectApprovalForm(TestCase):
     def test_updating_fields_sets_changed_flag(self):
         project = ProjectFactory()
 
@@ -20,7 +20,7 @@ class TestProjectEditForm(TestCase):
             'proposed_end': project.proposed_end,
         }
         data.update(address_to_form_data())
-        form = ProjectEditForm(instance=project, data=data)
+        form = ProjectApprovalForm(instance=project, data=data)
         form.save()
 
         self.assertTrue(project.user_has_updated_details)

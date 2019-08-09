@@ -1,3 +1,6 @@
+{% load approval_tools %}
+{% user_can_edit_project object request.user as editable %}
+
 <div class="docs-block wrapper--outer-space-large">
     <div class="docs-block__header">
         <h4 class="docs-block__heading">Supporting documents</h4>
@@ -23,7 +26,7 @@
                 <p class="docs-block__title">Approval Form</p>
             </div>
             <div class="docs-block__row-inner">
-                {% if object.editable %}
+                {% if editable %}
                     <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
                         {% if object.user_has_updated_details %}
                         Edit
@@ -45,7 +48,7 @@
                 <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
                 <p class="docs-block__title">Supporting documents</p>
             </div>
-            {% if object.editable %}
+            {% if editable %}
                 <div class="docs-block__row-inner">
                     <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
                 </div>

@@ -99,9 +99,8 @@
                     {% endblock %}
                 {% endif %}
 
-                {% if request.user.is_apply_staff and object.project %}
-                    {% block project %}
-                    {% endblock %}
+                {% if object.project %}
+                    {% include 'funds/includes/project_block.html' %}
                 {% endif %}
 
                 {% block determination %}
