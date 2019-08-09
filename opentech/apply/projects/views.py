@@ -24,7 +24,7 @@ from .forms import (
     UpdateProjectLeadForm,
     UploadDocumentForm,
 )
-from .models import CONTRACTING, Approval, DocumentCategory, Project, PacketFile
+from .models import CONTRACTING, Approval, Project, PacketFile
 
 
 @method_decorator(staff_required, name='dispatch')

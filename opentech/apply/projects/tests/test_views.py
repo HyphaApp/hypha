@@ -13,7 +13,7 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..views import ProjectDetailView, ProjectEditView
+from ..views import ProjectDetailView
 from .factories import (
     DocumentCategoryFactory,
     PacketFileFactory,
