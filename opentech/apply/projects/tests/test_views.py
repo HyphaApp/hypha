@@ -10,7 +10,8 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
 from ..views import ProjectDetailView
-from .factories import DocumentCategoryFactory, ProjectFactory
+from .factories import (DocumentCategoryFactory, PacketFileFactory,
+                        ProjectFactory)
 
 
 class TestCreateApprovalView(BaseViewTestCase):
@@ -69,6 +70,35 @@ class TestProjectDetailView(TestCase):
         request.user = UserFactory()
 
         response = ProjectDetailView.as_view()(request, pk=self.project.pk)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestRemoveDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_remove_document(self):
+        project = ProjectFactory()
+        document = PacketFileFactory()
+
+        response = self.post_page(project, {
+            'form-submitted-remove_document_form': '',
+            'id': document.id,
+        })
+        project.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(document.pk, project.packet_files.values_list('pk', flat=True))
+
+    def test_remove_non_existent_document(self):
+        response = self.post_page(ProjectFactory(), {
+            'form-submitted-remove_document_form': '',
+            'id': 1,
+        })
         self.assertEqual(response.status_code, 200)
 
 

@@ -73,7 +73,18 @@
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{{ document.document.url }}">Download</a>
-                        <a class="docs-block__document-link" href="#">Remove</a>
+                        <form method="POST" id="{{ remove_document_form.name }}">
+                            {% csrf_token %}
+                            {{ document.get_remove_form }}
+                            <input
+                                class="button button--primary button--top-space"
+                                id="{{ remove_document_form.name }}-submit"
+                                name="{{ form_prefix }}{{ remove_document_form.name }}"
+                                type="submit"
+                                form="{{ remove_document_form.name }}"
+                                value="Remove" />
+                        </form>
+                            </input>
                     </div>
                 </li>
                 {% endfor %}

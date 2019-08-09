@@ -37,6 +37,18 @@ class PacketFile(models.Model):
     def __str__(self):
         return f'Project file: {self.title}'
 
+    def get_remove_form(self):
+        """
+        Get an instantiated RemoveDocumentForm with this class as `instance`.
+
+        This allows us to build instances of the RemoveDocumentForm for each
+        instance of PacketFile in the supporting documents template.  The
+        standard Delegated View flow makes it difficult to create these forms
+        in the view or template.
+        """
+        from .forms import RemoveDocumentForm
+        return RemoveDocumentForm(instance=self)
+
 
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'

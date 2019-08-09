@@ -73,6 +73,17 @@ class RejectionForm(forms.Form):
         super().__init__(*args, **kwargs)
 
 
+class RemoveDocumentForm(forms.ModelForm):
+    id = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
+        fields = ['id']
+        model = PacketFile
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class SetPendingForm(forms.ModelForm):
     class Meta:
         fields = ['id']
