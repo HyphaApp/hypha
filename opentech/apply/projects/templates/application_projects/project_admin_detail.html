@@ -6,7 +6,44 @@
 {% block admin_sidebar %}
 <div class="modal" id="send-for-approval">
     <h4 class="modal__header-bar">Request Approval</h4>
+
+    {% if not remaining_document_categories %}
     {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Request'%}
+    {% else %}
+    <form class="form" method="post" id="{{ request_approval_form.name }}">
+        {% csrf_token %}
+
+        <h5>Are you sure you're ready to upload?</h5>
+
+        <p>This project is missing the following documents:</p>
+
+        <ul>
+            {% for missing in remaining_document_categories %}
+            <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
+            {% endfor %}
+        </ul>
+
+        <div class="form__item">
+            {{ request_approval_form }}
+        </div>
+
+        <button
+            type="button"
+            data-fancybox-close=""
+            class="button button--primary button--top-space"
+            title="Close">
+            Cancel
+        </button>
+
+        <input
+            class="button button--white button--top-space"
+            id="{{ request_approval_form.name }}-submit"
+            name="{{ form_prefix }}{{ request_approval_form.name }}"
+            type="submit" form="{{ form.name }}"
+            value="Upload anyway" />
+
+    </form>
+    {% endif %}
 </div>
 
 <div class="modal" id="assign-lead">
