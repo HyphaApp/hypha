@@ -5,7 +5,8 @@ import factory
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.projects.models import Project
+from opentech.apply.projects.models import (DocumentCategory, PacketFile,
+                                            Project)
 from opentech.apply.users.tests.factories import UserFactory
 
 ADDRESS = {
@@ -34,6 +35,14 @@ def address_to_form_data():
     }
 
 
+class DocumentCategoryFactory(factory.DjangoModelFactory):
+    name = factory.Sequence('name {}'.format)
+    recommended_minimum = 1
+
+    class Meta:
+        model = DocumentCategory
+
+
 class ProjectFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -49,3 +58,14 @@ class ProjectFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Project
+
+
+class PacketFileFactory(factory.DjangoModelFactory):
+    category = factory.SubFactory(DocumentCategoryFactory)
+    project = factory.SubFactory(ProjectFactory)
+
+    title = factory.Sequence('name {}'.format)
+    document = factory.django.FileField()
+
+    class Meta:
+        model = PacketFile

@@ -1,3 +1,4 @@
+import collections
 import decimal
 
 from django.conf import settings
@@ -20,6 +21,21 @@ class Approval(models.Model):
 
     def __str__(self):
         return f'Approval of "{self.project.title}" by {self.by}'
+
+
+def document_path(instance, filename):
+    return f'projects/{instance.project_id}/supporting_documents/{filename}'
+
+
+class PacketFile(models.Model):
+    category = models.ForeignKey("DocumentCategory", null=True, on_delete=models.CASCADE, related_name="packet_files")
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="packet_files")
+
+    title = models.TextField()
+    document = models.FileField(upload_to=document_path)
+
+    def __str__(self):
+        return f'Project file: {self.title}'
 
 
 COMMITTED = 'committed'
@@ -128,6 +144,24 @@ class Project(models.Model):
         """
         correct_state = self.status == COMMITTED and not self.is_locked
         return correct_state and self.user_has_updated_details
+
+    def get_missing_document_categories(self):
+        """
+        Get the number of documents required to meet each DocumentCategorys minimum
+        """
+        # Count the number of documents in each category currently
+        existing_categories = DocumentCategory.objects.filter(packet_files__project=self)
+        counter = collections.Counter(existing_categories)
+
+        # Find the difference between the current count and recommended count
+        for category in DocumentCategory.objects.all():
+            current_count = counter[category]
+            difference = category.recommended_minimum - current_count
+            if difference > 0:
+                yield {
+                    'category': category,
+                    'difference': difference,
+                }
 
 
 class DocumentCategory(models.Model):

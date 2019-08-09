@@ -56,36 +56,30 @@
                     Every project should include the following documents:
                 </p>
                 <ul>
-                    {% for category in remaining_document_categories %}
-                        <li>{{ category.name }} ({{ category.recommended_minimum }})</li>
+                    {% for missing in remaining_document_categories %}
+                        <li>{{ missing.category.name }} ({{ missing.difference }})</li>
                     {% endfor %}
                 </ul>
             </div>
             {% endif %}
-            <!-- Example document list
-                <ul class="docs-block__document-list">
-                    <li class="docs-block__document">
-                        <div class="docs-block__document-inner">
-                            <p class="docs-block__document-info"><b>This is a document title</b></p>
-                            <p class="docs-block__document-info">This is a document type</p>
-                        </div>
-                        <div class="docs-block__document-inner">
-                            <a class="docs-block__document-link" href="#">Download</a>
-                            <a class="docs-block__document-link" href="#">Remove</a>
-                        </div>
-                    </li>
-                    <li class="docs-block__document">
-                        <div class="docs-block__document-inner">
-                            <p class="docs-block__document-info"><b>This is a document title</b></p>
-                            <p class="docs-block__document-info">This is a document type</p>
-                        </div>
-                        <div class="docs-block__document-inner">
-                            <a class="docs-block__document-link" href="#">Download</a>
-                            <a class="docs-block__document-link" href="#">Remove</a>
-                        </div>
-                    </li>
-                </ul>
-            -->
+
+            {% if object.packet_files.exists %}
+            <ul class="docs-block__document-list">
+                {% for document in object.packet_files.all %}
+                <li class="docs-block__document">
+                    <div class="docs-block__document-inner">
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b></p>
+                        <p class="docs-block__document-info">{{ document.category.name }}</p>
+                    </div>
+                    <div class="docs-block__document-inner">
+                        <a class="docs-block__document-link" href="{{ document.document.url }}">Download</a>
+                        <a class="docs-block__document-link" href="#">Remove</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
         </li>
     </ul>
     <div class="docs-block__buttons">
@@ -103,12 +97,5 @@
 
 <div class="modal" id="upload-supporting-doc">
     <h4 class="modal__header-bar">Upload a new document</h4>
-    <div class="wrapper--outer-space-medium">
-        <label for="upload-document">Choose a document to upload:</label>
-        <input type="file" id="upload-document">
-    </div>
-    <div class="modal__buttons">
-        <button class="button button--primary button--submit" type="submit" name="submit">Upload</button>
-        <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-    </div>
+    {% include 'funds/includes/delegated_form_base.html' with form=document_form value='Upload'%}
 </div>

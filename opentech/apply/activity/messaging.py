@@ -742,6 +742,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
+        MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document "{title}"',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
