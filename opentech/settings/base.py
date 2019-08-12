@@ -668,3 +668,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+
+# Projects Feature Flag
+PROJECTS_ENABLED = False
+if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
+    PROJECTS_ENABLED = True

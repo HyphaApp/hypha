@@ -1,6 +1,7 @@
 import collections
 import decimal
 import json
+import logging
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from django.conf import settings
@@ -10,6 +11,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
+
+logger = logging.getLogger(__name__)
 
 
 class Approval(models.Model):
@@ -118,6 +121,10 @@ class Project(models.Model):
         Returns a new Project or the given ApplicationSubmissions existing
         Project.
         """
+        if not settings.PROJECTS_ENABLED:
+            logging.error(f'Tried to create a Project for Submission ID={submission.id} while projects are disabled')
+            return None
+
         # OneToOne relations on the targetted model cannot be accessed without
         # an exception when the relation doesn't exist (is None).  Since we
         # want to fail fast here, we can use hasattr instead.
