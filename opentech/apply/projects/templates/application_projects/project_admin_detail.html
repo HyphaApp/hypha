@@ -6,7 +6,21 @@
 {% block admin_sidebar %}
 <div class="modal" id="send-for-approval">
     <h4 class="modal__header-bar">Request Approval</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Request'%}
+
+    {% if remaining_document_categories %}
+        <h5>Are you sure you're ready to submit?</h5>
+
+        <p>This project is missing the following documents:</p>
+
+        <ul>
+            {% for missing in remaining_document_categories %}
+            <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
+            {% endfor %}
+        </ul>
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Submit anyway' cancel=True invert=True %}
+    {% else %}
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Request' %}
+    {% endif %}
 </div>
 
 <div class="modal" id="assign-lead">
