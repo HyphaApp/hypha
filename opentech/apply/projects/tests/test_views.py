@@ -1,7 +1,8 @@
 from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
-from django.test import TestCase
+from django.core.exceptions import PermissionDenied
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
@@ -17,7 +18,7 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
 from ..models import CONTRACTING, IN_PROGRESS, PAID
-from ..views import ContractsMixin, PaymentsMixin
+from ..views import ContractsMixin, PaymentsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
@@ -686,3 +687,19 @@ class TestPaymentsMixin(TestCase):
         self.assertEqual(values['awaiting_percentage'], 20)
         self.assertEqual(values['paid_absolute'], 10)
         self.assertEqual(values['paid_percentage'], 10)
+
+
+class TestProjectDetailSimplifiedView(TestCase):
+    def test_staff_only(self):
+        factory = RequestFactory()
+        project = ProjectFactory()
+
+        request = factory.get(f'/project/{project.pk}')
+        request.user = StaffFactory()
+
+        response = ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+        self.assertEqual(response.status_code, 200)
+
+        request.user = ApplicantFactory()
+        with self.assertRaises(PermissionDenied):
+            ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)

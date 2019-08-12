@@ -3,11 +3,11 @@ from django.urls import include, path
 
 from .views import (
     ApproveContractView,
+    ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
-    ProjectPrivateMediaView
+    ProjectPrivateMediaView,
 )
-
 
 app_name = 'projects'
 
@@ -24,5 +24,6 @@ if settings.PROJECTS_ENABLED:
                 name="approve-contract",
             ),
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
+            path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         ])),
     ]
