@@ -231,5 +231,8 @@ class AccessFormData:
         # Returns a safe string of the rendered answers
         return mark_safe(''.join(self.render_answers()))
 
+    def output_text_answers(self):
+        return mark_safe(''.join(self.render_text_blocks_answers()))
+
     def output_first_group_text_answers(self):
         return mark_safe(''.join(self.render_first_group_text_answers()))

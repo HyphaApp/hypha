@@ -1,11 +1,15 @@
 from datetime import timedelta
 import json
 
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, INTERNAL
 from opentech.apply.projects.models import Project
+from opentech.apply.projects.tests.factories import ProjectFactory
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -31,6 +35,7 @@ from opentech.apply.utils.testing import make_request
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision, ApplicationSubmission
+from ..views import SubmissionDetailSimplifiedView
 
 
 def prepare_form_data(submission, **kwargs):
@@ -658,3 +663,34 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         # Check that an activity was created that should only be viewable internally
         activity = Activity.objects.filter(message__contains='Screening status').first()
         self.assertEqual(activity.visibility, INTERNAL)
+
+
+class TestSubmissionDetailSimplifiedView(TestCase):
+    def test_staff_only(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory()
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = StaffFactory()
+
+        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
+
+        request.user = ApplicantFactory()
+        with self.assertRaises(PermissionDenied):
+            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+
+    def test_project_required(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory()
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = StaffFactory()
+
+        with self.assertRaises(Http404):
+            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+
+        ProjectFactory(submission=submission)
+        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)

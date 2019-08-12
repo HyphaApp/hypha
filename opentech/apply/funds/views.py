@@ -959,3 +959,17 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, View):
         if self.raise_exception or self.request.user.is_authenticated:
             raise PermissionDenied(self.get_permission_denied_message())
         return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+
+
+@method_decorator(staff_required, name='dispatch')
+class SubmissionDetailSimplifiedView(DetailView):
+    model = ApplicationSubmission
+    template_name_suffix = '_simplified_detail'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+
+        if not hasattr(obj, 'project'):
+            raise Http404
+
+        return obj
