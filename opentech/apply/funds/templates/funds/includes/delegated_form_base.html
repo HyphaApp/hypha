@@ -5,6 +5,23 @@
         {{ form }}
     </div>
 
-    <input class="button button--primary button--top-space" id="{{ form.name }}-submit" name="{{ form_prefix }}{{ form.name }}" type="submit" form="{{ form.name }}" value="{{ value }}">
+    {% if cancel %}
+    <button
+        type="button"
+        data-fancybox-close=""
+        class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
+        title="Close">
+        Cancel
+    </button>
+    {% endif %}
+
+    <input
+        class="button button--{% if invert %}white{% else %}primary{% endif %} button--top-space"
+        id="{{ form.name }}-submit"
+        name="{{ form_prefix }}{{ form.name }}"
+        type="submit"
+        form="{{ form.name }}"
+        value="{{ value }}"
+    >
 
 </form>
