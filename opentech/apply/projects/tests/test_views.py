@@ -1,8 +1,6 @@
 from io import BytesIO
 
-from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
-
+from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
     ApproverFactory,
     ReviewerFactory,
@@ -13,7 +11,6 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..views import ProjectDetailView
 from .factories import (
     DocumentCategoryFactory,
     PacketFileFactory,
@@ -46,47 +43,58 @@ class TestCreateApprovalView(BaseViewTestCase):
         self.assertEqual(approval.project_id, project.pk)
 
 
-class TestProjectDetailView(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.project = ProjectFactory()
+class BaseProjectDetailTestCase(BaseViewTestCase):
+    url_name = 'funds:projects:{}'
+    base_view_name = 'detail'
 
-    def test_reviewer_does_not_have_access(self):
-        request = self.factory.get('/projects/1/')
-        request.user = ReviewerFactory()
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
 
-        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
+
+class TestStaffProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = StaffFactory
+
+    def test_has_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_lab_project_renders(self):
+        project = ProjectFactory(submission=LabSubmissionFactory())
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestUserProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = UserFactory
+
+    def test_doesnt_have_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
         self.assertEqual(response.status_code, 403)
 
-    def test_staff_user_has_access(self):
-        request = self.factory.get('/projects/1/')
-        request.user = StaffFactory()
-
-        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
-        self.assertEqual(response.status_code, 200)
-
-    def test_super_user_has_access(self):
-        request = self.factory.get('/projects/1/')
-        request.user = SuperUserFactory()
-
-        response = ProjectDetailView.as_view()(request, pk=self.project.pk)
-        self.assertEqual(response.status_code, 200)
-
-    def test_user_does_not_have_access(self):
-        request = self.factory.get('/projects/1/')
-        request.user = UserFactory()
-
-        with self.assertRaises(PermissionDenied):
-            ProjectDetailView.as_view()(request, pk=self.project.pk)
-
     def test_owner_has_access(self):
-        owner = UserFactory()
-        request = self.factory.get('/projects/1/')
-        request.user = owner
-        project = ProjectFactory(user=owner)
-
-        response = ProjectDetailView.as_view()(request, pk=project.pk)
+        project = ProjectFactory(user=self.user)
+        response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
+
+
+class TestSuperUserProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = SuperUserFactory
+
+    def test_has_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestReviewerUserProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = ReviewerFactory
+
+    def test_doesnt_have_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestRemoveDocumentView(BaseViewTestCase):

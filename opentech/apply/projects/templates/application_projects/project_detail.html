@@ -23,7 +23,7 @@
                 {% endif %}
             </span>
 
-            {% if request.user.is_apply_staff %}
+            {% if request.user.is_apply_staff and object.submission.round %}
             <span>
                 <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
             </span>
