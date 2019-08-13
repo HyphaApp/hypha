@@ -120,6 +120,21 @@
                 {% block admin_sidebar %}{% endblock %}
                 {% endif %}
 
+                {% if recent_contracts %}
+                <div class="sidebar__inner">
+                    <h5>Contract History</h5>
+
+                    {% for contract in recent_contracts %}
+                    <p>
+                        <a href="{{ contract.file.url }}">
+                            Uploaded at {{ contract.created_at|date:"j F Y" }}
+                            ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
+                        </a>
+                    </p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 <div class="sidebar__inner">
                     <h5>Meta Categories</h5>
 

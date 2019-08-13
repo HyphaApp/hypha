@@ -22,9 +22,26 @@ from .forms import (
     RemoveDocumentForm,
     SetPendingForm,
     UpdateProjectLeadForm,
+    UploadContractForm,
     UploadDocumentForm,
 )
 from .models import CONTRACTING, Approval, Project, PacketFile
+
+
+class ContractsMixin:
+    def get_context_data(self, **kwargs):
+        project = self.get_object()
+        recent_contracts = list(project.contracts.filter(is_signed=True)
+                                                 .order_by('-created_at'))
+
+        # display an unsigned contract if it's more recent than the signed ones
+        latest_unsigned = project.contracts.filter(is_signed=False).first()
+        if latest_unsigned and latest_unsigned.created_at < recent_contracts[0].created_at:
+            recent_contracts = [latest_unsigned, *recent_contracts[:4]]
+
+        context = super().get_context_data(**kwargs)
+        context['recent_contracts'] = recent_contracts
+        return context
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -182,7 +199,7 @@ class UploadDocumentView(DelegatedViewMixin, CreateView):
         return response
 
 
-class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
     form_views = [
         CommentFormView,
         CreateApprovalView,
@@ -203,7 +220,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
         return context
 
 
-class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
     form_views = [
         CommentFormView,
         UploadContractView,
