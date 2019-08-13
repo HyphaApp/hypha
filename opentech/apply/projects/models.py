@@ -28,6 +28,24 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
+def contract_path(instance, filename):
+    return f'projects/{instance.project_id}/contracts/{filename}'
+
+
+class Contract(models.Model):
+    approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
+
+    file = models.FileField(upload_to=contract_path)
+
+    is_signed = models.BooleanField("Signed?", default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        state = 'Signed' if self.is_signed else 'Unsigned'
+        return f'Contract for {self.project} ({state})'
+
+
 def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
