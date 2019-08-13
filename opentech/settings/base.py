@@ -182,6 +182,7 @@ TEMPLATES = [
                 'opentech.public.utils.context_processors.global_vars',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'opentech.apply.projects.context_processors.projects_enabled',
             ],
         },
     },
