@@ -30,7 +30,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+            - v2-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
             - v2-python-{{ .Branch }}-
             - v2-python-
 
@@ -46,7 +46,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install coverage codecov
-            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
 
       - run:
           name: install node dependencies
@@ -57,7 +57,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v2-python-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          key: v2-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
 
       - save_cache:
           paths:
