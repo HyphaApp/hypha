@@ -1,0 +1,8 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+A new contract has been added to your Project:
+
+Title: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}

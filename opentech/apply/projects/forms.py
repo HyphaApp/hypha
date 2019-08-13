@@ -5,7 +5,7 @@ from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .models import COMMITTED, Approval, PacketFile, Project
+from .models import COMMITTED, Approval, Contract, PacketFile, Project
 
 
 class CreateProjectForm(forms.Form):
@@ -107,6 +107,19 @@ class SetPendingForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.is_locked = True
         return super().save(*args, **kwargs)
+
+
+class UploadContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['file', 'is_signed']
+        model = Contract
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not user.is_staff:
+            self.fields['is_signed'].widget = forms.HiddenInput()
+            self.fields['is_signed'].default = True
 
 
 class UploadDocumentForm(forms.ModelForm):

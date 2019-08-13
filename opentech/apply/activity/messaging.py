@@ -221,6 +221,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval',
         MESSAGES.APPROVE_PROJECT: '{user} has approved',
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes to for acceptance: "{comment}"',
+        MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for {source.title}',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -388,6 +389,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on project <{link}|{source.title}>.',
         MESSAGES.APPROVE_PROJECT: '{user} has approved project <{link}|{source.title}>.',
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
+        MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
     }
 
     def __init__(self):
@@ -609,6 +611,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
+        MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html'
     }
 
     def get_subject(self, message_type, source):

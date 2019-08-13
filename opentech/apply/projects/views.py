@@ -136,6 +136,31 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class UploadContractView(DelegatedViewMixin, CreateView):
+    context_name = 'contract_form'
+    form_class = UploadContractForm
+    model = Project
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+        form.instance.project = project
+
+        if self.request.user == project.user:
+            form.instance.is_signed = True
+
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPLOAD_CONTRACT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+        )
+
+        return response
+
+
+@method_decorator(staff_required, name='dispatch')
 class UploadDocumentView(DelegatedViewMixin, CreateView):
     context_name = 'document_form'
     form_class = UploadDocumentForm
@@ -165,6 +190,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
         RemoveDocumentView,
         SendForApprovalView,
         UpdateLeadView,
+        UploadContractView,
         UploadDocumentView,
     ]
     model = Project
@@ -180,6 +206,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, DetailView)
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, DetailView):
     form_views = [
         CommentFormView,
+        UploadContractView,
     ]
 
     model = Project

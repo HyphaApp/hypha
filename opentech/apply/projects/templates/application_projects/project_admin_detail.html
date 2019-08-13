@@ -38,6 +38,11 @@
     {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
+<div class="modal" id="upload-contract">
+    <h4 class="modal__header-bar">Upload Contract</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=contract_form value='Upload'%}
+</div>
+
 {% if mobile %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
 {% endif %}
@@ -72,13 +77,14 @@
         </a>
     {% endif %}
 
-    <!-- <a data-fancybox -->
-    <!-- data-src="#ready-for-contracting" -->
-    <!-- class="button button--primary button--full-width" -->
-    <!-- href="#"> -->
-    <!-- Ready for contracting -->
-    <!-- </a> -->
-
+    {% if object.can_upload_contract %}
+    <a data-fancybox
+       data-src="#upload-contract"
+       class="button button--primary button--full-width"
+       href="#">
+        Upload contract
+    </a>
+    {% endif %}
 
     <p class="sidebar__separator">Assign</p>
 
