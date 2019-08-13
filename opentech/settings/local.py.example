@@ -7,10 +7,6 @@ CACHES = {
     }
 }
 
-# Use the Django debug toolbar. First install via pip.
-# pip install django-debug-toolbar
-# DEBUGTOOLBAR = True
-
 # Write log to local file.
 # LOCAL_FILE_LOGGING = True
 
