@@ -132,6 +132,10 @@
                         </a>
                     </p>
                     {% endfor %}
+
+                    {% if request.user.is_apply_staff %}
+                    {% block approve_contracts %}{% endblock %}
+                    {% endif %}
                 </div>
                 {% endif %}
 

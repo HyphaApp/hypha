@@ -35,6 +35,7 @@ class MESSAGES(Enum):
     UPLOAD_DOCUMENT = 'Document was Uploaded to Project'
     REMOVE_DOCUMENT = 'Document was Removed from Project'
     UPLOAD_CONTRACT = 'Contract was Uploaded to Project'
+    APPROVE_CONTRACT = 'Contract was Approved'
 
     @classmethod
     def choices(cls):

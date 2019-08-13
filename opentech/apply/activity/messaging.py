@@ -58,6 +58,7 @@ neat_related = {
     MESSAGES.EDIT_REVIEW: 'review',
     MESSAGES.CREATED_PROJECT: 'submission',
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
+    MESSAGES.APPROVE_CONTRACT: 'contract',
 }
 
 
@@ -222,6 +223,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPROVE_PROJECT: '{user} has approved',
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes to for acceptance: "{comment}"',
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for {source.title}',
+        MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for {source.title}'
     }
 
     def recipients(self, message_type, **kwargs):
@@ -390,6 +392,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.APPROVE_PROJECT: '{user} has approved project <{link}|{source.title}>.',
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
+        MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
     }
 
     def __init__(self):

@@ -8,6 +8,16 @@ from opentech.apply.users.groups import STAFF_GROUP_NAME
 from .models import COMMITTED, Approval, Contract, PacketFile, Project
 
 
+class ApproveContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['id']
+        model = Contract
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class CreateProjectForm(forms.Form):
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(project__isnull=True),

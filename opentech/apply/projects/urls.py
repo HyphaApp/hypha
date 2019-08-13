@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 
-from .views import ProjectDetailView, ProjectEditView
+from .views import ApproveContractView, ProjectDetailView, ProjectEditView
 
 urlpatterns = []
 
@@ -10,5 +10,10 @@ if settings.PROJECTS_ENABLED:
         path('<int:pk>/', include([
             path('', ProjectDetailView.as_view(), name='detail'),
             path('edit/', ProjectEditView.as_view(), name="edit"),
+            path(
+                'approve-contract/<int:contract_pk>/',
+                ApproveContractView.as_view(),
+                name="approve-contract",
+            ),
         ])),
     ]

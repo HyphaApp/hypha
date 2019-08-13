@@ -43,6 +43,14 @@
     {% include 'funds/includes/delegated_form_base.html' with form=contract_form value='Upload'%}
 </div>
 
+{% if latest_contract %}
+<div class="modal" id="approve-contract">
+    <h4 class="modal__header-bar">Approve Contract</h4>
+    {% url 'apply:projects:approve-contract' pk=object.pk contract_pk=latest_contract.pk as approve_contract_url %}
+    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Approve' action=approve_contract_url %}
+</div>
+{% endif %}
+
 {% if mobile %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
 {% endif %}
@@ -114,6 +122,17 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block approve_contracts %}
+{% if not latest_contract.approver %}
+<a data-fancybox
+   data-src="#approve-contract"
+   class="button button--bottom-space button--primary button--full-width"
+   href="#">
+    Approve
+</a>
+{% endif %}
 {% endblock %}
 
 {% block extra_css %}

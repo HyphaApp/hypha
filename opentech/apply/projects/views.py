@@ -3,7 +3,7 @@ from copy import copy
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, DetailView, FormView, UpdateView
@@ -11,10 +11,14 @@ from django.views.generic import CreateView, DetailView, FormView, UpdateView
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
-                                        ViewDispatcher)
+from opentech.apply.utils.views import (
+    DelegateableView,
+    DelegatedViewMixin,
+    ViewDispatcher
+)
 
 from .forms import (
+    ApproveContractForm,
     CreateApprovalForm,
     ProjectApprovalForm,
     ProjectEditForm,
@@ -23,9 +27,9 @@ from .forms import (
     SetPendingForm,
     UpdateProjectLeadForm,
     UploadContractForm,
-    UploadDocumentForm,
+    UploadDocumentForm
 )
-from .models import CONTRACTING, Approval, Project, PacketFile
+from .models import CONTRACTING, Approval, Contract, PacketFile, Project
 
 
 class ContractsMixin:
@@ -39,9 +43,50 @@ class ContractsMixin:
         if latest_unsigned and latest_unsigned.created_at < recent_contracts[0].created_at:
             recent_contracts = [latest_unsigned, *recent_contracts[:4]]
 
+        try:
+            latest_contract = recent_contracts[0]
+        except IndexError:
+            latest_contract = None
+
         context = super().get_context_data(**kwargs)
+        context['latest_contract'] = latest_contract
         context['recent_contracts'] = recent_contracts
         return context
+
+
+@method_decorator(staff_required, name='dispatch')
+class ApproveContractView(UpdateView):
+    form_class = ApproveContractForm
+    model = Contract
+    pk_url_kwarg = 'contract_pk'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        for error in form.errors:
+            messages.error(self.request, error)
+
+        return redirect(self.project)
+
+    def form_valid(self, form):
+        form.instance.approver = self.request.user
+        form.instance.project = self.project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.APPROVE_CONTRACT,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -216,6 +261,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMi
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
+        context['approve_contract_form'] = ApproveContractForm()
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
 
