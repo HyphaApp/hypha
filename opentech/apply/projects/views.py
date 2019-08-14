@@ -35,24 +35,44 @@ from .models import CONTRACTING, Approval, Contract, PacketFile, Project
 
 class ContractsMixin:
     def get_context_data(self, **kwargs):
-        project = self.get_object()
-        recent_contracts = list(project.contracts.filter(is_signed=True)
-                                                 .order_by('-created_at'))
-
-        # display an unsigned contract if it's more recent than the signed ones
-        latest_unsigned = project.contracts.filter(is_signed=False).first()
-        if latest_unsigned and latest_unsigned.created_at < recent_contracts[0].created_at:
-            recent_contracts = [latest_unsigned, *recent_contracts[:4]]
+        contracts = self.get_contracts()
 
         try:
-            latest_contract = recent_contracts[0]
-        except IndexError:
+            latest_contract = contracts[0]
+        except TypeError:
             latest_contract = None
 
         context = super().get_context_data(**kwargs)
         context['latest_contract'] = latest_contract
-        context['recent_contracts'] = recent_contracts
+        context['contracts'] = contracts
         return context
+
+    def get_contracts(self):
+        """
+        Get approved AND signed contracts for the current project
+
+        When an unsigned and unapproved contract is newer than the signed and
+        approved ones we add that to the top of the list.
+        """
+        project = self.get_object()
+
+        contracts = (project.contracts.select_related('approver')
+                                      .order_by('-created_at'))
+
+        if not contracts.exists():
+            return
+
+        latest_contract = contracts.first()
+        if not (latest_contract.is_signed and latest_contract.approver):
+            # remove unsigned contracts EXCEPT this PK
+            exclude_pks = (contracts.filter(is_signed=False)
+                                    .exclude(pk=latest_contract.pk)
+                                    .values_list('pk', flat=True))
+            contracts = contracts.exclude(pk__in=exclude_pks)
+        else:
+            contracts = contracts.exclude(is_signed=False)
+
+        return contracts
 
 
 @method_decorator(staff_required, name='dispatch')

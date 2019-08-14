@@ -152,21 +152,24 @@
                 {% block project_approvals %}{% endblock %}
                 {% endif %}
 
+                {% if contracts %}
                 <div class="sidebar__inner">
-                    <h5>Contract History</h5>
+                    <h5>Contracts</h5>
 
-                    {% for contract in recent_contracts %}
+                    {% for contract in contracts %}
                     <p>
                         <a href="{{ contract.file.url }}">
                             Uploaded at {{ contract.created_at|date:"j F Y" }}
                             ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
                         </a>
                     </p>
-                    {% endfor %}
 
-                    {% if request.user.is_apply_staff %}
+                    {% if request.user.is_apply_staff and forloop.first and not latest_contract.approver %}
                     {% block approve_contracts %}{% endblock %}
                     {% endif %}
+
+                    {% endfor %}
+
                 </div>
                 {% endif %}
 

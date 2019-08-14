@@ -1,20 +1,24 @@
 from io import BytesIO
 
+from django.test import TestCase
+
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
     ApproverFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    UserFactory,
+    UserFactory
 )
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
+from ..views import ContractsMixin
 from .factories import (
+    ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
-    ProjectFactory,
+    ProjectFactory
 )
 
 
@@ -285,3 +289,115 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.redirect_chain, [])
+
+
+class TestContractsMixin(TestCase):
+    class Contracts(ContractsMixin):
+        """Dummy subclass of ContractsMixin to implement the get_object method."""
+
+        def __init__(self, project):
+            self.project = project
+
+        def get_object(self):
+            return self.project
+
+    def test_all_signed_and_approved_contracts_appear(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 3)
+
+    def test_mixture_with_latest_signed_returns_no_unsigned(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 2)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_no_contracts_returns_nothing(self):
+        project = ProjectFactory()
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertIsNone(contracts)
+
+    def test_some_unsigned_and_unapproved(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 1)
+
+    def test_some_signed_and_unapproved(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 3)
+
+    def test_mixture_of_both_latest_unsigned_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=False)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 4)
+        self.assertEqual(latest, contracts[0])
+        self.assertFalse(contracts[0].is_signed)
+        for contract in contracts[1:]:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 4)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_approved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.Contracts(project).get_contracts()
+
+        self.assertEqual(len(contracts), 4)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
