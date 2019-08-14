@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
     ApproverFactory,
     ReviewerFactory,
     StaffFactory,
@@ -164,6 +165,74 @@ class TestSendForApprovalView(BaseViewTestCase):
 
         self.assertTrue(project.is_locked)
         self.assertEqual(project.status, 'committed')
+
+
+class TestApplicantUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_owner_upload_contract(self):
+        project = ProjectFactory(user=self.user)
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
+    def test_non_owner_upload_contract(self):
+        project = ProjectFactory()
+        contract_count = project.contracts.count()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 403)
+
+        project.refresh_from_db()
+        self.assertEqual(project.contracts.count(), contract_count)
+
+
+class TestStaffUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_upload_contract(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertFalse(project.contracts.first().is_signed)
 
 
 class TestUploadDocumentView(BaseViewTestCase):
@@ -401,3 +470,55 @@ class TestContractsMixin(TestCase):
         self.assertTrue(contracts[0].is_signed)
         for contract in contracts:
             self.assertTrue(contract.is_signed)
+
+
+class TestApproveContractView(BaseViewTestCase):
+    base_view_name = 'approve-contract'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.id, 'contract_pk': instance.id}
+
+    def test_approve_unapproved_contract(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project, is_signed=True)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+
+        self.assertEqual(contract.approver, self.user)
+
+    def test_approve_already_approved_contract(self):
+        project = ProjectFactory()
+        user = UserFactory()
+        contract = ContractFactory(project=project, is_signed=True, approver=user)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+
+        self.assertEqual(contract.approver, self.user)
+
+    def test_approve_unsigned_contract(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project, is_signed=False)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)

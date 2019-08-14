@@ -71,6 +71,8 @@ class ContractFactory(factory.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)
     project = factory.SubFactory(ProjectFactory)
 
+    file = factory.django.FileField()
+
     class Meta:
         model = Contract
 
