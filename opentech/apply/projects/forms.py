@@ -17,6 +17,12 @@ class ApproveContractForm(forms.ModelForm):
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def clean(self):
+        if not self.instance.is_signed:
+            raise forms.ValidationError('You can only approve a signed contract')
+
+        super().clean()
+
 
 class CreateProjectForm(forms.Form):
     submission = forms.ModelChoiceField(

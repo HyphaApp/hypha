@@ -164,7 +164,7 @@
                         </a>
                     </p>
 
-                    {% if request.user.is_apply_staff and forloop.first and not latest_contract.approver %}
+                    {% if request.user.is_apply_staff and forloop.first %}
                     {% block approve_contracts %}{% endblock %}
                     {% endif %}
 
