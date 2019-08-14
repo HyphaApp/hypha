@@ -83,12 +83,12 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     class Meta:
         abstract = True
 
-    def get_defined_fields(self, stage=None, proposal_form=0):
+    def get_defined_fields(self, stage=None, form_index=0):
         if not stage:
             stage_num = 1
         else:
             stage_num = self.workflow.stages.index(stage) + 1
-        return self.forms.filter(stage=stage_num)[proposal_form].fields
+        return self.forms.filter(stage=stage_num)[form_index].fields
 
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission

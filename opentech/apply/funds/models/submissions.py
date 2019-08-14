@@ -515,7 +515,7 @@ class ApplicationSubmission(
         self.id = None
         proposal_form = kwargs.get('proposal_form')
         proposal_form = int(proposal_form) if proposal_form else 0
-        self.form_fields = self.get_from_parent('get_defined_fields')(target, proposal_form)
+        self.form_fields = self.get_from_parent('get_defined_fields')(target, form_index=proposal_form)
 
         self.live_revision = None
         self.draft_revision = None

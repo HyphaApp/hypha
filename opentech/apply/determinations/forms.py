@@ -363,6 +363,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                     help_text='Select the proposal form to use for proposal stage.',
                 )
                 self.fields['proposal_form'].group = 1
+                self.fields.move_to_end('proposal_form', last=False)
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
