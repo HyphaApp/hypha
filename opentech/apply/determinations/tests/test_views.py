@@ -71,7 +71,6 @@ class DeterminationFormTestCase(BaseViewTestCase):
 
     def test_can_edit_draft_determination(self):
         submission = ApplicationSubmissionFactory(status='post_review_discussion', lead=self.user)
-        DeterminationFactory(submission=submission, author=self.user)
         response = self.post_page(submission, {
             'data': 'value',
             'outcome': ACCEPTED,
