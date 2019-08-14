@@ -1,6 +1,7 @@
 from copy import copy
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
@@ -197,11 +198,21 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class UploadContractView(DelegatedViewMixin, CreateView):
     context_name = 'contract_form'
     form_class = UploadContractForm
     model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        project = self.kwargs['object']
+        is_owner = project.user == request.user
+        if not (request.user.is_apply_staff or is_owner):
+            raise PermissionDenied
+
+        return response
 
     def form_valid(self, form):
         project = self.kwargs['object']
