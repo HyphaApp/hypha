@@ -30,7 +30,14 @@ from .forms import (
     UploadContractForm,
     UploadDocumentForm
 )
-from .models import CONTRACTING, Approval, Contract, PacketFile, Project
+from .models import (
+    CONTRACTING,
+    IN_PROGRESS,
+    Approval,
+    Contract,
+    PacketFile,
+    Project
+)
 
 
 class ContractsMixin:
@@ -92,17 +99,21 @@ class ApproveContractView(UpdateView):
         return redirect(self.project)
 
     def form_valid(self, form):
-        form.instance.approver = self.request.user
-        form.instance.project = self.project
-        response = super().form_valid(form)
+        with transaction.atomic():
+            form.instance.approver = self.request.user
+            form.instance.project = self.project
+            response = super().form_valid(form)
 
-        messenger(
-            MESSAGES.APPROVE_CONTRACT,
-            request=self.request,
-            user=self.request.user,
-            source=self.project,
-            related=self.object,
-        )
+            messenger(
+                MESSAGES.APPROVE_CONTRACT,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=self.object,
+            )
+
+            self.project.status = IN_PROGRESS
+            self.project.save(update_fields=['status'])
 
         return response
 

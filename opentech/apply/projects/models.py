@@ -75,10 +75,11 @@ class PacketFile(models.Model):
 
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
+IN_PROGRESS = 'in_progress'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, 'Committed'),
     (CONTRACTING, 'Contracting'),
-    ('in_progress', 'In Progress'),
+    (IN_PROGRESS, 'In Progress'),
     ('closing', 'Closing'),
     ('complete', 'Complete'),
 ]

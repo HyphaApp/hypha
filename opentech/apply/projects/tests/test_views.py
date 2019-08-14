@@ -14,6 +14,7 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
+from ..models import CONTRACTING, IN_PROGRESS
 from ..views import ContractsMixin
 from .factories import (
     ContractFactory,
@@ -481,7 +482,7 @@ class TestApproveContractView(BaseViewTestCase):
         return {'pk': instance.project.id, 'contract_pk': instance.id}
 
     def test_approve_unapproved_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
         contract = ContractFactory(project=project, is_signed=True)
 
         response = self.post_page(contract, {
@@ -491,11 +492,13 @@ class TestApproveContractView(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
 
         contract.refresh_from_db()
-
         self.assertEqual(contract.approver, self.user)
 
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
+
     def test_approve_already_approved_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
         user = UserFactory()
         contract = ContractFactory(project=project, is_signed=True, approver=user)
 
@@ -506,8 +509,10 @@ class TestApproveContractView(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
 
         contract.refresh_from_db()
-
         self.assertEqual(contract.approver, self.user)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
 
     def test_approve_unsigned_contract(self):
         project = ProjectFactory()
