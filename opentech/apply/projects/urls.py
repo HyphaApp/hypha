@@ -3,6 +3,8 @@ from django.urls import include, path
 
 from .views import ProjectDetailView, ProjectEditView
 
+app_name = 'projects'
+
 urlpatterns = []
 
 if settings.PROJECTS_ENABLED:

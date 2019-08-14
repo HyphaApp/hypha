@@ -1,7 +1,6 @@
 from django.urls import include, path
 
-from opentech.apply.projects.urls import urlpatterns as projects_urls
-from opentech.apply.utils.storage import PrivateMediaView
+from opentech.apply.projects import urls as projects_urls
 
 from .views import (
     RevisionCompareView,
@@ -15,6 +14,7 @@ from .views import (
     SubmissionOverviewView,
     SubmissionSealedView,
     SubmissionDeleteView,
+    SubmissionPrivateMediaView,
 )
 from .api_views import (
     CommentEdit,
@@ -47,7 +47,7 @@ submission_urls = ([
         path('delete/', SubmissionDeleteView.as_view(), name="delete"),
         path(
             'documents/<uuid:field_id>/<str:file_name>',
-            PrivateMediaView.as_view(), name='serve_private_media'
+            SubmissionPrivateMediaView.as_view(), name='serve_private_media'
         ),
     ])),
     path('<int:submission_pk>/', include([
@@ -84,6 +84,6 @@ rounds_urls = ([
 urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('rounds/', include(rounds_urls)),
-    path('projects/', include((projects_urls, 'projects'))),
+    path('projects/', include(projects_urls)),
     path('api/', include(api_urls)),
 ]

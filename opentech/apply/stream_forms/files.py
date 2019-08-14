@@ -16,14 +16,27 @@ class StreamFieldDataEncoder(DjangoJSONEncoder):
 
 
 class StreamFieldFile(File):
-    def __init__(self, *args, filename=None, storage=default_storage, **kwargs):
+    """
+    Attempts to mimic the behaviour of the bound fields in django models
+
+    see django.db.models.fields.files for the inspiration
+    """
+    def __init__(self, instance, field, *args, filename=None, storage=default_storage, **kwargs):
         super().__init__(*args, **kwargs)
+        # Field is the wagtail field that the file was uploaded to
+        self.field = field
+        # Instance is the parent model object that created this file object
+        self.instance = instance
         self.storage = storage
-        self.filename = filename or os.path.basename(self.name)
+        self.filename = filename or self.basename
         self._committed = False
 
     def __str__(self):
         return self.filename
+
+    @property
+    def basename(self):
+        return os.path.basename(self.name)
 
     def __eq__(self, other):
         if isinstance(other, File):
@@ -79,10 +92,11 @@ class StreamFieldFile(File):
             self.file.open(mode)
         return self
 
-    def save(self, folder):
-        name = self.name
-        if not name.startswith(folder):
-            name = os.path.join(folder, name)
+    def generate_filename(self):
+        return self.name
+
+    def save(self):
+        name = self.generate_filename()
         name = self.storage.generate_filename(name)
         if not self._committed:
             self.name = self.storage.save(name, self.file)

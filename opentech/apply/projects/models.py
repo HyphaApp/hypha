@@ -12,7 +12,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
-from opentech.apply.utils.storage import private_storage
+from opentech.apply.utils.storage import PrivateStorage
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class PacketFile(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="packet_files")
 
     title = models.TextField()
-    document = models.FileField(upload_to=document_path, storage=private_storage())
+    document = models.FileField(upload_to=document_path, storage=PrivateStorage())
 
     def __str__(self):
         return f'Project file: {self.title}'

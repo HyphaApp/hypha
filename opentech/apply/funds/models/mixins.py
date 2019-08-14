@@ -1,6 +1,5 @@
 from django.utils.text import mark_safe
 from django.core.files import File
-from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import (
     FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
@@ -8,9 +7,9 @@ from opentech.apply.stream_forms.blocks import (
 from opentech.apply.utils.blocks import SingleIncludeMixin
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.utils.storage import private_storage
+from opentech.apply.utils.storage import PrivateStorage
 
-from .files import SubmissionStreamFileField
+from ..files import SubmissionStreamFileField
 
 __all__ = ['AccessFormData']
 
@@ -27,7 +26,7 @@ class AccessFormData:
          - form_fields > streamfield containing the original form fields
     """
     stream_file_class = SubmissionStreamFileField
-    storage_class = private_storage
+    storage_class = PrivateStorage
 
     @property
     def raw_data(self):
@@ -46,46 +45,44 @@ class AccessFormData:
         return data
 
     @classmethod
-    def stream_file(cls, file):
+    def stream_file(cls, instance, field, file):
         if not file:
             return []
         if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
-            return cls.stream_file_class(file, name=file.name, storage=cls.storage_class())
+            return cls.stream_file_class(instance, field, file, name=file.name, storage=cls.storage_class())
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
         if 'path' in file:
             file['filename'] = file['name']
             file['name'] = file['path']
-        return cls.stream_file_class(None, name=file['name'], filename=file.get('filename'), storage=cls.storage_class())
+        return cls.stream_file_class(instance, field, None, name=file['name'], filename=file.get('filename'), storage=cls.storage_class())
 
     @classmethod
-    def process_file(cls, file):
+    def process_file(cls, instance, field, file):
         if isinstance(file, list):
-            return [cls.stream_file(f) for f in file]
+            return [cls.stream_file(instance, field, f) for f in file]
         else:
-            return cls.stream_file(file)
+            return cls.stream_file(instance, field, file)
 
     @classmethod
     def from_db(cls, db, field_names, values):
         instance = super().from_db(db, field_names, values)
         if 'form_data' in field_names:
             # When the form_data is loaded from the DB deserialise it
-            instance.form_data = cls.deserialised_data(instance.form_data, instance.form_fields)
+            instance.form_data = cls.deserialised_data(instance, instance.form_data, instance.form_fields)
         return instance
 
     @classmethod
-    def deserialised_data(cls, data, form_fields):
+    def deserialised_data(cls, instance, data, form_fields):
         # Converts the file dicts into actual file objects
         data = data.copy()
-        for field in form_fields.stream_data:
-            block = form_fields.stream_block.child_blocks[field['type']]
-            if isinstance(block, UploadableMediaBlock):
-                field_id = field.get('id')
-                file = data.get(field_id, [])
-                data[field_id] = cls.process_file(file)
+        for field in form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                file = data.get(field.id, [])
+                data[field.id] = cls.process_file(instance, field, file)
         return data
 
     def get_definitive_id(self, id):

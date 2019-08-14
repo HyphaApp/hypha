@@ -1,6 +1,8 @@
 from copy import copy
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
@@ -29,9 +31,11 @@ from opentech.apply.projects.forms import CreateProjectForm
 from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
+from .files import generate_submission_file_path
 from .forms import (
     BatchUpdateSubmissionLeadForm,
     BatchUpdateReviewersForm,
@@ -50,6 +54,7 @@ from .models import (
     RoundBase,
     LabBase
 )
+from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
     ReviewerSubmissionsTable,
@@ -906,3 +911,28 @@ class SubmissionDeleteView(DeleteView):
         )
         response = super().delete(request, *args, **kwargs)
         return response
+
+
+class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    def get_media(self, *args, **kwargs):
+        submission_id = kwargs['pk']
+        field_id = kwargs['field_id']
+        file_name = kwargs['file_name']
+        path_to_file = generate_submission_file_path(submission_id, field_id, file_name)
+        return self.storage.open(path_to_file)
+
+    def test_func(self):
+        submission_id = self.kwargs['pk']
+        submission = get_object_or_404(ApplicationSubmission, id=submission_id)
+
+        return is_user_has_access_to_view_submission(self.request.user, submission)
+
+    def handle_no_permission(self):
+        # This method can be removed after upgrading Django to 2.1
+        # https://github.com/django/django/commit/9b1125bfc7e2dc747128e6e7e8a2259ff1a7d39f
+        # In older versions, authenticated users who lacked permissions were
+        # redirected to the login page (which resulted in a loop) instead of
+        # receiving an HTTP 403 Forbidden response.
+        if self.raise_exception or self.request.user.is_authenticated:
+            raise PermissionDenied(self.get_permission_denied_message())
+        return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
