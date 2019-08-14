@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from opentech.apply.projects.urls import urlpatterns as projects_urls
+from opentech.apply.utils.storage import PrivateMediaView
 
 from .views import (
     RevisionCompareView,
@@ -14,7 +15,6 @@ from .views import (
     SubmissionOverviewView,
     SubmissionSealedView,
     SubmissionDeleteView,
-    SubmissionPrivateMediaView,
 )
 from .api_views import (
     CommentEdit,
@@ -39,15 +39,16 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
-    path(
-        'documents/submission/<int:submission_id>/<uuid:field_id>/<str:file_name>/',
-        SubmissionPrivateMediaView.as_view(), name='serve_private_media'
-    ),
+    # TODO: Make generic / allow registering
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('delete/', SubmissionDeleteView.as_view(), name="delete"),
+        path(
+            'documents/<uuid:field_id>/<str:file_name>',
+            PrivateMediaView.as_view(), name='serve_private_media'
+        ),
     ])),
     path('<int:submission_pk>/', include([
         path('', include('opentech.apply.review.urls', namespace="reviews")),

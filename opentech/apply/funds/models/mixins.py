@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.utils.text import mark_safe
 from django.core.files import File
 from django.core.files.storage import get_storage_class
@@ -9,19 +8,11 @@ from opentech.apply.stream_forms.blocks import (
 from opentech.apply.utils.blocks import SingleIncludeMixin
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.stream_forms.files import StreamFieldFile
+from opentech.apply.utils.storage import private_storage
 
+from .files import SubmissionStreamFileField
 
 __all__ = ['AccessFormData']
-
-
-private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
-submission_storage_class = get_storage_class(private_file_storage)
-
-if private_file_storage:
-    submission_storage = submission_storage_class(is_submission=True)
-else:
-    submission_storage = submission_storage_class()
 
 
 class UnusedFieldException(Exception):
@@ -34,8 +25,9 @@ class AccessFormData:
     requires:
          - form_data > jsonfield containing the submitted data
          - form_fields > streamfield containing the original form fields
-
     """
+    stream_file_class = SubmissionStreamFileField
+    storage_class = private_storage
 
     @property
     def raw_data(self):
@@ -57,17 +49,17 @@ class AccessFormData:
     def stream_file(cls, file):
         if not file:
             return []
-        if isinstance(file, StreamFieldFile):
+        if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
-            return StreamFieldFile(file, name=file.name, storage=submission_storage)
+            return cls.stream_file_class(file, name=file.name, storage=cls.storage_class())
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
         if 'path' in file:
             file['filename'] = file['name']
             file['name'] = file['path']
-        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
+        return cls.stream_file_class(None, name=file['name'], filename=file.get('filename'), storage=cls.storage_class())
 
     @classmethod
     def process_file(cls, file):
