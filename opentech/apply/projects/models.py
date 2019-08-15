@@ -167,7 +167,9 @@ class Project(models.Model):
         return self.lead and not self.is_locked
 
     def get_absolute_url(self):
-        return reverse('apply:projects:detail', args=[self.id])
+        if settings.PROJECTS_ENABLED:
+            return reverse('apply:projects:detail', args=[self.id])
+        return '#'
 
     @property
     def can_make_approval(self):

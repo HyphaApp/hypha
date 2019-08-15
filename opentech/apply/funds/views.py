@@ -913,26 +913,18 @@ class SubmissionDeleteView(DeleteView):
         return response
 
 
+@method_decorator(login_required, name='dispatch')
 class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    def get(self, *args, **kwargs):
+        submission_pk = self.kwargs['pk']
+        self.submission = get_object_or_404(ApplicationSubmission, pk=submission_pk)
+        return super().get(*args, **kwargs)
+
     def get_media(self, *args, **kwargs):
-        submission_id = kwargs['pk']
         field_id = kwargs['field_id']
         file_name = kwargs['file_name']
-        path_to_file = generate_submission_file_path(submission_id, field_id, file_name)
+        path_to_file = generate_submission_file_path(self.submission.pk, field_id, file_name)
         return self.storage.open(path_to_file)
 
     def test_func(self):
-        submission_id = self.kwargs['pk']
-        submission = get_object_or_404(ApplicationSubmission, id=submission_id)
-
-        return is_user_has_access_to_view_submission(self.request.user, submission)
-
-    def handle_no_permission(self):
-        # This method can be removed after upgrading Django to 2.1
-        # https://github.com/django/django/commit/9b1125bfc7e2dc747128e6e7e8a2259ff1a7d39f
-        # In older versions, authenticated users who lacked permissions were
-        # redirected to the login page (which resulted in a loop) instead of
-        # receiving an HTTP 403 Forbidden response.
-        if self.raise_exception or self.request.user.is_authenticated:
-            raise PermissionDenied(self.get_permission_denied_message())
-        return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+        return is_user_has_access_to_view_submission(self.request.user, self.submission)

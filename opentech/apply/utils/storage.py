@@ -1,11 +1,10 @@
 import mimetypes
+import os
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.files.storage import get_storage_class
 from django.http import StreamingHttpResponse
-from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 
@@ -13,7 +12,6 @@ private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
 PrivateStorage = get_storage_class(private_file_storage)
 
 
-@method_decorator(login_required, name='dispatch')
 class PrivateMediaView(View):
     storage = PrivateStorage()
 
@@ -29,6 +27,7 @@ class PrivateMediaView(View):
             'gzip': 'application/gzip',
             'xz': 'application/x-xz',
         }
+        file_name = os.path.basename(file_to_serve.name)
         content_type, encoding = mimetypes.guess_type(file_name)
         # Encoding isn't set to prevent browsers from automatically uncompressing files.
         content_type = encoding_map.get(encoding, content_type)
@@ -37,6 +36,6 @@ class PrivateMediaView(View):
         response = StreamingHttpResponse(wrapper, content_type=content_type)
 
         response['Content-Disposition'] = f'filename={file_name}'
-        response['Content-Length'] = submission_file.size
+        response['Content-Length'] = file_to_serve.size
 
         return response

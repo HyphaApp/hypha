@@ -34,6 +34,8 @@ try:
 except ImportError:
     pass
 
+PROJECTS_ENABLED = True
+
 # We add these here so they can react on settings made in local.py.
 
 # E-mail to local files.
