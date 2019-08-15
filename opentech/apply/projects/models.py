@@ -3,7 +3,6 @@ import decimal
 import json
 import logging
 
-from addressfield.fields import ADDRESS_FIELDS_ORDER
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
@@ -12,10 +11,26 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
+from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.utils.storage import PrivateStorage
 
-
 logger = logging.getLogger(__name__)
+
+
+def contract_path(instance, filename):
+    return f'projects/{instance.project_id}/contracts/{filename}'
+
+
+def document_path(instance, filename):
+    return f'projects/{instance.project_id}/supporting_documents/{filename}'
+
+
+def invoice_path(instance, filename):
+    return f'projects/{instance.project_id}/payment_invoices/{filename}'
+
+
+def receipt_path(instance, filename):
+    return f'projects/{instance.payment_request.project_id}/payment_receipts/{filename}'
 
 
 class Approval(models.Model):
@@ -31,10 +46,6 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
-def contract_path(instance, filename):
-    return f'projects/{instance.project_id}/contracts/{filename}'
-
-
 class Contract(models.Model):
     approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
@@ -47,10 +58,6 @@ class Contract(models.Model):
     def __str__(self):
         state = 'Signed' if self.is_signed else 'Unsigned'
         return f'Contract for {self.project} ({state})'
-
-
-def document_path(instance, filename):
-    return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
 class PacketFile(models.Model):
@@ -74,6 +81,58 @@ class PacketFile(models.Model):
         """
         from .forms import RemoveDocumentForm
         return RemoveDocumentForm(instance=self)
+
+
+class PaymentApproval(models.Model):
+    request = models.ForeignKey('PaymentRequest', on_delete=models.CASCADE, related_name="approvals")
+    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_approvals")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Approval for {self.request} by {self.by}'
+
+
+class PaymentReceipt(models.Model):
+    payment_request = models.ForeignKey("PaymentRequest", on_delete=models.CASCADE, related_name="receipts")
+
+    file = models.FileField(upload_to=receipt_path, storage=PrivateStorage())
+
+    def __str__(self):
+        return f'Receipt for {self.payment_request}'
+
+
+SUBMITTED = 'submitted'
+UNDER_REVIEW = 'under_review'
+PAID = 'paid'
+DECLINED = 'declined'
+REQUEST_STATUS_CHOICES = [
+    (SUBMITTED, 'Submitted'),
+    (UNDER_REVIEW, 'Under Review'),
+    (PAID, 'Paid'),
+    (DECLINED, 'Declined'),
+]
+
+
+class PaymentRequest(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
+    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
+
+    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
+    value = models.DecimalField(
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
+    requested_at = models.DateTimeField(auto_now_add=True)
+    date_from = models.DateTimeField()
+    date_to = models.DateTimeField()
+    comment = models.TextField()
+    status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
+
+    def __str__(self):
+        return f'Payment requested for {self.project}'
 
 
 COMMITTED = 'committed'
