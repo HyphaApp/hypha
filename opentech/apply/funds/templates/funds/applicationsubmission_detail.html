@@ -99,7 +99,7 @@
                     {% endblock %}
                 {% endif %}
 
-                {% if object.project and settings.PROJECTS_ENABLED %}
+                {% if object.project and PROJECTS_ENABLED %}
                     {% include 'funds/includes/project_block.html' %}
                 {% endif %}
 
