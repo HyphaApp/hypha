@@ -13,7 +13,6 @@ jobs:
           PGUSER: root
           DJANGO_SETTINGS_MODULE: opentech.settings.test
           SEND_MESSAGES: false
-          PROJECTS_ENABLED: true
 
       - image: circleci/postgres:10.5
         environment:

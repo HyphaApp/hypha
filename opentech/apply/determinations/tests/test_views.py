@@ -2,7 +2,7 @@ import urllib
 
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import RequestFactory
+from django.test import override_settings, RequestFactory
 from django.urls import reverse_lazy
 
 from opentech.apply.activity.models import Activity
@@ -88,7 +88,15 @@ class DeterminationFormTestCase(BaseViewTestCase):
         response = self.get_page(submission, 'form')
         self.assertNotContains(response, 'Update ')
 
+    @override_settings(PROJECTS_ENABLED=False)
     def test_can_edit_draft_determination_if_not_lead(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion')
+        determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
+        response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
+        self.assertContains(response, 'Approved')
+        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+
+    def test_can_edit_draft_determination_if_not_lead_with_projects(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')

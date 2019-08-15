@@ -267,13 +267,14 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
 
             if self.submission.accepted_for_funding:
                 project = Project.create_from_submission(self.submission)
-                messenger(
-                    MESSAGES.CREATED_PROJECT,
-                    request=self.request,
-                    user=self.request.user,
-                    source=project,
-                    related=project.submission,
-                )
+                if project:
+                    messenger(
+                        MESSAGES.CREATED_PROJECT,
+                        request=self.request,
+                        user=self.request.user,
+                        source=project,
+                        related=project.submission,
+                    )
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
