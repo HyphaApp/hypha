@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.views import SuccessURLAllowedHostsMixin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render, resolve_url
 from django.template.response import TemplateResponse
@@ -93,8 +94,15 @@ class AccountView(UpdateView):
 
 @login_required()
 def become(request):
-    id = request.POST['user']
+    if not request.user.is_apply_staff:
+        raise PermissionDenied()
+
+    id = request.POST.get('user')
     if request.POST and id:
+        target_user = User.objects.get(pk=id)
+        if target_user.is_superuser:
+            raise PermissionDenied()
+
         return login_with_id(request, id)
     return redirect('users:account')
 
