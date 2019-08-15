@@ -301,6 +301,10 @@ class Project(models.Model):
                     'difference': difference,
                 }
 
+    @property
+    def is_in_progress(self):
+        return self.status == IN_PROGRESS
+
 
 class DocumentCategory(models.Model):
     name = models.CharField(max_length=254)
