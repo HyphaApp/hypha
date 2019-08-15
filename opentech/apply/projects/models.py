@@ -138,11 +138,12 @@ class PaymentRequest(models.Model):
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
 IN_PROGRESS = 'in_progress'
+CLOSING = 'closing'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, 'Committed'),
     (CONTRACTING, 'Contracting'),
     (IN_PROGRESS, 'In Progress'),
-    ('closing', 'Closing'),
+    (CLOSING, 'Closing'),
     ('complete', 'Complete'),
 ]
 
@@ -252,6 +253,12 @@ class Project(models.Model):
     @property
     def can_make_approval(self):
         return self.is_locked and self.status == COMMITTED
+
+    def can_request_funding(self):
+        """
+        Should we show this Project's funding block?
+        """
+        return self.status in (CLOSING, IN_PROGRESS)
 
     @property
     def can_send_for_approval(self):

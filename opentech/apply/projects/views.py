@@ -28,6 +28,7 @@ from .forms import (
     ProjectEditForm,
     RejectionForm,
     RemoveDocumentForm,
+    RequestPaymentForm,
     SetPendingForm,
     UpdateProjectLeadForm,
     UploadContractForm,
@@ -39,6 +40,7 @@ from .models import (
     Approval,
     Contract,
     PacketFile,
+    PaymentRequest,
     Project
 )
 
@@ -178,6 +180,28 @@ class RemoveDocumentView(DelegatedViewMixin, FormView):
         return redirect(project)
 
 
+class RequestPaymentView(DelegatedViewMixin, CreateView):
+    context_name = 'request_payment_form'
+    form_class = RequestPaymentForm
+    model = PaymentRequest
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+
+        form.instance.by = self.request.user
+        form.instance.project = project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.APPROVE_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+        )
+
+        return response
+
+
 @method_decorator(staff_required, name='dispatch')
 class SendForApprovalView(DelegatedViewMixin, UpdateView):
     context_name = 'request_approval_form'
@@ -284,6 +308,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMi
         CreateApprovalView,
         RejectionView,
         RemoveDocumentView,
+        RequestPaymentView,
         SendForApprovalView,
         UpdateLeadView,
         UploadContractView,
@@ -303,6 +328,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMi
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
     form_views = [
         CommentFormView,
+        RequestPaymentView,
         UploadContractView,
     ]
 

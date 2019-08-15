@@ -144,6 +144,20 @@
                     </a>
                     {% endif %}
 
+                    {% if object.can_request_funding %}
+                    <div class="modal" id="request-payment">
+                        <h4 class="modal__header-bar">Request Payment</h4>
+                        {% include 'funds/includes/delegated_form_base.html' with form=request_payment_form value='Request'%}
+                    </div>
+
+                    <a data-fancybox
+                       data-src="#request-payment"
+                       class="button button--primary button--full-width"
+                       href="#">
+                        Add payment request
+                    </a>
+                    {% endif %}
+
                     {% if request.user.is_apply_staff %}
                     {% block admin_assignments %}{% endblock %}
                     {% endif %}

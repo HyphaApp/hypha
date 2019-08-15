@@ -3,9 +3,18 @@ from django.db.models import Q
 
 from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .models import COMMITTED, Approval, Contract, PacketFile, Project
+from .models import (
+    COMMITTED,
+    Approval,
+    Contract,
+    PacketFile,
+    PaymentReceipt,
+    PaymentRequest,
+    Project
+)
 
 
 class ApproveContractForm(forms.ModelForm):
@@ -102,6 +111,41 @@ class RemoveDocumentForm(forms.ModelForm):
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class RequestPaymentForm(forms.ModelForm):
+    receipts = MultiFileField()
+
+    class Meta:
+        fields = ['value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
+        model = PaymentRequest
+        widgets = {
+            'date_from': forms.DateInput,
+            'date_to': forms.DateInput,
+        }
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date_from = cleaned_data['date_from']
+        date_to = cleaned_data['date_to']
+
+        if date_from > date_to:
+            self.add_error('date_from', 'Date From must be before Date To')
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        request = super().save(commit=commit)
+
+        PaymentReceipt.objects.bulk_create(
+            PaymentReceipt(payment_request=request, file=receipt)
+            for receipt in self.cleaned_data['receipts']
+        )
+
+        return request
 
 
 class SetPendingForm(forms.ModelForm):
