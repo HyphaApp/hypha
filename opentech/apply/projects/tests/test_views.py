@@ -16,12 +16,13 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..models import CONTRACTING, IN_PROGRESS
-from ..views import ContractsMixin
+from ..models import CONTRACTING, IN_PROGRESS, PAID
+from ..views import ContractsMixin, PaymentsMixin
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
+    PaymentRequestFactory,
     ProjectFactory
 )
 
@@ -669,3 +670,19 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
         self.assertEqual(project.payment_requests.count(), 1)
 
         self.assertEqual(project.payment_requests.first().by, self.user)
+
+
+class TestPaymentsMixin(TestCase):
+    def test_get_totals(self):
+        project = ProjectFactory(value=100)
+        user = UserFactory()
+
+        PaymentRequestFactory(project=project, by=user, value=20)
+        PaymentRequestFactory(project=project, by=user, value=10, status=PAID)
+
+        values = PaymentsMixin().get_totals(project)
+
+        self.assertEqual(values['awaiting_absolute'], 20)
+        self.assertEqual(values['awaiting_percentage'], 20)
+        self.assertEqual(values['paid_absolute'], 10)
+        self.assertEqual(values['paid_percentage'], 10)

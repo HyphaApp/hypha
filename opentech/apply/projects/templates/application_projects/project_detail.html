@@ -107,11 +107,13 @@
                     </div>
                 </div>
 
-                {# <div class="wrapper wrapper--outer-space-large"> #}
-                {#     {% include "funds/includes/funding_block.html" %} #}
-                {#     {% include "funds/includes/payment_requests.html" %} #}
-                {#     {% include "funds/includes/invoice_block.html" %} #}
-                {# </div> #}
+                {% if object.can_request_funding %}
+                <div class="wrapper wrapper--outer-space-large">
+                    {% include "application_projects/includes/funding_block.html" %}
+                    {% include "application_projects/includes/payment_requests.html" %}
+                    {% include "application_projects/includes/invoice_block.html" %}
+                </div>
+                {% endif %}
 
                 {% include "application_projects/includes/supporting_documents.html" %}
             </article>
@@ -224,6 +226,7 @@
 
 {% block extra_js %}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-payment-block.js' %}"></script>
     <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 {% endblock %}

@@ -1,3 +1,4 @@
+import decimal
 from copy import copy
 
 from django.contrib import messages
@@ -5,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
@@ -15,34 +17,17 @@ from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.storage import PrivateMediaView
-from opentech.apply.utils.views import (
-    DelegateableView,
-    DelegatedViewMixin,
-    ViewDispatcher,
-)
+from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
+                                        ViewDispatcher)
 
-from .forms import (
-    ApproveContractForm,
-    CreateApprovalForm,
-    ProjectApprovalForm,
-    ProjectEditForm,
-    RejectionForm,
-    RemoveDocumentForm,
-    RequestPaymentForm,
-    SetPendingForm,
-    UpdateProjectLeadForm,
-    UploadContractForm,
-    UploadDocumentForm
-)
-from .models import (
-    CONTRACTING,
-    IN_PROGRESS,
-    Approval,
-    Contract,
-    PacketFile,
-    PaymentRequest,
-    Project
-)
+from .forms import (ApproveContractForm, CreateApprovalForm,
+                    ProjectApprovalForm, ProjectEditForm, RejectionForm,
+                    RemoveDocumentForm, RequestPaymentForm, SetPendingForm,
+                    UpdateProjectLeadForm, UploadContractForm,
+                    UploadDocumentForm)
+from .models import (CONTRACTING, DECLINED, IN_PROGRESS, PAID,
+                     REQUEST_STATUS_CHOICES, SUBMITTED, UNDER_REVIEW, Approval,
+                     Contract, PacketFile, PaymentRequest, Project)
 
 
 class ContractsMixin:
@@ -74,6 +59,49 @@ class ContractsMixin:
             return
 
         return latest
+
+
+class PaymentsMixin:
+    def get_context_data(self, **kwargs):
+        project = self.get_object()
+
+        payments = {
+            'availabe_statuses': REQUEST_STATUS_CHOICES,
+            'not_rejected': project.payment_requests.exclude(status=DECLINED),
+            'rejected': project.payment_requests.filter(status=DECLINED),
+            'totals': self.get_totals(project),
+        }
+
+        context = super().get_context_data(**kwargs)
+        context['payments'] = payments
+        return context
+
+    def get_totals(self, project):
+        def percentage(total, value):
+            unrounded_total = (value / total) * 100
+
+            # round using Decimal since we're dealing with currency
+            rounded_total = unrounded_total.quantize(
+                decimal.Decimal('1'),
+                rounding=decimal.ROUND_DOWN,
+            )
+
+            return rounded_total
+
+        unpaid_requests = project.payment_requests.filter(Q(status=SUBMITTED) | Q(status=UNDER_REVIEW))
+        awaiting_absolute = sum(unpaid_requests.values_list('value', flat=True))
+        awaiting_percentage = percentage(project.value, awaiting_absolute)
+
+        paid_requests = project.payment_requests.filter(status=PAID)
+        paid_absolute = sum(paid_requests.values_list('value', flat=True))
+        paid_percentage = percentage(project.value, paid_absolute)
+
+        return {
+            'awaiting_absolute': awaiting_absolute,
+            'awaiting_percentage': awaiting_percentage,
+            'paid_absolute': paid_absolute,
+            'paid_percentage': paid_percentage,
+        }
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -302,7 +330,7 @@ class UploadDocumentView(DelegatedViewMixin, CreateView):
         return response
 
 
-class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
+class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):
     form_views = [
         CommentFormView,
         CreateApprovalView,
@@ -325,7 +353,7 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMi
         return context
 
 
-class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
+class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):
     form_views = [
         CommentFormView,
         RequestPaymentView,

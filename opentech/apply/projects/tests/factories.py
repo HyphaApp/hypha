@@ -2,6 +2,7 @@ import decimal
 import json
 
 import factory
+import pytz
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -9,6 +10,7 @@ from opentech.apply.projects.models import (
     Contract,
     DocumentCategory,
     PacketFile,
+    PaymentRequest,
     Project
 )
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
@@ -86,3 +88,14 @@ class PacketFileFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PacketFile
+
+
+class PaymentRequestFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory(ProjectFactory)
+    by = factory.SubFactory(UserFactory)
+
+    date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+    date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+
+    class Meta:
+        model = PaymentRequest
