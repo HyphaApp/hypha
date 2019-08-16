@@ -1,4 +1,6 @@
 from django import forms
+from django.core.files.base import ContentFile
+from django.db import transaction
 from django.db.models import Q
 
 from addressfield.fields import AddressField
@@ -6,10 +8,12 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
+from .files import get_files
 from .models import (
     COMMITTED,
     Approval,
     Contract,
+    DocumentCategory,
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
@@ -146,6 +150,43 @@ class RequestPaymentForm(forms.ModelForm):
         )
 
         return request
+
+
+class SelectDocumentForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=DocumentCategory.objects.all())
+    files = forms.MultipleChoiceField()
+
+    name = 'select_document_form'
+
+    def __init__(self, existing_files, project, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.project = project
+
+        choices = []
+        if existing_files is not None:
+            choices = [(f.url, f.filename) for f in existing_files]
+
+        self.fields['files'].choices = choices
+
+    @transaction.atomic()
+    def save(self, *args, **kwargs):
+        category = self.cleaned_data['category']
+        urls = self.cleaned_data['files']
+
+        files = get_files(self.project)
+        files = (f for f in files if f.url in urls)
+
+        for f in files:
+            new_file = ContentFile(f.read())
+            new_file.name = f.filename
+
+            PacketFile.objects.create(
+                category=category,
+                project=self.project,
+                title=f.filename,
+                document=new_file,
+            )
 
 
 class SetPendingForm(forms.ModelForm):
