@@ -59,8 +59,8 @@ class ContractsMixin:
         """
         Get approved AND signed contracts for the current project
 
-        When an unsigned and unapproved contract is newer than the signed and
-        approved ones we add that to the top of the list.
+        When an unsigned OR (signed AND unapproved) contract is newer than the
+        signed and approved ones we add that to the top of the list.
         """
         contracts = (project.contracts.select_related('approver')
                                       .order_by('-created_at'))
@@ -69,16 +69,21 @@ class ContractsMixin:
             return
 
         latest_contract = contracts.first()
-        if not (latest_contract.is_signed and latest_contract.approver):
-            # remove unsigned contracts EXCEPT this PK
-            exclude_pks = (contracts.filter(is_signed=False)
-                                    .exclude(pk=latest_contract.pk)
-                                    .values_list('pk', flat=True))
-            contracts = contracts.exclude(pk__in=exclude_pks)
-        else:
-            contracts = contracts.exclude(is_signed=False)
 
-        return contracts
+        if latest_contract.is_signed and latest_contract.approver:
+            return contracts.exclude(is_signed=False)
+
+        # At this point we know that latest_contract is the "pending" contract
+        # we want to display at the top of the list, however we need to remove
+        # all the older pending contracts from the list.
+        #
+        # We do that by getting the PKs for all the contracts which are (signed
+        # AND approved), adding the latest_contract's PK and returning the
+        # filter of those.
+        ready_pks = list(contracts.filter(is_signed=True, approver__isnull=False)
+                                  .values_list('pk', flat=True))
+
+        return contracts.filter(pk__in=[latest_contract.pk, *ready_pks])
 
 
 @method_decorator(staff_required, name='dispatch')
