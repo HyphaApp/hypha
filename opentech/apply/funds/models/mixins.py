@@ -112,17 +112,25 @@ class AccessFormData:
                 yield field_id
 
     @property
-    def question_text_field_ids(self):
+    def file_field_ids(self):
         for field_id, field in self.fields.items():
             if isinstance(field.block, (FileFieldBlock, ImageFieldBlock, MultiFileFieldBlock)):
+                yield field_id
+
+    @property
+    def question_text_field_ids(self):
+        file_fields = list(self.file_field_ids)
+        for field_id, field in self.fields.items():
+            if field_id in file_fields:
                 pass
             elif isinstance(field.block, FormFieldBlock):
                 yield field_id
 
     @property
     def first_group_question_text_field_ids(self):
+        file_fields = list(self.file_field_ids)
         for field_id, field in self.fields.items():
-            if isinstance(field.block, (FileFieldBlock, ImageFieldBlock, MultiFileFieldBlock)):
+            if field_id in file_fields:
                 continue
             elif isinstance(field.block, GroupToggleBlock):
                 break

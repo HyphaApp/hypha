@@ -1,7 +1,11 @@
 from io import BytesIO
 
+from django.contrib.auth.models import AnonymousUser
+from django.urls import reverse
+
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
     ApproverFactory,
     ReviewerFactory,
     StaffFactory,
@@ -285,3 +289,52 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.redirect_chain, [])
+
+
+class BasePacketFileViewTestCase(BaseViewTestCase):
+    url_name = 'funds:projects:{}'
+    base_view_name = 'document'
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'file_pk': instance.id,
+        }
+
+
+class TestStaffPacketView(BasePacketFileViewTestCase):
+    user_factory = StaffFactory
+
+    def test_staff_can_access(self):
+        document = PacketFileFactory()
+        response = self.get_page(document)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestUserPacketView(BasePacketFileViewTestCase):
+    user_factory = ApplicantFactory
+
+    def test_owner_can_access(self):
+        document = PacketFileFactory(project__user=self.user)
+        response = self.get_page(document)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_user_can_not_access(self):
+        document = PacketFileFactory()
+        response = self.get_page(document)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestAnonPacketView(BasePacketFileViewTestCase):
+    user_factory = AnonymousUser
+
+    def test_anonymous_can_not_access(self):
+        document = PacketFileFactory()
+        response = self.get_page(document)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 2)
+        for path, _ in response.redirect_chain:
+            self.assertIn(reverse('users_public:login'), path)

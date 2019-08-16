@@ -199,10 +199,12 @@ class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, DetailV
 
 @method_decorator(login_required, name='dispatch')
 class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
-    def get(self, *args, **kwargs):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
         project_pk = self.kwargs['pk']
         self.project = get_object_or_404(Project, pk=project_pk)
-        return super().get(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
         document = PacketFile.objects.get(pk=kwargs['file_pk'])
@@ -214,7 +216,7 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         if self.request.user.is_apply_staff:
             return True
 
-        if self.request.user == self.project.owner:
+        if self.request.user == self.project.user:
             return True
 
         return False

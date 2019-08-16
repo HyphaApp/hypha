@@ -914,10 +914,12 @@ class SubmissionDeleteView(DeleteView):
 
 @method_decorator(login_required, name='dispatch')
 class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
-    def get(self, *args, **kwargs):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
         submission_pk = self.kwargs['pk']
         self.submission = get_object_or_404(ApplicationSubmission, pk=submission_pk)
-        return super().get(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
         field_id = kwargs['field_id']

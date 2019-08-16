@@ -29,7 +29,8 @@ class BaseViewTestCase(TestCase):
         super().setUpTestData()
 
     def setUp(self):
-        self.client.force_login(self.user)
+        if not self.user.is_anonymous:
+            self.client.force_login(self.user)
         self.factory = RequestFactory()
 
     def get_kwargs(self, instance):
