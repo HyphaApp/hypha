@@ -1,6 +1,8 @@
 from datetime import timedelta
 import json
 
+from django.contrib.auth.models import AnonymousUser
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
@@ -658,3 +660,56 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         # Check that an activity was created that should only be viewable internally
         activity = Activity.objects.filter(message__contains='Screening status').first()
         self.assertEqual(activity.visibility, INTERNAL)
+
+
+class BaseSubmissionFileViewTestCase(BaseViewTestCase):
+    url_name = 'funds:submissions:{}'
+    base_view_name = 'serve_private_media'
+
+    def get_kwargs(self, instance):
+        document_fields = list(instance.file_field_ids)
+        field_id = document_fields[0]
+        document = instance.data(field_id)
+        return {
+            'pk': instance.pk,
+            'field_id': field_id,
+            'file_name': document.basename,
+        }
+
+
+class TestStaffSubmissionFileView(BaseSubmissionFileViewTestCase):
+    user_factory = StaffFactory
+
+    def test_staff_can_access(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestUserSubmissionFileView(BaseSubmissionFileViewTestCase):
+    user_factory = ApplicantFactory
+
+    def test_owner_can_access(self):
+        submission = ApplicationSubmissionFactory(user=self.user)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_user_can_not_access(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.redirect_chain, [])
+
+
+class TestAnonSubmissionFileView(BaseSubmissionFileViewTestCase):
+    user_factory = AnonymousUser
+
+    def test_anonymous_can_not_access(self):
+        submission = ApplicationSubmissionFactory()
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 2)
+        for path, _ in response.redirect_chain:
+            self.assertIn(reverse('users_public:login'), path)

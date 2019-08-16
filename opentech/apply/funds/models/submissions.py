@@ -1,4 +1,3 @@
-import os
 from functools import partialmethod
 
 from django.conf import settings
@@ -538,7 +537,7 @@ class ApplicationSubmission(
 
     def from_draft(self):
         self.is_draft = True
-        self.form_data = self.deserialised_data(self.draft_revision.form_data, self.form_fields)
+        self.form_data = self.deserialised_data(self, self.draft_revision.form_data, self.form_fields)
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
@@ -587,13 +586,12 @@ class ApplicationSubmission(
     def process_file_data(self, data):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.process_file(data.get(field.id, []))
-                folder = os.path.join('submission', str(self.id), field.id)
+                file = self.process_file(self, field, data.get(field.id, []))
                 try:
-                    file.save(folder)
+                    file.save()
                 except AttributeError:
                     for f in file:
-                        f.save(folder)
+                        f.save()
                 self.form_data[field.id] = file
 
     def save(self, *args, update_fields=list(), **kwargs):

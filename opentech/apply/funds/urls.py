@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from opentech.apply.projects.urls import urlpatterns as projects_urls
+from opentech.apply.projects import urls as projects_urls
 
 from .views import (
     RevisionCompareView,
@@ -39,15 +39,15 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
-    path(
-        'documents/submission/<int:submission_id>/<uuid:field_id>/<str:file_name>/',
-        SubmissionPrivateMediaView.as_view(), name='serve_private_media'
-    ),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('delete/', SubmissionDeleteView.as_view(), name="delete"),
+        path(
+            'documents/<uuid:field_id>/<str:file_name>',
+            SubmissionPrivateMediaView.as_view(), name='serve_private_media'
+        ),
     ])),
     path('<int:submission_pk>/', include([
         path('', include('opentech.apply.review.urls', namespace="reviews")),
@@ -83,6 +83,6 @@ rounds_urls = ([
 urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('rounds/', include(rounds_urls)),
-    path('projects/', include((projects_urls, 'projects'))),
+    path('projects/', include(projects_urls)),
     path('api/', include(api_urls)),
 ]
