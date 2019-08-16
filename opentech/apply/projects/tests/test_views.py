@@ -235,6 +235,24 @@ class TestStaffUploadContractView(BaseViewTestCase):
         self.assertEqual(project.contracts.count(), 1)
         self.assertFalse(project.contracts.first().is_signed)
 
+    def test_upload_contract_with_with_signed_set_to_true(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+            'is_signed': True,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
 
 class TestUploadDocumentView(BaseViewTestCase):
     base_view_name = 'detail'
