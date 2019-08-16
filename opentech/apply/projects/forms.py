@@ -9,6 +9,8 @@ from .models import COMMITTED, Approval, Contract, PacketFile, Project
 
 
 class ApproveContractForm(forms.ModelForm):
+    name = 'approve_contract_form'
+
     class Meta:
         fields = ['id']
         model = Contract
