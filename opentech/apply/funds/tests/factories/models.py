@@ -90,10 +90,11 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            for _ in self.workflow.stages:
+            for index, _ in enumerate(self.workflow.stages, 1):
                 # Generate a form based on all defined fields on the model
                 ApplicationBaseFormFactory(
                     application=self,
+                    stage=index,
                     **kwargs,
                 )
                 ApplicationBaseReviewForm(
@@ -160,10 +161,11 @@ class RoundFactory(wagtail_factories.PageFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            for _ in self.workflow.stages:
+            for index, _ in enumerate(self.workflow.stages, 1):
                 # Generate a form based on all defined fields on the model
                 RoundBaseFormFactory(
                     round=self,
+                    stage=index,
                     **kwargs,
                 )
                 RoundBaseReviewFormFactory(
@@ -197,10 +199,11 @@ class LabFactory(AbstractApplicationFactory):
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
         if create:
-            for _ in self.workflow.stages:
+            for index, _ in enumerate(self.workflow.stages, 1):
                 # Generate a form based on all defined fields on the model
                 LabBaseFormFactory(
                     lab=self,
+                    stage=index,
                     **kwargs,
                 )
                 LabBaseReviewFormFactory(

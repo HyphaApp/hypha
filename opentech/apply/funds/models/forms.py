@@ -27,10 +27,18 @@ class ApplicationForm(models.Model):
 
 
 class AbstractRelatedForm(Orderable):
+    FIRST_STAGE = 1
+    SECOND_STAGE = 2
+    STAGE_CHOICES = [
+        (FIRST_STAGE, '1st Stage'),
+        (SECOND_STAGE, '2nd Stage'),
+    ]
     form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
+    stage = models.PositiveSmallIntegerField(choices=STAGE_CHOICES)
 
     panels = [
-        FilteredFieldPanel('form', filter_query={'roundbaseform__isnull': True})
+        FilteredFieldPanel('form', filter_query={'roundbaseform__isnull': True}),
+        FieldPanel('stage'),
     ]
 
     @property

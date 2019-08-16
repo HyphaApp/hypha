@@ -223,7 +223,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         new_form.id = None
         new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
         new_form.save()
-        new_class.objects.create(round=self, form=new_form)
+        if hasattr(form, 'stage'):
+            new_class.objects.create(round=self, form=new_form, stage=form.stage)
+        else:
+            new_class.objects.create(round=self, form=new_form)
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
