@@ -392,7 +392,7 @@ class TestContractsMixin(TestCase):
 
         self.assertIsNone(contracts)
 
-    def test_some_unsigned_and_unapproved(self):
+    def test_all_unsigned_and_unapproved_returns_only_latest(self):
         project = ProjectFactory()
         ContractFactory(project=project, is_signed=False)
         ContractFactory(project=project, is_signed=False)
@@ -402,7 +402,7 @@ class TestContractsMixin(TestCase):
 
         self.assertEqual(len(contracts), 1)
 
-    def test_some_signed_and_unapproved(self):
+    def test_all_signed_and_unapproved_returns_all(self):
         project = ProjectFactory()
         ContractFactory(project=project, is_signed=True)
         ContractFactory(project=project, is_signed=True)
