@@ -201,9 +201,6 @@ class Project(models.Model):
         correct_state = self.status == COMMITTED and not self.is_locked
         return correct_state and self.user_has_updated_details
 
-    def can_upload_contract(self):
-        return self.status == CONTRACTING
-
     def get_missing_document_categories(self):
         """
         Get the number of documents required to meet each DocumentCategorys minimum

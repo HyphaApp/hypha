@@ -1,5 +1,6 @@
 {% extends "base-apply.html" %}
 
+{% load contract_tools %}
 {% load static  %}
 {% load wagtailcore_tags %}
 
@@ -128,7 +129,8 @@
                     {% block admin_actions %}{% endblock %}
                     {% endif %}
 
-                    {% if object.can_upload_contract %}
+                    {% user_can_upload_contract object request.user as can_upload_contract %}
+                    {% if can_upload_contract %}
                     <div class="modal" id="upload-contract">
                         <h4 class="modal__header-bar">Upload Contract</h4>
                         {% include 'funds/includes/delegated_form_base.html' with form=contract_form value='Upload'%}
