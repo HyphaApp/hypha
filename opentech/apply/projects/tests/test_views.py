@@ -362,15 +362,6 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
 
 class TestContractsMixin(TestCase):
-    class Contracts(ContractsMixin):
-        """Dummy subclass of ContractsMixin to implement the get_object method."""
-
-        def __init__(self, project):
-            self.project = project
-
-        def get_object(self):
-            return self.project
-
     def test_all_signed_and_approved_contracts_appear(self):
         project = ProjectFactory()
         user = StaffFactory()
@@ -378,7 +369,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 3)
 
@@ -389,7 +380,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=False)
         ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 2)
         for contract in contracts:
@@ -397,7 +388,7 @@ class TestContractsMixin(TestCase):
 
     def test_no_contracts_returns_nothing(self):
         project = ProjectFactory()
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertIsNone(contracts)
 
@@ -407,7 +398,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=False)
         ContractFactory(project=project, is_signed=False)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 1)
 
@@ -417,7 +408,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True)
         ContractFactory(project=project, is_signed=True)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 3)
 
@@ -430,7 +421,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=False)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 4)
         self.assertEqual(latest, contracts[0])
@@ -447,7 +438,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=True)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 4)
         self.assertEqual(latest, contracts[0])
@@ -464,7 +455,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = self.Contracts(project).get_contracts()
+        contracts = ContractsMixin().get_contracts(project)
 
         self.assertEqual(len(contracts), 4)
         self.assertEqual(latest, contracts[0])

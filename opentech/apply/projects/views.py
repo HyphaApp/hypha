@@ -42,7 +42,8 @@ from .models import (
 
 class ContractsMixin:
     def get_context_data(self, **kwargs):
-        contracts = self.get_contracts()
+        project = self.get_object()
+        contracts = self.get_contracts(project)
 
         try:
             latest_contract = contracts[0]
@@ -54,15 +55,13 @@ class ContractsMixin:
         context['contracts'] = contracts
         return context
 
-    def get_contracts(self):
+    def get_contracts(self, project):
         """
         Get approved AND signed contracts for the current project
 
         When an unsigned and unapproved contract is newer than the signed and
         approved ones we add that to the top of the list.
         """
-        project = self.get_object()
-
         contracts = (project.contracts.select_related('approver')
                                       .order_by('-created_at'))
 
