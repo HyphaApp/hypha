@@ -5,7 +5,7 @@ MCE_ATTRIBUTES = {
     'branding': False,
     'entity_encoding': 'raw',
     'plugins': 'link image preview codesample table code lists',
-    'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | link',
+    'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | table | link',
     'style_formats': [
         {'title': 'Headers', 'items': [
             {'title': 'Header 1', 'format': 'h1'},
