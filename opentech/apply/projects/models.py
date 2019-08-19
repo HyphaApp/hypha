@@ -12,6 +12,14 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    StreamFieldPanel,
+)
+from wagtail.core.fields import StreamField
+
+from opentech.apply.stream_forms.blocks import FormFieldsBlock
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -344,3 +352,16 @@ class DocumentCategory(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = 'Document Categories'
+
+
+class ProjectApprovalForm(models.Model):
+    name = models.CharField(max_length=255)
+    form_fields = StreamField(FormFieldsBlock())
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name
