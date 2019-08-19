@@ -71,7 +71,7 @@ class ContractsMixin:
         latest_contract = contracts.first()
 
         if latest_contract.is_signed and latest_contract.approver:
-            return contracts.exclude(is_signed=False)
+            return contracts.filter(is_signed=True, approver__isnull=False)
 
         # At this point we know that latest_contract is the "pending" contract
         # we want to display at the top of the list, however we need to remove
