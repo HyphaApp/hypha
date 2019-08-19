@@ -11,13 +11,18 @@ def user_can_upload_contract(project, user):
         return project.status != COMMITTED
 
     # Does the Project have any unapproved contracts?
-    contracts = project.contracts.order_by('-created_at')
-    latest_approved = contracts.filter(approver__isnull=False).first()
-    if latest_approved is None:
-        return True
+    latest_contract = project.contracts.order_by('-created_at').first()
 
-    latest_unapproved = contracts.filter(approver__isnull=True).first()
-    if latest_unapproved and latest_unapproved.created_at > latest_approved:
-        return True
+    # No contract ever uploaded - nothing to do
+    if not latest_contract:
+        return False
 
-    return False
+    # Latest contract approved - nothing to do
+    if latest_contract.approver:
+        return False
+
+    # Contract is either:
+    #  - Unsigned: Applicant needs to sign it.
+    #  - Signed: Applicant is waiting on approval and may need to upload a new
+    #    version because my scanning was bad.
+    return True
