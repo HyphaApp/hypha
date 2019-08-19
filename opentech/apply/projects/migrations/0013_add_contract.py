@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('application_projects', '0011_add_packet_file'),
+        ('application_projects', '0012_adjust_storage_class'),
     ]
 
     operations = [

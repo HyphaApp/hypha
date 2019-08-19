@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import include, path
 
 from .views import (
-    AppriveContractView,
+    ApproveContractView,
     ProjectDetailView,
     ProjectEditView,
     ProjectPrivateMediaView
