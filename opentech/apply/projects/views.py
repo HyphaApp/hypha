@@ -2,8 +2,10 @@ from copy import copy
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -12,10 +14,11 @@ from django.views.generic import CreateView, DetailView, FormView, UpdateView
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
     DelegatedViewMixin,
-    ViewDispatcher
+    ViewDispatcher,
 )
 
 from .forms import (
@@ -312,6 +315,31 @@ class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, Contrac
         if project.user != request.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        document = PacketFile.objects.get(pk=kwargs['file_pk'])
+        if document.project != self.project:
+            raise Http404
+        return document.document
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False
 
 
 class ProjectDetailView(ViewDispatcher):

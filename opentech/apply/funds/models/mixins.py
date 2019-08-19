@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.utils.text import mark_safe
 from django.core.files import File
-from django.core.files.storage import get_storage_class
 
 from opentech.apply.stream_forms.blocks import (
     FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
@@ -9,19 +7,11 @@ from opentech.apply.stream_forms.blocks import (
 from opentech.apply.utils.blocks import SingleIncludeMixin
 
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.stream_forms.files import StreamFieldFile
+from opentech.apply.utils.storage import PrivateStorage
 
+from ..files import SubmissionStreamFileField
 
 __all__ = ['AccessFormData']
-
-
-private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
-submission_storage_class = get_storage_class(private_file_storage)
-
-if private_file_storage:
-    submission_storage = submission_storage_class(is_submission=True)
-else:
-    submission_storage = submission_storage_class()
 
 
 class UnusedFieldException(Exception):
@@ -34,8 +24,9 @@ class AccessFormData:
     requires:
          - form_data > jsonfield containing the submitted data
          - form_fields > streamfield containing the original form fields
-
     """
+    stream_file_class = SubmissionStreamFileField
+    storage_class = PrivateStorage
 
     @property
     def raw_data(self):
@@ -54,46 +45,51 @@ class AccessFormData:
         return data
 
     @classmethod
-    def stream_file(cls, file):
+    def stream_file(cls, instance, field, file):
         if not file:
             return []
-        if isinstance(file, StreamFieldFile):
+        if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
-            return StreamFieldFile(file, name=file.name, storage=submission_storage)
+            return cls.stream_file_class(instance, field, file, name=file.name, storage=cls.storage_class())
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it
         if 'path' in file:
             file['filename'] = file['name']
             file['name'] = file['path']
-        return StreamFieldFile(None, name=file['name'], filename=file.get('filename'), storage=submission_storage)
+        return cls.stream_file_class(instance, field, None, name=file['name'], filename=file.get('filename'), storage=cls.storage_class())
 
     @classmethod
-    def process_file(cls, file):
+    def process_file(cls, instance, field, file):
         if isinstance(file, list):
-            return [cls.stream_file(f) for f in file]
+            return [cls.stream_file(instance, field, f) for f in file]
         else:
-            return cls.stream_file(file)
+            return cls.stream_file(instance, field, file)
 
     @classmethod
     def from_db(cls, db, field_names, values):
         instance = super().from_db(db, field_names, values)
         if 'form_data' in field_names:
             # When the form_data is loaded from the DB deserialise it
-            instance.form_data = cls.deserialised_data(instance.form_data, instance.form_fields)
+            instance.form_data = cls.deserialised_data(instance, instance.form_data, instance.form_fields)
         return instance
 
     @classmethod
-    def deserialised_data(cls, data, form_fields):
+    def deserialised_data(cls, instance, data, form_fields):
         # Converts the file dicts into actual file objects
         data = data.copy()
-        for field in form_fields.stream_data:
-            block = form_fields.stream_block.child_blocks[field['type']]
+        # PERFORMANCE NOTE:
+        # Do not attempt to iterate over form_fields - that will fully instantiate the form_fields
+        # including any sub queries that they do
+        for i, field_data in enumerate(form_fields.stream_data):
+            block = form_fields.stream_block.child_blocks[field_data['type']]
             if isinstance(block, UploadableMediaBlock):
-                field_id = field.get('id')
-                file = data.get(field_id, [])
-                data[field_id] = cls.process_file(file)
+                field_id = field_data.get('id')
+                if field_id:
+                    field = form_fields[i]
+                    file = data.get(field_id, [])
+                    data[field_id] = cls.process_file(instance, field, file)
         return data
 
     def get_definitive_id(self, id):
@@ -123,17 +119,25 @@ class AccessFormData:
                 yield field_id
 
     @property
-    def question_text_field_ids(self):
+    def file_field_ids(self):
         for field_id, field in self.fields.items():
             if isinstance(field.block, (FileFieldBlock, ImageFieldBlock, MultiFileFieldBlock)):
+                yield field_id
+
+    @property
+    def question_text_field_ids(self):
+        file_fields = list(self.file_field_ids)
+        for field_id, field in self.fields.items():
+            if field_id in file_fields:
                 pass
             elif isinstance(field.block, FormFieldBlock):
                 yield field_id
 
     @property
     def first_group_question_text_field_ids(self):
+        file_fields = list(self.file_field_ids)
         for field_id, field in self.fields.items():
-            if isinstance(field.block, (FileFieldBlock, ImageFieldBlock, MultiFileFieldBlock)):
+            if field_id in file_fields:
                 continue
             elif isinstance(field.block, GroupToggleBlock):
                 break

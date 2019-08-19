@@ -75,7 +75,7 @@
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
                     </div>
                     <div class="docs-block__document-inner">
-                        <a class="docs-block__document-link" href="{{ document.document.url }}">Download</a>
+                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">Download</a>
                         <form method="POST" id="{{ remove_document_form.name }}">
                             {% csrf_token %}
                             {{ document.get_remove_form }}
