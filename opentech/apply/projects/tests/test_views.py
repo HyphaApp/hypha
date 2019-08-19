@@ -235,7 +235,7 @@ class TestStaffUploadContractView(BaseViewTestCase):
         self.assertEqual(project.contracts.count(), 1)
         self.assertFalse(project.contracts.first().is_signed)
 
-    def test_upload_contract_with_with_signed_set_to_true(self):
+    def test_upload_contract_with_signed_set_to_true(self):
         project = ProjectFactory()
 
         test_doc = BytesIO(b'somebinarydata')
