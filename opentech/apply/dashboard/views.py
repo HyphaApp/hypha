@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -14,6 +15,8 @@ from opentech.apply.funds.tables import (
     SummarySubmissionsTableWithRole,
     review_filter_for_user,
 )
+from opentech.apply.projects.models import Project
+from opentech.apply.projects.tables import ProjectsDashboardTable
 from opentech.apply.utils.views import ViewDispatcher
 
 
@@ -46,6 +49,8 @@ class AdminDashboardView(TemplateView):
         # Filter for all active statuses.
         active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
 
+        projects = self.get_my_projects(request.user)
+
         context = {
             'open_rounds': open_rounds,
             'open_query': open_query,
@@ -59,9 +64,18 @@ class AdminDashboardView(TemplateView):
             'display_more_reviewed': display_more_reviewed,
             'filter': filterset,
             'active_statuses_filter': active_statuses_filter,
+            'projects': projects,
         }
 
         return render(request, 'dashboard/dashboard.html', context)
+
+    def get_my_projects(self, user):
+        projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
+
+        if not projects:
+            return
+
+        return ProjectsDashboardTable(projects)
 
     def get_my_reviews(self, user, qs):
         my_review_qs = qs.in_review_for(user).order_by('-submit_time')
