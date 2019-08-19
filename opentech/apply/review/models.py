@@ -180,6 +180,11 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     def reviewer_visibility(self):
         return self.visibility == REVIEWER
 
+    @cached_property
+    def is_updated(self):
+        # Only compear dates, not time.
+        return self.created_at.date() < self.updated_at.date()
+
 
 class ReviewOpinion(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='opinions')
