@@ -5,7 +5,25 @@ from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .models import COMMITTED, Approval, PacketFile, Project
+from .models import COMMITTED, Approval, Contract, PacketFile, Project
+
+
+class ApproveContractForm(forms.ModelForm):
+    name = 'approve_contract_form'
+
+    class Meta:
+        fields = ['id']
+        model = Contract
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        if not self.instance.is_signed:
+            raise forms.ValidationError('You can only approve a signed contract')
+
+        super().clean()
 
 
 class CreateProjectForm(forms.Form):
@@ -107,6 +125,19 @@ class SetPendingForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.is_locked = True
         return super().save(*args, **kwargs)
+
+
+class UploadContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['file', 'is_signed']
+        model = Contract
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not user.is_staff:
+            self.fields['is_signed'].widget = forms.HiddenInput()
+            self.fields['is_signed'].default = True
 
 
 class UploadDocumentForm(forms.ModelForm):

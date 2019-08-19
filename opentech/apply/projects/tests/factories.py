@@ -6,12 +6,12 @@ from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.projects.models import (
+    Contract,
     DocumentCategory,
     PacketFile,
-    Project,
+    Project
 )
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-
 
 ADDRESS = {
     'country': 'GB',
@@ -65,6 +65,16 @@ class ProjectFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Project
+
+
+class ContractFactory(factory.DjangoModelFactory):
+    approver = factory.SubFactory(StaffFactory)
+    project = factory.SubFactory(ProjectFactory)
+
+    file = factory.django.FileField()
+
+    class Meta:
+        model = Contract
 
 
 class PacketFileFactory(factory.DjangoModelFactory):

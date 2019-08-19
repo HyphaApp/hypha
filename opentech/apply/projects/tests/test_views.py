@@ -1,20 +1,26 @@
 from io import BytesIO
 
+from django.test import TestCase
+
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
     ApproverFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    UserFactory,
+    UserFactory
 )
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
+from ..models import CONTRACTING, IN_PROGRESS
+from ..views import ContractsMixin
 from .factories import (
+    ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
-    ProjectFactory,
+    ProjectFactory
 )
 
 
@@ -162,6 +168,92 @@ class TestSendForApprovalView(BaseViewTestCase):
         self.assertEqual(project.status, 'committed')
 
 
+class TestApplicantUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_owner_upload_contract(self):
+        project = ProjectFactory(user=self.user)
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
+    def test_non_owner_upload_contract(self):
+        project = ProjectFactory()
+        contract_count = project.contracts.count()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 403)
+
+        project.refresh_from_db()
+        self.assertEqual(project.contracts.count(), contract_count)
+
+
+class TestStaffUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_upload_contract(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertFalse(project.contracts.first().is_signed)
+
+    def test_upload_contract_with_signed_set_to_true(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+            'is_signed': True,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
+
 class TestUploadDocumentView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
@@ -285,3 +377,176 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.redirect_chain, [])
+
+
+class TestContractsMixin(TestCase):
+    class DummyView:
+        def get_context_data(self):
+            return {}
+
+    class DummyContractsView(ContractsMixin, DummyView):
+        def __init__(self, project):
+            self.project = project
+
+        def get_object(self):
+            return self.project
+
+    def test_all_signed_and_approved_contracts_appear(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+
+    def test_mixture_with_latest_signed_returns_no_unsigned(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 2)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_no_contracts_returns_nothing(self):
+        project = ProjectFactory()
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 0)
+
+    def test_all_unsigned_and_unapproved_returns_only_latest(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 1)
+
+    def test_all_signed_and_unapproved_returns_latest(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=None)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 1)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        self.assertIsNone(contracts[0].approver)
+
+    def test_mixture_of_both_latest_unsigned_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=False, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertFalse(contracts[0].is_signed)
+        for contract in contracts[1:]:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_approved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+
+class TestApproveContractView(BaseViewTestCase):
+    base_view_name = 'approve-contract'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.id, 'contract_pk': instance.id}
+
+    def test_approve_unapproved_contract(self):
+        project = ProjectFactory(status=CONTRACTING)
+        contract = ContractFactory(project=project, is_signed=True)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+        self.assertEqual(contract.approver, self.user)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
+
+    def test_approve_already_approved_contract(self):
+        project = ProjectFactory(status=CONTRACTING)
+        user = UserFactory()
+        contract = ContractFactory(project=project, is_signed=True, approver=user)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+        self.assertEqual(contract.approver, self.user)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
+
+    def test_approve_unsigned_contract(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project, is_signed=False)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)

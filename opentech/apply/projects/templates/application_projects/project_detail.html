@@ -1,5 +1,6 @@
 {% extends "base-apply.html" %}
 
+{% load contract_tools %}
 {% load static  %}
 {% load wagtailcore_tags %}
 
@@ -116,8 +117,62 @@
             </article>
 
             <aside class="sidebar">
-                {% if request.user.is_apply_staff %}
-                {% block admin_sidebar %}{% endblock %}
+                {% if mobile %}
+                <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+                {% endif %}
+
+                <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                    <h5>Actions to take</h5>
+
+                    {% if request.user.is_apply_staff %}
+                    {% block admin_actions %}{% endblock %}
+                    {% endif %}
+
+                    {% user_can_upload_contract object request.user as can_upload_contract %}
+                    {% if can_upload_contract %}
+                    <div class="modal" id="upload-contract">
+                        <h4 class="modal__header-bar">Upload Contract</h4>
+                        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value='Upload'%}
+                    </div>
+
+                    <a data-fancybox
+                       data-src="#upload-contract"
+                       class="button button--primary button--full-width"
+                       href="#">
+                        Upload contract
+                    </a>
+                    {% endif %}
+
+                    {% if request.user.is_apply_staff %}
+                    {% block admin_assignments %}{% endblock %}
+                    {% endif %}
+
+                </div>
+
+                {% if request.user.is_apply_staff and approvals %}
+                {% block project_approvals %}{% endblock %}
+                {% endif %}
+
+                {% if contracts %}
+                <div class="sidebar__inner">
+                    <h5>Contracts</h5>
+
+                    {% for contract in contracts %}
+                    <p>
+                        <a href="{{ contract.file.url }}">
+                            Uploaded at {{ contract.created_at|date:"j F Y" }}
+                            ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
+                        </a>
+                    </p>
+
+                    {% if request.user.is_apply_staff and forloop.first %}
+                    {% block approve_contracts %}{% endblock %}
+                    {% endif %}
+
+                    {% endfor %}
+
+                </div>
                 {% endif %}
 
                 <div class="sidebar__inner">
@@ -149,7 +204,12 @@
 </div>
 {% endblock content %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
 {% block extra_js %}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 {% endblock %}
