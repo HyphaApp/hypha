@@ -200,8 +200,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         ).prefetch_related(
             Prefetch(
                 'assigned',
-                queryset=AssignedReviewers.objects.reviewed().review_order().prefetch_related(
-                    Prefetch('opinions', queryset=ReviewOpinion.objects.select_related('author__reviewer'))
+                queryset=AssignedReviewers.objects.reviewed().review_order().select_related(
+                    'reviewer',
+                ).prefetch_related(
+                    Prefetch('review__opinions', queryset=ReviewOpinion.objects.select_related('author')),
                 ),
                 to_attr='has_reviewed'
             ),
@@ -210,7 +212,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 queryset=AssignedReviewers.objects.not_reviewed().staff(),
                 to_attr='hasnt_reviewed'
             )
-
         ).select_related(
             'page',
             'round',
@@ -218,6 +219,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             'user',
             'previous__page',
             'previous__round',
+            'previous__lead',
         )
 
 

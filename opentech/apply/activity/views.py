@@ -15,16 +15,19 @@ class AllActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
             'actions': Activity.actions.select_related(
-                'source_content_type',
                 'user',
+            ).prefetch_related(
+                'source',
             )[:ACTIVITY_LIMIT],
             'comments': Activity.comments.select_related(
-                'source_content_type',
                 'user',
+            ).prefetch_related(
+                'source',
             )[:ACTIVITY_LIMIT],
             'all_activity': Activity.objects.select_related(
-                'source_content_type',
                 'user',
+            ).prefetch_related(
+                'source',
             )[:ACTIVITY_LIMIT],
         }
         return super().get_context_data(**extra, **kwargs)
