@@ -104,7 +104,7 @@
 {% endblock %}
 
 {% block approve_contracts %}
-{% if latest_contract.is_signed and not latest_contract.approver %}
+{% if latest_contract %}
 <a data-fancybox
    data-src="#approve-contract"
    class="button button--bottom-space button--primary button--full-width"

@@ -43,47 +43,32 @@ from .models import (
 class ContractsMixin:
     def get_context_data(self, **kwargs):
         project = self.get_object()
-        contracts = self.get_contracts(project)
+        contracts = (project.contracts.select_related('approver')
+                                      .order_by('-created_at'))
 
-        try:
-            latest_contract = contracts[0]
-        except TypeError:
-            latest_contract = None
+        latest_contract = self.get_contract_to_approve(contracts)
+
+        contracts = contracts.filter(is_signed=True, approver__isnull=False)
+
+        if latest_contract:
+            contracts = [latest_contract, *contracts]
 
         context = super().get_context_data(**kwargs)
         context['latest_contract'] = latest_contract
         context['contracts'] = contracts
         return context
 
-    def get_contracts(self, project):
-        """
-        Get approved AND signed contracts for the current project
+    def get_contract_to_approve(self, contracts):
+        """If there's a contract to approve, get that"""
+        latest = contracts.first()
 
-        When an unsigned OR (signed AND unapproved) contract is newer than the
-        signed and approved ones we add that to the top of the list.
-        """
-        contracts = (project.contracts.select_related('approver')
-                                      .order_by('-created_at'))
-
-        if not contracts.exists():
+        if not latest:
             return
 
-        latest_contract = contracts.first()
+        if latest.approver:
+            return
 
-        if latest_contract.is_signed and latest_contract.approver:
-            return contracts.filter(is_signed=True, approver__isnull=False)
-
-        # At this point we know that latest_contract is the "pending" contract
-        # we want to display at the top of the list, however we need to remove
-        # all the older pending contracts from the list.
-        #
-        # We do that by getting the PKs for all the contracts which are (signed
-        # AND approved), adding the latest_contract's PK and returning the
-        # filter of those.
-        ready_pks = list(contracts.filter(is_signed=True, approver__isnull=False)
-                                  .values_list('pk', flat=True))
-
-        return contracts.filter(pk__in=[latest_contract.pk, *ready_pks])
+        return latest
 
 
 @method_decorator(staff_required, name='dispatch')

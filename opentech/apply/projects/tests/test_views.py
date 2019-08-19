@@ -380,6 +380,17 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
 
 class TestContractsMixin(TestCase):
+    class DummyView:
+        def get_context_data(self):
+            return {}
+
+    class DummyContractsView(ContractsMixin, DummyView):
+        def __init__(self, project):
+            self.project = project
+
+        def get_object(self):
+            return self.project
+
     def test_all_signed_and_approved_contracts_appear(self):
         project = ProjectFactory()
         user = StaffFactory()
@@ -387,7 +398,7 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
         self.assertEqual(len(contracts), 3)
 
@@ -395,10 +406,10 @@ class TestContractsMixin(TestCase):
         project = ProjectFactory()
         user = StaffFactory()
         ContractFactory(project=project, is_signed=True, approver=user)
-        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
         self.assertEqual(len(contracts), 2)
         for contract in contracts:
@@ -406,42 +417,45 @@ class TestContractsMixin(TestCase):
 
     def test_no_contracts_returns_nothing(self):
         project = ProjectFactory()
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
-        self.assertIsNone(contracts)
+        self.assertEqual(len(contracts), 0)
 
     def test_all_unsigned_and_unapproved_returns_only_latest(self):
         project = ProjectFactory()
-        ContractFactory(project=project, is_signed=False)
-        ContractFactory(project=project, is_signed=False)
-        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
         self.assertEqual(len(contracts), 1)
 
-    def test_all_signed_and_unapproved_returns_all(self):
+    def test_all_signed_and_unapproved_returns_latest(self):
         project = ProjectFactory()
-        ContractFactory(project=project, is_signed=True)
-        ContractFactory(project=project, is_signed=True)
-        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=None)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
-        self.assertEqual(len(contracts), 3)
+        self.assertEqual(len(contracts), 1)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        self.assertIsNone(contracts[0].approver)
 
     def test_mixture_of_both_latest_unsigned_and_unapproved(self):
         project = ProjectFactory()
         user = StaffFactory()
-        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        latest = ContractFactory(project=project, is_signed=False)
+        latest = ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
-        self.assertEqual(len(contracts), 4)
+        self.assertEqual(len(contracts), 3)
         self.assertEqual(latest, contracts[0])
         self.assertFalse(contracts[0].is_signed)
         for contract in contracts[1:]:
@@ -450,15 +464,15 @@ class TestContractsMixin(TestCase):
     def test_mixture_of_both_latest_signed_and_unapproved(self):
         project = ProjectFactory()
         user = StaffFactory()
-        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        latest = ContractFactory(project=project, is_signed=True)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
-        self.assertEqual(len(contracts), 4)
+        self.assertEqual(len(contracts), 3)
         self.assertEqual(latest, contracts[0])
         self.assertTrue(contracts[0].is_signed)
         for contract in contracts:
@@ -467,15 +481,15 @@ class TestContractsMixin(TestCase):
     def test_mixture_of_both_latest_signed_and_approved(self):
         project = ProjectFactory()
         user = StaffFactory()
-        ContractFactory(project=project, is_signed=True)
+        ContractFactory(project=project, is_signed=True, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        ContractFactory(project=project, is_signed=False)
+        ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = ContractsMixin().get_contracts(project)
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
 
-        self.assertEqual(len(contracts), 4)
+        self.assertEqual(len(contracts), 3)
         self.assertEqual(latest, contracts[0])
         self.assertTrue(contracts[0].is_signed)
         for contract in contracts:
