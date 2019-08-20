@@ -5,6 +5,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -14,12 +15,14 @@ from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.admin.edit_handlers import (
     FieldPanel,
-    InlinePanel,
     StreamFieldPanel,
 )
 from wagtail.core.fields import StreamField
 
+from opentech.apply.funds.models.mixins import AccessFormData
 from opentech.apply.stream_forms.blocks import FormFieldsBlock
+from opentech.apply.stream_forms.files import StreamFieldDataEncoder
+from opentech.apply.stream_forms.models import BaseStreamForm
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -171,7 +174,7 @@ PROJECT_STATUS_CHOICES = [
 ]
 
 
-class Project(models.Model):
+class Project(BaseStreamForm, AccessFormData, models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='owned_projects')
@@ -192,6 +195,9 @@ class Project(models.Model):
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
+
+    form_data = JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_fields = StreamField(FormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -354,7 +360,7 @@ class DocumentCategory(models.Model):
         verbose_name_plural = 'Document Categories'
 
 
-class ProjectApprovalForm(models.Model):
+class ProjectApprovalForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(FormFieldsBlock())
 

@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='applicationbase',
             name='approval_form',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='application_projects.ProjectApprovalForm'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='funds', to='application_projects.ProjectApprovalForm'),
         ),
         migrations.AddField(
             model_name='labbase',
             name='approval_form',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='application_projects.ProjectApprovalForm'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='labs', to='application_projects.ProjectApprovalForm'),
         ),
     ]
