@@ -393,6 +393,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
         MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
+        MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
     }
 
     def __init__(self):

@@ -16,12 +16,13 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..models import CONTRACTING, IN_PROGRESS
-from ..views import ContractsMixin
+from ..models import CONTRACTING, IN_PROGRESS, PAID
+from ..views import ContractsMixin, PaymentsMixin
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
+    PaymentRequestFactory,
     ProjectFactory
 )
 
@@ -601,3 +602,87 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
         self.assertEqual(len(response.redirect_chain), 2)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse('users_public:login'), path)
+
+
+class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_creating_a_payment_request(self):
+        project = ProjectFactory(user=self.user)
+        self.assertEqual(project.payment_requests.count(), 0)
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        receipts = BytesIO(b'someotherbinarydata')
+        receipts.name = 'receipts.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-request_payment_form': '',
+            'value': '10',
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipts': receipts,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        self.assertEqual(project.payment_requests.first().by, self.user)
+
+
+class TestRequestPaymentViewAsStaff(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_creating_a_payment_request(self):
+        project = ProjectFactory()
+        self.assertEqual(project.payment_requests.count(), 0)
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        receipts = BytesIO(b'someotherbinarydata')
+        receipts.name = 'receipts.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-request_payment_form': '',
+            'value': '10',
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipts': receipts,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        self.assertEqual(project.payment_requests.first().by, self.user)
+
+
+class TestPaymentsMixin(TestCase):
+    def test_get_totals(self):
+        project = ProjectFactory(value=100)
+        user = UserFactory()
+
+        PaymentRequestFactory(project=project, by=user, value=20)
+        PaymentRequestFactory(project=project, by=user, value=10, status=PAID)
+
+        values = PaymentsMixin().get_totals(project)
+
+        self.assertEqual(values['awaiting_absolute'], 20)
+        self.assertEqual(values['awaiting_percentage'], 20)
+        self.assertEqual(values['paid_absolute'], 10)
+        self.assertEqual(values['paid_percentage'], 10)
