@@ -53,7 +53,7 @@
 <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
 {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
-        {% block admin_actions %}
+        {% block mobile_actions %}
         {% endblock %}
         <div class="wrapper wrapper--sidebar">
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
@@ -94,10 +94,8 @@
             {% endif %}
 
             <aside class="sidebar">
-                {% if request.user.is_apply_staff %}
-                    {% block sidebar_forms %}
-                    {% endblock %}
-                {% endif %}
+                {% block sidebar_top %}
+                {% endblock %}
 
                 {% if object.project and PROJECTS_ENABLED %}
                     {% include 'funds/includes/project_block.html' %}
@@ -107,12 +105,10 @@
                     {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
                 {% endblock %}
 
-                {% if request.user.is_apply_staff %}
-                    {% block screening_status %}
-                    {% endblock %}
-                    {% block meta_categories %}
-                    {% endblock %}
-                {% endif %}
+                {% block screening_status %}
+                {% endblock %}
+                {% block meta_categories %}
+                {% endblock %}
 
                 {% block reviews %}
                 {% endblock %}
