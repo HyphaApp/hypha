@@ -1,3 +1,5 @@
+{% load payment_request_tools %}
+
 <div class="payment-block">
     <div class="payment-block__header">
         <p class="payment-block__title">Payment Requests</p>
@@ -25,14 +27,16 @@
                 <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                 <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
                 <td>
-                    <span class="payment-block__mobile-label">Status:</span>
-                    {% comment %}
-                    TODO: front end fix to make these dropdowns
-                    {% for status in payments.availabe_statuses %}
-                    <span class="payment-block__status">{{ status.0 }}{{ status.1 }}</span>
-                    {% endfor %}
-                    {% endcomment %}
-                    <a data-fancybox data-src="#change-payment-status-{{ payment_request.pk }}" class="payment-block__status-link" href="#">Change status</a>
+                    {% can_change_status payment_request user as user_can_change_status %}
+                    {% if user_can_change_status %}
+                    <a
+                        data-fancybox
+                        data-src="#change-payment-status-{{ payment_request.pk }}"
+                        class="payment-block__status-link"
+                        href="#">
+                        Change status
+                    </a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -66,13 +70,13 @@
 
 </div>
 
-{% for payment_request in payments.not_rejected %}
-<div class="modal" id="change-payment-status-{{ payment_request.pk }}">
+{% for form in change_payment_request_status_forms %}
+<div class="modal" id="change-payment-status-{{ form.instance.pk }}">
     <h4 class="modal__header-bar">Change payment status</h4>
     <div class="wrapper--outer-space-medium">
-        <p>Current status: <b>{{ payment_request.get_status_display }}</b></p>
-        {# {% url '' as change_payment_status_action %} #}
-        {# {% include 'funds/includes/delegated_form_base.html' with form=change_payment_status_form value='Update' action=change_payment_status_action %} #}
+        <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
+        {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
+        {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
     </div>
 </div>
 {% endfor %}

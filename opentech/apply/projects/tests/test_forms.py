@@ -6,12 +6,72 @@ from django.test import TestCase, override_settings
 from opentech.apply.users.tests.factories import UserFactory
 
 from ..files import get_files
-from ..forms import ProjectApprovalForm, RequestPaymentForm, SelectDocumentForm
+from ..forms import (
+    ChangePaymentRequestStatusForm,
+    ProjectApprovalForm,
+    RequestPaymentForm,
+    SelectDocumentForm,
+    filter_choices,
+    filter_request_choices
+)
+from ..models import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
 from .factories import (
     DocumentCategoryFactory,
+    PaymentRequestFactory,
     ProjectFactory,
     address_to_form_data
 )
+
+
+class TestChangePaymentRequestStatusForm(TestCase):
+    def test_choices_with_submitted_status(self):
+        request = PaymentRequestFactory(status=SUBMITTED)
+        form = ChangePaymentRequestStatusForm(instance=request)
+
+        expected = set(filter_request_choices([UNDER_REVIEW, CHANGES_REQUESTED, DECLINED, PAID]))
+        actual = set(form.fields['status'].choices)
+
+        self.assertEqual(expected, actual)
+
+    def test_choices_with_changes_requested_status(self):
+        request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        form = ChangePaymentRequestStatusForm(instance=request)
+
+        expected = set(filter_request_choices([DECLINED]))
+        actual = set(form.fields['status'].choices)
+
+        self.assertEqual(expected, actual)
+
+    def test_choices_with_under_review_status(self):
+        request = PaymentRequestFactory(status=UNDER_REVIEW)
+        form = ChangePaymentRequestStatusForm(instance=request)
+
+        expected = set(filter_request_choices([PAID]))
+        actual = set(form.fields['status'].choices)
+
+        self.assertEqual(expected, actual)
+
+    def test_filter_choices(self):
+        ONE = 'one'
+        TWO = 'two'
+        choices = [
+            (ONE, 'One'),
+            (TWO, 'Two'),
+        ]
+
+        output = filter_choices(choices, [ONE, TWO])
+        self.assertTrue(output, choices)
+
+        # order shouldn't matter
+        output = filter_choices(choices, [TWO, ONE])
+        self.assertTrue(output, choices)
+
+        # duplicates shouldn't matter
+        output = filter_choices(choices, [TWO, ONE, TWO])
+        self.assertTrue(output, choices)
+
+        output = filter_choices(choices, [TWO])
+        self.assertTrue(output, [(TWO, 'Two')])
 
 
 class TestProjectApprovalForm(TestCase):

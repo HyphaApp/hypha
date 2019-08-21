@@ -1,3 +1,5 @@
+import functools
+
 from django import forms
 from django.core.files.base import ContentFile
 from django.db import transaction
@@ -10,7 +12,13 @@ from opentech.apply.users.groups import STAFF_GROUP_NAME
 
 from .files import get_files
 from .models import (
+    CHANGES_REQUESTED,
     COMMITTED,
+    DECLINED,
+    PAID,
+    REQUEST_STATUS_CHOICES,
+    SUBMITTED,
+    UNDER_REVIEW,
     Approval,
     Contract,
     DocumentCategory,
@@ -19,6 +27,13 @@ from .models import (
     PaymentRequest,
     Project
 )
+
+
+def filter_choices(available, choices):
+    return [(k, v) for k, v in available if k in choices]
+
+
+filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
 
 
 class ApproveContractForm(forms.ModelForm):
@@ -37,6 +52,34 @@ class ApproveContractForm(forms.ModelForm):
             raise forms.ValidationError('You can only approve a signed contract')
 
         super().clean()
+
+
+class ChangePaymentRequestStatusForm(forms.ModelForm):
+    name = 'change_payment_request_status_form'
+
+    class Meta:
+        fields = ['status']
+        model = PaymentRequest
+
+    def __init__(self, instance, *args, **kwargs):
+        super().__init__(instance=instance, *args, **kwargs)
+
+        self.instance = instance
+
+        status_field = self.fields['status']
+
+        if instance.status == SUBMITTED:
+            wanted = [CHANGES_REQUESTED, UNDER_REVIEW, PAID, DECLINED]
+            status_field.choices = filter_request_choices(wanted)
+            return
+
+        if instance.status == CHANGES_REQUESTED:
+            status_field.choices = filter_request_choices([DECLINED])
+            return
+
+        if instance.status == UNDER_REVIEW:
+            status_field.choices = filter_request_choices([PAID])
+            return
 
 
 class CreateProjectForm(forms.Form):

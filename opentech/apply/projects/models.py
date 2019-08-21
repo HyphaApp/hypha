@@ -103,11 +103,13 @@ class PaymentReceipt(models.Model):
 
 
 SUBMITTED = 'submitted'
+CHANGES_REQUESTED = 'changes_requested'
 UNDER_REVIEW = 'under_review'
 PAID = 'paid'
 DECLINED = 'declined'
 REQUEST_STATUS_CHOICES = [
     (SUBMITTED, 'Submitted'),
+    (CHANGES_REQUESTED, 'Changes Requested'),
     (UNDER_REVIEW, 'Under Review'),
     (PAID, 'Paid'),
     (DECLINED, 'Declined'),

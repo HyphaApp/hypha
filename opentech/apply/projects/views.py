@@ -26,6 +26,7 @@ from opentech.apply.utils.views import (
 from .files import get_files
 from .forms import (
     ApproveContractForm,
+    ChangePaymentRequestStatusForm,
     CreateApprovalForm,
     ProjectApprovalForm,
     ProjectEditForm,
@@ -175,6 +176,39 @@ class ApproveContractView(UpdateView):
 
             self.project.status = IN_PROGRESS
             self.project.save(update_fields=['status'])
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
+
+
+@method_decorator(staff_required, name='dispatch')
+class ChangePaymentRequestStatusView(UpdateView):
+    form_class = ChangePaymentRequestStatusForm
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        for error in form.errors:
+            messages.error(self.request, error)
+
+        return redirect(self.project)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
 
         return response
 
@@ -435,8 +469,20 @@ class AdminProjectDetailView(
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
         context['approve_contract_form'] = ApproveContractForm()
+        context['change_payment_request_status_forms'] = list(self.get_change_payment_request_status_forms())
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
+
+    def get_change_payment_request_status_forms(self):
+        """
+        Get an iterable of ChangePaymentRequestStatusForms
+
+        We want to filter the available options based on the current
+        PaymentRequest object so we need to initialise those forms outside of
+        the template.
+        """
+        for payment_request in self.object.payment_requests.exclude(status=DECLINED).select_related('project'):
+            yield ChangePaymentRequestStatusForm(instance=payment_request)
 
 
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):

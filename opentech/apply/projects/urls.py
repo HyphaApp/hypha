@@ -3,6 +3,7 @@ from django.urls import include, path
 
 from .views import (
     ApproveContractView,
+    ChangePaymentRequestStatusView,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
@@ -25,6 +26,11 @@ if settings.PROJECTS_ENABLED:
                 name="approve-contract",
             ),
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
+            path(
+                'change-payment-request-status/<int:payment_request_id>/',
+                ChangePaymentRequestStatusView.as_view(),
+                name='change-payment-status',
+            ),
             path(
                 'copy-documents/',
                 SelectDocumentView.as_view(),
