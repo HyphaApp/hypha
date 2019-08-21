@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
 
-from opentech.apply.activity.models import Activity, PUBLIC, PRIVATE
+from opentech.apply.activity.models import Activity, APPLICANT, ALL
 from opentech.apply.activity.tests.factories import CommentFactory
 
 from opentech.apply.users.tests.factories import UserFactory
@@ -55,7 +55,7 @@ class TestCommentEdit(TestCase):
 
     def test_cant_change_visibility(self):
         user = UserFactory()
-        comment = CommentFactory(user=user, visibility=PRIVATE)
+        comment = CommentFactory(user=user, visibility=APPLICANT)
         self.client.force_login(user)
 
         response = self.client.post(
@@ -63,12 +63,12 @@ class TestCommentEdit(TestCase):
             secure=True,
             data={
                 'message': 'the new message',
-                'visibility': PUBLIC,
+                'visibility': ALL,
             },
         )
 
         self.assertEqual(response.status_code, 200, response.json())
-        self.assertEqual(response.json()['visibility'], PRIVATE)
+        self.assertEqual(response.json()['visibility'], APPLICANT)
 
     def test_out_of_order_does_nothing(self):
         user = UserFactory()

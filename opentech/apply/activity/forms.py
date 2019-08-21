@@ -12,7 +12,7 @@ class CommentForm(forms.ModelForm):
         model = Activity
         fields = ('message', 'visibility')
         labels = {
-            'visibility': '',
+            'visibility': 'Visible to',
             'message': '',
         }
         widgets = {
