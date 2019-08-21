@@ -10,6 +10,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.utils.storage import PrivateStorage
@@ -305,6 +306,11 @@ class Project(models.Model):
     @property
     def is_in_progress(self):
         return self.status == IN_PROGRESS
+
+
+@register_setting
+class ProjectSettings(BaseSetting):
+    compliance_email = models.TextField("Compliance Email")
 
 
 class DocumentCategory(models.Model):
