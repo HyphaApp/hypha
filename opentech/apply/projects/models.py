@@ -9,10 +9,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
+from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateStorage
 
 logger = logging.getLogger(__name__)
@@ -197,6 +199,8 @@ class Project(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    sent_to_compliance_at = models.DateTimeField(null=True)
+
     def __str__(self):
         return self.title
 
@@ -306,6 +310,19 @@ class Project(models.Model):
     @property
     def is_in_progress(self):
         return self.status == IN_PROGRESS
+
+    def send_to_compliance(self, request):
+        """Notify Compliance about this Project."""
+
+        messenger(
+            MESSAGES.SENT_TO_COMPLIANCE,
+            request=request,
+            user=request.user,
+            source=self,
+        )
+
+        self.sent_to_compliance_at = timezone.now()
+        self.save(update_fields=['sent_to_compliance_at'])
 
 
 @register_setting

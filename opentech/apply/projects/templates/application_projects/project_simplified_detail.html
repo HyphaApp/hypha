@@ -59,6 +59,14 @@
                     <h5>Value</h5>
                     <p>${{ object.value|default:"-" }}</p>
                 </div>
+
+                {% if object.sent_to_compliance_at %}
+                <div>
+                    <h5>Sent to Compliance</h5>
+                    <p>{{ object.sent_to_compliance_at|date:"j F Y" }}</p>
+                </div>
+                {% endif %}
+
             </div>
 
             {# TODO: put outcome of #1364 here #}
