@@ -313,4 +313,8 @@
             transform: rotate(90deg);
         }
     }
+
+    &--link {
+        color: $color--primary;
+    }
 }
