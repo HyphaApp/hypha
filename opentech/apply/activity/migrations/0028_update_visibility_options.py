@@ -26,7 +26,7 @@ def update_visibility_options(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0025_add_batch_lead_event'),
+        ('activity', '0027_add_update_project_lead'),
     ]
 
     operations = [
