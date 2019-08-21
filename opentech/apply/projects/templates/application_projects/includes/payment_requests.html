@@ -22,7 +22,7 @@
             {% for payment_request in payments.not_rejected %}
             <tr>
                 <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
-                <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.status }}</td>
+                <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                 <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
                 <td>
                     <span class="payment-block__mobile-label">Status:</span>
@@ -56,7 +56,7 @@
                 {% for payment_request in payments.rejected %}
                 <tr>
                     <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
-                    <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.status }}</td>
+                    <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                     <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
                 </tr>
                 {% endfor %}
@@ -70,7 +70,7 @@
 <div class="modal" id="change-payment-status-{{ payment_request.pk }}">
     <h4 class="modal__header-bar">Change payment status</h4>
     <div class="wrapper--outer-space-medium">
-        <p>Current status: <b>{{ payment_request.status }}</b></p>
+        <p>Current status: <b>{{ payment_request.get_status_display }}</b></p>
         {# {% url '' as change_payment_status_action %} #}
         {# {% include 'funds/includes/delegated_form_base.html' with form=change_payment_status_form value='Update' action=change_payment_status_action %} #}
     </div>
