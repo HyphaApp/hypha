@@ -1,9 +1,22 @@
 {% load util_tags %}
-<form class="form {{extra_classes}}" method="post" id="{{ form.name }}" enctype="multipart/form-data">
+<form
+    class="form {{ extra_classes }}"
+    method="post"
+    id="{{ form.name }}"
+    enctype="multipart/form-data"
+    {% if action %}action="{{ action }}"{% endif %}
+    >
     {% csrf_token %}
-    <div class="form__item">
-        {{ form }}
-    </div>
+
+    {{ form.media }}
+
+    {% for field in form %}
+        {% if field.field %}
+            {% include "forms/includes/field.html" %}
+        {% else %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
 
     {% if cancel %}
     <button
