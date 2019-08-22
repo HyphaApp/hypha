@@ -11,7 +11,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DetailView, FormView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    FormView,
+    UpdateView
+)
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -240,6 +246,37 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         project.save(update_fields=['is_locked', 'status'])
 
         return response
+
+
+class DeletePaymentRequestView(DeleteView):
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+
+        self.object = self.get_object()
+        if not self.object.user_can_delete(request.user):
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+    @transaction.atomic()
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.DELETE_PAYMENT_REQUEST,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
 
 
 @method_decorator(staff_required, name='dispatch')

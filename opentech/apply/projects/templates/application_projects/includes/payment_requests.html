@@ -17,7 +17,7 @@
                 <th class="payment-block__table-amount">Amount</th>
                 <th class="payment-block__table-status">Status</th>
                 <th class="payment-block__table-docs">Documents</th>
-                <th class="payment-block__table-update">Change status</th>
+                <th class="payment-block__table-update"></th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +36,14 @@
                         href="#">
                         Change status
                     </a>
+                    {% endif %}
+
+                    {% can_delete payment_request user as user_can_delete_request %}
+                    {% if user_can_delete_request %}
+                    <form method="POST" action="{% url 'apply:projects:delete-payment-request' pk=object.pk payment_request_id=payment_request.pk %}">
+                        {% csrf_token %}
+                        <button class="button button--primary" type="submit">Delete</button>
+                    </form>
                     {% endif %}
                 </td>
             </tr>

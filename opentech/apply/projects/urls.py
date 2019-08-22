@@ -4,6 +4,7 @@ from django.urls import include, path
 from .views import (
     ApproveContractView,
     ChangePaymentRequestStatusView,
+    DeletePaymentRequestView,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
@@ -35,6 +36,11 @@ if settings.PROJECTS_ENABLED:
                 'copy-documents/',
                 SelectDocumentView.as_view(),
                 name="copy-documents",
+            ),
+            path(
+                'delete-payment-request/<int:payment_request_id>/',
+                DeletePaymentRequestView.as_view(),
+                name='delete-payment-request',
             ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         ])),

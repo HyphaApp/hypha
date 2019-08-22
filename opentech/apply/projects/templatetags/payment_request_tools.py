@@ -14,3 +14,8 @@ def can_change_status(payment_request, user):
         return False
 
     return True
+
+
+@register.simple_tag
+def can_delete(payment_request, user):
+    return payment_request.user_can_delete(user)

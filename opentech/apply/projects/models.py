@@ -136,6 +136,15 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return f'Payment requested for {self.project}'
 
+    def user_can_delete(self, user):
+        if user.is_apply_staff:
+            return False  # Staff can reject
+
+        if self.status not in (SUBMITTED, CHANGES_REQUESTED):
+            return False
+
+        return True
+
 
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
