@@ -7,19 +7,15 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        <a class="link link--bold link--arrow-right link--on-dark" href="{{ object.project.get_absolute_url }}">
+            Projects
+        </a>
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
             <span>{{ object.page }}</span>
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
-            <span>
-                Project
-                <a class="link--transparent link--underlined"
-                   href="{{ object.project.get_absolute_url }}">
-                    {{ object.project }}
-                </a>
-            </span>
         </h5>
     </div>
 </div>

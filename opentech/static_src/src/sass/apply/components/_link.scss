@@ -260,4 +260,19 @@
             }
         }
     }
+
+    &--arrow-right {
+        display: inline-flex;
+        align-items: center;
+
+        &::after {
+            @include triangle(top, currentColor, 5px);
+            margin-left: .5rem;
+            transform: rotate(90deg);
+        }
+    }
+
+    &--on-dark {
+        color: $color--lightest-blue;
+    }
 }
