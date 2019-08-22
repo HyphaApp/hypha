@@ -76,11 +76,11 @@
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">Download</a>
-                        <form method="POST" id="{{ remove_document_form.name }}">
+                        <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
-                                class="button button--primary button--top-space"
+                                class="button button--link"
                                 id="{{ remove_document_form.name }}-submit"
                                 name="{{ form_prefix }}{{ remove_document_form.name }}"
                                 type="submit"
