@@ -1,5 +1,6 @@
+{% load static i18n %}
 <h4>Get the latest internet freedom news</h4>
-<form class="form" action="{{ PUBLIC_SITE.root_url }}{% url "newsletter:subscribe" %}" method="post">
+<form class="form newsletter-form" action="#" data-actionpath="{{ PUBLIC_SITE.root_url }}{% url "newsletter:subscribe" %}" method="post">
     <div>
         {% for field in newsletter_form %}
         <label for="{{ field.id_for_label }}"{% if field.field.required %} required{% endif %}>
@@ -11,7 +12,11 @@
         {{ field }}
         {% endfor %}
         <div class="form-actions form-wrapper">
-            <input type="submit" value="Sign up" class="form-submit button button--transparent--wide link--footer-signup">
+            <button class="form-submit button button--transparent--wide link--footer-signup" type="submit">{% trans 'Sign up' %}</button>
         </div>
     </div>
 </form>
+
+{% block extra_js %}
+    <script src="{% static 'js/public/protect-form.js' %}"></script>
+{% endblock %}
