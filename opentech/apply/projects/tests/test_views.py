@@ -1,3 +1,4 @@
+from decimal import Decimal
 from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
@@ -23,6 +24,7 @@ from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
+    PaymentReceiptFactory,
     PaymentRequestFactory,
     ProjectFactory
 )
@@ -703,3 +705,79 @@ class TestProjectDetailSimplifiedView(TestCase):
         request.user = ApplicantFactory()
         with self.assertRaises(PermissionDenied):
             ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+
+
+class TestApplicantEditPaymentRequestView(BaseViewTestCase):
+    base_view_name = 'edit-payment-request'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.pk, 'payment_request_id': instance.pk}
+
+    def test_editing_payment_request_fires_messaging(self):
+        project = ProjectFactory(user=self.user)
+        payment_request = PaymentRequestFactory(project=project)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        value = payment_request.value
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        response = self.post_page(payment_request, {
+            'form-submitted-edit_request_payment_form': '',
+            'value': value + 1,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        payment_request.refresh_from_db()
+
+        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+
+        self.assertEqual(value + Decimal("1"), payment_request.value)
+
+
+class TestStaffEditPaymentRequestView(BaseViewTestCase):
+    base_view_name = 'edit-payment-request'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.pk, 'payment_request_id': instance.pk}
+
+    def test_editing_payment_request_fires_messaging(self):
+        project = ProjectFactory()
+        payment_request = PaymentRequestFactory(project=project)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        value = payment_request.value
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        response = self.post_page(payment_request, {
+            'form-submitted-request_payment_form': '',
+            'value': value + 1,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        payment_request.refresh_from_db()
+
+        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+
+        self.assertEqual(value + Decimal("1"), payment_request.value)

@@ -59,6 +59,7 @@ neat_related = {
     MESSAGES.APPROVE_CONTRACT: 'contract',
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
 }
 
 
@@ -395,6 +396,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has updated status for payment request <{link}|{source.title}>.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
     }
 
     def __init__(self):
@@ -618,6 +620,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: 'handle_update_payment_request',
     }
 
     def get_subject(self, message_type, source):
@@ -658,6 +661,15 @@ class EmailAdapter(AdapterBase):
         for submission in submissions:
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
+
+    def handle_update_payment_request(self, user, **kwargs):
+        if user.is_applicant:
+            return
+
+        return self.render_message(
+            'messages/email/payment_request_updated.html',
+            **kwargs,
+        )
 
     def batch_determination(self, determinations, sources, **kwargs):
         submissions = sources
@@ -743,10 +755,15 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
+            from_email = source.page.specific.from_address
+        except AttributeError:  # we're dealing with a project
+            from_email = source.submission.page.specific.from_address
+
+        try:
             send_mail(
                 subject,
                 message,
-                source.page.specific.from_address,
+                from_email,
                 [recipient],
                 logs=logs
             )

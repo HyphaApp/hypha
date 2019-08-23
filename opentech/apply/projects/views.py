@@ -34,6 +34,7 @@ from .forms import (
     ApproveContractForm,
     ChangePaymentRequestStatusForm,
     CreateApprovalForm,
+    EditPaymentRequestForm,
     ProjectApprovalForm,
     ProjectEditForm,
     RejectionForm,
@@ -46,6 +47,7 @@ from .forms import (
     UploadDocumentForm
 )
 from .models import (
+    CHANGES_REQUESTED,
     CONTRACTING,
     DECLINED,
     IN_PROGRESS,
@@ -106,7 +108,21 @@ class PaymentsMixin:
 
         context = super().get_context_data(**kwargs)
         context['payments'] = payments
+        context['edit_payment_request_forms'] = list(self.get_edit_payment_request_forms())
         return context
+
+    def get_edit_payment_request_forms(self):
+        """
+        Get an iterable of EditPaymentRequestForms
+
+        We want to instantiate each EditPaymentRequestForm with a given
+        PaymentRequest.  Each subclass of this mixin defines
+        .get_payment_requests_queryset() so we can change the available forms
+        based on the type of user viewing (applicant or staff).
+        """
+        payment_requests = self.get_payment_requests_queryset().select_related('project')
+        for payment_request in payment_requests:
+            yield EditPaymentRequestForm(instance=payment_request)
 
     def get_totals(self, project):
         def percentage(total, value):
@@ -269,6 +285,42 @@ class DeletePaymentRequestView(DeleteView):
 
         messenger(
             MESSAGES.DELETE_PAYMENT_REQUEST,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
+
+
+class EditPaymentRequestView(UpdateView):
+    form_class = EditPaymentRequestForm
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+
+        is_admin = request.user.is_apply_staff
+        is_owner = request.user == self.project.user
+        if not (is_owner or is_admin):
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return redirect(self.project)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPDATE_PAYMENT_REQUEST,
             request=self.request,
             user=self.request.user,
             source=self.project,
@@ -523,6 +575,9 @@ class AdminProjectDetailView(
         for payment_request in self.object.payment_requests.exclude(status=DECLINED).select_related('project'):
             yield ChangePaymentRequestStatusForm(instance=payment_request)
 
+    def get_payment_requests_queryset(self):
+        return self.object.payment_requests.filter(status=SUBMITTED)
+
 
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):
     form_views = [
@@ -540,6 +595,9 @@ class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, Contrac
         if project.user != request.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+    def get_payment_requests_queryset(self):
+        return self.object.payment_requests.filter(status__in=[SUBMITTED, CHANGES_REQUESTED])
 
 
 @method_decorator(login_required, name='dispatch')
