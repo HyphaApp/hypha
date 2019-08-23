@@ -6,7 +6,7 @@
     <h1>{{ page.title }}</h1>
     {{ page.intro|richtext }}
     <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
-    <form class="form wagtail-form" action="#" data-pageurl="{% pageurl page %}" method="post" enctype="multipart/form-data">
+    <form class="form wagtail-form" action="#" data-actionpath="{% pageurl page %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.media }}
         {% for field in form %}
@@ -22,5 +22,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/public/wagtail-form.js' %}"></script>
+    <script src="{% static 'js/public/protect-form.js' %}"></script>
 {% endblock %}
