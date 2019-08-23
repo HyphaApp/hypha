@@ -84,8 +84,10 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
         for field in self.instance.score_fields:
             score = data.get(field.id)[1]
-            if score != NA:
-                scores.append(score)
+            # Include NA answers as 0.
+            if score == NA:
+                score = 0
+            scores.append(score)
 
         try:
             return sum(scores) / len(scores)
