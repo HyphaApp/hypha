@@ -47,8 +47,9 @@
 {% endif %}
 
 {% if object.requires_approval %}
-    <a data-fancybox
+    <a
         {% if not object.can_send_for_approval %}
+            onclick="return false"
             data-tooltip="
                 {% if not object.lead %}
                     A lead must be assigned
@@ -58,8 +59,9 @@
                     Currently awaiting approval
                 {% endif %}"
         {% endif %}
+        data-fancybox
         data-src="#send-for-approval"
-        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval %}is-disabled{% endif %}"
+        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval %}button--tooltip-disabled{% endif %}"
         href="#">
         Submit for Approval
     </a>
