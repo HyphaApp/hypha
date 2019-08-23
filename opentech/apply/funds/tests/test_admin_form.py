@@ -9,8 +9,7 @@ from opentech.apply.review.tests.factories import ReviewFormFactory
 
 
 def formset_base(field, total, delete, factory, same=False, form_stage_info=None):
-    base_data = {
-        f'{field}-TOTAL_FORMS': total + delete,
+    base_data = {f'{field}-TOTAL_FORMS': total + delete,
         f'{field}-INITIAL_FORMS': 0,
     }
 
@@ -49,6 +48,7 @@ def form_data(num_appl_forms=0, num_review_forms=0, delete=0, stages=1, same_for
     fund_data['workflow_name'] = workflow_for_stages(stages)
 
     form_data.update(fund_data)
+    form_data.update(approval_form='')
     return form_data
 
 

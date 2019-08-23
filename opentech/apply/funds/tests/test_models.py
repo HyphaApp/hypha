@@ -489,10 +489,19 @@ class TestSubmissionRenderMethods(TestCase):
 
     def test_named_blocks_dont_break_if_no_response(self):
         submission = ApplicationSubmissionFactory()
+
         # the user didn't respond
         del submission.form_data['value']
+
+        # value doesnt sneak into raw_data
         self.assertTrue('value' not in submission.raw_data)
-        self.assertTrue('duration' in submission.raw_data)
+
+        # value field_id gone
+        field_id = submission.get_definitive_id('value')
+        self.assertTrue(field_id not in submission.raw_data)
+
+        # value attr is None
+        self.assertIsNone(submission.value)
 
     def test_file_private_url_included(self):
         submission = ApplicationSubmissionFactory()

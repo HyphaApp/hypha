@@ -264,6 +264,19 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
+    def save(self, *args, **kwargs):
+        creating = not self.pk
+
+        if creating:
+            files = self.extract_files()
+        else:
+            self.process_file_data(self.form_data)
+
+        super().save(*args, **kwargs)
+
+        if creating:
+            self.process_file_data(files)
+
     def editable_by(self, user):
         if self.editable:
             return True

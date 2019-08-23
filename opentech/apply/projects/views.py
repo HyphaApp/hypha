@@ -654,7 +654,10 @@ class ProjectApprovalEditView(UpdateView):
         else:
             approval_form = self.object.submission.page.specific.approval_form
 
-        fields = approval_form.get_form_fields()
+        if approval_form:
+            fields = approval_form.get_form_fields()
+        else:
+            fields = {}
         kwargs['extra_fields'] = fields
         kwargs['initial'].update(self.object.raw_data)
         return kwargs

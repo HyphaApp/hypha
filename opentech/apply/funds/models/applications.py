@@ -67,6 +67,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     approval_form = models.ForeignKey(
         'application_projects.ProjectApprovalForm',
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name='funds',
@@ -393,6 +394,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     approval_form = models.ForeignKey(
         'application_projects.ProjectApprovalForm',
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name='labs',

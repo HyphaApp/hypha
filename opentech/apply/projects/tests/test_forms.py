@@ -91,6 +91,8 @@ class TestProjectApprovalForm(TestCase):
         }
         data.update(address_to_form_data())
         form = ProjectApprovalForm(instance=project, data=data)
+        self.assertTrue(form.is_valid(), form.errors.as_text())
+
         form.save()
 
         self.assertTrue(project.user_has_updated_details)

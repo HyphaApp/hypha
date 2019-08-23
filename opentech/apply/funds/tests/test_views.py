@@ -1,5 +1,4 @@
 from datetime import timedelta
-import json
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
@@ -26,7 +25,6 @@ from opentech.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.stream_forms.testing.factories import flatten_for_form
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
@@ -38,6 +36,7 @@ from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision, ApplicationSubmission
 from ..views import SubmissionDetailSimplifiedView
+from .factories import CustomFormFieldsFactory
 
 
 def prepare_form_data(submission, **kwargs):
@@ -48,22 +47,7 @@ def prepare_form_data(submission, **kwargs):
         field_id = submission.field(field).id
         data[field_id] = value
 
-    address_field = submission.named_blocks['address']
-    address = data.pop(address_field)
-    data.update(**prepare_address(address, address_field))
-
-    return data
-
-
-def prepare_address(address, field):
-    address = json.loads(address)
-    address['locality'] = {
-        'localityname': address.pop('localityname'),
-        'administrativearea': address.pop('administrativearea'),
-        'postalcode': address.pop('postalcode'),
-    }
-    address = flatten_for_form(address, field, number=True)
-    return address
+    return CustomFormFieldsFactory.form_response(submission.form_fields, data)
 
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
@@ -458,6 +442,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         submission = self.refresh(submission)
 
+        self.maxDiff = None
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.revisions.last().form_data, old_data)
@@ -475,6 +460,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         submission = self.refresh(submission)
 
+        self.maxDiff = None
         self.assertEqual(submission.status, 'draft_proposal')
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
@@ -496,9 +482,9 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         submission = self.refresh(submission)
 
         self.maxDiff = None
-        self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertEqual(submission.revisions.count(), 2)
 
         self.assertEqual(submission.title, newer_title)
 

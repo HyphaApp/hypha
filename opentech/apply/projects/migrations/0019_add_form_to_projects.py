@@ -11,7 +11,7 @@ import wagtail.core.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0014_projectapprovalform'),
+        ('application_projects', '0018_projectapprovalform'),
     ]
 
     operations = [

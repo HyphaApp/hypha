@@ -9,7 +9,7 @@ import wagtail.core.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0013_add_contract'),
+        ('application_projects', '0017_add_sent_to_compliance_at'),
     ]
 
     operations = [
