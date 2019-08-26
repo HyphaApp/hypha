@@ -164,7 +164,7 @@ class RequestPaymentForm(forms.ModelForm):
     receipts = MultiFileField()
 
     class Meta:
-        fields = ['value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
+        fields = ['requested_value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
         model = PaymentRequest
         widgets = {
             'date_from': forms.DateInput,

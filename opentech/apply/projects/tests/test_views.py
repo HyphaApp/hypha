@@ -625,7 +625,7 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -659,7 +659,7 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -678,8 +678,8 @@ class TestPaymentsMixin(TestCase):
         project = ProjectFactory(value=100)
         user = UserFactory()
 
-        PaymentRequestFactory(project=project, by=user, value=20)
-        PaymentRequestFactory(project=project, by=user, value=10, status=PAID)
+        PaymentRequestFactory(project=project, by=user, requested_value=20)
+        PaymentRequestFactory(project=project, by=user, requested_value=10, status=PAID)
 
         values = PaymentsMixin().get_totals(project)
 

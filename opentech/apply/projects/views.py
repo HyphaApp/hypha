@@ -121,11 +121,11 @@ class PaymentsMixin:
             return rounded_total
 
         unpaid_requests = project.payment_requests.filter(Q(status=SUBMITTED) | Q(status=UNDER_REVIEW))
-        awaiting_absolute = sum(unpaid_requests.values_list('value', flat=True))
+        awaiting_absolute = sum(unpaid_requests.values_list('requested_value', flat=True))
         awaiting_percentage = percentage(project.value, awaiting_absolute)
 
         paid_requests = project.payment_requests.filter(status=PAID)
-        paid_absolute = sum(paid_requests.values_list('value', flat=True))
+        paid_absolute = sum(paid_requests.values_list('requested_value', flat=True))
         paid_percentage = percentage(project.value, paid_absolute)
 
         return {
