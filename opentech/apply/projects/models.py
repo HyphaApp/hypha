@@ -123,13 +123,14 @@ class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
 
-    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
-    value = models.DecimalField(
+    requested_value = models.DecimalField(
         default=0,
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
     )
+
+    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()

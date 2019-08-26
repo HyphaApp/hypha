@@ -118,7 +118,7 @@ class EditPaymentRequestForm(forms.ModelForm):
     name = 'edit_payment_request_form'
 
     class Meta:
-        fields = ['invoice', 'value', 'date_from', 'date_to', 'receipt_list', 'comment']
+        fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'comment']
         model = PaymentRequest
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
@@ -130,6 +130,7 @@ class EditPaymentRequestForm(forms.ModelForm):
             (r.pk, os.path.basename(r.file.url))
             for r in instance.receipts.all()
         ]
+        self.fields['requested_value'].label = 'Value'
 
 
 class ProjectEditForm(forms.ModelForm):
@@ -185,7 +186,7 @@ class RequestPaymentForm(forms.ModelForm):
     receipts = MultiFileField()
 
     class Meta:
-        fields = ['value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
+        fields = ['requested_value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
         model = PaymentRequest
         widgets = {
             'date_from': forms.DateInput,

@@ -627,7 +627,7 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -661,7 +661,7 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -680,8 +680,8 @@ class TestPaymentsMixin(TestCase):
         project = ProjectFactory(value=100)
         user = UserFactory()
 
-        PaymentRequestFactory(project=project, by=user, value=20)
-        PaymentRequestFactory(project=project, by=user, value=10, status=PAID)
+        PaymentRequestFactory(project=project, by=user, requested_value=20)
+        PaymentRequestFactory(project=project, by=user, requested_value=10, status=PAID)
 
         values = PaymentsMixin().get_totals(project)
 
@@ -720,14 +720,14 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
 
-        value = payment_request.value
+        requested_value = payment_request.requested_value
 
         invoice = BytesIO(b'somebinarydata')
         invoice.name = 'invoice.pdf'
 
         response = self.post_page(payment_request, {
             'form-submitted-edit_request_payment_form': '',
-            'value': value + 1,
+            'requested_value': requested_value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -742,7 +742,7 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
 
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
-        self.assertEqual(value + Decimal("1"), payment_request.value)
+        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
 
 
 class TestStaffEditPaymentRequestView(BaseViewTestCase):
@@ -758,14 +758,14 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
 
-        value = payment_request.value
+        requested_value = payment_request.requested_value
 
         invoice = BytesIO(b'somebinarydata')
         invoice.name = 'invoice.pdf'
 
         response = self.post_page(payment_request, {
             'form-submitted-request_payment_form': '',
-            'value': value + 1,
+            'requested_value': requested_value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -780,4 +780,4 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
 
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
-        self.assertEqual(value + Decimal("1"), payment_request.value)
+        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
