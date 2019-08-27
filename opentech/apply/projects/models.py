@@ -155,6 +155,10 @@ class PaymentRequest(models.Model):
 
         return True
 
+    @property
+    def value(self):
+        return self.paid_value or self.requested_value
+
 
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
