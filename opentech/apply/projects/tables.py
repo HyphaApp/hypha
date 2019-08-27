@@ -2,7 +2,24 @@ import textwrap
 
 import django_tables2 as tables
 
-from .models import Project
+from .models import PaymentRequest, Project
+
+
+class PaymentRequestsDashboardTable(tables.Table):
+    project = tables.LinkColumn(
+        'funds:projects:detail',
+        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        args=[tables.utils.A('project_id')],
+    )
+    date_from = tables.DateColumn(verbose_name='Start Date')
+    date_to = tables.DateColumn(verbose_name='End Date')
+
+    class Meta:
+        fields = ['project', 'value', 'date_from', 'date_to', 'status']
+        model = PaymentRequest
+
+    def render_value(self, value):
+        return f'${value}'
 
 
 class ProjectsDashboardTable(tables.Table):
