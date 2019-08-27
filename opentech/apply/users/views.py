@@ -65,6 +65,12 @@ class LoginView(SuccessURLAllowedHostsMixin, TwoFactorLoginView):
         )
         return redirect_to if url_is_safe else ''
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            next=self.request.GET.get('next', ''),
+            **kwargs,
+        )
+
 
 @method_decorator(login_required, name='dispatch')
 class AccountView(UpdateView):
