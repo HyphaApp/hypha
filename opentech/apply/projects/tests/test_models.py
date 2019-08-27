@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.test import TestCase
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -72,6 +74,8 @@ class TestProjectModel(TestCase):
         self.assertEqual(missing[1]['category'], category2)
         self.assertEqual(missing[1]['difference'], 2)
 
+
+class TestPaymentRequestModel(TestCase):
     def test_staff_cant_delete_from_submitted(self):
         payment_request = PaymentRequestFactory(status=SUBMITTED)
         staff = StaffFactory()
@@ -131,3 +135,23 @@ class TestProjectModel(TestCase):
         user = ApplicantFactory()
 
         self.assertFalse(payment_request.user_can_delete(user))
+
+    def test_requested_value_used_when_no_paid_value(self):
+        payment_request = PaymentRequestFactory(
+            requested_value=Decimal('1'),
+            paid_value=None,
+        )
+        self.assertEqual(payment_request.value, Decimal('1'))
+
+    def test_paid_value_overrides_requested_value(self):
+        payment_request = PaymentRequestFactory(
+            requested_value=Decimal('1'),
+            paid_value=Decimal('2'),
+        )
+        self.assertEqual(payment_request.value, Decimal('2'))
+
+        payment_request = PaymentRequestFactory(
+            requested_value=Decimal('100'),
+            paid_value=Decimal('2'),
+        )
+        self.assertEqual(payment_request.value, Decimal('2'))

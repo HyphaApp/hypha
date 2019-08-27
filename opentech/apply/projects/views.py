@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Case, DecimalField, F, Q, When
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
@@ -120,12 +120,28 @@ class PaymentsMixin:
 
             return rounded_total
 
+        def get_values(qs):
+            """
+            Get definitive values for each PaymentRequest
+
+            This finds the definitive value for each PaymentRequest, picking
+            `paid_value` when it has a value or `requested_value` when it does
+            not.  These annotated values are then returned as an iterable.
+            """
+            return qs.annotate(
+                the_value=Case(
+                    When(paid_value__isnull=True, then=F('requested_value')),
+                    When(paid_value__isnull=False, then=F('paid_value')),
+                    output_field=DecimalField(),
+                )
+            ).values_list('the_value', flat=True)
+
         unpaid_requests = project.payment_requests.filter(Q(status=SUBMITTED) | Q(status=UNDER_REVIEW))
-        awaiting_absolute = sum(unpaid_requests.values_list('requested_value', flat=True))
+        awaiting_absolute = sum(get_values(unpaid_requests))
         awaiting_percentage = percentage(project.value, awaiting_absolute)
 
         paid_requests = project.payment_requests.filter(status=PAID)
-        paid_absolute = sum(paid_requests.values_list('requested_value', flat=True))
+        paid_absolute = sum(get_values(paid_requests))
         paid_percentage = percentage(project.value, paid_absolute)
 
         return {
