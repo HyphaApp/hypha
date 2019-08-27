@@ -401,6 +401,12 @@ class ProjectDetailView(ViewDispatcher):
     applicant_view = ApplicantProjectDetailView
 
 
+@method_decorator(staff_required, name='dispatch')
+class ProjectDetailSimplifiedView(DetailView):
+    model = Project
+    template_name_suffix = '_simplified_detail'
+
+
 class ProjectApprovalEditView(UpdateView):
     form_class = ProjectApprovalForm
     model = Project
