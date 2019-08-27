@@ -94,6 +94,11 @@
     <h4 class="modal__header-bar">Change payment status</h4>
     <div class="wrapper--outer-space-medium">
         <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
+
+        {% if not form.instance.has_changes_requested %}
+        <p>Requested value: <b>${{ form.instance.requested_value }}</b></p>
+        {% endif %}
+
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
         {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
     </div>

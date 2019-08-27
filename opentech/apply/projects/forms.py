@@ -37,6 +37,23 @@ def filter_choices(available, choices):
 filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
 
 
+class LoopedFormMixin:
+    """
+    Sets the `name` variable on child classes.
+
+    "Looped" forms live outside the typical delegated view/form flow.  They are
+    typically forms which need to be instantiated with an instance so can't use
+    the DelegateableView flow.  They also need to set a slightly different name
+    since there can be multiple instances of a given form on the page we need
+    to use the form's instance.pk to differentiate between them.
+
+    This mixin provides the `name` property to handle generating that full name.
+    """
+    @property
+    def name(self):
+        return f'{self.name_prefix}-{self.instance.pk}'
+
+
 class ApproveContractForm(forms.ModelForm):
     name = 'approve_contract_form'
 
@@ -55,32 +72,40 @@ class ApproveContractForm(forms.ModelForm):
         super().clean()
 
 
-class ChangePaymentRequestStatusForm(forms.ModelForm):
-    name = 'change_payment_request_status_form'
+class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
+    name_prefix = 'change_payment_request_status_form'
 
     class Meta:
-        fields = ['status']
+        fields = ['status', 'paid_value']
         model = PaymentRequest
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
 
         self.instance = instance
+        self.initial['paid_value'] = instance.requested_value
 
         status_field = self.fields['status']
 
-        if instance.status == SUBMITTED:
-            wanted = [CHANGES_REQUESTED, UNDER_REVIEW, PAID, DECLINED]
-            status_field.choices = filter_request_choices(wanted)
-            return
+        possible_status_transitions_lut = {
+            CHANGES_REQUESTED: filter_request_choices([DECLINED]),
+            SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, PAID, DECLINED]),
+            UNDER_REVIEW: filter_request_choices([PAID]),
+        }
+        status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
         if instance.status == CHANGES_REQUESTED:
-            status_field.choices = filter_request_choices([DECLINED])
-            return
+            del self.fields['paid_value']
 
-        if instance.status == UNDER_REVIEW:
-            status_field.choices = filter_request_choices([PAID])
-            return
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data['status']
+        paid_value = cleaned_data.get('paid_value')
+
+        if paid_value and status != PAID:
+            self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
+
+        return cleaned_data
 
 
 class CreateProjectForm(forms.Form):
