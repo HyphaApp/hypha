@@ -74,6 +74,13 @@
     </div>
     {% endif %}
 
+    {% if active_payment_requests %}
+    <div class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal heading--no-margin">Active Requests for Payment</h4>
+        {% render_table active_payment_requests %}
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
 

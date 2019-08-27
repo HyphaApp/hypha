@@ -3,6 +3,17 @@ from opentech.apply.funds.tests.factories import (
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
 )
+from opentech.apply.projects.models import (
+    CHANGES_REQUESTED,
+    DECLINED,
+    PAID,
+    SUBMITTED,
+    UNDER_REVIEW,
+)
+from opentech.apply.projects.tests.factories import (
+    PaymentRequestFactory,
+    ProjectFactory
+)
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from opentech.apply.users.tests.factories import ApplicantFactory, ReviewerFactory, StaffFactory
 from opentech.apply.utils.testing.tests import BaseViewTestCase
@@ -79,6 +90,33 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")
         self.assertEquals(response.context['in_review_count'], 0)
+
+    def test_active_payment_requests_with_no_project(self):
+        response = self.get_page()
+        self.assertNotContains(response, "Active Requests for Payment")
+
+    def test_active_payment_requests_with_no_payment_requests(self):
+        ProjectFactory(lead=self.user)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active Requests for Payment")
+
+    def test_active_payment_requests_with_payment_requests_paid_or_declined(self):
+        project = ProjectFactory(lead=self.user)
+        PaymentRequestFactory(project=project, status=PAID)
+        PaymentRequestFactory(project=project, status=DECLINED)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active Requests for Payment")
+
+    def test_active_payment_requests_with_payment_requests_in_correct_state(self):
+        project = ProjectFactory(lead=self.user)
+        PaymentRequestFactory(project=project, status=SUBMITTED)
+        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
+        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+
+        response = self.get_page()
+        self.assertContains(response, "Active Requests for Payment")
 
 
 class TestReviewerDashboard(BaseViewTestCase):

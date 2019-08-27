@@ -13,10 +13,18 @@ from opentech.apply.funds.tables import (
     SubmissionsTable,
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
-    review_filter_for_user,
+    review_filter_for_user
 )
-from opentech.apply.projects.models import Project
-from opentech.apply.projects.tables import ProjectsDashboardTable
+from opentech.apply.projects.models import (
+    DECLINED,
+    PAID,
+    PaymentRequest,
+    Project
+)
+from opentech.apply.projects.tables import (
+    PaymentRequestsDashboardTable,
+    ProjectsDashboardTable
+)
 from opentech.apply.utils.views import ViewDispatcher
 
 
@@ -50,6 +58,7 @@ class AdminDashboardView(TemplateView):
         active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
 
         projects = self.get_my_projects(request.user)
+        active_payment_requests = self.get_my_active_payment_requests(request.user)
 
         context = {
             'open_rounds': open_rounds,
@@ -65,9 +74,19 @@ class AdminDashboardView(TemplateView):
             'filter': filterset,
             'active_statuses_filter': active_statuses_filter,
             'projects': projects,
+            'active_payment_requests': active_payment_requests,
         }
 
         return render(request, 'dashboard/dashboard.html', context)
+
+    def get_my_active_payment_requests(self, user):
+        payment_requests = (PaymentRequest.objects.filter(project__lead=user)
+                                                  .exclude(status__in=[DECLINED, PAID]))[:10]
+
+        if not payment_requests:
+            return
+
+        return PaymentRequestsDashboardTable(payment_requests)
 
     def get_my_projects(self, user):
         projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
