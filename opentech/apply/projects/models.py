@@ -129,6 +129,12 @@ class PaymentRequest(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
     )
+    paid_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+        null=True
+    )
 
     invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
