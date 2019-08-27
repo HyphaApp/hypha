@@ -1,17 +1,20 @@
 {% extends "base-apply.html" %}
+{% load static %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block body_class %}{% endblock %}
 
 {% block content %}
-<div class="simplified">
+<button class="button button--primary js-pdf" data-html2canvas-ignore="true">Download PDF</button>
+
+<div class="simplified js-pdf-wrapper">
     <div class="simplified__admin-bar">
         <div class="simplified__admin-bar-inner">
             <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
                 Projects
             </a>
-            <h1 class="simplified__heading">{{ object.title }}</h1>
+            <h1 class="simplified__heading js-pdf-title">{{ object.title }}</h1>
             <h5 class="simplified__subheading">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
@@ -28,9 +31,16 @@
         </header>
 
         <h3>Proposal Information</h3>
-        <div class="simplified__rich-text">
+        <div class="simplified__rich-text js-simplified-answers">
             {{ object.output_text_answers }}
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.1/html2pdf.bundle.min.js"></script>
+    <script src="{% static 'js/apply/simplified-pdf.js' %}"></script>
 {% endblock %}

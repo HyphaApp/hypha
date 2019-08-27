@@ -1,15 +1,30 @@
 // class used for custom styling on the simplified submission and project pages
 .simplified {
+    position: relative;
     &__admin-bar {
         position: relative;
-        right: 50%;
-        left: 50%;
-        width: 100vw;
         padding: $mobile-gutter;
-        margin-right: -50vw;
-        margin-left: -50vw;
         color: $color--white;
         background-color: $color--dark-grey;
+
+        &::after,
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: $color--dark-grey;
+        }
+
+        &::before {
+            transform: translate3d(100%, 0, 0);
+        }
+
+        &::after {
+            transform: translate3d(-100%, 0, 0);
+        }
     }
 
     &__admin-bar-inner {
