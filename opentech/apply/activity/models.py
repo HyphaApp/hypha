@@ -16,9 +16,6 @@ ACTIVITY_TYPES = {
     ACTION: 'Action',
 }
 
-PUBLIC = 'public'
-INTERNAL = 'internal'
-
 APPLICANT = 'applicant'
 TEAM = 'team'
 REVIEWER = 'reviewers'
