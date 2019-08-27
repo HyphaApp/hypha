@@ -1,9 +1,10 @@
 // class used for custom styling on the simplified submission and project pages
 .simplified {
     position: relative;
+
     &__admin-bar {
         position: relative;
-        padding: $mobile-gutter;
+        padding: 30px 10px 10px;
         color: $color--white;
         background-color: $color--dark-grey;
 
@@ -33,6 +34,8 @@
     }
 
     &__projects-link {
+        position: absolute;
+        top: 10px;
         display: inline-flex;
         align-items: center;
         color: $color--lightest-blue;
@@ -50,6 +53,7 @@
         letter-spacing: -.02rem;
         font-weight: $weight--bold;
         margin: 0;
+        max-width: $wrapper--medium;
     }
 
     &__subheading {
@@ -125,6 +129,17 @@
 
         h4 {
             margin: 0;
+        }
+    }
+
+    &__button {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 20px;
+
+        @include media-query(tablet-landscape) {
+            display: block;
         }
     }
 }

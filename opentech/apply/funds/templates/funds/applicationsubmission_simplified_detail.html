@@ -6,12 +6,13 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-<button class="button button--primary js-pdf" data-html2canvas-ignore="true">Download PDF</button>
+
 
 <div class="simplified js-pdf-wrapper">
     <div class="simplified__admin-bar">
+        <button class="button button--primary simplified__button js-pdf" data-html2canvas-ignore="true">Download PDF</button>
         <div class="simplified__admin-bar-inner">
-            <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+            <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}" data-html2canvas-ignore="true">
                 Projects
             </a>
             <h1 class="simplified__heading js-pdf-title">{{ object.title }}</h1>
