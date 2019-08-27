@@ -9,9 +9,7 @@ from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from opentech.apply.funds.workflow import PHASES
-
-from .models import INTERNAL, PUBLIC
+from .models import TEAM, ALL
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -227,7 +225,6 @@ class ActivityAdapter(AdapterBase):
         return [None]
 
     def extra_kwargs(self, message_type, source, sources, **kwargs):
-        from .models import INTERNAL
         if message_type in [
                 MESSAGES.OPENED_SEALED,
                 MESSAGES.REVIEWERS_UPDATED,
@@ -239,12 +236,12 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.REQUEST_PROJECT_CHANGE,
                 MESSAGES.SEND_FOR_APPROVAL,
         ]:
-            return {'visibility': INTERNAL}
+            return {'visibility': TEAM}
 
         source = source or sources[0]
         if is_transition(message_type) and not source.phase.permissions.can_view(source.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
-            return {'visibility': INTERNAL}
+            return {'visibility': TEAM}
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
@@ -297,8 +294,8 @@ class ActivityAdapter(AdapterBase):
             )
 
             return json.dumps({
-                INTERNAL: staff_message,
-                PUBLIC: applicant_message,
+                TEAM: staff_message,
+                ALL: applicant_message,
             })
 
         return staff_message
@@ -323,8 +320,8 @@ class ActivityAdapter(AdapterBase):
         return ' '.join(message)
 
     def send_message(self, message, user, source, sources, **kwargs):
-        from .models import Activity, PUBLIC
-        visibility = kwargs.get('visibility', PUBLIC)
+        from .models import Activity
+        visibility = kwargs.get('visibility', ALL)
 
         try:
             # If this was a batch action we want to pull out the submission
@@ -628,6 +625,7 @@ class EmailAdapter(AdapterBase):
         }
 
     def handle_transition(self, old_phase, source, **kwargs):
+        from opentech.apply.funds.workflow import PHASES
         submission = source
         # Retrive status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)

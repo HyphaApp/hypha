@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
-from opentech.apply.activity.models import Activity, INTERNAL
+from opentech.apply.activity.models import Activity, TEAM
 from opentech.apply.projects.models import Project
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
@@ -659,7 +659,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
 
         # Check that an activity was created that should only be viewable internally
         activity = Activity.objects.filter(message__contains='Screening status').first()
-        self.assertEqual(activity.visibility, INTERNAL)
+        self.assertEqual(activity.visibility, TEAM)
 
 
 class BaseSubmissionFileViewTestCase(BaseViewTestCase):

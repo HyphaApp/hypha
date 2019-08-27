@@ -3,7 +3,7 @@ import uuid
 import factory
 from django.utils import timezone
 
-from opentech.apply.activity.models import Activity, Event, INTERNAL, Message, MESSAGES, REVIEWER
+from opentech.apply.activity.models import Activity, Event, TEAM, Message, MESSAGES, REVIEWER
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory
 
@@ -13,7 +13,7 @@ class CommentFactory(factory.DjangoModelFactory):
         model = Activity
 
     class Params:
-        internal = factory.Trait(visibility=INTERNAL)
+        internal = factory.Trait(visibility=TEAM)
         reviewers = factory.Trait(visibility=REVIEWER)
 
     source = factory.SubFactory(ApplicationSubmissionFactory)

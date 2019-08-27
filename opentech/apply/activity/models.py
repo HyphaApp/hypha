@@ -15,25 +15,28 @@ ACTIVITY_TYPES = {
     COMMENT: 'Comment',
     ACTION: 'Action',
 }
-PRIVATE = 'private'
-PUBLIC = 'public'
-REVIEWER = 'reviewers'
-INTERNAL = 'internal'
 
+APPLICANT = 'applicant'
+TEAM = 'team'
+REVIEWER = 'reviewers'
+PARTNER = 'partners'
+ALL = 'all'
 
 VISIBILILTY_HELP_TEXT = {
-    PRIVATE: 'Visible to applicant and staff.',
-    REVIEWER: 'Visible to reviewers and staff.',
-    INTERNAL: 'Visible only to staff.',
-    PUBLIC: 'Visible to all users of the application system.',
+    APPLICANT: 'Visible to applicant and team.',
+    TEAM: 'Visible only to team.',
+    REVIEWER: 'Visible to reviewers and team.',
+    PARTNER: 'Visible to partners and team.',
+    ALL: 'Visible to any user who has access to the submission.',
 }
 
 
 VISIBILITY = {
-    PRIVATE: 'Private',
-    REVIEWER: 'Reviewers and Staff',
-    INTERNAL: 'Internal',
-    PUBLIC: 'Public',
+    APPLICANT: 'Applicant(s)',
+    TEAM: 'Team',
+    REVIEWER: 'Reviewers',
+    PARTNER: 'Partners',
+    ALL: 'All',
 }
 
 
@@ -91,7 +94,7 @@ class Activity(models.Model):
     source = GenericForeignKey('source_content_type', 'source_object_id')
 
     message = models.TextField()
-    visibility = models.CharField(choices=list(VISIBILITY.items()), default=PUBLIC, max_length=10)
+    visibility = models.CharField(choices=list(VISIBILITY.items()), default=APPLICANT, max_length=30)
 
     # Fields for handling versioning of the comment activity models
     edited = models.DateTimeField(default=None, null=True)
@@ -114,12 +117,12 @@ class Activity(models.Model):
     @property
     def priviledged(self):
         # Not visible to applicant
-        return self.visibility not in [PUBLIC, PRIVATE]
+        return self.visibility not in [APPLICANT, ALL]
 
     @property
     def private(self):
         # not visible to all
-        return self.visibility not in [PUBLIC]
+        return self.visibility not in [ALL]
 
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.submission)
@@ -127,10 +130,13 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return [PRIVATE, REVIEWER, INTERNAL, PUBLIC]
+            return [APPLICANT, TEAM, REVIEWER, PARTNER, ALL]
         if user.is_reviewer:
-            return [REVIEWER, PUBLIC]
-        return [PRIVATE, PUBLIC]
+            return [REVIEWER, ALL]
+        if user.is_partner:
+            return [PARTNER, ALL]
+
+        return [APPLICANT, ALL]
 
     @classmethod
     def visibility_choices_for(cls, user):

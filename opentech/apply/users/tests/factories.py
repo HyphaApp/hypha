@@ -1,5 +1,8 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.utils.text import slugify
 
 import factory
 
@@ -23,7 +26,7 @@ class UserFactory(factory.DjangoModelFactory):
     class Meta:
         model = get_user_model()
 
-    email = factory.Sequence('email{}@email.com'.format)
+    email = factory.LazyAttribute(lambda o: '{}+{}@email.com'.format(slugify(o.full_name), uuid.uuid4()))
     full_name = factory.Faker('name')
     password = factory.PostGenerationMethodCall('set_password', 'defaultpassword')
 

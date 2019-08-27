@@ -163,20 +163,20 @@ class TestReviewScore(BaseViewTestCase):
         review = self.submit_review_scores()
         self.assertEqual(review.score, NA)
 
-    def test_na_not_included_in_review_average(self):
+    def test_na_included_in_review_average(self):
         review = self.submit_review_scores(NA, 5)
-        self.assertEqual(review.score, 5)
+        self.assertEqual(review.score, 2.5)
 
-    def test_na_not_included_reviews_average(self):
+    def test_na_included_reviews_average(self):
         self.submit_review_scores(NA)
-        self.assertIsNone(Review.objects.score())
+        self.assertIsNotNone(Review.objects.score())
 
-    def test_na_not_included_multiple_reviews_average(self):
+    def test_na_included_multiple_reviews_average(self):
         self.submit_review_scores(NA)
         self.submit_review_scores(5)
 
         self.assertEqual(Review.objects.count(), 2)
-        self.assertEqual(Review.objects.score(), 5)
+        self.assertEqual(Review.objects.score(), 2.5)
 
 
 class UserReviewFormTestCase(BaseViewTestCase):

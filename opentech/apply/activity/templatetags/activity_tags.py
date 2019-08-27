@@ -5,7 +5,7 @@ from django import template
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import Review
 
-from ..models import INTERNAL, PUBLIC, REVIEWER
+from ..models import TEAM, ALL, REVIEWER
 
 register = template.Library()
 
@@ -40,7 +40,7 @@ def display_for(activity, user):
 
     visibile_for_user = activity.visibility_for(user)
 
-    if set(visibile_for_user) & set([INTERNAL, REVIEWER]):
-        return message_data[INTERNAL]
+    if set(visibile_for_user) & set([TEAM, REVIEWER]):
+        return message_data[TEAM]
 
-    return message_data[PUBLIC]
+    return message_data[ALL]

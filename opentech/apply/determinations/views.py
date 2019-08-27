@@ -246,6 +246,15 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
         with transaction.atomic():
+            messenger(
+                MESSAGES.DETERMINATION_OUTCOME,
+                request=self.request,
+                user=self.object.author,
+                submission=self.object.submission,
+                related=self.object,
+            )
+            proposal_form = form.cleaned_data.get('proposal_form')
+
             transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
@@ -263,6 +272,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 self.request.user,
                 request=self.request,
                 notify=False,
+                proposal_form=proposal_form,
             )
 
             if self.submission.accepted_for_funding:

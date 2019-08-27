@@ -313,15 +313,15 @@ class AddTransitions(models.base.ModelBase):
             transition(by=user, request=request, **kwargs)
             self.save(update_fields=['status'])
 
-            self.progress_stage_when_possible(user, request)
+            self.progress_stage_when_possible(user, request, **kwargs)
 
         attrs['perform_transition'] = perform_transition
 
-        def progress_stage_when_possible(self, user, request):
+        def progress_stage_when_possible(self, user, request, notify=None, **kwargs):
             # Check to see if we can progress to a new stage from the current status
             for stage_transition in STAGE_CHANGE_ACTIONS:
                 try:
-                    self.perform_transition(stage_transition, user, request=request, notify=False)
+                    self.perform_transition(stage_transition, user, request=request, notify=False, **kwargs)
                 except PermissionDenied:
                     pass
 
@@ -522,7 +522,9 @@ class ApplicationSubmission(
         prev_meta_categories = submission_in_db.meta_categories.all()
 
         self.id = None
-        self.form_fields = self.get_from_parent('get_defined_fields')(target)
+        proposal_form = kwargs.get('proposal_form')
+        proposal_form = int(proposal_form) if proposal_form else 0
+        self.form_fields = self.get_from_parent('get_defined_fields')(target, form_index=proposal_form)
 
         self.live_revision = None
         self.draft_revision = None

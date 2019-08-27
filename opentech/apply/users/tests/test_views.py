@@ -3,7 +3,12 @@ from django.test import override_settings, TestCase
 from django.urls import reverse
 
 from opentech.apply.utils.testing.tests import BaseViewTestCase
-from .factories import OAuthUserFactory, StaffFactory, UserFactory
+from .factories import (
+    OAuthUserFactory,
+    StaffFactory,
+    SuperUserFactory,
+    UserFactory,
+)
 
 
 @override_settings(ROOT_URLCONF='opentech.apply.urls')
@@ -58,3 +63,47 @@ class TestPasswordReset(BaseViewTestCase):
         self.assertRedirects(response, self.url(None, view_name='password_reset_done'))
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('https://testserver/account/password/reset/confirm', mail.outbox[0].body)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestBecome(TestCase):
+    def setUp(self):
+        self.staff = StaffFactory()
+        self.user = UserFactory()
+        self.superuser = SuperUserFactory()
+
+    def become_request(self, user, target):
+        self.client.force_login(user)
+        url = reverse('users:become')
+        response = self.client.post(url, {'user': target.pk}, follow=True, secure=True)
+        return response
+
+    def test_staff_can_become_user(self):
+        response = self.become_request(self.staff, self.user)
+        self.assertEqual(response.status_code, 200)
+
+    def test_staff_cannot_become_superuser(self):
+        response = self.become_request(self.staff, self.superuser)
+        self.assertEqual(response.status_code, 403)
+
+    def test_superuser_can_become_staff(self):
+        response = self.become_request(self.superuser, self.staff)
+        self.assertEqual(response.status_code, 200)
+
+    def test_superuser_cannot_become_superuser(self):
+        other_superuser = SuperUserFactory()
+        response = self.become_request(self.superuser, other_superuser)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_become_staff(self):
+        response = self.become_request(self.user, self.staff)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_become_other_user(self):
+        other_user = UserFactory()
+        response = self.become_request(self.user, other_user)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_cannot_become_superuser(self):
+        response = self.become_request(self.user, self.superuser)
+        self.assertEqual(response.status_code, 403)

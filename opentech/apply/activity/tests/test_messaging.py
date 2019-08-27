@@ -19,7 +19,7 @@ from opentech.apply.review.tests.factories import ReviewFactory
 from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
 from opentech.apply.projects.tests.factories import ProjectFactory
 
-from ..models import Activity, Event, Message, INTERNAL, PUBLIC
+from ..models import Activity, Event, Message, TEAM, ALL
 from ..messaging import (
     AdapterBase,
     ActivityAdapter,
@@ -262,7 +262,7 @@ class TestActivityAdapter(TestCase):
         submission = ApplicationSubmissionFactory(status='post_review_discussion')
         kwargs = self.adapter.extra_kwargs(MESSAGES.TRANSITION, source=submission, sources=None)
 
-        self.assertEqual(kwargs['visibility'], INTERNAL)
+        self.assertEqual(kwargs['visibility'], TEAM)
 
     def test_public_transition_kwargs(self):
         submission = ApplicationSubmissionFactory()
@@ -277,10 +277,10 @@ class TestActivityAdapter(TestCase):
         message = self.adapter.handle_transition(old_phase, submission)
         message = json.loads(message)
 
-        self.assertIn(submission.phase.display_name, message[INTERNAL])
-        self.assertIn(old_phase.display_name, message[INTERNAL])
-        self.assertIn(submission.phase.public_name, message[PUBLIC])
-        self.assertIn(old_phase.public_name, message[PUBLIC])
+        self.assertIn(submission.phase.display_name, message[TEAM])
+        self.assertIn(old_phase.display_name, message[TEAM])
+        self.assertIn(submission.phase.public_name, message[ALL])
+        self.assertIn(old_phase.public_name, message[ALL])
 
     def test_handle_transition_to_private_to_public(self):
         submission = ApplicationSubmissionFactory(status='more_info')
@@ -289,10 +289,10 @@ class TestActivityAdapter(TestCase):
         message = self.adapter.handle_transition(old_phase, submission)
         message = json.loads(message)
 
-        self.assertIn(submission.phase.display_name, message[INTERNAL])
-        self.assertIn(old_phase.display_name, message[INTERNAL])
-        self.assertIn(submission.phase.public_name, message[PUBLIC])
-        self.assertIn(old_phase.public_name, message[PUBLIC])
+        self.assertIn(submission.phase.display_name, message[TEAM])
+        self.assertIn(old_phase.display_name, message[TEAM])
+        self.assertIn(submission.phase.public_name, message[ALL])
+        self.assertIn(old_phase.public_name, message[ALL])
 
     def test_handle_transition_to_public_to_private(self):
         submission = ApplicationSubmissionFactory(status='internal_review')
