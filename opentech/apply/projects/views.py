@@ -1,4 +1,5 @@
 import decimal
+import itertools
 from copy import copy
 
 from django.contrib import messages
@@ -60,6 +61,23 @@ from .models import (
     PaymentRequest,
     Project
 )
+
+
+def form_errors_to_messages(request, errors):
+    """
+    Convert form errors into messages
+
+    This is designed to be used in a form_invalid method where an invalid form
+    will have a populated ErrorDict in `form.errors` and you want to display
+    each error in a new Django Messages Framework message.
+
+    It converts the given ErrorDict to a flat list of ValidationErrors, pulling
+    their messages out before iterating and sending them as messages.
+    """
+    errors = itertools.chain.from_iterable(errors.as_data().values())
+    errors = (e.message for e in errors)
+    for error in errors:
+        messages.error(request, error)
 
 
 class ContractsMixin:
@@ -177,9 +195,7 @@ class ApproveContractView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
+        form_errors_to_messages(self.request, form.errors)
         return redirect(self.project)
 
     def form_valid(self, form):
@@ -216,9 +232,7 @@ class ChangePaymentRequestStatusView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
+        form_errors_to_messages(self.request, form.errors)
         return redirect(self.project)
 
     def form_valid(self, form):
