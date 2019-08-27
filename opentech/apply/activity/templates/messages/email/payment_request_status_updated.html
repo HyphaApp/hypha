@@ -1,0 +1,15 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+An OTF staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.
+It is now {{ payment_request.get_status_display }}.
+
+{% if has_changes_requested %}
+The staff member left this comment:
+
+{{ payment_request.comment }}
+{% endif %}
+
+Title: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}
