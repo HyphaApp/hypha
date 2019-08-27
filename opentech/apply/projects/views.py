@@ -25,7 +25,7 @@ from .forms import (ApproveContractForm, CreateApprovalForm,
                     RemoveDocumentForm, RequestPaymentForm, SetPendingForm,
                     UpdateProjectLeadForm, UploadContractForm,
                     UploadDocumentForm)
-from .models import (CONTRACTING, DECLINED, IN_PROGRESS, PAID,
+from .models import (CONTRACTING, DECLINED, IN_PROGRESS, PAID, PROJECT_STATUS_CHOICES,
                      REQUEST_STATUS_CHOICES, SUBMITTED, UNDER_REVIEW, Approval,
                      Contract, PacketFile, PaymentRequest, Project)
 
@@ -347,6 +347,8 @@ class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['statuses'] = PROJECT_STATUS_CHOICES
+        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
         context['approve_contract_form'] = ApproveContractForm()
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
