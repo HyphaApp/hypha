@@ -146,6 +146,10 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return f'Payment requested for {self.project}'
 
+    @property
+    def has_changes_requested(self):
+        return self.status == CHANGES_REQUESTED
+
     def user_can_delete(self, user):
         if user.is_apply_staff:
             return False  # Staff can reject
