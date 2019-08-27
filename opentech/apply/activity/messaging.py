@@ -618,6 +618,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
     }
 
     def get_subject(self, message_type, source):
@@ -658,6 +659,13 @@ class EmailAdapter(AdapterBase):
         for submission in submissions:
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
+
+    def handle_payment_status_updated(self, related, **kwargs):
+        return self.render_message(
+            'messages/email/payment_request_status_updated.html',
+            has_changes_requested=related.has_changes_requested,
+            **kwargs,
+        )
 
     def batch_determination(self, determinations, sources, **kwargs):
         submissions = sources

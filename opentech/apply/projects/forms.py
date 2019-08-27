@@ -75,7 +75,7 @@ class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
     name_prefix = 'change_payment_request_status_form'
 
     class Meta:
-        fields = ['status', 'paid_value']
+        fields = ['status', 'comment', 'paid_value']
         model = PaymentRequest
 
     def __init__(self, instance, *args, **kwargs):
