@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0041_add_approve_contract'),
+        ('activity', '0042_add_approve_contract'),
     ]
 
     operations = [

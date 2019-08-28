@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0039_add_remove_document'),
+        ('activity', '0040_merge_activity_update_and_generic_relations'),
     ]
 
     operations = [

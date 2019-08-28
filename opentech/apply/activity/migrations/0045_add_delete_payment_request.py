@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0043_add_update_payment_request_status'),
+        ('activity', '0044_add_update_payment_request_status'),
     ]
 
     operations = [
