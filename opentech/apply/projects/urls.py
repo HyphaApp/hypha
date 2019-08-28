@@ -6,8 +6,9 @@ from .views import (
     ChangePaymentRequestStatusView,
     DeletePaymentRequestView,
     EditPaymentRequestView,
-    PaymentRequestView,
+    PaymentRequestListView,
     PaymentRequestPrivateMedia,
+    PaymentRequestView,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
@@ -51,4 +52,9 @@ if settings.PROJECTS_ENABLED:
             ], 'payments'))),
         ])),
         path('all/', ProjectListView.as_view(), name='all'),
+        path(
+            'payment-requests/all/',
+            PaymentRequestListView.as_view(),
+            name="payment-request-all",
+        ),
     ]

@@ -2,6 +2,7 @@ import textwrap
 
 import django_tables2 as tables
 from django.db.models import F, Sum
+from django.utils.safestring import mark_safe
 
 from .models import PaymentRequest, Project
 
@@ -20,6 +21,27 @@ class PaymentRequestsDashboardTable(tables.Table):
         fields = ['project', 'requested_value', 'date_from', 'date_to', 'status']
         model = PaymentRequest
         orderable = False
+
+    def render_requested_value(self, value):
+        return f'${value}'
+
+
+class PaymentRequestsListTable(tables.Table):
+    requested_value = tables.Column(verbose_name='Amount Requested', orderable=True)
+    status = tables.Column()
+    date_to = tables.DateColumn(verbose_name='End Date', orderable=True)
+    fund = tables.Column(verbose_name='Fund', accessor='project.submission.page')
+
+    class Meta:
+        fields = ['project', 'requested_value', 'status', 'date_to', 'fund']
+        model = PaymentRequest
+        orderable = False
+
+    def render_project(self, value):
+        text = textwrap.shorten(value.title, width=30, placeholder="...")
+        url = f'{value.get_absolute_url()}#payment-requests'
+
+        return mark_safe(f'<a href="{url}">{text}</a>')
 
     def render_requested_value(self, value):
         return f'${value}'

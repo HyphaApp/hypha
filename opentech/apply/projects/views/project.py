@@ -31,7 +31,7 @@ from opentech.apply.utils.views import (
 )
 
 from ..files import get_files
-from ..filters import ProjectListFilter
+from ..filters import PaymentRequestListFilter, ProjectListFilter
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -55,7 +55,8 @@ from ..models import (
     PacketFile,
     Project
 )
-from ..tables import ProjectsListTable
+from ..tables import PaymentRequestsListTable, ProjectsListTable
+
 from .payment import RequestPaymentView
 
 
@@ -531,6 +532,17 @@ class ApplicantProjectEditView(UpdateView):
 class ProjectEditView(ViewDispatcher):
     admin_view = ProjectApprovalEditView
     applicant_view = ApplicantProjectEditView
+
+
+@method_decorator(staff_required, name='dispatch')
+class PaymentRequestListView(SingleTableMixin, FilterView):
+    filterset_class = PaymentRequestListFilter
+    model = PaymentRequest
+    table_class = PaymentRequestsListTable
+    template_name = 'application_projects/payment_request_list.html'
+
+    def get_queryset(self):
+        return PaymentRequest.objects.order_by('date_to')
 
 
 @method_decorator(staff_required, name='dispatch')
