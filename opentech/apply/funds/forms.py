@@ -27,6 +27,9 @@ class ProgressSubmissionForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         choices = list(self.instance.get_actions_for_user(self.user))
+        # Sort the transitions by the order they are listed.
+        sort_by = list(self.instance.phase.transitions.keys())
+        choices.sort(key=lambda k: sort_by.index(k[0]))
         action_field = self.fields['action']
         action_field.choices = choices
         self.should_show = bool(choices)

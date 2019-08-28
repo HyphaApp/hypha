@@ -1,6 +1,9 @@
 import os
 
 import django_heroku
+import sentry_sdk
+
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa
 
@@ -11,8 +14,8 @@ DEBUG = False
 # Alternatively, you can set these in a local.py file on the server
 
 env = os.environ.copy()
-# Basic configuration
 
+# Mailgun configuration.
 if 'MAILGUN_API_KEY' in env:
     EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
     ANYMAIL = {
@@ -21,4 +24,13 @@ if 'MAILGUN_API_KEY' in env:
         "WEBHOOK_SECRET": env.get('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
+# Sentry configuration.
+if 'SENTRY_DSN' in env:
+    sentry_sdk.init(
+        dsn=env['SENTRY_DSN'],
+        environment=env.get('SENTRY_ENVIRONMENT', None),
+        integrations=[DjangoIntegration()]
+    )
+
+# Heroku configuration.
 django_heroku.settings(locals())

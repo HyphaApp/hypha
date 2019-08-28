@@ -5,7 +5,6 @@
     enctype="multipart/form-data"
     {% if action %}action="{{ action }}"{% endif %}
     >
-
     {% csrf_token %}
 
     {{ form.media }}
