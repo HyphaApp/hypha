@@ -130,7 +130,9 @@ class CreateApprovalForm(forms.ModelForm):
 
 
 class EditPaymentRequestForm(forms.ModelForm):
-    receipt_list = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}))
+    receipt_list = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'})
+    )
 
     name = 'edit_payment_request_form'
 

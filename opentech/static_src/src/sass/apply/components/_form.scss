@@ -408,6 +408,40 @@
             background-size: 12px;
             border: 1px solid $color--dark-blue;
         }
+
+        &.delete {
+            + label {
+                padding-left: 0;
+
+                &::before {
+                    display: none;
+                }
+
+                &::after {
+                    content: 'remove';
+                    margin-left: 10px;
+                    color: $color--light-blue;
+                    font-size: 14px;
+                    text-decoration: underline;
+                }
+            }
+
+            &:checked + label {
+                text-decoration: line-through;
+                color: $color--black-60;
+
+                &::after {
+                    content: 'undo';
+                    display: inline-block;
+                    overflow: hidden;
+                    position: absolute;
+                    margin-left: 10px;
+                    bottom: 0;
+                }
+            }
+
+
+        }
     }
 
     .errorlist {
