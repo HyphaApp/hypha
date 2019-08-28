@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0027_update_visibility_options_2'),
+        ('activity', '0028_migrate_messages_with_visibility'),
         ('activity', '0039_add_remove_document'),
     ]
 
