@@ -1,10 +1,22 @@
 from django.test import TestCase
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from opentech.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
-from ..models import Project
-from .factories import (DocumentCategoryFactory, PacketFileFactory,
-                        ProjectFactory)
+from ..models import (
+    CHANGES_REQUESTED,
+    DECLINED,
+    PAID,
+    SUBMITTED,
+    UNDER_REVIEW,
+    Project
+)
+from .factories import (
+    DocumentCategoryFactory,
+    PacketFileFactory,
+    PaymentRequestFactory,
+    ProjectFactory
+)
 
 
 class TestProjectModel(TestCase):
@@ -59,3 +71,63 @@ class TestProjectModel(TestCase):
         self.assertEqual(missing[0]['difference'], 3)
         self.assertEqual(missing[1]['category'], category2)
         self.assertEqual(missing[1]['difference'], 2)
+
+    def test_staff_cant_delete_from_submitted(self):
+        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        staff = StaffFactory()
+
+        self.assertFalse(payment_request.user_can_delete(staff))
+
+    def test_staff_cant_delete_from_under_review(self):
+        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+        staff = StaffFactory()
+
+        self.assertFalse(payment_request.user_can_delete(staff))
+
+    def test_staff_cant_delete_from_changes_requested(self):
+        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        staff = StaffFactory()
+
+        self.assertFalse(payment_request.user_can_delete(staff))
+
+    def test_staff_cant_delete_from_paid(self):
+        payment_request = PaymentRequestFactory(status=PAID)
+        staff = StaffFactory()
+
+        self.assertFalse(payment_request.user_can_delete(staff))
+
+    def test_staff_cant_delete_from_declined(self):
+        payment_request = PaymentRequestFactory(status=DECLINED)
+        staff = StaffFactory()
+
+        self.assertFalse(payment_request.user_can_delete(staff))
+
+    def test_user_can_delete_from_submitted(self):
+        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        user = ApplicantFactory()
+
+        self.assertTrue(payment_request.user_can_delete(user))
+
+    def test_user_cant_delete_from_under_review(self):
+        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+        user = ApplicantFactory()
+
+        self.assertFalse(payment_request.user_can_delete(user))
+
+    def test_user_can_delete_from_changes_requested(self):
+        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        user = ApplicantFactory()
+
+        self.assertTrue(payment_request.user_can_delete(user))
+
+    def test_user_cant_delete_from_paid(self):
+        payment_request = PaymentRequestFactory(status=PAID)
+        user = ApplicantFactory()
+
+        self.assertFalse(payment_request.user_can_delete(user))
+
+    def test_user_cant_delete_from_declined(self):
+        payment_request = PaymentRequestFactory(status=DECLINED)
+        user = ApplicantFactory()
+
+        self.assertFalse(payment_request.user_can_delete(user))

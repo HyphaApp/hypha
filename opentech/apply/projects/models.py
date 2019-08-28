@@ -103,11 +103,13 @@ class PaymentReceipt(models.Model):
 
 
 SUBMITTED = 'submitted'
+CHANGES_REQUESTED = 'changes_requested'
 UNDER_REVIEW = 'under_review'
 PAID = 'paid'
 DECLINED = 'declined'
 REQUEST_STATUS_CHOICES = [
     (SUBMITTED, 'Submitted'),
+    (CHANGES_REQUESTED, 'Changes Requested'),
     (UNDER_REVIEW, 'Under Review'),
     (PAID, 'Paid'),
     (DECLINED, 'Declined'),
@@ -133,6 +135,15 @@ class PaymentRequest(models.Model):
 
     def __str__(self):
         return f'Payment requested for {self.project}'
+
+    def user_can_delete(self, user):
+        if user.is_apply_staff:
+            return False  # Staff can reject
+
+        if self.status not in (SUBMITTED, CHANGES_REQUESTED):
+            return False
+
+        return True
 
 
 COMMITTED = 'committed'

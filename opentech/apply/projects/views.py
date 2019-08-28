@@ -11,7 +11,13 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DetailView, FormView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    FormView,
+    UpdateView
+)
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -26,6 +32,7 @@ from opentech.apply.utils.views import (
 from .files import get_files
 from .forms import (
     ApproveContractForm,
+    ChangePaymentRequestStatusForm,
     CreateApprovalForm,
     ProjectApprovalForm,
     ProjectEditForm,
@@ -183,6 +190,39 @@ class ApproveContractView(UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class ChangePaymentRequestStatusView(UpdateView):
+    form_class = ChangePaymentRequestStatusForm
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        for error in form.errors:
+            messages.error(self.request, error)
+
+        return redirect(self.project)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
+
+
+@method_decorator(staff_required, name='dispatch')
 class CreateApprovalView(DelegatedViewMixin, CreateView):
     context_name = 'add_approval_form'
     form_class = CreateApprovalForm
@@ -206,6 +246,37 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         project.save(update_fields=['is_locked', 'status'])
 
         return response
+
+
+class DeletePaymentRequestView(DeleteView):
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+
+        self.object = self.get_object()
+        if not self.object.user_can_delete(request.user):
+            raise PermissionDenied
+
+        return super().dispatch(request, *args, **kwargs)
+
+    @transaction.atomic()
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.DELETE_PAYMENT_REQUEST,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -435,8 +506,20 @@ class AdminProjectDetailView(
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
         context['approve_contract_form'] = ApproveContractForm()
+        context['change_payment_request_status_forms'] = list(self.get_change_payment_request_status_forms())
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
+
+    def get_change_payment_request_status_forms(self):
+        """
+        Get an iterable of ChangePaymentRequestStatusForms
+
+        We want to filter the available options based on the current
+        PaymentRequest object so we need to initialise those forms outside of
+        the template.
+        """
+        for payment_request in self.object.payment_requests.exclude(status=DECLINED).select_related('project'):
+            yield ChangePaymentRequestStatusForm(instance=payment_request)
 
 
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):

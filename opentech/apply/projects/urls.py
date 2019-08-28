@@ -3,6 +3,8 @@ from django.urls import include, path
 
 from .views import (
     ApproveContractView,
+    ChangePaymentRequestStatusView,
+    DeletePaymentRequestView,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
@@ -26,9 +28,19 @@ if settings.PROJECTS_ENABLED:
             ),
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
             path(
+                'change-payment-request-status/<int:payment_request_id>/',
+                ChangePaymentRequestStatusView.as_view(),
+                name='change-payment-status',
+            ),
+            path(
                 'copy-documents/',
                 SelectDocumentView.as_view(),
                 name="copy-documents",
+            ),
+            path(
+                'delete-payment-request/<int:payment_request_id>/',
+                DeletePaymentRequestView.as_view(),
+                name='delete-payment-request',
             ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         ])),

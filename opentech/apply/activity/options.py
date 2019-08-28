@@ -37,6 +37,8 @@ class MESSAGES(Enum):
     UPLOAD_CONTRACT = 'Contract was Uploaded to Project'
     APPROVE_CONTRACT = 'Contract was Approved'
     REQUEST_PAYMENT = 'Payment was requested for Project'
+    UPDATE_PAYMENT_REQUEST_STATUS = 'Updated Payment Request Status'
+    DELETE_PAYMENT_REQUEST = 'Delete Payment Request'
 
     @classmethod
     def choices(cls):

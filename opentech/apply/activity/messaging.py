@@ -59,6 +59,8 @@ neat_related = {
     MESSAGES.CREATED_PROJECT: 'submission',
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
     MESSAGES.APPROVE_CONTRACT: 'contract',
+    MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
+    MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
 }
 
 
@@ -394,6 +396,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
         MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
         MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has updated status for payment request <{link}|{source.title}>.',
+        MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
     }
 
     def __init__(self):
