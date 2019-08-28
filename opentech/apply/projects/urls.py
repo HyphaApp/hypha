@@ -7,6 +7,7 @@ from .views import (
     ProjectDetailView,
     ProjectEditView,
     ProjectPrivateMediaView,
+    SelectDocumentView
 )
 
 app_name = 'projects'
@@ -24,6 +25,11 @@ if settings.PROJECTS_ENABLED:
                 name="approve-contract",
             ),
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
+            path(
+                'copy-documents/',
+                SelectDocumentView.as_view(),
+                name="copy-documents",
+            ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         ])),
     ]

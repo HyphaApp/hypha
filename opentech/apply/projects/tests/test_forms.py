@@ -1,12 +1,17 @@
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from opentech.apply.users.tests.factories import UserFactory
 
-from ..forms import ProjectApprovalForm, RequestPaymentForm
-from .factories import ProjectFactory, address_to_form_data
+from ..files import get_files
+from ..forms import ProjectApprovalForm, RequestPaymentForm, SelectDocumentForm
+from .factories import (
+    DocumentCategoryFactory,
+    ProjectFactory,
+    address_to_form_data
+)
 
 
 class TestProjectApprovalForm(TestCase):
@@ -85,3 +90,33 @@ class TestRequestPaymentForm(TestCase):
             }
         )
         self.assertFalse(form.is_valid())
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestSelectDocumentForm(TestCase):
+    def test_copying_files(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory()
+
+        self.assertEqual(project.packet_files.count(), 0)
+
+        files = list(get_files(project))
+        self.assertEqual(len(files), 4)
+
+        urls = [files[0].url, files[2].url]
+
+        form = SelectDocumentForm(
+            files,
+            project,
+            data={'category': category.id, 'files': urls},
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+        form.save()
+
+        packet_files = project.packet_files.order_by('id')
+        self.assertEqual(len(packet_files), 2)
+
+        first_file, second_file = packet_files
+        self.assertEqual(first_file.document.read(), files[0].read())
+        self.assertEqual(second_file.document.read(), files[2].read())

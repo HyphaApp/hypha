@@ -49,9 +49,19 @@
                 <p class="docs-block__title">Supporting documents</p>
             </div>
             {% if editable %}
-                <div class="docs-block__row-inner">
-                    <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
-                </div>
+            <div class="docs-block__row-inner">
+                <a
+                    data-fancybox
+                    data-src="#copy-supporting-doc"
+                    class="docs-block__link"
+                    style="margin-right:20px"
+                    href="#">
+                    Choose file
+                </a>
+            </div>
+            <div class="docs-block__row-inner">
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+            </div>
             {% endif %}
             {% if remaining_document_categories %}
             <div class="docs-block__info-text">
@@ -107,6 +117,12 @@
         {% endif %}
         <!-- <button class="button button--primary" href="#">Ready for contracting</button> -->
     </div>
+</div>
+
+<div class="modal" id="copy-supporting-doc">
+    <h4 class="modal__header-bar">Select a document</h4>
+    {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
+    {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value='Copy' action=select_document_url %}
 </div>
 
 <div class="modal" id="upload-supporting-doc">

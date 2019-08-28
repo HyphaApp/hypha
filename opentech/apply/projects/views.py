@@ -17,17 +17,42 @@ from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
 from opentech.apply.utils.storage import PrivateMediaView
-from opentech.apply.utils.views import (DelegateableView, DelegatedViewMixin,
-                                        ViewDispatcher)
+from opentech.apply.utils.views import (
+    DelegateableView,
+    DelegatedViewMixin,
+    ViewDispatcher
+)
 
-from .forms import (ApproveContractForm, CreateApprovalForm,
-                    ProjectApprovalForm, ProjectEditForm, RejectionForm,
-                    RemoveDocumentForm, RequestPaymentForm, SetPendingForm,
-                    UpdateProjectLeadForm, UploadContractForm,
-                    UploadDocumentForm)
-from .models import (CONTRACTING, DECLINED, IN_PROGRESS, PAID, PROJECT_STATUS_CHOICES,
-                     REQUEST_STATUS_CHOICES, SUBMITTED, UNDER_REVIEW, Approval,
-                     Contract, PacketFile, PaymentRequest, Project)
+from .files import get_files
+from .forms import (
+    ApproveContractForm,
+    CreateApprovalForm,
+    ProjectApprovalForm,
+    ProjectEditForm,
+    RejectionForm,
+    RemoveDocumentForm,
+    RequestPaymentForm,
+    SelectDocumentForm,
+    SetPendingForm,
+    UpdateProjectLeadForm,
+    UploadContractForm,
+    UploadDocumentForm
+)
+from .models import (
+    CONTRACTING,
+    DECLINED,
+    IN_PROGRESS,
+    PAID,
+    PROJECT_STATUS_CHOICES,
+    REQUEST_STATUS_CHOICES,
+    SUBMITTED,
+    UNDER_REVIEW,
+    Approval,
+    Contract,
+    PacketFile,
+    PaymentRequest,
+    Project
+)
 
 
 class ContractsMixin:
@@ -102,6 +127,20 @@ class PaymentsMixin:
             'paid_absolute': paid_absolute,
             'paid_percentage': paid_percentage,
         }
+
+
+class SubmissionFilesMixin:
+    """
+    Mixin to provide an instantiated SelectDocumentForm
+    """
+    def get_context_data(self, **kwargs):
+        project = self.get_object()
+
+        files = get_files(project)
+
+        context = super().get_context_data(**kwargs)
+        context['select_document_form'] = SelectDocumentForm(files, project)
+        return context
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -230,6 +269,44 @@ class RequestPaymentView(DelegatedViewMixin, CreateView):
         return response
 
 
+@method_decorator(login_required, name='dispatch')
+class SelectDocumentView(SubmissionFilesMixin, FormView):
+    context_name = 'select_document_form'
+    form_class = SelectDocumentForm
+    model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        for error in form.errors:
+            messages.error(self.request, error)
+
+        return redirect(self.project)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPLOAD_DOCUMENT,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+        )
+
+        return response
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['existing_files'] = get_files(self.project)
+        kwargs['project'] = self.project
+        return kwargs
+
+    def get_success_url(self):
+        return self.project.get_absolute_url()
+
+
 @method_decorator(staff_required, name='dispatch')
 class SendForApprovalView(DelegatedViewMixin, UpdateView):
     context_name = 'request_approval_form'
@@ -330,7 +407,14 @@ class UploadDocumentView(DelegatedViewMixin, CreateView):
         return response
 
 
-class AdminProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):
+class AdminProjectDetailView(
+    ActivityContextMixin,
+    DelegateableView,
+    ContractsMixin,
+    PaymentsMixin,
+    SubmissionFilesMixin,
+    DetailView,
+):
     form_views = [
         CommentFormView,
         CreateApprovalView,
