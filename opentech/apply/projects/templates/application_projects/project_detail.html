@@ -132,7 +132,9 @@
                 </div>
                 {% endif %}
 
+                {% if not object.is_in_progress %}
                 {% include "application_projects/includes/supporting_documents.html" %}
+                {% endif %}
             </article>
 
             <aside class="sidebar">
