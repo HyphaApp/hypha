@@ -132,7 +132,9 @@
                 </div>
                 {% endif %}
 
+                {% if not object.is_in_progress %}
                 {% include "application_projects/includes/supporting_documents.html" %}
+                {% endif %}
             </article>
 
             <aside class="sidebar">
@@ -171,7 +173,7 @@
 
                     <a data-fancybox
                        data-src="#request-payment"
-                       class="button button--primary button--full-width"
+                       class="button button--primary button--bottom-space button--full-width"
                        href="#">
                         Add payment request
                     </a>
@@ -182,6 +184,19 @@
                     {% endif %}
 
                 </div>
+
+                {% if object.is_in_progress %}
+                <div class="sidebar__inner">
+                    <h5>Supporting Documents</h5>
+
+                    <p><a href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
+
+                    {% if request.user.is_apply_staff %}
+                    <p><a href="#">Approval form</a></p>
+                    <p><a href="#">Supporting documents</a></p>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 {% if request.user.is_apply_staff and approvals %}
                 {% block project_approvals %}{% endblock %}

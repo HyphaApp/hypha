@@ -150,12 +150,13 @@ COMMITTED = 'committed'
 CONTRACTING = 'contracting'
 IN_PROGRESS = 'in_progress'
 CLOSING = 'closing'
+COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, 'Committed'),
     (CONTRACTING, 'Contracting'),
     (IN_PROGRESS, 'In Progress'),
     (CLOSING, 'Closing'),
-    ('complete', 'Complete'),
+    (COMPLETE, 'Complete'),
 ]
 
 
@@ -300,6 +301,10 @@ class Project(models.Model):
                     'category': category,
                     'difference': difference,
                 }
+
+    @property
+    def is_in_progress(self):
+        return self.status == IN_PROGRESS
 
 
 class DocumentCategory(models.Model):
