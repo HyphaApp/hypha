@@ -178,6 +178,7 @@ TEMPLATES = [
                 'opentech.public.utils.context_processors.global_vars',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
+                'opentech.apply.projects.context_processors.projects_enabled',
             ],
         },
     },
@@ -621,3 +622,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+
+# Projects Feature Flag
+PROJECTS_ENABLED = False
+if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
+    PROJECTS_ENABLED = True

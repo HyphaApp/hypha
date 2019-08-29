@@ -57,6 +57,7 @@
     &__title {
         font-weight: $weight--semibold;
         width: 100%;
+        hyphens: auto;
     }
 
     &__link {

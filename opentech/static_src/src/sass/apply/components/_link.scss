@@ -133,11 +133,13 @@
                 height: 30px;
                 margin-left: 30px;
                 font-size: 30px;
-                line-height: .9;
-                text-align: center;
                 border: 2px solid $color--white;
                 border-radius: 50%;
                 content: '+';
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-bottom: 4px;
             }
         }
 
@@ -166,11 +168,13 @@
             height: 30px;
             margin-left: 10px;
             font-size: 30px;
-            line-height: .1;
-            text-align: center;
             border: 2px solid $color--white;
             border-radius: 50%;
-            content: '_';
+            content: '\2013';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 5px;
 
             @include media-query(tablet-portrait) {
                 margin-left: 20px;
@@ -212,16 +216,24 @@
             cursor: not-allowed;
         }
 
-        @include media-query(tablet-landscape) {
-            margin-left: auto;
-        }
-
         &.is-active {
             color: $color--light-blue;
 
             &:hover {
                 cursor: pointer;
             }
+        }
+    }
+
+    &--delete-submission {
+        margin-right: 1rem;
+        padding-right: 1rem;
+        border-right: 2px solid $color--mid-grey;
+
+        &:only-child {
+            border-right: 0;
+            padding-right: 0;
+            margin-right: 0;
         }
     }
 

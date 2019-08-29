@@ -56,9 +56,10 @@
         updateTabOnLoad() {
             // Find tab with matching hash and activate
             const url = document.location.toString();
-            const match = this.findTab(url.split('#')[1]);
+            const tabName = url.split('#')[1];
+            const match = this.findTab(tabName);
 
-            this.addTabClasses(match);
+            return tabName ? this.addTabClasses(match) : this.addTabClasses(null);
         }
 
         tabs(e) {

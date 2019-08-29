@@ -5,14 +5,14 @@ from django import template
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import Review
 
-from ..models import INTERNAL, TEAM, PUBLIC, REVIEWER
+from ..models import TEAM, ALL, REVIEWER
 
 register = template.Library()
 
 
 @register.filter
 def display_author(activity, user):
-    if activity.submission.user == user and isinstance(activity.related_object, Review):
+    if isinstance(activity.related_object, Review) and activity.source.user == user:
         return 'Reviewer'
     return activity.user
 
@@ -41,6 +41,6 @@ def display_for(activity, user):
     visibile_for_user = activity.visibility_for(user)
 
     if set(visibile_for_user) & set([TEAM, REVIEWER]):
-        return message_data[INTERNAL]
+        return message_data[TEAM]
 
-    return message_data[PUBLIC]
+    return message_data[ALL]

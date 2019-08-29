@@ -3,7 +3,7 @@ import uuid
 import factory
 from django.utils import timezone
 
-from opentech.apply.activity.models import Activity, Event, INTERNAL, Message, MESSAGES, REVIEWER
+from opentech.apply.activity.models import Activity, Event, TEAM, Message, MESSAGES, REVIEWER
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import UserFactory
 
@@ -13,10 +13,10 @@ class CommentFactory(factory.DjangoModelFactory):
         model = Activity
 
     class Params:
-        internal = factory.Trait(visibility=INTERNAL)
+        internal = factory.Trait(visibility=TEAM)
         reviewers = factory.Trait(visibility=REVIEWER)
 
-    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    source = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
     message = factory.Faker('sentence')
     timestamp = factory.LazyFunction(timezone.now)
@@ -32,7 +32,7 @@ class EventFactory(factory.DjangoModelFactory):
 
     type = factory.Iterator([choice[0] for choice in MESSAGES.choices()])
     by = factory.SubFactory(UserFactory)
-    submission = factory.SubFactory(ApplicationSubmissionFactory)
+    source = factory.SubFactory(ApplicationSubmissionFactory)
 
 
 class MessageFactory(factory.DjangoModelFactory):

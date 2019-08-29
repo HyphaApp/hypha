@@ -12,7 +12,7 @@ fake = Faker()
 def make_files(number):
     file_names = [f'{fake.word()}_{i}.pdf' for i in range(number)]
     files = [
-        StreamFieldFile(SimpleUploadedFile(name, b'Some File Content'), filename=name)
+        StreamFieldFile('fake', 'uuid', SimpleUploadedFile(name, b'Some File Content'), filename=name)
         for name in file_names
     ]
     return files

@@ -9,9 +9,7 @@ from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils import timezone
 
-from opentech.apply.funds.workflow import PHASES
-
-from .models import INTERNAL, PUBLIC
+from .models import TEAM, ALL
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -56,6 +54,7 @@ neat_related = {
     MESSAGES.REVIEW_OPINION: 'opinion',
     MESSAGES.DELETE_REVIEW: 'review',
     MESSAGES.EDIT_REVIEW: 'review',
+    MESSAGES.CREATED_PROJECT: 'submission',
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
 }
 
@@ -111,38 +110,38 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def batch_recipients(self, message_type, submissions, **kwargs):
+    def batch_recipients(self, message_type, sources, **kwargs):
         # Default batch recipients is to send a message to each of the recipients that would
         # receive a message under normal conditions
         return [
             {
-                'recipients': self.recipients(message_type, submission=submission, **kwargs),
-                'submissions': [submission]
+                'recipients': self.recipients(message_type, source=source, **kwargs),
+                'sources': [source]
             }
-            for submission in submissions
+            for source in sources
         ]
 
-    def process_batch(self, message_type, events, request, user, submissions, related=None, **kwargs):
-        events_by_submission = {
-            event.submission.id: event
+    def process_batch(self, message_type, events, request, user, sources, related=None, **kwargs):
+        events_by_source = {
+            event.source.id: event
             for event in events
         }
-        for recipient in self.batch_recipients(message_type, submissions, **kwargs):
+        for recipient in self.batch_recipients(message_type, sources, **kwargs):
             recipients = recipient['recipients']
-            submissions = recipient['submissions']
-            events = [events_by_submission[submission.id] for submission in submissions]
-            self.process_send(message_type, recipients, events, request, user, submissions=submissions, submission=None, related=related, **kwargs)
+            sources = recipient['sources']
+            events = [events_by_source[source.id] for source in sources]
+            self.process_send(message_type, recipients, events, request, user, sources=sources, source=None, related=related, **kwargs)
 
-    def process(self, message_type, event, request, user, submission, related=None, **kwargs):
-        recipients = self.recipients(message_type, submission=submission, related=related, **kwargs)
-        self.process_send(message_type, recipients, [event], request, user, submission, related=related, **kwargs)
+    def process(self, message_type, event, request, user, source, related=None, **kwargs):
+        recipients = self.recipients(message_type, source=source, related=related, **kwargs)
+        self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
-    def process_send(self, message_type, recipients, events, request, user, submission, submissions=list(), related=None, **kwargs):
+    def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
         kwargs = {
             'request': request,
             'user': user,
-            'submission': submission,
-            'submissions': submissions,
+            'source': source,
+            'sources': sources,
             'related': related,
             **kwargs,
         }
@@ -200,10 +199,10 @@ class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.NEW_SUBMISSION: 'Submitted {submission.title} for {submission.page.title}',
+        MESSAGES.NEW_SUBMISSION: 'Submitted {source.title} for {source.page.title}',
         MESSAGES.EDIT: 'Edited',
         MESSAGES.APPLICANT_EDIT: 'Edited',
-        MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {submission.lead}',
+        MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {source.lead}',
         MESSAGES.BATCH_UPDATE_LEAD: 'Batch Lead changed to {new_lead}',
         MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
@@ -213,15 +212,19 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED: 'partners_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
-        MESSAGES.SCREENING: 'Screening status from {old_status} to {submission.screening_status}',
-        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}'
+        MESSAGES.SCREENING: 'Screening status from {old_status} to {source.screening_status}',
+        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
+        MESSAGES.CREATED_PROJECT: '{user} has created Project',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead} by {user}',
+        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval',
+        MESSAGES.APPROVE_PROJECT: '{user} has approved',
+        MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes to for acceptance: "{comment}"',
     }
 
     def recipients(self, message_type, **kwargs):
         return [None]
 
-    def extra_kwargs(self, message_type, submission, submissions, **kwargs):
-        from .models import INTERNAL
+    def extra_kwargs(self, message_type, source, sources, **kwargs):
         if message_type in [
                 MESSAGES.OPENED_SEALED,
                 MESSAGES.REVIEWERS_UPDATED,
@@ -229,13 +232,16 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.REVIEW_OPINION,
                 MESSAGES.BATCH_REVIEWERS_UPDATED,
                 MESSAGES.PARTNERS_UPDATED,
+                MESSAGES.APPROVE_PROJECT,
+                MESSAGES.REQUEST_PROJECT_CHANGE,
+                MESSAGES.SEND_FOR_APPROVAL,
         ]:
-            return {'visibility': INTERNAL}
+            return {'visibility': TEAM}
 
-        submission = submission or submissions[0]
-        if is_transition(message_type) and not submission.phase.permissions.can_view(submission.user):
+        source = source or sources[0]
+        if is_transition(message_type) and not source.phase.permissions.can_view(source.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
-            return {'visibility': INTERNAL}
+            return {'visibility': TEAM}
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
@@ -259,15 +265,15 @@ class ActivityAdapter(AdapterBase):
         ])
         return ' '.join(base)
 
-    def batch_determination(self, submissions, determinations, **kwargs):
-        submission = submissions[0]
+    def batch_determination(self, sources, determinations, **kwargs):
+        submission = sources[0]
         determination = determinations[submission.id]
         return self.messages[MESSAGES.DETERMINATION_OUTCOME].format(
             determination=determination,
-            submission=submission,
         )
 
-    def handle_transition(self, old_phase, submission, **kwargs):
+    def handle_transition(self, old_phase, source, **kwargs):
+        submission = source
         base_message = 'Progressed from {old_display} to {new_display}'
 
         new_phase = submission.phase
@@ -288,17 +294,18 @@ class ActivityAdapter(AdapterBase):
             )
 
             return json.dumps({
-                INTERNAL: staff_message,
-                PUBLIC: applicant_message,
+                TEAM: staff_message,
+                ALL: applicant_message,
             })
 
         return staff_message
 
-    def handle_batch_transition(self, transitions, submissions, **kwargs):
-        kwargs.pop('submission')
+    def handle_batch_transition(self, transitions, sources, **kwargs):
+        submissions = sources
+        kwargs.pop('source')
         for submission in submissions:
             old_phase = transitions[submission.id]
-            return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
+            return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
     def partners_updated(self, added, removed, **kwargs):
         message = ['Partners updated.']
@@ -312,23 +319,24 @@ class ActivityAdapter(AdapterBase):
 
         return ' '.join(message)
 
-    def send_message(self, message, user, submission, submissions, **kwargs):
-        from .models import Activity, PUBLIC
-        visibility = kwargs.get('visibility', PUBLIC)
+    def send_message(self, message, user, source, sources, **kwargs):
+        from .models import Activity
+        visibility = kwargs.get('visibility', ALL)
 
         try:
             # If this was a batch action we want to pull out the submission
-            submission = submissions[0]
+            source = sources[0]
         except IndexError:
             pass
 
         related = kwargs['related']
         if isinstance(related, dict):
             try:
-                related = related[submission.id]
+                related = related[source.id]
             except KeyError:
                 pass
 
+        # TODO resolve how related objects work with submission/project
         has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
         if has_correct_fields and isinstance(related, models.Model):
             related_object = related
@@ -337,7 +345,7 @@ class ActivityAdapter(AdapterBase):
 
         Activity.actions.create(
             user=user,
-            submission=submission,
+            source=source,
             timestamp=timezone.now(),
             message=message,
             visibility=visibility,
@@ -349,31 +357,34 @@ class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     always_send = True
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {submission.page.title}: <{link}|{submission.title}>',
-        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{submission.title}> has been updated from {old_lead} to {submission.lead} by {user}',
+        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {source.page.title}: <{link}|{source.title}>',
+        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
         MESSAGES.BATCH_UPDATE_LEAD: 'handle_batch_lead',
-        MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{submission.title}> by {user}',
-        MESSAGES.EDIT: '{user} has edited <{link}|{submission.title}>',
-        MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{submission.title}>',
+        MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}',
+        MESSAGES.EDIT: '{user} has edited <{link}|{source.title}>',
+        MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{source.title}>',
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
-        MESSAGES.PARTNERS_UPDATED: '{user} has updated the partners on <{link}|{submission.title}>',
-        MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{submission.title}>: {old_phase.display_name} → {submission.phase}',
+        MESSAGES.PARTNERS_UPDATED: '{user} has updated the partners on <{link}|{source.title}>',
+        MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{source.title}>: {old_phase.display_name} → {source.phase}',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{submission.title}> was sent by email. Outcome: {determination.clean_outcome}',
+        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{source.title}> was sent by email. Outcome: {determination.clean_outcome}',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
-        MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{submission.title}>',
-        MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{submission.title}> by {submission.user} has been invited to submit a proposal',
-        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{submission.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}',
+        MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{source.title}>',
+        MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{source.title}> by {source.user} has been invited to submit a proposal',
+        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{source.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}',
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
-        MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{submission.title}>',
-        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {submission}',
+        MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{source.title}>',
+        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source.title}',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
-        MESSAGES.DELETE_SUBMISSION: '{user} has deleted {submission.title}',
-        MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{submission.title}>.',
-        MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{submission.title}>.',
-        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{project.name}>.',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{project.name}> has been updated from {old_lead} to {project.lead} by {user}',
+        MESSAGES.DELETE_SUBMISSION: '{user} has deleted {source.title}',
+        MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{source.title}>.',
+        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
+        MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{source.title}>.',
+        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on project <{link}|{source.title}>.',
+        MESSAGES.APPROVE_PROJECT: '{user} has approved project <{link}|{source.title}>.',
+        MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
     }
 
     def __init__(self):
@@ -381,47 +392,56 @@ class SlackAdapter(AdapterBase):
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
 
-    def slack_links(self, links, submissions):
+    def slack_links(self, links, sources):
         return ', '.join(
-            f'<{links[submission.id]}|{submission.title}>'
-            for submission in submissions
+            f'<{links[source.id]}|{source.title}>'
+            for source in sources
         )
 
     def extra_kwargs(self, message_type, **kwargs):
-        submission = kwargs['submission']
-        submissions = kwargs['submissions']
+        source = kwargs['source']
+        sources = kwargs['sources']
         request = kwargs['request']
-        link = link_to(submission, request)
+        link = link_to(source, request)
         links = {
-            submission.id: link_to(submission, request)
-            for submission in submissions
+            source.id: link_to(source, request)
+            for source in sources
         }
         return {
             'link': link,
             'links': links,
         }
 
-    def recipients(self, message_type, submission, related, **kwargs):
-        recipients = [self.slack_id(submission.lead)]
+    def recipients(self, message_type, source, related, **kwargs):
+        if message_type == MESSAGES.SEND_FOR_APPROVAL:
+            return [
+                self.slack_id(user)
+                for user in User.objects.approvers()
+                if self.slack_id(user)
+            ]
+
+        recipients = [self.slack_id(source.lead)]
 
         # Notify second reviewer when first reviewer is done.
         if message_type == MESSAGES.NEW_REVIEW and related:
+            submission = source
             if submission.assigned.with_roles().count() == 2 and related.author.reviewer == submission.assigned.with_roles().first().reviewer:
                 recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
 
         return recipients
 
-    def batch_recipients(self, message_type, submissions, **kwargs):
+    def batch_recipients(self, message_type, sources, **kwargs):
         # We group the messages by lead
-        leads = User.objects.filter(id__in=submissions.values('lead'))
+        leads = User.objects.filter(id__in=sources.values('lead'))
         return [
             {
                 'recipients': [self.slack_id(lead)],
-                'submissions': submissions.filter(lead=lead),
+                'sources': sources.filter(lead=lead),
             } for lead in leads
         ]
 
-    def reviewers_updated(self, submission, link, user, added=list(), removed=list(), **kwargs):
+    def reviewers_updated(self, source, link, user, added=list(), removed=list(), **kwargs):
+        submission = source
         message = [f'{user} has updated the reviewers on <{link}|{submission.title}>.']
 
         if added:
@@ -434,7 +454,8 @@ class SlackAdapter(AdapterBase):
 
         return ' '.join(message)
 
-    def handle_batch_lead(self, submissions, links, user, new_lead, **kwargs):
+    def handle_batch_lead(self, sources, links, user, new_lead, **kwargs):
+        submissions = sources
         submissions_text = self.slack_links(links, submissions)
         return (
             '{user} has batch changed lead to {new_lead} on: {submissions_text}'.format(
@@ -444,7 +465,8 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def handle_batch_reviewers(self, submissions, links, user, added, **kwargs):
+    def handle_batch_reviewers(self, sources, links, user, added, **kwargs):
+        submissions = sources
         submissions_text = self.slack_links(links, submissions)
         reviewers_text = ' '.join([
             f'{str(user)} as {role.name},'
@@ -459,7 +481,8 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def handle_batch_transition(self, user, links, submissions, transitions, **kwargs):
+    def handle_batch_transition(self, user, links, sources, transitions, **kwargs):
+        submissions = sources
         submissions_text = [
             ': '.join([
                 self.slack_links(links, [submission]),
@@ -475,7 +498,8 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def handle_batch_determination(self, submissions, links, determinations, **kwargs):
+    def handle_batch_determination(self, sources, links, determinations, **kwargs):
+        submissions = sources
         submissions_links = ','.join([
             self.slack_links(links, [submission])
             for submission in submissions
@@ -490,7 +514,8 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def notify_reviewers(self, submission, link, **kwargs):
+    def notify_reviewers(self, source, link, **kwargs):
+        submission = source
         reviewers_to_notify = []
         for reviewer in submission.reviewers.all():
             if submission.phase.permissions.can_review(reviewer):
@@ -508,23 +533,27 @@ class SlackAdapter(AdapterBase):
             )
         )
 
-    def batch_notify_reviewers(self, submissions, links, **kwargs):
-        kwargs.pop('submission')
+    def batch_notify_reviewers(self, sources, links, **kwargs):
+        kwargs.pop('source')
         kwargs.pop('link')
         return '. '.join(
-            self.notify_reviewers(submission, link=links[submission.id], **kwargs)
-            for submission in submissions
+            self.notify_reviewers(source, link=links[source.id], **kwargs)
+            for source in sources
         )
 
     def slack_id(self, user):
-        if user.slack:
-            return f'<{user.slack}>'
-        return ''
+        if user is None:
+            return ''
 
-    def slack_channels(self, submission):
+        if not user.slack:
+            return ''
+
+        return f'<{user.slack}>'
+
+    def slack_channels(self, source):
         target_rooms = [self.target_room]
         try:
-            extra_rooms = submission.get_from_parent('slack_channel').split(',')
+            extra_rooms = source.get_from_parent('slack_channel').split(',')
         except AttributeError:
             # Not a submission object, no extra rooms.
             pass
@@ -540,8 +569,8 @@ class SlackAdapter(AdapterBase):
 
         return target_rooms
 
-    def send_message(self, message, recipient, submission, **kwargs):
-        target_rooms = self.slack_channels(submission)
+    def send_message(self, message, recipient, source, **kwargs):
+        target_rooms = self.slack_channels(source)
 
         if not self.destination or not any(target_rooms):
             errors = list()
@@ -579,20 +608,25 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
     }
 
-    def get_subject(self, message_type, submission):
-        if submission:
+    def get_subject(self, message_type, source):
+        if source:
             if is_ready_for_review(message_type):
-                subject = 'Application ready to review: {submission.title}'.format(submission=submission)
+                subject = 'Application ready to review: {submission.title}'.format(submission=source)
             else:
-                subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
+                try:
+                    subject = source.page.specific.subject or 'Your application to Open Technology Fund: {source.title}'.format(source=source)
+                except AttributeError:
+                    subject = 'Your Open Technology Fund Project: {source.title}'.format(source=source)
             return subject
 
-    def extra_kwargs(self, message_type, submission, submissions, **kwargs):
+    def extra_kwargs(self, message_type, source, sources, **kwargs):
         return {
-            'subject': self.get_subject(message_type, submission),
+            'subject': self.get_subject(message_type, source),
         }
 
-    def handle_transition(self, old_phase, submission, **kwargs):
+    def handle_transition(self, old_phase, source, **kwargs):
+        from opentech.apply.funds.workflow import PHASES
+        submission = source
         # Retrive status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
         target_index = list(dict(PHASES).keys()).index(submission.status)
@@ -601,71 +635,73 @@ class EmailAdapter(AdapterBase):
         if is_forward:
             return self.render_message(
                 'messages/email/transition.html',
-                submission=submission,
+                source=submission,
                 old_phase=old_phase,
                 **kwargs
             )
 
-    def handle_batch_transition(self, transitions, submissions, **kwargs):
-        kwargs.pop('submission')
+    def handle_batch_transition(self, transitions, sources, **kwargs):
+        submissions = sources
+        kwargs.pop('source')
         for submission in submissions:
             old_phase = transitions[submission.id]
-            return self.handle_transition(old_phase=old_phase, submission=submission, **kwargs)
+            return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
-    def batch_determination(self, determinations, submissions, **kwargs):
-        kwargs.pop('submission')
+    def batch_determination(self, determinations, sources, **kwargs):
+        submissions = sources
+        kwargs.pop('source')
         for submission in submissions:
             determination = determinations[submission.id]
             return self.render_message(
                 'messages/email/determination.html',
-                submission=submission,
+                source=submission,
                 determination=determination,
                 **kwargs
             )
 
     def notify_comment(self, **kwargs):
         comment = kwargs['comment']
-        submission = kwargs['submission']
-        if not comment.priviledged and not comment.user == submission.user:
+        source = kwargs['source']
+        if not comment.priviledged and not comment.user == source.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
-    def recipients(self, message_type, submission, **kwargs):
+    def recipients(self, message_type, source, **kwargs):
         if is_ready_for_review(message_type):
-            return self.reviewers(submission)
+            return self.reviewers(source)
 
         if is_transition(message_type):
             # Only notify the applicant if the new phase can be seen within the workflow
-            if not submission.phase.permissions.can_view(submission.user):
+            if not source.phase.permissions.can_view(source.user):
                 return []
 
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs['added']
             return [partner.email for partner in partners]
 
-        return [submission.user.email]
+        return [source.user.email]
 
-    def batch_recipients(self, message_type, submissions, **kwargs):
+    def batch_recipients(self, message_type, sources, **kwargs):
         if not is_ready_for_review(message_type):
-            return super().batch_recipients(message_type, submissions, **kwargs)
+            return super().batch_recipients(message_type, sources, **kwargs)
 
         reviewers_to_message = defaultdict(list)
-        for submission in submissions:
-            reviewers = self.reviewers(submission)
+        for source in sources:
+            reviewers = self.reviewers(source)
             for reviewer in reviewers:
-                reviewers_to_message[reviewer].append(submission)
+                reviewers_to_message[reviewer].append(source)
 
         return [
             {
                 'recipients': [reviewer],
-                'submissions': submissions,
-            } for reviewer, submissions in reviewers_to_message.items()
+                'sources': sources,
+            } for reviewer, sources in reviewers_to_message.items()
         ]
 
-    def reviewers(self, submission):
+    def reviewers(self, source):
         return [
             reviewer.email
-            for reviewer in submission.missing_reviewers.all()
-            if submission.phase.permissions.can_review(reviewer) and not reviewer.is_apply_staff
+            for reviewer in source.missing_reviewers.all()
+            if source.phase.permissions.can_review(reviewer) and not reviewer.is_apply_staff
         ]
 
     def partners_updated_applicant(self, added, removed, **kwargs):
@@ -683,12 +719,12 @@ class EmailAdapter(AdapterBase):
     def render_message(self, template, **kwargs):
         return render_to_string(template, kwargs)
 
-    def send_message(self, message, submission, subject, recipient, logs, **kwargs):
+    def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
             send_mail(
                 subject,
                 message,
-                submission.page.specific.from_address,
+                source.page.specific.from_address,
                 [recipient],
                 logs=logs
             )
@@ -704,9 +740,11 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
+        MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document "{title}"',
+        MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document "{title}"',
     }
 
-    def batch_reviewers_updated(self, added, submissions, **kwargs):
+    def batch_reviewers_updated(self, added, sources, **kwargs):
         reviewers_text = ' '.join([
             f'{str(user)} as {role.name},'
             for role, user in added
@@ -717,10 +755,10 @@ class DjangoMessagesAdapter(AdapterBase):
             'Batch reviewers added: ' +
             reviewers_text +
             ' to ' +
-            ', '.join(['"{}"'.format(submission.title) for submission in submissions])
+            ', '.join(['"{}"'.format(source.title) for source in sources])
         )
 
-    def batch_transition(self, submissions, transitions, **kwargs):
+    def batch_transition(self, sources, transitions, **kwargs):
         base_message = 'Successfully updated:'
         transition = '{submission} [{old_display} → {new_display}].'
         transition_messages = [
@@ -728,12 +766,13 @@ class DjangoMessagesAdapter(AdapterBase):
                 submission=submission.title,
                 old_display=transitions[submission.id],
                 new_display=submission.phase,
-            ) for submission in submissions
+            ) for submission in sources
         ]
         messages = [base_message, *transition_messages]
         return ' '.join(messages)
 
-    def batch_determinations(self, submissions, determinations, **kwargs):
+    def batch_determinations(self, sources, determinations, **kwargs):
+        submissions = sources
         outcome = determinations[submissions[0].id].clean_outcome
 
         base_message = f'Successfully determined as {outcome}: '
@@ -745,10 +784,10 @@ class DjangoMessagesAdapter(AdapterBase):
     def recipients(self, *args, **kwargs):
         return [None]
 
-    def batch_recipients(self, message_type, submissions, *args, **kwargs):
+    def batch_recipients(self, message_type, sources, *args, **kwargs):
         return [{
             'recipients': [None],
-            'submissions': submissions,
+            'sources': sources,
         }]
 
     def send_message(self, message, request, **kwargs):
@@ -762,20 +801,20 @@ class MessengerBackend:
     def __call__(self, *args, related=None, **kwargs):
         return self.send(*args, related=related, **kwargs)
 
-    def send(self, message_type, request, user, related, submission=None, submissions=list(), **kwargs):
+    def send(self, message_type, request, user, related, source=None, sources=list(), **kwargs):
         from .models import Event
-        if submission:
-            event = Event.objects.create(type=message_type.name, by=user, submission=submission)
+        if source:
+            event = Event.objects.create(type=message_type.name, by=user, source=source)
             for adapter in self.adapters:
-                adapter.process(message_type, event, request=request, user=user, submission=submission, related=related, **kwargs)
+                adapter.process(message_type, event, request=request, user=user, source=source, related=related, **kwargs)
 
-        elif submissions:
+        elif sources:
             events = Event.objects.bulk_create(
-                Event(type=message_type.name, by=user, submission=submission)
-                for submission in submissions
+                Event(type=message_type.name, by=user, source=source)
+                for source in sources
             )
             for adapter in self.adapters:
-                adapter.process_batch(message_type, events, request=request, user=user, submissions=submissions, related=related, **kwargs)
+                adapter.process_batch(message_type, events, request=request, user=user, sources=sources, related=related, **kwargs)
 
 
 adapters = [

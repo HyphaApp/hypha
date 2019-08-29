@@ -98,7 +98,7 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         self.post_page(data=self.data(action, [submission]))
         patched.assert_called_once()
         _, _, kwargs = patched.mock_calls[0]
-        self.assertQuerysetEqual(kwargs['submissions'], ApplicationSubmission.objects.none())
+        self.assertQuerysetEqual(kwargs['sources'], ApplicationSubmission.objects.none())
 
     @mock.patch('opentech.apply.funds.views.messenger')
     def test_messenger_with_submission_in_review(self, patched):
@@ -107,9 +107,9 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         self.post_page(data=self.data(action, [submission]))
         self.assertEqual(patched.call_count, 2)
         _, _, kwargs = patched.mock_calls[0]
-        self.assertCountEqual(kwargs['submissions'], [submission])
+        self.assertCountEqual(kwargs['sources'], [submission])
         _, _, kwargs = patched.mock_calls[1]
-        self.assertCountEqual(kwargs['submissions'], [submission])
+        self.assertCountEqual(kwargs['sources'], [submission])
 
 
 class ReivewersTestCase(BaseBatchProgressViewTestCase):

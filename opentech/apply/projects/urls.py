@@ -1,7 +1,17 @@
-from django.urls import path
+from django.conf import settings
+from django.urls import include, path
 
-from .views import ProjectDetailView
+from .views import ProjectDetailView, ProjectEditView, ProjectPrivateMediaView
 
-urlpatterns = [
-    path('<int:pk>/', ProjectDetailView.as_view(), name='detail'),
-]
+app_name = 'projects'
+
+urlpatterns = []
+
+if settings.PROJECTS_ENABLED:
+    urlpatterns = [
+        path('<int:pk>/', include([
+            path('', ProjectDetailView.as_view(), name='detail'),
+            path('edit/', ProjectEditView.as_view(), name="edit"),
+            path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
+        ])),
+    ]

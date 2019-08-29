@@ -6,7 +6,12 @@ from django.utils.text import slugify
 
 import factory
 
-from ..groups import APPLICANT_GROUP_NAME, REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from ..groups import (
+    APPLICANT_GROUP_NAME,
+    APPROVER_GROUP_NAME,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
 
 
 class GroupFactory(factory.DjangoModelFactory):
@@ -58,6 +63,16 @@ class StaffFactory(OAuthUserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+
+
+class ApproverFactory(StaffFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(
+                GroupFactory(name=STAFF_GROUP_NAME),
+                GroupFactory(name=APPROVER_GROUP_NAME),
+            )
 
 
 class SuperUserFactory(StaffFactory):

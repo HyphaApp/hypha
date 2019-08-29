@@ -3,6 +3,7 @@ from urllib import parse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -15,6 +16,7 @@ from opentech.apply.activity.models import Activity
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from opentech.apply.projects.models import Project
 from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from opentech.apply.users.decorators import staff_required
 
@@ -117,7 +119,7 @@ class BatchDeterminationCreateView(CreateView):
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
             user=self.request.user,
-            submissions=submissions.filter(id__in=list(determinations)),
+            sources=submissions.filter(id__in=list(determinations)),
             related=determinations,
         )
 
@@ -240,7 +242,10 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
     def form_valid(self, form):
         super().form_valid(form)
 
-        if not self.object.is_draft:
+        if self.object.is_draft:
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+
+        with transaction.atomic():
             messenger(
                 MESSAGES.DETERMINATION_OUTCOME,
                 request=self.request,
@@ -249,6 +254,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 related=self.object,
             )
             proposal_form = form.cleaned_data.get('proposal_form')
+
             transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
@@ -257,12 +263,36 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     message=self.object.stripped_message,
                     timestamp=timezone.now(),
                     user=self.request.user,
-                    submission=self.submission,
+                    source=self.submission,
                     related_object=self.object,
                 )
 
             self.submission.perform_transition(
-                transition, self.request.user, request=self.request, notify=False, proposal_form=proposal_form)
+                transition,
+                self.request.user,
+                request=self.request,
+                notify=False,
+                proposal_form=proposal_form,
+            )
+
+            if self.submission.accepted_for_funding:
+                project = Project.create_from_submission(self.submission)
+                if project:
+                    messenger(
+                        MESSAGES.CREATED_PROJECT,
+                        request=self.request,
+                        user=self.request.user,
+                        source=project,
+                        related=project.submission,
+                    )
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            source=self.object.submission,
+            related=self.object,
+        )
 
         return HttpResponseRedirect(self.submission.get_absolute_url())
 

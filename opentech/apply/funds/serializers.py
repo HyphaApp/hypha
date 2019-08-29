@@ -208,7 +208,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'submission', 'message', 'visibility', 'edited', 'edit_url', 'editable')
+        fields = ('id', 'timestamp', 'user', 'source', 'message', 'visibility', 'edited', 'edit_url', 'editable')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))

@@ -3,7 +3,7 @@
 
 {% block content %}
 New proposals have been added to your review list.
-{% for submission in submissions %}
+{% for submission in sources %}
 
 Title: {{ submission.title }}
 Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}

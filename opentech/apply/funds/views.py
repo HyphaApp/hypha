@@ -1,22 +1,17 @@
-import mimetypes
 from copy import copy
-from wsgiref.util import FileWrapper
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import get_storage_class
 from django.db.models import Count, F, Q
-from django.http import HttpResponseRedirect, Http404, StreamingHttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView, View
+from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -35,9 +30,11 @@ from opentech.apply.projects.forms import CreateProjectForm
 from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
+from .files import generate_submission_file_path
 from .forms import (
     BatchUpdateSubmissionLeadForm,
     BatchUpdateReviewersForm,
@@ -56,6 +53,7 @@ from .models import (
     RoundBase,
     LabBase
 )
+from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
     ReviewerSubmissionsTable,
@@ -66,9 +64,6 @@ from .tables import (
     SummarySubmissionsTable,
 )
 from .workflow import INITIAL_STATE, STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
-from .permissions import is_user_has_access_to_view_submission
-
-submission_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
@@ -120,7 +115,7 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_UPDATE_LEAD,
             request=self.request,
             user=self.request.user,
-            submissions=submissions,
+            sources=submissions,
             new_lead=new_lead,
         )
         return super().form_valid(form)
@@ -147,7 +142,7 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submissions=submissions,
+            sources=submissions,
             added=reviewers,
         )
         return super().form_valid(form)
@@ -205,7 +200,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
             MESSAGES.BATCH_TRANSITION,
             user=self.request.user,
             request=self.request,
-            submissions=succeeded_submissions,
+            sources=succeeded_submissions,
             related=phase_changes,
         )
 
@@ -218,7 +213,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
                 MESSAGES.BATCH_READY_FOR_REVIEW,
                 user=self.request.user,
                 request=self.request,
-                submissions=succeeded_submissions.filter(status__in=ready_for_review),
+                sources=succeeded_submissions.filter(status__in=ready_for_review),
             )
 
         return super().form_valid(form)
@@ -383,17 +378,20 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     model = Project
 
     def form_valid(self, form):
-        project = form.save()
+        response = super().form_valid(form)
 
         messenger(
             MESSAGES.CREATED_PROJECT,
             request=self.request,
             user=self.request.user,
-            submission=project.submission,
-            project=project,
+            source=self.object,
+            related=self.object.submission,
         )
 
-        return redirect(self.get_success_url())
+        return response
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -410,7 +408,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             MESSAGES.SCREENING,
             request=self.request,
             user=self.request.user,
-            submission=self.object,
+            source=self.object,
             related=str(old.screening_status),
         )
         return response
@@ -430,7 +428,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             MESSAGES.UPDATE_LEAD,
             request=self.request,
             user=self.request.user,
-            submission=form.instance,
+            source=form.instance,
             related=old.lead,
         )
         return response
@@ -457,7 +455,7 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             MESSAGES.REVIEWERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
@@ -505,7 +503,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
@@ -514,7 +512,7 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
             MESSAGES.PARTNERS_UPDATED_PARTNER,
             request=self.request,
             user=self.request.user,
-            submission=self.kwargs['submission'],
+            source=self.kwargs['object'],
             added=added,
             removed=removed,
         )
@@ -539,6 +537,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdateLeadView,
         UpdateReviewersView,
         UpdatePartnersView,
+        CreateProjectView,
         UpdateMetaCategoriesView,
         CreateProjectView,
     ]
@@ -659,7 +658,7 @@ class SubmissionSealedView(DetailView):
             MESSAGES.OPENED_SEALED,
             request=self.request,
             user=self.request.user,
-            submission=submission,
+            source=submission,
         )
         self.request.session.setdefault('peeked', {})[str(submission.id)] = True
         # Dictionary updates do not trigger session saves. Force update
@@ -737,7 +736,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
                     MESSAGES.EDIT,
                     request=self.request,
                     user=self.request.user,
-                    submission=self.object,
+                    source=self.object,
                     related=revision,
                 )
 
@@ -776,14 +775,14 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 MESSAGES.PROPOSAL_SUBMITTED,
                 request=self.request,
                 user=self.request.user,
-                submission=self.object,
+                source=self.object,
             )
         elif revision:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
                 user=self.request.user,
-                submission=self.object,
+                source=self.object,
                 related=revision,
             )
 
@@ -908,51 +907,26 @@ class SubmissionDeleteView(DeleteView):
             MESSAGES.DELETE_SUBMISSION,
             user=request.user,
             request=request,
-            submission=submission,
+            source=submission,
         )
         response = super().delete(request, *args, **kwargs)
         return response
 
 
-class SubmissionPrivateMediaView(UserPassesTestMixin, View):
+@method_decorator(login_required, name='dispatch')
+class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
 
-    def get(self, *args, **kwargs):
-        submission_id = kwargs['submission_id']
+    def dispatch(self, *args, **kwargs):
+        submission_pk = self.kwargs['pk']
+        self.submission = get_object_or_404(ApplicationSubmission, pk=submission_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
         field_id = kwargs['field_id']
         file_name = kwargs['file_name']
-        file_name_with_path = f'submission/{submission_id}/{field_id}/{file_name}'
-
-        submission_file = submission_storage.open(file_name_with_path)
-        wrapper = FileWrapper(submission_file)
-        encoding_map = {
-            'bzip2': 'application/x-bzip',
-            'gzip': 'application/gzip',
-            'xz': 'application/x-xz',
-        }
-        content_type, encoding = mimetypes.guess_type(file_name)
-        # Encoding isn't set to prevent browsers from automatically uncompressing files.
-        content_type = encoding_map.get(encoding, content_type)
-        content_type = content_type or 'application/octet-stream'
-        # From Django 2.1, we can use FileResponse instead of StreamingHttpResponse
-        response = StreamingHttpResponse(wrapper, content_type=content_type)
-
-        response['Content-Disposition'] = f'filename={file_name}'
-        response['Content-Length'] = submission_file.size
-
-        return response
+        path_to_file = generate_submission_file_path(self.submission.pk, field_id, file_name)
+        return self.storage.open(path_to_file)
 
     def test_func(self):
-        submission_id = self.kwargs['submission_id']
-        submission = get_object_or_404(ApplicationSubmission, id=submission_id)
-
-        return is_user_has_access_to_view_submission(self.request.user, submission)
-
-    def handle_no_permission(self):
-        # This method can be removed after upgrading Django to 2.1
-        # https://github.com/django/django/commit/9b1125bfc7e2dc747128e6e7e8a2259ff1a7d39f
-        # In older versions, authenticated users who lacked permissions were
-        # redirected to the login page (which resulted in a loop) instead of
-        # receiving an HTTP 403 Forbidden response.
-        if self.raise_exception or self.request.user.is_authenticated:
-            raise PermissionDenied(self.get_permission_denied_message())
-        return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+        return is_user_has_access_to_view_submission(self.request.user, self.submission)

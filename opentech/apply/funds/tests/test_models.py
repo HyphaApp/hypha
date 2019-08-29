@@ -22,6 +22,7 @@ from .factories import (
     AssignedReviewersFactory,
     CustomFormFieldsFactory,
     FundTypeFactory,
+    InvitedToProposalFactory,
     LabFactory,
     RequestForPartnersFactory,
     RoundFactory,
@@ -452,6 +453,13 @@ class TestApplicationSubmission(TestCase):
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
+    def test_in_final_stage(self):
+        submission = InvitedToProposalFactory().previous
+        self.assertFalse(submission.in_final_stage)
+
+        submission = InvitedToProposalFactory()
+        self.assertTrue(submission.in_final_stage)
+
 
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
@@ -581,7 +589,7 @@ class TestForTableQueryset(TestCase):
 
         ReviewFactory(submission=submission_two)
 
-        qs = ApplicationSubmission.objects.for_table(user=staff)
+        qs = ApplicationSubmission.objects.order_by('pk').for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission, submission_one)
         self.assertEqual(submission.opinion_disagree, 1)
