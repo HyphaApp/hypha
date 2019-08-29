@@ -241,6 +241,8 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
+        project.send_to_compliance(self.request)
+
         project.is_locked = False
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])

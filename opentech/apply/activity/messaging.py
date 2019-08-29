@@ -616,7 +616,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
-        MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html'
+        MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
+        MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
     }
 
     def get_subject(self, message_type, source):
@@ -688,6 +689,16 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs['added']
             return [partner.email for partner in partners]
+
+        if message_type == MESSAGES.SENT_TO_COMPLIANCE:
+            from opentech.apply.projects.models import ProjectSettings
+            project_settings = ProjectSettings.objects.first()
+
+            if project_settings is None:
+                # TODO: what to do when this isn't configured??
+                return []
+
+            return [project_settings.compliance_email]
 
         return [source.user.email]
 
