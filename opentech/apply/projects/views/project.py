@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Count, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
@@ -15,6 +17,7 @@ from django.views.generic import (
     CreateView,
     DetailView,
     FormView,
+    TemplateView,
     UpdateView
 )
 from django_filters.views import FilterView
@@ -55,7 +58,12 @@ from ..models import (
     PacketFile,
     Project
 )
-from ..tables import ProjectsListTable
+from ..tables import (
+    PaymentRequestsDashboardTable,
+    PaymentRequestsListTable,
+    ProjectsDashboardTable,
+    ProjectsListTable
+)
 
 from .payment import RequestPaymentView
 
@@ -531,3 +539,44 @@ class ProjectListView(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return Project.objects.for_table()
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectOverviewView(TemplateView):
+    template_name = 'application_projects/overview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['projects'] = self.get_projects(self.request)
+        context['payment_requests'] = self.get_payment_requests(self.request)
+        context['status_counts'] = self.get_status_counts()
+        return context
+
+    def get_payment_requests(self, request):
+        payment_requests = PaymentRequest.objects.order_by('date_to')[:10]
+
+        return {
+            'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
+            'table': PaymentRequestsDashboardTable(payment_requests, order_by=()),
+            'url': reverse('apply:projects:payment-request-all'),
+        }
+
+    def get_projects(self, request):
+        projects = (Project.objects.annotate(amount_paid=Sum('payment_requests__paid_value'))
+                                   .order_by('proposed_end'))[:10]
+
+        return {
+            'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
+            'table': ProjectsDashboardTable(projects, order_by=()),
+            'url': reverse('apply:projects:all'),
+        }
+
+    def get_status_counts(self):
+        status_counts_lut = dict(Project.objects.all()
+                                                .values('status')
+                                                .annotate(count=Count('status'))
+                                                .values_list('status', 'count'))
+
+        for key, name in PROJECT_STATUS_CHOICES:
+            count = status_counts_lut.get(key, 0)
+            yield key, name, count

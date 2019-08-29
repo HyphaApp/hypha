@@ -11,6 +11,7 @@ from .views import (
     ProjectDetailView,
     ProjectEditView,
     ProjectListView,
+    ProjectOverviewView,
     ProjectPrivateMediaView,
 )
 
@@ -20,6 +21,7 @@ urlpatterns = []
 
 if settings.PROJECTS_ENABLED:
     urlpatterns = [
+        path('', ProjectOverviewView.as_view(), name='overview'),
         path('<int:pk>/', include([
             path('', ProjectDetailView.as_view(), name='detail'),
             path('edit/', ProjectEditView.as_view(), name="edit"),
