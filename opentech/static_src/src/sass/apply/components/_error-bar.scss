@@ -1,0 +1,15 @@
+.error-bar {
+    padding: $mobile-gutter;
+    margin: 0 auto 2rem;
+    background: $color--tomato;
+    color: $color--white;
+
+    &__copy {
+        margin: 0 0 1rem;
+        font-weight: $weight--bold;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+}

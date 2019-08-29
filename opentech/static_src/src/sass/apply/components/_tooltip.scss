@@ -1,0 +1,30 @@
+[data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-tooltip]::before {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity, bottom, $transition;
+    position: absolute;
+    bottom: 110%;
+    margin-bottom: 5px;
+    padding: 7px;
+    background-color: $color--dark-grey;
+    color: $color--white;
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+}
+
+[data-tooltip]:hover::before {
+    visibility: visible;
+    opacity: 1;
+    bottom: 130%;
+}

@@ -2,17 +2,15 @@
 
 {% block notifications %}
 {% if not object.editable %}
-<div class="wrapper wrapper--sidebar">
-    <div class="wrapper--sidebar--inner wrapper--error">
-        <div>
-            <p>Your project is not editable at this point.</p>
+    <div class="error-bar">
+        <p class="error-bar__copy">
+            Your project is not editable at this point.
             {% if not object.lead %}
-                <p>We are awaiting a lead to be assigned.</p>
+            We are awaiting a lead to be assigned.
             {% else %}
-                <p>It is currently under review by a staff member.</p>
+                It is currently under review by a staff member.
             {% endif %}
-        </div>
+        </p>
     </div>
-</div>
 {% endif %}
 {% endblock %}
