@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
+from django.urls import reverse
 
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
@@ -461,10 +462,11 @@ class TestApplicationSubmission(TestCase):
         self.assertTrue(submission.in_final_stage)
 
 
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
-        answers = submission.render_answers()
+        answers = submission.output_answers()
         for name in submission.named_blocks:
             field = submission.field(name)
             self.assertNotIn(field.value['field_label'], answers)
@@ -482,7 +484,7 @@ class TestSubmissionRenderMethods(TestCase):
         submission = ApplicationSubmissionFactory(
             form_fields__text_markup__value=rich_text_label
         )
-        answers = submission.render_answers()
+        answers = submission.output_answers()
         self.assertNotIn(rich_text_label, answers)
 
     def test_named_blocks_dont_break_if_no_response(self):
@@ -491,6 +493,28 @@ class TestSubmissionRenderMethods(TestCase):
         del submission.form_data['value']
         self.assertTrue('value' not in submission.raw_data)
         self.assertTrue('duration' in submission.raw_data)
+
+    def test_file_private_url_included(self):
+        submission = ApplicationSubmissionFactory()
+        answers = submission.output_answers()
+        for file_id in submission.file_field_ids:
+
+            def file_url_in_answers(file_to_test):
+                url = reverse(
+                    'apply:submissions:serve_private_media', kwargs={
+                        'pk': submission.pk,
+                        'field_id': file_id,
+                        'file_name': file_to_test.basename,
+                    }
+                )
+                self.assertIn(url, answers)
+
+            file_response = submission.data(file_id)
+            if isinstance(file_response, list):
+                for stream_file in file_response:
+                    file_url_in_answers(stream_file)
+            else:
+                file_url_in_answers(file_response)
 
 
 class TestRequestForPartners(TestCase):
