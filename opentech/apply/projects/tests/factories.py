@@ -10,6 +10,7 @@ from opentech.apply.projects.models import (
     Contract,
     DocumentCategory,
     PacketFile,
+    PaymentReceipt,
     PaymentRequest,
     Project
 )
@@ -97,5 +98,16 @@ class PaymentRequestFactory(factory.DjangoModelFactory):
     date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
     date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
 
+    invoice = factory.django.FileField()
+
     class Meta:
         model = PaymentRequest
+
+
+class PaymentReceiptFactory(factory.DjangoModelFactory):
+    payment_request = factory.SubFactory(PaymentRequestFactory)
+
+    file = factory.django.FileField()
+
+    class Meta:
+        model = PaymentReceipt

@@ -1,6 +1,6 @@
 from django import template
 
-from ..models import DECLINED, PAID
+from ..models import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED
 
 register = template.Library()
 
@@ -19,3 +19,16 @@ def can_change_status(payment_request, user):
 @register.simple_tag
 def can_delete(payment_request, user):
     return payment_request.user_can_delete(user)
+
+
+@register.simple_tag
+def user_can_edit(payment_request, user):
+    # staff or applicant can edit when in SUBMITTED
+    if payment_request.status == SUBMITTED:
+        return True
+
+    # applicant can edit when in CHANGES_REQUESTED
+    if payment_request.status == CHANGES_REQUESTED and user.is_applicant:
+        return True
+
+    return False

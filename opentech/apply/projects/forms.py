@@ -1,4 +1,5 @@
 import functools
+import os
 
 from django import forms
 from django.core.files.base import ContentFile
@@ -109,6 +110,26 @@ class CreateApprovalForm(forms.ModelForm):
         initial = kwargs.pop('initial', {})
         initial.update(by=user)
         super().__init__(*args, initial=initial, **kwargs)
+
+
+class EditPaymentRequestForm(forms.ModelForm):
+    receipt_list = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}))
+
+    name = 'edit_payment_request_form'
+
+    class Meta:
+        fields = ['invoice', 'value', 'date_from', 'date_to', 'receipt_list', 'comment']
+        model = PaymentRequest
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, instance=instance, **kwargs)
+
+        self.instance = instance
+
+        self.fields['receipt_list'].choices = [
+            (r.pk, os.path.basename(r.file.url))
+            for r in instance.receipts.all()
+        ]
 
 
 class ProjectEditForm(forms.ModelForm):
