@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
-from django_tables2.views import SingleTableView
+from django_tables2.views import MultiTableMixin
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from opentech.apply.funds.tables import (
@@ -16,6 +16,7 @@ from opentech.apply.funds.tables import (
     review_filter_for_user
 )
 from opentech.apply.projects.models import (
+    COMPLETE,
     DECLINED,
     PAID,
     PaymentRequest,
@@ -312,29 +313,50 @@ class CommunityDashboardView(TemplateView):
         return context
 
 
-class ApplicantDashboardView(SingleTableView):
+class ApplicantDashboardView(MultiTableMixin, TemplateView):
+    tables = [
+        ProjectsDashboardTable,
+        SubmissionsTable,
+        ProjectsDashboardTable,
+    ]
     template_name = 'dashboard/applicant_dashboard.html'
-    model = ApplicationSubmission
-    table_class = SubmissionsTable
-
-    def get_queryset(self):
-        return self.model.objects.filter(
-            user=self.request.user
-        ).inactive().current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
-        my_active_submissions = self.model.objects.filter(
-            user=self.request.user
-        ).active().current().select_related('draft_revision')
+        active_submissions = list(self.get_active_submissions(self.request.user))
 
-        my_active_submissions = [
-            submission.from_draft() for submission in my_active_submissions
+        context = super().get_context_data(**kwargs)
+        context['my_active_submissions'] = active_submissions
+        return context
+
+    def get_active_project_data(self, user):
+        return (Project.objects.filter(user=user)
+                               .exclude(status=COMPLETE)
+                               .order_by(F('proposed_end').asc(nulls_last=True)))
+
+    def get_active_submissions(self, user):
+        active_subs = (ApplicationSubmission.objects.filter(user=user)
+                                                    .active()
+                                                    .current()
+                                                    .select_related('draft_revision'))
+        for submission in active_subs:
+            yield submission.from_draft()
+
+    def get_historical_project_data(self, user):
+        return (Project.objects.filter(user=user, status=COMPLETE)
+                               .order_by(F('proposed_end').asc(nulls_last=True)))
+
+    def get_historical_submission_data(self, user):
+        return (ApplicationSubmission.objects.filter(user=user)
+                                             .inactive()
+                                             .current()
+                                             .for_table(user))
+
+    def get_tables_data(self):
+        return [
+            self.get_active_project_data(self.request.user),
+            self.get_historical_submission_data(self.request.user),
+            self.get_historical_project_data(self.request.user),
         ]
-
-        return super().get_context_data(
-            my_active_submissions=my_active_submissions,
-            **kwargs,
-        )
 
 
 class DashboardView(ViewDispatcher):
