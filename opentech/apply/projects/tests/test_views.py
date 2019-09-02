@@ -351,6 +351,31 @@ class TestStaffProjectEditView(BaseProjectEditTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, self.url(project, 'detail'))
 
+    def test_no_paf_form_renders(self):
+        project = ProjectFactory(
+            submission__round__parent__approval_form=None,
+            form_fields=None,
+            form_data={},
+        )
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_pulls_paf_from_fund(self):
+        project = ProjectFactory(form_fields=None, form_data={})
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_edited_form_renders(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
 
 class TestApproverProjectEditView(BaseProjectEditTestCase):
     user_factory = ApproverFactory

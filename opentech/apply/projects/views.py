@@ -647,6 +647,26 @@ class ProjectApprovalEditView(UpdateView):
             return redirect(project)
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.object.get_defined_fields():
+            approval_form = self.object
+        else:
+            approval_form = self.object.submission.page.specific.approval_form
+
+        if approval_form:
+            fields = approval_form.get_form_fields()
+        else:
+            fields = {}
+        kwargs['extra_fields'] = fields
+        kwargs['initial'].update(self.object.raw_data)
+        return kwargs
+
+    def form_valid(self, form):
+        if not self.object.get_defined_fields():
+            form.instance.form_fields = self.object.submission.page.specific.approval_form.form_fields
+        return super().form_valid(form)
+
 
 class ApplicantProjectEditView(UpdateView):
     form_class = ProjectEditForm

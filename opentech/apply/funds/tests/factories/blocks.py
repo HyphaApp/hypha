@@ -4,13 +4,8 @@ import factory
 
 from opentech.apply.funds import blocks
 from opentech.apply.stream_forms.testing.factories import (
-    CharFieldBlockFactory,
-    FileFieldBlockFactory,
+    BLOCK_FACTORY_DEFINITION,
     FormFieldBlockFactory,
-    ImageFieldBlockFactory,
-    MultiFileFieldBlockFactory,
-    NumberFieldBlockFactory,
-    RadioFieldBlockFactory,
     ParagraphBlockFactory,
     StreamFieldUUIDFactory,
 )
@@ -64,7 +59,9 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.AddressFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params):
+        if not params:
+            params = {}
         return json.dumps({
             'country': 'GB',
             'thoroughfare': factory.Faker('street_name').generate(params),
@@ -76,31 +73,38 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_form_answer(cls, params=dict()):
-        return {
-            'country': 'GB',
-            'thoroughfare': factory.Faker('street_name').generate(params),
-            'premise': factory.Faker('building_number').generate(params),
-            'locality': {
-                'localityname': factory.Faker('city').generate(params),
-                'administrativearea': factory.Faker('city').generate(params),
-                'postal_code': 'SW1 4AQ',
+        try:
+            address = json.loads(params)
+        except TypeError:
+            if not params:
+                params = {}
+            return {
+                'country': 'GB',
+                'thoroughfare': factory.Faker('street_name').generate(params),
+                'premise': factory.Faker('building_number').generate(params),
+                'locality': {
+                    'localityname': factory.Faker('city').generate(params),
+                    'administrativearea': factory.Faker('city').generate(params),
+                    'postal_code': 'SW1 4AQ',
+                }
             }
+
+        address['locality'] = {
+            'localityname': address.pop('localityname'),
+            'administrativearea': address.pop('administrativearea'),
+            'postalcode': address.pop('postalcode'),
         }
+        return address
 
 
 CustomFormFieldsFactory = StreamFieldUUIDFactory({
+    **BLOCK_FACTORY_DEFINITION,
     'duration': DurationBlockFactory,
     'title': TitleBlockFactory,
     'value': ValueFieldBlockFactory,
     'email': EmailBlockFactory,
     'address': AddressFieldBlockFactory,
     'full_name': FullNameBlockFactory,
-    'char': CharFieldBlockFactory,
-    'number': NumberFieldBlockFactory,
-    'radios': RadioFieldBlockFactory,
-    'rich_text': RichTextFieldBlockFactory,
-    'image': ImageFieldBlockFactory,
-    'file': FileFieldBlockFactory,
-    'multi_file': MultiFileFieldBlockFactory,
     'text_markup': ParagraphBlockFactory,
+    'rich_text': RichTextFieldBlockFactory,
 })

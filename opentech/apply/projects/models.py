@@ -5,6 +5,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -12,6 +13,16 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    StreamFieldPanel,
+)
+from wagtail.core.fields import StreamField
+
+from opentech.apply.funds.models.mixins import AccessFormData
+from opentech.apply.stream_forms.blocks import FormFieldsBlock
+from opentech.apply.stream_forms.files import StreamFieldDataEncoder
+from opentech.apply.stream_forms.models import BaseStreamForm
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -163,7 +174,7 @@ PROJECT_STATUS_CHOICES = [
 ]
 
 
-class Project(models.Model):
+class Project(BaseStreamForm, AccessFormData, models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='owned_projects')
@@ -184,6 +195,9 @@ class Project(models.Model):
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
+
+    form_data = JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_fields = StreamField(FormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -249,6 +263,19 @@ class Project(models.Model):
 
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
+
+    def save(self, *args, **kwargs):
+        creating = not self.pk
+
+        if creating:
+            files = self.extract_files()
+        else:
+            self.process_file_data(self.form_data)
+
+        super().save(*args, **kwargs)
+
+        if creating:
+            self.process_file_data(files)
 
     def editable_by(self, user):
         if self.editable:
@@ -344,3 +371,16 @@ class DocumentCategory(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = 'Document Categories'
+
+
+class ProjectApprovalForm(BaseStreamForm, models.Model):
+    name = models.CharField(max_length=255)
+    form_fields = StreamField(FormFieldsBlock())
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name

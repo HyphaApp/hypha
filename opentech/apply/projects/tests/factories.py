@@ -12,8 +12,10 @@ from opentech.apply.projects.models import (
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
-    Project
+    Project,
+    ProjectApprovalForm,
 )
+from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 
 ADDRESS = {
@@ -50,6 +52,18 @@ class DocumentCategoryFactory(factory.DjangoModelFactory):
         model = DocumentCategory
 
 
+class ProjectApprovalFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ProjectApprovalForm
+
+    name = factory.Faker('word')
+    form_fields = FormFieldsBlockFactory
+
+
+class ProjectApprovalFormDataFactory(FormDataFactory):
+    field_factory = FormFieldsBlockFactory
+
+
 class ProjectFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -65,6 +79,12 @@ class ProjectFactory(factory.DjangoModelFactory):
     proposed_end = factory.LazyFunction(timezone.now)
 
     is_locked = False
+
+    form_fields = FormFieldsBlockFactory
+    form_data = factory.SubFactory(
+        ProjectApprovalFormDataFactory,
+        form_fields=factory.SelfAttribute('..form_fields'),
+    )
 
     class Meta:
         model = Project
