@@ -269,6 +269,13 @@ class ProjectQuerySet(models.QuerySet):
     def complete(self):
         return self.filter(status=COMPLETE)
 
+    def in_approval(self):
+        return self.filter(
+            is_locked=True,
+            status=COMMITTED,
+            approvals__isnull=True,
+        )
+
     def by_end_date(self, desc=False):
         order = getattr(F('proposed_end'), 'desc' if desc else 'asc')(nulls_last=True)
 

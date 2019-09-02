@@ -35,6 +35,13 @@
                 <p class="stat-block__text">Live projects under your management</p>
                 <div class="stat-block__view">View</div>
             </a>
+            {% if not projects_to_approve.count is None%}
+            <a href="#projects-awaiting-approval" class="stat-block__item">
+                <p class="stat-block__number">{{ projects_to_approve.count }}</p>
+                <p class="stat-block__text">Projects awaiting approval</p>
+                <div class="stat-block__view">View</div>
+            </a>
+            {% endif %}
             <a href="#active-payment-requests" class="stat-block__item">
                 <p class="stat-block__number">{{ active_payment_requests.count }}</p>
                 <p class="stat-block__text">Requests for payment requiring your attention</p>
@@ -65,7 +72,14 @@
     </div>
     {% endif %}
 
-    {% if active_payment_requests.table.data %}
+    {% if projects_to_approve.count %}
+    <div id="projects-awaiting-approval" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">Projects awaiting approval</h4>
+        {% render_table projects_to_approve.table %}
+    </div>
+    {% endif %}
+
+    {% if active_payment_requests.data %}
     <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">Active requests for payment</h4>
         {% render_table active_payment_requests.table %}

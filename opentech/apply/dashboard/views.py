@@ -37,6 +37,7 @@ class AdminDashboardView(TemplateView):
             'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, submissions),
             'my_reviewed': self.get_my_reviewed(self.request, submissions),
             'projects': self.get_my_projects(self.request),
+            'projects_to_approve': self.get_my_projects_to_approve(self.request.user),
             'rounds': self.get_rounds(self.request.user)
         }
         current_context = super().get_context_data(**kwargs)
@@ -58,6 +59,7 @@ class AdminDashboardView(TemplateView):
         filterset = ProjectListFilter(data=request.GET or None, request=request, queryset=projects)
 
         limit = 10
+
         return {
             'count': projects.count(),
             'filterset': filterset,
@@ -65,6 +67,21 @@ class AdminDashboardView(TemplateView):
             'display_more': projects.count() > limit,
             'url': reverse('apply:projects:all'),
         }
+
+    def get_my_projects_to_approve(self, user):
+        if not user.is_approver:
+            return {
+                'count': None,
+                'table': None,
+            }
+
+        to_approve = Project.objects.in_approval().for_table()
+
+        return {
+            'count': to_approve.count(),
+            'table': ProjectsDashboardTable(data=to_approve),
+        }
+
 
     def get_my_awaiting_reviews(self, user, qs):
         """Staff reviewer's current to-review submissions."""
