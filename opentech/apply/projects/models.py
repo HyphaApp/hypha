@@ -123,13 +123,20 @@ class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
 
-    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
-    value = models.DecimalField(
+    requested_value = models.DecimalField(
         default=0,
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
     )
+    paid_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+        null=True
+    )
+
+    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()
@@ -139,6 +146,10 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return f'Payment requested for {self.project}'
 
+    @property
+    def has_changes_requested(self):
+        return self.status == CHANGES_REQUESTED
+
     def user_can_delete(self, user):
         if user.is_apply_staff:
             return False  # Staff can reject
@@ -147,6 +158,10 @@ class PaymentRequest(models.Model):
             return False
 
         return True
+
+    @property
+    def value(self):
+        return self.paid_value or self.requested_value
 
 
 COMMITTED = 'committed'

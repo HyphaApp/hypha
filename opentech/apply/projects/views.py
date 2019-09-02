@@ -1,4 +1,5 @@
 import decimal
+import itertools
 from copy import copy
 
 from django.contrib import messages
@@ -6,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q, Sum
+from django.db.models.functions import Coalesce
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
@@ -62,6 +64,23 @@ from .models import (
     PaymentRequest,
     Project
 )
+
+
+def form_errors_to_messages(request, errors):
+    """
+    Convert form errors into messages
+
+    This is designed to be used in a form_invalid method where an invalid form
+    will have a populated ErrorDict in `form.errors` and you want to display
+    each error in a new Django Messages Framework message.
+
+    It converts the given ErrorDict to a flat list of ValidationErrors, pulling
+    their messages out before iterating and sending them as messages.
+    """
+    errors = itertools.chain.from_iterable(errors.as_data().values())
+    errors = (e.message for e in errors)
+    for error in errors:
+        messages.error(request, error)
 
 
 class ContractsMixin:
@@ -136,12 +155,26 @@ class PaymentsMixin:
 
             return rounded_total
 
+        def get_total(qs):
+            """
+            Get total value for the given QuerySet of PaymentRequests
+
+            This finds the definitive value for each PaymentRequest, picking
+            `paid_value` when it has a value or `requested_value` when it does
+            not (using Coalesce).  These values are then Sum'd to get the total.
+            """
+            return qs.aggregate(
+                total=Sum(
+                    Coalesce(F('paid_value'), F('requested_value')),
+                ),
+            )['total'] or 0
+
         unpaid_requests = project.payment_requests.filter(Q(status=SUBMITTED) | Q(status=UNDER_REVIEW))
-        awaiting_absolute = sum(unpaid_requests.values_list('value', flat=True))
+        awaiting_absolute = get_total(unpaid_requests)
         awaiting_percentage = percentage(project.value, awaiting_absolute)
 
         paid_requests = project.payment_requests.filter(status=PAID)
-        paid_absolute = sum(paid_requests.values_list('value', flat=True))
+        paid_absolute = get_total(paid_requests)
         paid_percentage = percentage(project.value, paid_absolute)
 
         return {
@@ -177,9 +210,7 @@ class ApproveContractView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
+        form_errors_to_messages(self.request, form.errors)
         return redirect(self.project)
 
     def form_valid(self, form):
@@ -216,9 +247,7 @@ class ChangePaymentRequestStatusView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
+        form_errors_to_messages(self.request, form.errors)
         return redirect(self.project)
 
     def form_valid(self, form):

@@ -621,6 +621,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST: 'handle_update_payment_request',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
     }
 
     def get_subject(self, message_type, source):
@@ -668,6 +669,13 @@ class EmailAdapter(AdapterBase):
 
         return self.render_message(
             'messages/email/payment_request_updated.html',
+            **kwargs,
+        )
+
+    def handle_payment_status_updated(self, related, **kwargs):
+        return self.render_message(
+            'messages/email/payment_request_status_updated.html',
+            has_changes_requested=related.has_changes_requested,
             **kwargs,
         )
 
