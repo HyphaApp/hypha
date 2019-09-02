@@ -9,7 +9,8 @@ from opentech.apply.review.tests.factories import ReviewFormFactory
 
 
 def formset_base(field, total, delete, factory, same=False, form_stage_info=None):
-    base_data = {f'{field}-TOTAL_FORMS': total + delete,
+    base_data = {
+        f'{field}-TOTAL_FORMS': total + delete,
         f'{field}-INITIAL_FORMS': 0,
     }
 
