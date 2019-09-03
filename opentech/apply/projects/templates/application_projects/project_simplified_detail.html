@@ -72,6 +72,31 @@
         </div>
 
         <div>
+            <h3>Review</h3>
+            <h4>Submission lead</h4>
+            <p>{{ project.submission.lead }}</p>
+
+            <h4>Reviews</h4>
+            <h5>Staff Reviewers</h5>
+            {% for review in project.submission.reviews.by_staff %}
+            <p>
+                <strong>{{ review.author }}</strong>
+                {% if review.author.role %}
+                    as {{ review.author.role }}
+                {% endif %}
+                - {{ review.outcome }} ({{ review.created_at }})</p>
+            {% empty %}
+                No reviews
+            {% endfor %}
+            <h5>External Reviewers</h5>
+            {% for review in project.submission.reviews.by_reviewers %}
+                <p><strong>{{ review.author }}</strong> - {{ review.outcome }} ({{ review.created_at }})</p>
+            {% empty %}
+                No reviews
+            {% endfor %}
+        </div>
+
+        <div>
             <h3>Supporting Documents</h3>
             <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">Submission</a></p>
             {% for packet_file in object.packet_files.all %}
