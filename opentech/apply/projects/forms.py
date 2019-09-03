@@ -87,6 +87,8 @@ class CreateProjectForm(forms.Form):
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(project__isnull=True),
         widget=forms.HiddenInput(),
+        label='',
+        required=False,
     )
 
     def __init__(self, instance=None, user=None, *args, **kwargs):
