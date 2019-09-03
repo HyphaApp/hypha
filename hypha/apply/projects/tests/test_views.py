@@ -21,7 +21,15 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..files import get_files
 from ..forms import SetPendingForm
-from ..models import CHANGES_REQUESTED, COMMITTED, CONTRACTING, IN_PROGRESS, SUBMITTED
+from ..models import (
+    CHANGES_REQUESTED,
+    CLOSING,
+    COMMITTED,
+    COMPLETE,
+    CONTRACTING,
+    IN_PROGRESS,
+    SUBMITTED,
+)
 from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -1587,3 +1595,24 @@ class ApplicantStaffProjectPDFExport(BaseViewTestCase):
         project = ProjectFactory()
         response = self.get_page(project)
         self.assertEqual(response.status_code, 403)
+
+
+class TestMoveToClosedView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.pk}
+
+    def test_happy_path(self):
+        project = ProjectFactory()
+
+        response = self.post_page(project, {
+            'form-submitted-close_form': '',
+            'id': project.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, COMPLETE)

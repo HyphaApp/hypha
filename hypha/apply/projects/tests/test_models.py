@@ -9,7 +9,9 @@ from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
 from ..models import (
     CHANGES_REQUESTED,
+    COMMITTED,
     DECLINED,
+    IN_PROGRESS,
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
@@ -80,6 +82,17 @@ class TestProjectModel(TestCase):
         self.assertEqual(missing[0]['difference'], 3)
         self.assertEqual(missing[1]['category'], category2)
         self.assertEqual(missing[1]['difference'], 2)
+
+    def test_cannot_close_in_incorrect_state(self):
+        project = ProjectFactory(status=COMMITTED)
+
+        self.assertFalse(project.can_close)
+
+    def test_cannot_close_with_open_payment_requests(self):
+        project = ProjectFactory(status=IN_PROGRESS)
+        PaymentRequestFactory(project=project, status=SUBMITTED)
+
+        self.assertFalse(project.can_close)
 
 
 class TestPaymentRequestModel(TestCase):

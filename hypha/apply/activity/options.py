@@ -50,6 +50,7 @@ class MESSAGES(Enum):
     DELETE_REMINDER = 'Reminder Deleted'
     REVIEW_REMINDER = 'Reminder to Review'
     PROJECT_MOVED_TO_CLOSING = 'Project moved to Closing'
+    PROJECT_MOVED_TO_CLOSED = 'Project Closed'
 
     @classmethod
     def choices(cls):
