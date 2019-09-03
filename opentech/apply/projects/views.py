@@ -530,7 +530,6 @@ class UploadDocumentView(DelegatedViewMixin, CreateView):
             request=self.request,
             user=self.request.user,
             source=project,
-            title=form.instance.title
         )
 
         return response
