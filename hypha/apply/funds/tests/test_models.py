@@ -246,7 +246,7 @@ class TestFormSubmission(TestCase):
         self.submit_form()
 
         # Lead + applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
         new_user = self.User.objects.get(email=self.email)
         self.assertEqual(new_user.full_name, self.name)
 
@@ -264,7 +264,7 @@ class TestFormSubmission(TestCase):
         self.submit_form()
 
         # Lead + applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
 
         user = self.User.objects.get(email=self.email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
@@ -277,7 +277,7 @@ class TestFormSubmission(TestCase):
         self.submit_form(email=email)
 
         # Lead + 2 x applicant
-        self.assertEqual(self.User.objects.count(), 3)
+        self.assertEqual(self.User.objects.count(), 4)
 
         first_user, second_user = self.User.objects.get(email=self.email), self.User.objects.get(email=email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
@@ -288,12 +288,12 @@ class TestFormSubmission(TestCase):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         # Lead + Applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
 
         self.submit_form(email=self.email, name=self.name, user=user)
 
         # Lead + Applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
@@ -303,13 +303,13 @@ class TestFormSubmission(TestCase):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         # Lead + applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
 
         response = self.submit_form(email='', name='', user=user, ignore_errors=True)
         self.assertContains(response, 'This field is required')
 
         # Lead + applicant
-        self.assertEqual(self.User.objects.count(), 2)
+        self.assertEqual(self.User.objects.count(), 3)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 0)
 

@@ -16,6 +16,18 @@ from .groups import (
 from .utils import send_activation_email
 
 
+def get_compliance_sentinel_user():
+    """
+    Get the sentinel User for unauthenticated Submission and Project pages.
+
+    The unauthenticated Submission and Project pages need to track when they
+    are accessed by Compliance.  However the Event models User FK is
+    non-nullabe.  Changing that relation to nullable and fixing it around the
+    site is prohibitively costly so we've opted to use a sentinel User.
+    """
+    return User.objects.get(email='compliance-sentinel')
+
+
 class UserQuerySet(models.QuerySet):
     def staff(self):
         return self.filter(
