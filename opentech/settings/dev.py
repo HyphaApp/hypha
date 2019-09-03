@@ -35,6 +35,7 @@ except ImportError:
     pass
 
 PROJECTS_ENABLED = True
+PROJECTS_AUTO_CREATE = True
 
 # We add these here so they can react on settings made in local.py.
 
