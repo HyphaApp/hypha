@@ -702,7 +702,7 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
 
 class TestPaymentsMixin(TestCase):
     def test_get_totals(self):
-        project = ProjectFactory(value=100)
+        project = ProjectFactory(value=Decimal(100))
         user = UserFactory()
 
         PaymentRequestFactory(project=project, by=user, value=20)
@@ -714,6 +714,15 @@ class TestPaymentsMixin(TestCase):
         self.assertEqual(values['awaiting_percentage'], 20)
         self.assertEqual(values['paid_absolute'], 10)
         self.assertEqual(values['paid_percentage'], 10)
+
+    def test_get_totals_no_value(self):
+        project = ProjectFactory(value=Decimal(0))
+        values = PaymentsMixin().get_totals(project)
+
+        self.assertEqual(values['awaiting_absolute'], 0)
+        self.assertEqual(values['awaiting_percentage'], 0)
+        self.assertEqual(values['paid_absolute'], 0)
+        self.assertEqual(values['paid_percentage'], 0)
 
 
 class TestProjectDetailSimplifiedView(TestCase):

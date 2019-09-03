@@ -126,6 +126,9 @@ class PaymentsMixin:
 
     def get_totals(self, project):
         def percentage(total, value):
+            if not total:
+                return decimal.Decimal(0)
+
             unrounded_total = (value / total) * 100
 
             # round using Decimal since we're dealing with currency
