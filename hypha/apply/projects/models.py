@@ -560,6 +560,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def is_in_progress(self):
         return self.status == IN_PROGRESS
 
+    @property
+    def is_in_contracting(self):
+        return self.status == CONTRACTING
+
     def send_to_compliance(self, request):
         """Notify Compliance about this Project."""
 

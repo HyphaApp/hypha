@@ -29,6 +29,7 @@ from django_tables2 import SingleTableMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.users.decorators import approver_required, staff_required
+from hypha.apply.users.models import get_compliance_sentinel_user
 from hypha.apply.utils.pdfs import (
     draw_project_content,
     draw_submission_content,
@@ -569,6 +570,31 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
             as_attachment=True,
             filename=self.object.title + '.pdf',
         )
+
+
+class ProjectDetailUnauthenticatedView(DetailView):
+    model = Project
+    template_name_suffix = '_simplified_detail'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.UNAUTHENTICATED_PROJECT_VIEW_ACCESSED,
+            request=self.request,
+            user=get_compliance_sentinel_user(),
+            source=self.object,
+        )
+
+        return response
+
+    def get_object(self):
+        project = super().get_object()
+
+        if not project.is_in_contracting:
+            raise Http404
+
+        return project
 
 
 class ProjectApprovalEditView(UpdateView):

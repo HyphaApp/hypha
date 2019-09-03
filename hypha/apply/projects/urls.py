@@ -10,6 +10,7 @@ from .views import (
     PaymentRequestView,
     ProjectDetailPDFView,
     ProjectDetailSimplifiedView,
+    ProjectDetailUnauthenticatedView,
     ProjectDetailView,
     ProjectEditView,
     ProjectListView,
@@ -34,6 +35,7 @@ urlpatterns = [
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
         path('download/', ProjectDetailPDFView.as_view(), name='download'),
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
+        path('unauthenticated/', ProjectDetailUnauthenticatedView.as_view(), name='unauthenticated'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
     ])),
     path('payment-requests/', include(([

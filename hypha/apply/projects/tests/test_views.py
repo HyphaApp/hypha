@@ -1566,3 +1566,28 @@ class ApplicantStaffProjectPDFExport(BaseViewTestCase):
         project = ProjectFactory()
         response = self.get_page(project)
         self.assertEqual(response.status_code, 403)
+
+
+class TestProjectDetailUnauthenticatedView(BaseViewTestCase):
+    base_view_name = 'unauthenticated'
+    url_name = 'funds:projects:{}'
+    user_factory = AnonymousUser
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_unauthenticated_user_can_access_view(self):
+        project = ProjectFactory(status=CONTRACTING)
+
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_access_unauthenticated_view_when_project_not_in_contracting(self):
+        project = ProjectFactory(status=IN_PROGRESS)
+
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 404)
