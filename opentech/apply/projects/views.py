@@ -24,6 +24,7 @@ from django.views.generic import (
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.users.models import get_compliance_sentinel_user
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
@@ -663,6 +664,31 @@ class ProjectDetailView(ViewDispatcher):
 class ProjectDetailSimplifiedView(DetailView):
     model = Project
     template_name_suffix = '_simplified_detail'
+
+
+class ProjectDetailUnauthenticatedView(DetailView):
+    model = Project
+    template_name_suffix = '_simplified_detail'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.UNAUTHENTICATED_PROJECT_VIEW_ACCESSED,
+            request=self.request,
+            user=get_compliance_sentinel_user(),
+            source=self.object,
+        )
+
+        return response
+
+    def get_object(self):
+        project = super().get_object()
+
+        if not project.is_in_contracting:
+            raise Http404
+
+        return project
 
 
 class ProjectApprovalEditView(UpdateView):

@@ -327,6 +327,10 @@ class Project(models.Model):
                 }
 
     @property
+    def is_in_contracting(self):
+        return self.status == CONTRACTING
+
+    @property
     def is_in_progress(self):
         return self.status == IN_PROGRESS
 

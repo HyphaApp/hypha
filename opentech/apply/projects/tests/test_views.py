@@ -3,7 +3,7 @@ from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
@@ -795,3 +795,22 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
         self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestProjectDetailUnauthenticatedView(TestCase):
+    def test_unauthenticated_user_can_access_view(self):
+        project = ProjectFactory(status=CONTRACTING)
+
+        url = reverse('apply:projects:unauthenticated', kwargs={'pk': project.pk})
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_cannot_access_unauthenticated_view_when_project_not_in_contracting(self):
+        project = ProjectFactory(status=IN_PROGRESS)
+
+        url = reverse('apply:projects:unauthenticated', kwargs={'pk': project.pk})
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 404)

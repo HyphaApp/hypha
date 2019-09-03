@@ -7,6 +7,7 @@ from .views import (
     DeletePaymentRequestView,
     EditPaymentRequestView,
     ProjectDetailSimplifiedView,
+    ProjectDetailUnauthenticatedView,
     ProjectDetailView,
     ProjectEditView,
     ProjectPrivateMediaView,
@@ -49,5 +50,6 @@ if settings.PROJECTS_ENABLED:
                 name='edit-payment-request',
             ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
+            path('unauthenticated/', ProjectDetailUnauthenticatedView.as_view(), name='unauthenticated'),
         ])),
     ]
