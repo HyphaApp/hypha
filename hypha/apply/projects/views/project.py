@@ -41,6 +41,7 @@ from ..files import get_files
 from ..filters import PaymentRequestListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
+    ClosingForm,
     CreateApprovalForm,
     ProjectApprovalForm,
     ProjectEditForm,
@@ -152,6 +153,27 @@ class RejectionView(DelegatedViewMixin, UpdateView):
         self.object.save(update_fields=['is_locked'])
 
         return redirect(self.object)
+
+
+@method_decorator(staff_required, name='dispatch')
+class MoveToClosingView(DelegatedViewMixin, UpdateView):
+    context_name = 'closing_form'
+    form_class = ClosingForm
+    model = Project
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+        form.instance.project = project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.PROJECT_MOVED_TO_CLOSING,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+        )
+
+        return response
 
 
 # PROJECT DOCUMENTS
@@ -414,6 +436,7 @@ class AdminProjectDetailView(
         ApproveContractView,
         CommentFormView,
         CreateApprovalView,
+        MoveToClosingView,
         RejectionView,
         RemoveDocumentView,
         SelectDocumentView,

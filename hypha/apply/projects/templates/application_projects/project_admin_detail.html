@@ -40,6 +40,13 @@
     {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
+{% if object.is_in_progress %}
+<div class="modal" id="move-to-closing">
+    <h4 class="modal__header-bar">Move to Closing</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=closing_form value='Update' %}
+</div>
+{% endif %}
+
 {% if contract_to_approve %}
 <div class="modal" id="approve-contract">
     <h4 class="modal__header-bar">Approve Contract</h4>
@@ -84,6 +91,15 @@
      class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
       href="#">
       Request changes
+  </a>
+{% endif %}
+
+{% if object.is_in_progress %}
+  <a data-fancybox
+      data-src="#move-to-closing"
+      class="button button--bottom-space button--primary button--full-width"
+      href="#">
+      Move to Closing
   </a>
 {% endif %}
 
