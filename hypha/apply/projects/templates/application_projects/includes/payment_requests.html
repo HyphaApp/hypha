@@ -3,10 +3,12 @@
 <div id="payment-requests" class="data-block">
     <div class="data-block__header">
         <p class="data-block__title">Payment Requests</p>
+        {% if not object.is_closed %}
         <a class="data-block__button button button--primary"
            href="{% url "apply:projects:request" pk=object.pk %}">
             Add Request
         </a>
+        {% endif %}
     </div>
     <div class="data-block__body">
         <table class="data-block__table">

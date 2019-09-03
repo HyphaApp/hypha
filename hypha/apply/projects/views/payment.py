@@ -114,6 +114,13 @@ class CreatePaymentRequestView(CreateView):
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        if self.project.is_closed:
+            messages.error(request, "Payment Requests can't be added to a closed Project")
+            return redirect(project)
+
+        return super().post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         return super().get_context_data(project=self.project, **kwargs)
 

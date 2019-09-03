@@ -436,6 +436,15 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         return response
 
+    def post(self, request, *args, **kwargs):
+        project = self.kwargs['object']
+
+        if project.is_closed:
+            messages.error(self.request, "Contracts can't be added to a closed Project")
+            return redirect(project)
+
+        return super().post(request, *args, **kwargs)
+
 
 # PROJECT VIEW
 class BaseProjectDetailView(ReportingMixin, DetailView):

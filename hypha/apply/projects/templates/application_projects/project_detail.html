@@ -174,11 +174,11 @@
                     </a>
                     {% endif %}
 
-                    {% if object.can_request_funding %}
                     <a class="button button--primary button--bottom-space button--full-width"
                        href="{% url "apply:projects:request" pk=object.pk %}">
                         Add payment request
                     </a>
+                    {% if object.can_request_funding and not object.is_closed %}
                     {% endif %}
 
                     {% if request.user.is_apply_staff %}
