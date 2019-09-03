@@ -614,9 +614,9 @@ class EmailAdapter(AdapterBase):
                 subject = 'Application ready to review: {submission.title}'.format(submission=source)
             else:
                 try:
-                    subject = source.page.specific.subject or 'Your application to Open Technology Fund: {source.title}'.format(source=source)
+                    subject = source.page.specific.subject or 'Your application to {org_long_name}: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = 'Your Open Technology Fund Project: {source.title}'.format(source=source)
+                    subject = 'Your {org_long_name} Project: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
             return subject
 
     def extra_kwargs(self, message_type, source, sources, **kwargs):

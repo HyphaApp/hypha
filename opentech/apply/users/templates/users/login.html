@@ -66,7 +66,7 @@
 
     {% if wizard.steps.current == 'auth' %}
         <div class="wrapper wrapper--inner-space-large">
-          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">Log in with your OTF email</a>
+          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">Log in with your {{ ORG_SHORT_NAME }} email</a>
         </div>
     {% endif %}
   </div>
