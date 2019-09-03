@@ -303,7 +303,8 @@ class DateFieldBlock(OptionalFormFieldBlock):
         return None
 
     def decode(self, value):
-        return parse(value).date()
+        if value:
+            return parse(value).date()
 
 
 class HTML5TimeInput(forms.TimeInput):
@@ -324,7 +325,8 @@ class TimeFieldBlock(OptionalFormFieldBlock):
         return None
 
     def decode(self, value):
-        return parse(value).time()
+        if value:
+            return parse(value).time()
 
 
 class DateTimePickerInput(forms.SplitDateTimeWidget):
@@ -356,7 +358,8 @@ class DateTimeFieldBlock(OptionalFormFieldBlock):
         return None
 
     def decode(self, value):
-        return isoparse(value)
+        if value:
+            return isoparse(value)
 
 
 class UploadableMediaBlock(OptionalFormFieldBlock):
