@@ -44,6 +44,7 @@ from ..forms import (
     CloseForm,
     ClosingForm,
     CreateApprovalForm,
+    InProgressForm,
     ProjectApprovalForm,
     ProjectEditForm,
     RejectionForm,
@@ -154,6 +155,24 @@ class RejectionView(DelegatedViewMixin, UpdateView):
         self.object.save(update_fields=['is_locked'])
 
         return redirect(self.object)
+
+
+class MoveToInProgressView(DelegatedViewMixin, UpdateView):
+    context_name = 'in_progress_form'
+    form_class = InProgressForm
+    model = Project
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.PROJECT_MOVED_TO_IN_PROGRESS,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+        )
+
+        return response
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -467,6 +486,7 @@ class AdminProjectDetailView(
         CreateApprovalView,
         MoveToClosedView,
         MoveToClosingView,
+        MoveToInProgressView,
         RejectionView,
         RemoveDocumentView,
         SelectDocumentView,

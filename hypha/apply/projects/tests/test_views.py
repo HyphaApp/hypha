@@ -1662,3 +1662,24 @@ class TestMoveToClosedView(BaseViewTestCase):
 
         project.refresh_from_db()
         self.assertEqual(project.status, COMPLETE)
+
+
+class TestMoveToInProgressView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.pk}
+
+    def test_happy_path(self):
+        project = ProjectFactory()
+
+        response = self.post_page(project, {
+            'form-submitted-in_progress_form': '',
+            'id': project.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)

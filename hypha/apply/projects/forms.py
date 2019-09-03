@@ -21,6 +21,7 @@ from .models import (
     COMMITTED,
     COMPLETE,
     DECLINED,
+    IN_PROGRESS,
     PAID,
     REQUEST_STATUS_CHOICES,
     SUBMITTED,
@@ -106,6 +107,20 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
         if paid_value and status != PAID:
             self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
         return cleaned_data
+
+
+class InProgressForm(forms.ModelForm):
+    class Meta:
+        fields = ['id']
+        model = Project
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.instance.status = IN_PROGRESS
+        return super().save(*args, **kwargs)
 
 
 class CloseForm(forms.ModelForm):

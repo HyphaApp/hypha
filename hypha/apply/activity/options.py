@@ -51,6 +51,7 @@ class MESSAGES(Enum):
     REVIEW_REMINDER = 'Reminder to Review'
     PROJECT_MOVED_TO_CLOSING = 'Project moved to Closing'
     PROJECT_MOVED_TO_CLOSED = 'Project Closed'
+    PROJECT_MOVED_TO_IN_PROGRESS = 'Project moved to In Progress'
 
     @classmethod
     def choices(cls):

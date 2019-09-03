@@ -250,6 +250,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
         MESSAGES.PROJECT_MOVED_TO_CLOSING: 'Project to closing.',
         MESSAGES.PROJECT_MOVED_TO_CLOSED: 'Project to closed.',
+        MESSAGES.PROJECT_MOVED_TO_IN_PROGRESS: 'Project to in progress.',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -430,6 +431,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
         MESSAGES.PROJECT_MOVED_TO_CLOSING: '{user} has moved project to closing <{link}|{source.title}>.',
         MESSAGES.PROJECT_MOVED_TO_CLOSED: '{user} has moved project to closed <{link}|{source.title}>.',
+        MESSAGES.PROJECT_MOVED_TO_IN_PROGRESS: '{user} has moved project to in progress <{link}|{source.title}>.',
     }
 
     def __init__(self):
