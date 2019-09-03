@@ -187,13 +187,12 @@
 
                 {% if object.is_in_progress %}
                 <div class="sidebar__inner">
-                    <h5>Supporting Documents</h5>
+                    <h5>Supporting Information</h5>
 
                     <p><a href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
 
                     {% if request.user.is_apply_staff %}
-                    <p><a href="#">Approval form</a></p>
-                    <p><a href="#">Supporting documents</a></p>
+                    <p><a href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
                     {% endif %}
                 </div>
                 {% endif %}

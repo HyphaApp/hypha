@@ -286,6 +286,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def editable(self):
+        # Someone has approved the project - consider it locked while with contracting
+        if self.approvals.exists():
+            return False
+
         # Someone must lead the project to make changes
         return self.lead and not self.is_locked
 

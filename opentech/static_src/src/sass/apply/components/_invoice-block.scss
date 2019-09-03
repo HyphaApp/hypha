@@ -9,10 +9,6 @@
         padding: 2rem;
     }
 
-    @include media-query(tablet-portrait) {
-        max-width: 610px;
-    }
-
     &__item {
         margin-bottom: 1rem;
 

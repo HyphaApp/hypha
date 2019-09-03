@@ -1,4 +1,4 @@
-{% load payment_request_tools %}
+{% load payment_request_tools humanize %}
 
 <div class="payment-block">
     <div class="payment-block__header">
@@ -23,7 +23,7 @@
         <tbody>
             {% for payment_request in payments.not_rejected %}
             <tr>
-                <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
+                <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value|intcomma }}</td>
                 <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                 <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
                 <td>

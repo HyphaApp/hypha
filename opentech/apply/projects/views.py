@@ -134,7 +134,7 @@ class PaymentsMixin:
 
             # round using Decimal since we're dealing with currency
             rounded_total = unrounded_total.quantize(
-                decimal.Decimal('1'),
+                decimal.Decimal('0.0'),
                 rounding=decimal.ROUND_DOWN,
             )
 

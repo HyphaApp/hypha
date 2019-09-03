@@ -2,6 +2,7 @@ import functools
 import os
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Q
@@ -28,6 +29,9 @@ from .models import (
     PaymentRequest,
     Project
 )
+
+
+User = get_user_model()
 
 
 def filter_choices(available, choices):
@@ -70,17 +74,15 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
         status_field = self.fields['status']
 
         if instance.status == SUBMITTED:
-            wanted = [CHANGES_REQUESTED, UNDER_REVIEW, PAID, DECLINED]
-            status_field.choices = filter_request_choices(wanted)
-            return
+            wanted = [CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]
+        elif instance.status == CHANGES_REQUESTED:
+            wanted = [DECLINED]
+        elif instance.status == UNDER_REVIEW:
+            wanted = [PAID]
+        else:
+            wanted = []
 
-        if instance.status == CHANGES_REQUESTED:
-            status_field.choices = filter_request_choices([DECLINED])
-            return
-
-        if instance.status == UNDER_REVIEW:
-            status_field.choices = filter_request_choices([PAID])
-            return
+        status_field.choices = filter_request_choices(wanted)
 
 
 class CreateProjectForm(forms.Form):
@@ -103,10 +105,16 @@ class CreateProjectForm(forms.Form):
 
 
 class CreateApprovalForm(forms.ModelForm):
+    by = forms.ModelChoiceField(
+        queryset=User.objects.approvers(),
+        widget=forms.HiddenInput(),
+        label='',
+        required=False,
+    )
+
     class Meta:
         model = Approval
-        fields = ['by']
-        widgets = {'by': forms.HiddenInput()}
+        fields = ('by',)
 
     def __init__(self, user=None, *args, **kwargs):
         initial = kwargs.pop('initial', {})
@@ -122,6 +130,10 @@ class EditPaymentRequestForm(forms.ModelForm):
     class Meta:
         fields = ['invoice', 'value', 'date_from', 'date_to', 'receipt_list', 'comment']
         model = PaymentRequest
+        widgets = {
+            'date_from': forms.DateInput,
+            'date_to': forms.DateInput,
+        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, instance=instance, **kwargs)

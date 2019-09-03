@@ -7,10 +7,6 @@
         padding: 2rem;
     }
 
-    @include media-query(tablet-portrait) {
-        max-width: 610px;
-    }
-
     &__header {
         margin-bottom: 1rem;
 
@@ -49,6 +45,7 @@
 
     &__status-link {
         font-size: map-get($font-sizes, milli);
+        display: block;
     }
 
     &__rejected {
@@ -83,7 +80,7 @@
                 padding: 10px;
 
                 @include media-query(tablet-landscape) {
-                    text-align: center;
+                    text-align: left;
                 }
             }
 
