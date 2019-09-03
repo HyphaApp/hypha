@@ -23,10 +23,10 @@
         color: $color--lightest-blue;
         font-weight: $weight--bold;
 
-        &::after {
+        &::before {
             @include triangle(top, currentColor, 5px);
-            margin-left: .5rem;
-            transform: rotate(90deg);
+            margin-right: .5rem;
+            transform: rotate(-90deg);
         }
     }
 

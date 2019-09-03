@@ -13,7 +13,7 @@
                 <p class="docs-block__title">Proposal</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#">View</a>
+                <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">View</a>
                 <a class="docs-block__link" href="#">Download</a>
             </div>
         </li>
@@ -36,7 +36,7 @@
                     </a>
                 {% endif %}
                 {% if object.user_has_updated_details %}
-                    <a class="docs-block__link" href="#">
+                    <a class="docs-block__link" href="{% url 'apply:projects:simplified' pk=project.pk %}">
                         View
                     </a>
                 {% endif %}
