@@ -30,6 +30,7 @@ from opentech.apply.projects.forms import CreateProjectForm
 from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.users.models import get_compliance_sentinel_user
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
@@ -943,3 +944,20 @@ class SubmissionDetailSimplifiedView(DetailView):
             raise Http404
 
         return obj
+
+
+class SubmissionDetailUnauthenticatedView(DetailView):
+    model = ApplicationSubmission
+    template_name_suffix = '_simplified_detail'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.UNAUTHENTICATED_SUBMISSION_VIEW_ACCESSED,
+            request=self.request,
+            user=get_compliance_sentinel_user(),
+            source=self.object,
+        )
+
+        return response

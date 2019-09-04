@@ -398,6 +398,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
         MESSAGES.UNAUTHENTICATED_PROJECT_VIEW_ACCESSED: 'Unauthenticated user has viewed project <{link}|{source.title}>.',
+        MESSAGES.UNAUTHENTICATED_SUBMISSION_VIEW_ACCESSED: 'Unauthenticated user has viewed submission <{link}|{source.title}>.',
     }
 
     def __init__(self):

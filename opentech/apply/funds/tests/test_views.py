@@ -4,7 +4,7 @@ import json
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -749,3 +749,14 @@ class TestAnonSubmissionFileView(BaseSubmissionFileViewTestCase):
         self.assertEqual(len(response.redirect_chain), 2)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse('users_public:login'), path)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestSubmissionDetailUnauthenticatedView(TestCase):
+    def test_unauthenticated_user_can_access_view(self):
+        submission = ApplicationSubmissionFactory(rejected=True)
+
+        url = reverse('funds:submissions:unauthenticated', kwargs={'pk': submission.pk})
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)
