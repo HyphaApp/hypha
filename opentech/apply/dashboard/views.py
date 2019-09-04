@@ -30,19 +30,23 @@ from opentech.apply.utils.views import ViewDispatcher
 
 
 class AdminDashboardView(TemplateView):
+    template_name = 'dashboard/dashboard.html'
 
     def get(self, request, *args, **kwargs):
         # redirect to submissions list when we use the filter to search for something
-        if len(request.GET):
-            query_str = '?'
-            for key, value in request.GET.items():
-                query_str += key + '=' + value + '&'
-            return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+        if not request.GET:
+            return super().get(request, *args, **kwargs)
 
+        query_str = '?'
+        for key, value in request.GET.items():
+            query_str += key + '=' + value + '&'
+        return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+
+    def get_context_data(self, **kwargs):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
-        base_query = base_query.by_lead(request.user)
+        base_query = base_query.by_lead(self.request.user)
         open_rounds = base_query.open()[:6]
         open_query = '?round_state=open'
         closed_rounds = base_query.closed()[:6]
@@ -50,18 +54,18 @@ class AdminDashboardView(TemplateView):
         rounds_title = 'Your rounds and labs'
 
         # Staff reviewer's current to-review submissions
-        my_review_qs, my_review, display_more = self.get_my_reviews(request.user, qs)
+        my_review_qs, my_review, display_more = self.get_my_reviews(self.request.user, qs)
 
         # Staff reviewer's reviewed submissions for 'Previous reviews' block
-        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
+        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(self.request, qs)
 
         # Filter for all active statuses.
-        active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
+        active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user))
 
-        projects = self.get_my_projects(request.user)
-        active_payment_requests = self.get_my_active_payment_requests(request.user)
+        projects = self.get_my_projects(self.request.user)
+        active_payment_requests = self.get_my_active_payment_requests(self.request.user)
 
-        context = {
+        extra_context = {
             'open_rounds': open_rounds,
             'open_query': open_query,
             'closed_rounds': closed_rounds,
@@ -77,8 +81,8 @@ class AdminDashboardView(TemplateView):
             'projects': projects,
             'active_payment_requests': active_payment_requests,
         }
-
-        return render(request, 'dashboard/dashboard.html', context)
+        current_context = super().get_context_data(**kwargs)
+        return {**current_context, **extra_context}
 
     def get_my_active_payment_requests(self, user):
         payment_requests = (PaymentRequest.objects.filter(project__lead=user)
