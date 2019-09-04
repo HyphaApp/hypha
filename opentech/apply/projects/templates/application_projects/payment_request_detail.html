@@ -1,0 +1,61 @@
+{% extends "base-apply.html" %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        Payment Request
+        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
+        <h5 class="heading heading--meta">
+            <span>{{ object.project.submission.page }}</span>
+            <span>{{ object.project.submission.round }}</span>
+            <span>{{ object.project }}</span>
+        </h5>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large">
+    <div class="wrapper wrapper--sidebar">
+        <article class="wrapper--sidebar--inner">
+            <h3>Request Information</h3>
+            <div class="grid grid--proposal-info">
+                <div>
+                    <h5>Amount</h5>
+                    <p>${{ object.value }}</p>
+                </div>
+
+                <div>
+                    <h5>Status</h5>
+                    <p>{{ object.get_status_display }}</p>
+                </div>
+
+                <div>
+                    <h5>Invoice</h5>
+                    <p><a href="{{ object.invoice.url }}">Download</a></p>
+                </div>
+
+                {% if object.receipts.exist %}
+                <div>
+                    <h5>Receipts</h5>
+
+                    <ul>
+                    {% for receipt in object.receipts.all %}
+                    <li><a href="{{ receipt.url }}">{{ receipt.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <p><a href="{% url 'apply:projects:simplified' pk=object.project_id %}">Project</a></p>
+            </div>
+
+        </article>
+
+    </div>
+</div>
+{% endblock content %}

@@ -24,7 +24,10 @@ from django.views.generic import (
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.models import get_compliance_sentinel_user
+from opentech.apply.users.models import (
+    get_compliance_sentinel_user,
+    get_finance_sentinel_user
+)
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
@@ -723,3 +726,31 @@ class ApplicantProjectEditView(UpdateView):
 class ProjectEditView(ViewDispatcher):
     admin_view = ProjectApprovalEditView
     applicant_view = ApplicantProjectEditView
+
+
+class PaymentRequestDetailUnauthenticatedView(DetailView):
+    model = PaymentRequest
+    pk_url_kwarg = 'payment_request_id'
+    template_name = 'application_projects/payment_request_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.UNAUTHENTICATED_PAYMENT_REQUEST_VIEW_ACCESSED,
+            request=self.request,
+            user=get_finance_sentinel_user(),
+            source=self.object,
+        )
+
+        return response
+
+    def get_object(self):
+        get_object_or_404(Project, pk=self.kwargs['pk'])
+
+        payment_request = super().get_object()
+
+        if not payment_request.is_approved:
+            raise Http404
+
+        return payment_request

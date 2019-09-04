@@ -18,7 +18,14 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..models import CONTRACTING, IN_PROGRESS, PAID
+from ..models import (
+    CHANGES_REQUESTED,
+    CONTRACTING,
+    DECLINED,
+    IN_PROGRESS,
+    PAID,
+    SUBMITTED
+)
 from ..views import ContractsMixin, PaymentsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -814,3 +821,53 @@ class TestProjectDetailUnauthenticatedView(TestCase):
         response = self.client.get(url, follow=True)
 
         self.assertEqual(response.status_code, 404)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestPaymentRequestDetailUnauthenticatedView(TestCase):
+    def test_cannot_access_unauthenticated_view_when_payment_request_is_declined(self):
+        project = ProjectFactory(status=CONTRACTING)
+        request = PaymentRequestFactory(project=project, status=DECLINED)
+
+        url = reverse(
+            'apply:projects:payment-request-unauthenticated',
+            kwargs={'pk': project.pk, 'payment_request_id': request.id},
+        )
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_cannot_access_unauthenticated_view_when_payment_request_is_paid(self):
+        project = ProjectFactory(status=CONTRACTING)
+        request = PaymentRequestFactory(project=project, status=PAID)
+
+        url = reverse(
+            'apply:projects:payment-request-unauthenticated',
+            kwargs={'pk': project.pk, 'payment_request_id': request.id},
+        )
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_cannot_access_unauthenticated_view_when_payment_request_is_submitted(self):
+        project = ProjectFactory(status=CONTRACTING)
+
+        request = PaymentRequestFactory(project=project, status=SUBMITTED)
+        url = reverse(
+            'apply:projects:payment-request-unauthenticated',
+            kwargs={'pk': project.pk, 'payment_request_id': request.id},
+        )
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_unauthenticated_user_can_access_view(self):
+        project = ProjectFactory(status=CONTRACTING)
+        request = PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
+
+        url = reverse(
+            'apply:projects:payment-request-unauthenticated',
+            kwargs={'pk': project.pk, 'payment_request_id': request.id},
+        )
+        response = self.client.get(url, follow=True)
+
+        self.assertEqual(response.status_code, 200)

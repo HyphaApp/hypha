@@ -146,9 +146,29 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return f'Payment requested for {self.project}'
 
+    def get_absolute_url(self):
+        return reverse('apply:projects:payment-request-unauthenticated', kwargs={
+            'pk': self.project.pk,
+            'payment_request_id': self.pk,
+        })
+
     @property
     def has_changes_requested(self):
         return self.status == CHANGES_REQUESTED
+
+    @property
+    def is_approved(self):
+        return self.status in [CHANGES_REQUESTED, UNDER_REVIEW]
+
+    @property
+    def lead(self):
+        """Mirror Project.lead so PaymentRequest can be used with messaging framework."""
+        return self.project.lead
+
+    @property
+    def title(self):
+        """Mirror standard title field so PaymentRequest can be used with messaging framework."""
+        return str(self)
 
     def user_can_delete(self, user):
         if user.is_apply_staff:

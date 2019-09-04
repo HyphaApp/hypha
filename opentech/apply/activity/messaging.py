@@ -399,6 +399,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
         MESSAGES.UNAUTHENTICATED_PROJECT_VIEW_ACCESSED: 'Unauthenticated user has viewed project <{link}|{source.title}>.',
         MESSAGES.UNAUTHENTICATED_SUBMISSION_VIEW_ACCESSED: 'Unauthenticated user has viewed submission <{link}|{source.title}>.',
+        MESSAGES.UNAUTHENTICATED_PAYMENT_REQUEST_VIEW_ACCESSED: 'Unauthenticated user has viewed payment request <{link}|{source}>.',
     }
 
     def __init__(self):
@@ -711,6 +712,11 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs['added']
             return [partner.email for partner in partners]
+
+        if message_type == MESSAGES.UNAUTHENTICATED_PAYMENT_REQUEST_VIEW_ACCESSED:
+            # PaymentRequest uses `by` and we only fire this message type for
+            # unauthenticated access so there is no meaningful User.
+            return []
 
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
             from opentech.apply.projects.models import ProjectSettings
