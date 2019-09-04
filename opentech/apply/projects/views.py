@@ -166,7 +166,13 @@ class SubmissionFilesMixin:
         files = get_files(project)
 
         context = super().get_context_data(**kwargs)
-        context['select_document_form'] = SelectDocumentForm(files, project)
+
+        if files:
+            form = SelectDocumentForm(files, project)
+        else:
+            form = None
+
+        context['select_document_form'] = form
         return context
 
 
