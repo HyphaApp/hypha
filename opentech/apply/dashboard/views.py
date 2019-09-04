@@ -53,33 +53,17 @@ class AdminDashboardView(TemplateView):
         closed_query = '?round_state=closed'
         rounds_title = 'Your rounds and labs'
 
-        # Staff reviewer's current to-review submissions
-        my_review_qs, my_review, display_more = self.get_my_reviews(self.request.user, qs)
-
-        # Staff reviewer's reviewed submissions for 'Previous reviews' block
-        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(self.request, qs)
-
-        # Filter for all active statuses.
-        active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user))
-
-        projects = self.get_my_projects(self.request.user)
-        active_payment_requests = self.get_my_active_payment_requests(self.request.user)
-
         extra_context = {
             'open_rounds': open_rounds,
             'open_query': open_query,
             'closed_rounds': closed_rounds,
             'closed_query': closed_query,
             'rounds_title': rounds_title,
-            'my_review': my_review,
-            'in_review_count': my_review_qs.count(),
-            'display_more': display_more,
-            'my_reviewed': my_reviewed,
-            'display_more_reviewed': display_more_reviewed,
-            'filter': filterset,
-            'active_statuses_filter': active_statuses_filter,
-            'projects': projects,
-            'active_payment_requests': active_payment_requests,
+
+            'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
+            'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, qs),
+            'my_reviewed': self.get_my_reviewed(self.request, qs),
+            'projects': self.get_my_projects(self.request.user),
         }
         current_context = super().get_context_data(**kwargs)
         return {**current_context, **extra_context}
@@ -88,41 +72,40 @@ class AdminDashboardView(TemplateView):
         payment_requests = (PaymentRequest.objects.filter(project__lead=user)
                                                   .exclude(status__in=[DECLINED, PAID]))[:10]
 
-        if not payment_requests:
-            return
-
-        return PaymentRequestsDashboardTable(payment_requests)
+        return {
+            'table': PaymentRequestsDashboardTable(payment_requests),
+        }
 
     def get_my_projects(self, user):
         projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
 
-        if not projects:
-            return
+        return {
+            'table': ProjectsDashboardTable(projects),
+        }
 
-        return ProjectsDashboardTable(projects)
+    def get_my_awaiting_reviews(self, user, qs):
+        """Staff reviewer's current to-review submissions."""
+        qs = qs.in_review_for(user).order_by('-submit_time')
+        count = qs.count()
 
-    def get_my_reviews(self, user, qs):
-        my_review_qs = qs.in_review_for(user).order_by('-submit_time')
-        my_review_table = SummarySubmissionsTableWithRole(my_review_qs[:5], prefix='my-review-')
-        display_more = (my_review_qs.count() > 5)
-
-        return my_review_qs, my_review_table, display_more
+        return {
+            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(user)),
+            'count': count,
+            'display_more': count > 5,
+            'table': SummarySubmissionsTableWithRole(qs[:5], prefix='my-review-'),
+        }
 
     def get_my_reviewed(self, request, qs):
-        # Replicating django_filters.views.FilterView
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-        kwargs = {
-            'data': self.request.GET or None,
-            'request': self.request,
-            'queryset': my_reviewed_qs,
+        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
+        qs = qs.reviewed_by(request.user).order_by('-submit_time')
+
+        filterset = SubmissionFilterAndSearch(data=request.GET or None, request=request, queryset=qs)
+
+        return {
+            'display_more': filterset.qs.count() > 5,
+            'filterset': filterset,
+            'table': SummarySubmissionsTable(qs[:5], prefix='my-reviewed-')
         }
-        filterset = SubmissionFilterAndSearch(**kwargs)
-        my_reviewed_qs = filterset.qs
-
-        my_reviewed_table = SummarySubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
-        display_more_reviewed = (my_reviewed_qs.count() > 5)
-
-        return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
 
 
 class ReviewerDashboardView(TemplateView):
