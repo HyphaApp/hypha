@@ -50,7 +50,7 @@
     </div>
 
     {% if rounds.closed or rounds.open %}
-        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title=rounds_title %}
+        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" %}
     {% endif %}
 
     {% if my_reviewed.table.data %}

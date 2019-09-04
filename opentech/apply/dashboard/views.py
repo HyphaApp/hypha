@@ -45,11 +45,7 @@ class AdminDashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        rounds_title = 'Your rounds and labs'
-
         extra_context = {
-            'rounds_title': rounds_title,
-
             'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
             'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, qs),
             'my_reviewed': self.get_my_reviewed(self.request, qs),
