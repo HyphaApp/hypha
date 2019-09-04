@@ -10,6 +10,7 @@ from .views import (
     SubmissionDeleteView,
     SubmissionDetailPDFView,
     SubmissionDetailSimplifiedView,
+    SubmissionDetailUnauthenticatedView,
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
@@ -53,6 +54,11 @@ submission_urls = ([
         path(
             'documents/<uuid:field_id>/<str:file_name>',
             SubmissionPrivateMediaView.as_view(), name='serve_private_media'
+        ),
+        path(
+            'unauthenticated/',
+            SubmissionDetailUnauthenticatedView.as_view(),
+            name='unauthenticated',
         ),
     ])),
     path('<int:submission_pk>/', include([

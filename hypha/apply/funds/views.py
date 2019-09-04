@@ -42,6 +42,7 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.models import get_compliance_sentinel_user
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
@@ -1147,3 +1148,20 @@ class SubmissionResultView(FilterView):
                 values.append(value)
 
         return {'total': sum(values), 'average': round(mean(values))}
+
+
+class SubmissionDetailUnauthenticatedView(DetailView):
+    model = ApplicationSubmission
+    template_name_suffix = '_simplified_detail'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+
+        messenger(
+            MESSAGES.UNAUTHENTICATED_SUBMISSION_VIEW_ACCESSED,
+            request=self.request,
+            user=get_compliance_sentinel_user(),
+            source=self.object,
+        )
+
+        return response
