@@ -48,16 +48,12 @@ class AdminDashboardView(TemplateView):
         base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
         base_query = base_query.by_lead(self.request.user)
         open_rounds = base_query.open()[:6]
-        open_query = '?round_state=open'
         closed_rounds = base_query.closed()[:6]
-        closed_query = '?round_state=closed'
         rounds_title = 'Your rounds and labs'
 
         extra_context = {
             'open_rounds': open_rounds,
-            'open_query': open_query,
             'closed_rounds': closed_rounds,
-            'closed_query': closed_query,
             'rounds_title': rounds_title,
 
             'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
