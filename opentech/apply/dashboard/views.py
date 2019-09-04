@@ -45,21 +45,16 @@ class AdminDashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
-        base_query = base_query.by_lead(self.request.user)
-        open_rounds = base_query.open()[:6]
-        closed_rounds = base_query.closed()[:6]
         rounds_title = 'Your rounds and labs'
 
         extra_context = {
-            'open_rounds': open_rounds,
-            'closed_rounds': closed_rounds,
             'rounds_title': rounds_title,
 
             'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
             'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, qs),
             'my_reviewed': self.get_my_reviewed(self.request, qs),
             'projects': self.get_my_projects(self.request.user),
+            'rounds': self.get_rounds(self.request.user)
         }
         current_context = super().get_context_data(**kwargs)
         return {**current_context, **extra_context}
@@ -101,6 +96,16 @@ class AdminDashboardView(TemplateView):
             'display_more': filterset.qs.count() > 5,
             'filterset': filterset,
             'table': SummarySubmissionsTable(qs[:5], prefix='my-reviewed-')
+        }
+
+    def get_rounds(self, user):
+        qs = (RoundsAndLabs.objects.with_progress()
+                                   .active()
+                                   .order_by('-end_date')
+                                   .by_lead(user))
+        return {
+            'closed': qs.closed()[:6],
+            'open': qs.open()[:6],
         }
 
 

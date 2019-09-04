@@ -49,8 +49,8 @@
         {% include "dashboard/includes/waiting-for-review.html" with in_review_count=awating_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
     </div>
 
-    {% if closed_rounds or open_rounds %}
-        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
+    {% if rounds.closed or rounds.open %}
+        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title=rounds_title %}
     {% endif %}
 
     {% if my_reviewed.table.data %}
