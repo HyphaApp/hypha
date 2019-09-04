@@ -43,12 +43,12 @@ class AdminDashboardView(TemplateView):
         return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
 
     def get_context_data(self, **kwargs):
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         extra_context = {
             'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
-            'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, qs),
-            'my_reviewed': self.get_my_reviewed(self.request, qs),
+            'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, submissions),
+            'my_reviewed': self.get_my_reviewed(self.request, submissions),
             'projects': self.get_my_projects(self.request.user),
             'rounds': self.get_rounds(self.request.user)
         }
