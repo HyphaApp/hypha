@@ -69,7 +69,7 @@
 
     {% if projects.table.data %}
     <div class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal heading--no-margin">Your projects</h4>
+        {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_action=projects.url use_search=True use_batch_actions=False heading="Your projects" %}
         {% render_table projects.table %}
     </div>
     {% endif %}

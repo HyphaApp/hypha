@@ -15,6 +15,7 @@ from opentech.apply.funds.tables import (
     SummarySubmissionsTableWithRole,
     review_filter_for_user
 )
+from opentech.apply.projects.filters import ProjectListFilter
 from opentech.apply.projects.models import (
     COMPLETE,
     DECLINED,
@@ -39,7 +40,7 @@ class AdminDashboardView(TemplateView):
             'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
             'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, submissions),
             'my_reviewed': self.get_my_reviewed(self.request, submissions),
-            'projects': self.get_my_projects(self.request.user),
+            'projects': self.get_my_projects(self.request),
             'rounds': self.get_rounds(self.request.user)
         }
         current_context = super().get_context_data(**kwargs)
@@ -53,11 +54,15 @@ class AdminDashboardView(TemplateView):
             'table': PaymentRequestsDashboardTable(payment_requests),
         }
 
-    def get_my_projects(self, user):
+    def get_my_projects(self, request):
         projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
 
+        filterset = ProjectListFilter(data=request.GET or None, request=request, queryset=projects)
+
         return {
+            'filterset': filterset,
             'table': ProjectsDashboardTable(projects),
+            'url': reverse('apply:projects:all'),
         }
 
     def get_my_awaiting_reviews(self, user, qs):
