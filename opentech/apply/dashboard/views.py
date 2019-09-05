@@ -1,8 +1,8 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
 from django_tables2.views import MultiTableMixin
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
@@ -31,16 +31,6 @@ from opentech.apply.utils.views import ViewDispatcher
 
 class AdminDashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
-
-    def get(self, request, *args, **kwargs):
-        # redirect to submissions list when we use the filter to search for something
-        if not request.GET:
-            return super().get(request, *args, **kwargs)
-
-        query_str = '?'
-        for key, value in request.GET.items():
-            query_str += key + '=' + value + '&'
-        return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
 
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
@@ -91,7 +81,8 @@ class AdminDashboardView(TemplateView):
         return {
             'display_more': filterset.qs.count() > 5,
             'filterset': filterset,
-            'table': SummarySubmissionsTable(qs[:5], prefix='my-reviewed-')
+            'table': SummarySubmissionsTable(qs[:5], prefix='my-reviewed-'),
+            'url': reverse('funds:submissions:list'),
         }
 
     def get_rounds(self, user):
