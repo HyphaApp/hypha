@@ -245,7 +245,7 @@ class RequestPaymentForm(forms.ModelForm):
 
 class SelectDocumentForm(forms.Form):
     category = forms.ModelChoiceField(queryset=DocumentCategory.objects.all())
-    files = forms.MultipleChoiceField()
+    file = forms.ChoiceField()
 
     name = 'select_document_form'
 
@@ -253,31 +253,33 @@ class SelectDocumentForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.project = project
+        self.files = existing_files
 
-        choices = []
-        if existing_files is not None:
-            choices = [(f.url, f.filename) for f in existing_files]
+        choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['files'].choices = choices
+        self.fields['file'].choices = choices
+
+    def clean_file(self):
+        file_url = self.cleaned_data['file']
+        for file in self.files:
+            if file.url == file_url:
+                return file
+        raise forms.ValidationError("File not found on submission")
 
     @transaction.atomic()
     def save(self, *args, **kwargs):
         category = self.cleaned_data['category']
-        urls = self.cleaned_data['files']
+        file = self.cleaned_data['file']
 
-        files = get_files(self.project)
-        files = (f for f in files if f.url in urls)
+        new_file = ContentFile(file.read())
+        new_file.name = file.filename
 
-        for f in files:
-            new_file = ContentFile(f.read())
-            new_file.name = f.filename
-
-            PacketFile.objects.create(
-                category=category,
-                project=self.project,
-                title=f.filename,
-                document=new_file,
-            )
+        PacketFile.objects.create(
+            category=category,
+            project=self.project,
+            title=new_file.name,
+            document=new_file,
+        )
 
 
 class SetPendingForm(forms.ModelForm):

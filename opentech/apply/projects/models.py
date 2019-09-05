@@ -3,12 +3,15 @@ import decimal
 import json
 import logging
 
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -95,6 +98,12 @@ class PacketFile(models.Model):
         """
         from .forms import RemoveDocumentForm
         return RemoveDocumentForm(instance=self)
+
+
+@receiver(post_delete, sender=PacketFile)
+def delete_packetfile_file(sender, instance, **kwargs):
+    # Remove the file and don't save the base model
+    instance.document.delete(False)
 
 
 class PaymentApproval(models.Model):

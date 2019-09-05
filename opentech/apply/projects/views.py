@@ -421,6 +421,7 @@ class SelectDocumentView(SubmissionFilesMixin, FormView):
         return redirect(self.project)
 
     def form_valid(self, form):
+        form.save()
         response = super().form_valid(form)
 
         messenger(
