@@ -45,7 +45,9 @@
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
-                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
+                    <use xlink:href="#tick"></use>
+                </svg>
                 <p class="docs-block__title">Supporting documents</p>
             </div>
             {% if editable %}
