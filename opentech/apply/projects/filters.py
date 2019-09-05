@@ -1,5 +1,6 @@
+import django_filters as filters
+from django import forms
 from django.contrib.auth import get_user_model
-from django_filters import FilterSet
 
 from opentech.apply.funds.tables import (
     Select2ModelMultipleChoiceFilter,
@@ -15,10 +16,11 @@ def get_project_leads(request):
     return User.objects.filter(lead_projects__isnull=False).distinct()
 
 
-class ProjectListFilter(FilterSet):
+class ProjectListFilter(filters.FilterSet):
     fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
     lead = Select2ModelMultipleChoiceFilter(label='Lead', queryset=get_project_leads)
     status = Select2MultipleChoiceFilter(label='Status', choices=PROJECT_STATUS_CHOICES)
+    query = filters.CharFilter(field_name='title', lookup_expr="icontains", widget=forms.HiddenInput)
 
     class Meta:
         fields = ['status', 'lead', 'fund']
