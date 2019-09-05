@@ -218,13 +218,13 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {source.screening_status}',
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
-        MESSAGES.CREATED_PROJECT: '{user} has created Project',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead} by {user}',
-        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval',
-        MESSAGES.APPROVE_PROJECT: '{user} has approved',
-        MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes to for acceptance: "{comment}"',
-        MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for {source.title}',
-        MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for {source.title}'
+        MESSAGES.CREATED_PROJECT: 'Created',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead}',
+        MESSAGES.SEND_FOR_APPROVAL: 'Requested approval',
+        MESSAGES.APPROVE_PROJECT: 'Approved',
+        MESSAGES.REQUEST_PROJECT_CHANGE: 'Requested changes for acceptance: "{comment}"',
+        MESSAGES.UPLOAD_CONTRACT: 'Uploaded a contract',
+        MESSAGES.APPROVE_CONTRACT: 'Approved contract'
     }
 
     def recipients(self, message_type, **kwargs):
