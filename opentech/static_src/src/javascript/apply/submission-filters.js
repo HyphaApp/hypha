@@ -10,10 +10,6 @@
     const filterOpenClass = 'filters-open';
     const filterActiveClass = 'is-active';
 
-    const $searchInput = $('.js-search-input');
-    const $queryInput = $('#id_query');
-    const $searchForm = $('.js-search-form');
-
     const $filterForm = $('.js-filter-form');
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,12 +26,6 @@
         $body.addClass(filterOpenClass);
         updateButtonText();
     }
-
-    $searchForm.submit((e) => {
-        e.preventDefault();
-        $queryInput.val($searchInput.val());
-        $filterForm.submit();
-    });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
     // so we have to listen for the event higher up
