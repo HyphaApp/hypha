@@ -19,6 +19,7 @@ class PaymentRequestsDashboardTable(tables.Table):
     class Meta:
         fields = ['project', 'requested_value', 'date_from', 'date_to', 'status']
         model = PaymentRequest
+        orderable = False
 
     def render_requested_value(self, value):
         return f'${value}'
@@ -38,7 +39,7 @@ class ProjectsDashboardTable(tables.Table):
     class Meta:
         fields = ['title', 'status', 'fund', 'end_date', 'fund_allocation']
         model = Project
-        # orderable = False
+        orderable = False
 
     def render_fund_allocation(self, value):
         return f'${value}'
