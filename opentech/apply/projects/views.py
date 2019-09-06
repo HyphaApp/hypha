@@ -265,6 +265,9 @@ class ChangePaymentRequestStatusView(UpdateView):
             related=self.object,
         )
 
+        if form.instance.is_approved:
+            form.instance.send_to_finance(self.request)
+
         return response
 
     def get_success_url(self):

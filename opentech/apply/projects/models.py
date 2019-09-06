@@ -142,6 +142,7 @@ class PaymentRequest(models.Model):
     date_to = models.DateTimeField()
     comment = models.TextField()
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
+    sent_to_finance_at = models.DateTimeField(null=True)
 
     def __str__(self):
         return f'Payment requested for {self.project}'
@@ -164,6 +165,19 @@ class PaymentRequest(models.Model):
     def lead(self):
         """Mirror Project.lead so PaymentRequest can be used with messaging framework."""
         return self.project.lead
+
+    def send_to_finance(self, request):
+        """Notify Finance about this PaymentRequest."""
+
+        messenger(
+            MESSAGES.SENT_TO_FINANCE,
+            request=request,
+            user=request.user,
+            source=self,
+        )
+
+        self.sent_to_finance_at = timezone.now()
+        self.save(update_fields=['sent_to_finance_at'])
 
     @property
     def title(self):
@@ -371,6 +385,7 @@ class Project(models.Model):
 @register_setting
 class ProjectSettings(BaseSetting):
     compliance_email = models.TextField("Compliance Email")
+    finance_email = models.TextField("Finance Email")
 
 
 class DocumentCategory(models.Model):

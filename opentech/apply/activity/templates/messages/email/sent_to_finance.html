@@ -1,0 +1,12 @@
+{% extends "messages/email/base.html" %}
+
+{% block salutation %}{% endblock %}
+
+{% block content %}
+A Payment Request is awaiting your review.
+
+Title: {{ source.project.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:payment-request-unauthenticated' pk=source.project.pk payment_request_id=source.pk %}
+
+Please contact {{ source.project.lead }} - {{ source.project.lead.email }} if you have any questions.
+{% endblock %}

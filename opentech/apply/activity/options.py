@@ -44,6 +44,7 @@ class MESSAGES(Enum):
     UNAUTHENTICATED_PROJECT_VIEW_ACCESSED = 'Project was Access via Unauthenticated View'
     UNAUTHENTICATED_SUBMISSION_VIEW_ACCESSED = 'Submission was Access via Unauthenticated View'
     UNAUTHENTICATED_PAYMENT_REQUEST_VIEW_ACCESSED = 'Payment Request was Access via Unauthenticated View'
+    SENT_TO_FINANCE = 'Project was sent to Finance'
 
     @classmethod
     def choices(cls):
