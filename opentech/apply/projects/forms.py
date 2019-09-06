@@ -102,7 +102,9 @@ class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
         status = cleaned_data['status']
         paid_value = cleaned_data.get('paid_value')
 
-        if paid_value and status != PAID:
+        value_was_changed = paid_value != self.instance.requested_value
+
+        if value_was_changed and status != PAID:
             self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
 
         return cleaned_data
