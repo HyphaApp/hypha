@@ -33,26 +33,37 @@ from .factories import (
 class TestCreateApprovalView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
+    user_factory = ApproverFactory
 
     def get_kwargs(self, instance):
         return {'pk': instance.id}
 
     def test_creating_an_approval_happy_path(self):
-        project = ProjectFactory()
+        project = ProjectFactory(in_approval=True)
         self.assertEqual(project.approvals.count(), 0)
 
         response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': self.user.id})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
-        approval = project.approvals.first()
-
         self.assertEqual(project.approvals.count(), 1)
         self.assertFalse(project.is_locked)
         self.assertEqual(project.status, 'contracting')
 
+        approval = project.approvals.first()
         self.assertEqual(approval.project_id, project.pk)
+
+    def test_creating_an_approval_other_approver(self):
+        project = ProjectFactory(in_approval=True)
+        self.assertEqual(project.approvals.count(), 0)
+
+        other = self.user_factory()
+        response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': other.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.approvals.count(), 0)
+        self.assertTrue(project.is_locked)
 
 
 class BaseProjectDetailTestCase(BaseViewTestCase):

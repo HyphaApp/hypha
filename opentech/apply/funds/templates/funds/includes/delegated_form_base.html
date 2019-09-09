@@ -9,7 +9,10 @@
 
     {{ form.media }}
 
-    {% for field in form %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
         {% if field.field %}
             {% include "forms/includes/field.html" %}
         {% else %}

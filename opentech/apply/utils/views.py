@@ -60,12 +60,22 @@ class DelegatableBase(ContextMixin):
     """
     form_prefix = 'form-submitted-'
 
+    def __init__(self, *args, **kwargs):
+        self._form_views = {
+            self.form_prefix + form_view.context_name: form_view
+            for form_view in self.form_views
+        }
+
     def get_form_kwargs(self):
         return {}
 
     def get_context_data(self, **kwargs):
-        form_kwargs = self.get_form_kwargs()
-        forms = dict(form_view.contribute_form(**form_kwargs) for form_view in self.form_views)
+        forms = {}
+        for form_view in self._form_views.values():
+            view = form_view()
+            view.setup(self.request, self.args, self.kwargs)
+            context_key, form = view.contribute_form(self)
+            forms[context_key] = form
 
         return super().get_context_data(
             form_prefix=self.form_prefix,
@@ -78,9 +88,9 @@ class DelegatableBase(ContextMixin):
         kwargs['context'] = self.get_context_data()
         kwargs['template_names'] = self.get_template_names()
 
-        for form_view in self.form_views:
-            if self.form_prefix + form_view.context_name in request.POST:
-                return form_view.as_view()(request, *args, **kwargs)
+        for form_key, form_view in self._form_views.items():
+            if form_key in request.POST:
+                return form_view.as_view()(request, *args, parent=self, **kwargs)
 
         # Fall back to get if not form exists as submitted
         return self.get(request, *args, **kwargs)
@@ -115,13 +125,27 @@ class DelegateableListView(DelegatableBase):
 class DelegatedViewMixin(View):
     """For use on create views accepting forms from another view"""
 
+    # TODO: REMOVE IN DJANGO 2.2
+    def setup(self, request, *args, **kwargs):
+        """Initialize attributes shared by all view methods."""
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+
     def get_template_names(self):
         return self.kwargs['template_names']
 
+    def get_parent_kwargs(self):
+        try:
+            return self.parent.get_form_kwargs()
+        except AttributeError:
+            return self.kwargs['parent'].get_form_kwargs()
+
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['user'] = self.request.user
+        form_kwargs.update(**self.get_parent_kwargs())
+        return form_kwargs
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
@@ -139,11 +163,10 @@ class DelegatedViewMixin(View):
     def is_model_form(cls):
         return issubclass(cls.form_class, ModelForm)
 
-    @classmethod
-    def contribute_form(cls, **kwargs):
-        form = cls.form_class(**kwargs)
-        form.name = cls.context_name
-        return cls.context_name, form
+    def contribute_form(self, parent):
+        self.parent = parent
+        form = self.get_form()
+        return self.context_name, form
 
     def get_success_url(self):
         query = self.request.GET.urlencode()

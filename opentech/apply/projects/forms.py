@@ -89,8 +89,6 @@ class CreateProjectForm(forms.Form):
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(project__isnull=True),
         widget=forms.HiddenInput(),
-        label='',
-        required=False,
     )
 
     def __init__(self, instance=None, user=None, *args, **kwargs):
@@ -108,8 +106,6 @@ class CreateApprovalForm(forms.ModelForm):
     by = forms.ModelChoiceField(
         queryset=User.objects.approvers(),
         widget=forms.HiddenInput(),
-        label='',
-        required=False,
     )
 
     class Meta:
@@ -117,9 +113,14 @@ class CreateApprovalForm(forms.ModelForm):
         fields = ('by',)
 
     def __init__(self, user=None, *args, **kwargs):
-        initial = kwargs.pop('initial', {})
-        initial.update(by=user)
-        super().__init__(*args, initial=initial, **kwargs)
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_by(self):
+        by = self.cleaned_data['by']
+        if by != self.user:
+            raise forms.ValidationError('Cannot approve for a different user')
+        return by
 
 
 class EditPaymentRequestForm(forms.ModelForm):
@@ -307,15 +308,14 @@ class SetPendingForm(forms.ModelForm):
 
 class UploadContractForm(forms.ModelForm):
     class Meta:
-        fields = ['file', 'is_signed']
+        fields = ['file']
         model = Contract
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        if not user.is_staff:
-            self.fields['is_signed'].widget = forms.HiddenInput()
-            self.fields['is_signed'].default = True
+class StaffUploadContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['file', 'is_signed']
+        model = Contract
 
 
 class UploadDocumentForm(forms.ModelForm):

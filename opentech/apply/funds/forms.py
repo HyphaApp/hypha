@@ -105,10 +105,6 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
 
     def save(self):
         new_lead = self.cleaned_data['lead']
-        import logging
-        logger = logging.getLogger('opentech')
-        logger.debug(new_lead)
-        logger.debug(new_lead.id)
         submissions = self.cleaned_data['submissions']
 
         for submission in submissions:

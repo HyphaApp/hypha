@@ -43,6 +43,7 @@ from .forms import (
     RequestPaymentForm,
     SelectDocumentForm,
     SetPendingForm,
+    StaffUploadContractForm,
     UpdateProjectLeadForm,
     UploadContractForm,
     UploadDocumentForm
@@ -254,10 +255,17 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
     form_class = CreateApprovalForm
     model = Approval
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+        return kwargs
+
     @transaction.atomic()
     def form_valid(self, form):
         project = self.kwargs['object']
+
         form.instance.project = project
+
         response = super().form_valid(form)
 
         messenger(
@@ -489,7 +497,6 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 @method_decorator(login_required, name='dispatch')
 class UploadContractView(DelegatedViewMixin, CreateView):
     context_name = 'contract_form'
-    form_class = UploadContractForm
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
@@ -502,8 +509,20 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         return response
 
+    def get_form_class(self):
+        if self.request.user.is_apply_staff:
+            return StaffUploadContractForm
+        return UploadContractForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+        kwargs.pop('user')
+        return kwargs
+
     def form_valid(self, form):
         project = self.kwargs['object']
+
         form.instance.project = project
 
         if self.request.user == project.user:
