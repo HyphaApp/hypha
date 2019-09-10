@@ -5,6 +5,7 @@
 *.swp
 /venv/
 /static/
+/staticfiles/
 /media/
 /tmp/
 /.vagrant/
