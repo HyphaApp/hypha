@@ -9,7 +9,8 @@ from ..models import (
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
-    Project
+    Project,
+    PaymentRequest,
 )
 from .factories import (
     DocumentCategoryFactory,
@@ -131,3 +132,16 @@ class TestProjectModel(TestCase):
         user = ApplicantFactory()
 
         self.assertFalse(payment_request.user_can_delete(user))
+
+
+class TestPaymentRequestsQueryset(TestCase):
+    def test_get_totals(self):
+        PaymentRequestFactory(value=20)
+        PaymentRequestFactory(value=10, status=PAID)
+
+        self.assertEqual(PaymentRequest.objects.paid_value(), 10)
+        self.assertEqual(PaymentRequest.objects.unpaid_value(), 20)
+
+    def test_get_totals_no_value(self):
+        self.assertEqual(PaymentRequest.objects.paid_value(), 0)
+        self.assertEqual(PaymentRequest.objects.unpaid_value(), 0)

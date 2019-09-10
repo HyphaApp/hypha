@@ -18,8 +18,8 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
-from ..models import CONTRACTING, IN_PROGRESS, PAID
-from ..views import ContractsMixin, PaymentsMixin, ProjectDetailSimplifiedView
+from ..models import CONTRACTING, IN_PROGRESS
+from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
@@ -711,31 +711,6 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
         self.assertEqual(project.payment_requests.first().by, self.user)
 
 
-class TestPaymentsMixin(TestCase):
-    def test_get_totals(self):
-        project = ProjectFactory(value=Decimal(100))
-        user = UserFactory()
-
-        PaymentRequestFactory(project=project, by=user, value=20)
-        PaymentRequestFactory(project=project, by=user, value=10, status=PAID)
-
-        values = PaymentsMixin().get_totals(project)
-
-        self.assertEqual(values['awaiting_absolute'], 20)
-        self.assertEqual(values['awaiting_percentage'], 20)
-        self.assertEqual(values['paid_absolute'], 10)
-        self.assertEqual(values['paid_percentage'], 10)
-
-    def test_get_totals_no_value(self):
-        project = ProjectFactory(value=Decimal(0))
-        values = PaymentsMixin().get_totals(project)
-
-        self.assertEqual(values['awaiting_absolute'], 0)
-        self.assertEqual(values['awaiting_percentage'], 0)
-        self.assertEqual(values['paid_absolute'], 0)
-        self.assertEqual(values['paid_percentage'], 0)
-
-
 class TestProjectDetailSimplifiedView(TestCase):
     def test_staff_only(self):
         factory = RequestFactory()
@@ -753,12 +728,12 @@ class TestProjectDetailSimplifiedView(TestCase):
 
 
 class TestApplicantEditPaymentRequestView(BaseViewTestCase):
-    base_view_name = 'edit-payment-request'
-    url_name = 'funds:projects:{}'
+    base_view_name = 'edit'
+    url_name = 'funds:projects:payments:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'payment_request_id': instance.pk}
+        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
 
     def test_editing_payment_request_fires_messaging(self):
         project = ProjectFactory(user=self.user)
@@ -771,7 +746,6 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
         invoice.name = 'invoice.pdf'
 
         response = self.post_page(payment_request, {
-            'form-submitted-edit_request_payment_form': '',
             'value': value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
@@ -791,12 +765,12 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
 
 
 class TestStaffEditPaymentRequestView(BaseViewTestCase):
-    base_view_name = 'edit-payment-request'
-    url_name = 'funds:projects:{}'
+    base_view_name = 'edit'
+    url_name = 'funds:projects:payments:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'payment_request_id': instance.pk}
+        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
 
     def test_editing_payment_request_fires_messaging(self):
         project = ProjectFactory()
@@ -809,7 +783,6 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
         invoice.name = 'invoice.pdf'
 
         response = self.post_page(payment_request, {
-            'form-submitted-request_payment_form': '',
             'value': value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',

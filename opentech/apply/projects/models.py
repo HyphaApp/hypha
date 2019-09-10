@@ -10,6 +10,8 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Sum, Value as V
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
@@ -139,7 +141,7 @@ REQUEST_STATUS_CHOICES = [
 ]
 
 
-class PaymentRequestManager(models.Manager):
+class PaymentRequestQueryset(models.QuerySet):
     def in_progress(self):
         return self.exclude(status__in=[DECLINED, PAID])
 
@@ -149,11 +151,14 @@ class PaymentRequestManager(models.Manager):
     def not_rejected(self):
         return self.exclude(status=DECLINED)
 
+    def total_value(self):
+        return self.aggregate(total=Coalesce(Sum('value'), V(0)))['total']
+
     def paid_value(self):
-        return self.filter(status=PAID).aggregate(models.Sum('value'))['value__sum']
+        return self.filter(status=PAID).total_value()
 
     def unpaid_value(self):
-        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).aggregate(models.Sum('value'))['value__sum']
+        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value()
 
 
 class PaymentRequest(models.Model):
@@ -173,7 +178,7 @@ class PaymentRequest(models.Model):
     comment = models.TextField()
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
-    objects = PaymentRequestManager()
+    objects = PaymentRequestQueryset.as_manager()
 
     def __str__(self):
         return f'Payment requested for {self.project}'
