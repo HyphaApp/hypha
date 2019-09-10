@@ -582,9 +582,6 @@ class AdminProjectDetailView(
         for payment_request in self.object.payment_requests.in_progress().select_related('project'):
             yield ChangePaymentRequestStatusForm(instance=payment_request)
 
-    def get_payment_requests_queryset(self):
-        return self.object.payment_requests.filter(status=SUBMITTED)
-
 
 class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
     form_views = [
@@ -598,13 +595,9 @@ class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, Contrac
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
-        # This view is only for applicants.
         if project.user != request.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
-
-    def get_payment_requests_queryset(self):
-        return self.object.payment_requests.filter(status__in=[SUBMITTED, CHANGES_REQUESTED])
 
 
 @method_decorator(login_required, name='dispatch')
