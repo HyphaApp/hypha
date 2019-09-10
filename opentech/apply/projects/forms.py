@@ -12,7 +12,6 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .files import get_files
 from .models import (
     CHANGES_REQUESTED,
     COMMITTED,

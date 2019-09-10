@@ -5,8 +5,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
 from opentech.apply.users.tests.factories import (
-    ApplicantFactory,
-    StaffFactory,
     UserFactory,
 )
 
@@ -27,7 +25,6 @@ from ..models import (
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
-    Contract,
 )
 from .factories import (
     DocumentCategoryFactory,
