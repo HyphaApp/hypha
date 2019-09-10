@@ -18,7 +18,7 @@ from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.payment_request_tools import (
     can_change_status,
     can_delete,
-    user_can_edit
+    can_edit
 )
 from .factories import ContractFactory, PaymentRequestFactory, ProjectFactory
 
@@ -217,41 +217,41 @@ class TestPaymentRequestTools(TestCase):
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertTrue(user_can_edit(payment_request, applicant))
-        self.assertTrue(user_can_edit(payment_request, staff))
+        self.assertTrue(can_edit(payment_request, applicant))
+        self.assertTrue(can_edit(payment_request, staff))
 
     def test_applicant_can_edit_in_changes_requested(self):
         payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
         applicant = ApplicantFactory()
 
-        self.assertTrue(user_can_edit(payment_request, applicant))
+        self.assertTrue(can_edit(payment_request, applicant))
 
     def test_staff_cant_edit_in_changes_requested(self):
         payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertFalse(user_can_edit(payment_request, staff))
+        self.assertFalse(can_edit(payment_request, staff))
 
     def test_applicant_and_staff_cant_edit_in_under_review(self):
         payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(user_can_edit(payment_request, applicant))
-        self.assertFalse(user_can_edit(payment_request, staff))
+        self.assertFalse(can_edit(payment_request, applicant))
+        self.assertFalse(can_edit(payment_request, staff))
 
     def test_applicant_and_staff_cant_edit_in_paid(self):
         payment_request = PaymentRequestFactory(status=PAID)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(user_can_edit(payment_request, applicant))
-        self.assertFalse(user_can_edit(payment_request, staff))
+        self.assertFalse(can_edit(payment_request, applicant))
+        self.assertFalse(can_edit(payment_request, staff))
 
     def test_applicant_and_staff_cant_edit_in_decline(self):
         payment_request = PaymentRequestFactory(status=DECLINED)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(user_can_edit(payment_request, applicant))
-        self.assertFalse(user_can_edit(payment_request, staff))
+        self.assertFalse(can_edit(payment_request, applicant))
+        self.assertFalse(can_edit(payment_request, staff))

@@ -18,7 +18,7 @@ User = get_user_model()
 
 
 def link_to(target, request):
-    if target:
+    if target and hasattr(target, 'get_absolute_url'):
         return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
@@ -344,9 +344,10 @@ class ActivityAdapter(AdapterBase):
             except KeyError:
                 pass
 
-        # TODO resolve how related objects work with submission/project
         has_correct_fields = all(hasattr(related, attr) for attr in ['get_absolute_url'])
-        if has_correct_fields and isinstance(related, models.Model):
+        isnt_source = source != related
+        is_model = isinstance(related, models.Model)
+        if has_correct_fields and isnt_source and is_model:
             related_object = related
         else:
             related_object = None
