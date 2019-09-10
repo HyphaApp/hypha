@@ -133,6 +133,15 @@ class DelegatedViewMixin(View):
         self.args = args
         self.kwargs = kwargs
 
+    def get_object(self):
+        # We want to make sure we share the same instance between the form
+        # and the view where appropriate
+        parent_object = self.get_parent_kwargs()['instance']
+        if isinstance(parent_object, self.model):
+            return parent_object
+
+        return super().get_object()
+
     def get_template_names(self):
         return self.kwargs['template_names']
 
