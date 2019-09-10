@@ -255,13 +255,15 @@ class DeletePaymentRequestView(DeleteView):
         return self.project.get_absolute_url()
 
 
-class EditPaymentRequestView(UpdateView):
-    form_class = EditPaymentRequestForm
+@method_decorator(login_required, name='dispatch')
+class PaymentRequestAccessMixin:
     model = PaymentRequest
-    pk_url_kwarg = 'payment_request_id'
+    pk_url_kwarg = 'pr_pk'
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        if self.get_object().project != self.project:
+            raise Http404
 
         is_admin = request.user.is_apply_staff
         is_owner = request.user == self.project.user
@@ -270,9 +272,13 @@ class EditPaymentRequestView(UpdateView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def form_invalid(self, form):
-        messages.error(self.request, form.errors)
-        return redirect(self.project)
+
+class PaymentRequestView(PaymentRequestAccessMixin, DetailView):
+    pass
+
+
+class EditPaymentRequestView(PaymentRequestAccessMixin, UpdateView):
+    form_class = EditPaymentRequestForm
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -289,6 +295,39 @@ class EditPaymentRequestView(UpdateView):
 
     def get_success_url(self):
         return self.project.get_absolute_url()
+
+
+@method_decorator(login_required, name='dispatch')
+class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        payment_pk = self.kwargs['pr_pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        self.payment_request = get_object_or_404(PaymentRequest, pk=payment_pk)
+
+        if self.payment_request.project != self.project:
+            raise Http404
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        file_pk = kwargs.get('file_pk')
+        if not file_pk:
+            return self.payment_request.invoice
+
+        receipt = get_object_or_404(self.payment_request.receipts, pk=file_pk)
+        return receipt.file
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False
 
 
 @method_decorator(staff_required, name='dispatch')

@@ -41,10 +41,8 @@
                     {% user_can_edit payment_request user as user_can_edit_request %}
                     {% if user_can_edit_request %}
                     <a
-                        data-fancybox
-                        data-src="#edit-payment-request-{{ payment_request.pk }}"
                         class="payment-block__status-link"
-                        href="#">
+                        href="{% url "apply:projects:payments:edit" pk=object.pk pr_pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}
@@ -66,7 +64,6 @@
         </tbody>
     </table>
 
-    {% if payments.rejected %}
     {% if object.payment_requests.rejected %}
         <p class="payment-block__rejected">
             <a class="payment-block__rejected-link js-payment-block-rejected-link" href="#">Show rejected</a>
@@ -101,16 +98,6 @@
         <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
         {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
-    </div>
-</div>
-{% endfor %}
-
-{% for form in edit_payment_request_forms %}
-<div class="modal" id="edit-payment-request-{{ form.instance.pk }}">
-    <h4 class="modal__header-bar">Edit request</h4>
-    <div class="wrapper--outer-space-medium">
-        {% url 'apply:projects:edit-payment-request' pk=object.pk payment_request_id=form.instance.pk as edit_payment_request_action %}
-        {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=edit_payment_request_action %}
     </div>
 </div>
 {% endfor %}
