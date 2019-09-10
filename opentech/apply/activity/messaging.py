@@ -396,7 +396,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
         MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
         MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
-        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> <{link}|{source.title}> to {payment_request.status}.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
     }
