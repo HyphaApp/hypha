@@ -97,66 +97,6 @@ class ContractsMixin:
         return latest
 
 
-class PaymentsMixin:
-    def get_context_data(self, **kwargs):
-        project = self.get_object()
-
-        payments = {
-            'availabe_statuses': REQUEST_STATUS_CHOICES,
-            'not_rejected': project.payment_requests.exclude(status=DECLINED),
-            'rejected': project.payment_requests.filter(status=DECLINED),
-            'totals': self.get_totals(project),
-        }
-
-        context = super().get_context_data(**kwargs)
-        context['payments'] = payments
-        context['edit_payment_request_forms'] = list(self.get_edit_payment_request_forms())
-        return context
-
-    def get_edit_payment_request_forms(self):
-        """
-        Get an iterable of EditPaymentRequestForms
-
-        We want to instantiate each EditPaymentRequestForm with a given
-        PaymentRequest.  Each subclass of this mixin defines
-        .get_payment_requests_queryset() so we can change the available forms
-        based on the type of user viewing (applicant or staff).
-        """
-        payment_requests = self.get_payment_requests_queryset().select_related('project')
-        for payment_request in payment_requests:
-            yield EditPaymentRequestForm(instance=payment_request)
-
-    def get_totals(self, project):
-        def percentage(total, value):
-            if not total:
-                return decimal.Decimal(0)
-
-            unrounded_total = (value / total) * 100
-
-            # round using Decimal since we're dealing with currency
-            rounded_total = unrounded_total.quantize(
-                decimal.Decimal('0.0'),
-                rounding=decimal.ROUND_DOWN,
-            )
-
-            return rounded_total
-
-        unpaid_requests = project.payment_requests.filter(Q(status=SUBMITTED) | Q(status=UNDER_REVIEW))
-        awaiting_absolute = sum(unpaid_requests.values_list('value', flat=True))
-        awaiting_percentage = percentage(project.value, awaiting_absolute)
-
-        paid_requests = project.payment_requests.filter(status=PAID)
-        paid_absolute = sum(paid_requests.values_list('value', flat=True))
-        paid_percentage = percentage(project.value, paid_absolute)
-
-        return {
-            'awaiting_absolute': awaiting_absolute,
-            'awaiting_percentage': awaiting_percentage,
-            'paid_absolute': paid_absolute,
-            'paid_percentage': paid_percentage,
-        }
-
-
 class SubmissionFilesMixin:
     """
     Mixin to provide an instantiated SelectDocumentForm
@@ -565,7 +505,6 @@ class AdminProjectDetailView(
     ActivityContextMixin,
     DelegateableView,
     ContractsMixin,
-    PaymentsMixin,
     SubmissionFilesMixin,
     DetailView,
 ):
@@ -608,7 +547,7 @@ class AdminProjectDetailView(
         return self.object.payment_requests.filter(status=SUBMITTED)
 
 
-class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, PaymentsMixin, DetailView):
+class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
     form_views = [
         CommentFormView,
         RequestPaymentView,

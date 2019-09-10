@@ -1,4 +1,4 @@
-{% load humanize %}
+{% load humanize payment_request_tools %}
 <ul class="funding-block">
     <li class="funding-block__item">
         <p class="funding-block__title">Fund total</p>
@@ -6,12 +6,12 @@
     </li>
     <li class="funding-block__item">
         <p class="funding-block__title">Total paid</p>
-        <p class="funding-block__standout">${{ payments.totals.paid_absolute|default:0|intcomma }}</p>
-        <p class="funding-block__meta">({{ payments.totals.paid_percentage|default:0 }}%)</p>
+        <p class="funding-block__standout">${{ object.paid_value|intcomma }}</p>
+        <p class="funding-block__meta">({% percentage object.paid_value object.value %}%)</p>
     </li>
     <li class="funding-block__item">
         <p class="funding-block__title">Awaiting payment</p>
-        <p class="funding-block__standout">${{ payments.totals.awaiting_absolute|default:0|intcomma}}</p>
-        <p class="funding-block__meta">({{ payments.totals.awaiting_percentage|default:0 }}%)</p>
+        <p class="funding-block__standout">${{ object.unpaid_value|intcomma}}</p>
+        <p class="funding-block__meta">({% percentage object.unpaid_value object.value %}%)</p>
     </li>
 </ul>

@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for payment_request in payments.not_rejected %}
+            {% for payment_request in object.payment_requests.not_rejected %}
             <tr>
                 <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value|intcomma }}</td>
                 <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
@@ -58,11 +58,16 @@
                     {% endif %}
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                No active Payment Requests.
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 
     {% if payments.rejected %}
+    {% if object.payment_requests.rejected %}
         <p class="payment-block__rejected">
             <a class="payment-block__rejected-link js-payment-block-rejected-link" href="#">Show rejected</a>
         </p>
@@ -76,7 +81,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for payment_request in payments.rejected %}
+                {% for payment_request in object.payment_requests.rejected %}
                 <tr>
                     <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
                     <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>

@@ -141,7 +141,19 @@ REQUEST_STATUS_CHOICES = [
 
 class PaymentRequestManager(models.Manager):
     def in_progress(self):
+        return self.exclude(status__in=[DECLINED, PAID])
+
+    def rejected(self):
+        return self.filter(status=DECLINED)
+
+    def not_rejected(self):
         return self.exclude(status=DECLINED)
+
+    def paid_value(self):
+        return self.filter(status=PAID).aggregate(models.Sum('value'))['value__sum']
+
+    def unpaid_value(self):
+        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).aggregate(models.Sum('value'))['value__sum']
 
 
 class PaymentRequest(models.Model):
@@ -269,6 +281,12 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             contact_address=submission.form_data.get('address', ''),
             value=submission.form_data.get('value', 0),
         )
+
+    def paid_value(self):
+        return self.payment_requests.paid_value()
+
+    def unpaid_value(self):
+        return self.payment_requests.unpaid_value()
 
     def clean(self):
         if self.proposed_start is None:
