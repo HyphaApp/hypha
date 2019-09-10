@@ -601,7 +601,7 @@ class AdminProjectDetailView(
         PaymentRequest object so we need to initialise those forms outside of
         the template.
         """
-        for payment_request in self.object.payment_requests.exclude(status=DECLINED).select_related('project'):
+        for payment_request in self.object.payment_requests.in_progress().select_related('project'):
             yield ChangePaymentRequestStatusForm(instance=payment_request)
 
     def get_payment_requests_queryset(self):

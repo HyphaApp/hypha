@@ -69,15 +69,13 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
 
-        self.instance = instance
-
         status_field = self.fields['status']
 
-        if instance.status == SUBMITTED:
+        if self.instance.status == SUBMITTED:
             wanted = [CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]
-        elif instance.status == CHANGES_REQUESTED:
+        elif self.instance.status == CHANGES_REQUESTED:
             wanted = [DECLINED]
-        elif instance.status == UNDER_REVIEW:
+        elif self.instance.status == UNDER_REVIEW:
             wanted = [PAID]
         else:
             wanted = []

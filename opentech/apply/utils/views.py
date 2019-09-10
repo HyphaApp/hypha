@@ -7,6 +7,7 @@ from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
+from django.shortcuts import redirect
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
@@ -93,7 +94,7 @@ class DelegatableBase(ContextMixin):
                 return form_view.as_view()(request, *args, parent=self, **kwargs)
 
         # Fall back to get if not form exists as submitted
-        return self.get(request, *args, **kwargs)
+        return redirect(request.path)
 
 
 class DelegateableView(DelegatableBase):
@@ -135,11 +136,8 @@ class DelegatedViewMixin(View):
     def get_template_names(self):
         return self.kwargs['template_names']
 
-    def get_parent_kwargs(self):
-        try:
-            return self.parent.get_form_kwargs()
-        except AttributeError:
-            return self.kwargs['parent'].get_form_kwargs()
+    def get_form_name(self):
+        return self.context_name
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -147,9 +145,18 @@ class DelegatedViewMixin(View):
         form_kwargs.update(**self.get_parent_kwargs())
         return form_kwargs
 
+    def get_parent_kwargs(self):
+        try:
+            return self.parent.get_form_kwargs()
+        except AttributeError:
+            return self.kwargs['parent'].get_form_kwargs()
+
+    def get_parent_object(self):
+        return self.get_parent_kwargs()['instance']
+
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
-        form.name = self.context_name
+        form.name = self.get_form_name()
         return form
 
     def get_context_data(self, **kwargs):

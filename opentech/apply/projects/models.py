@@ -139,6 +139,11 @@ REQUEST_STATUS_CHOICES = [
 ]
 
 
+class PaymentRequestManager(models.Manager):
+    def in_progress(self):
+        return self.exclude(status=DECLINED)
+
+
 class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
@@ -155,6 +160,8 @@ class PaymentRequest(models.Model):
     date_to = models.DateTimeField()
     comment = models.TextField()
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
+
+    objects = PaymentRequestManager()
 
     def __str__(self):
         return f'Payment requested for {self.project}'
