@@ -16,7 +16,7 @@
             <tr>
                 <th class="payment-block__table-amount">Amount</th>
                 <th class="payment-block__table-status">Status</th>
-                <th class="payment-block__table-docs">Documents</th>
+                <th class="payment-block__table-view"></th>
                 <th class="payment-block__table-update"></th>
             </tr>
         </thead>
@@ -25,7 +25,7 @@
             <tr>
                 <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value|intcomma }}</td>
                 <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
+                <td><a href="{{ payment_request.get_absolute_url }}">View</a></td>
                 <td>
                     {% can_change_status payment_request user as user_can_change_status %}
                     {% if user_can_change_status %}
@@ -74,7 +74,7 @@
                 <tr>
                     <th class="payment-block__table-amount">Amount</th>
                     <th class="payment-block__table-status">Status</th>
-                    <th class="payment-block__table-docs">Documents</th>
+                    <th class="payment-block__table-view"></th>
                 </tr>
             </thead>
             <tbody>
@@ -82,7 +82,7 @@
                 <tr>
                     <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
                     <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                    <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
+                    <td><a href="{{ payment_request.get_absolute_url }}">View</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -187,6 +187,9 @@ class PaymentRequest(models.Model):
 
         return True
 
+    def get_absolute_url(self):
+        return reverse('apply:projects:payments:detail', args=[self.project.pk, self.pk])
+
 
 COMMITTED = 'committed'
 CONTRACTING = 'contracting'
