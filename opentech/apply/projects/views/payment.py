@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -19,6 +18,7 @@ from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
     DelegatedViewMixin,
+    ViewDispatcher,
 )
 
 from ..forms import (
@@ -51,20 +51,14 @@ class PaymentRequestAccessMixin:
 
 
 @method_decorator(staff_required, name='dispatch')
-class ChangePaymentRequestStatusView(DelegatedViewMixin, UpdateView):
+class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMixin, UpdateView):
     form_class = ChangePaymentRequestStatusForm
-    model = PaymentRequest
-    pk_url_kwarg = 'payment_request_id'
+    context_name = 'change_payment_status'
 
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
-        return redirect(self.project)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('user')
+        return kwargs
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -78,9 +72,6 @@ class ChangePaymentRequestStatusView(DelegatedViewMixin, UpdateView):
         )
 
         return response
-
-    def get_success_url(self):
-        return self.project.get_absolute_url()
 
 
 class DeletePaymentRequestView(DeleteView):
@@ -114,14 +105,30 @@ class DeletePaymentRequestView(DeleteView):
         return self.project.get_absolute_url()
 
 
-class PaymentRequestView(PaymentRequestAccessMixin, DelegateableView, DetailView):
+class PaymentRequestAdminView(PaymentRequestAccessMixin, DelegateableView, DetailView):
     form_views = [
         ChangePaymentRequestStatusView
     ]
+    template_name_suffix = '_admin_detail'
+
+
+class PaymentRequestApplicantView(PaymentRequestAccessMixin, DelegateableView, DetailView):
+    pass
+
+
+class PaymentRequestView(ViewDispatcher):
+    admin_view = PaymentRequestAdminView
+    applicant_view = PaymentRequestApplicantView
 
 
 class EditPaymentRequestView(PaymentRequestAccessMixin, UpdateView):
     form_class = EditPaymentRequestForm
+
+    def dispatch(self, request, *args, **kwargs):
+        payment_request = self.get_object()
+        if not payment_request.can_user_edit(request.user):
+            return redirect(payment_request)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -186,7 +193,7 @@ class RequestPaymentView(DelegatedViewMixin, CreateView):
         response = super().form_valid(form)
 
         messenger(
-            MESSAGES.APPROVE_PROJECT,
+            MESSAGES.REQUEST_PAYMENT,
             request=self.request,
             user=self.request.user,
             source=project,

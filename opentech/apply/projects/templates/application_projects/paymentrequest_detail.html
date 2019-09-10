@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load static humanize %}
+{% load humanize payment_request_tools %}
 
 {% block title %}Payment Request: {{ object.project.title }}{% endblock %}
 {% block content %}
@@ -13,7 +13,7 @@
     </div>
 </div>
 
-<div class="wrapper wrapper--large">
+<div class="wrapper wrapper--sidebar">
     <div class="wrapper--sidebar--inner">
         <h5>Status: {{ object.get_status_display }}</h5>
         <p>Name of Vendor: {{ object.project.contact_legal_name }}</p>
@@ -38,6 +38,25 @@
             <a href="{% url "apply:projects:payments:receipt" pk=object.project.pk pr_pk=object.pk file_pk=reciept.pk %}">Download</a>
         {% endfor %}
     </div>
-
+    <aside class="sidebar">
+        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+            {% block actions %}
+                {% can_edit object user as user_can_edit_request %}
+                <a
+                    {% if not user_can_edit_request %}
+                        data-tooltip="Only editable when 'Submitted' or you have been requested to make changes"
+                    {% endif %}
+                    class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
+                    href={% if user_can_edit_request %}
+                        "{% url "apply:projects:payments:edit" pk=object.project.pk pr_pk=object.pk %}"
+                    {% else %}
+                        "#"
+                    {% endif %}
+                >
+                    Edit
+                </a>
+            {% endblock %}
+        </div>
+    </aside>
 </div>
 {% endblock %}

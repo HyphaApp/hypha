@@ -224,7 +224,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPROVE_PROJECT: 'Approved',
         MESSAGES.REQUEST_PROJECT_CHANGE: 'Requested changes for acceptance: "{comment}"',
         MESSAGES.UPLOAD_CONTRACT: 'Uploaded a contract',
-        MESSAGES.APPROVE_CONTRACT: 'Approved contract'
+        MESSAGES.APPROVE_CONTRACT: 'Approved contract',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
+        MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -343,7 +345,7 @@ class ActivityAdapter(AdapterBase):
                 pass
 
         # TODO resolve how related objects work with submission/project
-        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
+        has_correct_fields = all(hasattr(related, attr) for attr in ['get_absolute_url'])
         if has_correct_fields and isinstance(related, models.Model):
             related_object = related
         else:
@@ -394,7 +396,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
         MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
         MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
-        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has updated status for payment request <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> <{link}|{source.title}> to {payment_request.status}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
     }
@@ -414,13 +416,16 @@ class SlackAdapter(AdapterBase):
         source = kwargs['source']
         sources = kwargs['sources']
         request = kwargs['request']
+        related = kwargs['related']
         link = link_to(source, request)
+        link_related = link_to(related, request)
         links = {
             source.id: link_to(source, request)
             for source in sources
         }
         return {
             'link': link,
+            'link_related': link_related,
             'links': links,
         }
 

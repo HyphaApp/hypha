@@ -43,12 +43,12 @@ class ActivityContextMixin:
             'actions': Activity.actions.filter(**query).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__submission',
+                'related_object',
             ).visible_to(self.request.user),
             'comments': Activity.comments.filter(**query).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__submission',
+                'related_object',
             ).visible_to(self.request.user),
         }
         return super().get_context_data(**extra, **kwargs)

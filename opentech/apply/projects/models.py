@@ -183,11 +183,33 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return f'Payment requested for {self.project}'
 
-    def user_can_delete(self, user):
-        if user.is_apply_staff:
-            return False  # Staff can reject
+    @property
+    def status_display(self):
+        return self.get_status_display()
 
-        if self.status not in (SUBMITTED, CHANGES_REQUESTED):
+    def can_user_delete(self, user):
+        if user.is_applicant:
+            if self.status in (SUBMITTED, CHANGES_REQUESTED):
+                return True
+
+        return False
+
+    def can_user_edit(self, user):
+        if user.is_applicant:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED}:
+                return True
+
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
+        return False
+
+    def can_user_change_status(self, user):
+        if not user.is_apply_staff:
+            return False  # Users can't change status
+
+        if self.status in {PAID, DECLINED}:
             return False
 
         return True
