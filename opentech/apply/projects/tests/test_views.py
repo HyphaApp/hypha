@@ -18,6 +18,7 @@ from opentech.apply.users.tests.factories import (
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
+from ..files import get_files
 from ..models import (
     CHANGES_REQUESTED,
     COMMITTED,
@@ -331,6 +332,58 @@ class TestStaffUploadContractView(BaseViewTestCase):
 
         self.assertEqual(project.contracts.count(), 1)
         self.assertTrue(project.contracts.first().is_signed)
+
+
+class TestStaffSelectDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_can_choose(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory()
+
+        files = get_files(project)
+
+        response = self.post_page(project, {
+            'form-submitted-select_document_form': '',
+            'category': category.id,
+            'document': files[0].url,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.packet_files.count(), 1)
+
+
+class TestApplicantSelectDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_can_choose(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory(user=self.user)
+
+        files = get_files(project)
+
+        response = self.post_page(project, {
+            'form-submitted-select_document_form': '',
+            'category': category.id,
+            'document': files[0].url,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.packet_files.count(), 1)
 
 
 class TestUploadDocumentView(BaseViewTestCase):

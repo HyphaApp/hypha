@@ -54,26 +54,6 @@ from ..models import (
 from .payment import RequestPaymentView
 
 
-class SubmissionFilesMixin:
-    """
-    Mixin to provide an instantiated SelectDocumentForm
-    """
-    def get_context_data(self, **kwargs):
-        project = self.get_object()
-
-        files = get_files(project)
-
-        context = super().get_context_data(**kwargs)
-
-        if files:
-            form = SelectDocumentForm(files, project)
-        else:
-            form = None
-
-        context['select_document_form'] = form
-        return context
-
-
 # APPROVAL VIEWS
 
 @method_decorator(staff_required, name='dispatch')
@@ -194,10 +174,10 @@ class RemoveDocumentView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(login_required, name='dispatch')
-class SelectDocumentView(SubmissionFilesMixin, FormView):
-    context_name = 'select_document_form'
+class SelectDocumentView(DelegatedViewMixin, CreateView):
     form_class = SelectDocumentForm
-    model = Project
+    context_name = 'select_document_form'
+    model = PacketFile
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
@@ -210,7 +190,9 @@ class SelectDocumentView(SubmissionFilesMixin, FormView):
         return redirect(self.project)
 
     def form_valid(self, form):
-        form.save()
+        form.instance.project = self.project
+        form.instance.name = form.instance.document.name
+
         response = super().form_valid(form)
 
         messenger(
@@ -224,12 +206,10 @@ class SelectDocumentView(SubmissionFilesMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['existing_files'] = get_files(self.project)
-        kwargs['project'] = self.project
+        kwargs.pop('user')
+        kwargs.pop('instance')
+        kwargs['existing_files'] = get_files(self.get_parent_object())
         return kwargs
-
-    def get_success_url(self):
-        return self.project.get_absolute_url()
 
 
 # GENERAL FORM VIEWS
@@ -381,7 +361,6 @@ class AdminProjectDetailView(
     ActivityContextMixin,
     DelegateableView,
     ContractsMixin,
-    SubmissionFilesMixin,
     DetailView,
 ):
     form_views = [
@@ -390,6 +369,7 @@ class AdminProjectDetailView(
         RejectionView,
         RemoveDocumentView,
         RequestPaymentView,
+        SelectDocumentView,
         SendForApprovalView,
         UpdateLeadView,
         UploadContractView,
@@ -412,6 +392,7 @@ class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, Contrac
     form_views = [
         CommentFormView,
         RequestPaymentView,
+        SelectDocumentView,
         UploadContractView,
     ]
 

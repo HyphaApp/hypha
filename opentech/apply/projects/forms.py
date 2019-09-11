@@ -241,43 +241,34 @@ class RequestPaymentForm(forms.ModelForm):
         return request
 
 
-class SelectDocumentForm(forms.Form):
-    category = forms.ModelChoiceField(queryset=DocumentCategory.objects.all())
-    file = forms.ChoiceField()
+class SelectDocumentForm(forms.ModelForm):
+    document = forms.ChoiceField()
 
-    name = 'select_document_form'
+    class Meta:
+        model = PacketFile
+        fields = ['category', 'document']
 
-    def __init__(self, existing_files, project, *args, **kwargs):
+    def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.project = project
         self.files = existing_files
 
         choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['file'].choices = choices
+        self.fields['document'].choices = choices
 
-    def clean_file(self):
-        file_url = self.cleaned_data['file']
+    def clean_document(self):
+        file_url = self.cleaned_data['document']
         for file in self.files:
             if file.url == file_url:
-                return file
+                new_file = ContentFile(file.read())
+                new_file.name = file.filename
+                return new_file
         raise forms.ValidationError("File not found on submission")
 
     @transaction.atomic()
     def save(self, *args, **kwargs):
-        category = self.cleaned_data['category']
-        file = self.cleaned_data['file']
-
-        new_file = ContentFile(file.read())
-        new_file.name = file.filename
-
-        PacketFile.objects.create(
-            category=category,
-            project=self.project,
-            title=new_file.name,
-            document=new_file,
-        )
+        return super().save(*args, **kwargs)
 
 
 class SetPendingForm(forms.ModelForm):
