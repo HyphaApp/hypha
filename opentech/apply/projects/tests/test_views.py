@@ -1,6 +1,9 @@
+from decimal import Decimal
 from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
@@ -10,41 +13,64 @@ from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    UserFactory,
+    UserFactory
 )
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
+from ..files import get_files
+from ..models import (
+    CHANGES_REQUESTED,
+    COMMITTED,
+    CONTRACTING,
+    IN_PROGRESS,
+    SUBMITTED,
+)
+from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
+    ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
-    ProjectFactory,
+    PaymentReceiptFactory,
+    PaymentRequestFactory,
+    ProjectFactory
 )
 
 
 class TestCreateApprovalView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
+    user_factory = ApproverFactory
 
     def get_kwargs(self, instance):
         return {'pk': instance.id}
 
     def test_creating_an_approval_happy_path(self):
-        project = ProjectFactory()
+        project = ProjectFactory(in_approval=True)
         self.assertEqual(project.approvals.count(), 0)
 
         response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': self.user.id})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
-        approval = project.approvals.first()
-
         self.assertEqual(project.approvals.count(), 1)
         self.assertFalse(project.is_locked)
         self.assertEqual(project.status, 'contracting')
 
+        approval = project.approvals.first()
         self.assertEqual(approval.project_id, project.pk)
+
+    def test_creating_an_approval_other_approver(self):
+        project = ProjectFactory(in_approval=True)
+        self.assertEqual(project.approvals.count(), 0)
+
+        other = self.user_factory()
+        response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': other.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.approvals.count(), 0)
+        self.assertTrue(project.is_locked)
 
 
 class BaseProjectDetailTestCase(BaseViewTestCase):
@@ -70,7 +96,7 @@ class TestStaffProjectDetailView(BaseProjectDetailTestCase):
 
 
 class TestUserProjectDetailView(BaseProjectDetailTestCase):
-    user_factory = UserFactory
+    user_factory = ApplicantFactory
 
     def test_doesnt_have_access(self):
         project = ProjectFactory()
@@ -99,6 +125,62 @@ class TestReviewerUserProjectDetailView(BaseProjectDetailTestCase):
         project = ProjectFactory()
         response = self.get_page(project)
         self.assertEqual(response.status_code, 403)
+
+
+class TestStaffProjectRejectView(BaseProjectDetailTestCase):
+    user_factory = StaffFactory
+
+    def test_cant_reject(self):
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {
+            'form-submitted-rejection_form': '',
+            'comment': 'needs to change',
+        })
+        self.assertEqual(response.status_code, 403)
+        project = self.refresh(project)
+        self.assertEqual(project.status, COMMITTED)
+        self.assertTrue(project.is_locked)
+
+
+class TestApproverProjectRejectView(BaseProjectDetailTestCase):
+    user_factory = ApproverFactory
+
+    def test_can_reject(self):
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {
+            'form-submitted-rejection_form': '',
+            'comment': 'needs to change',
+        })
+        self.assertEqual(response.status_code, 200)
+        project = self.refresh(project)
+        self.assertEqual(project.status, COMMITTED)
+        self.assertFalse(project.is_locked)
+
+    def test_cant_reject_no_comment(self):
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {
+            'form-submitted-rejection_form': '',
+            'comment': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        project = self.refresh(project)
+        self.assertEqual(project.status, COMMITTED)
+        self.assertTrue(project.is_locked)
+
+
+class TestUserProjectRejectView(BaseProjectDetailTestCase):
+    user_factory = ApplicantFactory
+
+    def test_cant_reject(self):
+        project = ProjectFactory(in_approval=True, user=self.user)
+        response = self.post_page(project, {
+            'form-submitted-rejection_form': '',
+            'comment': 'needs to change',
+        })
+        self.assertEqual(response.status_code, 200)
+        project = self.refresh(project)
+        self.assertEqual(project.status, COMMITTED)
+        self.assertTrue(project.is_locked)
 
 
 class TestRemoveDocumentView(BaseViewTestCase):
@@ -164,6 +246,144 @@ class TestSendForApprovalView(BaseViewTestCase):
 
         self.assertTrue(project.is_locked)
         self.assertEqual(project.status, 'committed')
+
+
+class TestApplicantUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_owner_upload_contract(self):
+        project = ProjectFactory(user=self.user)
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
+    def test_non_owner_upload_contract(self):
+        project = ProjectFactory()
+        contract_count = project.contracts.count()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 403)
+
+        project.refresh_from_db()
+        self.assertEqual(project.contracts.count(), contract_count)
+
+
+class TestStaffUploadContractView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_upload_contract(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertFalse(project.contracts.first().is_signed)
+
+    def test_upload_contract_with_signed_set_to_true(self):
+        project = ProjectFactory()
+
+        test_doc = BytesIO(b'somebinarydata')
+        test_doc.name = 'contract.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-contract_form': '',
+            'file': test_doc,
+            'is_signed': True,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.contracts.count(), 1)
+        self.assertTrue(project.contracts.first().is_signed)
+
+
+class TestStaffSelectDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_can_choose(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory()
+
+        files = get_files(project)
+
+        response = self.post_page(project, {
+            'form-submitted-select_document_form': '',
+            'category': category.id,
+            'document': files[0].url,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.packet_files.count(), 1)
+
+
+class TestApplicantSelectDocumentView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_can_choose(self):
+        category = DocumentCategoryFactory()
+        project = ProjectFactory(user=self.user)
+
+        files = get_files(project)
+
+        response = self.post_page(project, {
+            'form-submitted-select_document_form': '',
+            'category': category.id,
+            'document': files[0].url,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertEqual(project.packet_files.count(), 1)
 
 
 class TestUploadDocumentView(BaseViewTestCase):
@@ -257,6 +477,31 @@ class TestStaffProjectEditView(BaseProjectEditTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, self.url(project, 'detail'))
 
+    def test_no_paf_form_renders(self):
+        project = ProjectFactory(
+            submission__round__parent__approval_form=None,
+            form_fields=None,
+            form_data={},
+        )
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_pulls_paf_from_fund(self):
+        project = ProjectFactory(form_fields=None, form_data={})
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
+    def test_edited_form_renders(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.redirect_chain, [])
+
 
 class TestApproverProjectEditView(BaseProjectEditTestCase):
     user_factory = ApproverFactory
@@ -289,6 +534,179 @@ class TestReviewerProjectEditView(BaseProjectEditTestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.redirect_chain, [])
+
+
+class TestContractsMixin(TestCase):
+    class DummyView:
+        def get_context_data(self):
+            return {}
+
+    class DummyContractsView(ContractsMixin, DummyView):
+        def __init__(self, project):
+            self.project = project
+
+        def get_object(self):
+            return self.project
+
+    def test_all_signed_and_approved_contracts_appear(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+
+    def test_mixture_with_latest_signed_returns_no_unsigned(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 2)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_no_contracts_returns_nothing(self):
+        project = ProjectFactory()
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 0)
+
+    def test_all_unsigned_and_unapproved_returns_only_latest(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=False, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 1)
+
+    def test_all_signed_and_unapproved_returns_latest(self):
+        project = ProjectFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=None)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 1)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        self.assertIsNone(contracts[0].approver)
+
+    def test_mixture_of_both_latest_unsigned_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=False, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertFalse(contracts[0].is_signed)
+        for contract in contracts[1:]:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_unapproved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True, approver=None)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+    def test_mixture_of_both_latest_signed_and_approved(self):
+        project = ProjectFactory()
+        user = StaffFactory()
+        ContractFactory(project=project, is_signed=True, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=False, approver=None)
+        ContractFactory(project=project, is_signed=True, approver=user)
+        latest = ContractFactory(project=project, is_signed=True, approver=user)
+
+        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+
+        self.assertEqual(len(contracts), 3)
+        self.assertEqual(latest, contracts[0])
+        self.assertTrue(contracts[0].is_signed)
+        for contract in contracts:
+            self.assertTrue(contract.is_signed)
+
+
+class TestApproveContractView(BaseViewTestCase):
+    base_view_name = 'approve-contract'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.id, 'contract_pk': instance.id}
+
+    def test_approve_unapproved_contract(self):
+        project = ProjectFactory(status=CONTRACTING)
+        contract = ContractFactory(project=project, is_signed=True)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+        self.assertEqual(contract.approver, self.user)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
+
+    def test_approve_already_approved_contract(self):
+        project = ProjectFactory(status=CONTRACTING)
+        user = UserFactory()
+        contract = ContractFactory(project=project, is_signed=True, approver=user)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        contract.refresh_from_db()
+        self.assertEqual(contract.approver, self.user)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, IN_PROGRESS)
+
+    def test_approve_unsigned_contract(self):
+        project = ProjectFactory()
+        contract = ContractFactory(project=project, is_signed=False)
+
+        response = self.post_page(contract, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract.id,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
 
 
 class BasePacketFileViewTestCase(BaseViewTestCase):
@@ -338,3 +756,358 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
         self.assertEqual(len(response.redirect_chain), 2)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse('users_public:login'), path)
+
+
+class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_creating_a_payment_request(self):
+        project = ProjectFactory(user=self.user)
+        self.assertEqual(project.payment_requests.count(), 0)
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        receipts = BytesIO(b'someotherbinarydata')
+        receipts.name = 'receipts.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-request_payment_form': '',
+            'value': '10',
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipts': receipts,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        self.assertEqual(project.payment_requests.first().by, self.user)
+
+
+class TestRequestPaymentViewAsStaff(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_creating_a_payment_request(self):
+        project = ProjectFactory()
+        self.assertEqual(project.payment_requests.count(), 0)
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        receipts = BytesIO(b'someotherbinarydata')
+        receipts.name = 'receipts.pdf'
+
+        response = self.post_page(project, {
+            'form-submitted-request_payment_form': '',
+            'value': '10',
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipts': receipts,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        self.assertEqual(project.payment_requests.first().by, self.user)
+
+
+class TestProjectDetailSimplifiedView(TestCase):
+    def test_staff_only(self):
+        factory = RequestFactory()
+        project = ProjectFactory()
+
+        request = factory.get(f'/project/{project.pk}')
+        request.user = StaffFactory()
+
+        response = ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+        self.assertEqual(response.status_code, 200)
+
+        request.user = ApplicantFactory()
+        with self.assertRaises(PermissionDenied):
+            ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+
+
+class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can(self):
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_wrong_project_cant(self):
+        other_project = ProjectFactory()
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        self.assertEqual(response.status_code, 404)
+
+
+class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can(self):
+        payment_request = PaymentRequestFactory(project__user=self.user)
+        response = self.get_page(payment_request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_other_cant(self):
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestApplicantEditPaymentRequestView(BaseViewTestCase):
+    base_view_name = 'edit'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+
+    def test_editing_payment_request_fires_messaging(self):
+        project = ProjectFactory(user=self.user)
+        payment_request = PaymentRequestFactory(project=project)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        value = payment_request.value
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        response = self.post_page(payment_request, {
+            'value': value + 1,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        payment_request.refresh_from_db()
+
+        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+
+        self.assertEqual(value + Decimal("1"), payment_request.value)
+
+
+class TestStaffEditPaymentRequestView(BaseViewTestCase):
+    base_view_name = 'edit'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+
+    def test_editing_payment_request_fires_messaging(self):
+        project = ProjectFactory()
+        payment_request = PaymentRequestFactory(project=project)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        value = payment_request.value
+
+        invoice = BytesIO(b'somebinarydata')
+        invoice.name = 'invoice.pdf'
+
+        response = self.post_page(payment_request, {
+            'value': value + 1,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': invoice,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(project.payment_requests.count(), 1)
+
+        payment_request.refresh_from_db()
+
+        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+
+        self.assertEqual(value + Decimal("1"), payment_request.value)
+
+
+class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can(self):
+        payment_request = PaymentRequestFactory()
+        response = self.post_page(payment_request, {
+            'form-submitted-change_payment_status': '',
+            'status': CHANGES_REQUESTED,
+        })
+        self.assertEqual(response.status_code, 200)
+        payment_request.refresh_from_db()
+        self.assertEqual(payment_request.status, CHANGES_REQUESTED)
+
+
+class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can(self):
+        payment_request = PaymentRequestFactory(project__user=self.user)
+        response = self.post_page(payment_request, {
+            'form-submitted-change_payment_status': '',
+            'status': CHANGES_REQUESTED,
+        })
+        self.assertEqual(response.status_code, 200)
+        payment_request.refresh_from_db()
+        self.assertEqual(payment_request.status, SUBMITTED)
+
+    def test_other_cant(self):
+        payment_request = PaymentRequestFactory()
+        response = self.post_page(payment_request, {
+            'form-submitted-change_payment_status': '',
+            'status': CHANGES_REQUESTED,
+        })
+        self.assertEqual(response.status_code, 403)
+        payment_request.refresh_from_db()
+        self.assertEqual(payment_request.status, SUBMITTED)
+
+
+class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
+    base_view_name = 'invoice'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can_access(self):
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request)
+        self.assertContains(response, payment_request.invoice.read())
+
+    def test_cant_access_if_project_wrong(self):
+        other_project = ProjectFactory()
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        self.assertEqual(response.status_code, 404)
+
+
+class TestApplicantPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
+    base_view_name = 'invoice'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.project.pk,
+            'pr_pk': instance.pk,
+        }
+
+    def test_can_access_own(self):
+        payment_request = PaymentRequestFactory(project__user=self.user)
+        response = self.get_page(payment_request)
+        self.assertContains(response, payment_request.invoice.read())
+
+    def test_cant_access_other(self):
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
+    base_view_name = 'receipt'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.payment_request.project.pk,
+            'pr_pk': instance.payment_request.pk,
+            'file_pk': instance.pk,
+        }
+
+    def test_can_access(self):
+        payment_receipt = PaymentReceiptFactory()
+        response = self.get_page(payment_receipt)
+        self.assertContains(response, payment_receipt.file.read())
+
+    def test_cant_access_if_project_wrong(self):
+        other_project = ProjectFactory()
+        payment_receipt = PaymentReceiptFactory()
+        response = self.get_page(payment_receipt, url_kwargs={'pk': other_project.pk})
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_access_if_request_is_wrong(self):
+        other_request = PaymentRequestFactory()
+        payment_receipt = PaymentReceiptFactory()
+        response = self.get_page(payment_receipt, url_kwargs={'pr_pk': other_request.pk})
+        self.assertEqual(response.status_code, 404)
+
+
+class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
+    base_view_name = 'receipt'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.payment_request.project.pk,
+            'pr_pk': instance.payment_request.pk,
+            'file_pk': instance.pk,
+        }
+
+    def test_can_access_own(self):
+        payment_receipt = PaymentReceiptFactory(payment_request__project__user=self.user)
+        response = self.get_page(payment_receipt)
+        self.assertContains(response, payment_receipt.file.read())
+
+    def test_cant_access_other(self):
+        payment_receipt = PaymentReceiptFactory()
+        response = self.get_page(payment_receipt)
+        self.assertEqual(response.status_code, 403)

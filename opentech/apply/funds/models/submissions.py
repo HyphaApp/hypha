@@ -36,7 +36,6 @@ from opentech.apply.categories.models import MetaCategory
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import ReviewOpinion
 from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
-from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
 from opentech.apply.stream_forms.models import BaseStreamForm
 
@@ -579,25 +578,6 @@ class ApplicationSubmission(
             if response:
                 self.form_data[field_name] = response
 
-    def extract_files(self):
-        files = {}
-        for field in self.form_fields:
-            if isinstance(field.block, UploadableMediaBlock):
-                files[field.id] = self.data(field.id) or []
-                self.form_data.pop(field.id, None)
-        return files
-
-    def process_file_data(self, data):
-        for field in self.form_fields:
-            if isinstance(field.block, UploadableMediaBlock):
-                file = self.process_file(self, field, data.get(field.id, []))
-                try:
-                    file.save()
-                except AttributeError:
-                    for f in file:
-                        f.save()
-                self.form_data[field.id] = file
-
     def save(self, *args, update_fields=list(), **kwargs):
         if update_fields and 'form_data' not in update_fields:
             # We don't want to use this approach if the user is sending data
@@ -743,7 +723,7 @@ class ApplicationSubmission(
         return self.render_answer(name)
 
     def _get_REQUIRED_value(self, name):
-        return self.form_data[name]
+        return self.data(name)
 
 
 @receiver(post_transition, sender=ApplicationSubmission)
@@ -781,7 +761,7 @@ def log_status_update(sender, **kwargs):
         )
 
 
-class ApplicationRevision(AccessFormData, models.Model):
+class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
     form_data = JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)

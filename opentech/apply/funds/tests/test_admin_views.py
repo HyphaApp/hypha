@@ -22,11 +22,21 @@ class TestFundCreationView(TestCase):
         url = reverse('wagtailadmin_pages:add', args=('funds', 'fundtype', self.home.id))
 
         data = form_data(
-            appl_forms, review_forms, same_forms=same_forms, stages=stages, form_stage_info=form_stage_info)
+            appl_forms,
+            review_forms,
+            same_forms=same_forms,
+            stages=stages,
+            form_stage_info=form_stage_info,
+        )
         data['action-publish'] = True
 
         response = self.client.post(url, data=data, secure=True, follow=True)
-        self.assertContains(response, 'success')
+        try:
+            # If the form is present there was an error - report it
+            form = response.context['form']
+            self.assertTrue(form.is_valid(), form.errors.as_text())
+        except KeyError:
+            self.assertContains(response, 'success')
 
         self.home.refresh_from_db()
         fund = self.home.get_children().first()

@@ -13,7 +13,7 @@
                 <p class="docs-block__title">Proposal</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#">View</a>
+                <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">View</a>
                 <a class="docs-block__link" href="#">Download</a>
             </div>
         </li>
@@ -36,7 +36,7 @@
                     </a>
                 {% endif %}
                 {% if object.user_has_updated_details %}
-                    <a class="docs-block__link" href="#">
+                    <a class="docs-block__link" href="{% url 'apply:projects:simplified' pk=project.pk %}">
                         View
                     </a>
                 {% endif %}
@@ -45,13 +45,26 @@
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
-                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
+                    <use xlink:href="#tick"></use>
+                </svg>
                 <p class="docs-block__title">Supporting documents</p>
             </div>
             {% if editable %}
-                <div class="docs-block__row-inner">
-                    <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
-                </div>
+            <div class="docs-block__row-inner">
+                {% if select_document_form %}
+                    <a
+                        data-fancybox
+                        data-src="#copy-supporting-doc"
+                        class="docs-block__link"
+                        href="#">
+                        Choose file
+                    </a>
+                {% else %}
+                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">Choose file</span>
+                {% endif %}
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+            </div>
             {% endif %}
             {% if remaining_document_categories %}
             <div class="docs-block__info-text">
@@ -76,11 +89,11 @@
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">Download</a>
-                        <form method="POST" id="{{ remove_document_form.name }}">
+                        <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
-                                class="button button--primary button--top-space"
+                                class="button button--link"
                                 id="{{ remove_document_form.name }}-submit"
                                 name="{{ form_prefix }}{{ remove_document_form.name }}"
                                 type="submit"
@@ -107,6 +120,12 @@
         {% endif %}
         <!-- <button class="button button--primary" href="#">Ready for contracting</button> -->
     </div>
+</div>
+
+<div class="modal" id="copy-supporting-doc">
+    <h4 class="modal__header-bar">Select a document</h4>
+    {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
+    {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value='Copy' action=select_document_url %}
 </div>
 
 <div class="modal" id="upload-supporting-doc">

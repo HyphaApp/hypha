@@ -43,12 +43,12 @@ class ActivityContextMixin:
             'actions': Activity.actions.filter(**query).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__submission',
+                'related_object',
             ).visible_to(self.request.user),
             'comments': Activity.comments.filter(**query).select_related(
                 'user',
             ).prefetch_related(
-                'related_object__submission',
+                'related_object',
             ).visible_to(self.request.user),
         }
         return super().get_context_data(**extra, **kwargs)
@@ -77,7 +77,8 @@ class CommentFormView(DelegatedViewMixin, CreateView):
     def get_success_url(self):
         return self.object.source.get_absolute_url() + '#communications'
 
-    @classmethod
-    def contribute_form(cls, instance, user):
+    def get_form_kwargs(self):
         # We dont want to pass the submission as the instance
-        return super().contribute_form(instance=None, user=user)
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('instance')
+        return kwargs

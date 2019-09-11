@@ -1,0 +1,28 @@
+{% extends "application-projects/paymentrequest_detail.html" %}
+
+{% block actions %}
+    {{ block.super }}
+    <a
+        data-fancybox
+        data-src="#change-status"
+        class="button button--bottom-space button--primary button--full-width"
+        href="#"
+    >
+        Change Status
+    </a>
+    <div class="modal" id="change-status">
+        <h4 class="modal__header-bar">Change status</h4>
+        <p>Current status: {{ object.get_status_display }}</p>
+        {% include 'funds/includes/delegated_form_base.html' with form=change_payment_status value='Update'%}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+{% endblock %}

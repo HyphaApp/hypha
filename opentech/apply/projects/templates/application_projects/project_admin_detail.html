@@ -3,7 +3,7 @@
 {% load approval_tools %}
 {% load static %}
 
-{% block admin_sidebar %}
+{% block admin_actions %}
 <div class="modal" id="send-for-approval">
     <h4 class="modal__header-bar">Request Approval</h4>
 
@@ -38,67 +38,74 @@
     {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
-{% if mobile %}
-    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+{% if latest_contract %}
+<div class="modal" id="approve-contract">
+    <h4 class="modal__header-bar">Approve Contract</h4>
+    {% url 'apply:projects:approve-contract' pk=object.pk contract_pk=latest_contract.pk as approve_contract_url %}
+    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Approve' action=approve_contract_url %}
+</div>
 {% endif %}
 
-<div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-
-    <h5>Actions to take</h5>
-
-    {% if object.can_send_for_approval %}
-    <a data-fancybox
-       data-src="#send-for-approval"
-       class="button button--bottom-space button--primary button--full-width"
-       href="#">
+{% if object.requires_approval %}
+    <a
+        {% if not object.can_send_for_approval %}
+            onclick="return false"
+            data-tooltip="
+                {% if not object.lead %}
+                    A lead must be assigned
+                {% elif not object.user_has_updated_details %}
+                    Project approval form must be completed
+                {% elif object.is_locked %}
+                    Currently awaiting approval
+                {% endif %}"
+        {% endif %}
+        data-fancybox
+        data-src="#send-for-approval"
+        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval %}button--tooltip-disabled{% endif %}"
+        href="#">
         Submit for Approval
     </a>
-    {% endif %}
+{% endif %}
 
-    {% if object.can_make_approval %}
-        {% user_can_approve_project object request.user as user_can_approve %}
-        <a data-fancybox
-            data-src="#approve"
-            class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
-            href="#">
-            Approve
-        </a>
+{% if object.can_make_approval %}
+  {% user_can_approve_project object request.user as user_can_approve %}
+  <a data-fancybox
+      data-src="#approve"
+      class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+      href="#">
+      Approve
+  </a>
 
-        <a data-fancybox
-            data-src="#request-project-changes"
-           class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
-            href="#">
-            Request changes
-        </a>
-    {% endif %}
+  <a data-fancybox
+      data-src="#request-project-changes"
+     class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+      href="#">
+      Request changes
+  </a>
+{% endif %}
 
-    <!-- <a data-fancybox -->
-    <!-- data-src="#ready-for-contracting" -->
-    <!-- class="button button--primary button--full-width" -->
-    <!-- href="#"> -->
-    <!-- Ready for contracting -->
-    <!-- </a> -->
+{% endblock %}
 
+{% block admin_assignments %}
+<p class="sidebar__separator">Assign</p>
 
-    <p class="sidebar__separator">Assign</p>
+<a data-fancybox
+ data-src="#assign-lead"
+ class="button button--bottom-space button--white button--full-width"
+ href="#">
+  Lead
+</a>
 
-    <a data-fancybox
-       data-src="#assign-lead"
-       class="button button--bottom-space button--white button--full-width"
-       href="#">
-        Lead
-    </a>
+<!-- <a data-fancybox -->
+<!-- data-src="#update-meta-categories" -->
+<!-- class="button button--bottom-space button--white button--full-width" -->
+<!-- href="#"> -->
+<!-- Meta Categories -->
+<!-- </a> -->
 
-    <!-- <a data-fancybox -->
-    <!-- data-src="#update-meta-categories" -->
-    <!-- class="button button--bottom-space button--white button--full-width" -->
-    <!-- href="#"> -->
-    <!-- Meta Categories -->
-    <!-- </a> -->
+{% endblock %}
 
-</div>
-
-{% if approvals %}
+{% block project_approvals %}
 <div class="sidebar__inner">
     <h5>Approved By:</h5>
 
@@ -106,15 +113,15 @@
     <p>{{ approval.by }} - {{ approval.created_at|date:"Y-m-d" }}</p>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block approve_contracts %}
+{% if latest_contract and latest_contract.is_signed %}
+<a data-fancybox
+   data-src="#approve-contract"
+   class="button button--bottom-space button--primary button--full-width"
+   href="#">
+    Approve Contract
+</a>
 {% endif %}
-
-{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
-{% endblock %}
-
-{% block extra_js %}
-    {{ block.super }}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 {% endblock %}

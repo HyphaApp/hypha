@@ -95,6 +95,12 @@
         font-weight: $weight--bold;
         margin-right: 1rem;
 
+        &:disabled,
+        &.is-disabled {
+            color: $color--mid-grey;
+            cursor: default;
+        }
+
         &:last-child {
             margin-right: 0;
         }
@@ -172,5 +178,9 @@
         &:last-child {
             margin-right: 0;
         }
+    }
+
+    &__document-form {
+        display: inline;
     }
 }

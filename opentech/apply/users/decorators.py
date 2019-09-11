@@ -19,7 +19,15 @@ def is_apply_staff(user):
     return True
 
 
+def is_approver(user):
+    if not user.is_approver:
+        raise PermissionDenied
+    return True
+
+
 staff_required = [login_required, user_passes_test(is_apply_staff)]
+
+approver_required = [login_required, user_passes_test(is_approver)]
 
 
 def superuser_decorator(fn):

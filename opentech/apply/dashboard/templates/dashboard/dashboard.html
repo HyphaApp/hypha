@@ -66,6 +66,14 @@
             {% endif %}
         </div>
     {% endif %}
+
+    {% if projects %}
+    <div class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal heading--no-margin">Your projects</h4>
+        {% render_table projects %}
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}
 

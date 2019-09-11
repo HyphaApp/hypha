@@ -18,7 +18,7 @@ User = get_user_model()
 
 
 def link_to(target, request):
-    if target:
+    if target and hasattr(target, 'get_absolute_url'):
         return request.scheme + '://' + request.get_host() + target.get_absolute_url()
 
 
@@ -56,6 +56,10 @@ neat_related = {
     MESSAGES.EDIT_REVIEW: 'review',
     MESSAGES.CREATED_PROJECT: 'submission',
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
+    MESSAGES.APPROVE_CONTRACT: 'contract',
+    MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
+    MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
 }
 
 
@@ -214,11 +218,15 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
         MESSAGES.SCREENING: 'Screening status from {old_status} to {source.screening_status}',
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
-        MESSAGES.CREATED_PROJECT: '{user} has created Project',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead} by {user}',
-        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval',
-        MESSAGES.APPROVE_PROJECT: '{user} has approved',
-        MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes to for acceptance: "{comment}"',
+        MESSAGES.CREATED_PROJECT: 'Created',
+        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead}',
+        MESSAGES.SEND_FOR_APPROVAL: 'Requested approval',
+        MESSAGES.APPROVE_PROJECT: 'Approved',
+        MESSAGES.REQUEST_PROJECT_CHANGE: 'Requested changes for acceptance: "{comment}"',
+        MESSAGES.UPLOAD_CONTRACT: 'Uploaded a contract',
+        MESSAGES.APPROVE_CONTRACT: 'Approved contract',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
+        MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -336,9 +344,10 @@ class ActivityAdapter(AdapterBase):
             except KeyError:
                 pass
 
-        # TODO resolve how related objects work with submission/project
-        has_correct_fields = all(hasattr(related, attr) for attr in ['author', 'submission', 'get_absolute_url'])
-        if has_correct_fields and isinstance(related, models.Model):
+        has_correct_fields = all(hasattr(related, attr) for attr in ['get_absolute_url'])
+        isnt_source = source != related
+        is_model = isinstance(related, models.Model)
+        if has_correct_fields and isnt_source and is_model:
             related_object = related
         else:
             related_object = None
@@ -385,6 +394,12 @@ class SlackAdapter(AdapterBase):
         MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on project <{link}|{source.title}>.',
         MESSAGES.APPROVE_PROJECT: '{user} has approved project <{link}|{source.title}>.',
         MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
+        MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
+        MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
+        MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
+        MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
     }
 
     def __init__(self):
@@ -402,13 +417,16 @@ class SlackAdapter(AdapterBase):
         source = kwargs['source']
         sources = kwargs['sources']
         request = kwargs['request']
+        related = kwargs['related']
         link = link_to(source, request)
+        link_related = link_to(related, request)
         links = {
             source.id: link_to(source, request)
             for source in sources
         }
         return {
             'link': link,
+            'link_related': link_related,
             'links': links,
         }
 
@@ -606,6 +624,9 @@ class EmailAdapter(AdapterBase):
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
+        MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
+        MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: 'handle_update_payment_request',
     }
 
     def get_subject(self, message_type, source):
@@ -647,6 +668,15 @@ class EmailAdapter(AdapterBase):
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
+    def handle_update_payment_request(self, user, **kwargs):
+        if user.is_applicant:
+            return
+
+        return self.render_message(
+            'messages/email/payment_request_updated.html',
+            **kwargs,
+        )
+
     def batch_determination(self, determinations, sources, **kwargs):
         submissions = sources
         kwargs.pop('source')
@@ -677,6 +707,16 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs['added']
             return [partner.email for partner in partners]
+
+        if message_type == MESSAGES.SENT_TO_COMPLIANCE:
+            from opentech.apply.projects.models import ProjectSettings
+            project_settings = ProjectSettings.objects.first()
+
+            if project_settings is None:
+                # TODO: what to do when this isn't configured??
+                return []
+
+            return [project_settings.compliance_email]
 
         return [source.user.email]
 
@@ -721,10 +761,15 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
+            from_email = source.page.specific.from_address
+        except AttributeError:  # we're dealing with a project
+            from_email = source.submission.page.specific.from_address
+
+        try:
             send_mail(
                 subject,
                 message,
-                source.page.specific.from_address,
+                from_email,
                 [recipient],
                 logs=logs
             )
@@ -740,8 +785,8 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
-        MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document "{title}"',
-        MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document "{title}"',
+        MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document',
+        MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):

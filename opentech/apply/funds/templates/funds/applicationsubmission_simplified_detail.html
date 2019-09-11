@@ -1,0 +1,36 @@
+{% extends "base-apply.html" %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+<div class="simplified">
+    <div class="simplified__admin-bar">
+        <div class="simplified__admin-bar-inner">
+            <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+                Project
+            </a>
+            <h1 class="simplified__heading">{{ object.title }}</h1>
+            <h5 class="simplified__subheading">
+                <span>{{ object.stage }}</span>
+                <span>{{ object.page }}</span>
+                <span>{{ object.round }}</span>
+                <span>Lead: {{ object.lead }}</span>
+            </h5>
+        </div>
+    </div>
+
+    <div class="simplified__wrapper">
+        <header class="simplified__meta">
+            <span class="simplified__meta-item">Submitted: <strong>{{ object.submit_time.date }} by {{ object.user.get_full_name }}</strong></span>
+            <span class="simplified__meta-item">Last edited: <strong>{{ object.live_revision.timestamp.date }} by {{ object.live_revision.author }}</strong></span>
+        </header>
+
+        <h3>Proposal Information</h3>
+        <div class="simplified__rich-text">
+            {{ object.output_text_answers }}
+        </div>
+    </div>
+</div>
+{% endblock %}

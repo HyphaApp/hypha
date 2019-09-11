@@ -2,18 +2,15 @@
 <div class="status-bar {{ class }}">
     {% for phase in phases %}
         {% ifchanged phase.step %}
-            <div class="status-bar__item
-                        {% if phase.step == current_phase.step %}
-                            status-bar__item--is-current
-                        {% elif current_phase.step > phase.step %}
-                            status-bar__item--is-complete
-                        {% endif %}">
-                <span class="status-bar__tooltip"
-                    {% status_display current_phase phase public as display_text %}
-                    data-title="{{ display_text }}" aria-label="{{ display_text }}"
-                ></span>
-                <svg class="status-bar__icon"><use xlink:href="#tick-alt"></use></svg>
-            </div>
+            {% status_display current_phase phase public as display_text %}
+            {% if current_phase.step == phase.step %}
+                {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=display_text %}
+            {% elif current_phase.step > phase.step %}
+                {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=display_text %}
+            {% else %}
+                {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=display_text %}
+            {% endif %}
+
         {% endifchanged %}
     {% endfor %}
 </div>

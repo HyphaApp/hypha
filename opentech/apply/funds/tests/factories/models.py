@@ -75,6 +75,7 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
+    approval_form = factory.SubFactory('opentech.apply.projects.tests.factories.ProjectApprovalFormFactory')
 
     @factory.post_generation
     def parent(self, create, extracted_parent, **parent_kwargs):
@@ -237,7 +238,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
         ApplicationFormDataFactory,
         form_fields=factory.SelfAttribute('..form_fields'),
     )
-    page = factory.SubFactory(FundTypeFactory)
+    page = factory.SelfAttribute('.round.fund')
     workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
     round = factory.SubFactory(
         RoundFactory,

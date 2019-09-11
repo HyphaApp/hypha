@@ -2,16 +2,21 @@ import decimal
 import json
 
 import factory
+import pytz
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.projects.models import (
+    Contract,
     DocumentCategory,
     PacketFile,
+    PaymentReceipt,
+    PaymentRequest,
     Project,
+    ProjectApprovalForm,
 )
+from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-
 
 ADDRESS = {
     'country': 'GB',
@@ -47,6 +52,18 @@ class DocumentCategoryFactory(factory.DjangoModelFactory):
         model = DocumentCategory
 
 
+class ProjectApprovalFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = ProjectApprovalForm
+
+    name = factory.Faker('word')
+    form_fields = FormFieldsBlockFactory
+
+
+class ProjectApprovalFormDataFactory(FormDataFactory):
+    field_factory = FormFieldsBlockFactory
+
+
 class ProjectFactory(factory.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -63,8 +80,29 @@ class ProjectFactory(factory.DjangoModelFactory):
 
     is_locked = False
 
+    form_fields = FormFieldsBlockFactory
+    form_data = factory.SubFactory(
+        ProjectApprovalFormDataFactory,
+        form_fields=factory.SelfAttribute('..form_fields'),
+    )
+
     class Meta:
         model = Project
+
+    class Params:
+        in_approval = factory.Trait(
+            is_locked=True,
+        )
+
+
+class ContractFactory(factory.DjangoModelFactory):
+    approver = factory.SubFactory(StaffFactory)
+    project = factory.SubFactory(ProjectFactory)
+
+    file = factory.django.FileField()
+
+    class Meta:
+        model = Contract
 
 
 class PacketFileFactory(factory.DjangoModelFactory):
@@ -76,3 +114,25 @@ class PacketFileFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PacketFile
+
+
+class PaymentRequestFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory(ProjectFactory)
+    by = factory.SubFactory(UserFactory)
+
+    date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+    date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+
+    invoice = factory.django.FileField()
+
+    class Meta:
+        model = PaymentRequest
+
+
+class PaymentReceiptFactory(factory.DjangoModelFactory):
+    payment_request = factory.SubFactory(PaymentRequestFactory)
+
+    file = factory.django.FileField()
+
+    class Meta:
+        model = PaymentReceipt

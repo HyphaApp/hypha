@@ -932,3 +932,17 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
     def test_func(self):
         return is_user_has_access_to_view_submission(self.request.user, self.submission)
+
+
+@method_decorator(staff_required, name='dispatch')
+class SubmissionDetailSimplifiedView(DetailView):
+    model = ApplicationSubmission
+    template_name_suffix = '_simplified_detail'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+
+        if not hasattr(obj, 'project'):
+            raise Http404
+
+        return obj

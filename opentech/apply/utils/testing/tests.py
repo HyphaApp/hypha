@@ -36,7 +36,7 @@ class BaseViewTestCase(TestCase):
     def get_kwargs(self, instance):
         return {}
 
-    def url(self, instance, view_name=None, absolute=True, kwargs=dict()):
+    def url(self, instance, view_name=None, absolute=True, url_kwargs=None):
         view = view_name or self.base_view_name
         full_url_name = self.url_name.format(view)
         kwargs_method = f'get_{view}_kwargs'
@@ -44,6 +44,8 @@ class BaseViewTestCase(TestCase):
             kwargs = getattr(self, kwargs_method)(instance)
         else:
             kwargs = self.get_kwargs(instance)
+        if url_kwargs:
+            kwargs.update(url_kwargs)
         return self.url_from_pattern(full_url_name, kwargs, secure=True, absolute=absolute)
 
     def absolute_url(self, location, secure=True):
@@ -57,11 +59,11 @@ class BaseViewTestCase(TestCase):
         request = self.factory.get(url, secure=secure)
         return request.path
 
-    def get_page(self, instance=None, view_name=None):
-        return self.client.get(self.url(instance, view_name), secure=True, follow=True)
+    def get_page(self, instance=None, view_name=None, url_kwargs=None):
+        return self.client.get(self.url(instance, view_name, url_kwargs=url_kwargs), secure=True, follow=True)
 
-    def post_page(self, instance=None, data=dict(), view_name=None):
-        return self.client.post(self.url(instance, view_name), data, secure=True, follow=True)
+    def post_page(self, instance=None, data=dict(), view_name=None, url_kwargs=None):
+        return self.client.post(self.url(instance, view_name, url_kwargs=url_kwargs), data, secure=True, follow=True)
 
     def refresh(self, instance):
         return instance.__class__.objects.get(id=instance.id)

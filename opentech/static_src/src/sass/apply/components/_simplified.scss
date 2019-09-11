@@ -1,0 +1,115 @@
+// class used for custom styling on the simplified submission and project pages
+.simplified {
+    &__admin-bar {
+        position: relative;
+        right: 50%;
+        left: 50%;
+        width: 100vw;
+        padding: $mobile-gutter;
+        margin-right: -50vw;
+        margin-left: -50vw;
+        color: $color--white;
+        background-color: $color--dark-grey;
+    }
+
+    &__admin-bar-inner {
+        max-width: $site-width;
+        margin: 0 auto;
+    }
+
+    &__projects-link {
+        display: inline-flex;
+        align-items: center;
+        color: $color--lightest-blue;
+        font-weight: $weight--bold;
+
+        &::before {
+            @include triangle(top, currentColor, 5px);
+            margin-right: .5rem;
+            transform: rotate(-90deg);
+        }
+    }
+
+    &__heading {
+        @include responsive-font-sizes(30px, map-get($font-sizes, beta));
+        letter-spacing: -.02rem;
+        font-weight: $weight--bold;
+        margin: 0;
+    }
+
+    &__subheading {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+
+        @include media-query(tablet-portrait) {
+            margin-bottom: 1rem;
+        }
+
+        span {
+            &::after {
+                padding: 0 15px;
+                content: '|';
+            }
+
+            &:last-child {
+                &::after {
+                    padding: 0;
+                    content: '';
+                }
+            }
+        }
+    }
+
+    &__wrapper {
+        padding: $mobile-gutter 0;
+
+        @include media-query(tablet-portrait) {
+            padding: 3rem 0;
+        }
+    }
+
+    &__meta {
+        @include heading-text;
+        @include font-size(zeta);
+        display: flex;
+        flex-direction: column;
+        margin-top: $mobile-gutter;
+        font-weight: $weight--normal;
+        color: transparentize($color--dark-grey, .5);
+
+        @include media-query(tablet-landscape) {
+            flex-direction: row;
+            margin-top: 0;
+        }
+    }
+
+    &__meta-item {
+        margin-right: 15px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &__rich-text {
+        margin-bottom: 2rem;
+        word-break: break-word;
+
+        > section {
+            margin: 0 0 1rem;
+
+            p:first-of-type {
+                margin-top: 0;
+            }
+
+            p:empty {
+                margin: 0;
+            }
+        }
+
+        h4 {
+            margin: 0;
+        }
+    }
+}
