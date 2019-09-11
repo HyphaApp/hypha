@@ -19,7 +19,7 @@ from django.views.generic import (
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
-from opentech.apply.users.decorators import staff_required
+from opentech.apply.users.decorators import approver_required, staff_required
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
@@ -131,7 +131,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(approver_required, name='dispatch')
 class RejectionView(DelegatedViewMixin, UpdateView):
     context_name = 'rejection_form'
     form_class = RejectionForm

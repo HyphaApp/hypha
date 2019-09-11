@@ -113,7 +113,7 @@ class PaymentRequestAdminView(PaymentRequestAccessMixin, DelegateableView, Detai
 
 
 class PaymentRequestApplicantView(PaymentRequestAccessMixin, DelegateableView, DetailView):
-    pass
+    form_views = []
 
 
 class PaymentRequestView(ViewDispatcher):
