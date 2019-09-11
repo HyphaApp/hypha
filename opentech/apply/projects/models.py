@@ -3,15 +3,31 @@ import decimal
 import json
 import logging
 
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Sum, Value as V
+from django.db.models.functions import Coalesce
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    StreamFieldPanel,
+)
+from wagtail.core.fields import StreamField
+
+from opentech.apply.funds.models.mixins import AccessFormData
+from opentech.apply.stream_forms.blocks import FormFieldsBlock
+from opentech.apply.stream_forms.files import StreamFieldDataEncoder
+from opentech.apply.stream_forms.models import BaseStreamForm
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -86,6 +102,12 @@ class PacketFile(models.Model):
         return RemoveDocumentForm(instance=self)
 
 
+@receiver(post_delete, sender=PacketFile)
+def delete_packetfile_file(sender, instance, **kwargs):
+    # Remove the file and don't save the base model
+    instance.document.delete(False)
+
+
 class PaymentApproval(models.Model):
     request = models.ForeignKey('PaymentRequest', on_delete=models.CASCADE, related_name="approvals")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_approvals")
@@ -119,6 +141,26 @@ REQUEST_STATUS_CHOICES = [
 ]
 
 
+class PaymentRequestQueryset(models.QuerySet):
+    def in_progress(self):
+        return self.exclude(status__in=[DECLINED, PAID])
+
+    def rejected(self):
+        return self.filter(status=DECLINED)
+
+    def not_rejected(self):
+        return self.exclude(status=DECLINED)
+
+    def total_value(self, field):
+        return self.aggregate(total=Coalesce(Sum(field), V(0)))['total']
+
+    def paid_value(self):
+        return self.filter(status=PAID).total_value('paid_value')
+
+    def unpaid_value(self):
+        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value('requested_value')
+
+
 class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
@@ -143,6 +185,8 @@ class PaymentRequest(models.Model):
     comment = models.TextField()
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
+    objects = PaymentRequestQueryset.as_manager()
+
     def __str__(self):
         return f'Payment requested for {self.project}'
 
@@ -150,11 +194,40 @@ class PaymentRequest(models.Model):
     def has_changes_requested(self):
         return self.status == CHANGES_REQUESTED
 
+    @property
+    def status_display(self):
+        return self.get_status_display()
+
+    def can_user_delete(self, user):
+        if user.is_applicant:
+            if self.status in (SUBMITTED, CHANGES_REQUESTED):
+                return True
+
+        return False
+
+    def can_user_edit(self, user):
+        if user.is_applicant:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED}:
+                return True
+
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
+        return False
+
     def user_can_delete(self, user):
         if user.is_apply_staff:
-            return False  # Staff can reject
+            if self.status in {SUBMITTED}:
+                return True
 
-        if self.status not in (SUBMITTED, CHANGES_REQUESTED):
+        return False
+
+    def can_user_change_status(self, user):
+        if not user.is_apply_staff:
+            return False  # Users can't change status
+
+        if self.status in {PAID, DECLINED}:
             return False
 
         return True
@@ -162,6 +235,9 @@ class PaymentRequest(models.Model):
     @property
     def value(self):
         return self.paid_value or self.requested_value
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:payments:detail', args=[self.project.pk, self.pk])
 
 
 COMMITTED = 'committed'
@@ -178,7 +254,7 @@ PROJECT_STATUS_CHOICES = [
 ]
 
 
-class Project(models.Model):
+class Project(BaseStreamForm, AccessFormData, models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='owned_projects')
@@ -199,6 +275,9 @@ class Project(models.Model):
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
+
+    form_data = JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_fields = StreamField(FormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -255,6 +334,12 @@ class Project(models.Model):
             value=submission.form_data.get('value', 0),
         )
 
+    def paid_value(self):
+        return self.payment_requests.paid_value()
+
+    def unpaid_value(self):
+        return self.payment_requests.unpaid_value()
+
     def clean(self):
         if self.proposed_start is None:
             return
@@ -265,6 +350,19 @@ class Project(models.Model):
         if self.proposed_start > self.proposed_end:
             raise ValidationError(_('Proposed End Date must be after Proposed Start Date'))
 
+    def save(self, *args, **kwargs):
+        creating = not self.pk
+
+        if creating:
+            files = self.extract_files()
+        else:
+            self.process_file_data(self.form_data)
+
+        super().save(*args, **kwargs)
+
+        if creating:
+            self.process_file_data(files)
+
     def editable_by(self, user):
         if self.editable:
             return True
@@ -274,6 +372,10 @@ class Project(models.Model):
 
     @property
     def editable(self):
+        # Someone has approved the project - consider it locked while with contracting
+        if self.approvals.exists():
+            return False
+
         # Someone must lead the project to make changes
         return self.lead and not self.is_locked
 
@@ -359,3 +461,16 @@ class DocumentCategory(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = 'Document Categories'
+
+
+class ProjectApprovalForm(BaseStreamForm, models.Model):
+    name = models.CharField(max_length=255)
+    form_fields = StreamField(FormFieldsBlock())
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name

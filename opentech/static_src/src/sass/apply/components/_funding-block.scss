@@ -11,10 +11,6 @@
         flex-wrap: wrap;
     }
 
-    @include media-query(tablet-portrait) {
-        max-width: 610px;
-    }
-
     &__item {
         margin: 0 .5rem 1rem 0;
 

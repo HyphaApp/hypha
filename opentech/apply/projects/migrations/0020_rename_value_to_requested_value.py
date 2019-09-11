@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0017_add_sent_to_compliance_at'),
+        ('application_projects', '0019_add_form_to_projects'),
     ]
 
     operations = [

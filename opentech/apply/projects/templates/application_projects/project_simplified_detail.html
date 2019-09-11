@@ -5,84 +5,104 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a href="{{ object.get_absolute_url }}">Project</a>
-        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
-        <h5 class="heading heading--meta">
-            <span>{{ object.submission.page }}</span>
-            <span>{{ object.submission.round }}</span>
-            <span>Lead: {{ object.lead }}</span>
-        </h5>
+<div class="simplified">
+    <div class="simplified__admin-bar">
+        <div class="simplified__admin-bar-inner">
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                Project
+            </a>
+            <h1 class="simplified__heading">{{ object.title }}</h1>
+            <h5 class="simplified__subheading">
+                <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.round }}</span>
+                <span>Lead: {{ object.lead }}</span>
+            </h5>
+        </div>
     </div>
-</div>
 
-<div class="wrapper wrapper--large">
+    <div class="simplified__wrapper">
+        <h3>Project Information</h3>
+        <div class="grid grid--proposal-info">
+            <div>
+                <h5>Proposed start date</h5>
+                <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
+            </div>
 
-    {% block notifications %}
-    {% endblock %}
-    <div class="wrapper wrapper--sidebar">
-        <article class="wrapper--sidebar--inner">
-            <h3>Project Information</h3>
-            <div class="grid grid--proposal-info">
-                <div>
-                    <h5>Proposed start date</h5>
-                    <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
-                </div>
+            <div>
+                <h5>Project Proposed end date</h5>
+                <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
+            </div>
 
-                <div>
-                    <h5>Project Proposed end date</h5>
-                    <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
-                </div>
+            <div>
+                <h5>Legal name</h5>
+                <p>{{ object.contact_legal_name|default:"-" }}</p>
+            </div>
 
-                <div>
-                    <h5>Legal name</h5>
-                    <p>{{ object.contact_legal_name|default:"-" }}</p>
-                </div>
+            <div>
+                <h5>Email</h5>
+                <p>{{ object.contact_email|default:"-" }}</p>
+            </div>
 
-                <div>
-                    <h5>Email</h5>
-                    <p>{{ object.contact_email|default:"-" }}</p>
-                </div>
+            <div>
+                <h5>Address</h5>
+                <p>{{ object.get_address_display|default:"-"}}</p>
+            </div>
 
-                <div>
-                    <h5>Address</h5>
-                    <p>{{ object.get_address_display|default:"-"}}</p>
-                </div>
+            <div>
+                <h5>Phone</h5>
+                <p>{{ object.phone|default:"-" }}</p>
+            </div>
 
-                <div>
-                    <h5>Phone</h5>
-                    <p>{{ object.phone|default:"-" }}</p>
-                </div>
+            <div>
+                <h5>Value</h5>
+                <p>${{ object.value|default:"-" }}</p>
+            </div>
 
-                <div>
-                    <h5>Value</h5>
-                    <p>${{ object.value|default:"-" }}</p>
-                </div>
+            {% if object.sent_to_compliance_at %}
+            <div>
+                <h5>Sent to Compliance</h5>
+                <p>{{ object.sent_to_compliance_at|date:"j F Y" }}</p>
+            </div>
+            {% endif %}
 
-                {% if object.sent_to_compliance_at %}
-                <div>
-                    <h5>Sent to Compliance</h5>
-                    <p>{{ object.sent_to_compliance_at|date:"j F Y" }}</p>
-                </div>
+        </div>
+
+        <div class="simplified__rich-text">
+            {{ object.output_answers }}
+        </div>
+
+        <div>
+            <h3>Review</h3>
+            <h4>Submission lead</h4>
+            <p>{{ project.submission.lead }}</p>
+
+            <h4>Reviews</h4>
+            <h5>Staff Reviewers</h5>
+            {% for review in project.submission.reviews.by_staff %}
+            <p>
+                <strong>{{ review.author }}</strong>
+                {% if review.author.role %}
+                    as {{ review.author.role }}
                 {% endif %}
+                - {{ review.outcome }} ({{ review.created_at }})</p>
+            {% empty %}
+                No reviews
+            {% endfor %}
+            <h5>External Reviewers</h5>
+            {% for review in project.submission.reviews.by_reviewers %}
+                <p><strong>{{ review.author }}</strong> - {{ review.outcome }} ({{ review.created_at }})</p>
+            {% empty %}
+                No reviews
+            {% endfor %}
+        </div>
 
-            </div>
-
-            {# TODO: put outcome of #1364 here #}
-
-            <div>
-                <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">Submission</a></p>
-            </div>
-
-            <div>
-                <h5>Supporting Documents</h5>
-                {% for packet_file in object.packet_files.all %}
+        <div>
+            <h3>Supporting Documents</h3>
+            <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">Submission</a></p>
+            {% for packet_file in object.packet_files.all %}
                 <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
-                {% endfor %}
-            </div>
-
-        </article>
+            {% endfor %}
+        </div>
 
     </div>
 </div>

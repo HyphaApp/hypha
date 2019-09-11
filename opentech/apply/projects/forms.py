@@ -2,6 +2,7 @@ import functools
 import os
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Q
@@ -11,7 +12,6 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .files import get_files
 from .models import (
     CHANGES_REQUESTED,
     COMMITTED,
@@ -22,7 +22,6 @@ from .models import (
     UNDER_REVIEW,
     Approval,
     Contract,
-    DocumentCategory,
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
@@ -30,28 +29,14 @@ from .models import (
 )
 
 
+User = get_user_model()
+
+
 def filter_choices(available, choices):
     return [(k, v) for k, v in available if k in choices]
 
 
 filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
-
-
-class LoopedFormMixin:
-    """
-    Sets the `name` variable on child classes.
-
-    "Looped" forms live outside the typical delegated view/form flow.  They are
-    typically forms which need to be instantiated with an instance so can't use
-    the DelegateableView flow.  They also need to set a slightly different name
-    since there can be multiple instances of a given form on the page we need
-    to use the form's instance.pk to differentiate between them.
-
-    This mixin provides the `name` property to handle generating that full name.
-    """
-    @property
-    def name(self):
-        return f'{self.name_prefix}-{self.instance.pk}'
 
 
 class ApproveContractForm(forms.ModelForm):
@@ -72,7 +57,7 @@ class ApproveContractForm(forms.ModelForm):
         super().clean()
 
 
-class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
+class ChangePaymentRequestStatusForm(forms.ModelForm):
     name_prefix = 'change_payment_request_status_form'
 
     class Meta:
@@ -82,19 +67,18 @@ class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
 
-        self.instance = instance
-        self.initial['paid_value'] = instance.requested_value
+        self.initial['paid_value'] = self.instance.requested_value
 
         status_field = self.fields['status']
 
         possible_status_transitions_lut = {
             CHANGES_REQUESTED: filter_request_choices([DECLINED]),
-            SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, PAID, DECLINED]),
+            SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]),
             UNDER_REVIEW: filter_request_choices([PAID]),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
-        if instance.status == CHANGES_REQUESTED:
+        if instance.status != UNDER_REVIEW:
             del self.fields['paid_value']
 
     def clean(self):
@@ -104,7 +88,6 @@ class ChangePaymentRequestStatusForm(LoopedFormMixin, forms.ModelForm):
 
         if paid_value and status != PAID:
             self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
-
         return cleaned_data
 
 
@@ -126,15 +109,24 @@ class CreateProjectForm(forms.Form):
 
 
 class CreateApprovalForm(forms.ModelForm):
+    by = forms.ModelChoiceField(
+        queryset=User.objects.approvers(),
+        widget=forms.HiddenInput(),
+    )
+
     class Meta:
         model = Approval
-        fields = ['by']
-        widgets = {'by': forms.HiddenInput()}
+        fields = ('by',)
 
     def __init__(self, user=None, *args, **kwargs):
-        initial = kwargs.pop('initial', {})
-        initial.update(by=user)
-        super().__init__(*args, initial=initial, **kwargs)
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_by(self):
+        by = self.cleaned_data['by']
+        if by != self.user:
+            raise forms.ValidationError('Cannot approve for a different user')
+        return by
 
 
 class EditPaymentRequestForm(forms.ModelForm):
@@ -145,6 +137,10 @@ class EditPaymentRequestForm(forms.ModelForm):
     class Meta:
         fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'comment']
         model = PaymentRequest
+        widgets = {
+            'date_from': forms.DateInput,
+            'date_to': forms.DateInput,
+        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, instance=instance, **kwargs)
@@ -184,7 +180,20 @@ class ProjectEditForm(forms.ModelForm):
 
 
 class ProjectApprovalForm(ProjectEditForm):
+    def __init__(self, *args, extra_fields=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if extra_fields:
+            self.fields = {
+                **self.fields,
+                **extra_fields,
+            }
+
     def save(self, *args, **kwargs):
+        self.instance.form_data = {
+            field: self.cleaned_data[field]
+            for field in self.instance.question_field_ids
+            if field in self.cleaned_data
+        }
         self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)
 
@@ -242,41 +251,34 @@ class RequestPaymentForm(forms.ModelForm):
         return request
 
 
-class SelectDocumentForm(forms.Form):
-    category = forms.ModelChoiceField(queryset=DocumentCategory.objects.all())
-    files = forms.MultipleChoiceField()
+class SelectDocumentForm(forms.ModelForm):
+    document = forms.ChoiceField()
 
-    name = 'select_document_form'
+    class Meta:
+        model = PacketFile
+        fields = ['category', 'document']
 
-    def __init__(self, existing_files, project, *args, **kwargs):
+    def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.project = project
+        self.files = existing_files
 
-        choices = []
-        if existing_files is not None:
-            choices = [(f.url, f.filename) for f in existing_files]
+        choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['files'].choices = choices
+        self.fields['document'].choices = choices
+
+    def clean_document(self):
+        file_url = self.cleaned_data['document']
+        for file in self.files:
+            if file.url == file_url:
+                new_file = ContentFile(file.read())
+                new_file.name = file.filename
+                return new_file
+        raise forms.ValidationError("File not found on submission")
 
     @transaction.atomic()
     def save(self, *args, **kwargs):
-        category = self.cleaned_data['category']
-        urls = self.cleaned_data['files']
-
-        files = get_files(self.project)
-        files = (f for f in files if f.url in urls)
-
-        for f in files:
-            new_file = ContentFile(f.read())
-            new_file.name = f.filename
-
-            PacketFile.objects.create(
-                category=category,
-                project=self.project,
-                title=f.filename,
-                document=new_file,
-            )
+        return super().save(*args, **kwargs)
 
 
 class SetPendingForm(forms.ModelForm):
@@ -304,15 +306,14 @@ class SetPendingForm(forms.ModelForm):
 
 class UploadContractForm(forms.ModelForm):
     class Meta:
-        fields = ['file', 'is_signed']
+        fields = ['file']
         model = Contract
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        if not user.is_staff:
-            self.fields['is_signed'].widget = forms.HiddenInput()
-            self.fields['is_signed'].default = True
+class StaffUploadContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['file', 'is_signed']
+        model = Contract
 
 
 class UploadDocumentForm(forms.ModelForm):

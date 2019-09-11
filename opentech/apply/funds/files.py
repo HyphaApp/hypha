@@ -12,7 +12,7 @@ def generate_submission_file_path(submission_id, field_id, file_name):
     return os.path.join(path, file_name)
 
 
-class SubmissionStreamFileField(StreamFieldFile):
+class SubmissionStreamFieldFile(StreamFieldFile):
     def generate_filename(self):
         return generate_submission_file_path(self.instance.pk, self.field.id, self.name)
 

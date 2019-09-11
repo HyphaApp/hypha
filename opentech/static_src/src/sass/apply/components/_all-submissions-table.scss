@@ -91,7 +91,7 @@
                             white-space: normal;
                             background: $color--sky-blue;
                             border: 1px solid $color--marine;
-                            content: attr(data-tooltip);
+                            content: attr(data-title-tooltip);
                             opacity: 0;
                             transition: opacity $transition;
                         }

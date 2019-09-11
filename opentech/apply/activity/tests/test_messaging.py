@@ -386,7 +386,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     @responses.activate
     def test_round_slack_channel(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
-        submission = ApplicationSubmissionFactory(page__slack_channel='dummy')
+        submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy')
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '', source=submission)
@@ -607,7 +607,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
-        self.assertEqual(None, activity.related_object)
+        self.assertEqual(project.submission, activity.related_object)
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,

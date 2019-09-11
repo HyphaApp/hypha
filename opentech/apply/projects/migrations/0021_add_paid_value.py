@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0018_rename_value_to_requested_value'),
+        ('application_projects', '0020_rename_value_to_requested_value'),
     ]
 
     operations = [

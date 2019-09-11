@@ -6,6 +6,8 @@ from .views import (
     ChangePaymentRequestStatusView,
     DeletePaymentRequestView,
     EditPaymentRequestView,
+    PaymentRequestView,
+    PaymentRequestPrivateMedia,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
@@ -38,16 +40,13 @@ if settings.PROJECTS_ENABLED:
                 SelectDocumentView.as_view(),
                 name="copy-documents",
             ),
-            path(
-                'delete-payment-request/<int:payment_request_id>/',
-                DeletePaymentRequestView.as_view(),
-                name='delete-payment-request',
-            ),
-            path(
-                'edit-payment-request/<int:payment_request_id>/',
-                EditPaymentRequestView.as_view(),
-                name='edit-payment-request',
-            ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
+            path('payment-requests/<int:pr_pk>/', include(([
+                path('', PaymentRequestView.as_view(), name='detail'),
+                path('edit/', EditPaymentRequestView.as_view(), name='edit'),
+                path('delete/', DeletePaymentRequestView.as_view(), name='delete'),
+                path('documents/invoice/', PaymentRequestPrivateMedia.as_view(), name="invoice"),
+                path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
+            ], 'payments'))),
         ])),
     ]

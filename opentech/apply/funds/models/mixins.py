@@ -9,7 +9,7 @@ from opentech.apply.utils.blocks import SingleIncludeMixin
 from opentech.apply.stream_forms.blocks import UploadableMediaBlock
 from opentech.apply.utils.storage import PrivateStorage
 
-from ..files import SubmissionStreamFileField
+from ..files import SubmissionStreamFieldFile
 
 __all__ = ['AccessFormData']
 
@@ -25,7 +25,7 @@ class AccessFormData:
          - form_data > jsonfield containing the submitted data
          - form_fields > streamfield containing the original form fields
     """
-    stream_file_class = SubmissionStreamFileField
+    stream_file_class = SubmissionStreamFieldFile
     storage_class = PrivateStorage
 
     @property
@@ -36,7 +36,7 @@ class AccessFormData:
         for field_name, field_id in self.named_blocks.items():
             if field_id not in data:
                 try:
-                    response = data[field_name]
+                    response = data.pop(field_name)
                 except KeyError:
                     # There was no value supplied for the named field
                     pass
@@ -66,6 +66,25 @@ class AccessFormData:
             return [cls.stream_file(instance, field, f) for f in file]
         else:
             return cls.stream_file(instance, field, file)
+
+    def process_file_data(self, data):
+        for field in self.form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                file = self.process_file(self, field, data.get(field.id, []))
+                try:
+                    file.save()
+                except AttributeError:
+                    for f in file:
+                        f.save()
+                self.form_data[field.id] = file
+
+    def extract_files(self):
+        files = {}
+        for field in self.form_fields:
+            if isinstance(field.block, UploadableMediaBlock):
+                files[field.id] = self.data(field.id) or []
+                self.form_data.pop(field.id, None)
+        return files
 
     @classmethod
     def from_db(cls, db, field_names, values):
