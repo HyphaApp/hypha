@@ -176,15 +176,15 @@ class TestSelectDocumentForm(TestCase):
         files = list(get_files(project))
         self.assertEqual(len(files), 4)
 
-        urls = files[3].url
+        url = files[3].url
 
         form = SelectDocumentForm(
             files,
-            project,
-            data={'category': category.id, 'file': urls},
+            data={'category': category.id, 'document': url},
         )
         self.assertTrue(form.is_valid(), form.errors)
 
+        form.instance.project = project
         form.save()
 
         packet_files = project.packet_files.order_by('id')

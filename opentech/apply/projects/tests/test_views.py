@@ -177,7 +177,7 @@ class TestUserProjectRejectView(BaseProjectDetailTestCase):
             'form-submitted-rejection_form': '',
             'comment': 'needs to change',
         })
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
         project = self.refresh(project)
         self.assertEqual(project.status, COMMITTED)
         self.assertTrue(project.is_locked)
