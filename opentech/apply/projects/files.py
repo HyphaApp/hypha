@@ -25,4 +25,4 @@ def get_files(project):
     file_field_names = project.submission.file_field_ids
     file_fields = (project.submission.data(field) for field in file_field_names)
 
-    yield from flatten(file_fields)
+    return list(flatten(file_fields))

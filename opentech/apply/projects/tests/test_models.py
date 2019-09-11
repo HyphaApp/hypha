@@ -9,7 +9,8 @@ from ..models import (
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
-    Project
+    Project,
+    PaymentRequest,
 )
 from .factories import (
     DocumentCategoryFactory,
@@ -76,58 +77,71 @@ class TestProjectModel(TestCase):
         payment_request = PaymentRequestFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.user_can_delete(staff))
+        self.assertFalse(payment_request.can_user_delete(staff))
 
     def test_staff_cant_delete_from_under_review(self):
         payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.user_can_delete(staff))
+        self.assertFalse(payment_request.can_user_delete(staff))
 
     def test_staff_cant_delete_from_changes_requested(self):
         payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.user_can_delete(staff))
+        self.assertFalse(payment_request.can_user_delete(staff))
 
     def test_staff_cant_delete_from_paid(self):
         payment_request = PaymentRequestFactory(status=PAID)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.user_can_delete(staff))
+        self.assertFalse(payment_request.can_user_delete(staff))
 
     def test_staff_cant_delete_from_declined(self):
         payment_request = PaymentRequestFactory(status=DECLINED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.user_can_delete(staff))
+        self.assertFalse(payment_request.can_user_delete(staff))
 
-    def test_user_can_delete_from_submitted(self):
+    def test_can_user_delete_from_submitted(self):
         payment_request = PaymentRequestFactory(status=SUBMITTED)
         user = ApplicantFactory()
 
-        self.assertTrue(payment_request.user_can_delete(user))
+        self.assertTrue(payment_request.can_user_delete(user))
 
     def test_user_cant_delete_from_under_review(self):
         payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.user_can_delete(user))
+        self.assertFalse(payment_request.can_user_delete(user))
 
     def test_user_can_delete_from_changes_requested(self):
         payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
         user = ApplicantFactory()
 
-        self.assertTrue(payment_request.user_can_delete(user))
+        self.assertTrue(payment_request.can_user_delete(user))
 
     def test_user_cant_delete_from_paid(self):
         payment_request = PaymentRequestFactory(status=PAID)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.user_can_delete(user))
+        self.assertFalse(payment_request.can_user_delete(user))
 
     def test_user_cant_delete_from_declined(self):
         payment_request = PaymentRequestFactory(status=DECLINED)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.user_can_delete(user))
+        self.assertFalse(payment_request.can_user_delete(user))
+
+
+class TestPaymentRequestsQueryset(TestCase):
+    def test_get_totals(self):
+        PaymentRequestFactory(value=20)
+        PaymentRequestFactory(value=10, status=PAID)
+
+        self.assertEqual(PaymentRequest.objects.paid_value(), 10)
+        self.assertEqual(PaymentRequest.objects.unpaid_value(), 20)
+
+    def test_get_totals_no_value(self):
+        self.assertEqual(PaymentRequest.objects.paid_value(), 0)
+        self.assertEqual(PaymentRequest.objects.unpaid_value(), 0)

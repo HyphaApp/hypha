@@ -45,21 +45,24 @@
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
-                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
+                    <use xlink:href="#tick"></use>
+                </svg>
                 <p class="docs-block__title">Supporting documents</p>
             </div>
             {% if editable %}
             <div class="docs-block__row-inner">
-                <a
-                    data-fancybox
-                    data-src="#copy-supporting-doc"
-                    class="docs-block__link"
-                    style="margin-right:20px"
-                    href="#">
-                    Choose file
-                </a>
-            </div>
-            <div class="docs-block__row-inner">
+                {% if select_document_form %}
+                    <a
+                        data-fancybox
+                        data-src="#copy-supporting-doc"
+                        class="docs-block__link"
+                        href="#">
+                        Choose file
+                    </a>
+                {% else %}
+                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">Choose file</span>
+                {% endif %}
                 <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
             </div>
             {% endif %}

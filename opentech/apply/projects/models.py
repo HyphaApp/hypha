@@ -3,12 +3,17 @@ import decimal
 import json
 import logging
 
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import Sum, Value as V
+from django.db.models.functions import Coalesce
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -97,6 +102,12 @@ class PacketFile(models.Model):
         return RemoveDocumentForm(instance=self)
 
 
+@receiver(post_delete, sender=PacketFile)
+def delete_packetfile_file(sender, instance, **kwargs):
+    # Remove the file and don't save the base model
+    instance.document.delete(False)
+
+
 class PaymentApproval(models.Model):
     request = models.ForeignKey('PaymentRequest', on_delete=models.CASCADE, related_name="approvals")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_approvals")
@@ -130,6 +141,26 @@ REQUEST_STATUS_CHOICES = [
 ]
 
 
+class PaymentRequestQueryset(models.QuerySet):
+    def in_progress(self):
+        return self.exclude(status__in=[DECLINED, PAID])
+
+    def rejected(self):
+        return self.filter(status=DECLINED)
+
+    def not_rejected(self):
+        return self.exclude(status=DECLINED)
+
+    def total_value(self):
+        return self.aggregate(total=Coalesce(Sum('value'), V(0)))['total']
+
+    def paid_value(self):
+        return self.filter(status=PAID).total_value()
+
+    def unpaid_value(self):
+        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value()
+
+
 class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
@@ -147,17 +178,44 @@ class PaymentRequest(models.Model):
     comment = models.TextField()
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
+    objects = PaymentRequestQueryset.as_manager()
+
     def __str__(self):
         return f'Payment requested for {self.project}'
 
-    def user_can_delete(self, user):
-        if user.is_apply_staff:
-            return False  # Staff can reject
+    @property
+    def status_display(self):
+        return self.get_status_display()
 
-        if self.status not in (SUBMITTED, CHANGES_REQUESTED):
+    def can_user_delete(self, user):
+        if user.is_applicant:
+            if self.status in (SUBMITTED, CHANGES_REQUESTED):
+                return True
+
+        return False
+
+    def can_user_edit(self, user):
+        if user.is_applicant:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED}:
+                return True
+
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
+        return False
+
+    def can_user_change_status(self, user):
+        if not user.is_apply_staff:
+            return False  # Users can't change status
+
+        if self.status in {PAID, DECLINED}:
             return False
 
         return True
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:payments:detail', args=[self.project.pk, self.pk])
 
 
 COMMITTED = 'committed'
@@ -253,6 +311,12 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             contact_address=submission.form_data.get('address', ''),
             value=submission.form_data.get('value', 0),
         )
+
+    def paid_value(self):
+        return self.payment_requests.paid_value()
+
+    def unpaid_value(self):
+        return self.payment_requests.unpaid_value()
 
     def clean(self):
         if self.proposed_start is None:

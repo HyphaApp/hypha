@@ -16,35 +16,25 @@
             <tr>
                 <th class="payment-block__table-amount">Amount</th>
                 <th class="payment-block__table-status">Status</th>
-                <th class="payment-block__table-docs">Documents</th>
+                <th class="payment-block__table-date">From</th>
+                <th class="payment-block__table-date">To</th>
                 <th class="payment-block__table-update"></th>
             </tr>
         </thead>
         <tbody>
-            {% for payment_request in payments.not_rejected %}
+            {% for payment_request in object.payment_requests.not_rejected %}
             <tr>
                 <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value|intcomma }}</td>
                 <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
+                <td><span class="payment-block__mobile-label">From: </span>{{ payment_request.date_from.date }}</td>
+                <td><span class="payment-block__mobile-label">To: </span>{{ payment_request.date_to.date }}</td>
                 <td>
-                    {% can_change_status payment_request user as user_can_change_status %}
-                    {% if user_can_change_status %}
-                    <a
-                        data-fancybox
-                        data-src="#change-payment-status-{{ payment_request.pk }}"
-                        class="payment-block__status-link"
-                        href="#">
-                        Change status
-                    </a>
-                    {% endif %}
-
-                    {% user_can_edit payment_request user as user_can_edit_request %}
+                    <a href="{{ payment_request.get_absolute_url }}">View</a>
+                    {% can_edit payment_request user as user_can_edit_request %}
                     {% if user_can_edit_request %}
                     <a
-                        data-fancybox
-                        data-src="#edit-payment-request-{{ payment_request.pk }}"
                         class="payment-block__status-link"
-                        href="#">
+                        href="{% url "apply:projects:payments:edit" pk=object.pk pr_pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}
@@ -58,11 +48,15 @@
                     {% endif %}
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                No active Payment Requests.
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {% if payments.rejected %}
+    {% if object.payment_requests.rejected %}
         <p class="payment-block__rejected">
             <a class="payment-block__rejected-link js-payment-block-rejected-link" href="#">Show rejected</a>
         </p>
@@ -72,15 +66,15 @@
                 <tr>
                     <th class="payment-block__table-amount">Amount</th>
                     <th class="payment-block__table-status">Status</th>
-                    <th class="payment-block__table-docs">Documents</th>
+                    <th class="payment-block__table-view"></th>
                 </tr>
             </thead>
             <tbody>
-                {% for payment_request in payments.rejected %}
+                {% for payment_request in object.payment_requests.rejected %}
                 <tr>
                     <td><span class="payment-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
                     <td><span class="payment-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                    <td><span class="payment-block__mobile-label">Documents: </span><a href="#">Download</a></td>
+                    <td><a href="{{ payment_request.get_absolute_url }}">View</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -96,16 +90,6 @@
         <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
         {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
-    </div>
-</div>
-{% endfor %}
-
-{% for form in edit_payment_request_forms %}
-<div class="modal" id="edit-payment-request-{{ form.instance.pk }}">
-    <h4 class="modal__header-bar">Edit request</h4>
-    <div class="wrapper--outer-space-medium">
-        {% url 'apply:projects:edit-payment-request' pk=object.pk payment_request_id=form.instance.pk as edit_payment_request_action %}
-        {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=edit_payment_request_action %}
     </div>
 </div>
 {% endfor %}

@@ -1,9 +1,12 @@
 from io import BytesIO
+from unittest import mock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
-from opentech.apply.users.tests.factories import UserFactory
+from opentech.apply.users.tests.factories import (
+    UserFactory,
+)
 
 from ..files import get_files
 from ..forms import (
@@ -11,10 +14,18 @@ from ..forms import (
     ProjectApprovalForm,
     RequestPaymentForm,
     SelectDocumentForm,
+    StaffUploadContractForm,
+    UploadContractForm,
     filter_choices,
     filter_request_choices
 )
-from ..models import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
+from ..models import (
+    CHANGES_REQUESTED,
+    DECLINED,
+    PAID,
+    SUBMITTED,
+    UNDER_REVIEW,
+)
 from .factories import (
     DocumentCategoryFactory,
     PaymentRequestFactory,
@@ -28,7 +39,7 @@ class TestChangePaymentRequestStatusForm(TestCase):
         request = PaymentRequestFactory(status=SUBMITTED)
         form = ChangePaymentRequestStatusForm(instance=request)
 
-        expected = set(filter_request_choices([UNDER_REVIEW, CHANGES_REQUESTED, DECLINED, PAID]))
+        expected = set(filter_request_choices([UNDER_REVIEW, CHANGES_REQUESTED, DECLINED]))
         actual = set(form.fields['status'].choices)
 
         self.assertEqual(expected, actual)
@@ -165,20 +176,48 @@ class TestSelectDocumentForm(TestCase):
         files = list(get_files(project))
         self.assertEqual(len(files), 4)
 
-        urls = [files[0].url, files[2].url]
+        url = files[3].url
 
         form = SelectDocumentForm(
             files,
-            project,
-            data={'category': category.id, 'files': urls},
+            data={'category': category.id, 'document': url},
         )
         self.assertTrue(form.is_valid(), form.errors)
 
+        form.instance.project = project
         form.save()
 
         packet_files = project.packet_files.order_by('id')
-        self.assertEqual(len(packet_files), 2)
+        self.assertEqual(len(packet_files), 1)
 
-        first_file, second_file = packet_files
-        self.assertEqual(first_file.document.read(), files[0].read())
-        self.assertEqual(second_file.document.read(), files[2].read())
+        self.assertEqual(packet_files.first().document.read(), files[3].read())
+
+
+class TestStaffContractUploadForm(TestCase):
+    mock_file = mock.MagicMock(spec=SimpleUploadedFile)
+    mock_file.read.return_value = b"fake file contents"
+
+    def test_staff_can_upload_unsigned(self):
+        form = StaffUploadContractForm(data={}, files={'file': self.mock_file})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertFalse(form.cleaned_data.get('is_signed'))
+
+    def test_staff_can_upload_signed(self):
+        form = StaffUploadContractForm(data={'is_signed': True}, files={'file': self.mock_file})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertTrue(form.cleaned_data.get('is_signed'))
+
+
+class TestContractUploadForm(TestCase):
+    mock_file = mock.MagicMock(spec=SimpleUploadedFile)
+    mock_file.read.return_value = b"fake file contents"
+
+    def test_applicant_cant_upload_unsigned(self):
+        form = UploadContractForm(data={}, files={'file': self.mock_file})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertIsNone(form.cleaned_data.get('is_signed'))
+
+    def test_applicant_can_upload_signed(self):
+        form = UploadContractForm(data={'is_signed': True}, files={'file': self.mock_file})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertIsNone(form.cleaned_data.get('is_signed'))

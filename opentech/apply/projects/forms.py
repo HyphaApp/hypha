@@ -12,7 +12,6 @@ from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
 
-from .files import get_files
 from .models import (
     CHANGES_REQUESTED,
     COMMITTED,
@@ -23,7 +22,6 @@ from .models import (
     UNDER_REVIEW,
     Approval,
     Contract,
-    DocumentCategory,
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
@@ -69,15 +67,13 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
 
-        self.instance = instance
-
         status_field = self.fields['status']
 
-        if instance.status == SUBMITTED:
+        if self.instance.status == SUBMITTED:
             wanted = [CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]
-        elif instance.status == CHANGES_REQUESTED:
+        elif self.instance.status == CHANGES_REQUESTED:
             wanted = [DECLINED]
-        elif instance.status == UNDER_REVIEW:
+        elif self.instance.status == UNDER_REVIEW:
             wanted = [PAID]
         else:
             wanted = []
@@ -89,8 +85,6 @@ class CreateProjectForm(forms.Form):
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(project__isnull=True),
         widget=forms.HiddenInput(),
-        label='',
-        required=False,
     )
 
     def __init__(self, instance=None, user=None, *args, **kwargs):
@@ -108,8 +102,6 @@ class CreateApprovalForm(forms.ModelForm):
     by = forms.ModelChoiceField(
         queryset=User.objects.approvers(),
         widget=forms.HiddenInput(),
-        label='',
-        required=False,
     )
 
     class Meta:
@@ -117,9 +109,14 @@ class CreateApprovalForm(forms.ModelForm):
         fields = ('by',)
 
     def __init__(self, user=None, *args, **kwargs):
-        initial = kwargs.pop('initial', {})
-        initial.update(by=user)
-        super().__init__(*args, initial=initial, **kwargs)
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_by(self):
+        by = self.cleaned_data['by']
+        if by != self.user:
+            raise forms.ValidationError('Cannot approve for a different user')
+        return by
 
 
 class EditPaymentRequestForm(forms.ModelForm):
@@ -243,41 +240,34 @@ class RequestPaymentForm(forms.ModelForm):
         return request
 
 
-class SelectDocumentForm(forms.Form):
-    category = forms.ModelChoiceField(queryset=DocumentCategory.objects.all())
-    files = forms.MultipleChoiceField()
+class SelectDocumentForm(forms.ModelForm):
+    document = forms.ChoiceField()
 
-    name = 'select_document_form'
+    class Meta:
+        model = PacketFile
+        fields = ['category', 'document']
 
-    def __init__(self, existing_files, project, *args, **kwargs):
+    def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.project = project
+        self.files = existing_files
 
-        choices = []
-        if existing_files is not None:
-            choices = [(f.url, f.filename) for f in existing_files]
+        choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['files'].choices = choices
+        self.fields['document'].choices = choices
+
+    def clean_document(self):
+        file_url = self.cleaned_data['document']
+        for file in self.files:
+            if file.url == file_url:
+                new_file = ContentFile(file.read())
+                new_file.name = file.filename
+                return new_file
+        raise forms.ValidationError("File not found on submission")
 
     @transaction.atomic()
     def save(self, *args, **kwargs):
-        category = self.cleaned_data['category']
-        urls = self.cleaned_data['files']
-
-        files = get_files(self.project)
-        files = (f for f in files if f.url in urls)
-
-        for f in files:
-            new_file = ContentFile(f.read())
-            new_file.name = f.filename
-
-            PacketFile.objects.create(
-                category=category,
-                project=self.project,
-                title=f.filename,
-                document=new_file,
-            )
+        return super().save(*args, **kwargs)
 
 
 class SetPendingForm(forms.ModelForm):
@@ -305,15 +295,14 @@ class SetPendingForm(forms.ModelForm):
 
 class UploadContractForm(forms.ModelForm):
     class Meta:
-        fields = ['file', 'is_signed']
+        fields = ['file']
         model = Contract
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-        if not user.is_staff:
-            self.fields['is_signed'].widget = forms.HiddenInput()
-            self.fields['is_signed'].default = True
+class StaffUploadContractForm(forms.ModelForm):
+    class Meta:
+        fields = ['file', 'is_signed']
+        model = Contract
 
 
 class UploadDocumentForm(forms.ModelForm):

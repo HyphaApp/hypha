@@ -189,10 +189,10 @@
                 <div class="sidebar__inner">
                     <h5>Supporting Information</h5>
 
-                    <p><a href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
+                    <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
 
                     {% if request.user.is_apply_staff %}
-                    <p><a href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
+                    <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
                     {% endif %}
                 </div>
                 {% endif %}
@@ -207,16 +207,19 @@
 
                     {% for contract in contracts %}
                     <p>
-                        <a href="{{ contract.file.url }}">
-                            Uploaded at {{ contract.created_at|date:"j F Y" }}
-                            ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
+                        <a href="{{ contract.file.url }}" class="link link--bold">
+                            {{ contract.created_at|date:"j F Y" }}
                         </a>
+                            {% if contract.approver %}
+                                    - Approved by {{ contract.approver }}
+                            {% else %}
+                                ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
+                            {% endif %}
+
+                        {% if request.user.is_apply_staff and forloop.first %}
+                            {% block approve_contracts %}{% endblock %}
+                        {% endif %}
                     </p>
-
-                    {% if request.user.is_apply_staff and forloop.first %}
-                    {% block approve_contracts %}{% endblock %}
-                    {% endif %}
-
                     {% endfor %}
 
                 </div>

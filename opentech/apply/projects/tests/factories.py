@@ -89,6 +89,11 @@ class ProjectFactory(factory.DjangoModelFactory):
     class Meta:
         model = Project
 
+    class Params:
+        in_approval = factory.Trait(
+            is_locked=True,
+        )
+
 
 class ContractFactory(factory.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)

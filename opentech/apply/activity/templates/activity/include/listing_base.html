@@ -1,4 +1,4 @@
-{% load activity_tags bleach_tags markdown_tags submission_tags %}
+{% load activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
 <div class="feed__item feed__item--{{ activity.type }}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
@@ -49,7 +49,7 @@
                 {% with url=activity.related_object.get_absolute_url %}
                     {% if url %}
                     <a href="{{ url }}" class="feed__related-item">
-                        {{ activity.related_object }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                        {{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
                     {% endif %}
                 {% endwith %}
