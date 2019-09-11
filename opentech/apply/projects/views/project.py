@@ -179,6 +179,10 @@ class SelectDocumentView(DelegatedViewMixin, CreateView):
     context_name = 'select_document_form'
     model = PacketFile
 
+    @property
+    def should_show(self):
+        return bool(self.files)
+
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)

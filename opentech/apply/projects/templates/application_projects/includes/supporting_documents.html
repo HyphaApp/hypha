@@ -52,7 +52,7 @@
             </div>
             {% if editable %}
             <div class="docs-block__row-inner">
-                {% if select_document_form %}
+                {% if select_document_form.should_show %}
                     <a
                         data-fancybox
                         data-src="#copy-supporting-doc"
