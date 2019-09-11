@@ -1015,7 +1015,6 @@ class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
         self.assertEqual(payment_request.status, SUBMITTED)
 
 
-
 class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
     base_view_name = 'invoice'
     url_name = 'funds:projects:payments:{}'

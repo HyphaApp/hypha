@@ -22,7 +22,6 @@ from .models import (
     UNDER_REVIEW,
     Approval,
     Contract,
-    DocumentCategory,
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
