@@ -43,9 +43,8 @@
         }
     }
 
-    &__status-link {
-        font-size: map-get($font-sizes, milli);
-        display: block;
+    &__edit-link {
+        margin-left: 1rem;
     }
 
     &__rejected {
@@ -142,7 +141,7 @@
         width: 25%;
     }
 
-    &__table-date{
+    &__table-date {
         min-width: 180px;
         width: 25%;
     }

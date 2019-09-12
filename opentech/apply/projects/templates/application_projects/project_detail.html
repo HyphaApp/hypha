@@ -217,7 +217,7 @@
                             {% endif %}
 
                         {% if request.user.is_apply_staff and forloop.first %}
-                            {% block approve_contracts %}{% endblock %}
+                            <p>{% block approve_contracts %}{% endblock %}</p>
                         {% endif %}
                     </p>
                     {% endfor %}
