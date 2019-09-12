@@ -418,11 +418,12 @@
                 }
 
                 &::after {
-                    content: 'remove';
+                    content: '';
+                    background: url('./../../images/cross.svg') left no-repeat;
                     margin-left: 10px;
-                    color: $color--light-blue;
-                    font-size: 14px;
-                    text-decoration: underline;
+                    width: 14px;
+                    height: 13px;
+                    display: inline-block;
                 }
             }
 
@@ -431,12 +432,14 @@
                 color: $color--black-60;
 
                 &::after {
-                    content: 'undo';
-                    display: inline-block;
-                    overflow: hidden;
+                    content: '(will be removed on save) - undo';
+                    background: none;
+                    color: $color--light-blue;
+                    font-size: 14px;
                     position: absolute;
-                    margin-left: 10px;
-                    bottom: 0;
+                    font-weight: $weight--bold;
+                    width: auto;
+                    height: auto;
                 }
             }
 

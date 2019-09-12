@@ -230,6 +230,7 @@ class EditPaymentRequestForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
         required=False,
+        label='Receipts'
     )
     receipts = MultiFileField(label='', required=False)
 
