@@ -895,23 +895,37 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'pk': instance.project.pk, 'pr_pk': instance.pk}
 
-    def test_editing_payment_request_fires_messaging(self):
+    def test_editing_payment_remove_receipt(self):
+        payment_request = PaymentRequestFactory(project__user=self.user)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        response = self.post_page(payment_request, {
+            'requested_value': payment_request.requested_value,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': None,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(payment_request.receipts.exists())
+
+    def test_editing_payment_keeps_receipts(self):
         project = ProjectFactory(user=self.user)
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
 
         requested_value = payment_request.requested_value
 
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
-
         response = self.post_page(payment_request, {
             'requested_value': requested_value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': invoice,
-            'receipt_list': [receipt.pk],
+            'invoice': None,
+            'receipt_list': [],
         })
 
         self.assertEqual(response.status_code, 200)
@@ -922,6 +936,7 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
         self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
+        self.assertEqual(payment_request.receipts.first().file, receipt.file)
 
 
 class TestStaffEditPaymentRequestView(BaseViewTestCase):
@@ -932,7 +947,24 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'pk': instance.project.pk, 'pr_pk': instance.pk}
 
-    def test_editing_payment_request_fires_messaging(self):
+    def test_editing_payment_remove_receipt(self):
+        payment_request = PaymentRequestFactory()
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        response = self.post_page(payment_request, {
+            'requested_value': payment_request.requested_value,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': None,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(payment_request.receipts.exists())
+
+    def test_editing_payment_keeps_receipts(self):
         project = ProjectFactory()
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
