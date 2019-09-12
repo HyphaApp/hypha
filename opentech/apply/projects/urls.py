@@ -11,6 +11,7 @@ from .views import (
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectEditView,
+    ProjectListView,
     ProjectPrivateMediaView,
     SelectDocumentView
 )
@@ -49,4 +50,5 @@ if settings.PROJECTS_ENABLED:
                 path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
             ], 'payments'))),
         ])),
+        path('all/', ProjectListView.as_view(), name='all'),
     ]
