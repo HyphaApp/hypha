@@ -75,6 +75,14 @@
             {% endif %}
         </div>
 
+        <h3>Approvals</h3>
+        <div class="card card--solid">
+            <h4>Approver</h4>
+            {% with approval=project.approvals.first %}
+                <p>{{ approval.by }} ({{ approval.created_at }})</p>
+            {% endwith %}
+        </div>
+
         <h3>Review</h3>
         <div class="card card--solid">
             <h4>Submission lead</h4>
