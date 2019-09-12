@@ -2,7 +2,6 @@
 {% load humanize payment_request_tools %}
 
 {% block title %}Payment Request: {{ object.project.title }}{% endblock %}
-{% block body_class %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
@@ -16,7 +15,7 @@
 
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
-        <div class="card">
+        <div class="card card--solid">
             <p class="card__text"><b>Status:</b> {{ object.get_status_display }}</p>
             <p class="card__text"><b>Name of Vendor:</b> {{ object.project.contact_legal_name }}</p>
             <p class="card__text"><b>Invoice Number:</b> {{ object.pk }}</p>
@@ -24,7 +23,7 @@
             <p class="card__text"><b>Total:</b> ${{ object.value|intcomma }}</p>
         </div>
 
-        <div class="card">
+        <div class="card card--solid">
             <div class="card__inner">
                 <h5 class="card__heading">Invoice</h5>
                 <p class="card__text"><a href="{% url "apply:projects:payments:invoice" pk=object.project.pk pr_pk=object.pk %}">Download</a></p>
