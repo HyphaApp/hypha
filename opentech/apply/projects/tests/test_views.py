@@ -1135,5 +1135,5 @@ class TestProjectListView(TestCase):
 
         url = reverse('apply:projects:all')
 
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 301)
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)

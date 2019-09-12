@@ -1,4 +1,3 @@
-from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -17,9 +16,6 @@ from opentech.apply.funds.tables import (
 )
 from opentech.apply.projects.filters import ProjectListFilter
 from opentech.apply.projects.models import (
-    COMPLETE,
-    DECLINED,
-    PAID,
     PaymentRequest,
     Project
 )
@@ -47,21 +43,24 @@ class AdminDashboardView(TemplateView):
         return {**current_context, **extra_context}
 
     def get_my_active_payment_requests(self, user):
-        payment_requests = (PaymentRequest.objects.filter(project__lead=user)
-                                                  .exclude(status__in=[DECLINED, PAID]))[:10]
+        payment_requests = PaymentRequest.objects.filter(
+            project__lead=user,
+        ).in_progress()
 
         return {
             'table': PaymentRequestsDashboardTable(payment_requests),
         }
 
     def get_my_projects(self, request):
-        projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
+        projects = Project.objects.filter(lead=request.user).for_table()
 
         filterset = ProjectListFilter(data=request.GET or None, request=request, queryset=projects)
 
+        limit = 10
         return {
             'filterset': filterset,
-            'table': ProjectsDashboardTable(projects),
+            'table': ProjectsDashboardTable(projects[:limit]),
+            'display_more': projects.count() > limit,
             'url': reverse('apply:projects:all'),
         }
 
@@ -70,11 +69,12 @@ class AdminDashboardView(TemplateView):
         qs = qs.in_review_for(user).order_by('-submit_time')
         count = qs.count()
 
+        limit = 5
         return {
             'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(user)),
             'count': count,
-            'display_more': count > 5,
-            'table': SummarySubmissionsTableWithRole(qs[:5], prefix='my-review-'),
+            'display_more': count > limit,
+            'table': SummarySubmissionsTableWithRole(qs[:limit], prefix='my-review-'),
         }
 
     def get_my_reviewed(self, request, qs):
@@ -83,10 +83,11 @@ class AdminDashboardView(TemplateView):
 
         filterset = SubmissionFilterAndSearch(data=request.GET or None, request=request, queryset=qs)
 
+        limit = 5
         return {
-            'display_more': filterset.qs.count() > 5,
             'filterset': filterset,
-            'table': SummarySubmissionsTable(qs[:5], prefix='my-reviewed-'),
+            'table': SummarySubmissionsTable(qs[:limit], prefix='my-reviewed-'),
+            'display_more': qs.count() > limit,
             'url': reverse('funds:submissions:list'),
         }
 
@@ -309,27 +310,23 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
         return context
 
     def get_active_project_data(self, user):
-        return (Project.objects.filter(user=user)
-                               .exclude(status=COMPLETE)
-                               .order_by(F('proposed_end').asc(nulls_last=True)))
+        return Project.objects.filter(user=user).in_progress()
 
     def get_active_submissions(self, user):
-        active_subs = (ApplicationSubmission.objects.filter(user=user)
-                                                    .active()
-                                                    .current()
-                                                    .select_related('draft_revision'))
+        active_subs = ApplicationSubmission.objects.filter(
+            user=user,
+        ) .active().current().select_related('draft_revision')
+
         for submission in active_subs:
             yield submission.from_draft()
 
     def get_historical_project_data(self, user):
-        return (Project.objects.filter(user=user, status=COMPLETE)
-                               .order_by(F('proposed_end').asc(nulls_last=True)))
+        return Project.objects.filter(user=user).complete()
 
     def get_historical_submission_data(self, user):
-        return (ApplicationSubmission.objects.filter(user=user)
-                                             .inactive()
-                                             .current()
-                                             .for_table(user))
+        return ApplicationSubmission.objects.filter(
+            user=user,
+        ).inactive().current().for_table(user)
 
     def get_tables_data(self):
         return [

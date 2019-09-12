@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Max, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
@@ -542,6 +541,4 @@ class ProjectListView(SingleTableMixin, FilterView):
     template_name = 'application_projects/project_list.html'
 
     def get_queryset(self):
-        return (Project.objects.annotate(amount_paid=Sum('payment_requests__paid_value'))
-                               .annotate(last_payment_request=Max('payment_requests__requested_at'))
-                               .order_by('proposed_end'))
+        return Project.objects.for_table()

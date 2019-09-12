@@ -10,7 +10,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, Value as V
+from django.db.models import F, Max, Sum, Value as V
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -97,7 +97,7 @@ class PacketFile(models.Model):
         instance of PacketFile in the supporting documents template.  The
         standard Delegated View flow makes it difficult to create these forms
         in the view or template.
-        """
+       """
         from .forms import RemoveDocumentForm
         return RemoveDocumentForm(instance=self)
 
@@ -254,6 +254,32 @@ PROJECT_STATUS_CHOICES = [
 ]
 
 
+class ProjectQuerySet(models.QuerySet):
+    def in_progress(self):
+        return self.exclude(status=COMPLETE)
+
+    def complete(self):
+        return self.filter(status=COMPLETE)
+
+    def by_end_date(self, desc=False):
+        order = getattr(F('proposed_end'), 'desc' if desc else 'asc')(nulls_last=True)
+
+        return self.order_by(order)
+
+    def with_amount_paid(self):
+        return self.annotate(
+            amount_paid=Coalesce(Sum('payment_requests__paid_value'), V(0)),
+        )
+
+    def with_last_payment(self):
+        return self.annotate(
+            last_payment_request=Max('payment_requests__requested_at'),
+        )
+
+    def for_table(self):
+        return self.with_amount_paid().with_last_payment()
+
+
 class Project(BaseStreamForm, AccessFormData, models.Model):
     lead = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='lead_projects')
     submission = models.OneToOneField("funds.ApplicationSubmission", on_delete=models.CASCADE)
@@ -294,6 +320,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     sent_to_compliance_at = models.DateTimeField(null=True)
+
+    objects = ProjectQuerySet.as_manager()
 
     def __str__(self):
         return self.title
