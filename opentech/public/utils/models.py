@@ -226,7 +226,13 @@ class SocialMediaSettings(BaseSetting):
 @register_setting
 class SystemMessagesSettings(BaseSetting):
     class Meta:
-        verbose_name = 'system messages'
+        verbose_name = 'system settings'
+
+    footer_content = models.TextField(
+        "Footer content",
+        default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
+        help_text='This will be added to the footer, html tags is allowed.',
+    )
 
     title_404 = models.CharField(
         "Title",
@@ -239,6 +245,7 @@ class SystemMessagesSettings(BaseSetting):
     )
 
     panels = [
+        FieldPanel('footer_content'),
         MultiFieldPanel([
             FieldPanel('title_404'),
             FieldPanel('body_404'),
