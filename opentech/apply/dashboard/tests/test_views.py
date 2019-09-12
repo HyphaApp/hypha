@@ -79,7 +79,7 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, submission.title)
-        self.assertEquals(response.context['in_review_count'], 1)
+        self.assertEquals(response.context['awaiting_reviews']['count'], 1)
 
     def test_waiting_for_review_after_agreement_is_empty(self):
         staff = StaffFactory()
@@ -89,7 +89,7 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")
-        self.assertEquals(response.context['in_review_count'], 0)
+        self.assertEquals(response.context['awaiting_reviews']['count'], 0)
 
     def test_active_payment_requests_with_no_project(self):
         response = self.get_page()

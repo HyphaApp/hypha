@@ -3,7 +3,7 @@ from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
@@ -1111,4 +1111,29 @@ class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
     def test_cant_access_other(self):
         payment_receipt = PaymentReceiptFactory()
         response = self.get_page(payment_receipt)
+        self.assertEqual(response.status_code, 403)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestProjectListView(TestCase):
+    def test_staff_can_access_project_list_page(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse('apply:projects:all')
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_applicants_cannot_access_project_list_page(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(UserFactory())
+
+        url = reverse('apply:projects:all')
+
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)

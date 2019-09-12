@@ -1,6 +1,7 @@
 import textwrap
 
 import django_tables2 as tables
+from django.db.models import F, Sum
 
 from .models import PaymentRequest, Project
 
@@ -18,26 +19,65 @@ class PaymentRequestsDashboardTable(tables.Table):
     class Meta:
         fields = ['project', 'requested_value', 'date_from', 'date_to', 'status']
         model = PaymentRequest
+        orderable = False
 
     def render_requested_value(self, value):
         return f'${value}'
 
 
-class ProjectsDashboardTable(tables.Table):
+class BaseProjectsTable(tables.Table):
     title = tables.LinkColumn(
         'funds:projects:detail',
         text=lambda r: textwrap.shorten(r.title, width=30, placeholder="..."),
         args=[tables.utils.A('pk')],
     )
-    status = tables.Column(verbose_name='Status', accessor='status')
+    status = tables.Column(verbose_name='Status', accessor='get_status_display', order_by=('status',))
     fund = tables.Column(verbose_name='Fund', accessor='submission.page')
+    last_payment_request = tables.DateColumn()
     end_date = tables.DateColumn(verbose_name='End Date', accessor='proposed_end')
     fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
 
-    class Meta:
-        fields = ['title', 'status', 'fund', 'end_date', 'fund_allocation']
-        model = Project
-        # orderable = False
+    def render_fund_allocation(self, record):
+        return f'${record.amount_paid} / ${record.value}'
 
-    def render_fund_allocation(self, value):
-        return f'${value}'
+
+class ProjectsDashboardTable(BaseProjectsTable):
+    class Meta:
+        fields = [
+            'title',
+            'status',
+            'fund',
+            'last_payment_request',
+            'end_date',
+            'fund_allocation',
+        ]
+        model = Project
+        orderable = False
+
+
+class ProjectsListTable(BaseProjectsTable):
+    class Meta:
+        fields = [
+            'title',
+            'status',
+            'lead',
+            'fund',
+            'last_payment_request',
+            'end_date',
+            'fund_allocation',
+        ]
+        model = Project
+        orderable = True
+        order_by = ('-end_date',)
+
+    def order_fund_allocation(self, qs, is_descending):
+        direction = '-' if is_descending else ''
+
+        qs = qs.annotate(
+            paid_ratio=Sum('payment_requests__paid_value') / F('value'),
+        ).order_by(f'{direction}paid_ratio', 'value')
+
+        return qs, True
+
+    def order_end_date(self, qs, desc):
+        return qs.by_end_date(desc), True

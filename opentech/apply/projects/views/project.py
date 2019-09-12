@@ -17,6 +17,8 @@ from django.views.generic import (
     FormView,
     UpdateView
 )
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -29,6 +31,7 @@ from opentech.apply.utils.views import (
 )
 
 from ..files import get_files
+from ..filters import ProjectListFilter
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -52,6 +55,7 @@ from ..models import (
     PacketFile,
     Project
 )
+from ..tables import ProjectsListTable
 from .payment import RequestPaymentView
 
 
@@ -527,3 +531,14 @@ class ApplicantProjectEditView(UpdateView):
 class ProjectEditView(ViewDispatcher):
     admin_view = ProjectApprovalEditView
     applicant_view = ApplicantProjectEditView
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectListView(SingleTableMixin, FilterView):
+    filterset_class = ProjectListFilter
+    model = Project
+    table_class = ProjectsListTable
+    template_name = 'application_projects/project_list.html'
+
+    def get_queryset(self):
+        return Project.objects.for_table()

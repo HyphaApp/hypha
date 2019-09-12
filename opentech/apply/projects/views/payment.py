@@ -60,12 +60,7 @@ class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMix
         kwargs.pop('user')
         return kwargs
 
-    def form_invalid(self, form):
-        import pudb; pudb.set_trace()
-        pass
-
     def form_valid(self, form):
-        import pudb; pudb.set_trace()
         response = super().form_valid(form)
 
         messenger(

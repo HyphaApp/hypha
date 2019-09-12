@@ -1,8 +1,7 @@
-from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from django.urls import reverse_lazy
 from django_tables2.views import MultiTableMixin
 
 from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
@@ -15,10 +14,8 @@ from opentech.apply.funds.tables import (
     SummarySubmissionsTableWithRole,
     review_filter_for_user
 )
+from opentech.apply.projects.filters import ProjectListFilter
 from opentech.apply.projects.models import (
-    COMPLETE,
-    DECLINED,
-    PAID,
     PaymentRequest,
     Project
 )
@@ -30,95 +27,79 @@ from opentech.apply.utils.views import ViewDispatcher
 
 
 class AdminDashboardView(TemplateView):
+    template_name = 'dashboard/dashboard.html'
 
-    def get(self, request, *args, **kwargs):
-        # redirect to submissions list when we use the filter to search for something
-        if len(request.GET):
-            query_str = '?'
-            for key, value in request.GET.items():
-                query_str += key + '=' + value + '&'
-            return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+    def get_context_data(self, **kwargs):
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        base_query = RoundsAndLabs.objects.with_progress().active().order_by('-end_date')
-        base_query = base_query.by_lead(request.user)
-        open_rounds = base_query.open()[:6]
-        open_query = '?round_state=open'
-        closed_rounds = base_query.closed()[:6]
-        closed_query = '?round_state=closed'
-        rounds_title = 'Your rounds and labs'
-
-        # Staff reviewer's current to-review submissions
-        my_review_qs, my_review, display_more = self.get_my_reviews(request.user, qs)
-
-        # Staff reviewer's reviewed submissions for 'Previous reviews' block
-        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
-
-        # Filter for all active statuses.
-        active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
-
-        projects = self.get_my_projects(request.user)
-        active_payment_requests = self.get_my_active_payment_requests(request.user)
-
-        context = {
-            'open_rounds': open_rounds,
-            'open_query': open_query,
-            'closed_rounds': closed_rounds,
-            'closed_query': closed_query,
-            'rounds_title': rounds_title,
-            'my_review': my_review,
-            'in_review_count': my_review_qs.count(),
-            'display_more': display_more,
-            'my_reviewed': my_reviewed,
-            'display_more_reviewed': display_more_reviewed,
-            'filter': filterset,
-            'active_statuses_filter': active_statuses_filter,
-            'projects': projects,
-            'active_payment_requests': active_payment_requests,
+        extra_context = {
+            'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
+            'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, submissions),
+            'my_reviewed': self.get_my_reviewed(self.request, submissions),
+            'projects': self.get_my_projects(self.request),
+            'rounds': self.get_rounds(self.request.user)
         }
-
-        return render(request, 'dashboard/dashboard.html', context)
+        current_context = super().get_context_data(**kwargs)
+        return {**current_context, **extra_context}
 
     def get_my_active_payment_requests(self, user):
-        payment_requests = (PaymentRequest.objects.filter(project__lead=user)
-                                                  .exclude(status__in=[DECLINED, PAID]))[:10]
+        payment_requests = PaymentRequest.objects.filter(
+            project__lead=user,
+        ).in_progress()
 
-        if not payment_requests:
-            return
+        return {
+            'table': PaymentRequestsDashboardTable(payment_requests),
+        }
 
-        return PaymentRequestsDashboardTable(payment_requests)
+    def get_my_projects(self, request):
+        projects = Project.objects.filter(lead=request.user).for_table()
 
-    def get_my_projects(self, user):
-        projects = Project.objects.order_by(F('proposed_end').asc(nulls_last=True))[:10]
+        filterset = ProjectListFilter(data=request.GET or None, request=request, queryset=projects)
 
-        if not projects:
-            return
+        limit = 10
+        return {
+            'filterset': filterset,
+            'table': ProjectsDashboardTable(projects[:limit]),
+            'display_more': projects.count() > limit,
+            'url': reverse('apply:projects:all'),
+        }
 
-        return ProjectsDashboardTable(projects)
+    def get_my_awaiting_reviews(self, user, qs):
+        """Staff reviewer's current to-review submissions."""
+        qs = qs.in_review_for(user).order_by('-submit_time')
+        count = qs.count()
 
-    def get_my_reviews(self, user, qs):
-        my_review_qs = qs.in_review_for(user).order_by('-submit_time')
-        my_review_table = SummarySubmissionsTableWithRole(my_review_qs[:5], prefix='my-review-')
-        display_more = (my_review_qs.count() > 5)
-
-        return my_review_qs, my_review_table, display_more
+        limit = 5
+        return {
+            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(user)),
+            'count': count,
+            'display_more': count > limit,
+            'table': SummarySubmissionsTableWithRole(qs[:limit], prefix='my-review-'),
+        }
 
     def get_my_reviewed(self, request, qs):
-        # Replicating django_filters.views.FilterView
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-        kwargs = {
-            'data': self.request.GET or None,
-            'request': self.request,
-            'queryset': my_reviewed_qs,
+        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
+        qs = qs.reviewed_by(request.user).order_by('-submit_time')
+
+        filterset = SubmissionFilterAndSearch(data=request.GET or None, request=request, queryset=qs)
+
+        limit = 5
+        return {
+            'filterset': filterset,
+            'table': SummarySubmissionsTable(qs[:limit], prefix='my-reviewed-'),
+            'display_more': qs.count() > limit,
+            'url': reverse('funds:submissions:list'),
         }
-        filterset = SubmissionFilterAndSearch(**kwargs)
-        my_reviewed_qs = filterset.qs
 
-        my_reviewed_table = SummarySubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
-        display_more_reviewed = (my_reviewed_qs.count() > 5)
-
-        return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
+    def get_rounds(self, user):
+        qs = (RoundsAndLabs.objects.with_progress()
+                                   .active()
+                                   .order_by('-end_date')
+                                   .by_lead(user))
+        return {
+            'closed': qs.closed()[:6],
+            'open': qs.open()[:6],
+        }
 
 
 class ReviewerDashboardView(TemplateView):
@@ -329,27 +310,23 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
         return context
 
     def get_active_project_data(self, user):
-        return (Project.objects.filter(user=user)
-                               .exclude(status=COMPLETE)
-                               .order_by(F('proposed_end').asc(nulls_last=True)))
+        return Project.objects.filter(user=user).in_progress()
 
     def get_active_submissions(self, user):
-        active_subs = (ApplicationSubmission.objects.filter(user=user)
-                                                    .active()
-                                                    .current()
-                                                    .select_related('draft_revision'))
+        active_subs = ApplicationSubmission.objects.filter(
+            user=user,
+        ) .active().current().select_related('draft_revision')
+
         for submission in active_subs:
             yield submission.from_draft()
 
     def get_historical_project_data(self, user):
-        return (Project.objects.filter(user=user, status=COMPLETE)
-                               .order_by(F('proposed_end').asc(nulls_last=True)))
+        return Project.objects.filter(user=user).complete()
 
     def get_historical_submission_data(self, user):
-        return (ApplicationSubmission.objects.filter(user=user)
-                                             .inactive()
-                                             .current()
-                                             .for_table(user))
+        return ApplicationSubmission.objects.filter(
+            user=user,
+        ).inactive().current().for_table(user)
 
     def get_tables_data(self):
         return [
