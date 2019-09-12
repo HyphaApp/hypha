@@ -16,7 +16,7 @@
     bottom: 110%;
     margin-bottom: 5px;
     padding: 7px;
-    background-color: $color--dark-grey;
+    background-color: lighten($color--dark-grey, 10%);
     color: $color--white;
     content: attr(data-tooltip);
     text-align: center;
