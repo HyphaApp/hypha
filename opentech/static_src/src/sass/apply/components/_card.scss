@@ -1,0 +1,25 @@
+.card {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid $color--mid-grey;
+
+    &__text {
+        margin: 0 0 1rem;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &__inner {
+        margin-bottom: 1rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__heading {
+        margin-bottom: 0;
+    }
+}
