@@ -26,12 +26,12 @@
         <div class="card card--solid">
             <div class="card__inner">
                 <h5 class="card__heading">Invoice</h5>
-                <p class="card__text"><a href="{% url "apply:projects:payments:invoice" pk=object.project.pk pr_pk=object.pk %}">Download</a></p>
+                <p class="card__text"><a href="{% url "apply:projects:payments:invoice" pk=object.pk %}">Download</a></p>
             </div>
             <div class="card__inner">
                 <h5 class="card__heading">Reciepts</h5>
                 {% for reciept in object.receipts.all %}
-                    <p class="card__text"><a href="{% url "apply:projects:payments:receipt" pk=object.project.pk pr_pk=object.pk file_pk=reciept.pk %}">Download</a></p>
+                    <p class="card__text"><a href="{% url "apply:projects:payments:receipt" pk=object.pk file_pk=reciept.pk %}">Download</a></p>
                 {% endfor %}
             </div>
         </div>
@@ -46,7 +46,7 @@
                     {% endif %}
                     class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
                     href={% if user_can_edit_request %}
-                        "{% url "apply:projects:payments:edit" pk=object.project.pk pr_pk=object.pk %}"
+                        "{% url "apply:projects:payments:edit" pk=object.pk %}"
                     {% else %}
                         "#"
                     {% endif %}

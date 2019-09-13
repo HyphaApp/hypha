@@ -1,6 +1,6 @@
 {% load payment_request_tools humanize %}
 
-<div class="payment-block">
+<div id="payment-requests" class="payment-block">
     <div class="payment-block__header">
         <p class="payment-block__title">Payment Requests</p>
         <a data-fancybox
@@ -34,7 +34,7 @@
                     {% if user_can_edit_request %}
                     <a
                         class="payment-block__edit-link"
-                        href="{% url "apply:projects:payments:edit" pk=object.pk pr_pk=payment_request.pk %}">
+                        href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}

@@ -8,7 +8,22 @@ from opentech.apply.funds.tables import (
     get_used_funds
 )
 
-from .models import PROJECT_STATUS_CHOICES, Project
+from .models import (
+    PROJECT_STATUS_CHOICES,
+    REQUEST_STATUS_CHOICES,
+    PaymentRequest,
+    Project
+)
+
+
+class PaymentRequestListFilter(filters.FilterSet):
+    fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
+    project = Select2ModelMultipleChoiceFilter(label='Project', queryset=Project.objects.all())
+    status = Select2MultipleChoiceFilter(label='Status', choices=REQUEST_STATUS_CHOICES)
+
+    class Meta:
+        fields = ['project', 'status', 'fund']
+        model = PaymentRequest
 
 
 def get_project_leads(request):

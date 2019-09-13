@@ -849,8 +849,7 @@ class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -872,8 +871,7 @@ class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -893,7 +891,7 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+        return {'pk': instance.pk}
 
     def test_editing_payment_request_fires_messaging(self):
         project = ProjectFactory(user=self.user)
@@ -930,7 +928,7 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+        return {'pk': instance.pk}
 
     def test_editing_payment_request_fires_messaging(self):
         project = ProjectFactory()
@@ -968,8 +966,7 @@ class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -991,8 +988,7 @@ class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -1023,8 +1019,7 @@ class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can_access(self):
@@ -1046,8 +1041,7 @@ class TestApplicantPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can_access_own(self):
@@ -1068,8 +1062,7 @@ class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.project.pk,
-            'pr_pk': instance.payment_request.pk,
+            'pk': instance.payment_request.pk,
             'file_pk': instance.pk,
         }
 
@@ -1077,18 +1070,6 @@ class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
         payment_receipt = PaymentReceiptFactory()
         response = self.get_page(payment_receipt)
         self.assertContains(response, payment_receipt.file.read())
-
-    def test_cant_access_if_project_wrong(self):
-        other_project = ProjectFactory()
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt, url_kwargs={'pk': other_project.pk})
-        self.assertEqual(response.status_code, 404)
-
-    def test_cant_access_if_request_is_wrong(self):
-        other_request = PaymentRequestFactory()
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt, url_kwargs={'pr_pk': other_request.pk})
-        self.assertEqual(response.status_code, 404)
 
 
 class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
@@ -1098,8 +1079,7 @@ class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.project.pk,
-            'pr_pk': instance.payment_request.pk,
+            'pk': instance.payment_request.pk,
             'file_pk': instance.pk,
         }
 

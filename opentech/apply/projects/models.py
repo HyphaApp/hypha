@@ -237,7 +237,7 @@ class PaymentRequest(models.Model):
         return self.paid_value or self.requested_value
 
     def get_absolute_url(self):
-        return reverse('apply:projects:payments:detail', args=[self.project.pk, self.pk])
+        return reverse('apply:projects:payments:detail', args=[self.pk])
 
 
 COMMITTED = 'committed'

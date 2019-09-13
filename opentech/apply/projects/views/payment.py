@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.views.generic import (
@@ -11,6 +10,8 @@ from django.views.generic import (
     DetailView,
     UpdateView
 )
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.users.decorators import staff_required
@@ -26,24 +27,21 @@ from ..forms import (
     EditPaymentRequestForm,
     RequestPaymentForm,
 )
+from ..filters import PaymentRequestListFilter
 from ..models import (
     PaymentRequest,
     Project
 )
+from ..tables import PaymentRequestsListTable
 
 
 @method_decorator(login_required, name='dispatch')
 class PaymentRequestAccessMixin:
     model = PaymentRequest
-    pk_url_kwarg = 'pr_pk'
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        if self.get_object().project != self.project:
-            raise Http404
-
         is_admin = request.user.is_apply_staff
-        is_owner = request.user == self.project.user
+        is_owner = request.user == self.get_object().project.user
         if not (is_owner or is_admin):
             raise PermissionDenied
 
@@ -67,7 +65,7 @@ class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMix
             MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS,
             request=self.request,
             user=self.request.user,
-            source=self.project,
+            source=self.object.project,
             related=self.object,
         )
 
@@ -137,14 +135,11 @@ class EditPaymentRequestView(PaymentRequestAccessMixin, UpdateView):
             MESSAGES.UPDATE_PAYMENT_REQUEST,
             request=self.request,
             user=self.request.user,
-            source=self.project,
+            source=self.object.project,
             related=self.object,
         )
 
         return response
-
-    def get_success_url(self):
-        return self.project.get_absolute_url()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -152,13 +147,8 @@ class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        project_pk = self.kwargs['pk']
-        payment_pk = self.kwargs['pr_pk']
-        self.project = get_object_or_404(Project, pk=project_pk)
+        payment_pk = self.kwargs['pk']
         self.payment_request = get_object_or_404(PaymentRequest, pk=payment_pk)
-
-        if self.payment_request.project != self.project:
-            raise Http404
 
         return super().dispatch(*args, **kwargs)
 
@@ -174,7 +164,7 @@ class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
         if self.request.user.is_apply_staff:
             return True
 
-        if self.request.user == self.project.user:
+        if self.request.user == self.payment_request.project.user:
             return True
 
         return False
@@ -200,3 +190,14 @@ class RequestPaymentView(DelegatedViewMixin, CreateView):
         )
 
         return response
+
+
+@method_decorator(staff_required, name='dispatch')
+class PaymentRequestListView(SingleTableMixin, FilterView):
+    filterset_class = PaymentRequestListFilter
+    model = PaymentRequest
+    table_class = PaymentRequestsListTable
+    template_name = 'application_projects/payment_request_list.html'
+
+    def get_queryset(self):
+        return PaymentRequest.objects.order_by('date_to')
