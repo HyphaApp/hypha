@@ -718,7 +718,6 @@ class TestApproveContractView(BaseViewTestCase):
             'id': contract.id,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
 
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
@@ -733,7 +732,6 @@ class TestApproveContractView(BaseViewTestCase):
             'id': contract_attempt.id,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
 
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
