@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 
 from wagtail.admin import messages
-from wagtail.admin.forms import CopyForm
+from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages import get_valid_next_url_from_request
 from wagtail.core import hooks
 from wagtail.core.models import Page

@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load statusbar_tags %}
 
 {% block title %}Sealed: {{ object.title }}{% endblock %}
 
@@ -12,7 +13,7 @@
             <span>{{ object.round }}</span>
             <span>Lead: {{ object.lead }}</span>
         </h5>
-        {% include "funds/includes/status_bar.html" with phases=object.workflow current_phase=object.phase same_stage=True%}
+        {% status_bar object.workflow object.phase request.user same_stage=True %}
     </div>
 </div>
 <div class="wrapper wrapper--medium">

@@ -6,7 +6,7 @@ import bleach
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 
 from wagtail.core.blocks import StaticBlock, StreamValue, StreamBlock
 

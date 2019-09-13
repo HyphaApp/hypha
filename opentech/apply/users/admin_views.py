@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.views.decorators.vary import vary_on_headers
 
-from wagtail.admin.forms import SearchForm
+from wagtail.admin.forms.search import SearchForm
 from wagtail.admin.utils import any_permission_required
 from wagtail.core.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
-from wagtail.utils.pagination import paginate
 
 User = get_user_model()
 
@@ -73,7 +73,8 @@ def index(request):
     else:
         ordering = 'name'
 
-    paginator, users = paginate(request, users)
+    paginator = Paginator(users, per_page=20)
+    users = paginator.get_page(request.GET.get('p'))
 
     if request.is_ajax():
         return render(request, "wagtailusers/users/results.html", {
