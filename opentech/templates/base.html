@@ -168,35 +168,11 @@
                         {% if settings.utils.SocialMediaSettings.twitter_handle %}
                             <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
                                 <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
-                                <h4 class="heading heading--no-margin">@OpenTechFund</h4>
+                                <h4 class="heading heading--no-margin">@{{ settings.utils.SocialMediaSettings.twitter_handle }}</h4>
                             </a>
                         {% endif %}
                     </div>
-
-                        <p>2025 M Street NW, Suite 300</br>
-                        Washington, DC 20036 USA</p>
-
-                        <p>
-                            <a href="mailto:hello@opentech.fund">hello@opentech.fund</a></br>
-                            <a href="mailto:press@opentech.fund">press@opentech.fund</a></br>
-                            <span>PGP: <a href="https://keybase.io/opentechfund/pgp_keys.asc?fingerprint=67acddcfb909468536ddbc03f7663861965a90d2">67AC DDCF B909 4685 36DD BC03 F766 3861 965A 90D2</a></span>
-                        </p>
-
-                        <p><a class="link link--underlined" href="/about/tos/">Terms of Use</a></p>
-
-                        <p>Test the OTF website for censorship</p>
-
-                        <a class="button button--transparent--wide" href="https://run.ooni.io/nettest?tn=web_connectivity&ta=%7B%22urls%22%3A%5B%22https%3A%2F%2Fwww.opentech.fund%2F%22%5D%7D&mv=1.2.0">Run OONI!</a>
-
-                        <div class="footer__credits">
-                            <a href="https://www.usagm.gov/" aria-label="Link to the U.S. Agency for Global Media website">
-                                <img src="{% static 'images/usagm.png' %}" width="201" height="61" alt="Logo for the U.S. Agency for Global Media">
-                            </a>
-
-                            <a href="https://www.rfa.org/english/" aria-label="Link to the Radio Free Asia website">
-                                <img src="{% static 'images/radio-free-asia-logo.svg' %}" width="144" height="61" alt="Logo for Radio Free Asia">
-                            </a>
-                        </div>
+                    {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
                 </div>
             </div>
 
