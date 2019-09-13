@@ -38,11 +38,10 @@
     {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
-{% if latest_contract %}
+{% if contract_to_approve %}
 <div class="modal" id="approve-contract">
     <h4 class="modal__header-bar">Approve Contract</h4>
-    {% url 'apply:projects:approve-contract' pk=object.pk contract_pk=latest_contract.pk as approve_contract_url %}
-    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Approve' action=approve_contract_url %}
+    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Approve' %}
 </div>
 {% endif %}
 
@@ -115,13 +114,16 @@
 </div>
 {% endblock %}
 
-{% block approve_contracts %}
-{% if latest_contract and latest_contract.is_signed %}
-<a data-fancybox
-   data-src="#approve-contract"
-   class="button button--bottom-space button--primary button--full-width"
-   href="#">
-    Approve Contract
-</a>
+{% block approve_contract %}
+{% if contract_to_approve %}
+    {{ block.super }}
+    <p>
+        <a data-fancybox
+        data-src="#approve-contract"
+        class="button button--bottom-space button--primary button--full-width"
+        href="#">
+            Approve Contract
+        </a>
+    </p>
 {% endif %}
 {% endblock %}

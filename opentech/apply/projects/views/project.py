@@ -1,4 +1,3 @@
-import itertools
 from copy import copy
 
 from django.contrib import messages
@@ -10,6 +9,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
@@ -60,23 +60,6 @@ from ..tables import ProjectsListTable
 from .payment import RequestPaymentView
 
 
-def form_errors_to_messages(request, errors):
-    """
-    Convert form errors into messages
-
-    This is designed to be used in a form_invalid method where an invalid form
-    will have a populated ErrorDict in `form.errors` and you want to display
-    each error in a new Django Messages Framework message.
-
-    It converts the given ErrorDict to a flat list of ValidationErrors, pulling
-    their messages out before iterating and sending them as messages.
-    """
-    errors = itertools.chain.from_iterable(errors.as_data().values())
-    errors = (e.message for e in errors)
-    for error in errors:
-        messages.error(request, error)
-
-
 # APPROVAL VIEWS
 
 @method_decorator(staff_required, name='dispatch')
@@ -108,6 +91,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.pop('instance')
+        kwargs.get('initial', {}).update({'by': kwargs.get('user')})
         return kwargs
 
     @transaction.atomic()
@@ -269,47 +253,51 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 class ContractsMixin:
     def get_context_data(self, **kwargs):
         project = self.get_object()
-        contracts = (project.contracts.select_related('approver')
-                                      .order_by('-created_at'))
+        contracts = project.contracts.select_related(
+            'approver',
+        ).order_by('-created_at')
 
-        latest_contract = self.get_contract_to_approve(contracts)
-
-        contracts = contracts.filter(is_signed=True, approver__isnull=False)
-
+        latest_contract = contracts.first()
+        contract_to_approve = None
+        contract_to_sign = None
         if latest_contract:
-            contracts = [latest_contract, *contracts]
+            if not latest_contract.is_signed:
+                contract_to_sign = latest_contract
+            elif not latest_contract.approver:
+                contract_to_approve = latest_contract
 
         context = super().get_context_data(**kwargs)
-        context['latest_contract'] = latest_contract
-        context['contracts'] = contracts
+        context['contract_to_approve'] = contract_to_approve
+        context['contract_to_sign'] = contract_to_sign
+        context['contracts'] = contracts.approved()
         return context
-
-    def get_contract_to_approve(self, contracts):
-        """If there's a contract to approve, get that"""
-        latest = contracts.first()
-
-        if not latest:
-            return
-
-        if latest.approver:
-            return
-
-        return latest
 
 
 @method_decorator(staff_required, name='dispatch')
-class ApproveContractView(UpdateView):
+class ApproveContractView(DelegatedViewMixin, UpdateView):
     form_class = ApproveContractForm
     model = Contract
-    pk_url_kwarg = 'contract_pk'
+    context_name = 'approve_contract_form'
+
+    def get_object(self):
+        project = self.get_parent_object()
+        latest_contract = project.contracts.order_by('-created_at').first()
+        if latest_contract and not latest_contract.approver:
+            return latest_contract
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.get_object()
+        kwargs.pop('user')
+        return kwargs
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        form_errors_to_messages(self.request, form.errors)
-        return redirect(self.project)
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -389,6 +377,7 @@ class AdminProjectDetailView(
     DetailView,
 ):
     form_views = [
+        ApproveContractView,
         CommentFormView,
         CreateApprovalView,
         RejectionView,
@@ -408,7 +397,6 @@ class AdminProjectDetailView(
         context['statuses'] = PROJECT_STATUS_CHOICES
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
-        context['approve_contract_form'] = ApproveContractForm()
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
 

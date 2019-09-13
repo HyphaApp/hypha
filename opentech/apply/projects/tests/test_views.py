@@ -582,11 +582,17 @@ class TestContractsMixin(TestCase):
         project = ProjectFactory()
         ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=False, approver=None)
-        ContractFactory(project=project, is_signed=False, approver=None)
+        latest = ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 1)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 0)
+        self.assertEqual(latest, to_sign)
+        self.assertIsNone(to_approve)
 
     def test_all_signed_and_unapproved_returns_latest(self):
         project = ProjectFactory()
@@ -594,12 +600,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=None)
         latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 1)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        self.assertIsNone(contracts[0].approver)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 0)
+        self.assertEqual(latest, to_approve)
+        self.assertIsNone(to_sign)
 
     def test_mixture_of_both_latest_unsigned_and_unapproved(self):
         project = ProjectFactory()
@@ -610,13 +619,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertFalse(contracts[0].is_signed)
-        for contract in contracts[1:]:
-            self.assertTrue(contract.is_signed)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 2)
+        self.assertEqual(latest, to_sign)
+        self.assertIsNone(to_approve)
 
     def test_mixture_of_both_latest_signed_and_unapproved(self):
         project = ProjectFactory()
@@ -627,13 +638,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        for contract in contracts:
-            self.assertTrue(contract.is_signed)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 2)
+        self.assertEqual(latest, to_approve)
+        self.assertIsNone(to_sign)
 
     def test_mixture_of_both_latest_signed_and_approved(self):
         project = ProjectFactory()
@@ -642,30 +655,32 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        latest = ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
+
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
 
         self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        for contract in contracts:
-            self.assertTrue(contract.is_signed)
+        self.assertIsNone(to_approve)
+        self.assertIsNone(to_sign)
 
 
 class TestApproveContractView(BaseViewTestCase):
-    base_view_name = 'approve-contract'
+    base_view_name = 'detail'
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.id, 'contract_pk': instance.id}
+        return {'pk': instance.id}
 
     def test_approve_unapproved_contract(self):
         project = ProjectFactory(status=CONTRACTING)
-        contract = ContractFactory(project=project, is_signed=True)
+        contract = ContractFactory(project=project, is_signed=True, approver=None)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
@@ -678,35 +693,52 @@ class TestApproveContractView(BaseViewTestCase):
         self.assertEqual(project.status, IN_PROGRESS)
 
     def test_approve_already_approved_contract(self):
-        project = ProjectFactory(status=CONTRACTING)
-        user = UserFactory()
+        project = ProjectFactory(status=IN_PROGRESS)
+        user = StaffFactory()
         contract = ContractFactory(project=project, is_signed=True, approver=user)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
         self.assertEqual(response.status_code, 200)
 
         contract.refresh_from_db()
-        self.assertEqual(contract.approver, self.user)
+        self.assertEqual(contract.approver, user)
 
         project.refresh_from_db()
         self.assertEqual(project.status, IN_PROGRESS)
 
     def test_approve_unsigned_contract(self):
         project = ProjectFactory()
-        contract = ContractFactory(project=project, is_signed=False)
+        contract = ContractFactory(project=project, is_signed=False, approver=None)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
 
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
+
+    def test_attempt_to_approve_non_latest(self):
+        project = ProjectFactory()
+        contract_attempt = ContractFactory(project=project, is_signed=True, approver=None)
+        contract_meant = ContractFactory(project=project, is_signed=True, approver=None)
+
+        response = self.post_page(project, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract_attempt.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        contract_attempt.refresh_from_db()
+        contract_meant.refresh_from_db()
+        self.assertIsNone(contract_attempt.approver)
+        self.assertIsNone(contract_meant.approver)
 
 
 class BasePacketFileViewTestCase(BaseViewTestCase):

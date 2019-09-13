@@ -39,22 +39,31 @@ def filter_choices(available, choices):
 filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
 
 
-class ApproveContractForm(forms.ModelForm):
-    name = 'approve_contract_form'
+class ApproveContractForm(forms.Form):
+    id = forms.IntegerField(widget=forms.HiddenInput())
 
-    class Meta:
-        fields = ['id']
-        model = Contract
-        widgets = {'id': forms.HiddenInput()}
-
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.instance = instance
+        if instance:
+            self.fields['id'].initial = instance.id
+
+    def clean_id(self):
+        if self.has_changed():
+            raise forms.ValidationError('Something changed before your approval please re-review')
 
     def clean(self):
+        if not self.instance:
+            raise forms.ValidationError('The contract you were trying to approve has already been approved')
+
         if not self.instance.is_signed:
             raise forms.ValidationError('You can only approve a signed contract')
 
         super().clean()
+
+    def save(self, *args, **kwargs):
+        self.instance.save()
+        return self.instance
 
 
 class ChangePaymentRequestStatusForm(forms.ModelForm):
