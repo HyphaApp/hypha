@@ -65,6 +65,11 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
+class ContractQuerySet(models.QuerySet):
+    def approved(self):
+        return self.filter(is_signed=True, approver__isnull=False)
+
+
 class Contract(models.Model):
     approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
@@ -73,6 +78,8 @@ class Contract(models.Model):
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = ContractQuerySet.as_manager()
 
     def __str__(self):
         state = 'Signed' if self.is_signed else 'Unsigned'

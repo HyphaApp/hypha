@@ -201,27 +201,40 @@
                 {% block project_approvals %}{% endblock %}
                 {% endif %}
 
-                {% if contracts %}
+                {% if contracts or contract_to_sign or contract_to_approve %}
                 <div class="sidebar__inner">
                     <h5>Contracts</h5>
+
+                    {% block approve_contract %}
+                        {% if contract_to_approve %}
+                        <p>
+                            <a href="{{ contract_to_approve.file.url }}" class="link link--bold">
+                                {{ contract_to_approve.created_at|date:"j F Y" }}
+                            </a>
+                            (Signed)
+                        </p>
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block sign_contract %}
+                        {% if contract_to_sign%}
+                        <p>
+                            <a href="{{ contract_to_sign.file.url }}" class="link link--bold">
+                                {{ contract_to_sign.created_at|date:"j F Y" }}
+                            </a>
+                            (Unsigned)
+                        </p>
+                        {% endif %}
+                    {% endblock %}
 
                     {% for contract in contracts %}
                     <p>
                         <a href="{{ contract.file.url }}" class="link link--bold">
                             {{ contract.created_at|date:"j F Y" }}
                         </a>
-                            {% if contract.approver %}
-                                    - Approved by {{ contract.approver }}
-                            {% else %}
-                                ({% if contract.is_signed %}Signed{% else %}Unsigned{% endif %})
-                            {% endif %}
-
-                        {% if request.user.is_apply_staff and forloop.first %}
-                            <p>{% block approve_contracts %}{% endblock %}</p>
-                        {% endif %}
+                            - Approved by {{ contract.approver }}
                     </p>
                     {% endfor %}
-
                 </div>
                 {% endif %}
 
