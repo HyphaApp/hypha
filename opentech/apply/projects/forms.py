@@ -1,5 +1,4 @@
 import functools
-import os
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -138,31 +137,6 @@ class CreateApprovalForm(forms.ModelForm):
         return by
 
 
-class EditPaymentRequestForm(forms.ModelForm):
-    receipt_list = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}))
-
-    name = 'edit_payment_request_form'
-
-    class Meta:
-        fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'comment']
-        model = PaymentRequest
-        widgets = {
-            'date_from': forms.DateInput,
-            'date_to': forms.DateInput,
-        }
-
-    def __init__(self, user=None, instance=None, *args, **kwargs):
-        super().__init__(*args, instance=instance, **kwargs)
-
-        self.instance = instance
-
-        self.fields['receipt_list'].choices = [
-            (r.pk, os.path.basename(r.file.url))
-            for r in instance.receipts.all()
-        ]
-        self.fields['requested_value'].label = 'Value'
-
-
 class ProjectEditForm(forms.ModelForm):
     contact_address = AddressField()
 
@@ -257,6 +231,47 @@ class RequestPaymentForm(forms.ModelForm):
             for receipt in self.cleaned_data['receipts']
         )
 
+        return request
+
+
+class EditPaymentRequestForm(forms.ModelForm):
+    receipt_list = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
+        queryset=PaymentReceipt.objects.all(),
+        required=False,
+        label='Receipts'
+    )
+    receipts = MultiFileField(label='', required=False)
+
+    class Meta:
+        fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'receipts', 'comment']
+        model = PaymentRequest
+        widgets = {
+            'date_from': forms.DateInput,
+            'date_to': forms.DateInput,
+        }
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, instance=instance, **kwargs)
+
+        self.fields['receipt_list'].queryset = instance.receipts.all()
+
+        self.fields['requested_value'].label = 'Value'
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        request = super().save(*args, **kwargs)
+
+        removed_receipts = self.cleaned_data['receipt_list']
+
+        removed_receipts.delete()
+
+        to_add = self.cleaned_data['receipts']
+        if to_add:
+            PaymentReceipt.objects.bulk_create(
+                PaymentReceipt(payment_request=request, file=receipt)
+                for receipt in to_add
+            )
         return request
 
 

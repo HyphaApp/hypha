@@ -2,6 +2,7 @@ import collections
 import decimal
 import json
 import logging
+import os
 
 
 from django.conf import settings
@@ -131,7 +132,7 @@ class PaymentReceipt(models.Model):
     file = models.FileField(upload_to=receipt_path, storage=PrivateStorage())
 
     def __str__(self):
-        return f'Receipt for {self.payment_request}'
+        return os.path.basename(self.file.name)
 
 
 SUBMITTED = 'submitted'

@@ -408,6 +408,43 @@
             background-size: 12px;
             border: 1px solid $color--dark-blue;
         }
+
+        &.delete {
+            + label {
+                padding-left: 0;
+
+                &::before {
+                    display: none;
+                }
+
+                &::after {
+                    content: '';
+                    background: url('./../../images/cross.svg') left no-repeat;
+                    margin-left: 10px;
+                    width: 14px;
+                    height: 13px;
+                    display: inline-block;
+                }
+            }
+
+            &:checked + label {
+                text-decoration: line-through;
+                color: $color--black-60;
+
+                &::after {
+                    content: '(will be removed on save) - undo';
+                    background: none;
+                    color: $color--light-blue;
+                    font-size: 14px;
+                    position: absolute;
+                    font-weight: $weight--bold;
+                    width: auto;
+                    height: auto;
+                }
+            }
+
+
+        }
     }
 
     .errorlist {
