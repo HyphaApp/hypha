@@ -43,18 +43,16 @@ if settings.PROJECTS_ENABLED:
                 name="copy-documents",
             ),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
-            path('payment-requests/<int:pr_pk>/', include(([
+        ])),
+        path('/', ProjectListView.as_view(), name='all'),
+        path('payment-requests/', include(([
+            path('', PaymentRequestListView.as_view()),
+            path('<int:pk>/', include([
                 path('', PaymentRequestView.as_view(), name='detail'),
                 path('edit/', EditPaymentRequestView.as_view(), name='edit'),
                 path('delete/', DeletePaymentRequestView.as_view(), name='delete'),
                 path('documents/invoice/', PaymentRequestPrivateMedia.as_view(), name="invoice"),
                 path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
-            ], 'payments'))),
-        ])),
-        path('all/', ProjectListView.as_view(), name='all'),
-        path(
-            'payment-requests/all/',
-            PaymentRequestListView.as_view(),
-            name="payment-request-all",
-        ),
+            ])),
+        ], 'payments'))),
     ]

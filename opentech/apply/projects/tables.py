@@ -2,49 +2,60 @@ import textwrap
 
 import django_tables2 as tables
 from django.db.models import F, Sum
-from django.utils.safestring import mark_safe
 
 from .models import PaymentRequest, Project
 
 
-class PaymentRequestsDashboardTable(tables.Table):
+class BasePaymentRequestsTable(tables.Table):
     project = tables.LinkColumn(
-        'funds:projects:detail',
+        'funds:projects:payments:detail',
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
-        args=[tables.utils.A('project_id')],
+        args=[tables.utils.A('pk')],
     )
-    requested_value = tables.Column(verbose_name='Total Amount')
+    fund = tables.Column(verbose_name='Fund', accessor='project.submission.page')
+    status = tables.Column()
     date_from = tables.DateColumn(verbose_name='Start Date')
     date_to = tables.DateColumn(verbose_name='End Date')
 
-    class Meta:
-        fields = ['project', 'requested_value', 'date_from', 'date_to', 'status']
-        model = PaymentRequest
-        orderable = False
-
-    def render_requested_value(self, value):
+    def render_value(self, value):
         return f'${value}'
 
 
-class PaymentRequestsListTable(tables.Table):
-    requested_value = tables.Column(verbose_name='Amount Requested', orderable=True)
-    status = tables.Column()
-    date_to = tables.DateColumn(verbose_name='End Date', orderable=True)
-    fund = tables.Column(verbose_name='Fund', accessor='project.submission.page')
+class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
+    requested_value = tables.Column(verbose_name='Amount Requested')
 
     class Meta:
-        fields = ['project', 'requested_value', 'status', 'date_to', 'fund']
+        fields = [
+            'project',
+            'fund',
+            'value',
+            'status',
+            'date_from',
+            'date_to',
+        ]
         model = PaymentRequest
         orderable = False
 
-    def render_project(self, value):
-        text = textwrap.shorten(value.title, width=30, placeholder="...")
-        url = f'{value.get_absolute_url()}#payment-requests'
 
-        return mark_safe(f'<a href="{url}">{text}</a>')
+class PaymentRequestsListTable(BasePaymentRequestsTable):
+    class Meta:
+        fields = [
+            'project',
+            'fund',
+            'value',
+            'status',
+            'date_from',
+            'date_to',
+        ]
+        model = PaymentRequest
+        orderable = True
 
-    def render_requested_value(self, value):
-        return f'${value}'
+    def order_value(self, qs, is_descending):
+        direction = '-' if is_descending else ''
+
+        qs = qs.order_by(f'{direction}paid_value', f'{direction}requested_value')
+
+        return qs, True
 
 
 class BaseProjectsTable(tables.Table):

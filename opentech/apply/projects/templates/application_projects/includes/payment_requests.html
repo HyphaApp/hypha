@@ -34,7 +34,7 @@
                     {% if user_can_edit_request %}
                     <a
                         class="payment-block__edit-link"
-                        href="{% url "apply:projects:payments:edit" pk=object.pk pr_pk=payment_request.pk %}">
+                        href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}

@@ -16,7 +16,7 @@ from .models import (
 )
 
 
-class PaymentRequestListFilter(FilterSet):
+class PaymentRequestListFilter(filters.FilterSet):
     fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
     project = Select2ModelMultipleChoiceFilter(label='Project', queryset=Project.objects.all())
     status = Select2MultipleChoiceFilter(label='Status', choices=REQUEST_STATUS_CHOICES)
