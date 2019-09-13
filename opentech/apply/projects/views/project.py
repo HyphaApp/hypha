@@ -1,4 +1,3 @@
-import itertools
 from copy import copy
 
 from django.contrib import messages
@@ -10,6 +9,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
@@ -57,23 +57,6 @@ from ..models import (
 )
 from ..tables import ProjectsListTable
 from .payment import RequestPaymentView
-
-
-def form_errors_to_messages(request, errors):
-    """
-    Convert form errors into messages
-
-    This is designed to be used in a form_invalid method where an invalid form
-    will have a populated ErrorDict in `form.errors` and you want to display
-    each error in a new Django Messages Framework message.
-
-    It converts the given ErrorDict to a flat list of ValidationErrors, pulling
-    their messages out before iterating and sending them as messages.
-    """
-    errors = itertools.chain.from_iterable(errors.as_data().values())
-    errors = (e.message for e in errors)
-    for error in errors:
-        messages.error(request, error)
 
 
 # APPROVAL VIEWS
@@ -312,8 +295,8 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        form_errors_to_messages(self.request, form.errors)
-        return redirect(self.project)
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
     def form_valid(self, form):
         with transaction.atomic():

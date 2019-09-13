@@ -50,7 +50,7 @@ class ApproveContractForm(forms.Form):
 
     def clean_id(self):
         if self.has_changed():
-            raise forms.ValidationError('New contract uploaded please re-review')
+            raise forms.ValidationError('Something changed before your approval please re-review')
 
     def clean(self):
         if not self.instance:
