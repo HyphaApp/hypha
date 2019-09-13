@@ -5,6 +5,7 @@
 # Test dependencies
 flake8
 factory_boy==2.9.2
+Faker==1.0.8 # Pinning to avoid API changes to pydecimal in 0.x - could go higher in future
 wagtail-factories==1.1.0
 responses==0.10.4
 
