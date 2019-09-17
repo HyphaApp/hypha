@@ -1,4 +1,4 @@
-export function fetchNotesForSubmission(submissionID, visibility = 'internal') {
+export function fetchNotesForSubmission(submissionID, visibility = 'team') {
     return {
         path: `/apply/api/submissions/${submissionID}/comments/`,
         params: {
@@ -9,7 +9,7 @@ export function fetchNotesForSubmission(submissionID, visibility = 'internal') {
 }
 
 
-export function fetchNewNotesForSubmission(submissionID, latestID, visibility = 'internal') {
+export function fetchNewNotesForSubmission(submissionID, latestID, visibility = 'team') {
     return {
         path: `/apply/api/submissions/${submissionID}/comments/`,
         params: {
