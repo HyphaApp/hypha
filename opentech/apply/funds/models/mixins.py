@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.core.files import File
 from django.core.files.storage import get_storage_class
 

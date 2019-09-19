@@ -58,9 +58,3 @@ class CategoriesWidget(forms.MultiWidget):
             for i, widget in enumerate(self.widgets)
         }
         return json.dumps(data)
-
-    def get_context(self, *args, **kwargs):
-        context = super().get_context(*args, **kwargs)
-        # Mutliwidget kills the wrap_label option when it is building the context
-        context['wrap_label'] = True
-        return context

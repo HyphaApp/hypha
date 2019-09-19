@@ -3,7 +3,7 @@
 {% if related_documents or related_pages %}
     <div class="wrapper wrapper--breakout wrapper--dark-bg wrapper--inner-space-xl">
         <div class="wrapper wrapper--medium">
-            <h2>{{ title|default:"You might also like..."}}</h2>
+            <h2>{{ title|default:"You might also like…"}}</h2>
             <section class="grid grid--max-three">
                     {% for related_document in related_documents %}
                         {% with document=related_document.document %}

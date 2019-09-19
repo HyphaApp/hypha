@@ -7,6 +7,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 
 from .models import (
     Determination,
+    DeterminationFormSettings,
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
 )
@@ -29,6 +30,9 @@ class RequiredRichTextField(forms.CharField):
 
 class BaseDeterminationForm:
     def __init__(self, *args, user, initial, action, **kwargs):
+        if 'site' in kwargs:
+            site = kwargs.pop('site')
+            self.form_settings = DeterminationFormSettings.for_site(site)
         try:
             initial.update(outcome=TRANSITION_DETERMINATION[action])
         except KeyError:
@@ -51,6 +55,18 @@ class BaseDeterminationForm:
             if key in self.data_fields()
         }
         return cleaned_data
+
+    def apply_form_settings(self, application_type, fields):
+        for field in fields:
+            try:
+                self.fields[field].label = getattr(self.form_settings, f'{application_type}_{field}_label')
+            except AttributeError:
+                pass
+            try:
+                self.fields[field].help_text = getattr(self.form_settings, f'{application_type}_{field}_help_text')
+            except AttributeError:
+                pass
+        return fields
 
     @classmethod
     def get_detailed_response(cls, saved_data):
@@ -347,6 +363,8 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
     def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
         super().__init__(*args, submission=submission, user=user, initial={}, instance=None, **kwargs)
 
+        self.fields = self.apply_form_settings('concept', self.fields)
+
         action = kwargs.get('action')
         stages_num = len(submission.workflow.stages)
 
@@ -367,12 +385,21 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
-    pass
+    def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
+        super().__init__(*args, submission=submission, user=user, initial={}, instance=None, **kwargs)
+
+        self.fields = self.apply_form_settings('proposal', self.fields)
 
 
 class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
-    pass
+    def __init__(self, *args, submissions, initial={}, **kwargs):
+        super().__init__(*args, submissions=submissions, initial={}, **kwargs)
+
+        self.fields = self.apply_form_settings('concept', self.fields)
 
 
 class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDeterminationForm):
-    pass
+    def __init__(self, *args, submissions, user, initial={}, **kwargs):
+        super().__init__(*args, submissions=submissions, initial={}, **kwargs)
+
+        self.fields = self.apply_form_settings('proposal', self.fields)
