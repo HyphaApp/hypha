@@ -578,7 +578,7 @@ class EmailAdapter(AdapterBase):
             if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {submission.title}'.format(submission=submission)
             else:
-                subject = submission.page.specific.subject or 'Your application to Open Technology Fund: {submission.title}'.format(submission=submission)
+                subject = submission.page.specific.subject or 'Your application to {org_long_name}: {submission.title}'.format(org_long_name=settings.ORG_LONG_NAME, submission=submission)
             return subject
 
     def extra_kwargs(self, message_type, submission, submissions, **kwargs):

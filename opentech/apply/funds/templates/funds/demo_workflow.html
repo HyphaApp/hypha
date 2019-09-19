@@ -25,7 +25,7 @@
                 <button id="submit" name="submit">Submit</button>
             </form>
         {% else %}
-            <h4>OTF: {{ phase.name }}</h4>
+            <h4>{{ ORG_SHORT_NAME }}: {{ phase.name }}</h4>
             <h4>Public: {{ phase.public_name }}</h4>
             <form method="post">
             {% csrf_token %}

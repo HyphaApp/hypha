@@ -27,12 +27,13 @@ class BaseRoundAdmin(ModelAdmin):
 class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
-    list_display = ('title', 'fund', 'start_date', 'end_date', 'sealed', 'applications', 'review_forms')
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'applications', 'review_forms')
 
     def applications(self, obj):
+
         def build_urls(applications):
             for application in applications:
-                url = reverse('funds_applicationform_modeladmin_edit', args=[application.id])
+                url = reverse('funds_applicationform_modeladmin_edit', args=[application.form.id])
                 yield f'<a href="{url}">{application}</a>'
 
         urls = list(build_urls(obj.forms.all()))
@@ -48,10 +49,10 @@ class RoundAdmin(BaseRoundAdmin):
         return mark_safe(url_tag)
 
     def review_forms(self, obj):
-        def build_urls(review_forms):
-            for review_form in review_forms:
-                url = reverse('funds_round_modeladmin_edit', args=[review_form.id])
-                yield f'<a href="{url}">{review_form}</a>'
+        def build_urls(reviews):
+            for review in reviews:
+                url = reverse('review_reviewform_modeladmin_edit', args=[review.form.id])
+                yield f'<a href="{url}">{review}</a>'
 
         urls = list(build_urls(obj.review_forms.all()))
 
