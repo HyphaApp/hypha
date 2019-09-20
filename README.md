@@ -6,11 +6,11 @@
 
 ## Submission management software
 
-* Manage the collection and review of applications or submission openly and efficiently.
+* Manage the collection and review of applications or submissions openly and efficiently.
 * Customize all aspects of the process, forms, workflows, review options, and more.
-* Automate workflows and integrate with other services.
-* Many privacy and security features, regularly audited by 3rd parties.
-* Want to know what is coming next? Check our [Roadmap](/wiki/Roadmap).
+* Automate workflows and integrate with other services (Slack, Mailgun, etc).
+* Regularly audited software with many privacy and security features.
+* View our [Roadmap](/wiki/Roadmap) for upcoming features and enhancements.
 
 *Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 
@@ -42,7 +42,7 @@ Issues on Hypha can be funded by anyone and the money will be distributed to con
 * Website: coming soon
 * Docs: coming soon
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
-* Copyright (C) - Open Technology Fund
+* Copyright (C) 2019 - Open Technology Fund
 
 ### License
 [BSD 3-clause](./LICENSE)
