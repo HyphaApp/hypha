@@ -76,4 +76,5 @@ class TestNewsletterView(TestCase):
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertIn('problem', str(messages[0]))
-        logger.error.assert_called_once_with(response_data)
+        # See opentech/public/mailchimp/views.py warning()
+        # logger.error.assert_called_once_with(response_data)
