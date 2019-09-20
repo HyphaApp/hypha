@@ -1,5 +1,9 @@
 # Hypha
 
+<a href="https://travis-ci.org/opentechfund/opentech.fund">
+ <img src="https://travis-ci.org/opentechfund/opentech.fund.svg?branch=master" alt="Build Status" />
+</a>
+
 ## Submission management software
 
 * Manage the collection and review of applications or submission openly and efficiently.
@@ -11,10 +15,6 @@
 *Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 
 *Deploy with [Heroku](/wiki/Deployment:-Heroku), [Docker](/wiki/Deployment:-Docker), or [your own server](/wiki/Deployment:-Standalone-App).*
-
-<a href="https://travis-ci.org/opentechfund/opentech.fund">
- <img src="https://travis-ci.org/opentechfund/opentech.fund.svg?branch=master" alt="Build Status" />
-</a>
 
 ***[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):*** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources.
 
