@@ -16,8 +16,6 @@
 
 *Deploy with [Heroku](/wiki/Deployment:-Heroku), [Docker](/wiki/Deployment:-Docker), or [your own server](/wiki/Deployment:-Standalone-App).*
 
-***[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):*** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources.
-
 ## Maintainers
 
 - [Open Technology Fund](https://www.opentech.fund)
@@ -43,6 +41,7 @@ Issues on Hypha can be funded by anyone and the money will be distributed to con
 ## More information
 * Website: coming soon
 * Docs: coming soon
+* Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
 * Copyright (C) - Open Technology Fund
 
 ### License
