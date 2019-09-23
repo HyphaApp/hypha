@@ -12,3 +12,7 @@ categories:
     labels:
       - 'dependencies'
       - 'maintenance'
+template: |
+  ## Changes
+
+  $CHANGES
