@@ -28,7 +28,7 @@ const AddNoteForm = ({error, isCreating, draftNote, submitNote, storeNote, clear
     const onSubmit = (message, resetEditor) => {
         submitNote(submissionID, {
             message,
-            visibility: 'internal',
+            visibility: 'team',
         }).then(() => resetEditor());
     }
 

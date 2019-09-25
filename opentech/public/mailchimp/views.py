@@ -72,7 +72,9 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def warning(self, e):
         messages.warning(self.request, _('Sorry, there has been an problem. Please try again later.'))
-        logger.error(e.args[0])
+        # If there is a problem with subscribing uncomment this to get notifications.
+        # When things work warnings is only about spam scipts.
+        # logger.error(e.args[0])
 
     def success(self):
         messages.success(self.request, _('Thank you for subscribing'))
