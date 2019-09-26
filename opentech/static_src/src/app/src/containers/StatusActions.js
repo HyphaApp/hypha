@@ -24,6 +24,7 @@ class StatusActions extends React.Component {
                 value: PropTypes.string.isRequired,
             })),
             isExecutingAction: PropTypes.bool,
+            executionActionError: PropTypes.string,
         }),
         changeStatus: PropTypes.func.isRequired,
         addMessage: PropTypes.func.isRequired,

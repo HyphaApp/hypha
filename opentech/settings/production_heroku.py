@@ -1,5 +1,6 @@
 import os
 
+import django_heroku
 import sentry_sdk
 
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -30,3 +31,6 @@ if 'SENTRY_DSN' in env:
         environment=env.get('SENTRY_ENVIRONMENT', None),
         integrations=[DjangoIntegration()]
     )
+
+# Heroku configuration.
+django_heroku.settings(locals())
