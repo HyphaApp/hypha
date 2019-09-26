@@ -12,10 +12,10 @@ DEBUG = False
 # Configuration from environment variables
 
 # Alternatively, you can set these in a local.py file on the server
-try: 
-     from .local import *  # noqa 
- except ImportError: 
-     pass 
+try:
+    from .local import *  # noqa
+except ImportError:
+    pass
 
 env = os.environ.copy()
 
