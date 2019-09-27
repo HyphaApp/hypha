@@ -51,15 +51,18 @@ class MetaTerm(index.Indexed, MP_Node):
     name = models.CharField(
         max_length=50, unique=True, help_text='Keep the name short, ideally one word.'
     )
-    is_archived = models.BooleanField(default=False, verbose_name=_("Archived"))
-    help_text = RichTextField(features=[
-        'h2', 'h3', 'bold', 'italic', 'link', 'hr', 'ol', 'ul'], blank=True)
+    is_archived = models.BooleanField(
+        default=False, verbose_name=_("Archived"),
+        help_text='Archived terms can be viewed but not set on content.'
+    )
     filter_on_dashboard = models.BooleanField(
         default=True, help_text='Make available to filter on dashboard'
     )
     available_to_applicants = models.BooleanField(
         default=False, help_text='Make available to applicants'
     )
+    help_text = RichTextField(features=[
+        'h2', 'h3', 'bold', 'italic', 'link', 'hr', 'ol', 'ul'], blank=True)
 
     # node tree specific fields and attributes
     node_order_index = models.IntegerField(blank=True, default=0, editable=False)
@@ -69,14 +72,14 @@ class MetaTerm(index.Indexed, MP_Node):
     node_order_by = ['node_order_index', 'name']
 
     panels = [
-        FieldPanel('parent'),
         FieldPanel('name'),
+        FieldPanel('parent'),
         MultiFieldPanel(
             [
                 FieldPanel('is_archived'),
-                FieldPanel('help_text'),
                 FieldPanel('filter_on_dashboard'),
                 FieldPanel('available_to_applicants'),
+                FieldPanel('help_text'),
             ],
             heading="Options",
         ),
