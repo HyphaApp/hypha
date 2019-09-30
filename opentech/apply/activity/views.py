@@ -15,15 +15,15 @@ class AllActivityContextMixin:
     def get_context_data(self, **kwargs):
         extra = {
             'actions': Activity.actions.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'submission__user',
                 'user',
             )[:ACTIVITY_LIMIT],
             'comments': Activity.comments.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'submission__user',
                 'user',
             )[:ACTIVITY_LIMIT],
             'all_activity': Activity.objects.filter(submission__in=self.object_list).select_related(
-                'submission',
+                'submission__user',
                 'user',
             )[:ACTIVITY_LIMIT],
         }
@@ -37,11 +37,13 @@ class ActivityContextMixin:
             # are not homogeneous and this will fail
             'actions': Activity.actions.filter(submission=self.object).select_related(
                 'user',
+                'submission__user',
             ).prefetch_related(
                 'related_object__submission',
             ).visible_to(self.request.user),
             'comments': Activity.comments.filter(submission=self.object).select_related(
                 'user',
+                'submission__user',
             ).prefetch_related(
                 'related_object__submission',
             ).visible_to(self.request.user),
