@@ -58,6 +58,7 @@
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -184,7 +185,6 @@
               new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
             }
         </script>
-        <script src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>

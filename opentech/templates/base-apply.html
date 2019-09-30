@@ -32,6 +32,7 @@
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -98,7 +99,6 @@
         </main>
 
         <footer class="footer"></footer>
-        <script src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>
