@@ -2,6 +2,7 @@ import textwrap
 
 import django_tables2 as tables
 from django.db.models import F, Sum
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 from .models import PaymentRequest, Project
 
@@ -22,16 +23,14 @@ class BasePaymentRequestsTable(tables.Table):
 
 
 class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
-    requested_value = tables.Column(verbose_name='Amount Requested')
-
     class Meta:
         fields = [
             'project',
             'fund',
-            'value',
             'status',
             'date_from',
             'date_to',
+            'value',
         ]
         model = PaymentRequest
         orderable = False
@@ -42,10 +41,10 @@ class PaymentRequestsListTable(BasePaymentRequestsTable):
         fields = [
             'project',
             'fund',
-            'value',
             'status',
             'date_from',
             'date_to',
+            'value',
         ]
         model = PaymentRequest
         orderable = True
@@ -71,7 +70,7 @@ class BaseProjectsTable(tables.Table):
     fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
 
     def render_fund_allocation(self, record):
-        return f'${record.amount_paid} / ${record.value}'
+        return f'${intcomma(record.amount_paid)} / ${intcomma(record.value)}'
 
 
 class ProjectsDashboardTable(BaseProjectsTable):
@@ -108,7 +107,7 @@ class ProjectsListTable(BaseProjectsTable):
 
         qs = qs.annotate(
             paid_ratio=Sum('payment_requests__paid_value') / F('value'),
-        ).order_by(f'{direction}paid_ratio', 'value')
+        ).order_by(f'{direction}paid_ratio', f'{direction}value')
 
         return qs, True
 

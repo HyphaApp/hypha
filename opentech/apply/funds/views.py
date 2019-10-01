@@ -256,6 +256,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
             status: {
                 'name': data['name'],
                 'count': sum(status_counts.get(status, 0) for status in data['statuses']),
+                'url': reverse_lazy("funds:submissions:status", kwargs={'status': status})
             }
             for status, data in PHASES_MAPPING.items()
         }

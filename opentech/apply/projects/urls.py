@@ -11,6 +11,7 @@ from .views import (
     ProjectDetailView,
     ProjectEditView,
     ProjectListView,
+    ProjectOverviewView,
     ProjectPrivateMediaView,
 )
 
@@ -20,15 +21,16 @@ urlpatterns = []
 
 if settings.PROJECTS_ENABLED:
     urlpatterns = [
+        path('', ProjectOverviewView.as_view(), name='overview'),
+        path('all/', ProjectListView.as_view(), name='all'),
         path('<int:pk>/', include([
             path('', ProjectDetailView.as_view(), name='detail'),
             path('edit/', ProjectEditView.as_view(), name="edit"),
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         ])),
-        path('/', ProjectListView.as_view(), name='all'),
         path('payment-requests/', include(([
-            path('', PaymentRequestListView.as_view()),
+            path('', PaymentRequestListView.as_view(), name='all'),
             path('<int:pk>/', include([
                 path('', PaymentRequestView.as_view(), name='detail'),
                 path('edit/', EditPaymentRequestView.as_view(), name='edit'),

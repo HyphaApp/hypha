@@ -5,8 +5,8 @@
             {% for status, data in status_counts.items %}
                 <li class="status-block__item">
                     <h5 class="status-block__title">{{ data.name }}</h5>
-                    <p class="status-block__info">{{ data.count }} Applications</p>
-                    <a class="status-block__link" href="{% url "funds:submissions:status" status=status %}">View</a>
+                    <p class="status-block__info">{{ data.count }} {{ type }}</p>
+                    <a class="status-block__link" href="{{ data.url }}">View</a>
                 </li>
             {% endfor %}
         </ul>
