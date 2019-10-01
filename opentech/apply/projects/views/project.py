@@ -5,10 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Sum
+from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
@@ -34,7 +34,10 @@ from opentech.apply.utils.views import (
 )
 
 from ..files import get_files
-from ..filters import ProjectListFilter
+from ..filters import (
+    PaymentRequestListFilter,
+    ProjectListFilter,
+)
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -56,11 +59,11 @@ from ..models import (
     Approval,
     Contract,
     PacketFile,
+    PaymentRequest,
     Project
 )
 from ..tables import (
     PaymentRequestsDashboardTable,
-    PaymentRequestsListTable,
     ProjectsDashboardTable,
     ProjectsListTable
 )
@@ -558,12 +561,11 @@ class ProjectOverviewView(TemplateView):
         return {
             'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
             'table': PaymentRequestsDashboardTable(payment_requests, order_by=()),
-            'url': reverse('apply:projects:payment-request-all'),
+            'url': reverse('apply:projects:payments:all'),
         }
 
     def get_projects(self, request):
-        projects = (Project.objects.annotate(amount_paid=Sum('payment_requests__paid_value'))
-                                   .order_by('proposed_end'))[:10]
+        projects = Project.objects.for_table()[:10]
 
         return {
             'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
@@ -572,11 +574,20 @@ class ProjectOverviewView(TemplateView):
         }
 
     def get_status_counts(self):
-        status_counts_lut = dict(Project.objects.all()
-                                                .values('status')
-                                                .annotate(count=Count('status'))
-                                                .values_list('status', 'count'))
+        status_counts = dict(
+            Project.objects.all().values('status').annotate(
+                count=Count('status'),
+            ).values_list(
+                'status',
+                'count',
+            )
+        )
 
-        for key, name in PROJECT_STATUS_CHOICES:
-            count = status_counts_lut.get(key, 0)
-            yield key, name, count
+        return {
+            key: {
+                'name': display,
+                'count': status_counts.get(key, 0),
+                'url': reverse_lazy("funds:projects:all") + '?status=' + key,
+            }
+            for key, display in PROJECT_STATUS_CHOICES
+        }

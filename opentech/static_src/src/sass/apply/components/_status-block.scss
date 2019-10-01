@@ -16,7 +16,7 @@
         @include media-query(tablet-landscape) {
             border-bottom: 0;
             border-right: 1px solid $color--light-mid-grey;
-            width: calc(100% / 9);
+            width: 100%;
             padding: 10px;
             display: flex;
             align-items: flex-start;
