@@ -93,21 +93,21 @@ class TestStaffDashboard(BaseViewTestCase):
 
     def test_active_payment_requests_with_no_project(self):
         response = self.get_page()
-        self.assertNotContains(response, "Active Requests for Payment")
+        self.assertNotContains(response, "Active requests for payment")
 
-    def test_active_payment_requests_with_no_payment_requests(self):
+    def test_doesnt_show_active_payment_requests_with_none(self):
         ProjectFactory(lead=self.user)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active Requests for Payment")
+        self.assertNotContains(response, "Active requests for payment")
 
-    def test_active_payment_requests_with_payment_requests_paid_or_declined(self):
+    def test_doest_show_active_payment_requests_when_paid_or_declined(self):
         project = ProjectFactory(lead=self.user)
         PaymentRequestFactory(project=project, status=PAID)
         PaymentRequestFactory(project=project, status=DECLINED)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active Requests for Payment")
+        self.assertNotContains(response, "Active requests for payment")
 
     def test_active_payment_requests_with_payment_requests_in_correct_state(self):
         project = ProjectFactory(lead=self.user)
@@ -116,7 +116,16 @@ class TestStaffDashboard(BaseViewTestCase):
         PaymentRequestFactory(project=project, status=UNDER_REVIEW)
 
         response = self.get_page()
-        self.assertContains(response, "Active Requests for Payment")
+        self.assertContains(response, "Active requests for payment")
+
+    def test_doesnt_show_active_payment_requests_when_not_mine(self):
+        project = ProjectFactory()
+        PaymentRequestFactory(project=project, status=SUBMITTED)
+        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
+        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active requests for payment")
 
 
 class TestReviewerDashboard(BaseViewTestCase):

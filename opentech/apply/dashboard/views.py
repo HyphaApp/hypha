@@ -48,6 +48,7 @@ class AdminDashboardView(TemplateView):
         ).in_progress()
 
         return {
+            'count': payment_requests.count(),
             'table': PaymentRequestsDashboardTable(payment_requests),
         }
 
@@ -58,6 +59,7 @@ class AdminDashboardView(TemplateView):
 
         limit = 10
         return {
+            'count': projects.count(),
             'filterset': filterset,
             'table': ProjectsDashboardTable(projects[:limit]),
             'display_more': projects.count() > limit,
