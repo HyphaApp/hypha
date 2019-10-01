@@ -633,10 +633,10 @@ class EmailAdapter(AdapterBase):
     def get_subject(self, message_type, source):
         if source:
             if is_ready_for_review(message_type):
-                subject = 'Application ready to review: {submission.title}'.format(submission=source)
+                subject = 'Application ready to review: {source.title}'.format(source=source)
             else:
                 try:
-                    subject = source.page.specific.subject or 'Your application to {org_long_name}: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=submission)
+                    subject = source.page.specific.subject or 'Your application to {org_long_name}: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
                     subject = 'Your {org_long_name} Project: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
             return subject
