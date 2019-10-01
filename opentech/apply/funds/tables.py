@@ -5,8 +5,9 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.utils.html import format_html
-from django.utils.text import mark_safe, slugify
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
 import django_filters as filters
 import django_tables2 as tables
@@ -215,7 +216,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
         }
         super().__init__(
             *args,
-            name='status',
+            field_name='status',
             choices=choices,
             label='Statuses',
             **kwargs,
@@ -230,7 +231,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
@@ -257,7 +258,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 
 class SubmissionDashboardFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(name='page', queryset=get_used_funds, label='Funds')
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
 
     class Meta:
         model = ApplicationSubmission

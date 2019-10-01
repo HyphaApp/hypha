@@ -78,7 +78,7 @@ class TestRoundIndexView(WagtailTestUtils, TestCase):
         response = self.client.get('/admin/funds/round/', follow=True)
 
         application_links = [
-            f'<a href="/admin/funds/applicationform/edit/{app.id}/">{app}</a>'
+            f'<a href="/admin/funds/applicationform/edit/{app.form.id}/">{app}</a>'
             for app in self.round.forms.all()
         ]
         applications_cell = f'<td class="field-applications">{"".join(application_links)}</td>'
@@ -94,8 +94,8 @@ class TestRoundIndexView(WagtailTestUtils, TestCase):
         response = self.client.get('/admin/funds/round/', follow=True)
 
         review_form_links = [
-            f'<a href="/admin/funds/round/edit/{review_form.id}/">{review_form}</a>'
-            for review_form in self.round.review_forms.all()
+            f'<a href="/admin/review/reviewform/edit/{review.form.id}/">{review}</a>'
+            for review in self.round.review_forms.all()
         ]
         review_form_cell = f'<td class="field-review_forms">{"".join(review_form_links)}</td>'
         self.assertContains(response, review_form_cell, html=True)

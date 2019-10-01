@@ -28,6 +28,8 @@ def notify_after_create_user(request, user):
 @hooks.register('after_edit_user')
 def notify_after_edit_user(request, user):
     roles = list(user.groups.values_list('name', flat=True))
+    if user.is_superuser:
+        roles.append('Administrator')
     if roles:
         roles = ', '.join(roles)
         slack_notify(

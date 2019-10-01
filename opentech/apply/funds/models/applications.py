@@ -9,19 +9,18 @@ from django.db.models import (
     Count,
     F,
     FloatField,
-    Func,
     IntegerField,
     OuterRef,
     Q,
     Subquery,
     When,
 )
-from django.db.models.functions import Coalesce, Length
+from django.db.models.functions import Coalesce, Length, Left
 from django.shortcuts import render
 
 from django.http import Http404
 from django.utils.functional import cached_property
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from modelcluster.fields import ParentalManyToManyField
@@ -540,26 +539,3 @@ class RoundsAndLabs(Page):
 
     def save(self, *args, **kwargs):
         raise NotImplementedError('Do not save through this model')
-
-
-# TODO remove in django 2.1 where this is fixed
-F.relabeled_clone = lambda self, relabels: self
-
-
-# TODO remove in django 2.1 where this is added
-class Left(Func):
-    function = 'LEFT'
-    arity = 2
-
-    def __init__(self, expression, length, **extra):
-        """
-        expression: the name of a field, or an expression returning a string
-        length: the number of characters to return from the start of the string
-        """
-        if not hasattr(length, 'resolve_expression'):
-            if length < 1:
-                raise ValueError("'length' must be greater than 0.")
-        super().__init__(expression, length, **extra)
-
-    def get_substr(self):
-        return Substr(self.source_expressions[0], Value(1), self.source_expressions[1])

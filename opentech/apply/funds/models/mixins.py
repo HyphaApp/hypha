@@ -1,4 +1,4 @@
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.core.files import File
 
 from opentech.apply.stream_forms.blocks import (

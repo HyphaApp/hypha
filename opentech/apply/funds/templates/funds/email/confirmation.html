@@ -1,6 +1,6 @@
 {% extends "messages/email/base.html" %}
 
-{% block content %}{% with email_context=source.page.specific %}We appreciate your {{ email_context.title }} application submission to the Open Technology Fund. We will review and reply to your submission as quickly as possible.
+{% block content %}{% with email_context=source.page.specific %}We appreciate your {{ email_context.title }} application submission to the {{ ORG_LONG_NAME }}. We will review and reply to your submission as quickly as possible.
 
 Our reply will have the next steps for your {{ email_context.title }} application. You can find more information about our support options, review process and selection criteria on our website.
 
