@@ -1185,29 +1185,24 @@ class TestProjectListView(TestCase):
 
 @override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestProjectOverviewView(TestCase):
-    def test_up_to_ten_items_are_displayed(self):
-        PaymentRequestFactory.create_batch(5)  # creates the same number of related Projects
+    def test_staff_can_access(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
 
         self.client.force_login(StaffFactory())
 
         url = reverse('apply:projects:overview')
+
         response = self.client.get(url, follow=True)
-        self.assertTrue(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
-        payments_table_data = response.context['payment_requests']['table'].data
-        self.assertEqual(len(payments_table_data), 5)
+    def test_applicants_cannot_access(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
 
-        projects_table_data = response.context['projects']['table'].data
-        self.assertEqual(len(projects_table_data), 5)
-
-        PaymentRequestFactory.create_batch(10)  # creates the same number of related Projects
+        self.client.force_login(UserFactory())
 
         url = reverse('apply:projects:overview')
+
         response = self.client.get(url, follow=True)
-        self.assertTrue(response.status_code, 200)
-
-        payments_table_data = response.context['payment_requests']['table'].data
-        self.assertEqual(len(payments_table_data), 10)
-
-        projects_table_data = response.context['projects']['table'].data
-        self.assertEqual(len(projects_table_data), 10)
+        self.assertEqual(response.status_code, 403)
