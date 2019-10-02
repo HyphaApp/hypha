@@ -243,7 +243,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old = copy(self.get_object())
+        old_lead = copy(self.get_object().lead)
 
         response = super().form_valid(form)
 
@@ -252,7 +252,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=form.instance,
-            related=old.lead or 'Unassigned',
+            related=old_lead or 'Unassigned',
         )
 
         return response
