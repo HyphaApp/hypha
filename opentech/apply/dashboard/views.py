@@ -82,7 +82,6 @@ class AdminDashboardView(TemplateView):
             'table': ProjectsDashboardTable(data=to_approve),
         }
 
-
     def get_my_awaiting_reviews(self, user, qs):
         """Staff reviewer's current to-review submissions."""
         qs = qs.in_review_for(user).order_by('-submit_time')
