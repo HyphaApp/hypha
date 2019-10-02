@@ -1,5 +1,5 @@
 from django import forms
-from django.utils.functional import cached_property
+from django.utils.functional import cached_property, SimpleLazyObject
 from django.utils.translation import ugettext_lazy as _
 
 from wagtail.core.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
@@ -19,6 +19,10 @@ class ModelChooserBlock(ChooserBlock):
     @cached_property
     def target_model(self):
         return resolve_model_string(self._target_model)
+
+    def to_python(self, value):
+        super_method = super().to_python
+        return SimpleLazyObject(lambda: super_method(value))
 
 
 class CategoryQuestionBlock(OptionalFormFieldBlock):
