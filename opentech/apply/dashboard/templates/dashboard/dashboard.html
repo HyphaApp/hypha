@@ -79,7 +79,7 @@
     </div>
     {% endif %}
 
-    {% if active_payment_requests.data %}
+    {% if active_payment_requests.count %}
     <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">Active requests for payment</h4>
         {% render_table active_payment_requests.table %}
