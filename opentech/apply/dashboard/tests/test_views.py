@@ -5,6 +5,7 @@ from opentech.apply.funds.tests.factories import (
 )
 from opentech.apply.projects.models import (
     CHANGES_REQUESTED,
+    COMMITTED,
     DECLINED,
     PAID,
     SUBMITTED,
@@ -15,7 +16,13 @@ from opentech.apply.projects.tests.factories import (
     ProjectFactory
 )
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.users.tests.factories import ApplicantFactory, ReviewerFactory, StaffFactory
+from opentech.apply.users.groups import APPROVER_GROUP_NAME
+from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
+    GroupFactory,
+    ReviewerFactory,
+    StaffFactory
+)
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 
@@ -126,6 +133,22 @@ class TestStaffDashboard(BaseViewTestCase):
 
         response = self.get_page()
         self.assertNotContains(response, "Active requests for payment")
+
+    def test_non_project_approver_cannot_see_projects_awaiting_review_stats_or_table(self):
+        ProjectFactory(is_locked=True, status=COMMITTED)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Projects awaiting approval")
+
+    def test_project_approver_can_see_projects_awaiting_review_stats_or_table(self):
+        ProjectFactory(is_locked=True, status=COMMITTED)
+
+        user = StaffFactory()
+        user.groups.add(GroupFactory(name=APPROVER_GROUP_NAME))
+        self.client.force_login(user)
+
+        response = self.get_page()
+        self.assertContains(response, "Projects awaiting approval")
 
 
 class TestReviewerDashboard(BaseViewTestCase):

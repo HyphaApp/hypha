@@ -64,7 +64,6 @@ from ..models import (
 )
 from ..tables import (
     PaymentRequestsDashboardTable,
-    ProjectsDashboardTable,
     ProjectsListTable
 )
 
@@ -569,7 +568,7 @@ class ProjectOverviewView(TemplateView):
 
         return {
             'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
-            'table': ProjectsDashboardTable(projects, order_by=()),
+            'table': ProjectsListTable(projects, order_by=()),
             'url': reverse('apply:projects:all'),
         }
 
