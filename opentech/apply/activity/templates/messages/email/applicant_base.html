@@ -4,5 +4,5 @@
 {% block more_info %}You can find more information here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 If you have any questions, please submit them here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
-If you have any issues accessing the submission system or other general inquiries, please email us at hello@opentech.fund
+If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}
 {% endblock %}

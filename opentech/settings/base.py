@@ -23,6 +23,14 @@ if 'ALLOWED_HOSTS' in env:
     ALLOWED_HOSTS = env['ALLOWED_HOSTS'].split(',')
 
 
+# Organisation name and e-mail address, used in e-mail templates etc.
+
+ORG_LONG_NAME = env.get('ORG_LONG_NAME', 'Acme Corporation')
+ORG_SHORT_NAME = env.get('ORG_SHORT_NAME', 'ACME')
+ORG_EMAIL = env.get('ORG_EMAIL', 'info@example.org')
+ORG_GUIDE_URL = env.get('ORG_GUIDE_URL', 'https://guide.example.org/')
+
+
 # Email settings
 if 'EMAIL_HOST' in env:
     EMAIL_HOST = env['EMAIL_HOST']
@@ -401,15 +409,14 @@ WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
     'default': {
         'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
-        # fixed in wagtail 2.0.1: https://github.com/wagtail/wagtail/commit/09f8a4f38a95f2760f38ab2f142443df93b5d8c6
-        # 'OPTIONS': {
-        #     'features': [
-        #         'bold', 'italic',
-        #         'h3', 'h4', 'h5',
-        #         'ol', 'ul',
-        #         'link'
-        #     ]
-        # }
+        'OPTIONS': {
+            'features': [
+                'bold', 'italic',
+                'h2', 'h3', 'h4', 'h5',
+                'ol', 'ul',
+                'link'
+            ]
+        }
     },
 }
 

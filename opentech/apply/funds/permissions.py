@@ -8,7 +8,7 @@ class IsAuthor(permissions.BasePermission):
 
 class IsApplyStaffUser(permissions.BasePermission):
     """
-    Custom permission to only allow OTF Staff or higher
+    Custom permission to only allow organisation Staff or higher
     """
 
     def has_permission(self, request, view):

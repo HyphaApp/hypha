@@ -1,9 +1,10 @@
+import re
+
 from bleach.sanitizer import Cleaner
-from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
 from django.utils.html import format_html
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 
 
 def wrap_with_span(text, class_name):
@@ -19,66 +20,37 @@ def wrap_added(text):
 
 
 def compare(answer_a, answer_b, should_bleach=True):
-    if not answer_a and not answer_b:
-        # This catches the case where both results are None and we cant compare
-        return answer_b
-    if isinstance(answer_a, dict) or isinstance(answer_b, dict):
-        # TODO: handle file dictionaries
-        return answer_b
-
     if should_bleach:
         cleaner = Cleaner(tags=['h4'], attributes={}, strip=True)
-        if isinstance(answer_a, str):
-            answer_a = cleaner.clean(answer_a)
-        else:
-            answer_a = str(answer_a)
-
-        if isinstance(answer_b, str):
-            answer_b = cleaner.clean(answer_b)
-        else:
-            answer_b = str(answer_b)
+        answer_a = re.sub('(<li[^>]*>)', r'\1● ', answer_a)
+        answer_b = re.sub('(<li[^>]*>)', r'\1● ', answer_b)
+        answer_a = cleaner.clean(answer_a)
+        answer_b = cleaner.clean(answer_b)
 
     diff = SequenceMatcher(None, answer_a, answer_b)
-    output = []
-    added = []
-    deleted = []
+    from_diff = []
+    to_diff = []
     for opcode, a0, a1, b0, b1 in diff.get_opcodes():
         if opcode == 'equal':
-            if a1 - a0 > 2 or not (added or deleted):
-                # if there are more than two of the same characters, commit the added and removed text
-                if added:
-                    output.append(wrap_added(''.join(added)))
-                    added = []
-                if deleted:
-                    output.append(wrap_deleted(''.join(deleted)))
-                    deleted = []
-                output.append(diff.a[a0:a1])
-            else:
-                # Ignore the small gap pretend it has been both added and removed
-                added.append(diff.a[a0:a1])
-                deleted.append(diff.a[a0:a1])
+            from_diff.append(mark_safe(diff.a[a0:a1]))
+            to_diff.append(mark_safe(diff.b[b0:b1]))
         elif opcode == 'insert':
-            added.append(diff.b[b0:b1])
+            from_diff.append(mark_safe(diff.a[a0:a1]))
+            to_diff.append(wrap_with_span(diff.b[b0:b1], 'added'))
         elif opcode == 'delete':
-            deleted.append(diff.a[a0:a1])
+            from_diff.append(wrap_with_span(diff.a[a0:a1], 'deleted'))
+            to_diff.append(mark_safe(diff.b[b0:b1]))
         elif opcode == 'replace':
-            deleted.append(diff.a[a0:a1])
-            added.append(diff.b[b0:b1])
+            from_diff.append(wrap_with_span(diff.a[a0:a1], 'deleted'))
+            to_diff.append(wrap_with_span(diff.b[b0:b1], 'added'))
 
-    # Handle text not added to the output already
-    if added == deleted:
-        output.append(''.join(added))
-    else:
-        if deleted:
-            output.append(wrap_deleted(''.join(deleted)))
-        if added:
-            output.append(wrap_added(''.join(added)))
+    from_display = ''.join(from_diff)
+    to_display = ''.join(to_diff)
+    from_display = re.sub('([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', from_display)
+    to_display = re.sub('([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', to_display)
+    from_display = re.sub('(\.\n)', r'\1<br><br>', from_display)
+    to_display = re.sub('(\.\n)', r'\1<br><br>', to_display)
+    from_display = mark_safe(from_display)
+    to_display = mark_safe(to_display)
 
-    display = ''.join(output)
-
-    if not should_bleach:
-        soup = BeautifulSoup(display, "html5lib")
-        soup.body.hidden = True
-        display = soup.body.prettify()
-
-    return mark_safe(display)
+    return (from_display, to_display)

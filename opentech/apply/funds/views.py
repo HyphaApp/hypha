@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView
 
@@ -856,21 +856,17 @@ class RevisionCompareView(DetailView):
         to_rendered_text_fields = self.object.render_text_blocks_answers()
         to_required = self.render_required()
 
-        # Compare all the required fields
-        diffed_required = [
+        required_fields = [
             compare(*fields)
             for fields in zip(from_required, to_required)
         ]
-        for field, diff in zip(self.object.named_blocks, diffed_required):
-            setattr(self.object, 'get_{}_display'.format(field), diff)
 
-        # Compare all the answers
-        diffed_text_fields_answers = [
+        stream_fields = [
             compare(*fields)
             for fields in zip(from_rendered_text_fields, to_rendered_text_fields)
         ]
 
-        self.object.output_answers = mark_safe(''.join(diffed_text_fields_answers))
+        return (required_fields, stream_fields)
 
     def render_required(self):
         return [
@@ -881,8 +877,14 @@ class RevisionCompareView(DetailView):
     def get_context_data(self, **kwargs):
         from_revision = self.object.revisions.get(id=self.kwargs['from'])
         to_revision = self.object.revisions.get(id=self.kwargs['to'])
-        self.compare_revisions(from_revision, to_revision)
-        return super().get_context_data(**kwargs)
+        required_fields, stream_fields = self.compare_revisions(from_revision, to_revision)
+        timestamps = (from_revision.timestamp, to_revision.timestamp)
+        return super().get_context_data(
+            timestamps=timestamps,
+            required_fields=required_fields,
+            stream_fields=stream_fields,
+            **kwargs,
+        )
 
 
 @method_decorator(staff_required, name='dispatch')

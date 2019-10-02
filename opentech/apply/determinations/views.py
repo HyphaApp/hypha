@@ -90,6 +90,7 @@ class BatchDeterminationCreateView(CreateView):
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
         kwargs['action'] = self.get_action()
+        kwargs['site'] = self.request.site
         kwargs.pop('instance')
         return kwargs
 
@@ -234,6 +235,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
         kwargs['action'] = self.request.GET.get('action')
+        kwargs['site'] = self.request.site
         return kwargs
 
     def get_success_url(self):

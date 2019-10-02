@@ -7,6 +7,7 @@ from opentech.apply.funds.models import ApplicationSubmission
 
 from .models import (
     Determination,
+    DeterminationFormSettings,
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
 )
@@ -29,6 +30,9 @@ class RequiredRichTextField(forms.CharField):
 
 class BaseDeterminationForm:
     def __init__(self, *args, user, initial, action, **kwargs):
+        if 'site' in kwargs:
+            site = kwargs.pop('site')
+            self.form_settings = DeterminationFormSettings.for_site(site)
         try:
             initial.update(outcome=TRANSITION_DETERMINATION[action])
         except KeyError:
@@ -51,6 +55,18 @@ class BaseDeterminationForm:
             if key in self.data_fields()
         }
         return cleaned_data
+
+    def apply_form_settings(self, application_type, fields):
+        for field in fields:
+            try:
+                self.fields[field].label = getattr(self.form_settings, f'{application_type}_{field}_label')
+            except AttributeError:
+                pass
+            try:
+                self.fields[field].help_text = getattr(self.form_settings, f'{application_type}_{field}_help_text')
+            except AttributeError:
+                pass
+        return fields
 
     @classmethod
     def get_detailed_response(cls, saved_data):
@@ -95,25 +111,6 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
             if field not in self._meta.fields
         ]
 
-    def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
-        initial.update(submission=submission.id)
-
-        if instance:
-            for key, value in instance.data.items():
-                if key not in self._meta.fields:
-                    initial[key] = value
-
-        super().__init__(*args, initial=initial, user=user, instance=instance, **kwargs)
-
-        for field in self._meta.widgets:
-            self.fields[field].disabled = True
-
-        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
-
-        if self.draft_button_name in self.data:
-            for field in self.fields.values():
-                field.required = False
-
     def outcome_choices_for_phase(self, submission, user):
         """
         Outcome choices correspond to Phase transitions.
@@ -155,11 +152,6 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
             field for field in self.fields
             if field not in ['submissions', 'outcome', 'author']
         ]
-
-    def __init__(self, *args, submissions, initial={}, **kwargs):
-        initial.update(submissions=submissions.values_list('id', flat=True))
-        super().__init__(*args, initial=initial, **kwargs)
-        self.fields['outcome'].widget = forms.HiddenInput()
 
     def _post_clean(self):
         submissions = self.cleaned_data['submissions'].undetermined()
@@ -345,7 +337,25 @@ class BaseProposalDeterminationForm(forms.Form):
 
 class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDeterminationForm):
     def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
-        super().__init__(*args, submission=submission, user=user, initial={}, instance=None, **kwargs)
+        initial.update(submission=submission.id)
+
+        if instance:
+            for key, value in instance.data.items():
+                if key not in self._meta.fields:
+                    initial[key] = value
+
+        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, **kwargs)
+
+        for field in self._meta.widgets:
+            self.fields[field].disabled = True
+
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+
+        if self.draft_button_name in self.data:
+            for field in self.fields.values():
+                field.required = False
+
+        self.fields = self.apply_form_settings('concept', self.fields)
 
         action = kwargs.get('action')
         stages_num = len(submission.workflow.stages)
@@ -367,12 +377,41 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
-    pass
+    def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
+        initial.update(submission=submission.id)
+
+        if instance:
+            for key, value in instance.data.items():
+                if key not in self._meta.fields:
+                    initial[key] = value
+
+        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, **kwargs)
+
+        for field in self._meta.widgets:
+            self.fields[field].disabled = True
+
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+
+        if self.draft_button_name in self.data:
+            for field in self.fields.values():
+                field.required = False
+
+        self.fields = self.apply_form_settings('proposal', self.fields)
 
 
 class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
-    pass
+    def __init__(self, *args, submissions, initial={}, **kwargs):
+        initial.update(submissions=submissions.values_list('id', flat=True))
+        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
+        self.fields['outcome'].widget = forms.HiddenInput()
+
+        self.fields = self.apply_form_settings('concept', self.fields)
 
 
 class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDeterminationForm):
-    pass
+    def __init__(self, *args, submissions, initial={}, **kwargs):
+        initial.update(submissions=submissions.values_list('id', flat=True))
+        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
+        self.fields['outcome'].widget = forms.HiddenInput()
+
+        self.fields = self.apply_form_settings('proposal', self.fields)

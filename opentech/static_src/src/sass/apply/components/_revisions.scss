@@ -1,6 +1,10 @@
-.diff {
-    display: inline-block;
+.revision-diff-table {
+    td {
+        vertical-align: top;
+    }
+}
 
+.diff {
     &__deleted {
         background-color: $color--light-pink;
 

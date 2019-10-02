@@ -29,7 +29,7 @@ def send_activation_email(user, site=None):
     token_generator = PasswordResetTokenGenerator()
     token = token_generator.make_token(user)
 
-    uid = urlsafe_base64_encode(force_bytes(user.pk)).decode()
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
 
     activation_path = reverse('users:activate', kwargs={'uidb64': uid, 'token': token})
 
@@ -39,12 +39,13 @@ def send_activation_email(user, site=None):
         'username': user.get_username(),
         'activation_path': activation_path,
         'timeout_days': settings.PASSWORD_RESET_TIMEOUT_DAYS,
+        'org_long_name': settings.ORG_LONG_NAME,
     }
 
     if site:
         context.update(site=site)
 
-    subject = 'Account details for {username} at Open Technology Fund'.format(**context)
+    subject = 'Account details for {username} at {org_long_name}'.format(**context)
     # Force subject to a single line to avoid header-injection issues.
     subject = ''.join(subject.splitlines())
     message = render_to_string('users/activation/email.txt', context)

@@ -1,81 +1,48 @@
-opentech.fund Wagtail site
-==================
+# Hypha
 
-## Contributing
+<a href="https://travis-ci.org/opentechfund/opentech.fund">
+ <img src="https://travis-ci.org/opentechfund/opentech.fund.svg?branch=master" alt="Build Status" />
+</a>
 
-1. Make changes on a new branch, including a broad category and the ticket number if relevant e.g. `feature/123-extra-squiggles`, `fix/newsletter-signup`.
-1. Push your branch to the remote.
-1. Edit details as necessary.
+## Submission management software
 
-If you need to preview work on `staging`, this can be merged and deployed manually without making a merge request. You can still make the merge request as above, but add a note to say that this is on `staging`, and not yet ready to be merged to `master`.
+* Manage the collection and review of applications or submissions openly and efficiently.
+* Customize all aspects of the process, forms, workflows, review options, and more.
+* Automate workflows and integrate with other services (Slack, Mailgun, etc).
+* Regularly audited software with many privacy and security features.
+* View our [Roadmap](/wiki/Roadmap) for upcoming features and enhancements.
 
-# Setting up a local build
+*Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 
-This repository includes a Vagrantfile for running the project in a Debian VM.
+*Deploy with [Heroku](/wiki/Deployment:-Heroku), [Docker](/wiki/Deployment:-Docker), or [your own server](/wiki/Deployment:-Standalone-App).*
 
-To set up a new build:
+## Maintainers
 
-``` bash
-git clone git@github.com:OpenTechFund/opentech.fund.git
-cd opentech.fund
-vagrant up
-vagrant ssh
-```
+- [Open Technology Fund](https://www.opentech.fund)
 
-Then within the SSH session:
+## Contributors
+Thank you to all the people who have contributed to Hypha!
 
-``` bash
-dj migrate
-dj createcachetable
-dj createsuperuser
-djrun
-```
+***Special thanks to:***
 
-This will make the site available on the host machine at: http://127.0.0.1:8000/
+- [Combonetwork](https://www.combonet.se/)
+- [Torchbox](https://torchbox.com/digital-products/)
+- [Parbhat](https://github.com/Parbhat)
+## Community
+More here soon!
 
-# Updating front-end files
+## Support Hypha
+Hypha is an open source project made possible thanks to the support by our amazing backers.
 
-Any changes to sass and js files need to be made within the `opentech/static_src` directory. They then need to be compiled with the  help of "gulp".
+Issues on Hypha can be funded by anyone and the money will be distributed to contributors and maintainers. If you use Hypha please consider becoming a backer:
 
-Start a vagrant SSH session and go to the project root directory.
+[![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/opentech.fund)
 
-``` bash
-vagrant ssh
-cd /vagrant
-```
+## More information
+* Website: coming soon
+* Docs: coming soon
+* Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
+* Copyright (C) 2019 - Open Technology Fund
 
-Here you can run a number of different "gulp" commands. The two most useful are likely:
-
-``` bash
-gulp watch
-```
-
-That will watch all fles for changes and build them with maps etc., perfect for development. (It will also run the "collecstatic" command, useful when running the site with a production server and not the built in dev server.)
-
-If you are working on the React components then it may be worth just using one of the two following commands. They should do the same thing, but the npm command calls Webpack direct.
-
-| WARNING: You cannot use Webpack watch and Hot Module Reload within vagrant, it must be run from your own installation of node. All other commands will work. |
-| --- |
-
-``` bash
-gulp watch:app
-# OR
-npm run webpack-watch
-```
-
-To build the assets which get deployed, use the following. The deployment scripts will handle this, and the files do not need to be committed.
-
-``` bash
-gulp build
-```
-
-For more command see the `gulpfile.js` file.
-
-
-# Running tests
-
-Run all tests for the project with the following command within the SSH session:
-
-``` bash
-DJANGO_SETTINGS_MODULE=opentech.settings.test python manage.py test --keepdb
-```
+### License
+[BSD 3-clause](./LICENSE)

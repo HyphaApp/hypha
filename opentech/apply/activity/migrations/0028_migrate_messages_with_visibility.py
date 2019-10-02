@@ -14,12 +14,13 @@ def forward_visibility_options(apps, schema_editor):
         except json.JSONDecodeError:
             continue
 
-        new_message = {
-            TEAM: message['internal'],
-            ALL: message['public'],
-        }
-        activity.message = json.dumps(new_message)
-        activity.save()
+        if 'internal' in message and 'public' in message:
+            new_message = {
+                TEAM: message['internal'],
+                ALL: message['public'],
+            }
+            activity.message = json.dumps(new_message)
+            activity.save()
 
 
 def backward_visibility_options(apps, schema_editor):

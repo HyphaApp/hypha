@@ -2,6 +2,7 @@ from collections import defaultdict
 from enum import Enum
 import itertools
 
+from django.conf import settings
 from django.utils.text import slugify
 
 """
@@ -229,7 +230,7 @@ SingleStageDefinition = [
                 INITIAL_STATE: 'Screening (back)',
             },
             'display': 'Internal Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Request,
             'permissions': default_permissions,
         },
@@ -323,7 +324,7 @@ SingleStageExternalDefinition = [
                 INITIAL_STATE: 'Screening (back)',
             },
             'display': 'Internal Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestExt,
             'permissions': default_permissions,
         },
@@ -465,7 +466,7 @@ SingleStageCommunityDefinition = [
                 'com_rejected': 'Dismiss',
             },
             'display': 'Internal Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestCom,
             'permissions': default_permissions,
         },
@@ -476,7 +477,7 @@ SingleStageCommunityDefinition = [
                 'com_rejected': 'Dismiss',
             },
             'display': 'Community Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestCom,
             'permissions': community_review_permissions,
         },
@@ -610,7 +611,7 @@ DoubleStageDefinition = [
                 'invited_to_proposal': 'Invite to Proposal',
             },
             'display': 'Internal Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Concept,
             'permissions': default_permissions,
         },
@@ -724,7 +725,7 @@ DoubleStageDefinition = [
                 'proposal_discussion': 'Proposal Received (back)',
             },
             'display': 'Internal Review',
-            'public': 'OTF Review',
+            'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Proposal,
             'permissions': default_permissions,
         },

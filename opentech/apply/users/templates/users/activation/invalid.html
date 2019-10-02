@@ -12,6 +12,6 @@
         <li>The account has already been activated.</li>
     </ul>
 
-    <p>First test to <a href="{% url 'users:password_reset' %}">reset your password</a>. If that fails please contact OTF at <a href="mailto:hello@opentech.fund">hello@opentech.fund</a></p>
+    <p>First test to <a href="{% url 'users:password_reset' %}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
 </div>
 {% endblock %}
