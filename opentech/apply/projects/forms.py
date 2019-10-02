@@ -276,11 +276,11 @@ class EditPaymentRequestForm(forms.ModelForm):
 
 
 class SelectDocumentForm(forms.ModelForm):
-    document = forms.ChoiceField()
+    from_submission = forms.ChoiceField(label="Document")
 
     class Meta:
         model = PacketFile
-        fields = ['category', 'document']
+        fields = ['category', 'from_submission']
 
     def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -289,10 +289,10 @@ class SelectDocumentForm(forms.ModelForm):
 
         choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['document'].choices = choices
+        self.fields['from_submission'].choices = choices
 
-    def clean_document(self):
-        file_url = self.cleaned_data['document']
+    def clean_from_submission(self):
+        file_url = self.cleaned_data['from_submission']
         for file in self.files:
             if file.url == file_url:
                 new_file = ContentFile(file.read())
@@ -345,6 +345,9 @@ class UploadDocumentForm(forms.ModelForm):
         fields = ['title', 'category', 'document']
         model = PacketFile
         widgets = {'title': forms.TextInput()}
+        labels = {
+            "title": "File Name",
+        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
