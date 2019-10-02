@@ -1,7 +1,7 @@
 .filters {
     display: none;
 
-    .filters-open & {
+    &.filters-open {
         position: fixed;
         top: 0;
         right: 0;
@@ -21,7 +21,7 @@
         transition-delay: $base-delay;
         pointer-events: none;
 
-        .filters-open & {
+        &.filters-open {
             position: relative;
             top: auto;
             left: auto;
