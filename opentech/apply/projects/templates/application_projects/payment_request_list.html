@@ -18,7 +18,7 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if table %}
-    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True %}
+    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True search_placeholder="payment requests" %}
     {% render_table table %}
     {% else %}
     <p>No Requests Available</p>

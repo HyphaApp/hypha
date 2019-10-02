@@ -63,7 +63,7 @@ from ..models import (
     Project
 )
 from ..tables import (
-    PaymentRequestsDashboardTable,
+    PaymentRequestsListTable,
     ProjectsListTable
 )
 
@@ -559,7 +559,7 @@ class ProjectOverviewView(TemplateView):
 
         return {
             'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
-            'table': PaymentRequestsDashboardTable(payment_requests, order_by=()),
+            'table': PaymentRequestsListTable(payment_requests, order_by=()),
             'url': reverse('apply:projects:payments:all'),
         }
 

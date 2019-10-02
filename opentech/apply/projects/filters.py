@@ -15,20 +15,21 @@ from .models import (
     Project
 )
 
-
-class PaymentRequestListFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
-    project = Select2ModelMultipleChoiceFilter(label='Project', queryset=Project.objects.all())
-    status = Select2MultipleChoiceFilter(label='Status', choices=REQUEST_STATUS_CHOICES)
-
-    class Meta:
-        fields = ['project', 'status', 'fund']
-        model = PaymentRequest
+User = get_user_model()
 
 
 def get_project_leads(request):
-    User = get_user_model()
     return User.objects.filter(lead_projects__isnull=False).distinct()
+
+
+class PaymentRequestListFilter(filters.FilterSet):
+    fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds, field_name='project__submission__page')
+    status = Select2MultipleChoiceFilter(label='Status', choices=REQUEST_STATUS_CHOICES)
+    lead = Select2ModelMultipleChoiceFilter(label='Lead', queryset=get_project_leads, field_name='project__lead')
+
+    class Meta:
+        fields = ['lead', 'fund', 'status']
+        model = PaymentRequest
 
 
 class ProjectListFilter(filters.FilterSet):
