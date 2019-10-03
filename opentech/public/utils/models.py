@@ -228,6 +228,24 @@ class SystemMessagesSettings(BaseSetting):
     class Meta:
         verbose_name = 'system settings'
 
+    site_logo_default = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text='Default site logo',
+    )
+
+    site_logo_mobile = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text='Mobil site logo (if not set default will be used)',
+    )
+
     footer_content = models.TextField(
         "Footer content",
         default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
@@ -245,6 +263,10 @@ class SystemMessagesSettings(BaseSetting):
     )
 
     panels = [
+        MultiFieldPanel([
+            FieldPanel('site_logo_default'),
+            FieldPanel('site_logo_mobile'),
+        ], 'Site logo'),
         FieldPanel('footer_content'),
         MultiFieldPanel([
             FieldPanel('title_404'),
