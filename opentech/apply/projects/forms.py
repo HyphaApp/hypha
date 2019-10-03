@@ -276,11 +276,14 @@ class EditPaymentRequestForm(forms.ModelForm):
 
 
 class SelectDocumentForm(forms.ModelForm):
-    from_submission = forms.ChoiceField(label="Document")
+    document = forms.ChoiceField(
+        label="Document",
+        widget=forms.Select(attrs={'id': 'from_submission'})
+    )
 
     class Meta:
         model = PacketFile
-        fields = ['category', 'from_submission']
+        fields = ['category', 'document']
 
     def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -289,10 +292,10 @@ class SelectDocumentForm(forms.ModelForm):
 
         choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['from_submission'].choices = choices
+        self.fields['document'].choices = choices
 
-    def clean_from_submission(self):
-        file_url = self.cleaned_data['from_submission']
+    def clean_document(self):
+        file_url = self.cleaned_data['document']
         for file in self.files:
             if file.url == file_url:
                 new_file = ContentFile(file.read())
