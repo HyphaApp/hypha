@@ -1,0 +1,72 @@
+{% extends "base-apply.html" %}
+
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block title %}Projects{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{{ projects.filterset.form.media.css }}
+{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--search">
+        {% block page_header %}
+            <div>
+                <h1 class="gamma heading heading--no-margin heading--bold">Projects</h1>
+                <h5>Track and explore recent projects</h5>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+
+    {% include "funds/includes/status-block.html" with type="Projects" %}
+
+    {% if projects.table.data %}
+    <div class="wrapper wrapper--bottom-space">
+
+        {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_placeholder="projects" search_action=projects.url use_search=True use_batch_actions=False heading="Projects" %}
+
+        {% render_table projects.table %}
+
+        <div class="all-submissions-table__more">
+            <a href="{{ projects.url }}">Show all</a>
+        </div>
+
+    </div>
+    {% endif %}
+
+    {% if payment_requests.table.data %}
+    <div class="wrapper wrapper--bottom-space">
+
+        {% include "funds/includes/table_filter_and_search.html" with filter=payment_requests.filterset filter_action=payment_requests.url search_term=search_term search_placeholder="payment requests" search_action=payment_requests.url use_search=True use_batch_actions=False heading="Payment Requests" %}
+
+        {% render_table payment_requests.table %}
+
+        <div class="all-submissions-table__more">
+            <a href="{{ payment_requests.url }}">Show all</a>
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+    {{ projects.filterset.form.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/symbol-es6@0.1.2/symbol-es6.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
+    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/batch-actions.js' %}"></script>
+{% endblock %}

@@ -3,7 +3,7 @@ from io import BytesIO
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
@@ -35,6 +35,35 @@ from .factories import (
     PaymentRequestFactory,
     ProjectFactory
 )
+
+
+class TestUpdateLeadView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApproverFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_update_lead(self):
+        project = ProjectFactory()
+
+        new_lead = self.user_factory()
+        response = self.post_page(project, {'form-submitted-lead_form': '', 'lead': new_lead.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.lead, new_lead)
+
+    def test_update_lead_from_none(self):
+        project = ProjectFactory(lead=None)
+
+        new_lead = self.user_factory()
+        response = self.post_page(project, {'form-submitted-lead_form': '', 'lead': new_lead.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.lead, new_lead)
 
 
 class TestCreateApprovalView(BaseViewTestCase):
@@ -582,11 +611,17 @@ class TestContractsMixin(TestCase):
         project = ProjectFactory()
         ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=False, approver=None)
-        ContractFactory(project=project, is_signed=False, approver=None)
+        latest = ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 1)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 0)
+        self.assertEqual(latest, to_sign)
+        self.assertIsNone(to_approve)
 
     def test_all_signed_and_unapproved_returns_latest(self):
         project = ProjectFactory()
@@ -594,12 +629,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=None)
         latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 1)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        self.assertIsNone(contracts[0].approver)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 0)
+        self.assertEqual(latest, to_approve)
+        self.assertIsNone(to_sign)
 
     def test_mixture_of_both_latest_unsigned_and_unapproved(self):
         project = ProjectFactory()
@@ -610,13 +648,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=False, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertFalse(contracts[0].is_signed)
-        for contract in contracts[1:]:
-            self.assertTrue(contract.is_signed)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 2)
+        self.assertEqual(latest, to_sign)
+        self.assertIsNone(to_approve)
 
     def test_mixture_of_both_latest_signed_and_unapproved(self):
         project = ProjectFactory()
@@ -627,13 +667,15 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         latest = ContractFactory(project=project, is_signed=True, approver=None)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
 
-        self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        for contract in contracts:
-            self.assertTrue(contract.is_signed)
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
+
+        self.assertEqual(len(contracts), 2)
+        self.assertEqual(latest, to_approve)
+        self.assertIsNone(to_sign)
 
     def test_mixture_of_both_latest_signed_and_approved(self):
         project = ProjectFactory()
@@ -642,30 +684,32 @@ class TestContractsMixin(TestCase):
         ContractFactory(project=project, is_signed=True, approver=user)
         ContractFactory(project=project, is_signed=False, approver=None)
         ContractFactory(project=project, is_signed=True, approver=user)
-        latest = ContractFactory(project=project, is_signed=True, approver=user)
+        ContractFactory(project=project, is_signed=True, approver=user)
 
-        contracts = self.DummyContractsView(project).get_context_data()['contracts']
+        context = self.DummyContractsView(project).get_context_data()
+
+        contracts = context['contracts']
+        to_approve = context['contract_to_approve']
+        to_sign = context['contract_to_sign']
 
         self.assertEqual(len(contracts), 3)
-        self.assertEqual(latest, contracts[0])
-        self.assertTrue(contracts[0].is_signed)
-        for contract in contracts:
-            self.assertTrue(contract.is_signed)
+        self.assertIsNone(to_approve)
+        self.assertIsNone(to_sign)
 
 
 class TestApproveContractView(BaseViewTestCase):
-    base_view_name = 'approve-contract'
+    base_view_name = 'detail'
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.id, 'contract_pk': instance.id}
+        return {'pk': instance.id}
 
     def test_approve_unapproved_contract(self):
         project = ProjectFactory(status=CONTRACTING)
-        contract = ContractFactory(project=project, is_signed=True)
+        contract = ContractFactory(project=project, is_signed=True, approver=None)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
@@ -678,35 +722,52 @@ class TestApproveContractView(BaseViewTestCase):
         self.assertEqual(project.status, IN_PROGRESS)
 
     def test_approve_already_approved_contract(self):
-        project = ProjectFactory(status=CONTRACTING)
-        user = UserFactory()
+        project = ProjectFactory(status=IN_PROGRESS)
+        user = StaffFactory()
         contract = ContractFactory(project=project, is_signed=True, approver=user)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
         self.assertEqual(response.status_code, 200)
 
         contract.refresh_from_db()
-        self.assertEqual(contract.approver, self.user)
+        self.assertEqual(contract.approver, user)
 
         project.refresh_from_db()
         self.assertEqual(project.status, IN_PROGRESS)
 
     def test_approve_unsigned_contract(self):
         project = ProjectFactory()
-        contract = ContractFactory(project=project, is_signed=False)
+        contract = ContractFactory(project=project, is_signed=False, approver=None)
 
-        response = self.post_page(contract, {
+        response = self.post_page(project, {
             'form-submitted-approve_contract_form': '',
             'id': contract.id,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.absolute_url(project.get_absolute_url()))
 
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
+
+    def test_attempt_to_approve_non_latest(self):
+        project = ProjectFactory()
+        contract_attempt = ContractFactory(project=project, is_signed=True, approver=None)
+        contract_meant = ContractFactory(project=project, is_signed=True, approver=None)
+
+        response = self.post_page(project, {
+            'form-submitted-approve_contract_form': '',
+            'id': contract_attempt.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        contract_attempt.refresh_from_db()
+        contract_meant.refresh_from_db()
+        self.assertIsNone(contract_attempt.approver)
+        self.assertIsNone(contract_meant.approver)
 
 
 class BasePacketFileViewTestCase(BaseViewTestCase):
@@ -778,7 +839,7 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -812,7 +873,7 @@ class TestRequestPaymentViewAsStaff(BaseViewTestCase):
 
         response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -849,8 +910,7 @@ class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -872,8 +932,7 @@ class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -893,25 +952,39 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+        return {'pk': instance.pk}
 
-    def test_editing_payment_request_fires_messaging(self):
+    def test_editing_payment_remove_receipt(self):
+        payment_request = PaymentRequestFactory(project__user=self.user)
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        response = self.post_page(payment_request, {
+            'requested_value': payment_request.requested_value,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': None,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(payment_request.receipts.exists())
+
+    def test_editing_payment_keeps_receipts(self):
         project = ProjectFactory(user=self.user)
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
 
-        value = payment_request.value
-
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
+        requested_value = payment_request.requested_value
 
         response = self.post_page(payment_request, {
-            'value': value + 1,
+            'requested_value': requested_value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': invoice,
-            'receipt_list': [receipt.pk],
+            'invoice': None,
+            'receipt_list': [],
         })
 
         self.assertEqual(response.status_code, 200)
@@ -921,7 +994,8 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
 
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
-        self.assertEqual(value + Decimal("1"), payment_request.value)
+        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
+        self.assertEqual(payment_request.receipts.first().file, receipt.file)
 
 
 class TestStaffEditPaymentRequestView(BaseViewTestCase):
@@ -930,20 +1004,37 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.project.pk, 'pr_pk': instance.pk}
+        return {'pk': instance.pk}
 
-    def test_editing_payment_request_fires_messaging(self):
+    def test_editing_payment_remove_receipt(self):
+        payment_request = PaymentRequestFactory()
+        receipt = PaymentReceiptFactory(payment_request=payment_request)
+
+        response = self.post_page(payment_request, {
+            'requested_value': payment_request.requested_value,
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+            'invoice': None,
+            'receipt_list': [receipt.pk],
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertFalse(payment_request.receipts.exists())
+
+    def test_editing_payment_keeps_receipts(self):
         project = ProjectFactory()
         payment_request = PaymentRequestFactory(project=project)
         receipt = PaymentReceiptFactory(payment_request=payment_request)
 
-        value = payment_request.value
+        requested_value = payment_request.requested_value
 
         invoice = BytesIO(b'somebinarydata')
         invoice.name = 'invoice.pdf'
 
         response = self.post_page(payment_request, {
-            'value': value + 1,
+            'requested_value': requested_value + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -958,7 +1049,7 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
 
         self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
 
-        self.assertEqual(value + Decimal("1"), payment_request.value)
+        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
 
 
 class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
@@ -968,8 +1059,7 @@ class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -977,6 +1067,7 @@ class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
         response = self.post_page(payment_request, {
             'form-submitted-change_payment_status': '',
             'status': CHANGES_REQUESTED,
+            'comment': 'this is a comment',
         })
         self.assertEqual(response.status_code, 200)
         payment_request.refresh_from_db()
@@ -990,8 +1081,7 @@ class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can(self):
@@ -1022,8 +1112,7 @@ class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can_access(self):
@@ -1045,8 +1134,7 @@ class TestApplicantPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
-            'pr_pk': instance.pk,
+            'pk': instance.pk,
         }
 
     def test_can_access_own(self):
@@ -1067,8 +1155,7 @@ class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.project.pk,
-            'pr_pk': instance.payment_request.pk,
+            'pk': instance.payment_request.pk,
             'file_pk': instance.pk,
         }
 
@@ -1076,18 +1163,6 @@ class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
         payment_receipt = PaymentReceiptFactory()
         response = self.get_page(payment_receipt)
         self.assertContains(response, payment_receipt.file.read())
-
-    def test_cant_access_if_project_wrong(self):
-        other_project = ProjectFactory()
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt, url_kwargs={'pk': other_project.pk})
-        self.assertEqual(response.status_code, 404)
-
-    def test_cant_access_if_request_is_wrong(self):
-        other_request = PaymentRequestFactory()
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt, url_kwargs={'pr_pk': other_request.pk})
-        self.assertEqual(response.status_code, 404)
 
 
 class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
@@ -1097,8 +1172,7 @@ class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.project.pk,
-            'pr_pk': instance.payment_request.pk,
+            'pk': instance.payment_request.pk,
             'file_pk': instance.pk,
         }
 
@@ -1110,4 +1184,54 @@ class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
     def test_cant_access_other(self):
         payment_receipt = PaymentReceiptFactory()
         response = self.get_page(payment_receipt)
+        self.assertEqual(response.status_code, 403)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestProjectListView(TestCase):
+    def test_staff_can_access_project_list_page(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse('apply:projects:all')
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_applicants_cannot_access_project_list_page(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(UserFactory())
+
+        url = reverse('apply:projects:all')
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+
+@override_settings(ROOT_URLCONF='opentech.apply.urls')
+class TestProjectOverviewView(TestCase):
+    def test_staff_can_access(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(StaffFactory())
+
+        url = reverse('apply:projects:overview')
+
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_applicants_cannot_access(self):
+        ProjectFactory(status=CONTRACTING)
+        ProjectFactory(status=IN_PROGRESS)
+
+        self.client.force_login(UserFactory())
+
+        url = reverse('apply:projects:overview')
+
+        response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)

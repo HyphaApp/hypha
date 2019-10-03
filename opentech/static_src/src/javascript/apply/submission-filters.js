@@ -3,16 +3,11 @@
     'use strict';
 
     // Variables
-    const $body = $('body');
     const $toggleButton = $('.js-toggle-filters');
     const $closeButton = $('.js-close-filters');
     const $clearButton = $('.js-clear-filters');
     const filterOpenClass = 'filters-open';
     const filterActiveClass = 'is-active';
-
-    const $searchInput = $('.js-search-input');
-    const $queryInput = $('#id_query');
-    const $searchForm = $('.js-search-form');
 
     const $filterForm = $('.js-filter-form');
 
@@ -27,19 +22,13 @@
     );
 
     if ([...urlParams].length > minimumNumberParams && $(window).width() > 1024) {
-        $body.addClass(filterOpenClass);
-        updateButtonText();
+        $('.filters').addClass(filterOpenClass);
+        $('.js-toggle-filters').text('Clear filters');
     }
-
-    $searchForm.submit((e) => {
-        e.preventDefault();
-        $queryInput.val($searchInput.val());
-        $filterForm.submit();
-    });
 
     // Add active class to filters - dropdowns are dynamically appended to the dom,
     // so we have to listen for the event higher up
-    $body.on('click', '.select2-dropdown', (e) => {
+    $('body').on('click', '.select2-dropdown', (e) => {
         // get the id of the dropdown
         let selectId = e.target.parentElement.parentElement.id;
 
@@ -64,20 +53,25 @@
     });
 
     // toggle filters
-    $toggleButton.on('click', () => {
-        if ($body.hasClass(filterOpenClass)) {
+    $toggleButton.on('click', (e) => {
+        // find the nearest filters
+        const filters = e.target.closest('.js-table-actions').nextElementSibling;
+
+        if (filters.classList.contains(filterOpenClass)) {
             handleClearFilters();
         }
         else {
-            $body.addClass(filterOpenClass);
-            updateButtonText();
+            filters.classList.add(filterOpenClass);
+            // only update button text on desktop
+            if (window.innerWidth >= 1024) {
+                updateButtonText(e.target, filters);
+            }
         }
     });
 
     // close filters on mobile
     $closeButton.on('click', (e) => {
-        $body.removeClass(filterOpenClass);
-        updateButtonText();
+        e.target.closest('.filters').classList.remove(filterOpenClass);
     });
 
     // redirect to submissions home to clear filters
@@ -88,12 +82,12 @@
     }
 
     // toggle filters button wording
-    function updateButtonText() {
-        if ($body.hasClass(filterOpenClass)) {
-            $toggleButton.text('Clear filters');
+    function updateButtonText(button, filters) {
+        if (filters.classList.contains(filterOpenClass)) {
+            button.textContent = 'Clear filters';
         }
         else {
-            $toggleButton.text('Filters');
+            button.textContent = 'Filters';
         }
     }
 

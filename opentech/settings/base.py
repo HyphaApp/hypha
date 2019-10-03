@@ -635,3 +635,7 @@ REST_FRAMEWORK = {
 PROJECTS_ENABLED = False
 if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
     PROJECTS_ENABLED = True
+
+PROJECTS_AUTO_CREATE = False
+if env.get('PROJECTS_AUTO_CREATE', 'false').lower().strip() == 'true':
+    PROJECTS_AUTO_CREATE = True

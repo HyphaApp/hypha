@@ -1,5 +1,4 @@
 import functools
-import os
 
 from django import forms
 from django.contrib.auth import get_user_model
@@ -39,46 +38,65 @@ def filter_choices(available, choices):
 filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
 
 
-class ApproveContractForm(forms.ModelForm):
-    name = 'approve_contract_form'
+class ApproveContractForm(forms.Form):
+    id = forms.IntegerField(widget=forms.HiddenInput())
 
-    class Meta:
-        fields = ['id']
-        model = Contract
-        widgets = {'id': forms.HiddenInput()}
-
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, instance, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.instance = instance
+        if instance:
+            self.fields['id'].initial = instance.id
+
+    def clean_id(self):
+        if self.has_changed():
+            raise forms.ValidationError('Something changed before your approval please re-review')
 
     def clean(self):
+        if not self.instance:
+            raise forms.ValidationError('The contract you were trying to approve has already been approved')
+
         if not self.instance.is_signed:
             raise forms.ValidationError('You can only approve a signed contract')
 
         super().clean()
 
+    def save(self, *args, **kwargs):
+        self.instance.save()
+        return self.instance
+
 
 class ChangePaymentRequestStatusForm(forms.ModelForm):
-    name = 'change_payment_request_status_form'
+    name_prefix = 'change_payment_request_status_form'
 
     class Meta:
-        fields = ['status']
+        fields = ['status', 'comment', 'paid_value']
         model = PaymentRequest
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
 
+        self.initial['paid_value'] = self.instance.requested_value
+
         status_field = self.fields['status']
 
-        if self.instance.status == SUBMITTED:
-            wanted = [CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]
-        elif self.instance.status == CHANGES_REQUESTED:
-            wanted = [DECLINED]
-        elif self.instance.status == UNDER_REVIEW:
-            wanted = [PAID]
-        else:
-            wanted = []
+        possible_status_transitions_lut = {
+            CHANGES_REQUESTED: filter_request_choices([DECLINED]),
+            SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]),
+            UNDER_REVIEW: filter_request_choices([PAID]),
+        }
+        status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
-        status_field.choices = filter_request_choices(wanted)
+        if instance.status != UNDER_REVIEW:
+            del self.fields['paid_value']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data['status']
+        paid_value = cleaned_data.get('paid_value')
+
+        if paid_value and status != PAID:
+            self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
+        return cleaned_data
 
 
 class CreateProjectForm(forms.Form):
@@ -117,30 +135,6 @@ class CreateApprovalForm(forms.ModelForm):
         if by != self.user:
             raise forms.ValidationError('Cannot approve for a different user')
         return by
-
-
-class EditPaymentRequestForm(forms.ModelForm):
-    receipt_list = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}))
-
-    name = 'edit_payment_request_form'
-
-    class Meta:
-        fields = ['invoice', 'value', 'date_from', 'date_to', 'receipt_list', 'comment']
-        model = PaymentRequest
-        widgets = {
-            'date_from': forms.DateInput,
-            'date_to': forms.DateInput,
-        }
-
-    def __init__(self, user=None, instance=None, *args, **kwargs):
-        super().__init__(*args, instance=instance, **kwargs)
-
-        self.instance = instance
-
-        self.fields['receipt_list'].choices = [
-            (r.pk, os.path.basename(r.file.url))
-            for r in instance.receipts.all()
-        ]
 
 
 class ProjectEditForm(forms.ModelForm):
@@ -209,7 +203,7 @@ class RequestPaymentForm(forms.ModelForm):
     receipts = MultiFileField()
 
     class Meta:
-        fields = ['value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
+        fields = ['requested_value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
         model = PaymentRequest
         widgets = {
             'date_from': forms.DateInput,
@@ -240,8 +234,52 @@ class RequestPaymentForm(forms.ModelForm):
         return request
 
 
+class EditPaymentRequestForm(forms.ModelForm):
+    receipt_list = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
+        queryset=PaymentReceipt.objects.all(),
+        required=False,
+        label='Receipts'
+    )
+    receipts = MultiFileField(label='', required=False)
+
+    class Meta:
+        fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'receipts', 'comment']
+        model = PaymentRequest
+        widgets = {
+            'date_from': forms.DateInput,
+            'date_to': forms.DateInput,
+        }
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, instance=instance, **kwargs)
+
+        self.fields['receipt_list'].queryset = instance.receipts.all()
+
+        self.fields['requested_value'].label = 'Value'
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        request = super().save(*args, **kwargs)
+
+        removed_receipts = self.cleaned_data['receipt_list']
+
+        removed_receipts.delete()
+
+        to_add = self.cleaned_data['receipts']
+        if to_add:
+            PaymentReceipt.objects.bulk_create(
+                PaymentReceipt(payment_request=request, file=receipt)
+                for receipt in to_add
+            )
+        return request
+
+
 class SelectDocumentForm(forms.ModelForm):
-    document = forms.ChoiceField()
+    document = forms.ChoiceField(
+        label="Document",
+        widget=forms.Select(attrs={'id': 'from_submission'})
+    )
 
     class Meta:
         model = PacketFile
@@ -310,6 +348,9 @@ class UploadDocumentForm(forms.ModelForm):
         fields = ['title', 'category', 'document']
         model = PacketFile
         widgets = {'title': forms.TextInput()}
+        labels = {
+            "title": "File Name",
+        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, **kwargs)

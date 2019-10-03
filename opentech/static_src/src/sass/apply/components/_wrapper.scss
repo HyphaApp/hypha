@@ -178,6 +178,10 @@
                 padding-right: 20px;
             }
         }
+
+        .card:first-child {
+            margin-top: 20px;
+        }
     }
 
     &--search {

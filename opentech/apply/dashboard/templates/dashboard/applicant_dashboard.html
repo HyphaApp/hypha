@@ -2,14 +2,14 @@
 {% load render_table from django_tables2 %}
 {% load static wagtailcore_tags workflow_tags statusbar_tags %}
 
-{% block title %}Submission Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--applicant-dashboard">
         <div>
             <h3 class="heading heading--no-margin">Dashboard</h3>
-            <h5>An overview of active and past submissions</h5>
+            <h5>An overview of active and past submissions and projects</h5>
         </div>
         <div class="wrapper wrapper--cta-box">
             <h4 class="heading heading--no-margin">Submit a new application</h4>
@@ -18,6 +18,7 @@
         </div>
     </div>
 </div>
+
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>Your active submissions</h3>
     {% for submission in my_active_submissions %}
@@ -44,12 +45,27 @@
     {% endfor %}
 </div>
 
-{% if table.data %}
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <h3>Submission history</h3>
-        {% render_table table %}
-    </div>
+{% if tables.0.data %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Your active projects</h3>
+    {% render_table tables.0 %}
+</div>
 {% endif %}
+
+{% if tables.1.data %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Submission history</h3>
+    {% render_table tables.1 %}
+</div>
+{% endif %}
+
+{% if tables.2.data %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    <h3>Project history</h3>
+    {% render_table tables.2 %}
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_js %}

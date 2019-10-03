@@ -6,16 +6,19 @@
     text-align: center;
     border-radius: 50%;
 
+    &--no,
     &--red {
         color: $color--tomato;
         background-color: $color--tomato;
     }
 
+    &--maybe,
     &--amber {
         color: $color--mustard;
         background-color: $color--mustard;
     }
 
+    &--yes,
     &--green {
         color: $color--green;
         background-color: $color--green;

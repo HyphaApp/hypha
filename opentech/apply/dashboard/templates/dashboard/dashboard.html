@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extra_css %}
-    {{ filter.form.media.css }}
+    {{ my_reviewed.filterset.form.media.css }}
 {% endblock %}
 
 {% block title %}Dashboard{% endblock %}
@@ -23,62 +23,88 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
 
-    <!-- Example Stat Block markup
-        <div class="wrapper wrapper--bottom-space">
-            <div class="stat-block">
-                <a href="#" class="stat-block__item">
-                    <p class="stat-block__number">3</p>
-                    <p class="stat-block__text">Submissions waiting for your review</p>
-                    <div class="stat-block__view">View</div>
-                </a>
-                <a href="#" class="stat-block__item">
-                    <p class="stat-block__number">10</p>
-                    <p class="stat-block__text">Live projects under your management</p>
-                    <div class="stat-block__view">View</div>
-                </a>
-                <a href="#" class="stat-block__item">
-                    <p class="stat-block__number">4</p>
-                    <p class="stat-block__text">Requests for payment requiring your attention</p>
-                    <div class="stat-block__view">View</div>
-                </a>
-            </div>
-        </div>
-    -->
-
     <div class="wrapper wrapper--bottom-space">
-        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=in_review_count my_review=my_review display_more=display_more active_statuses_filter=active_statuses_filter %}
+        <div class="stat-block">
+            <a href="#submissions-awaiting-review" class="stat-block__item">
+                <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
+                <p class="stat-block__text">Submissions waiting for your review</p>
+                <div class="stat-block__view">View</div>
+            </a>
+            <a href="#active-projects" class="stat-block__item">
+                <p class="stat-block__number">{{ projects.count }}</p>
+                <p class="stat-block__text">Live projects under your management</p>
+                <div class="stat-block__view">View</div>
+            </a>
+            {% if not projects_to_approve.count is None%}
+            <a href="#projects-awaiting-approval" class="stat-block__item">
+                <p class="stat-block__number">{{ projects_to_approve.count }}</p>
+                <p class="stat-block__text">Projects awaiting approval</p>
+                <div class="stat-block__view">View</div>
+            </a>
+            {% endif %}
+            <a href="#active-payment-requests" class="stat-block__item">
+                <p class="stat-block__number">{{ active_payment_requests.count }}</p>
+                <p class="stat-block__text">Requests for payment requiring your attention</p>
+                <div class="stat-block__view">View</div>
+            </a>
+        </div>
     </div>
 
-    {% if closed_rounds or open_rounds %}
-        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title %}
+    <div id="submissions-awaiting-review" class="wrapper wrapper--bottom-space">
+        {% include "dashboard/includes/waiting-for-review.html" with in_review_count=awating_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
+    </div>
+
+    {% if rounds.closed or rounds.open %}
+        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" %}
     {% endif %}
 
-    {% if my_reviewed.data %}
+    {% if projects.table.data %}
+    <div id="active-projects" class="wrapper wrapper--bottom-space">
+        {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_action=projects.url search_placeholder="projects" use_search=True use_batch_actions=False heading="Your projects" %}
+        {% render_table projects.table %}
+
+        {% if projects.display_more %}
+        <div class="all-submissions-table__more">
+            <a href="{{ projects.url }}?lead={{ request.user.pk }}">Show all</a>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    {% if projects_to_approve.count %}
+    <div id="projects-awaiting-approval" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">Projects awaiting approval</h4>
+        {% render_table projects_to_approve.table %}
+    </div>
+    {% endif %}
+
+    {% if active_payment_requests.count %}
+    <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">Active requests for payment</h4>
+        {% render_table active_payment_requests.table %}
+    </div>
+    {% endif %}
+
+    {% if my_reviewed.table.data %}
         <div class="wrapper wrapper--bottom-space">
 
-            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True use_batch_actions=False heading="Your previous reviews" %}
-            {% render_table my_reviewed %}
+            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading="Your previous reviews" %}
+            {% render_table my_reviewed.table %}
 
-            {% if display_more_reviewed %}
+            {% if my_reviewed.display_more %}
                 <div class="all-submissions-table__more">
-                    <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}">Show all</a>
+                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">Show all</a>
                 </div>
             {% endif %}
         </div>
-    {% endif %}
-
-    {% if projects %}
-    <div class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal heading--no-margin">Your projects</h4>
-        {% render_table projects %}
-    </div>
     {% endif %}
 
 </div>
 {% endblock %}
 
 {% block extra_js %}
-    {{ filter.form.media.js }}
+    {{ my_reviewed.filterset.form.media.js }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
     <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>

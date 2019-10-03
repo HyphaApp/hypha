@@ -270,6 +270,48 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertIsNone(submission_next)
         self.assertFalse(hasattr(submission_original, 'project'))
 
+    @override_settings(PROJECTS_AUTO_CREATE=False)
+    def test_disabling_project_auto_creation_stops_projects_being_created(self):
+        submission = ApplicationSubmissionFactory(
+            status='post_review_discussion',
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertIsNone(submission_next)
+        self.assertFalse(hasattr(submission_original, 'project'))
+
+    @override_settings(PROJECTS_ENABLED=False, PROJECTS_AUTO_CREATE=True)
+    def test_disabling_projects_ignores_auto_creation_setting(self):
+        submission = ApplicationSubmissionFactory(
+            status='post_review_discussion',
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertIsNone(submission_next)
+        self.assertFalse(hasattr(submission_original, 'project'))
+
 
 class BatchDeterminationTestCase(BaseViewTestCase):
     user_factory = StaffFactory

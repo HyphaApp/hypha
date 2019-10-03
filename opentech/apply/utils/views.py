@@ -134,11 +134,14 @@ class DelegatedViewMixin(View):
         self.kwargs = kwargs
 
     def get_object(self):
-        # We want to make sure we share the same instance between the form
-        # and the view where appropriate
-        parent_object = self.get_parent_kwargs()['instance']
-        if isinstance(parent_object, self.model):
-            return parent_object
+        # Make sure the form instance, bound at the parent class level,  is the same as the
+        # value we work with on the class.
+        # If we don't have self.object, bind the parent instance to it. This value will then
+        # be used by the form. Any further calls to get_object will get a new instance of the object
+        if not hasattr(self, 'object'):
+            parent_object = self.get_parent_object()
+            if isinstance(parent_object, self.model):
+                return parent_object
 
         return super().get_object()
 
@@ -181,7 +184,18 @@ class DelegatedViewMixin(View):
 
     def contribute_form(self, parent):
         self.parent = parent
+
+        # We do not want to bind any forms generated this way
+        # pretend we are doing a get request to avoid passing data to forms
+        old_method = None
+        if self.request.method in ('POST', 'PUT'):
+            old_method = self.request.method
+            self.request.method = 'GET'
+
         form = self.get_form()
+
+        if old_method:
+            self.request.method = old_method
         return self.context_name, form
 
     def get_success_url(self):

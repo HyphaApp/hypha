@@ -2,6 +2,7 @@ import collections
 import decimal
 import json
 import logging
+import os
 
 
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, Value as V
+from django.db.models import F, Max, Sum, Value as V
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -65,6 +66,11 @@ class Approval(models.Model):
         return f'Approval of "{self.project.title}" by {self.by}'
 
 
+class ContractQuerySet(models.QuerySet):
+    def approved(self):
+        return self.filter(is_signed=True, approver__isnull=False)
+
+
 class Contract(models.Model):
     approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
@@ -73,6 +79,8 @@ class Contract(models.Model):
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = ContractQuerySet.as_manager()
 
     def __str__(self):
         state = 'Signed' if self.is_signed else 'Unsigned'
@@ -97,7 +105,7 @@ class PacketFile(models.Model):
         instance of PacketFile in the supporting documents template.  The
         standard Delegated View flow makes it difficult to create these forms
         in the view or template.
-        """
+       """
         from .forms import RemoveDocumentForm
         return RemoveDocumentForm(instance=self)
 
@@ -124,7 +132,7 @@ class PaymentReceipt(models.Model):
     file = models.FileField(upload_to=receipt_path, storage=PrivateStorage())
 
     def __str__(self):
-        return f'Receipt for {self.payment_request}'
+        return os.path.basename(self.file.name)
 
 
 SUBMITTED = 'submitted'
@@ -151,27 +159,34 @@ class PaymentRequestQueryset(models.QuerySet):
     def not_rejected(self):
         return self.exclude(status=DECLINED)
 
-    def total_value(self):
-        return self.aggregate(total=Coalesce(Sum('value'), V(0)))['total']
+    def total_value(self, field):
+        return self.aggregate(total=Coalesce(Sum(field), V(0)))['total']
 
     def paid_value(self):
-        return self.filter(status=PAID).total_value()
+        return self.filter(status=PAID).total_value('paid_value')
 
     def unpaid_value(self):
-        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value()
+        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value('requested_value')
 
 
 class PaymentRequest(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="payment_requests")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payment_requests")
 
-    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
-    value = models.DecimalField(
+    requested_value = models.DecimalField(
         default=0,
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
     )
+    paid_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+        null=True
+    )
+
+    invoice = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()
@@ -182,6 +197,10 @@ class PaymentRequest(models.Model):
 
     def __str__(self):
         return f'Payment requested for {self.project}'
+
+    @property
+    def has_changes_requested(self):
+        return self.status == CHANGES_REQUESTED
 
     @property
     def status_display(self):
@@ -205,6 +224,13 @@ class PaymentRequest(models.Model):
 
         return False
 
+    def user_can_delete(self, user):
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
+        return False
+
     def can_user_change_status(self, user):
         if not user.is_apply_staff:
             return False  # Users can't change status
@@ -214,8 +240,12 @@ class PaymentRequest(models.Model):
 
         return True
 
+    @property
+    def value(self):
+        return self.paid_value or self.requested_value
+
     def get_absolute_url(self):
-        return reverse('apply:projects:payments:detail', args=[self.project.pk, self.pk])
+        return reverse('apply:projects:payments:detail', args=[self.pk])
 
 
 COMMITTED = 'committed'
@@ -230,6 +260,39 @@ PROJECT_STATUS_CHOICES = [
     (CLOSING, 'Closing'),
     (COMPLETE, 'Complete'),
 ]
+
+
+class ProjectQuerySet(models.QuerySet):
+    def in_progress(self):
+        return self.exclude(status=COMPLETE)
+
+    def complete(self):
+        return self.filter(status=COMPLETE)
+
+    def in_approval(self):
+        return self.filter(
+            is_locked=True,
+            status=COMMITTED,
+            approvals__isnull=True,
+        )
+
+    def by_end_date(self, desc=False):
+        order = getattr(F('proposed_end'), 'desc' if desc else 'asc')(nulls_last=True)
+
+        return self.order_by(order)
+
+    def with_amount_paid(self):
+        return self.annotate(
+            amount_paid=Coalesce(Sum('payment_requests__paid_value'), V(0)),
+        )
+
+    def with_last_payment(self):
+        return self.annotate(
+            last_payment_request=Max('payment_requests__requested_at'),
+        )
+
+    def for_table(self):
+        return self.with_amount_paid().with_last_payment()
 
 
 class Project(BaseStreamForm, AccessFormData, models.Model):
@@ -272,6 +335,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     sent_to_compliance_at = models.DateTimeField(null=True)
+
+    objects = ProjectQuerySet.as_manager()
 
     def __str__(self):
         return self.title

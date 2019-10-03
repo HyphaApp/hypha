@@ -1,6 +1,6 @@
 {% load payment_request_tools humanize %}
 
-<div class="payment-block">
+<div id="payment-requests" class="payment-block">
     <div class="payment-block__header">
         <p class="payment-block__title">Payment Requests</p>
         <a data-fancybox
@@ -33,8 +33,8 @@
                     {% can_edit payment_request user as user_can_edit_request %}
                     {% if user_can_edit_request %}
                     <a
-                        class="payment-block__status-link"
-                        href="{% url "apply:projects:payments:edit" pk=object.pk pr_pk=payment_request.pk %}">
+                        class="payment-block__edit-link"
+                        href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}
@@ -50,7 +50,7 @@
             </tr>
             {% empty %}
             <tr>
-                No active Payment Requests.
+                <td colspan="5">No active Payment Requests.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -88,6 +88,11 @@
     <h4 class="modal__header-bar">Change payment status</h4>
     <div class="wrapper--outer-space-medium">
         <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
+
+        {% if not form.instance.has_changes_requested %}
+        <p>Requested value: <b>${{ form.instance.requested_value }}</b></p>
+        {% endif %}
+
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
         {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
     </div>

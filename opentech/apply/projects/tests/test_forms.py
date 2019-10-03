@@ -112,7 +112,7 @@ class TestProjectApprovalForm(TestCase):
 class TestRequestPaymentForm(TestCase):
     def test_adding_payment_request(self):
         data = {
-            'value': '10',
+            'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
@@ -145,7 +145,7 @@ class TestRequestPaymentForm(TestCase):
         form = RequestPaymentForm(
             files=files,
             data={
-                'value': '10',
+                'requested_value': '10',
                 'date_from': '2018-08-15',
                 'date_to': '2019-08-15',
                 'comment': 'test comment',
@@ -156,7 +156,7 @@ class TestRequestPaymentForm(TestCase):
         form = RequestPaymentForm(
             files=files,
             data={
-                'value': '10',
+                'requested_value': '10',
                 'date_from': '2019-08-15',
                 'date_to': '2018-08-15',
                 'comment': 'test comment',

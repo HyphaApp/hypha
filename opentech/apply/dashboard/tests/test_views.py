@@ -3,8 +3,26 @@ from opentech.apply.funds.tests.factories import (
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
 )
+from opentech.apply.projects.models import (
+    CHANGES_REQUESTED,
+    COMMITTED,
+    DECLINED,
+    PAID,
+    SUBMITTED,
+    UNDER_REVIEW,
+)
+from opentech.apply.projects.tests.factories import (
+    PaymentRequestFactory,
+    ProjectFactory
+)
 from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.users.tests.factories import ApplicantFactory, ReviewerFactory, StaffFactory
+from opentech.apply.users.groups import APPROVER_GROUP_NAME
+from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
+    GroupFactory,
+    ReviewerFactory,
+    StaffFactory
+)
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 
@@ -68,7 +86,7 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, submission.title)
-        self.assertEquals(response.context['in_review_count'], 1)
+        self.assertEquals(response.context['awaiting_reviews']['count'], 1)
 
     def test_waiting_for_review_after_agreement_is_empty(self):
         staff = StaffFactory()
@@ -78,7 +96,59 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")
-        self.assertEquals(response.context['in_review_count'], 0)
+        self.assertEquals(response.context['awaiting_reviews']['count'], 0)
+
+    def test_active_payment_requests_with_no_project(self):
+        response = self.get_page()
+        self.assertNotContains(response, "Active requests for payment")
+
+    def test_doesnt_show_active_payment_requests_with_none(self):
+        ProjectFactory(lead=self.user)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active requests for payment")
+
+    def test_doest_show_active_payment_requests_when_paid_or_declined(self):
+        project = ProjectFactory(lead=self.user)
+        PaymentRequestFactory(project=project, status=PAID)
+        PaymentRequestFactory(project=project, status=DECLINED)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active requests for payment")
+
+    def test_active_payment_requests_with_payment_requests_in_correct_state(self):
+        project = ProjectFactory(lead=self.user)
+        PaymentRequestFactory(project=project, status=SUBMITTED)
+        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
+        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+
+        response = self.get_page()
+        self.assertContains(response, "Active requests for payment")
+
+    def test_doesnt_show_active_payment_requests_when_not_mine(self):
+        project = ProjectFactory()
+        PaymentRequestFactory(project=project, status=SUBMITTED)
+        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
+        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Active requests for payment")
+
+    def test_non_project_approver_cannot_see_projects_awaiting_review_stats_or_table(self):
+        ProjectFactory(is_locked=True, status=COMMITTED)
+
+        response = self.get_page()
+        self.assertNotContains(response, "Projects awaiting approval")
+
+    def test_project_approver_can_see_projects_awaiting_review_stats_or_table(self):
+        ProjectFactory(is_locked=True, status=COMMITTED)
+
+        user = StaffFactory()
+        user.groups.add(GroupFactory(name=APPROVER_GROUP_NAME))
+        self.client.force_login(user)
+
+        response = self.get_page()
+        self.assertContains(response, "Projects awaiting approval")
 
 
 class TestReviewerDashboard(BaseViewTestCase):

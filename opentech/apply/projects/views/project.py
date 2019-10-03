@@ -5,17 +5,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
+from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,
     DetailView,
     FormView,
+    TemplateView,
     UpdateView
 )
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -28,6 +34,10 @@ from opentech.apply.utils.views import (
 )
 
 from ..files import get_files
+from ..filters import (
+    PaymentRequestListFilter,
+    ProjectListFilter,
+)
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -49,8 +59,14 @@ from ..models import (
     Approval,
     Contract,
     PacketFile,
+    PaymentRequest,
     Project
 )
+from ..tables import (
+    PaymentRequestsListTable,
+    ProjectsListTable
+)
+
 from .payment import RequestPaymentView
 
 
@@ -85,6 +101,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.pop('instance')
+        kwargs.get('initial', {}).update({'by': kwargs.get('user')})
         return kwargs
 
     @transaction.atomic()
@@ -226,7 +243,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old = copy(self.get_object())
+        old_lead = copy(self.get_object().lead)
 
         response = super().form_valid(form)
 
@@ -235,7 +252,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=form.instance,
-            related=old.lead or 'Unassigned',
+            related=old_lead or 'Unassigned',
         )
 
         return response
@@ -246,49 +263,51 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 class ContractsMixin:
     def get_context_data(self, **kwargs):
         project = self.get_object()
-        contracts = (project.contracts.select_related('approver')
-                                      .order_by('-created_at'))
+        contracts = project.contracts.select_related(
+            'approver',
+        ).order_by('-created_at')
 
-        latest_contract = self.get_contract_to_approve(contracts)
-
-        contracts = contracts.filter(is_signed=True, approver__isnull=False)
-
+        latest_contract = contracts.first()
+        contract_to_approve = None
+        contract_to_sign = None
         if latest_contract:
-            contracts = [latest_contract, *contracts]
+            if not latest_contract.is_signed:
+                contract_to_sign = latest_contract
+            elif not latest_contract.approver:
+                contract_to_approve = latest_contract
 
         context = super().get_context_data(**kwargs)
-        context['latest_contract'] = latest_contract
-        context['contracts'] = contracts
+        context['contract_to_approve'] = contract_to_approve
+        context['contract_to_sign'] = contract_to_sign
+        context['contracts'] = contracts.approved()
         return context
-
-    def get_contract_to_approve(self, contracts):
-        """If there's a contract to approve, get that"""
-        latest = contracts.first()
-
-        if not latest:
-            return
-
-        if latest.approver:
-            return
-
-        return latest
 
 
 @method_decorator(staff_required, name='dispatch')
-class ApproveContractView(UpdateView):
+class ApproveContractView(DelegatedViewMixin, UpdateView):
     form_class = ApproveContractForm
     model = Contract
-    pk_url_kwarg = 'contract_pk'
+    context_name = 'approve_contract_form'
+
+    def get_object(self):
+        project = self.get_parent_object()
+        latest_contract = project.contracts.order_by('-created_at').first()
+        if latest_contract and not latest_contract.approver:
+            return latest_contract
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.get_object()
+        kwargs.pop('user')
+        return kwargs
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
-        return redirect(self.project)
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
 
     def form_valid(self, form):
         with transaction.atomic():
@@ -368,6 +387,7 @@ class AdminProjectDetailView(
     DetailView,
 ):
     form_views = [
+        ApproveContractView,
         CommentFormView,
         CreateApprovalView,
         RejectionView,
@@ -387,7 +407,6 @@ class AdminProjectDetailView(
         context['statuses'] = PROJECT_STATUS_CHOICES
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
-        context['approve_contract_form'] = ApproveContractForm()
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
 
@@ -511,3 +530,63 @@ class ApplicantProjectEditView(UpdateView):
 class ProjectEditView(ViewDispatcher):
     admin_view = ProjectApprovalEditView
     applicant_view = ApplicantProjectEditView
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectListView(SingleTableMixin, FilterView):
+    filterset_class = ProjectListFilter
+    model = Project
+    table_class = ProjectsListTable
+    template_name = 'application_projects/project_list.html'
+
+    def get_queryset(self):
+        return Project.objects.for_table()
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectOverviewView(TemplateView):
+    template_name = 'application_projects/overview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['projects'] = self.get_projects(self.request)
+        context['payment_requests'] = self.get_payment_requests(self.request)
+        context['status_counts'] = self.get_status_counts()
+        return context
+
+    def get_payment_requests(self, request):
+        payment_requests = PaymentRequest.objects.order_by('date_to')[:10]
+
+        return {
+            'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
+            'table': PaymentRequestsListTable(payment_requests, order_by=()),
+            'url': reverse('apply:projects:payments:all'),
+        }
+
+    def get_projects(self, request):
+        projects = Project.objects.for_table()[:10]
+
+        return {
+            'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
+            'table': ProjectsListTable(projects, order_by=()),
+            'url': reverse('apply:projects:all'),
+        }
+
+    def get_status_counts(self):
+        status_counts = dict(
+            Project.objects.all().values('status').annotate(
+                count=Count('status'),
+            ).values_list(
+                'status',
+                'count',
+            )
+        )
+
+        return {
+            key: {
+                'name': display,
+                'count': status_counts.get(key, 0),
+                'url': reverse_lazy("funds:projects:all") + '?status=' + key,
+            }
+            for key, display in PROJECT_STATUS_CHOICES
+        }
