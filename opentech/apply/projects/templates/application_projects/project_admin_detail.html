@@ -30,6 +30,8 @@
 
 <div class="modal" id="approve">
     <h4 class="modal__header-bar">Add Approval</h4>
+    <p>This will move the project into contracting and notify the compliance team.</p>
+    <p>This cannot be undone</p>
     {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value='Approve'%}
 </div>
 
@@ -41,7 +43,9 @@
 {% if contract_to_approve %}
 <div class="modal" id="approve-contract">
     <h4 class="modal__header-bar">Approve Contract</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Approve' %}
+    <p>You confirm that the uploaded contract is acceptable for commencing the project.</p>
+    <p>This cannot be undone.</p>
+    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value='Confirm' %}
 </div>
 {% endif %}
 
@@ -94,13 +98,6 @@
  href="#">
   Lead
 </a>
-
-<!-- <a data-fancybox -->
-<!-- data-src="#update-meta-categories" -->
-<!-- class="button button--bottom-space button--white button--full-width" -->
-<!-- href="#"> -->
-<!-- Meta Categories -->
-<!-- </a> -->
 
 {% endblock %}
 

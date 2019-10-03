@@ -63,7 +63,7 @@ from ..models import (
     Project
 )
 from ..tables import (
-    PaymentRequestsDashboardTable,
+    PaymentRequestsListTable,
     ProjectsListTable
 )
 
@@ -243,7 +243,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old = copy(self.get_object())
+        old_lead = copy(self.get_object().lead)
 
         response = super().form_valid(form)
 
@@ -252,7 +252,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=form.instance,
-            related=old.lead or 'Unassigned',
+            related=old_lead or 'Unassigned',
         )
 
         return response
@@ -559,7 +559,7 @@ class ProjectOverviewView(TemplateView):
 
         return {
             'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
-            'table': PaymentRequestsDashboardTable(payment_requests, order_by=()),
+            'table': PaymentRequestsListTable(payment_requests, order_by=()),
             'url': reverse('apply:projects:payments:all'),
         }
 

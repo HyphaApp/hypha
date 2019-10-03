@@ -276,7 +276,10 @@ class EditPaymentRequestForm(forms.ModelForm):
 
 
 class SelectDocumentForm(forms.ModelForm):
-    document = forms.ChoiceField()
+    document = forms.ChoiceField(
+        label="Document",
+        widget=forms.Select(attrs={'id': 'from_submission'})
+    )
 
     class Meta:
         model = PacketFile
@@ -345,6 +348,9 @@ class UploadDocumentForm(forms.ModelForm):
         fields = ['title', 'category', 'document']
         model = PacketFile
         widgets = {'title': forms.TextInput()}
+        labels = {
+            "title": "File Name",
+        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, **kwargs)

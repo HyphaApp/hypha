@@ -37,6 +37,35 @@ from .factories import (
 )
 
 
+class TestUpdateLeadView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = ApproverFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_update_lead(self):
+        project = ProjectFactory()
+
+        new_lead = self.user_factory()
+        response = self.post_page(project, {'form-submitted-lead_form': '', 'lead': new_lead.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.lead, new_lead)
+
+    def test_update_lead_from_none(self):
+        project = ProjectFactory(lead=None)
+
+        new_lead = self.user_factory()
+        response = self.post_page(project, {'form-submitted-lead_form': '', 'lead': new_lead.id})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.lead, new_lead)
+
+
 class TestCreateApprovalView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'

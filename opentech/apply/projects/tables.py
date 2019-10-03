@@ -13,41 +13,47 @@ class BasePaymentRequestsTable(tables.Table):
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
         args=[tables.utils.A('pk')],
     )
-    fund = tables.Column(verbose_name='Fund', accessor='project.submission.page')
     status = tables.Column()
-    date_from = tables.DateColumn(verbose_name='Start Date')
-    date_to = tables.DateColumn(verbose_name='End Date')
+    requested_at = tables.DateColumn(verbose_name='Submitted')
 
     def render_value(self, value):
         return f'${value}'
 
 
 class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
+    date_from = tables.DateColumn(verbose_name='Period Start')
+    date_to = tables.DateColumn(verbose_name='Period End')
+
     class Meta:
         fields = [
             'project',
-            'fund',
             'status',
+            'requested_at',
             'date_from',
             'date_to',
             'value',
         ]
         model = PaymentRequest
         orderable = False
+        order_by = ['-requested_at']
 
 
 class PaymentRequestsListTable(BasePaymentRequestsTable):
+    fund = tables.Column(verbose_name="Fund", accessor='project.submission.page')
+    lead = tables.Column(verbose_name="Lead", accessor='project.lead')
+
     class Meta:
         fields = [
             'project',
             'fund',
+            'lead',
             'status',
-            'date_from',
-            'date_to',
+            'requested_at',
             'value',
         ]
         model = PaymentRequest
         orderable = True
+        order_by = ['-requested_at']
 
     def order_value(self, qs, is_descending):
         direction = '-' if is_descending else ''
