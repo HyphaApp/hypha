@@ -25,4 +25,3 @@ class TestDelegatedViewMixin(TestCase):
         view.object = 3
         self.assertNotEqual(view.get_object(), 3)
         self.assertEqual(view.get_object(), 1)
-
