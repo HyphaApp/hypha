@@ -1,7 +1,7 @@
-import os
 from functools import partialmethod
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.postgres.fields import JSONField
@@ -59,6 +59,7 @@ from ..workflow import (
     get_review_active_statuses,
     INITIAL_STATE,
     PHASES,
+    PHASES_MAPPING,
     review_statuses,
     STAGE_CHANGE_ACTIONS,
     UserPermissions,
@@ -140,7 +141,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(next__isnull=False)
 
     def with_latest_update(self):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
         return self.annotate(
             last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
@@ -148,7 +149,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        activities = self.model.activities.field.model
+        activities = self.model.activities.rel.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
@@ -199,8 +200,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         ).prefetch_related(
             Prefetch(
                 'assigned',
-                queryset=AssignedReviewers.objects.reviewed().review_order().prefetch_related(
-                    Prefetch('opinions', queryset=ReviewOpinion.objects.select_related('author__reviewer'))
+                queryset=AssignedReviewers.objects.reviewed().review_order().select_related(
+                    'reviewer',
+                ).prefetch_related(
+                    Prefetch('review__opinions', queryset=ReviewOpinion.objects.select_related('author')),
                 ),
                 to_attr='has_reviewed'
             ),
@@ -209,7 +212,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 queryset=AssignedReviewers.objects.not_reviewed().staff(),
                 to_attr='hasnt_reviewed'
             )
-
         ).select_related(
             'page',
             'round',
@@ -217,6 +219,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             'user',
             'previous__page',
             'previous__round',
+            'previous__lead',
         )
 
 
@@ -396,6 +399,12 @@ class ApplicationSubmission(
         related_name='submissions',
         blank=True,
     )
+    activities = GenericRelation(
+        'activity.Activity',
+        content_type_field='source_content_type',
+        object_id_field='source_object_id',
+        related_query_name='submission',
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
 
@@ -532,7 +541,7 @@ class ApplicationSubmission(
 
     def from_draft(self):
         self.is_draft = True
-        self.form_data = self.deserialised_data(self.draft_revision.form_data, self.form_fields)
+        self.form_data = self.deserialised_data(self, self.draft_revision.form_data, self.form_fields)
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
@@ -581,13 +590,12 @@ class ApplicationSubmission(
     def process_file_data(self, data):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
-                file = self.process_file(data.get(field.id, []))
-                folder = os.path.join('submission', str(self.id), field.id)
+                file = self.process_file(self, field, data.get(field.id, []))
                 try:
-                    file.save(folder)
+                    file.save()
                 except AttributeError:
                     for f in file:
-                        f.save(folder)
+                        f.save()
                 self.form_data[field.id] = file
 
     def save(self, *args, update_fields=list(), **kwargs):
@@ -703,6 +711,22 @@ class ApplicationSubmission(
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
 
+    @property
+    def accepted_for_funding(self):
+        accepted = self.status in PHASES_MAPPING['accepted']['statuses']
+        return self.in_final_stage and accepted
+
+    @property
+    def in_final_stage(self):
+        stages = self.workflow.stages
+
+        stage_index = stages.index(self.stage)
+
+        # adjust the index since list.index() is zero-based
+        adjusted_index = stage_index + 1
+
+        return adjusted_index == len(stages)
+
     # Methods for accessing data on the submission
 
     def get_data(self):
@@ -736,7 +760,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.TRANSITION,
             user=by,
             request=request,
-            submission=instance,
+            source=instance,
             related=old_phase,
         )
 
@@ -745,7 +769,7 @@ def log_status_update(sender, **kwargs):
                 MESSAGES.READY_FOR_REVIEW,
                 user=by,
                 request=request,
-                submission=instance,
+                source=instance,
             )
 
     if instance.status in STAGE_CHANGE_ACTIONS:
@@ -753,7 +777,7 @@ def log_status_update(sender, **kwargs):
             MESSAGES.INVITED_TO_PROPOSAL,
             request=request,
             user=by,
-            submission=instance,
+            source=instance,
         )
 
 

@@ -1,10 +1,40 @@
 {% load util_tags %}
-<form class="form {{extra_classes}}" method="post" id="{{ form.name }}">
+<form
+    class="form {{ extra_classes }}"
+    method="post"
+    id="{{ form.name }}"
+    enctype="multipart/form-data"
+    {% if action %}action="{{ action }}"{% endif %}
+    >
     {% csrf_token %}
-    <div class="form__item">
-        {{ form }}
-    </div>
 
-    <input class="button button--primary button--top-space" id="{{ form.name }}-submit" name="{{ form_prefix }}{{ form.name }}" type="submit" form="{{ form.name }}" value="{{ value }}">
+    {{ form.media }}
+
+    {% for field in form %}
+        {% if field.field %}
+            {% include "forms/includes/field.html" %}
+        {% else %}
+            {{ field }}
+        {% endif %}
+    {% endfor %}
+
+    {% if cancel %}
+    <button
+        type="button"
+        data-fancybox-close=""
+        class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
+        title="Close">
+        Cancel
+    </button>
+    {% endif %}
+
+    <input
+        class="button button--{% if invert %}white{% else %}primary{% endif %} button--top-space"
+        id="{{ form.name }}-submit"
+        name="{{ form_prefix }}{{ form.name }}"
+        type="submit"
+        form="{{ form.name }}"
+        value="{{ value }}"
+    >
 
 </form>

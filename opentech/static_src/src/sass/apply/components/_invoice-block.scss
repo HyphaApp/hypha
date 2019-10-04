@@ -1,0 +1,36 @@
+.invoice-block {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid $color--dark-blue;
+
+    @include media-query(mob-landscape) {
+        display: flex;
+        justify-content: space-between;
+        padding: 2rem;
+    }
+
+    @include media-query(tablet-portrait) {
+        max-width: 610px;
+    }
+
+    &__item {
+        margin-bottom: 1rem;
+
+        &:last-child {
+            margin: 0;
+        }
+
+        @include media-query(mob-landscape) {
+            margin: 0 1rem 0 0;
+        }
+    }
+
+    &__title {
+        font-weight: $weight--bold;
+        margin: 0 0 .2rem;
+    }
+
+    &__meta {
+        margin: 0;
+    }
+}

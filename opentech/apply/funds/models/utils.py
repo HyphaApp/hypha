@@ -97,7 +97,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             MESSAGES.NEW_SUBMISSION,
             request=request,
             user=form_submission.user,
-            submission=form_submission,
+            source=form_submission,
         )
         return super().render_landing_page(request, form_submission=None, *args, **kwargs)
 

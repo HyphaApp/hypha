@@ -2,7 +2,7 @@ import urllib
 
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import RequestFactory
+from django.test import override_settings, RequestFactory
 from django.urls import reverse_lazy
 
 from opentech.apply.activity.models import Activity
@@ -87,7 +87,15 @@ class DeterminationFormTestCase(BaseViewTestCase):
         response = self.get_page(submission, 'form')
         self.assertNotContains(response, 'Update ')
 
+    @override_settings(PROJECTS_ENABLED=False)
     def test_can_edit_draft_determination_if_not_lead(self):
+        submission = ApplicationSubmissionFactory(status='in_discussion')
+        determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
+        response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
+        self.assertContains(response, 'Approved')
+        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+
+    def test_can_edit_draft_determination_if_not_lead_with_projects(self):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         determination = DeterminationFactory(submission=submission, author=self.user, accepted=True)
         response = self.post_page(submission, {'data': 'value', 'outcome': determination.outcome}, 'form')
@@ -124,6 +132,143 @@ class DeterminationFormTestCase(BaseViewTestCase):
         self.assertRedirects(response, self.factory.get(url, secure=True).build_absolute_uri(url))
         self.assertEqual(submission_original.status, 'invited_to_proposal')
         self.assertEqual(submission_next.status, 'draft_proposal')
+
+    def test_first_stage_accepted_determination_does_not_create_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='concept_review_discussion',
+            workflow_stages=2,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertIsNotNone(submission_next)
+
+        # Confirm a Project was not created for either submission since it's
+        # not in the final stage of its workflow.
+        self.assertFalse(hasattr(submission_original, 'project'))
+        self.assertFalse(hasattr(submission_next, 'project'))
+
+    def test_first_stage_rejected_determination_does_not_create_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='concept_review_discussion',
+            workflow_stages=2,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': REJECTED,
+            'message': 'You are not invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        # There should be no next submission since rejected is an end to the
+        # applications flow.
+        self.assertIsNone(submission_next)
+
+        # Confirm a Project was not created for the original
+        # ApplicationSubmission.
+        self.assertFalse(hasattr(submission_original, 'project'))
+
+    def test_second_stage_accepted_determination_creates_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='proposal_determination',
+            workflow_stages=2,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+        # import ipdb;ipdb.set_trace()
+
+        # There should be no next submission since rejected is an end to the
+        # applications flow.
+        self.assertIsNone(submission_next)
+
+        self.assertTrue(hasattr(submission_original, 'project'))
+        self.assertFalse(hasattr(submission_next, 'project'))
+
+    def test_second_stage_rejected_determination_does_not_create_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='proposal_determination',
+            workflow_stages=2,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': REJECTED,
+            'message': 'You are not invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        # There should be no next submission since rejected is an end to the
+        # applications flow.
+        self.assertIsNone(submission_next)
+
+        self.assertFalse(hasattr(submission_original, 'project'))
+
+    def test_single_stage_accepted_determination_creates_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='post_review_discussion',
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertIsNone(submission_next)
+        self.assertTrue(hasattr(submission_original, 'project'))
+
+    def test_single_stage_rejected_determination_does_not_create_project(self):
+        submission = ApplicationSubmissionFactory(
+            status='post_review_discussion',
+            workflow_stages=1,
+            lead=self.user,
+        )
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': REJECTED,
+            'message': 'You are not invited to submit a proposal',
+        }, 'form')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        submission_next = submission_original.next
+
+        self.assertIsNone(submission_next)
+        self.assertFalse(hasattr(submission_original, 'project'))
 
 
 class BatchDeterminationTestCase(BaseViewTestCase):

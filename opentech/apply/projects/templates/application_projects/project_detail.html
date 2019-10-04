@@ -1,0 +1,157 @@
+{% extends "base-apply.html" %}
+
+{% load static  %}
+{% load wagtailcore_tags %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
+        <h5 class="heading heading--meta">
+
+            <span>
+                {% if public_page %}
+                <a class="link--transparent link--underlined" href="{% pageurl public_page %}" >
+                    {{ object.submission.page }}
+                </a>
+                {% else %}
+                {{ object.submission.page }}
+                {% endif %}
+            </span>
+
+            {% if request.user.is_apply_staff and object.submission.round %}
+            <span>
+                <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
+            </span>
+            {% else %}
+                <span>{{ object.submission.round }}</span>
+            {% endif %}
+
+            <span>Lead: {{ object.lead }}</span>
+
+        </h5>
+        {# {% status_bar object.workflow object.phase request.user same_stage=True%} #}
+
+        <div class="tabs js-tabs">
+            <div class="tabs__container">
+                <a class="tab__item" href="#details" data-tab="tab-1">
+                    Details
+                </a>
+
+                <a class="tab__item" href="#communications" data-tab="tab-2">
+                    Communications
+                </a>
+
+                <a class="tab__item" href="#activity-feed" data-tab="tab-3">
+                    Activity Feed
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+    <div class="tabs__content" id="tab-1">
+        {% block notifications %}
+        {% endblock %}
+        <div class="wrapper wrapper--sidebar">
+            <article class="wrapper--sidebar--inner">
+                <h3>Project Information</h3>
+                <div class="grid grid--proposal-info">
+                    <div>
+                        <h5>Proposed start date</h5>
+                        <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Project Proposed end date</h5>
+                        <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Legal name</h5>
+                        <p>{{ object.contact_legal_name|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Email</h5>
+                        {% if object.contact_email %}
+                        <a href="mailto:{{ object.contact_email }}">{{ object.contact_email }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+                </div>
+
+                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">Show more</a>
+
+                <div class="rich-text--hidden js-rich-text-hidden">
+                    <div>
+                        <h5>Address</h5>
+                        <p>{{ object.get_address_display|default:"-"}}</p>
+                    </div>
+
+                    <div>
+                        <h5>Phone</h5>
+                        <p>{{ object.phone|default:"-" }}</p>
+                    </div>
+
+                    <div>
+                        <h5>Value</h5>
+                        <p>${{ object.value|default:"-" }}</p>
+                    </div>
+                </div>
+
+                {# <div class="wrapper wrapper--outer-space-large"> #}
+                {#     {% include "funds/includes/funding_block.html" %} #}
+                {#     {% include "funds/includes/payment_requests.html" %} #}
+                {#     {% include "funds/includes/invoice_block.html" %} #}
+                {# </div> #}
+
+                {% include "application_projects/includes/supporting_documents.html" %}
+            </article>
+
+            <aside class="sidebar">
+                {% if request.user.is_apply_staff %}
+                {% block admin_sidebar %}{% endblock %}
+                {% endif %}
+
+                <div class="sidebar__inner">
+                    <h5>Meta Categories</h5>
+
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                    <p>Meta Category</p>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    {# Tab 2 #}
+    <div class="tabs__content" id="tab-2">
+        <div class="feed">
+            {% include "activity/include/comment_form.html" %}
+            {% include "activity/include/comment_list.html" with editable=True %}
+        </div>
+    </div>
+
+    {# Tab 3 #}
+    <div class="tabs__content" id="tab-3">
+        <div class="feed">
+            {% include "activity/include/action_list.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
+    <script src="{% static 'js/apply/file-uploads.js' %}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+{% endblock %}

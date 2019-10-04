@@ -12,9 +12,9 @@ class MessageInline(admin.TabularInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('type', 'by', 'when', 'submission')
+    list_display = ('type', 'by', 'when', 'source')
     list_filter = ('type', 'when')
-    readonly_fields = ('type', 'submission', 'when', 'by')
+    readonly_fields = ('type', 'source', 'when', 'by')
     inlines = (MessageInline,)
 
     def has_add_permission(self, request):

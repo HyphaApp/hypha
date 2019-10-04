@@ -1,0 +1,18 @@
+{% extends "application_projects/project_detail.html" %}
+
+{% block notifications %}
+{% if not object.editable %}
+<div class="wrapper wrapper--sidebar">
+    <div class="wrapper--sidebar--inner wrapper--error">
+        <div>
+            <p>Your project is not editable at this point.</p>
+            {% if not object.lead %}
+                <p>We are awaiting a lead to be assigned.</p>
+            {% else %}
+                <p>It is currently under review by a staff member.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

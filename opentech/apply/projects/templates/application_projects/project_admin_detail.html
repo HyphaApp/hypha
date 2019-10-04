@@ -1,0 +1,120 @@
+{% extends "application_projects/project_detail.html" %}
+
+{% load approval_tools %}
+{% load static %}
+
+{% block admin_sidebar %}
+<div class="modal" id="send-for-approval">
+    <h4 class="modal__header-bar">Request Approval</h4>
+
+    {% if remaining_document_categories %}
+        <h5>Are you sure you're ready to submit?</h5>
+
+        <p>This project is missing the following documents:</p>
+
+        <ul>
+            {% for missing in remaining_document_categories %}
+            <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
+            {% endfor %}
+        </ul>
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Submit anyway' cancel=True invert=True %}
+    {% else %}
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Request' %}
+    {% endif %}
+</div>
+
+<div class="modal" id="assign-lead">
+    <h4 class="modal__header-bar">Assign Lead</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
+</div>
+
+<div class="modal" id="approve">
+    <h4 class="modal__header-bar">Add Approval</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value='Approve'%}
+</div>
+
+<div class="modal" id="request-project-changes">
+    <h4 class="modal__header-bar">Request Changes</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
+</div>
+
+{% if mobile %}
+    <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+{% endif %}
+
+<div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+    <h5>Actions to take</h5>
+
+    {% if object.can_send_for_approval %}
+    <a data-fancybox
+       data-src="#send-for-approval"
+       class="button button--bottom-space button--primary button--full-width"
+       href="#">
+        Submit for Approval
+    </a>
+    {% endif %}
+
+    {% if object.can_make_approval %}
+        {% user_can_approve_project object request.user as user_can_approve %}
+        <a data-fancybox
+            data-src="#approve"
+            class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+            href="#">
+            Approve
+        </a>
+
+        <a data-fancybox
+            data-src="#request-project-changes"
+           class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
+            href="#">
+            Request changes
+        </a>
+    {% endif %}
+
+    <!-- <a data-fancybox -->
+    <!-- data-src="#ready-for-contracting" -->
+    <!-- class="button button--primary button--full-width" -->
+    <!-- href="#"> -->
+    <!-- Ready for contracting -->
+    <!-- </a> -->
+
+
+    <p class="sidebar__separator">Assign</p>
+
+    <a data-fancybox
+       data-src="#assign-lead"
+       class="button button--bottom-space button--white button--full-width"
+       href="#">
+        Lead
+    </a>
+
+    <!-- <a data-fancybox -->
+    <!-- data-src="#update-meta-categories" -->
+    <!-- class="button button--bottom-space button--white button--full-width" -->
+    <!-- href="#"> -->
+    <!-- Meta Categories -->
+    <!-- </a> -->
+
+</div>
+
+{% if approvals %}
+<div class="sidebar__inner">
+    <h5>Approved By:</h5>
+
+    {% for approval in approvals %}
+    <p>{{ approval.by }} - {{ approval.created_at|date:"Y-m-d" }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+{% endblock %}

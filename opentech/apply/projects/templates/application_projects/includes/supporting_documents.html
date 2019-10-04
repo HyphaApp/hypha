@@ -1,0 +1,115 @@
+{% load approval_tools %}
+{% user_can_edit_project object request.user as editable %}
+
+<div class="docs-block wrapper--outer-space-large">
+    <div class="docs-block__header">
+        <h4 class="docs-block__heading">Supporting documents</h4>
+    </div>
+    <ul class="docs-block__inner">
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon is-complete"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Proposal</p>
+            </div>
+            <div class="docs-block__row-inner">
+                <a class="docs-block__link" href="#">View</a>
+                <a class="docs-block__link" href="#">Download</a>
+            </div>
+        </li>
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon{% if object.user_has_updated_details %} is-complete{% endif %}">
+                    <use xlink:href="#tick"></use>
+                </svg>
+                <p class="docs-block__title">Approval Form</p>
+            </div>
+            <div class="docs-block__row-inner">
+                {% if editable %}
+                    <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                        {% if object.user_has_updated_details %}
+                        Edit
+                        {% else %}
+                        Create
+                        {% endif %}
+                    </a>
+                {% endif %}
+                {% if object.user_has_updated_details %}
+                    <a class="docs-block__link" href="#">
+                        View
+                    </a>
+                {% endif %}
+            </div>
+        </li>
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Supporting documents</p>
+            </div>
+            {% if editable %}
+                <div class="docs-block__row-inner">
+                    <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+                </div>
+            {% endif %}
+            {% if remaining_document_categories %}
+            <div class="docs-block__info-text">
+                <p>
+                    Every project should include the following documents:
+                </p>
+                <ul>
+                    {% for missing in remaining_document_categories %}
+                        <li>{{ missing.category.name }} ({{ missing.difference }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if object.packet_files.exists %}
+            <ul class="docs-block__document-list">
+                {% for document in object.packet_files.all %}
+                <li class="docs-block__document">
+                    <div class="docs-block__document-inner">
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b></p>
+                        <p class="docs-block__document-info">{{ document.category.name }}</p>
+                    </div>
+                    <div class="docs-block__document-inner">
+                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">Download</a>
+                        <form method="POST" id="{{ remove_document_form.name }}">
+                            {% csrf_token %}
+                            {{ document.get_remove_form }}
+                            <input
+                                class="button button--primary button--top-space"
+                                id="{{ remove_document_form.name }}-submit"
+                                name="{{ form_prefix }}{{ remove_document_form.name }}"
+                                type="submit"
+                                form="{{ remove_document_form.name }}"
+                                value="Remove" />
+                        </form>
+                            </input>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+        </li>
+    </ul>
+    <div class="docs-block__buttons">
+        {% if object.can_send_for_approval %}
+            <a data-fancybox
+            data-src="#send-for-approval"
+            class="button button--primary"
+            href="#">
+                Submit for Approval
+            </a>
+        {% endif %}
+        <!-- <button class="button button--primary" href="#">Ready for contracting</button> -->
+    </div>
+</div>
+
+<div class="modal" id="upload-supporting-doc">
+    <h4 class="modal__header-bar">Upload a new document</h4>
+    {% include 'funds/includes/delegated_form_base.html' with form=document_form value='Upload'%}
+</div>

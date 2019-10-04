@@ -280,4 +280,17 @@
             justify-content: flex-end;
         }
     }
+
+    &--submission-actions {
+        margin-left: auto;
+        display: flex;
+        margin-top: 1rem;
+        align-items: flex-start;
+
+        @include media-query(tablet-landscape) {
+            margin-top: 0;
+            justify-content: flex-end;
+            flex: 1;
+        }
+    }
 }

@@ -45,6 +45,12 @@
                     padding-right: 0;
                 }
             }
+
+            &.comments {
+                @include media-query($table-breakpoint) {
+                    width: 110px;
+                }
+            }
         }
 
         tr {
@@ -156,6 +162,14 @@
                 @include media-query($table-breakpoint) {
                     display: table-cell;
                 }
+            }
+
+            &.fund,
+            &.round,
+            &.screening_status { // sass-lint:disable-line class-name-format
+                -webkit-hyphens: auto; // sass-lint:disable-line no-vendor-prefixes
+                -ms-hyphens: auto; // sass-lint:disable-line no-vendor-prefixes
+                hyphens: auto;
             }
 
             // arrow to toggle project info - added via js

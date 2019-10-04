@@ -1,0 +1,72 @@
+.stat-block {
+    $root: &;
+
+    @include media-query(tablet-portrait) {
+        display: flex;
+    }
+
+    &__item {
+        border: 1px solid $color--mid-dark-grey;
+        padding: 1.5rem;
+        background-color: $color--white;
+        flex: 1;
+        display: block;
+        margin: 0 0 1rem;
+
+        @include media-query(tablet-portrait) {
+            margin: 0 1rem 0 0;
+            padding: 1.9rem 2.5rem;
+        }
+
+        @include media-query(tablet-landscape) {
+            margin: 0 2rem 0 0;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        &:only-child {
+            @include media-query(tablet-portrait) {
+                max-width: calc(100% / 3);
+            }
+        }
+    }
+
+    &__number {
+        @extend %h1;
+        line-height: 1;
+        margin: 0 0 .7rem;
+        color: $color--marine;
+    }
+
+    &__text {
+        font-weight: $weight--bold;
+        margin: 0 0 1rem;
+        color: $color--dark-grey;
+
+        @include media-query(small-tablet) {
+            margin: 0 0 1.5rem;
+            font-size: map-get($font-sizes, delta);
+        }
+    }
+
+    &__view {
+        text-transform: uppercase;
+        font-weight: $weight--bold;
+        letter-spacing: .5px;
+        transition: opacity $quick-transition;
+
+        @include media-query(small-tablet) {
+            font-size: map-get($font-sizes, epsilon);
+        }
+
+        @include media-query(tablet-portrait) {
+            opacity: 0;
+
+            #{$root}__item:hover & {
+                opacity: 1;
+            }
+        }
+    }
+}

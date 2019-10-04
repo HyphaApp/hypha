@@ -92,7 +92,7 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
             MESSAGES.EDIT_REVIEW,
             user=self.request.user,
             request=self.request,
-            submission=review.submission,
+            source=review.submission,
             related=review,
         )
         response = super().form_valid(form)
@@ -159,7 +159,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 MESSAGES.NEW_REVIEW,
                 request=self.request,
                 user=self.request.user,
-                submission=self.submission,
+                source=self.submission,
                 related=self.object,
             )
 
@@ -299,7 +299,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
             MESSAGES.REVIEW_OPINION,
             request=self.request,
             user=self.request.user,
-            submission=self.review.submission,
+            source=self.review.submission,
             related=opinion,
         )
 
@@ -399,7 +399,7 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
             MESSAGES.DELETE_REVIEW,
             user=request.user,
             request=request,
-            submission=review.submission,
+            source=review.submission,
             related=review,
         )
         response = super().delete(request, *args, **kwargs)

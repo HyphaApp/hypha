@@ -163,7 +163,7 @@ class CommentFilter(filters.FilterSet):
 
 class AllCommentFilter(CommentFilter):
     class Meta(CommentFilter.Meta):
-        fields = CommentFilter.Meta.fields + ['submission']
+        fields = CommentFilter.Meta.fields + ['source_object_id']
 
 
 class CommentList(generics.ListAPIView):
@@ -200,13 +200,13 @@ class CommentListCreate(generics.ListCreateAPIView):
             timestamp=timezone.now(),
             type=COMMENT,
             user=self.request.user,
-            submission_id=self.kwargs['pk']
+            source=ApplicationSubmission.objects.get(pk=self.kwargs['pk'])
         )
         messenger(
             MESSAGES.COMMENT,
             request=self.request,
             user=self.request.user,
-            submission=obj.submission,
+            source=obj.submission,
             related=obj,
         )
 
