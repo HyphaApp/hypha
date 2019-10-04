@@ -144,6 +144,16 @@
     &__help {
     }
 
+    &__help-link {
+        text-align: right;
+    }
+
+    &__open-icon {
+        width: 20px;
+        height: 20px;
+        fill: $color--dark-grey;
+    }
+
     &__item {
         position: relative;
         padding-bottom: 10px;
