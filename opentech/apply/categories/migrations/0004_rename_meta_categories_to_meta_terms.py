@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('categories', '0003_rename_meta_categories_to_meta_terms'),
-        ('funds', '0068_rename_meta_categories_to_meta_terms'),
+        ('funds', '0070_rename_meta_categories_to_meta_terms'),
     ]
 
     operations = [
