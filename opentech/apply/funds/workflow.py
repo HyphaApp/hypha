@@ -799,6 +799,7 @@ DoubleStageDefinition = [
             'transitions': {
                 'proposal_accepted': 'Accept',
                 'proposal_rejected': 'Dismiss',
+                'post_external_review_discussion': 'Ready For Discussion (back)',
             },
             'display': 'Ready for Final Determination',
             'permissions': hidden_from_applicant_permissions,
