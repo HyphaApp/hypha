@@ -341,6 +341,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def status_display(self):
+        return self.get_status_display()
+
     def get_address_display(self):
         address = json.loads(self.contact_address)
         return ', '.join(

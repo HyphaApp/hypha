@@ -107,6 +107,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
     @transaction.atomic()
     def form_valid(self, form):
         project = self.kwargs['object']
+        old_stage = project.get_status_display()
 
         form.instance.project = project
 
@@ -124,6 +125,14 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         project.is_locked = False
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            old_stage=old_stage,
+        )
 
         return response
 
