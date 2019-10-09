@@ -382,6 +382,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
             request=self.request,
             user=self.request.user,
             source=project,
+            related=form.instance,
         )
 
         return response
@@ -468,6 +469,31 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         if document.project != self.project:
             raise Http404
         return document.document
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        document = Contract.objects.get(pk=kwargs['file_pk'])
+        if document.project != self.project:
+            raise Http404
+        return document.file
 
     def test_func(self):
         if self.request.user.is_apply_staff:

@@ -75,16 +75,22 @@ class Contract(models.Model):
     approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
 
-    file = models.FileField(upload_to=contract_path)
+    file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = ContractQuerySet.as_manager()
 
+    @property
+    def state(self):
+        return 'Signed' if self.is_signed else 'Unsigned'
+
     def __str__(self):
-        state = 'Signed' if self.is_signed else 'Unsigned'
-        return f'Contract for {self.project} ({state})'
+        return f'Contract for {self.project} ({self.state})'
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:contract', args=[self.project.pk, self.pk])
 
 
 class PacketFile(models.Model):
