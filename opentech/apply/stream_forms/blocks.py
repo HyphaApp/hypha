@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from unidecode import unidecode
 from wagtail.core.blocks import (
     StructBlock, TextBlock, CharBlock, BooleanBlock, ListBlock, StreamBlock,
-    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock, StaticBlock
+    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock, StaticBlock, URLBlock
 )
 
 from .fields import MultiFileField
@@ -24,6 +24,7 @@ from .fields import MultiFileField
 class FormFieldBlock(StructBlock):
     field_label = CharBlock(label=_('Label'))
     help_text = TextBlock(required=False, label=_('Help text'))
+    help_link = URLBlock(required=False, label=_('Help link'))
 
     field_class = forms.CharField
     widget = None
