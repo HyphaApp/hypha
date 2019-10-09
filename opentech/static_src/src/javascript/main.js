@@ -7,6 +7,9 @@
     // document.querySelector('html').classList.replace('no-js', 'js');
     $('html').removeClass('no-js').addClass('js');
 
+    // Remove the "no javascript" messages
+    $('.message-no-js').detach();
+
     let Search = class {
         static selector() {
             return '.js-search-toggle';
