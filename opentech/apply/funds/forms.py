@@ -17,7 +17,39 @@ from .widgets import Select2MultiCheckboxesWidget, MetaCategorySelect2Widget
 from .workflow import get_action_mapping
 
 
-class ProgressSubmissionForm(forms.ModelForm):
+class ApplicationSubmissionModelForm(forms.ModelForm):
+    """
+    Application Submission model's save method performs several operations
+    which are not required in forms which update fields like status, partners etc.
+    It also has a side effect of creating a new file uploads every time with long filenames (#1572).
+    """
+
+    def save(self, commit=True):
+        """
+        Save this form's self.instance object if commit=True. Otherwise, add
+        a save_m2m() method to the form which can be called after the instance
+        is saved manually at a later time. Return the model instance.
+        https://github.com/django/django/blob/5d9cf79baf07fc4aed7ad1b06990532a65378155/django/forms/models.py#L444
+        """
+        if self.errors:
+            raise ValueError(
+                "The %s could not be %s because the data didn't validate." % (
+                    self.instance._meta.object_name,
+                    'created' if self.instance._state.adding else 'changed',
+                )
+            )
+        if commit:
+            # If committing, save the instance and the m2m data immediately.
+            self.instance.save(skip_custom=True)
+            self._save_m2m()
+        else:
+            # If not committing, add a method to the form to allow deferred
+            # saving of m2m data.
+            self.save_m2m = self._save_m2m
+        return self.instance
+
+
+class ProgressSubmissionForm(ApplicationSubmissionModelForm):
     action = forms.ChoiceField(label='Take action')
 
     class Meta:
@@ -59,7 +91,7 @@ class BatchProgressSubmissionForm(forms.Form):
         return action
 
 
-class ScreeningSubmissionForm(forms.ModelForm):
+class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
 
     class Meta:
         model = ApplicationSubmission
@@ -73,7 +105,8 @@ class ScreeningSubmissionForm(forms.ModelForm):
             self.should_show = True
 
 
-class UpdateSubmissionLeadForm(forms.ModelForm):
+class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
+
     class Meta:
         model = ApplicationSubmission
         fields = ('lead',)
@@ -121,7 +154,7 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
         return None
 
 
-class UpdateReviewersForm(forms.ModelForm):
+class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
@@ -300,7 +333,7 @@ def make_role_reviewer_fields():
     return role_fields
 
 
-class UpdatePartnersForm(forms.ModelForm):
+class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Partners'}),
@@ -361,7 +394,7 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         return {'label': super().label_from_instance(obj), 'disabled': not obj.is_leaf()}
 
 
-class UpdateMetaCategoriesForm(forms.ModelForm):
+class UpdateMetaCategoriesForm(ApplicationSubmissionModelForm):
     meta_categories = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
         widget=MetaCategorySelect2Widget(attrs={'data-placeholder': 'Meta categories'}),
