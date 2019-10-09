@@ -13,7 +13,7 @@ scout-apm==2.5.0
 sentry-sdk==0.12.3
 
 # Production dependencies
-boto3==1.9.160
+boto3==1.9.245
 celery==4.2.1
 dj-database-url==0.5.0
 django-anymail==6.0.1
