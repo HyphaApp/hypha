@@ -379,12 +379,19 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
 
 # PROJECT VIEW
+class BaseProjectDetailView(DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = PROJECT_STATUS_CHOICES
+        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
+        return context
+
 
 class AdminProjectDetailView(
     ActivityContextMixin,
     DelegateableView,
     ContractsMixin,
-    DetailView,
+    BaseProjectDetailView,
 ):
     form_views = [
         ApproveContractView,
@@ -404,19 +411,23 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['statuses'] = PROJECT_STATUS_CHOICES
-        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
 
 
-class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
+class ApplicantProjectDetailView(
+    ActivityContextMixin,
+    DelegateableView,
+    ContractsMixin,
+    BaseProjectDetailView,
+):
     form_views = [
         CommentFormView,
         RequestPaymentView,
         SelectDocumentView,
         UploadContractView,
+        UploadDocumentView,
     ]
 
     model = Project

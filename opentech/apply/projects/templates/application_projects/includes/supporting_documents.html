@@ -14,7 +14,9 @@
             </div>
             <div class="docs-block__row-inner">
                 <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">View</a>
-                <a class="docs-block__link" href="#">Download</a>
+                {% if not user.is_applicant %}
+                    <a class="docs-block__link" href="#">Download</a>
+                {% endif %}
             </div>
         </li>
 
@@ -35,7 +37,7 @@
                         {% endif %}
                     </a>
                 {% endif %}
-                {% if object.user_has_updated_details %}
+                {% if object.user_has_updated_details and not user.is_applicant %}
                     <a class="docs-block__link" href="{% url 'apply:projects:simplified' pk=project.pk %}">
                         View
                     </a>
@@ -110,7 +112,8 @@
         </li>
     </ul>
     <div class="docs-block__buttons">
-        {% if object.can_send_for_approval %}
+        {% can_send_for_approval object user as can_approve %}
+        {% if can_approve %}
             <a data-fancybox
             data-src="#send-for-approval"
             class="button button--primary"
@@ -118,7 +121,6 @@
                 Submit for Approval
             </a>
         {% endif %}
-        <!-- <button class="button button--primary" href="#">Ready for contracting</button> -->
     </div>
 </div>
 
@@ -130,5 +132,6 @@
 
 <div class="modal" id="upload-supporting-doc">
     <h4 class="modal__header-bar">Upload a new document</h4>
+    <p></p>
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value='Upload'%}
 </div>
