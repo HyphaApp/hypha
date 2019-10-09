@@ -25,3 +25,7 @@ CACHES = {
 
 # Enable Wagtail Cache while developing
 # WAGTAIL_CACHE = True
+
+# If you have a problem with "CSRF cookie not set".
+# CSRF_COOKIE_SAMESITE = None
+# SESSION_COOKIE_SAMESITE = None

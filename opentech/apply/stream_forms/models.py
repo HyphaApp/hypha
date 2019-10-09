@@ -48,6 +48,7 @@ class BaseStreamForm:
 
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
+                field_from_block.help_link = struct_value.get('help_link')
                 field_from_block.group_number = group_counter if is_in_group else 1
                 if isinstance(block, GroupToggleBlock) and not is_in_group:
                     field_from_block.group_number = 1

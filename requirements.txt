@@ -10,8 +10,8 @@ wagtail-factories==1.1.0
 responses==0.10.4
 
 # Monitor dependencies
-scout-apm==2.0.1
-sentry-sdk==0.12.1
+scout-apm==2.5.0
+sentry-sdk==0.12.3
 
 # Production dependencies
 boto3==1.9.160
@@ -20,14 +20,14 @@ dj-database-url==0.5.0
 django-anymail==6.0.1
 django-basic-auth-ip-whitelist==0.2.1
 django-bleach==0.5.3
-django-countries==5.3.3
+django-countries==5.5
 django-extensions==2.1.7
 django-filter==2.1.0
 django-fsm==2.6.1
 django-heroku==0.3.1
 django-hijack==2.1.10
 django-pagedown==1.0.6
-django-pwned-passwords==3.0.0
+django-pwned-passwords==4.1.0
 django-redis==4.10.0
 django-referrer-policy==1.0
 django-storages==1.7.1
@@ -35,8 +35,9 @@ django-tables2==1.21.2
 django-tinymce4-lite==1.7.5
 django-two-factor-auth==1.9.1
 django-webpack-loader==0.6.0
-django_select2==7.1.0
+django_select2==7.1.1
 djangorestframework==3.9.2
+djangorestframework-api-key==1.3.0
 django==2.1.11
 gunicorn==19.9.0
 mailchimp3==3.0.7
@@ -48,4 +49,4 @@ social_auth_app_django==3.1.0
 tomd==0.1.3
 wagtail==2.5.1
 wagtail-cache==0.5.2
-whitenoise==4.1.2
+whitenoise==4.1.4

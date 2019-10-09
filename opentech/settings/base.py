@@ -126,6 +126,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'two_factor',
     'rest_framework',
+    'rest_framework_api_key',
     'wagtailcache',
 
     'hijack',
@@ -597,6 +598,10 @@ if env.get('SECURE_BROWSER_XSS_FILTER', 'true').lower().strip() == 'true':
 
 if env.get('SECURE_CONTENT_TYPE_NOSNIFF', 'true').lower().strip() == 'true':
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+if env.get('COOKIE_SECURE', 'false').lower().strip() == 'true':
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Referrer-policy header settings
