@@ -598,10 +598,12 @@ class ApplicationSubmission(
                         f.save()
                 self.form_data[field.id] = file
 
-    def save(self, *args, update_fields=list(), **kwargs):
+    def save(self, *args, update_fields=list(), skip_custom=False, **kwargs):
         if update_fields and 'form_data' not in update_fields:
             # We don't want to use this approach if the user is sending data
             return super().save(*args, update_fields=update_fields, **kwargs)
+        elif skip_custom:
+            return super().save(*args, **kwargs)
 
         if self.is_draft:
             raise ValueError('Cannot save with draft data')
