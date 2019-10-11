@@ -129,7 +129,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             request=self.request,
             user=self.request.user,
             source=project,
-            old_stage=old_stage,
+            related=old_stage,
         )
 
         return response
@@ -339,8 +339,8 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 MESSAGES.PROJECT_TRANSITION,
                 request=self.request,
                 user=self.request.user,
-                source=project,
-                old_stage=old_stage,
+                source=self.project,
+                related=old_stage,
             )
 
         return response
