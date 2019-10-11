@@ -5,7 +5,6 @@
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <h1>{{ page.title }}</h1>
     {{ page.intro|richtext }}
-    <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
     <form class="form wagtail-form" action="#" data-actionpath="{% pageurl page %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.media }}
@@ -18,6 +17,7 @@
         {% endfor %}
         <button class="link link--button-secondary" type="submit" disabled>Submit</button>
     </form>
+    <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
 </div>
 {% endblock %}
 
