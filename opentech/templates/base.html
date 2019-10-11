@@ -83,9 +83,20 @@
 
                 <div class="header__inner wrapper wrapper--large">
                     <a href="{% slugurl 'home' %}" aria-label="Home link">
+                    {% if settings.utils.SystemMessagesSettings.site_logo_default %}
+                        {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
+                        <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
+                        {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
+                            {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
+                            <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                        {% else %}
+                            <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
+                        {% endif %}
+                    {% else %}
                         <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
                         <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
                         <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                    {% endif %}
                     </a>
 
                     <div class="header__inner header__inner--mobile-buttons">
@@ -112,7 +123,12 @@
                     <section class="header__menus header__menus--mobile">
                         <div class="header__inner header__inner--menu-open">
                             <a href="{% slugurl 'home' %}" aria-label="Home link">
+                            {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
+                                {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
+                                <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                            {% else %}
                                 <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                            {% endif %}
                             </a>
                             <div class="header__inner header__inner--mobile-buttons">
                                 <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
