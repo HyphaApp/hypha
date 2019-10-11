@@ -3,6 +3,7 @@ from django.urls import include, path
 
 from .views import (
     ContractPrivateMediaView,
+    CreatePaymentRequestView,
     DeletePaymentRequestView,
     EditPaymentRequestView,
     PaymentRequestListView,
@@ -30,6 +31,7 @@ if settings.PROJECTS_ENABLED:
             path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
             path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
             path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
+            path('request/', CreatePaymentRequestView.as_view(), name='request'),
         ])),
         path('payment-requests/', include(([
             path('', PaymentRequestListView.as_view(), name='all'),

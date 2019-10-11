@@ -67,8 +67,6 @@ from ..tables import (
     ProjectsListTable
 )
 
-from .payment import RequestPaymentView
-
 
 # APPROVAL VIEWS
 
@@ -324,6 +322,8 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
             form.instance.project = self.project
             response = super().form_valid(form)
 
+            old_stage = self.project.get_status_display()
+
             messenger(
                 MESSAGES.APPROVE_CONTRACT,
                 request=self.request,
@@ -334,6 +334,14 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 
             self.project.status = IN_PROGRESS
             self.project.save(update_fields=['status'])
+
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                old_stage=old_stage,
+            )
 
         return response
 
@@ -409,7 +417,6 @@ class AdminProjectDetailView(
         CreateApprovalView,
         RejectionView,
         RemoveDocumentView,
-        RequestPaymentView,
         SelectDocumentView,
         SendForApprovalView,
         UpdateLeadView,
@@ -434,7 +441,6 @@ class ApplicantProjectDetailView(
 ):
     form_views = [
         CommentFormView,
-        RequestPaymentView,
         SelectDocumentView,
         UploadContractView,
         UploadDocumentView,

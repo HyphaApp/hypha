@@ -59,6 +59,7 @@ neat_related = {
     MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
     MESSAGES.APPROVE_CONTRACT: 'contract',
     MESSAGES.UPLOAD_CONTRACT: 'contract',
+    MESSAGES.REQUEST_PAYMENT: 'payment_request',
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',

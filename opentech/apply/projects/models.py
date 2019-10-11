@@ -196,7 +196,7 @@ class PaymentRequest(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
     objects = PaymentRequestQueryset.as_manager()
@@ -217,6 +217,10 @@ class PaymentRequest(models.Model):
             if self.status in (SUBMITTED, CHANGES_REQUESTED):
                 return True
 
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
         return False
 
     def can_user_edit(self, user):
@@ -224,13 +228,6 @@ class PaymentRequest(models.Model):
             if self.status in {SUBMITTED, CHANGES_REQUESTED}:
                 return True
 
-        if user.is_apply_staff:
-            if self.status in {SUBMITTED}:
-                return True
-
-        return False
-
-    def user_can_delete(self, user):
         if user.is_apply_staff:
             if self.status in {SUBMITTED}:
                 return True
@@ -425,6 +422,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def editable(self):
+        if self.status not in (CONTRACTING, COMMITTED):
+            return True
+
         # Someone has approved the project - consider it locked while with contracting
         if self.approvals.exists():
             return False

@@ -24,8 +24,8 @@ from opentech.apply.utils.views import (
 
 from ..forms import (
     ChangePaymentRequestStatusForm,
+    CreatePaymentRequestForm,
     EditPaymentRequestForm,
-    RequestPaymentForm,
 )
 from ..filters import PaymentRequestListFilter
 from ..models import (
@@ -74,13 +74,10 @@ class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMix
 
 class DeletePaymentRequestView(DeleteView):
     model = PaymentRequest
-    pk_url_kwarg = 'payment_request_id'
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
-
         self.object = self.get_object()
-        if not self.object.user_can_delete(request.user):
+        if not self.object.can_user_delete(request.user):
             raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
@@ -117,6 +114,36 @@ class PaymentRequestApplicantView(PaymentRequestAccessMixin, DelegateableView, D
 class PaymentRequestView(ViewDispatcher):
     admin_view = PaymentRequestAdminView
     applicant_view = PaymentRequestApplicantView
+
+
+class CreatePaymentRequestView(CreateView):
+    model = PaymentRequest
+    form_class = CreatePaymentRequestForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = Project.objects.get(pk=kwargs['pk'])
+        if not request.user.is_apply_staff and not self.project.user == request.user:
+            return redirect(self.project)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(project=self.project, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.project = self.project
+        form.instance.by = self.request.user
+
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.REQUEST_PAYMENT,
+            request=self.request,
+            user=self.request.user,
+            source=self.project,
+            related=self.object,
+        )
+
+        return response
 
 
 class EditPaymentRequestView(PaymentRequestAccessMixin, UpdateView):
@@ -168,28 +195,6 @@ class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
             return True
 
         return False
-
-
-class RequestPaymentView(DelegatedViewMixin, CreateView):
-    context_name = 'request_payment_form'
-    form_class = RequestPaymentForm
-    model = PaymentRequest
-
-    def form_valid(self, form):
-        project = self.kwargs['object']
-
-        form.instance.by = self.request.user
-        form.instance.project = project
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.REQUEST_PAYMENT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-
-        return response
 
 
 @method_decorator(staff_required, name='dispatch')
