@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
 {% load static %}
 
-{% block title %}Edit Payment Request: {{ object.project.title }}{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Payment Request: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Editing Payment Request</h2>
-        <h5 class="heading heading--no-margin">{{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{% if object %}Editing{% else %}Create{% endif %} Payment Request</h2>
+        <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}</h5>
     </div>
 </div>
 

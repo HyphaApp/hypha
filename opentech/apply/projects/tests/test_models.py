@@ -77,11 +77,11 @@ class TestProjectModel(TestCase):
 
 
 class TestPaymentRequestModel(TestCase):
-    def test_staff_cant_delete_from_submitted(self):
+    def test_staff_can_delete_from_submitted(self):
         payment_request = PaymentRequestFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.can_user_delete(staff))
+        self.assertTrue(payment_request.can_user_delete(staff))
 
     def test_staff_cant_delete_from_under_review(self):
         payment_request = PaymentRequestFactory(status=UNDER_REVIEW)

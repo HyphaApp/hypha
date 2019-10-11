@@ -11,8 +11,8 @@ from opentech.apply.users.tests.factories import (
 from ..files import get_files
 from ..forms import (
     ChangePaymentRequestStatusForm,
+    CreatePaymentRequestForm,
     ProjectApprovalForm,
-    RequestPaymentForm,
     SelectDocumentForm,
     StaffUploadContractForm,
     UploadContractForm,
@@ -109,7 +109,7 @@ class TestProjectApprovalForm(TestCase):
         self.assertTrue(project.user_has_updated_details)
 
 
-class TestRequestPaymentForm(TestCase):
+class TestCreatePaymentRequestForm(TestCase):
     def test_adding_payment_request(self):
         data = {
             'requested_value': '10',
@@ -125,7 +125,7 @@ class TestRequestPaymentForm(TestCase):
             'receipts': receipts,
         }
 
-        form = RequestPaymentForm(data=data, files=files)
+        form = CreatePaymentRequestForm(data=data, files=files)
         self.assertTrue(form.is_valid(), msg=form.errors)
 
         form.instance.by = UserFactory()
@@ -142,7 +142,7 @@ class TestRequestPaymentForm(TestCase):
             'receipts': receipts,
         }
 
-        form = RequestPaymentForm(
+        form = CreatePaymentRequestForm(
             files=files,
             data={
                 'requested_value': '10',
@@ -153,7 +153,7 @@ class TestRequestPaymentForm(TestCase):
         )
         self.assertTrue(form.is_valid(), msg=form.errors)
 
-        form = RequestPaymentForm(
+        form = CreatePaymentRequestForm(
             files=files,
             data={
                 'requested_value': '10',

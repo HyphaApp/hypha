@@ -820,7 +820,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
 
 
 class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
-    base_view_name = 'detail'
+    base_view_name = 'request'
     url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
@@ -842,7 +842,6 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
             'requested_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
-            'comment': 'test comment',
             'invoice': invoice,
             'receipts': receipts,
         })
@@ -854,7 +853,7 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
 
 
 class TestRequestPaymentViewAsStaff(BaseViewTestCase):
-    base_view_name = 'detail'
+    base_view_name = 'request'
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 

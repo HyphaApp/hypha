@@ -3,6 +3,7 @@ import json
 from django import template
 
 from opentech.apply.determinations.models import Determination
+from opentech.apply.projects.models import Contract
 from opentech.apply.review.models import Review
 
 from ..models import TEAM, ALL, REVIEWER
@@ -25,7 +26,7 @@ def user_can_see_related(activity, user):
     if user.is_apply_staff:
         return True
 
-    if isinstance(activity.related_object, Determination):
+    if isinstance(activity.related_object, (Determination, Contract)):
         return True
 
     return False

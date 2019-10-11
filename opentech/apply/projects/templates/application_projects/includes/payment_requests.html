@@ -3,10 +3,8 @@
 <div id="payment-requests" class="payment-block">
     <div class="payment-block__header">
         <p class="payment-block__title">Payment Requests</p>
-        <a data-fancybox
-           data-src="#request-payment"
-           class="payment-block__button button button--primary"
-           href="#">
+        <a class="payment-block__button button button--primary"
+           href="{% url "apply:projects:request" pk=object.pk %}">
             Add Request
         </a>
     </div>
@@ -32,19 +30,16 @@
                     <a href="{{ payment_request.get_absolute_url }}">View</a>
                     {% can_edit payment_request user as user_can_edit_request %}
                     {% if user_can_edit_request %}
-                    <a
-                        class="payment-block__edit-link"
-                        href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
+                    <a href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
                         Edit
                     </a>
                     {% endif %}
 
                     {% can_delete payment_request user as user_can_delete_request %}
                     {% if user_can_delete_request %}
-                    <form method="POST" action="{% url 'apply:projects:delete-payment-request' pk=object.pk payment_request_id=payment_request.pk %}">
-                        {% csrf_token %}
-                        <button class="button button--primary" type="submit">Delete</button>
-                    </form>
+                    <a href="{% url 'apply:projects:payments:delete' pk=payment_request.pk %}">
+                        Delete
+                    </a>
                     {% endif %}
                 </td>
             </tr>

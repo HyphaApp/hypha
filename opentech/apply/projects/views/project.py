@@ -67,8 +67,6 @@ from ..tables import (
     ProjectsListTable
 )
 
-from .payment import RequestPaymentView
-
 
 # APPROVAL VIEWS
 
@@ -107,6 +105,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
     @transaction.atomic()
     def form_valid(self, form):
         project = self.kwargs['object']
+        old_stage = project.get_status_display()
 
         form.instance.project = project
 
@@ -124,6 +123,14 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         project.is_locked = False
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            related=old_stage,
+        )
 
         return response
 
@@ -315,6 +322,8 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
             form.instance.project = self.project
             response = super().form_valid(form)
 
+            old_stage = self.project.get_status_display()
+
             messenger(
                 MESSAGES.APPROVE_CONTRACT,
                 request=self.request,
@@ -325,6 +334,14 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 
             self.project.status = IN_PROGRESS
             self.project.save(update_fields=['status'])
+
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=old_stage,
+            )
 
         return response
 
@@ -373,18 +390,26 @@ class UploadContractView(DelegatedViewMixin, CreateView):
             request=self.request,
             user=self.request.user,
             source=project,
+            related=form.instance,
         )
 
         return response
 
 
 # PROJECT VIEW
+class BaseProjectDetailView(DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = PROJECT_STATUS_CHOICES
+        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
+        return context
+
 
 class AdminProjectDetailView(
     ActivityContextMixin,
     DelegateableView,
     ContractsMixin,
-    DetailView,
+    BaseProjectDetailView,
 ):
     form_views = [
         ApproveContractView,
@@ -392,7 +417,6 @@ class AdminProjectDetailView(
         CreateApprovalView,
         RejectionView,
         RemoveDocumentView,
-        RequestPaymentView,
         SelectDocumentView,
         SendForApprovalView,
         UpdateLeadView,
@@ -404,19 +428,22 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['statuses'] = PROJECT_STATUS_CHOICES
-        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
         return context
 
 
-class ApplicantProjectDetailView(ActivityContextMixin, DelegateableView, ContractsMixin, DetailView):
+class ApplicantProjectDetailView(
+    ActivityContextMixin,
+    DelegateableView,
+    ContractsMixin,
+    BaseProjectDetailView,
+):
     form_views = [
         CommentFormView,
-        RequestPaymentView,
         SelectDocumentView,
         UploadContractView,
+        UploadDocumentView,
     ]
 
     model = Project
@@ -448,6 +475,31 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         if document.project != self.project:
             raise Http404
         return document.document
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        document = Contract.objects.get(pk=kwargs['file_pk'])
+        if document.project != self.project:
+            raise Http404
+        return document.file
 
     def test_func(self):
         if self.request.user.is_apply_staff:
