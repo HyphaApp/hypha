@@ -34,7 +34,7 @@ if 'SENTRY_DSN' in env:
     )
 
 # Heroku configuration.
-# Set ON_HEROKU to true in Config Vars or via cli "heroku config:set ON_HEROKU=1".
+# Set ON_HEROKU to true in Config Vars or via cli "heroku config:set ON_HEROKU=true".
 if 'ON_HEROKU' in env:
     import django_heroku
     django_heroku.settings(locals())
