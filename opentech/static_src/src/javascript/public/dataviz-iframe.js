@@ -14,4 +14,16 @@
         $('.section--share').before($dataviz_iframe);
     }
 
+    if (window.location.pathname.indexOf('impacts-and-outcomes') !== -1) {
+        var $dataviz_iframe2 = $('<iframe/>', {
+            id: 'dataviz',
+            src: 'https://dataviz.opentech.fund/impacts/',
+            title: 'Impacts and Outcomes',
+            width: '100%',
+            height: '460rem',
+            frameborder: 0
+        });
+        $('.section--share').before($dataviz_iframe2);
+    }
+
 })(jQuery);
