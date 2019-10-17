@@ -20,9 +20,6 @@ RUN apk add bash procps
 # copy requirements.txt
 COPY requirements.txt /usr/src/hypha/
 
-# set working directory
-WORKDIR /usr/src/hypha/
-
 # install python dependencies
 RUN pip install -r requirements.txt
 
