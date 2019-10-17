@@ -1,0 +1,29 @@
+# pull official base image
+FROM python:3.7.4-alpine
+
+# set work directory
+WORKDIR /usr/src/hypha
+
+# install system dependencies
+RUN apk update \
+    && apk add --virtual build-deps gcc python3-dev musl-dev \
+    && apk add jpeg-dev zlib-dev build-base linux-headers \
+    && apk add postgresql-dev
+
+# npm & Gulp
+RUN apk add --update nodejs-npm
+RUN npm install -g gulp
+
+# For testing
+RUN apk add bash procps
+
+# copy project
+COPY . /usr/src/hypha/
+
+# install python dependencies
+RUN pip install -r requirements.txt
+
+RUN apk del build-deps
+
+# run entrypoint.sh
+ENTRYPOINT ["/usr/src/hypha/docker/entrypoint.dev.sh"]

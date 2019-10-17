@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    volumes:
+      - ..:/usr/src/hypha/
+    ports:
+      - 8080:8080
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=opentech.settings.dev
+      - SECURE_SSL_REDIRECT=false
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=hypha
+      - SQL_USER=hypha
+      - SQL_PASSWORD=hypha
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE=postgres
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hypha
+      - POSTGRES_PASSWORD=hypha
+      - POSTGRES_DB=hypha
+
+volumes:
+  postgres_data:
