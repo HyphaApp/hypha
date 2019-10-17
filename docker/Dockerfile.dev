@@ -12,13 +12,16 @@ RUN apk update \
 
 # npm & Gulp
 RUN apk add --update nodejs-npm
-RUN npm install -g gulp
+RUN npm install -g gulp-cli
 
-# For testing
+# for testing
 RUN apk add bash procps
 
-# copy project
-COPY . /usr/src/hypha/
+# copy requirements.txt
+COPY requirements.txt /usr/src/hypha/
+
+# set working directory
+WORKDIR /usr/src/hypha/
 
 # install python dependencies
 RUN pip install -r requirements.txt

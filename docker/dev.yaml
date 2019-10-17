@@ -10,16 +10,10 @@ services:
     ports:
       - 8080:8080
     environment:
-      - DEBUG=1
       - DJANGO_SETTINGS_MODULE=opentech.settings.dev
-      - SECURE_SSL_REDIRECT=false
-      - SQL_ENGINE=django.db.backends.postgresql
-      - SQL_DATABASE=hypha
-      - SQL_USER=hypha
-      - SQL_PASSWORD=hypha
-      - SQL_HOST=db
-      - SQL_PORT=5432
-      - DATABASE=postgres
+      - DATABASE_URL=postgres://hypha:hypha@db:5432/hypha
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
     depends_on:
       - db
   db:
