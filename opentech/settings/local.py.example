@@ -1,6 +1,9 @@
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+    "wagtailcache": {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
