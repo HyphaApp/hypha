@@ -53,6 +53,7 @@ from .models import (
     RoundBase,
     LabBase
 )
+from .paginators import LazyPaginator
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
@@ -70,6 +71,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
+    table_pagination = {'klass': LazyPaginator}
 
     excluded_fields = []
 
@@ -256,6 +258,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
             status: {
                 'name': data['name'],
                 'count': sum(status_counts.get(status, 0) for status in data['statuses']),
+                'url': reverse_lazy("funds:submissions:status", kwargs={'status': status})
             }
             for status, data in PHASES_MAPPING.items()
         }
@@ -931,3 +934,17 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
     def test_func(self):
         return is_user_has_access_to_view_submission(self.request.user, self.submission)
+
+
+@method_decorator(staff_required, name='dispatch')
+class SubmissionDetailSimplifiedView(DetailView):
+    model = ApplicationSubmission
+    template_name_suffix = '_simplified_detail'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+
+        if not hasattr(obj, 'project'):
+            raise Http404
+
+        return obj

@@ -1,0 +1,15 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+A new contract has been added to your Project:
+
+Title: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+
+{% if contract.is_signed %}
+This contract has already been signed and there is no action for you to take.
+{% else %}
+Please review the contract and sign it before reuploading it to your Project page for the {{ ORG_SHORT_NAME }} Team to approve.
+{% endif %}
+
+{% endblock %}

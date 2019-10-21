@@ -313,4 +313,17 @@
             transform: rotate(90deg);
         }
     }
+
+    &--link {
+        color: $color--primary;
+    }
+
+    &--tooltip-disabled {
+        background-color: $color--button-disabled;
+
+        &:hover {
+            cursor: default;
+            background-color: $color--button-disabled;
+        }
+    }
 }

@@ -16,8 +16,16 @@ from opentech.apply.funds.tests.factories import (
     AssignedWithRoleReviewersFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.users.tests.factories import ReviewerFactory, UserFactory
-from opentech.apply.projects.tests.factories import ProjectFactory
+from opentech.apply.users.tests.factories import (
+    ApplicantFactory,
+    ReviewerFactory,
+    StaffFactory,
+    UserFactory
+)
+from opentech.apply.projects.tests.factories import (
+    ProjectFactory,
+    PaymentRequestFactory
+)
 
 from ..models import Activity, Event, Message, TEAM, ALL
 from ..messaging import (
@@ -378,7 +386,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     @responses.activate
     def test_round_slack_channel(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
-        submission = ApplicationSubmissionFactory(page__slack_channel='dummy')
+        submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy')
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '', source=submission)
@@ -599,7 +607,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         self.assertEqual(Activity.objects.count(), 1)
         activity = Activity.objects.first()
-        self.assertEqual(None, activity.related_object)
+        self.assertEqual(project.submission, activity.related_object)
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
@@ -642,3 +650,68 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         data = json.loads(responses.calls[0].request.body)
         self.assertIn(str(user), data['message'])
         self.assertIn(str(project), data['message'])
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_slack_applicant_update_payment_request(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+
+        project = self.source_factory()
+        payment_request = PaymentRequestFactory(project=project)
+        applicant = ApplicantFactory()
+
+        self.adapter_process(
+            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            adapter=self.slack(),
+            user=applicant,
+            source=project,
+            related=payment_request,
+        )
+
+        self.assertEqual(len(responses.calls), 1)
+
+        data = json.loads(responses.calls[0].request.body)
+        self.assertIn(str(applicant), data['message'])
+        self.assertIn(str(project), data['message'])
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_slack_staff_update_payment_request(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+
+        project = self.source_factory()
+        payment_request = PaymentRequestFactory(project=project)
+        staff = StaffFactory()
+
+        self.adapter_process(
+            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            adapter=self.slack(),
+            user=staff,
+            source=project,
+            related=payment_request,
+        )
+
+        self.assertEqual(len(responses.calls), 1)
+
+    @override_settings(SEND_MESSAGES=True)
+    def test_email_staff_update_payment_request(self):
+        project = self.source_factory()
+        payment_request = PaymentRequestFactory(project=project)
+        staff = StaffFactory()
+
+        self.adapter_process(
+            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            adapter=EmailAdapter(),
+            user=staff,
+            source=project,
+            related=payment_request,
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [project.user.email])

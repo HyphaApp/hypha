@@ -1,0 +1,36 @@
+{% extends "base-apply.html" %}
+{% load static %}
+
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Payment Request: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h2 class="heading heading--no-margin">{% if object %}Editing{% else %}Create{% endif %} Payment Request</h2>
+        <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}</h5>
+    </div>
+</div>
+
+{% include "forms/includes/form_errors.html" with form=form %}
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper--sidebar--inner">
+        <form class="form" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+            <input class="button button--submit button--top-space button--primary" type="submit" name="save" value="Save" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/apply/list-input-files.js' %}"></script>
+{% endblock %}

@@ -5,6 +5,7 @@
 # Test dependencies
 flake8
 factory_boy==2.9.2
+Faker==1.0.8 # Pinning to avoid API changes to pydecimal in 0.x - could go higher in future
 wagtail-factories==1.1.0
 responses==0.10.4
 
@@ -41,6 +42,7 @@ django==2.1.11
 gunicorn==19.9.0
 mailchimp3==3.0.9
 mistune==0.8.4
+more-itertools==7.2.0
 Pillow==5.4.1
 psycopg2==2.7.3.1
 social_auth_app_django==3.1.0

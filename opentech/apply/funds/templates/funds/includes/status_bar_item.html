@@ -1,0 +1,12 @@
+<div class="status-bar__item
+{% if is_current %}
+    status-bar__item--is-current
+{% elif is_complete %}
+    status-bar__item--is-complete
+{% endif %}">
+    <span class="status-bar__tooltip"
+        data-title="{{ label }}" aria-label="{{ label }}"></span>
+    <svg class="status-bar__icon">
+        <use xlink:href="#tick-alt"></use>
+    </svg>
+</div>

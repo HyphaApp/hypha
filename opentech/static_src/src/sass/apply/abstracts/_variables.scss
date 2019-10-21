@@ -15,7 +15,9 @@ $color--mid-grey: #cfcfcf;
 $color--mid-dark-grey: #919191;
 
 // Brand
+$color--lightest-blue: #24aae1;
 $color--light-blue: #0d7db0;
+$color--lighter-blue: #7ab8d4;
 $color--dark-blue: #0c72a0;
 $color--darkest-blue: #3d6bdb;
 $color--mustard: #e6ab32;
@@ -60,6 +62,7 @@ $color--default: $color--dark-grey;
 $color--primary: $color--light-blue;
 $color--error: $color--tomato;
 $color--correct: $color--mint;
+$color--button-disabled: $color--lighter-blue;
 
 // Fonts
 $font--primary: 'noto-sans';

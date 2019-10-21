@@ -1,5 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 import bleach
+from dateutil.parser import isoparse, parse
 from django_bleach.templatetags.bleach_tags import bleach_value
 
 from django import forms
@@ -56,6 +57,10 @@ class FormFieldBlock(StructBlock):
     def get_field(self, struct_value):
         field_kwargs = self.get_field_kwargs(struct_value)
         return self.get_field_class(struct_value)(**field_kwargs)
+
+    def decode(self, value):
+        """Convert JSON representation into actual python objects"""
+        return value
 
     def serialize(self, value, context):
         field_kwargs = self.get_field_kwargs(value)
@@ -124,7 +129,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         # CharField acts as a fallback. Force data to string
         data = str(data)
-        return bleach.clean(data, tags=[], strip=True)
+        return bleach.clean(data or '', tags=[], strip=True)
 
 
 class TextFieldBlock(OptionalFormFieldBlock):
@@ -137,7 +142,7 @@ class TextFieldBlock(OptionalFormFieldBlock):
         template = 'stream_forms/render_unsafe_field.html'
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data, tags=[], strip=True)
+        return bleach.clean(data or '', tags=[], strip=True)
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):
@@ -298,6 +303,10 @@ class DateFieldBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         return None
 
+    def decode(self, value):
+        if value:
+            return parse(value).date()
+
 
 class HTML5TimeInput(forms.TimeInput):
     input_type = 'time'
@@ -315,6 +324,10 @@ class TimeFieldBlock(OptionalFormFieldBlock):
 
     def get_searchable_content(self, value, data):
         return None
+
+    def decode(self, value):
+        if value:
+            return parse(value).time()
 
 
 class DateTimePickerInput(forms.SplitDateTimeWidget):
@@ -344,6 +357,10 @@ class DateTimeFieldBlock(OptionalFormFieldBlock):
 
     def get_searchable_content(self, value, data):
         return None
+
+    def decode(self, value):
+        if value:
+            return isoparse(value)
 
 
 class UploadableMediaBlock(OptionalFormFieldBlock):

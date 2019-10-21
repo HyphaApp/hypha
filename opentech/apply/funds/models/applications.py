@@ -64,6 +64,14 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
+    approval_form = models.ForeignKey(
+        'application_projects.ProjectApprovalForm',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='funds',
+    )
+
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
@@ -99,6 +107,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         return self.open_round.serve(request)
 
     content_panels = WorkflowStreamForm.content_panels + [
+        FieldPanel('approval_form'),
         FieldPanel('reviewers'),
         FieldPanel('slack_channel'),
     ]
@@ -382,12 +391,21 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         blank=True,
     )
 
+    approval_form = models.ForeignKey(
+        'application_projects.ProjectApprovalForm',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='labs',
+    )
+
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
+        FieldPanel('approval_form'),
         FieldPanel('lead'),
         FieldPanel('reviewers'),
         FieldPanel('slack_channel'),

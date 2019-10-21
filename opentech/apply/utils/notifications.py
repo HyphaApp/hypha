@@ -19,16 +19,15 @@ class SlackNotifications():
                 slack_users.append(f'<{user.slack}>')
         return ' '.join(slack_users)
 
-    def slack_link(self, request, related):
-        slack_link = ''
+    def slack_link(self, request, related, path=None, **kwargs):
         try:
-            link = request.scheme + '://' + request.get_host() + related.get_absolute_url()
+            url = path or related.get_absolute_url()
         except AttributeError:
-            pass
-        else:
-            title = str(related)
-            slack_link = f'<{link}|{title}>'
-        return slack_link
+            return ''
+
+        link = request.scheme + '://' + request.get_host() + url
+        title = str(related)
+        return f'<{link}|{title}>'
 
     def send_message(self, message, request, recipients=None, related=None, **kwargs):
         if not self.destination or not self.target_room:
@@ -41,7 +40,7 @@ class SlackNotifications():
 
         slack_users = self.slack_users(recipients) if recipients else ''
 
-        slack_link = self.slack_link(request, related) if related else ''
+        slack_link = self.slack_link(request, related, **kwargs) if related else ''
 
         message = ' '.join([slack_users, message, slack_link]).strip()
 

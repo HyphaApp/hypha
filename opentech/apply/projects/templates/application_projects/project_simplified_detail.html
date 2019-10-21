@@ -1,0 +1,129 @@
+{% extends "base-apply.html" %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block body_class %}light-grey-bg{% endblock %}
+
+{% block content %}
+<div class="simplified">
+    <div class="simplified__admin-bar">
+        <div class="simplified__admin-bar-inner">
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                Project
+            </a>
+            <h1 class="simplified__heading">{{ object.title }}</h1>
+            <h5 class="simplified__subheading">
+                <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.round }}</span>
+                <span>Lead: {{ object.lead }}</span>
+            </h5>
+        </div>
+    </div>
+
+    <div class="simplified__wrapper">
+        <h3>Project Information</h3>
+        <div class="card card--solid">
+            <div class="grid grid--proposal-info">
+                <div>
+                    <h5>Proposed start date</h5>
+                    <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <h5>Project Proposed end date</h5>
+                    <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <h5>Legal name</h5>
+                    <p>{{ object.contact_legal_name|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <h5>Email</h5>
+                    <p>{{ object.contact_email|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <h5>Address</h5>
+                    <p>{{ object.get_address_display|default:"-"}}</p>
+                </div>
+
+                <div>
+                    <h5>Phone</h5>
+                    <p>{{ object.phone|default:"-" }}</p>
+                </div>
+
+                <div>
+                    <h5>Value</h5>
+                    <p>${{ object.value|default:"-" }}</p>
+                </div>
+
+                {% if object.sent_to_compliance_at %}
+                <div>
+                    <h5>Sent to Compliance</h5>
+                    <p>{{ object.sent_to_compliance_at|date:"j F Y" }}</p>
+                </div>
+                {% endif %}
+
+            </div>
+
+            {% if object.output_answers %}
+                <div class="simplified__rich-text">
+                    {{ object.output_answers }}
+                </div>
+            {% endif %}
+        </div>
+
+        <h3>Approvals</h3>
+        <div class="card card--solid">
+            <h4>Approver</h4>
+            {% with approval=project.approvals.first %}
+                <p>{{ approval.by }} ({{ approval.created_at }})</p>
+            {% endwith %}
+        </div>
+
+        <h3>Review</h3>
+        <div class="card card--solid">
+            <h4>Submission lead</h4>
+            <p>{{ project.submission.lead }}</p>
+
+            <h4>Reviews</h4>
+            <h5>Staff Reviewers</h5>
+            {% for review in project.submission.reviews.by_staff %}
+            <div class="card__reviewer-outcome">
+                <div class="traffic-light traffic-light--{{ review.outcome|lower }}"></div>
+                <span class="card__reviewer">
+                    {{ review.author }}
+                    {% if review.author.role %}
+                        as {{ review.author.role }}
+                    {% endif %}
+                    - {{ review.outcome }} ({{ review.created_at }})
+                </span>
+            </div>
+            {% empty %}
+                No reviews
+            {% endfor %}
+            <h5>External Reviewers</h5>
+            {% for review in project.submission.reviews.by_reviewers %}
+                <div class="card__reviewer-outcome">
+                    <div class="traffic-light traffic-light--{{ review.outcome|lower }}"></div>
+                    <span class="card__reviewer">
+                        {{ review.author }} - <span>{{ review.outcome }}</span> ({{ review.created_at }})
+                    </span>
+                </div>
+            {% empty %}
+                No reviews
+            {% endfor %}
+        </div>
+
+        <h3>Supporting Documents</h3>
+        <div class="card card--solid">
+            <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">Submission</a></p>
+            {% for packet_file in object.packet_files.all %}
+                <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

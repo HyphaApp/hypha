@@ -31,9 +31,17 @@ class MESSAGES(Enum):
     EDIT_REVIEW = 'Edit Review'
     SEND_FOR_APPROVAL = 'Send for Approval'
     APPROVE_PROJECT = 'Project was Approved'
+    PROJECT_TRANSITION = 'Project was Transitioned'
     REQUEST_PROJECT_CHANGE = 'Project change requested'
     UPLOAD_DOCUMENT = 'Document was Uploaded to Project'
     REMOVE_DOCUMENT = 'Document was Removed from Project'
+    UPLOAD_CONTRACT = 'Contract was Uploaded to Project'
+    APPROVE_CONTRACT = 'Contract was Approved'
+    REQUEST_PAYMENT = 'Payment was requested for Project'
+    UPDATE_PAYMENT_REQUEST_STATUS = 'Updated Payment Request Status'
+    DELETE_PAYMENT_REQUEST = 'Delete Payment Request'
+    SENT_TO_COMPLIANCE = 'Project was sent to Compliance'
+    UPDATE_PAYMENT_REQUEST = 'Updated Payment Request'
 
     @classmethod
     def choices(cls):

@@ -1,13 +1,16 @@
 from datetime import timedelta
-import json
 
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
 from opentech.apply.activity.models import Activity, TEAM
 from opentech.apply.projects.models import Project
+from opentech.apply.projects.tests.factories import ProjectFactory
 from opentech.apply.determinations.tests.factories import DeterminationFactory
 from opentech.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -22,7 +25,6 @@ from opentech.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.stream_forms.testing.factories import flatten_for_form
 from opentech.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
@@ -33,6 +35,8 @@ from opentech.apply.utils.testing import make_request
 from opentech.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision, ApplicationSubmission
+from ..views import SubmissionDetailSimplifiedView
+from .factories import CustomFormFieldsFactory
 
 
 def prepare_form_data(submission, **kwargs):
@@ -43,22 +47,7 @@ def prepare_form_data(submission, **kwargs):
         field_id = submission.field(field).id
         data[field_id] = value
 
-    address_field = submission.named_blocks['address']
-    address = data.pop(address_field)
-    data.update(**prepare_address(address, address_field))
-
-    return data
-
-
-def prepare_address(address, field):
-    address = json.loads(address)
-    address['locality'] = {
-        'localityname': address.pop('localityname'),
-        'administrativearea': address.pop('administrativearea'),
-        'postalcode': address.pop('postalcode'),
-    }
-    address = flatten_for_form(address, field, number=True)
-    return address
+    return CustomFormFieldsFactory.form_response(submission.form_fields, data)
 
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
@@ -453,6 +442,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         submission = self.refresh(submission)
 
+        self.maxDiff = None
         self.assertEqual(submission.status, 'proposal_discussion')
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.revisions.last().form_data, old_data)
@@ -470,6 +460,7 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
 
         submission = self.refresh(submission)
 
+        self.maxDiff = None
         self.assertEqual(submission.status, 'draft_proposal')
         self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
@@ -491,9 +482,9 @@ class TestRevisionsView(BaseSubmissionViewTestCase):
         submission = self.refresh(submission)
 
         self.maxDiff = None
-        self.assertEqual(submission.revisions.count(), 2)
         self.assertDictEqual(submission.draft_revision.form_data, submission.from_draft().form_data)
         self.assertDictEqual(submission.live_revision.form_data, submission.form_data)
+        self.assertEqual(submission.revisions.count(), 2)
 
         self.assertEqual(submission.title, newer_title)
 
@@ -660,6 +651,37 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         # Check that an activity was created that should only be viewable internally
         activity = Activity.objects.filter(message__contains='Screening status').first()
         self.assertEqual(activity.visibility, TEAM)
+
+
+class TestSubmissionDetailSimplifiedView(TestCase):
+    def test_staff_only(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory()
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = StaffFactory()
+
+        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
+
+        request.user = ApplicantFactory()
+        with self.assertRaises(PermissionDenied):
+            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+
+    def test_project_required(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory()
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = StaffFactory()
+
+        with self.assertRaises(Http404):
+            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+
+        ProjectFactory(submission=submission)
+        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
 
 
 class BaseSubmissionFileViewTestCase(BaseViewTestCase):

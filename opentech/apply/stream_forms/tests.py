@@ -5,6 +5,7 @@ from faker import Faker
 
 from .files import StreamFieldFile
 from .fields import MultiFileField, MultiFileInput
+from .blocks import FormFieldBlock, FormFieldsBlock
 
 fake = Faker()
 
@@ -87,3 +88,12 @@ class TestMultiFileField(TestCase):
         initial_files = make_files(3)
         cleaned = self.field.clean(self.multi_file_value(cleared=[0, 2]), initial_files)
         self.assertEqual([initial_files[1]], cleaned)
+
+
+class TestBlocks(TestCase):
+    def test_blocks_decode_none(self):
+        for block in FormFieldsBlock().child_blocks.values():
+            if isinstance(block, FormFieldBlock):
+                with self.subTest(block=block):
+                    value = block.decode(None)
+                    self.assertIsNone(value)

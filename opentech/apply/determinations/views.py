@@ -1,5 +1,6 @@
 from urllib import parse
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -277,7 +278,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 proposal_form=proposal_form,
             )
 
-            if self.submission.accepted_for_funding:
+            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
                 project = Project.create_from_submission(self.submission)
                 if project:
                     messenger(

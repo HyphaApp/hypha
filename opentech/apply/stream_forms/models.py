@@ -10,6 +10,30 @@ from .forms import BlockFieldWrapper, PageStreamBaseForm
 class BaseStreamForm:
     submission_form_class = PageStreamBaseForm
 
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if 'form_data' in field_names:
+            instance.form_data = cls.deserialize_form_data(instance, instance.form_data, instance.form_fields)
+        return instance
+
+    @classmethod
+    def deserialize_form_data(cls, instance, form_data, form_fields):
+        data = form_data.copy()
+        # PERFORMANCE NOTE:
+        # Do not attempt to iterate over form_fields - that will fully instantiate the form_fields
+        # including any sub queries that they do
+        for i, field_data in enumerate(form_fields.stream_data):
+            block = form_fields.stream_block.child_blocks[field_data['type']]
+            field_id = field_data.get('id')
+            try:
+                value = data[field_id]
+            except KeyError:
+                pass
+            else:
+                data[field_id] = block.decode(value)
+        return data
+
     def get_defined_fields(self):
         return self.form_fields
 

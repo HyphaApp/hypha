@@ -3,7 +3,7 @@ import json
 import uuid
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-
+from django.core.serializers.json import DjangoJSONEncoder
 import factory
 from wagtail.core.blocks import RichTextBlock
 from wagtail.core.rich_text import RichText
@@ -11,10 +11,11 @@ import wagtail_factories
 
 from opentech.apply.stream_forms import blocks as stream_blocks
 
-__all__ = ['FormFieldBlockFactory', 'CharFieldBlockFactory',
-           'NumberFieldBlockFactory', 'RadioFieldBlockFactory',
-           'UploadableMediaFactory', 'ImageFieldBlockFactory',
-           'FileFieldBlockFactory', 'MultiFileFieldBlockFactory']
+__all__ = ['BLOCK_FACTORY_DEFINITION', 'FormFieldBlockFactory',
+           'CharFieldBlockFactory', 'NumberFieldBlockFactory',
+           'RadioFieldBlockFactory', 'UploadableMediaFactory',
+           'ImageFieldBlockFactory', 'FileFieldBlockFactory',
+           'MultiFileFieldBlockFactory']
 
 
 class AnswerFactory(factory.Factory):
@@ -99,12 +100,14 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
         model = stream_blocks.FormFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
-        return cls.default_value.generate(params)
+    def make_answer(cls, params=None):
+        return cls.default_value.generate(params or {})
 
     @classmethod
-    def make_form_answer(cls, params=dict()):
-        return cls.make_answer(params)
+    def make_form_answer(cls, params=None):
+        if params:
+            return params
+        return cls.make_answer(params or {})
 
 
 class CharFieldBlockFactory(FormFieldBlockFactory):
@@ -114,6 +117,45 @@ class CharFieldBlockFactory(FormFieldBlockFactory):
         model = stream_blocks.CharFieldBlock
 
 
+class TextFieldBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('sentence')
+
+    class Meta:
+        model = stream_blocks.TextFieldBlock
+
+
+class DateFieldBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('date_object')
+
+    class Meta:
+        model = stream_blocks.DateFieldBlock
+
+
+class TimeFieldBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('time_object')
+
+    class Meta:
+        model = stream_blocks.TimeFieldBlock
+
+
+class DateTimeFieldBlockFactory(FormFieldBlockFactory):
+    default_value = factory.Faker('date_time')
+
+    class Meta:
+        model = stream_blocks.DateTimeFieldBlock
+
+    @classmethod
+    def make_form_answer(cls, params=None):
+        if params:
+            date_time = params
+        else:
+            date_time = super().make_form_answer(params)
+        return {
+            'date': str(date_time.date()),
+            'time': str(date_time.time()),
+        }
+
+
 class NumberFieldBlockFactory(FormFieldBlockFactory):
     default_value = 100
 
@@ -121,8 +163,30 @@ class NumberFieldBlockFactory(FormFieldBlockFactory):
         model = stream_blocks.NumberFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params=None):
         return cls.default_value
+
+
+class CheckboxFieldBlockFactory(FormFieldBlockFactory):
+    choices = ['check_one', 'check_two']
+
+    class Meta:
+        model = stream_blocks.CheckboxFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=None):
+        return cls.choices[0]
+
+
+class CheckboxesFieldBlockFactory(FormFieldBlockFactory):
+    checkboxes = ['check_one', 'check_two', 'check_three']
+
+    class Meta:
+        model = stream_blocks.CheckboxesFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=None):
+        return cls.checkboxes[0:2]
 
 
 class RadioFieldBlockFactory(FormFieldBlockFactory):
@@ -132,7 +196,18 @@ class RadioFieldBlockFactory(FormFieldBlockFactory):
         model = stream_blocks.RadioButtonsFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params=None):
+        return cls.choices[0]
+
+
+class DropdownFieldBlockFactory(FormFieldBlockFactory):
+    choices = ['first', 'second']
+
+    class Meta:
+        model = stream_blocks.DropdownFieldBlock
+
+    @classmethod
+    def make_answer(cls, params=None):
         return cls.choices[0]
 
 
@@ -140,8 +215,8 @@ class UploadableMediaFactory(FormFieldBlockFactory):
     default_value = factory.django.FileField
 
     @classmethod
-    def make_answer(cls, params=dict()):
-        params = params.copy()
+    def make_answer(cls, params=None):
+        params = params or {}
         params.setdefault('data', b'this is some content')
         if params.get('filename') is None:
             params['filename'] = 'example.pdf'
@@ -166,7 +241,7 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
         model = stream_blocks.MultiFileFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params=None):
         return [UploadableMediaFactory.make_answer() for _ in range(2)]
 
 
@@ -180,7 +255,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
             block = self.factories[block_name]._meta.model()
             value = block.get_prep_value(value)
             ret_val.append({'type': block_name, 'value': value, 'id': str(uuid.uuid4())})
-        return json.dumps(ret_val)
+        return json.dumps(ret_val, cls=DjangoJSONEncoder)
 
     def build_form(self, data):
         extras = defaultdict(dict)
@@ -216,13 +291,35 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
         return form_fields
 
-    def form_response(self, fields, field_values=dict()):
+    def form_response(self, fields, field_values=None):
+        if not field_values:
+            field_values = {}
         data = {
             field.id: self.factories[field.block.name].make_form_answer(field_values.get(field.id, {}))
             for field in fields
             if hasattr(self.factories[field.block.name], 'make_form_answer')
         }
         return flatten_for_form(data)
+
+
+BLOCK_FACTORY_DEFINITION = {
+    'text_markup': ParagraphBlockFactory,
+    'char': CharFieldBlockFactory,
+    'text': TextFieldBlockFactory,
+    'number': NumberFieldBlockFactory,
+    'checkbox': CheckboxFieldBlockFactory,
+    'radios': RadioFieldBlockFactory,
+    'dropdown': DropdownFieldBlockFactory,
+    'checkboxes': CheckboxesFieldBlockFactory,
+    'date': DateFieldBlockFactory,
+    'time': TimeFieldBlockFactory,
+    'datetime': DateTimeFieldBlockFactory,
+    'image': ImageFieldBlockFactory,
+    'file': FileFieldBlockFactory,
+    'multi_file': MultiFileFieldBlockFactory,
+}
+
+FormFieldsBlockFactory = StreamFieldUUIDFactory(BLOCK_FACTORY_DEFINITION)
 
 
 def flatten_for_form(data, field_name='', number=False):

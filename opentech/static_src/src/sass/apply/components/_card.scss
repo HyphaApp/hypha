@@ -1,0 +1,43 @@
+.card {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid $color--mid-grey;
+
+    &--solid {
+        background-color: $color--white;
+    }
+
+    &__text {
+        margin: 0 0 1rem;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &__inner {
+        margin-bottom: 1rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__heading {
+        margin-bottom: 0;
+    }
+
+    &__reviewer-outcome {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        @include media-query(small-tablet) {
+            margin-left: 1rem;
+        }
+    }
+
+    &__reviewer {
+        margin-left: 10px;
+    }
+}
