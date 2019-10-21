@@ -25,7 +25,7 @@
     {% if PROJECTS_ENABLED %}
         {% include "funds/includes/create_project_form.html" %}
     {% endif %}
-    {% include "funds/includes/update_meta_categories_form.html" %}
+    {% include "funds/includes/update_meta_terms_form.html" %}
 {% endblock %}
 
 {% block reviews %}
@@ -47,8 +47,8 @@
     {% include 'funds/includes/screening_status_block.html' %}
 {% endblock %}
 
-{% block meta_categories %}
-    {% include 'funds/includes/meta_categories_block.html' %}
+{% block meta_terms %}
+    {% include 'funds/includes/meta_terms_block.html' %}
 {% endblock %}
 
 {% block determination %}

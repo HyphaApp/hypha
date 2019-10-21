@@ -8,12 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django_select2.forms import Select2Widget
 
-from opentech.apply.categories.models import MetaCategory
+from opentech.apply.categories.models import MetaTerm
 from opentech.apply.users.models import User
 
 from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
 from .utils import render_icon
-from .widgets import Select2MultiCheckboxesWidget, MetaCategorySelect2Widget
+from .widgets import Select2MultiCheckboxesWidget, MetaTermSelect2Widget
 from .workflow import get_action_mapping
 
 
@@ -390,14 +390,14 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         return {'label': super().label_from_instance(obj), 'disabled': not obj.is_leaf()}
 
 
-class UpdateMetaCategoriesForm(ApplicationSubmissionModelForm):
-    meta_categories = GroupedModelMultipleChoiceField(
+class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
+    meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaCategorySelect2Widget(attrs={'data-placeholder': 'Meta categories'}),
-        label='Meta categories',
+        widget=MetaTermSelect2Widget(attrs={'data-placeholder': 'Meta terms'}),
+        label='Meta terms',
         choices_groupby='get_parent',
         required=False,
-        help_text='Meta categories are hierarchical in nature.',
+        help_text='Meta terms are hierarchical in nature.',
     )
 
     class Meta:
@@ -407,4 +407,4 @@ class UpdateMetaCategoriesForm(ApplicationSubmissionModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['meta_categories'].queryset = MetaCategory.get_root_descendants().exclude(depth=2)
+        self.fields['meta_terms'].queryset = MetaTerm.get_root_descendants().exclude(depth=2)

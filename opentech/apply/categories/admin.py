@@ -1,9 +1,9 @@
 from django.conf.urls import url
 from wagtail.contrib.modeladmin.options import ModelAdmin
 
-from .admin_helpers import MetaCategoryButtonHelper
-from .admin_views import AddChildMetaCategoryViewClass
-from .models import Category, MetaCategory
+from .admin_helpers import MetaTermButtonHelper
+from .admin_views import AddChildMetaTermViewClass
+from .models import Category, MetaTerm
 
 
 class CategoryAdmin(ModelAdmin):
@@ -12,8 +12,8 @@ class CategoryAdmin(ModelAdmin):
     model = Category
 
 
-class MetaCategoryAdmin(ModelAdmin):
-    model = MetaCategory
+class MetaTermAdmin(ModelAdmin):
+    model = MetaTerm
 
     menu_icon = 'tag'
 
@@ -24,11 +24,11 @@ class MetaCategoryAdmin(ModelAdmin):
     inspect_view_enabled = True
     inspect_view_fields = ('name', 'get_parent', 'id')
 
-    button_helper_class = MetaCategoryButtonHelper
+    button_helper_class = MetaTermButtonHelper
 
     def add_child_view(self, request, instance_pk):
         kwargs = {'model_admin': self, 'parent_pk': instance_pk}
-        view_class = AddChildMetaCategoryViewClass
+        view_class = AddChildMetaTermViewClass
         return view_class.as_view(**kwargs)(request)
 
     def get_admin_urls_for_registration(self):
