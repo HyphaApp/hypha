@@ -17,7 +17,7 @@ ACCEPTED = 2
 
 DETERMINATION_CHOICES = (
     (REJECTED, _('Dismissed')),
-    (NEEDS_MORE_INFO, _('Needs more info')),
+    (NEEDS_MORE_INFO, _('More information requested')),
     (ACCEPTED, _('Approved')),
 )
 
