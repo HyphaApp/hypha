@@ -75,16 +75,22 @@ class Contract(models.Model):
     approver = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name='contracts')
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contracts")
 
-    file = models.FileField(upload_to=contract_path)
+    file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = ContractQuerySet.as_manager()
 
+    @property
+    def state(self):
+        return 'Signed' if self.is_signed else 'Unsigned'
+
     def __str__(self):
-        state = 'Signed' if self.is_signed else 'Unsigned'
-        return f'Contract for {self.project} ({state})'
+        return f'Contract for {self.project} ({self.state})'
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:contract', args=[self.project.pk, self.pk])
 
 
 class PacketFile(models.Model):
@@ -190,7 +196,7 @@ class PaymentRequest(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     date_from = models.DateTimeField()
     date_to = models.DateTimeField()
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
     objects = PaymentRequestQueryset.as_manager()
@@ -211,6 +217,10 @@ class PaymentRequest(models.Model):
             if self.status in (SUBMITTED, CHANGES_REQUESTED):
                 return True
 
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED}:
+                return True
+
         return False
 
     def can_user_edit(self, user):
@@ -218,13 +228,6 @@ class PaymentRequest(models.Model):
             if self.status in {SUBMITTED, CHANGES_REQUESTED}:
                 return True
 
-        if user.is_apply_staff:
-            if self.status in {SUBMITTED}:
-                return True
-
-        return False
-
-    def user_can_delete(self, user):
         if user.is_apply_staff:
             if self.status in {SUBMITTED}:
                 return True
@@ -341,6 +344,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def status_display(self):
+        return self.get_status_display()
+
     def get_address_display(self):
         address = json.loads(self.contact_address)
         return ', '.join(
@@ -415,6 +422,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def editable(self):
+        if self.status not in (CONTRACTING, COMMITTED):
+            return True
+
         # Someone has approved the project - consider it locked while with contracting
         if self.approvals.exists():
             return False

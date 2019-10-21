@@ -199,19 +199,21 @@ class RemoveDocumentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
-class RequestPaymentForm(forms.ModelForm):
-    receipts = MultiFileField()
-
+class PaymentRequestBaseForm(forms.ModelForm):
     class Meta:
-        fields = ['requested_value', 'invoice', 'date_from', 'date_to', 'receipts', 'comment']
+        fields = ['requested_value', 'invoice', 'date_from', 'date_to']
         model = PaymentRequest
         widgets = {
             'date_from': forms.DateInput,
             'date_to': forms.DateInput,
         }
+        labels = {
+            'requested_value': 'Requested Value ($)'
+        }
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
+    def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['requested_value'].widget.attrs['min'] = 0
 
     def clean(self):
         cleaned_data = super().clean()
@@ -222,6 +224,10 @@ class RequestPaymentForm(forms.ModelForm):
             self.add_error('date_from', 'Date From must be before Date To')
 
         return cleaned_data
+
+
+class CreatePaymentRequestForm(PaymentRequestBaseForm):
+    receipts = MultiFileField()
 
     def save(self, commit=True):
         request = super().save(commit=commit)
@@ -234,7 +240,7 @@ class RequestPaymentForm(forms.ModelForm):
         return request
 
 
-class EditPaymentRequestForm(forms.ModelForm):
+class EditPaymentRequestForm(PaymentRequestBaseForm):
     receipt_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
@@ -242,14 +248,6 @@ class EditPaymentRequestForm(forms.ModelForm):
         label='Receipts'
     )
     receipts = MultiFileField(label='', required=False)
-
-    class Meta:
-        fields = ['invoice', 'requested_value', 'date_from', 'date_to', 'receipt_list', 'receipts', 'comment']
-        model = PaymentRequest
-        widgets = {
-            'date_from': forms.DateInput,
-            'date_to': forms.DateInput,
-        }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
         super().__init__(*args, instance=instance, **kwargs)
@@ -259,8 +257,8 @@ class EditPaymentRequestForm(forms.ModelForm):
         self.fields['requested_value'].label = 'Value'
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
-        request = super().save(*args, **kwargs)
+    def save(self, commit=True):
+        request = super().save(commit=commit)
 
         removed_receipts = self.cleaned_data['receipt_list']
 

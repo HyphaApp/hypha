@@ -53,6 +53,12 @@
                 >
                     Edit
                 </a>
+                {% can_delete object user as user_can_delete_request %}
+                {% if user_can_delete_request %}
+                <a
+                    class="button button--bottom-space button--primary button--full-width"
+                    href="{% url 'apply:projects:payments:delete' pk=object.pk %}">Delete</a>
+            {% endif %}
             {% endblock %}
         </div>
     </aside>

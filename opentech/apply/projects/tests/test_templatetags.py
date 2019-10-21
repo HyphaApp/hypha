@@ -152,11 +152,11 @@ class TestPaymentRequestTools(TestCase):
 
         self.assertFalse(can_change_status(payment_request, user))
 
-    def test_staff_cant_delete_from_submitted(self):
+    def test_staff_can_delete_from_submitted(self):
         payment_request = PaymentRequestFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertFalse(can_delete(payment_request, staff))
+        self.assertTrue(can_delete(payment_request, staff))
 
     def test_staff_cant_delete_from_under_review(self):
         payment_request = PaymentRequestFactory(status=UNDER_REVIEW)

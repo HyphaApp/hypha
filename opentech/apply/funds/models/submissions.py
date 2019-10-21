@@ -32,7 +32,7 @@ from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
 from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.categories.models import MetaCategory
+from opentech.apply.categories.models import MetaTerm
 from opentech.apply.determinations.models import Determination
 from opentech.apply.review.models import ReviewOpinion
 from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
@@ -393,8 +393,8 @@ class ApplicationSubmission(
         limit_choices_to=LIMIT_TO_PARTNERS,
         blank=True,
     )
-    meta_categories = models.ManyToManyField(
-        MetaCategory,
+    meta_terms = models.ManyToManyField(
+        MetaTerm,
         related_name='submissions',
         blank=True,
     )
@@ -518,7 +518,7 @@ class ApplicationSubmission(
             raise ValueError('Incorrect State for transition')
 
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
-        prev_meta_categories = submission_in_db.meta_categories.all()
+        prev_meta_terms = submission_in_db.meta_terms.all()
 
         self.id = None
         proposal_form = kwargs.get('proposal_form')
@@ -528,7 +528,7 @@ class ApplicationSubmission(
         self.live_revision = None
         self.draft_revision = None
         self.save()
-        self.meta_categories.set(prev_meta_categories)
+        self.meta_terms.set(prev_meta_terms)
 
         submission_in_db.next = self
         submission_in_db.save()
