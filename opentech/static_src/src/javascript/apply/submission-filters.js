@@ -9,8 +9,6 @@
     const filterOpenClass = 'filters-open';
     const filterActiveClass = 'is-active';
 
-    const $filterForm = $('.js-filter-form');
-
     const urlParams = new URLSearchParams(window.location.search);
 
     const persistedParams = ['sort', 'query', 'submission'];
