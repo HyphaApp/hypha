@@ -33,7 +33,7 @@ export function createNoteForSubmission(submissionID, note) {
 
 export function editNoteForSubmission(note) {
     return {
-        path: `/apply/api/comments/${note.id}/edit/`,
+        path: `/v1/comments/${note.id}/edit/`,
         method: 'POST',
         options: {
             body: JSON.stringify({ message: note.message }),
