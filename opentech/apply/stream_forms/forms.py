@@ -3,7 +3,6 @@ from django.forms.forms import DeclarativeFieldsMetaclass
 
 from wagtail.contrib.forms.forms import BaseForm
 
-
 class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
     """Stores all fields passed to the class and not just the field type.
     This allows the form to be rendered when Field-like blocks are passed
