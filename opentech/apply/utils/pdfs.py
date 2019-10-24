@@ -7,15 +7,18 @@ from reportlab.lib.styles import ParagraphStyle as PS
 from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import KeepTogether, ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 styles = {
+    'Question': PS(fontName='MontserratBold', fontSize=14, name='Question', spaceAfter=0, spaceBefore=18, leading=21),
     'Normal': PS(fontName='NotoSans', name='Normal'),
-    'Heading3': PS(fontName='MontserratBold', fontSize=16, name='Heading3', spaceAfter=4, spaceBefore=20, leading=24),
-    'Heading4': PS(fontName='MontserratBold', fontSize=14, name='Heading4', spaceAfter=4, spaceBefore=18, leading=21),
-    'Heading5': PS(fontName='MontserratBold', fontSize=12, name='Heading5', spaceAfter=4, spaceBefore=16, leading=18),
+    'Heading1': PS(fontName='NotoSansBold', fontSize=12, name='Heading1', spaceAfter=4, spaceBefore=12, leading=18),
+    'Heading2': PS(fontName='NotoSansBold', fontSize=10, name='Heading2', spaceAfter=4, spaceBefore=10, leading=15),
+    'Heading3': PS(fontName='NotoSansBold', fontSize=10, name='Heading3', spaceAfter=4, spaceBefore=10, leading=15),
+    'Heading4': PS(fontName='NotoSansBold', fontSize=10, name='Heading4', spaceAfter=4, spaceBefore=10, leading=15),
+    'Heading5': PS(fontName='NotoSansBold', fontSize=10, name='Heading5', spaceAfter=4, spaceBefore=10, leading=15),
 }
 
 font_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media', 'fonts')
@@ -107,7 +110,7 @@ def draw_header(canvas, title):
 
 
 def draw_title_block(canvas, title, meta):
-    title_size = 20
+    title_size = 30
     meta_size = 10
     header_height = MARGIN_TOP + title_size + 6 * meta_size
 
@@ -144,30 +147,69 @@ def draw_title_block(canvas, title, meta):
     return PAGE_HEIGHT - header_height
 
 
-def draw_content(content):
-    RICH_TEXT_TAGS = ('p', 'li', 'h3', 'h4', 'h5')
+def handle_block(block):
+    RICH_TEXT_TAGS = ('p', 'ul', 'ol' 'h3', 'h2', 'h4', 'h5')
 
     paragraphs = []
 
-    for section in BeautifulSoup(content, "html5lib").find_all('section'):
-        for tag in section.find_all(RICH_TEXT_TAGS):
-            text = tag.get_text()
-            extra = {}
+    for tag in block:
+        if isinstance(tag, NavigableString):
+            text = tag.strip()
             if text:
-                if tag.name in {'p'}:
-                    style = styles['Normal']
-                elif tag.name == 'li':
-                    style = styles['Normal']
-                    extra['bulletText'] = '•'
-                elif tag.name == 'h3':
-                    style = styles['Heading3']
-                elif tag.name == 'h4':
-                    style = styles['Heading4']
-                elif tag.name == 'h5':
-                    style = styles['Heading5']
+                paragraphs.append(Paragraph(text, styles['Normal']))
+        elif tag.name in {'ul', 'ol'}:
+            style = styles['Normal']
+            if tag.name == 'ul':
+                bullet = 'bullet'
+            elif tag.name == 'li':
+                bullet = '1'
 
-                paragraphs.append(Paragraph(text, style, **extra))
+            paragraphs.append(
+                ListFlowable(
+                    [
+                        ListItem(Paragraph(bullet_item.get_text(), style))
+                        for bullet_item in tag.find_all('li')
+                    ],
+                    bulletType=bullet,
+                )
+            )
 
+        else:
+            if tag.name in {'p'}:
+                style = styles['Normal']
+            elif tag.name == 'h2':
+                style = styles['Heading2']
+            elif tag.name == 'h3':
+                style = styles['Heading3']
+            elif tag.name == 'h4':
+                style = styles['Heading4']
+            elif tag.name == 'h5':
+                style = styles['Heading5']
+
+            text = tag.get_text()
+            if text:
+                paragraphs.append(Paragraph(text, style))
+    return paragraphs
+
+
+def draw_content(content):
+    paragraphs = []
+
+    for section in BeautifulSoup(content, "html5lib").find_all('section'):
+        question_text = section.select_one('.question').get_text()
+        question = Paragraph(question_text, styles['Question'])
+
+        # Keep the question and the first block of the answer together
+        # this keeps 1 line answers tidy and ensures that bigger responses break
+        # sooner instead of waiting to fill an entire page. There may still be issues
+        first_answer, *rest = handle_block(section.select_one('.answer'))
+        paragraphs.extend([
+            KeepTogether([
+                question,
+                first_answer,
+            ]),
+            *rest
+        ])
     return paragraphs
 
 

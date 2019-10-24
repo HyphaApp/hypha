@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load static %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -39,4 +40,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
 {% endblock %}
