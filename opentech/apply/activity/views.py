@@ -18,16 +18,19 @@ class AllActivityContextMixin:
                 'user',
             ).prefetch_related(
                 'source',
+                'related_object',
             )[:ACTIVITY_LIMIT],
             'comments': Activity.comments.select_related(
                 'user',
             ).prefetch_related(
                 'source',
+                'related_object',
             )[:ACTIVITY_LIMIT],
             'all_activity': Activity.objects.select_related(
                 'user',
             ).prefetch_related(
                 'source',
+                'related_object',
             )[:ACTIVITY_LIMIT],
         }
         return super().get_context_data(**extra, **kwargs)
