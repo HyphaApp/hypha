@@ -4,11 +4,19 @@ import io
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import Color, white
 from reportlab.lib.styles import ParagraphStyle as PS
-from reportlab.lib.units import inch
 from reportlab.lib.utils import simpleSplit
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import KeepTogether, ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import (
+    KeepTogether,
+    ListFlowable,
+    ListItem,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 
 from bs4 import BeautifulSoup, NavigableString
@@ -209,7 +217,23 @@ def handle_block(block):
                     bulletType=bullet,
                 )
             )
-
+        elif tag.name in {'table'}:
+            paragraphs.append(
+                Table(
+                    [
+                        [
+                            Paragraph(cell.get_text(), styles['Normal'])
+                            for cell in row.find_all({'td', 'th'})
+                        ]
+                        for row in tag.find_all('tr')
+                    ],
+                    colWidths='*',
+                    style=TableStyle([
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                        ('LINEABOVE', (0, 0), (-1, -1), 1, DARK_GREY),
+                    ]),
+                )
+            )
         else:
             if tag.name in {'p'}:
                 style = styles['Normal']
