@@ -6,13 +6,14 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import Http404
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -20,12 +21,14 @@ from django.views.generic import (
     TemplateView,
     UpdateView
 )
+from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import approver_required, staff_required
+from opentech.apply.utils.pdfs import make_pdf
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
@@ -517,6 +520,29 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 class ProjectDetailSimplifiedView(DetailView):
     model = Project
     template_name_suffix = '_simplified_detail'
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectDetailPDFView(SingleObjectMixin, View):
+    model = Project
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object().submission
+        pdf = make_pdf(
+            title=self.object.title,
+            meta=[
+                self.object.stage,
+                self.object.page,
+                self.object.round,
+                f"Lead: { self.object.lead }",
+            ],
+            content=self.object.output_text_answers()
+        )
+        return FileResponse(
+            pdf,
+            as_attachment=True,
+            filename=self.object.title + '.pdf',
+        )
 
 
 class ProjectApprovalEditView(UpdateView):
