@@ -17,6 +17,12 @@
                 <span>{{ object.submission.round }}</span>
                 <span>Lead: {{ object.lead }}</span>
             </h5>
+            <a
+                class="button button--primary simplified__button"
+                href="{% url "apply:projects:download" pk=object.pk %}"
+            >
+                Download PDF
+            </a>
         </div>
     </div>
 
