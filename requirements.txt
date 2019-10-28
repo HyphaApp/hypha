@@ -11,7 +11,7 @@ responses==0.10.6
 
 # Monitor dependencies
 scout-apm==2.5.0
-sentry-sdk==0.12.3
+sentry-sdk==0.13.1
 
 # Production dependencies
 boto3==1.9.245
