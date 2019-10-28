@@ -272,4 +272,3 @@ def draw_content(content):
         ])
     return paragraphs
 
-
