@@ -393,8 +393,8 @@ class ReportEditForm(forms.ModelForm):
             submitted=timezone.now(),
         )
 
-        PaymentReceipt.objects.bulk_create(
-            PaymentReceipt(report=version, file=file)
+        ReportPrivateFiles.objects.bulk_create(
+            ReportPrivateFiles(report=version, file=file)
             for file in self.cleaned_data['files']
         )
 

@@ -1,5 +1,4 @@
 from decimal import Decimal
-from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase
