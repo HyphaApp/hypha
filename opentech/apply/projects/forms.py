@@ -29,6 +29,7 @@ from .models import (
     Project,
     Report,
     ReportVersion,
+    ReportPrivateFiles,
 )
 
 
@@ -377,6 +378,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
 
 class ReportEditForm(forms.ModelForm):
     content = RichTextField(required=True)
+    files = MultiFileField(required=False)
 
     class Meta:
         model = Report
@@ -384,9 +386,16 @@ class ReportEditForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit)
-        ReportVersion.objects.create(
+
+        version = ReportVersion.objects.create(
             report=instance,
             content=self.cleaned_data['content'],
             submitted=timezone.now(),
         )
+
+        PaymentReceipt.objects.bulk_create(
+            PaymentReceipt(report=version, file=file)
+            for file in self.cleaned_data['files']
+        )
+
         return instance
