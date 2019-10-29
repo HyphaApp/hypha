@@ -393,9 +393,11 @@ class ReportEditForm(forms.ModelForm):
             submitted=timezone.now(),
         )
 
-        ReportPrivateFiles.objects.bulk_create(
-            ReportPrivateFiles(report=version, file=file)
-            for file in self.cleaned_data['files']
-        )
+        files = self.cleaned_data['files']
+        if files:
+            ReportPrivateFiles.objects.bulk_create(
+                ReportPrivateFiles(report=version, file=file)
+                for file in files
+            )
 
         return instance
