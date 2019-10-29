@@ -326,4 +326,20 @@
             background-color: $color--button-disabled;
         }
     }
+
+    &--flag {
+        &.flagged {
+            position: relative;
+
+            &::after {
+                content: '\2691';
+                color:  $color--tomato;
+                position: absolute;
+                top:  4px;
+                padding-left: 5px;
+                font-size: map-get($font-sizes, delta);
+                line-height: 1;
+            }
+        }
+    }
 }
