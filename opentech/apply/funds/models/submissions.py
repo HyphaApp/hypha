@@ -34,6 +34,7 @@ from wagtail.contrib.forms.models import AbstractFormSubmission
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.categories.models import MetaTerm
 from opentech.apply.determinations.models import Determination
+from opentech.apply.flags.models import STAFF, USER, Flag
 from opentech.apply.review.models import ReviewOpinion
 from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
 from opentech.apply.stream_forms.files import StreamFieldDataEncoder
@@ -124,6 +125,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def reviewed_by(self, user):
         return self.filter(reviews__author__reviewer=user)
+
+    def flagged_by(self, user):
+        return self.filter(flags__user=user, flags__type=USER)
+
+    def flagged_staff(self):
+        return self.filter(flags__type=STAFF)
 
     def partner_for(self, user):
         return self.filter(partners=user)
@@ -398,6 +405,12 @@ class ApplicationSubmission(
         related_name='submissions',
         blank=True,
     )
+    flags = GenericRelation(
+        Flag,
+        content_type_field='target_content_type',
+        object_id_field='target_object_id',
+        related_query_name='submission',
+    )
     activities = GenericRelation(
         'activity.Activity',
         content_type_field='source_content_type',
@@ -647,6 +660,13 @@ class ApplicationSubmission(
 
     def reviewed_by(self, user):
         return self.assigned.reviewed().filter(reviewer=user).exists()
+
+    def flagged_by(self, user):
+        return self.flags.filter(user=user, type="user").exists()
+
+    @property
+    def flagged_staff(self):
+        return self.flags.filter(type=STAFF).exists()
 
     def has_permission_to_review(self, user):
         if user.is_apply_staff:

@@ -97,6 +97,9 @@
                 {% block sidebar_top %}
                 {% endblock %}
 
+                {% block flags %}
+                {% endblock %}
+
                 {% if object.project and PROJECTS_ENABLED %}
                     {% include 'funds/includes/project_block.html' %}
                 {% endif %}
@@ -105,12 +108,11 @@
                     {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
                 {% endblock %}
 
-                {% if request.user.is_apply_staff %}
-                    {% block screening_status %}
-                    {% endblock %}
-                    {% block meta_terms %}
-                    {% endblock %}
-                {% endif %}
+                {% block screening_status %}
+                {% endblock %}
+
+                {% block meta_terms %}
+                {% endblock %}
 
                 {% block reviews %}
                 {% endblock %}
@@ -166,4 +168,5 @@
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/submission-text-cleanup.js' %}"></script>
     <script src="{% static 'js/apply/edit-comment.js' %}"></script>
+    <script src="{% static 'js/apply/flag.js' %}"></script>
 {% endblock %}

@@ -15,7 +15,9 @@ from .views import (
     SubmissionSealedView,
     SubmissionDeleteView,
     SubmissionPrivateMediaView,
-    SubmissionDetailSimplifiedView
+    SubmissionDetailSimplifiedView,
+    SubmissionUserFlaggedView,
+    SubmissionStaffFlaggedView
 )
 from .api_views import (
     CommentEdit,
@@ -40,6 +42,10 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    path('flagged/', include([
+        path('', SubmissionUserFlaggedView.as_view(), name="flagged"),
+        path('staff/', SubmissionStaffFlaggedView.as_view(), name="staff_flagged"),
+    ])),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
@@ -56,6 +62,7 @@ submission_urls = ([
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
     path('', include('opentech.apply.determinations.urls', namespace="determinations")),
+    path('', include('opentech.apply.flags.urls', namespace="flags")),
     path('<slug:status>/', SubmissionsByStatus.as_view(), name='status'),
 ], 'submissions')
 
