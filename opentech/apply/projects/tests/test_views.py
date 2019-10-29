@@ -33,7 +33,8 @@ from .factories import (
     PacketFileFactory,
     PaymentReceiptFactory,
     PaymentRequestFactory,
-    ProjectFactory
+    ProjectFactory,
+    ReportFactory,
 )
 
 
@@ -1233,4 +1234,72 @@ class TestProjectOverviewView(TestCase):
         url = reverse('apply:projects:overview')
 
         response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 403)
+
+
+class TestStaffSubmitReport(BaseViewTestCase):
+    base_view_name = 'edit'
+    url_name = 'funds:projects:reports:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_get_page(self):
+        report = ReportFactory()
+        response = self.get_page(report)
+        self.assertContains(response, report.project.title)
+
+    def test_submit_report(self):
+        report = ReportFactory()
+        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertEqual(report.versions.first().content, 'Some text')
+
+    def test_change_privacy(self):
+        report = ReportFactory()
+        response = self.post_page(report, {'content': 'Some text', 'public': False})
+        report.refresh_from_db()
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertFalse(report.public)
+
+
+class TestApplicantSubmitReport(BaseViewTestCase):
+    base_view_name = 'edit'
+    url_name = 'funds:projects:reports:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_get_own_report(self):
+        report = ReportFactory(project__user=self.user)
+        response = self.get_page(report)
+        self.assertContains(response, report.project.title)
+
+    def test_cant_get_other_report(self):
+        report = ReportFactory()
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 403)
+
+    def test_submit_own_report(self):
+        report = ReportFactory(project__user=self.user)
+        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertEqual(report.versions.first().content, 'Some text')
+
+    def test_change_privacy_own(self):
+        report = ReportFactory(project__user=self.user)
+        response = self.post_page(report, {'content': 'Some text', 'public': False})
+        report.refresh_from_db()
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertFalse(report.public)
+
+    def test_cant_submit_other_report(self):
+        report = ReportFactory()
+        response = self.post_page(report, {'content': 'Some text', 'public': True})
         self.assertEqual(response.status_code, 403)

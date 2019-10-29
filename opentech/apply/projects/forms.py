@@ -5,11 +5,13 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 
 from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
 from opentech.apply.stream_forms.fields import MultiFileField
 from opentech.apply.users.groups import STAFF_GROUP_NAME
+from opentech.apply.utils.fields import RichTextField
 
 from .models import (
     CHANGES_REQUESTED,
@@ -24,7 +26,9 @@ from .models import (
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
-    Project
+    Project,
+    Report,
+    ReportVersion,
 )
 
 
@@ -369,3 +373,20 @@ class UpdateProjectLeadForm(forms.ModelForm):
         lead_field.queryset = (lead_field.queryset.exclude(pk=self.instance.lead_id)
                                                   .filter(qwargs)
                                                   .distinct())
+
+
+class ReportEditForm(forms.ModelForm):
+    content = RichTextField(required=True)
+
+    class Meta:
+        model = Report
+        fields = ['public']
+
+    def save(self, commit=True):
+        instance = super().save(commit)
+        ReportVersion.objects.create(
+            report=instance,
+            content=self.cleaned_data['content'],
+            submitted=timezone.now(),
+        )
+        return instance
