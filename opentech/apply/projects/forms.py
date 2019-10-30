@@ -386,12 +386,12 @@ class ReportEditForm(forms.ModelForm):
 
     def save(self, commit=True):
         version = ReportVersion.objects.create(
-            report=instance,
+            report=self.instance,
             content=self.cleaned_data['content'],
             submitted=timezone.now(),
         )
 
-        instance.current = version
+        self.instance.current = version
 
         instance = super().save(commit)
 

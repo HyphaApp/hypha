@@ -556,9 +556,10 @@ class ReportConfig(models.Model):
     frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
 
     def past_due_reports(self):
-        return self.project.reports.exclude(
-            current__exists=False,
-        )
+        return self.project.reports.filter(
+            current__isnull=True,
+            end_date__lt=timezone.now().date(),
+        ).order_by('end_date')
 
     def current_due_report(self):
         # Project not started - no reporting required
@@ -568,7 +569,7 @@ class ReportConfig(models.Model):
         today = timezone.now().date()
 
         last_report = self.project.reports.filter(
-            Q(end_date__lt=today) | Q(current__exists=True)
+            Q(end_date__lt=today) | Q(current__isnull=False)
         ).first()
 
         schedule_date = self.schedule_start or self.project.start_date
@@ -607,6 +608,11 @@ class ReportConfig(models.Model):
         return next_date
 
 
+class ReportQueryset(models.QuerySet):
+    def done(self):
+        return self.filter(current__isnull=False)
+
+
 class Report(models.Model):
     public = models.BooleanField(default=True)
     end_date = models.DateField()
@@ -618,6 +624,8 @@ class Report(models.Model):
         null=True,
     )
 
+    objects = ReportQueryset.as_manager()
+
     class Meta:
         ordering = ('-end_date',)
 
@@ -626,16 +634,27 @@ class Report(models.Model):
         return timezone.now().date() > self.end_date
 
     @property
+    def is_very_late(self):
+        more_than_one_report_late = self.project.reports.filter(end_date__gt=self.end_date).count() >= 2
+        not_submitted = not self.current
+        return not_submitted and more_than_one_report_late
+
+    @property
+    def can_submit(self):
+        return self.start_date <= timezone.now().date()
+
+    @property
     def submitted_date(self):
-        return self.current.submitted.date()
+        if self.current:
+            return self.current.submitted.date()
 
     @cached_property
     def start_date(self):
-        last_report = self.project.reports.order_by('submitted').filter(end_date__lt=self.end_date).first()
+        last_report = self.project.reports.order_by('current__submitted').filter(end_date__lt=self.end_date).first()
         if last_report:
-            return last_report.end_date.date() + relativedelta(days=1)
+            return last_report.end_date + relativedelta(days=1)
 
-        return self.project.start_date.date()
+        return self.project.start_date
 
 
 class ReportVersion(models.Model):

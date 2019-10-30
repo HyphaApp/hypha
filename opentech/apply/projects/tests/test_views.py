@@ -1,10 +1,12 @@
 from decimal import Decimal
 from io import BytesIO
+from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import LabSubmissionFactory
 from opentech.apply.users.tests.factories import (
@@ -1255,8 +1257,22 @@ class TestStaffSubmitReport(BaseViewTestCase):
     def test_submit_report(self):
         report = ReportFactory()
         response = self.post_page(report, {'content': 'Some text', 'public': True})
+        report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
         self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first(), report.current)
+
+    def test_can_submit_future_report(self):
+        submitted_report = ReportFactory(
+            end_date=timezone.now() + relativedelta(days=1),
+            submitted=True,
+        )
+        future_report = ReportFactory(
+            end_date=timezone.now() + relativedelta(days=3),
+            project=submitted_report.project,
+        )
+        response = self.post_page(future_report, {'content': 'Some text', 'public': True})
+        self.assertEqual(response.status_code, 404)
 
     def test_change_privacy(self):
         report = ReportFactory()
@@ -1289,8 +1305,10 @@ class TestApplicantSubmitReport(BaseViewTestCase):
     def test_submit_own_report(self):
         report = ReportFactory(project__user=self.user)
         response = self.post_page(report, {'content': 'Some text', 'public': True})
+        report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
         self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first(), report.current)
 
     def test_change_privacy_own(self):
         report = ReportFactory(project__user=self.user)
