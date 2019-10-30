@@ -134,7 +134,7 @@ class AdapterBase:
             event.source.id: event
             for event in events
         }
-        for recipient in self.batch_recipients(message_type, sources, **kwargs):
+        for recipient in self.batch_recipients(message_type, sources, user=user, **kwargs):
             recipients = recipient['recipients']
             sources = recipient['sources']
             events = [events_by_source[source.id] for source in sources]
