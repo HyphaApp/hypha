@@ -1,0 +1,61 @@
+<div id="payment-requests" class="payment-block">
+    <div class="payment-block__header">
+        <p class="payment-block__title">Reporting</p>
+    </div>
+    <div>
+    {% for report in object.report_config.past_due_reports %}
+        <p>
+            A report is due for the period {{ report.start_date }} to {{ report.end_date }}
+            <a
+                class="payment-block__button button button--primary"
+                href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+            >
+                Add Report
+            </a>
+        </p>
+    {% endfor %}
+    {% with next_report=object.report_config.current_due_report %}
+        <p>
+            The current reporting period is {{ next_report.start_date }} to {{ next_report.end_date }}
+            <a
+                class="payment-block__button button button--primary"
+                href="{% url "apply:projects:reports:edit" pk=next_report.pk %}"
+            >
+                Add Report
+            </a>
+        </p>
+    {% endwith %}
+
+    </div>
+    <table class="payment-block__table">
+        <thead>
+            <tr>
+                <th class="payment-block__table-date">Period End</th>
+                <th class="payment-block__table-date">Submitted</th>
+                <th class="payment-block__table-date">Privacy</th>
+                <th class="payment-block__table-update"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in object.reports.all %}
+            <tr>
+                <td>
+                    <span class="payment-block__mobile-label">Period End: </span>{{ report.end_date }}
+                </td>
+                <td>
+                    <span class="payment-block__mobile-label">Submitted: </span>{{ report.submitted_date }}
+                </td>
+                <td>
+                    <span class="payment-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
+                </td>
+                <td>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No reports submitted</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
