@@ -141,7 +141,7 @@ class AdapterBase:
             self.process_send(message_type, recipients, events, request, user, sources=sources, source=None, related=related, **kwargs)
 
     def process(self, message_type, event, request, user, source, related=None, **kwargs):
-        recipients = self.recipients(message_type, source=source, related=related, **kwargs)
+        recipients = self.recipients(message_type, source=source, related=related, user=user, **kwargs)
         self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
     def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
