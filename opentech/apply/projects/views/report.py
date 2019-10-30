@@ -61,24 +61,21 @@ class ReportPrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        payment_pk = self.kwargs['pk']
-        self.payment_request = get_object_or_404(PaymentRequest, pk=payment_pk)
+        report_pk = self.kwargs['pk']
+        self.report = get_object_or_404(Report, pk=report_pk)
 
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
         file_pk = kwargs.get('file_pk')
-        if not file_pk:
-            return self.payment_request.invoice
-
-        receipt = get_object_or_404(self.payment_request.receipts, pk=file_pk)
-        return receipt.file
+        document = get_object_or_404(self.report.files, pk=file_pk)
+        return document.document
 
     def test_func(self):
         if self.request.user.is_apply_staff:
             return True
 
-        if self.request.user == self.payment_request.project.user:
+        if self.request.user == self.report.project.user:
             return True
 
         return False
