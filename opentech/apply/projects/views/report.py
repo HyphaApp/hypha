@@ -6,6 +6,7 @@ from django.views.generic import (
     UpdateView
 )
 
+from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateMediaView
 
 from ..models import Report, ReportConfig
@@ -40,6 +41,19 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
 
     def get_success_url(self):
         return self.object.project.get_absolute_url()
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.SUBMIT_REPORT,
+            request=self.request,
+            user=self.request.user,
+            source=self.object.project,
+            related=self.object,
+        )
+
+        return response
 
 
 @method_decorator(login_required, name='dispatch')

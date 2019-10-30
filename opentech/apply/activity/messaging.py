@@ -63,6 +63,7 @@ neat_related = {
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.SUBMIT_REPORT: 'report',
 }
 
 
@@ -231,6 +232,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPROVE_CONTRACT: 'Approved contract',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
         MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
+        MESSAGES.SUBMIT_REPORT: 'Submitted a report',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -404,6 +406,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
+        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.'
     }
 
     def __init__(self):
@@ -630,8 +633,9 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
-        MESSAGES.UPDATE_PAYMENT_REQUEST: 'handle_update_payment_request',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: 'messages/email/payment_request_updated.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
+        MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
     }
 
     def get_subject(self, message_type, source):
@@ -673,15 +677,6 @@ class EmailAdapter(AdapterBase):
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
-    def handle_update_payment_request(self, user, **kwargs):
-        if user.is_applicant:
-            return
-
-        return self.render_message(
-            'messages/email/payment_request_updated.html',
-            **kwargs,
-        )
-
     def handle_payment_status_updated(self, related, **kwargs):
         return self.render_message(
             'messages/email/payment_request_status_updated.html',
@@ -707,7 +702,7 @@ class EmailAdapter(AdapterBase):
         if not comment.priviledged and not comment.user == source.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
-    def recipients(self, message_type, source, **kwargs):
+    def recipients(self, message_type, source, user, **kwargs):
         if is_ready_for_review(message_type):
             return self.reviewers(source)
 
@@ -729,6 +724,11 @@ class EmailAdapter(AdapterBase):
                 return []
 
             return [project_settings.compliance_email]
+
+        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST}:
+            # Don't tell the user if they did these activities
+            if user.is_applicant:
+                return []
 
         return [source.user.email]
 
