@@ -1,16 +1,16 @@
-import factory
 import wagtail_factories
 
 from .models import ApplyHomePage
 
 
+class ApplySiteFactory(wagtail_factories.SiteFactory):
+    class Meta:
+        django_get_or_create = ('hostname',)
+
+
 class ApplyHomePageFactory(wagtail_factories.PageFactory):
-    site = factory.RelatedFactory(
-        wagtail_factories.SiteFactory,
-        'root_page',
-        is_default_site=True,
-    )
-    parent = None
+    title = "Apply Home"
+    slug = 'apply'
 
     class Meta:
         model = ApplyHomePage
