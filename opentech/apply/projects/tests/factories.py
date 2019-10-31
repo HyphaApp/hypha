@@ -160,9 +160,22 @@ class ReportVersionFactory(factory.DjangoModelFactory):
     report = factory.SubFactory("opentech.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
     content = factory.Faker('paragraph')
+    draft = True
 
     class Meta:
         model = ReportVersion
+
+    @factory.post_generation
+    def relate(obj, create, should_relate, **kwargs):
+        if not create:
+            return
+
+        if should_relate:
+            if obj.draft:
+                obj.report.draft = obj
+            else:
+                obj.report.current = obj
+            obj.report.save()
 
 
 class ReportFactory(factory.DjangoModelFactory):
@@ -177,7 +190,10 @@ class ReportFactory(factory.DjangoModelFactory):
             end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
         )
         submitted = factory.Trait(
-            current=factory.RelatedFactory(ReportVersionFactory, 'report')
+            version=factory.RelatedFactory(ReportVersionFactory, 'report', draft=False, relate=True)
+        )
+        is_draft = factory.Trait(
+            version=factory.RelatedFactory(ReportVersionFactory, 'report', relate=True),
         )
 
 

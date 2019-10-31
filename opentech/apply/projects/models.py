@@ -623,6 +623,12 @@ class Report(models.Model):
         related_name='live_for_report',
         null=True,
     )
+    draft = models.OneToOneField(
+        "ReportVersion",
+        on_delete=models.CASCADE,
+        related_name='draft_for_report',
+        null=True,
+    )
 
     objects = ReportQueryset.as_manager()
 
@@ -661,6 +667,13 @@ class ReportVersion(models.Model):
     report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
     submitted = models.DateTimeField()
     content = models.TextField()
+    draft = models.BooleanField()
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="reports",
+        null=True,
+    )
 
 
 class ReportPrivateFiles(models.Model):

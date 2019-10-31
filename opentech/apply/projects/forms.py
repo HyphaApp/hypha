@@ -384,14 +384,26 @@ class ReportEditForm(forms.ModelForm):
         model = Report
         fields = ['public']
 
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
     def save(self, commit=True):
+        is_draft = 'save' in self.data
+
         version = ReportVersion.objects.create(
             report=self.instance,
             content=self.cleaned_data['content'],
             submitted=timezone.now(),
+            draft=is_draft,
+            author=self.user,
         )
 
-        self.instance.current = version
+        if is_draft:
+            self.instance.draft = version
+        else:
+            self.instance.current = version
+            self.instance.draft = None
 
         instance = super().save(commit)
 
