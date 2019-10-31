@@ -20,13 +20,13 @@
     {% with next_report=object.report_config.current_due_report %}
         <p>
             The
-            {% if report.can_submit %}
+            {% if next_report.can_submit %}
             current
             {% else %}
             next
             {% endif %}
             reporting period is {{ next_report.start_date }} to {{ next_report.end_date }}
-            {% if report.can_submit %}
+            {% if next_report.can_submit %}
             <a
                 class="payment-block__button button button--primary"
                 href="{% url "apply:projects:reports:edit" pk=next_report.pk %}"
