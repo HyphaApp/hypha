@@ -56,7 +56,7 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
         if current:
             return {
                 'content': current.content,
-                'files': current.files.all(),
+                'file_list': current.files.all(),
             }
 
         return {}

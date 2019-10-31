@@ -54,6 +54,10 @@ def receipt_path(instance, filename):
     return f'projects/{instance.payment_request.project_id}/payment_receipts/{filename}'
 
 
+def report_path(instance, filename):
+    return f'reports/{instance.report.report_id}/version/{instance.report_id}/{filename}'
+
+
 class Approval(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="approvals")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="approvals")
@@ -678,4 +682,11 @@ class ReportVersion(models.Model):
 
 class ReportPrivateFiles(models.Model):
     report = models.ForeignKey("ReportVersion", on_delete=models.CASCADE, related_name="files")
-    document = models.FileField(upload_to=document_path, storage=PrivateStorage())
+    document = models.FileField(upload_to=report_path, storage=PrivateStorage())
+
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)
+
+    def __str__(self):
+        return self.filename
