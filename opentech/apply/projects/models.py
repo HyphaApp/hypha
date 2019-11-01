@@ -601,6 +601,7 @@ class ReportConfig(models.Model):
         report, _ = self.project.reports.update_or_create(
             project=self.project,
             end_date__gte=today,
+            current__isnull=True,
             defaults={'end_date': next_due_date}
         )
         return report
@@ -660,7 +661,7 @@ class Report(models.Model):
 
     @cached_property
     def start_date(self):
-        last_report = self.project.reports.order_by('current__submitted').filter(end_date__lt=self.end_date).first()
+        last_report = self.project.reports.filter(end_date__lt=self.end_date).first()
         if last_report:
             return last_report.end_date + relativedelta(days=1)
 
