@@ -46,7 +46,7 @@ class ReportDetailView(ReportAccessMixin, DetailView):
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
-        if not report.current:
+        if not report.current and not report.skipped:
             raise Http404
         return super().dispatch(*args, **kwargs)
 
@@ -151,6 +151,14 @@ class ReportSkipView(SingleObjectMixin, View):
 
     def post(self, *args, **kwargs):
         report = self.get_object()
-        report.skipped = not report.skipped
-        report.save()
+        if not report.current:
+            report.skipped = not report.skipped
+            report.save()
+            messenger(
+                MESSAGES.SKIPPED_REPORT,
+                request=self.request,
+                user=self.request.user,
+                source=report.project,
+                related=report,
+            )
         return redirect(report.project.get_absolute_url())

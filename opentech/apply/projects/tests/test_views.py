@@ -1424,6 +1424,11 @@ class TestStaffReportDetail(BaseViewTestCase):
         response = self.get_page(report)
         self.assertEqual(response.status_code, 200)
 
+    def test_can_access_skipped_report(self):
+        report = ReportFactory(skipped=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
     def test_cant_access_draft_report(self):
         report = ReportFactory(is_draft=True)
         response = self.get_page(report)
