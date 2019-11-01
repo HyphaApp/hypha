@@ -563,7 +563,7 @@ class ApplicationSubmission(
                 self.live_revision = revision
 
             self.draft_revision = revision
-            self.save()
+            self.save(skip_custom=True)
             return revision
         return None
 
