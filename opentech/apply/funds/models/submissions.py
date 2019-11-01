@@ -545,9 +545,11 @@ class ApplicationSubmission(
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
         # Will return True/False if the revision was created or not
-        self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
         current_data = current_submission.form_data
+        self.clean_submission(current_data)
+        self.search_data = ' '.join(self.prepare_search_values())
+
         if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
@@ -567,10 +569,10 @@ class ApplicationSubmission(
             return revision
         return None
 
-    def clean_submission(self):
+    def clean_submission(self, current_data=None):
         self.process_form_data()
         self.ensure_user_has_account()
-        self.process_file_data(self.form_data)
+        self.process_file_data(self.form_data, current_data)
 
     def process_form_data(self):
         for field_name, field_id in self.named_blocks.items():
