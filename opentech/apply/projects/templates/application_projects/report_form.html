@@ -1,0 +1,39 @@
+{% extends "base-apply.html" %}
+{% load static %}
+
+{% block title %}Report | {{ object.project.title }}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
+            Project
+        </a>
+        <h2 class="heading heading--no-margin">Report for the period ending {{ report.end_date }}</h2>
+        <h5 class="heading heading--no-margin">{{ object.project.title }}</h5>
+    </div>
+</div>
+
+{% include "forms/includes/form_errors.html" with form=form %}
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper--sidebar--inner">
+        <form class="form" action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+            <input class="button button--submit button--top-space button--primary" type="submit" name="save" value="Submit" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/apply/list-input-files.js' %}"></script>
+{% endblock %}

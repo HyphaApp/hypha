@@ -1,6 +1,8 @@
 from decimal import Decimal
 
+from dateutil.relativedelta import relativedelta
 from django.test import TestCase
+from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.users.tests.factories import ApplicantFactory, StaffFactory
@@ -13,12 +15,16 @@ from ..models import (
     UNDER_REVIEW,
     Project,
     PaymentRequest,
+    Report,
+    ReportConfig,
 )
 from .factories import (
     DocumentCategoryFactory,
     PacketFileFactory,
     PaymentRequestFactory,
-    ProjectFactory
+    ProjectFactory,
+    ReportFactory,
+    ReportConfigFactory,
 )
 
 
@@ -168,3 +174,72 @@ class TestPaymentRequestsQueryset(TestCase):
     def test_get_totals_no_value(self):
         self.assertEqual(PaymentRequest.objects.paid_value(), 0)
         self.assertEqual(PaymentRequest.objects.unpaid_value(), 0)
+
+
+class TestReportConfigCalculations(TestCase):
+
+    @property
+    def today(self):
+        return timezone.now().date()
+
+    def test_next_date_month_from_now(self):
+        config = ReportConfigFactory()
+        delta = relativedelta(months=1)
+
+        next_date = config.next_date(self.today)
+
+        self.assertEqual(next_date, self.today + delta)
+
+    def test_next_date_week_from_now(self):
+        config = ReportConfigFactory(frequency=ReportConfig.WEEK)
+        delta = relativedelta(weeks=1)
+
+        next_date = config.next_date(self.today)
+
+        self.assertEqual(next_date, self.today + delta)
+
+    def test_months_always_relative(self):
+        config = ReportConfigFactory(occurrence=2)
+        last_report = self.today - relativedelta(day=25, months=1)
+        next_date = config.next_date(last_report)
+
+        self.assertEqual(next_date, last_report + relativedelta(months=2))
+
+    def test_current_due_report_gets_active_report(self):
+        config = ReportConfigFactory()
+        report = ReportFactory(project=config.project)
+        self.assertEqual(config.current_due_report(), report)
+
+    def test_no_report_creates_report(self):
+        config = ReportConfigFactory()
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 1)
+        self.assertEqual(report.end_date, self.today + relativedelta(months=1, days=-1))
+
+    def test_no_report_creates_report_not_in_past(self):
+        config = ReportConfigFactory(schedule_start=self.today - relativedelta(months=3))
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 1)
+        self.assertEqual(report.end_date, self.today)
+
+    def test_no_report_schedule_in_future_creates_report(self):
+        config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=2))
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 1)
+        self.assertEqual(report.end_date, self.today + relativedelta(days=2))
+
+    def test_past_due_report_creates_report(self):
+        config = ReportConfigFactory(schedule_start=self.today - relativedelta(days=2))
+        ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
+
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 2)
+        self.assertEqual(report.end_date, self.today + relativedelta(months=1, days=-1))
+
+    def test_past_due_report_future_schedule_creates_report(self):
+        config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=3))
+        ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
+
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 2)
+        self.assertEqual(report.end_date, self.today + relativedelta(days=3))

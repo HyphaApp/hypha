@@ -9,6 +9,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
@@ -66,6 +67,8 @@ from ..tables import (
     PaymentRequestsListTable,
     ProjectsListTable
 )
+
+from .report import ReportingMixin
 
 
 # APPROVAL VIEWS
@@ -319,6 +322,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         with transaction.atomic():
             form.instance.approver = self.request.user
+            form.instance.approved_at = timezone.now()
             form.instance.project = self.project
             response = super().form_valid(form)
 
@@ -397,7 +401,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
 
 # PROJECT VIEW
-class BaseProjectDetailView(DetailView):
+class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['statuses'] = PROJECT_STATUS_CHOICES
