@@ -1,0 +1,19 @@
+<p>
+    {% if current %}
+    The {% if report.can_submit %}current{% else %}next{% endif %} reporting
+    {% else %}
+    A report is due for the
+    {% endif %}
+    period is {{ report.start_date }} to {{ report.end_date }}
+    {% if report.is_very_late %}
+    ( ! )
+    {% endif %}
+    {% if report.can_submit %}
+    <a
+        class="payment-block__button button button--primary"
+        href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+    >
+        {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
+    </a>
+    {% endif %}
+</p>

@@ -40,9 +40,32 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
     model = Report
 
     def dispatch(self, *args, **kwargs):
-        if not self.get_object().can_submit:
+        report = self.get_object()
+        if not report.can_submit:
+            raise Http404
+        if report.current and self.request.user.is_applicant:
             raise Http404
         return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        if self.object.draft:
+            current = self.object.draft
+        else:
+            current = self.object.current
+
+        if current:
+            return {
+                'content': current.content,
+                'file_list': current.files.all(),
+            }
+
+        return {}
+
+    def get_form_kwargs(self):
+        return {
+            'user': self.request.user,
+            **super().get_form_kwargs(),
+        }
 
     def get_success_url(self):
         return self.object.project.get_absolute_url()
@@ -50,13 +73,14 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        messenger(
-            MESSAGES.SUBMIT_REPORT,
-            request=self.request,
-            user=self.request.user,
-            source=self.object.project,
-            related=self.object,
-        )
+        if not form.instance.draft:
+            messenger(
+                MESSAGES.SUBMIT_REPORT,
+                request=self.request,
+                user=self.request.user,
+                source=self.object.project,
+                related=self.object,
+            )
 
         return response
 

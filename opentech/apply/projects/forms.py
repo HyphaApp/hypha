@@ -378,28 +378,59 @@ class UpdateProjectLeadForm(forms.ModelForm):
 
 class ReportEditForm(forms.ModelForm):
     content = RichTextField(required=True)
-    files = MultiFileField(required=False)
+    file_list = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
+        queryset=ReportPrivateFiles.objects.all(),
+        required=False,
+        label='Files'
+    )
+    files = MultiFileField(required=False, label='')
 
     class Meta:
         model = Report
         fields = ['public']
 
+    def __init__(self, *args, user=None, initial={}, **kwargs):
+        self.report_files = initial.pop(
+            'file_list',
+            ReportPrivateFiles.objects.none(),
+        )
+        super().__init__(*args, initial=initial, **kwargs)
+        self.fields['file_list'].queryset = self.report_files
+        self.user = user
+
+    @transaction.atomic
     def save(self, commit=True):
+        is_draft = 'save' in self.data
+
         version = ReportVersion.objects.create(
             report=self.instance,
             content=self.cleaned_data['content'],
             submitted=timezone.now(),
+            draft=is_draft,
+            author=self.user,
         )
 
-        self.instance.current = version
+        if is_draft:
+            self.instance.draft = version
+        else:
+            self.instance.current = version
+            self.instance.draft = None
 
         instance = super().save(commit)
 
-        files = self.cleaned_data['files']
-        if files:
+        removed_files = self.cleaned_data['file_list']
+        ReportPrivateFiles.objects.bulk_create(
+            ReportPrivateFiles(report=version, document=file.document)
+            for file in self.report_files
+            if file not in removed_files
+        )
+
+        added_files = self.cleaned_data['files']
+        if added_files:
             ReportPrivateFiles.objects.bulk_create(
-                ReportPrivateFiles(report=version, file=file)
-                for file in files
+                ReportPrivateFiles(report=version, document=file)
+                for file in added_files
             )
 
         return instance
