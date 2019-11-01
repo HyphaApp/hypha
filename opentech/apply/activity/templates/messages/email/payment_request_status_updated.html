@@ -1,7 +1,7 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% block content %}
-An OTF staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.
+An {{ ORG_SHORT_NAME }} staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.
 It is now {{ payment_request.get_status_display }}.
 
 {% if has_changes_requested %}

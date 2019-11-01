@@ -3,6 +3,7 @@ import json
 
 import factory
 import pytz
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -14,6 +15,8 @@ from opentech.apply.projects.models import (
     PaymentRequest,
     Project,
     ProjectApprovalForm,
+    Report,
+    ReportConfig,
 )
 from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
@@ -98,6 +101,8 @@ class ProjectFactory(factory.DjangoModelFactory):
 class ContractFactory(factory.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)
     project = factory.SubFactory(ProjectFactory)
+    approved_at = factory.LazyFunction(timezone.now)
+    is_signed = True
 
     file = factory.django.FileField()
 
@@ -137,3 +142,28 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PaymentReceipt
+
+
+class ReportConfigFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory("opentech.apply.projects.tests.factories.ApprovedProjectFactory")
+
+    class Meta:
+        model = ReportConfig
+        django_get_or_create = ('project',)
+
+
+class ReportFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory("opentech.apply.projects.tests.factories.ApprovedProjectFactory")
+    end_date = factory.LazyFunction(timezone.now)
+
+    class Meta:
+        model = Report
+
+    class Params:
+        past_due = factory.Trait(
+            end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
+        )
+
+
+class ApprovedProjectFactory(ProjectFactory):
+    contract = factory.RelatedFactory(ContractFactory, 'project')
