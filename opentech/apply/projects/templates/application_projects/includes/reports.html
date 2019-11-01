@@ -27,14 +27,20 @@
                     <span class="payment-block__mobile-label">Period End: </span>{{ report.end_date }}
                 </td>
                 <td>
-                    <span class="payment-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"-" }}
+                    <span class="payment-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
                 </td>
                 <td>
                     <span class="payment-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
                 </td>
                 <td>
                     {% if request.user.is_apply_staff %}
-                        <a href="{% url "apply:projects:reports:edit" pk=report.pk %}">edit</a>
+                        <a href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
+                        {% if report.skipped %}
+                            <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" value="Unskip" class="btn"></input>
+                            </form>
+                        {% endif %}
                     {% endif %}
                     <a href="{% url "apply:projects:reports:detail" pk=report.pk %}">view</a>
                 </td>

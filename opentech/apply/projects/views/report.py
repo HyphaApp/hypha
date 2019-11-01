@@ -1,16 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import F
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.generic import (
     DetailView,
     UpdateView,
 )
+from django.views.generic.detail import SingleObjectMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateMediaView
+from opentech.apply.users.decorators import staff_required
 
 from ..models import Report, ReportConfig, ReportPrivateFiles
 from ..forms import ReportEditForm
@@ -139,3 +143,14 @@ class ReportPrivateMedia(UserPassesTestMixin, PrivateMediaView):
             return True
 
         return False
+
+
+@method_decorator(staff_required, name='dispatch')
+class ReportSkipView(SingleObjectMixin, View):
+    model = Report
+
+    def post(self, *args, **kwargs):
+        report = self.get_object()
+        report.skipped = not report.skipped
+        report.save()
+        return redirect(report.project.get_absolute_url())
