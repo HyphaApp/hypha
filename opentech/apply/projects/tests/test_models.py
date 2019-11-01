@@ -256,7 +256,7 @@ class TestReportConfigCalculations(TestCase):
 
     def test_submitted_report_unaffected(self):
         config = ReportConfigFactory()
-        report = ReportFactory(submitted=True, project=config.project, end_date=self.today + relativedelta(days=1))
+        report = ReportFactory(is_submitted=True, project=config.project, end_date=self.today + relativedelta(days=1))
         next_report = config.current_due_report()
         self.assertNotEqual(report, next_report)
 
@@ -295,5 +295,5 @@ class TestReport(TestCase):
     def test_start_date_with_submitted(self):
         yesterday = self.from_today(-1)
         ReportFactory(end_date=yesterday)
-        report = ReportFactory(end_date=self.from_today(1), submitted=True)
+        report = ReportFactory(end_date=self.from_today(1), is_submitted=True)
         self.assertEqual(report.start_date, self.today)

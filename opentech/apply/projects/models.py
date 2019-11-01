@@ -622,6 +622,7 @@ class Report(models.Model):
     public = models.BooleanField(default=True)
     end_date = models.DateField()
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
+    submitted = models.DateTimeField(null=True)
     current = models.OneToOneField(
         "ReportVersion",
         on_delete=models.CASCADE,
@@ -658,8 +659,8 @@ class Report(models.Model):
 
     @property
     def submitted_date(self):
-        if self.current:
-            return self.current.submitted.date()
+        if self.submitted:
+            return self.submitted.date()
 
     @cached_property
     def start_date(self):

@@ -414,6 +414,10 @@ class ReportEditForm(forms.ModelForm):
         if is_draft:
             self.instance.draft = version
         else:
+            # If this is the first submission of the report we track that as the
+            # submitted date of the report
+            if not self.instance.submitted:
+                self.instance.submitted = version.submitted
             self.instance.current = version
             self.instance.draft = None
 
