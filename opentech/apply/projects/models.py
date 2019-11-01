@@ -641,6 +641,9 @@ class Report(models.Model):
     class Meta:
         ordering = ('-end_date',)
 
+    def get_absolute_url(self):
+        return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
+
     @property
     def past_due(self):
         return timezone.now().date() > self.end_date
@@ -696,4 +699,4 @@ class ReportPrivateFiles(models.Model):
         return self.filename
 
     def get_absolute_url(self):
-        return reverse('apply:projects:reports:document', kwargs={'pk': self.report.report_pk, 'files_pk': self.pk})
+        return reverse('apply:projects:reports:document', kwargs={'pk': self.report.report_id, 'file_pk': self.pk})
