@@ -4,7 +4,8 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from django.views.generic import (
-    UpdateView
+    DetailView,
+    UpdateView,
 )
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
@@ -32,6 +33,17 @@ class ReportAccessMixin:
             raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class ReportDetailView(ReportAccessMixin, DetailView):
+    model = Report
+
+    def dispatch(self, *args, **kwargs):
+        report = self.get_object()
+        if not report.current:
+            raise Http404
+        return super().dispatch(*args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')

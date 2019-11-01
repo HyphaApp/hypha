@@ -1,14 +1,14 @@
 {% extends "base-apply.html" %}
 {% load static %}
 
-{% block title %}Report | {{ object.project.title }}{% endblock %}
+{% block title %}Edit Report | {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
             Project
         </a>
-        <h2 class="heading heading--no-margin">Report for the period ending {{ report.end_date }}</h2>
+        <h2 class="heading heading--no-margin">Report for the period {{ report.start_date }} to {{ report.end_date }}</h2>
         <h5 class="heading heading--no-margin">{{ object.project.title }}</h5>
     </div>
 </div>

@@ -36,6 +36,7 @@
                     {% if request.user.is_apply_staff %}
                         <a href="{% url "apply:projects:reports:edit" pk=report.pk %}">edit</a>
                     {% endif %}
+                    <a href="{% url "apply:projects:reports:detail" pk=report.pk %}">view</a>
                 </td>
             </tr>
             {% empty %}

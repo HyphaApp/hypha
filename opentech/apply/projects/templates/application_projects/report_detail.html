@@ -1,0 +1,40 @@
+{% extends "base-apply.html" %}
+{% load static bleach_tags %}
+
+{% block title %}Report | {{ object.project.title }}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
+            Project
+        </a>
+        <h2 class="heading heading--no-margin">Report for the period {{ report.start_date }} to {{ report.end_date }}</h2>
+        <h5 class="heading heading--no-margin">{{ object.project.title }}</h5>
+    </div>
+</div>
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper--sidebar--inner">
+        <h3>
+            {% if object.public %}
+                Public
+            {% else %}
+                Private
+            {% endif %}
+        </h3>
+        {{ object.current.content|bleach|safe }}
+        {% for file in object.current.files.all %}
+            {% if forloop.first %}
+                <h4>Files</h4>
+                <ul>
+            {% endif %}
+
+            <li><a href="{{ file.document.url }}">{{ file.filename }}</a></li>
+
+            {% if forloop.last %}
+                </ul>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
