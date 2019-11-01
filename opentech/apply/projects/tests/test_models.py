@@ -177,7 +177,6 @@ class TestPaymentRequestsQueryset(TestCase):
 
 
 class TestReportConfigCalculations(TestCase):
-
     @property
     def today(self):
         return timezone.now().date()
@@ -254,3 +253,47 @@ class TestReportConfigCalculations(TestCase):
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 2)
         self.assertEqual(report.end_date, self.today + relativedelta(days=3))
+
+    def test_submitted_report_unaffected(self):
+        config = ReportConfigFactory()
+        report = ReportFactory(submitted=True, project=config.project, end_date=self.today + relativedelta(days=1))
+        next_report = config.current_due_report()
+        self.assertNotEqual(report, next_report)
+
+
+class TestReport(TestCase):
+    @property
+    def today(self):
+        return timezone.now().date()
+
+    def from_today(self, days):
+        return self.today + relativedelta(days=days)
+
+    def test_not_late_if_one_ahead(self):
+        report = ReportFactory(end_date=self.from_today(-3))
+        ReportFactory(project=report.project)
+        self.assertFalse(report.is_very_late)
+
+    def test_late_if_two_ahead(self):
+        report = ReportFactory(end_date=self.from_today(-3))
+        ReportFactory(end_date=self.from_today(-2), project=report.project)
+        ReportFactory(project=report.project)
+        self.assertTrue(report.is_very_late)
+
+    def test_not_late_if_two_ahead_but_one_in_future(self):
+        report = ReportFactory(end_date=self.from_today(-3))
+        ReportFactory(project=report.project)
+        ReportFactory(end_date=self.from_today(2), project=report.project)
+        self.assertFalse(report.is_very_late)
+
+    def test_start_date(self):
+        yesterday = self.from_today(-1)
+        ReportFactory(end_date=yesterday)
+        report = ReportFactory(end_date=self.from_today(1))
+        self.assertEqual(report.start_date, self.today)
+
+    def test_start_date_with_submitted(self):
+        yesterday = self.from_today(-1)
+        ReportFactory(end_date=yesterday)
+        report = ReportFactory(end_date=self.from_today(1), submitted=True)
+        self.assertEqual(report.start_date, self.today)

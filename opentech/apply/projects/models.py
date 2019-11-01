@@ -646,7 +646,9 @@ class Report(models.Model):
 
     @property
     def is_very_late(self):
-        more_than_one_report_late = self.project.reports.filter(end_date__gt=self.end_date).count() >= 2
+        more_than_one_report_late = self.project.reports.filter(
+            Q(end_date__gt=self.end_date) & Q(end_date__lt=timezone.now().date())
+        ).count() >= 1
         not_submitted = not self.current
         return not_submitted and more_than_one_report_late
 
