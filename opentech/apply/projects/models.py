@@ -4,7 +4,7 @@ import json
 import logging
 import os
 
-
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import JSONField
@@ -79,6 +79,7 @@ class Contract(models.Model):
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
 
@@ -384,6 +385,15 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             value=submission.form_data.get('value', 0),
         )
 
+    @property
+    def start_date(self):
+        # Assume project starts when OTF are happy with the first signed contract
+        first_approved_contract = self.contracts.approved().order_by('approved_at').first()
+        if not first_approved_contract:
+            return None
+
+        return first_approved_contract.approved_at.date()
+
     def paid_value(self):
         return self.payment_requests.paid_value()
 
@@ -527,3 +537,89 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ReportConfig(models.Model):
+    """Persists configuration about the reporting schedule etc"""
+
+    WEEK = "week"
+    MONTH = "month"
+    FREQUENCY_CHOICES = [
+        (WEEK, "Weeks"),
+        (MONTH, "Months"),
+    ]
+
+    project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
+    schedule_start = models.DateField(null=True)
+    occurrence = models.PositiveSmallIntegerField(default=1)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
+
+    def current_due_report(self):
+        # Project not started - no reporting required
+        if not self.project.start_date:
+            return None
+
+        today = timezone.now().date()
+
+        last_report = self.project.reports.filter(
+            end_date__lt=today,
+        ).first()
+
+        schedule_date = self.schedule_start or self.project.start_date
+
+        if last_report:
+            if last_report.end_date < schedule_date:
+                # reporting schedule changed schedule_start is now the next report date
+                next_due_date = schedule_date
+            else:
+                # we've had a report since the schedule date so base next deadline from the report
+                next_due_date = self.next_date(last_report.end_date)
+        else:
+            # first report required
+            if schedule_date > today:
+                # Schedule changed since project inception
+                next_due_date = schedule_date
+            else:
+                # schedule_start is the first day the project so the "last" period
+                # ended one day before that. If date is in past we required report now
+                next_due_date = max(
+                    self.next_date(schedule_date - relativedelta(days=1)),
+                    today,
+                )
+
+        report, _ = self.project.reports.update_or_create(
+            project=self.project,
+            end_date__gte=today,
+            defaults={'end_date': next_due_date}
+        )
+        return report
+
+    def next_date(self, last_date):
+        delta_frequency = self.frequency + 's'
+        delta = relativedelta(**{delta_frequency: self.occurrence})
+        next_date = last_date + delta
+        return next_date
+
+
+class Report(models.Model):
+    public = models.BooleanField(default=True)
+    end_date = models.DateField()
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
+
+    class Meta:
+        ordering = ('-end_date',)
+
+    @property
+    def past_due(self):
+        return timezone.now().date() > self.end_date
+
+
+class ReportVersion(models.Model):
+    report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
+    submitted = models.DateTimeField()
+    content = models.TextField()
+
+
+class ReportPrivateFiles(models.Model):
+    report = models.ForeignKey("ReportVersion", on_delete=models.CASCADE, related_name="files")
+    document = models.FileField(upload_to=document_path, storage=PrivateStorage())

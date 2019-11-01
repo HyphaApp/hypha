@@ -14,6 +14,8 @@ from .views import (
     ProjectListView,
     ProjectOverviewView,
     ProjectPrivateMediaView,
+    ReportPrivateMedia,
+    ReportUpdateView,
 )
 
 app_name = 'projects'
@@ -39,4 +41,10 @@ urlpatterns = [
             path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
         ])),
     ], 'payments'))),
+    path('reports/', include(([
+        path('<int:pk>/', include([
+            path('edit/', ReportUpdateView.as_view(), name='edit'),
+            path('documents/<int:file_pk>/', ReportPrivateMedia.as_view(), name="document"),
+        ])),
+    ], 'reports'))),
 ]

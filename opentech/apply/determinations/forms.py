@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.utils.options import RICH_TEXT_WIDGET
+from opentech.apply.utils.fields import RichTextField
 from opentech.apply.funds.models import ApplicationSubmission
 
 from .models import (
@@ -14,18 +14,6 @@ from .models import (
 from .utils import determination_actions
 
 User = get_user_model()
-
-
-class RichTextField(forms.CharField):
-    widget = RICH_TEXT_WIDGET
-
-    def __init__(self, *args, required=False, **kwargs):
-        kwargs.update(required=required)
-        super().__init__(*args, **kwargs)
-
-
-class RequiredRichTextField(forms.CharField):
-    widget = RICH_TEXT_WIDGET
 
 
 class BaseDeterminationForm:
