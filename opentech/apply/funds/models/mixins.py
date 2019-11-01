@@ -67,18 +67,12 @@ class AccessFormData:
         else:
             return cls.stream_file(instance, field, file)
 
-    def process_file_data(self, data, current_data=None):
+    def process_file_data(self, data):
         for field in self.form_fields:
             if isinstance(field.block, UploadableMediaBlock):
                 file = self.process_file(self, field, data.get(field.id, []))
                 try:
-                    if current_data:
-                        current_file = current_data.get(field.id)
-                        # Save file only when the file is changed
-                        if current_file != file:
-                            file.save()
-                    else:
-                        file.save()
+                    file.save()
                 except AttributeError:
                     for f in file:
                         f.save()
