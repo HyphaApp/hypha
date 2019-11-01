@@ -694,3 +694,6 @@ class ReportPrivateFiles(models.Model):
 
     def __str__(self):
         return self.filename
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:reports:document', kwargs={'pk': self.report.report_pk, 'files_pk': self.pk})

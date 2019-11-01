@@ -29,7 +29,7 @@
                 <ul>
             {% endif %}
 
-            <li><a href="{{ file.document.url }}">{{ file.filename }}</a></li>
+            <li><a href="{{ file.get_absolute_url }}">{{ file.filename }}</a></li>
 
             {% if forloop.last %}
                 </ul>
