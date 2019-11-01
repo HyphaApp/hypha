@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
 from django.views.generic import (
@@ -24,8 +25,6 @@ class ReportingMixin:
 
 
 class ReportAccessMixin:
-    model = Report
-
     def dispatch(self, request, *args, **kwargs):
         is_admin = request.user.is_apply_staff
         is_owner = request.user == self.get_object().project.user
@@ -38,6 +37,12 @@ class ReportAccessMixin:
 @method_decorator(login_required, name='dispatch')
 class ReportUpdateView(ReportAccessMixin, UpdateView):
     form_class = ReportEditForm
+    model = Report
+
+    def dispatch(self, *args, **kwargs):
+        if not self.get_object().can_submit:
+            raise Http404
+        return super().dispatch(*args, **kwargs)
 
     def get_success_url(self):
         return self.object.project.get_absolute_url()

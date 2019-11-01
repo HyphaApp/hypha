@@ -132,16 +132,9 @@
                 {% endif %}
 
                 {% if object.is_in_progress %}
-                    {% with next_report=object.report_config.current_due_report %}
-                    {% if next_report %}
-                    <a
-                        class="button button--primary"
-                        href="{% url "apply:projects:reports:edit" pk=next_report.pk %}"
-                    >
-                        Add Report
-                    </a>
-                    {% endif %}
-                    {% endwith %}
+                    <div class="wrapper wrapper--outer-space-large">
+                        {% include "application_projects/includes/reports.html" %}
+                    </div>
                 {% endif %}
 
                 {% if not object.is_in_progress %}

@@ -17,6 +17,7 @@ from opentech.apply.projects.models import (
     ProjectApprovalForm,
     Report,
     ReportConfig,
+    ReportVersion,
 )
 from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
@@ -145,11 +146,23 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
 
 
 class ReportConfigFactory(factory.DjangoModelFactory):
-    project = factory.SubFactory("opentech.apply.projects.tests.factories.ApprovedProjectFactory")
+    project = factory.SubFactory(
+        "opentech.apply.projects.tests.factories.ApprovedProjectFactory",
+        report_config=None,
+    )
 
     class Meta:
         model = ReportConfig
         django_get_or_create = ('project',)
+
+
+class ReportVersionFactory(factory.DjangoModelFactory):
+    report = factory.SubFactory("opentech.apply.projects.tests.factories.ReportFactory")
+    submitted = factory.LazyFunction(timezone.now)
+    content = factory.Faker('paragraph')
+
+    class Meta:
+        model = ReportVersion
 
 
 class ReportFactory(factory.DjangoModelFactory):
@@ -163,7 +176,11 @@ class ReportFactory(factory.DjangoModelFactory):
         past_due = factory.Trait(
             end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
         )
+        submitted = factory.Trait(
+            current=factory.RelatedFactory(ReportVersionFactory, 'report')
+        )
 
 
 class ApprovedProjectFactory(ProjectFactory):
     contract = factory.RelatedFactory(ContractFactory, 'project')
+    report_config = factory.RelatedFactory(ReportConfigFactory, 'project')

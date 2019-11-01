@@ -385,13 +385,15 @@ class ReportEditForm(forms.ModelForm):
         fields = ['public']
 
     def save(self, commit=True):
-        instance = super().save(commit)
-
         version = ReportVersion.objects.create(
-            report=instance,
+            report=self.instance,
             content=self.cleaned_data['content'],
             submitted=timezone.now(),
         )
+
+        self.instance.current = version
+
+        instance = super().save(commit)
 
         files = self.cleaned_data['files']
         if files:
