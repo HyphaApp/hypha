@@ -399,6 +399,10 @@ class ReportEditForm(forms.ModelForm):
         self.fields['file_list'].queryset = self.report_files
         self.user = user
 
+        # Cant change the privacy of a submitted report
+        if self.instance.current:
+            del self.fields['public']
+
     @transaction.atomic
     def save(self, commit=True):
         is_draft = 'save' in self.data

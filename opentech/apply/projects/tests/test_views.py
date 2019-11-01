@@ -1325,11 +1325,21 @@ class TestStaffSubmitReport(BaseViewTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_change_privacy(self):
-        report = ReportFactory()
+        report = ReportFactory(public=True)
         response = self.post_page(report, {'content': 'Some text', 'public': False})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
         self.assertFalse(report.public)
+
+    def test_cant_change_privacy_submitted(self):
+        report = ReportFactory(
+            is_submitted=True,
+            public=True,
+        )
+        response = self.post_page(report, {'content': 'Some text', 'public': False})
+        report.refresh_from_db()
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertTrue(report.public)
 
 
 class TestApplicantSubmitReport(BaseViewTestCase):
