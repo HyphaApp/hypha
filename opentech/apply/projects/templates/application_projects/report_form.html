@@ -17,7 +17,7 @@
 
 <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
     <div class="wrapper--sidebar--inner">
-        <form class="form" action="" method="post" enctype="multipart/form-data">
+        <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             {{ form.media }}
 
@@ -28,7 +28,8 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <input class="button button--submit button--top-space button--primary" type="submit" name="save" value="Submit" />
+            <input class="button button--submit button--top-space button--white" type="submit" name="save" value="Save" />
+            <input class="button button--submit button--top-space button--primary" type="submit" name="submit" value="Submit" />
         </form>
     </div>
 </div>
