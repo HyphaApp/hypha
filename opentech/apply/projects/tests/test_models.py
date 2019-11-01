@@ -213,8 +213,13 @@ class TestReportConfigCalculations(TestCase):
     def test_no_report_creates_report(self):
         config = ReportConfigFactory()
         report = config.current_due_report()
+        # Separate day from month for case where start date + 1 month would exceed next month
+        # length (31st Oct to 30th Nov)
+        # combined => 31th + 1 month = 30th - 1 day = 29th (wrong)
+        # separate => 31th - 1 day = 30th + 1 month = 30th (correct)
+        next_due = report.project.start_date - relativedelta(days=1) + relativedelta(months=1)
         self.assertEqual(Report.objects.count(), 1)
-        self.assertEqual(report.end_date, self.today + relativedelta(months=1, days=-1))
+        self.assertEqual(report.end_date, next_due)
 
     def test_no_report_creates_report_not_in_past(self):
         config = ReportConfigFactory(schedule_start=self.today - relativedelta(months=3))
@@ -232,9 +237,15 @@ class TestReportConfigCalculations(TestCase):
         config = ReportConfigFactory(schedule_start=self.today - relativedelta(days=2))
         ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
 
+        # Separate day from month for case where start date + 1 month would exceed next month
+        # length (31st Oct to 30th Nov)
+        # combined => 31th + 1 month = 30th - 1 day = 29th (wrong)
+        # separate => 31th - 1 day = 30th + 1 month = 30th (correct)
+        next_due = self.today - relativedelta(days=1) + relativedelta(months=1)
+
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 2)
-        self.assertEqual(report.end_date, self.today + relativedelta(months=1, days=-1))
+        self.assertEqual(report.end_date, next_due)
 
     def test_past_due_report_future_schedule_creates_report(self):
         config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=3))
