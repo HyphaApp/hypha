@@ -73,7 +73,7 @@
                                     {% if report.skipped %}
                                         <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                                             {% csrf_token %}
-                                            <input type="submit" value="Unskip" class="btn"></input>
+                                            <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
                                         </form>
                                     {% endif %}
                                 {% endif %}
