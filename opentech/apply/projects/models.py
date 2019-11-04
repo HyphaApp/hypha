@@ -601,6 +601,7 @@ class ReportConfig(models.Model):
         report, _ = self.project.reports.update_or_create(
             project=self.project,
             end_date__gte=today,
+            current__isnull=True,
             defaults={'end_date': next_due_date}
         )
         return report
@@ -621,6 +622,7 @@ class Report(models.Model):
     public = models.BooleanField(default=True)
     end_date = models.DateField()
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
+    submitted = models.DateTimeField(null=True)
     current = models.OneToOneField(
         "ReportVersion",
         on_delete=models.CASCADE,
@@ -645,7 +647,9 @@ class Report(models.Model):
 
     @property
     def is_very_late(self):
-        more_than_one_report_late = self.project.reports.filter(end_date__gt=self.end_date).count() >= 2
+        more_than_one_report_late = self.project.reports.filter(
+            Q(end_date__gt=self.end_date) & Q(end_date__lt=timezone.now().date())
+        ).count() >= 1
         not_submitted = not self.current
         return not_submitted and more_than_one_report_late
 
@@ -655,12 +659,12 @@ class Report(models.Model):
 
     @property
     def submitted_date(self):
-        if self.current:
-            return self.current.submitted.date()
+        if self.submitted:
+            return self.submitted.date()
 
     @cached_property
     def start_date(self):
-        last_report = self.project.reports.order_by('current__submitted').filter(end_date__lt=self.end_date).first()
+        last_report = self.project.reports.filter(end_date__lt=self.end_date).first()
         if last_report:
             return last_report.end_date + relativedelta(days=1)
 
