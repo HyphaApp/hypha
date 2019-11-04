@@ -380,8 +380,12 @@ class UpdateProjectLeadForm(forms.ModelForm):
 
 
 class ReportEditForm(forms.ModelForm):
-    public_content = RichTextField()
-    private_content = RichTextField()
+    public_content = RichTextField(
+        help_text="This section will be shared with the wider community."
+    )
+    private_content = RichTextField(
+        help_text="This section will be shared with staff members only."
+    )
     file_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=ReportPrivateFiles.objects.all(),
