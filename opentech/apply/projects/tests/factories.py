@@ -175,6 +175,7 @@ class ReportVersionFactory(factory.DjangoModelFactory):
                 obj.report.draft = obj
             else:
                 obj.report.current = obj
+                obj.report.submitted = obj.submitted
             obj.report.save()
 
 
@@ -189,7 +190,7 @@ class ReportFactory(factory.DjangoModelFactory):
         past_due = factory.Trait(
             end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
         )
-        submitted = factory.Trait(
+        is_submitted = factory.Trait(
             version=factory.RelatedFactory(ReportVersionFactory, 'report', draft=False, relate=True)
         )
         is_draft = factory.Trait(
