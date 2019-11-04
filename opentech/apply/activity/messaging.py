@@ -831,7 +831,6 @@ class DjangoMessagesAdapter(AdapterBase):
         else:
             return f"Successfully unskipped a Report for {report.start_date} to {report.end_date}"
 
-
     def batch_transition(self, sources, transitions, **kwargs):
         base_message = 'Successfully updated:'
         transition = '{submission} [{old_display} → {new_display}].'
