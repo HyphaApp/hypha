@@ -65,17 +65,18 @@
                         <td>
                             <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
                         </td>
-                        <td>
+                        <td class="data-block__links">
+                            <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
+
                             {% if request.user.is_apply_staff %}
                                 <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
                                 {% if report.skipped %}
                                     <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                                         {% csrf_token %}
-                                        <input type="submit" value="Unskip" class="btn"></input>
+                                        <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
                                     </form>
                                 {% endif %}
                             {% endif %}
-                            <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
                         </td>
                     </tr>
                     {% empty %}
