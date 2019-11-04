@@ -176,7 +176,7 @@ class TestPaymentRequestsQueryset(TestCase):
         self.assertEqual(PaymentRequest.objects.unpaid_value(), 0)
 
 
-class TestReportConfigCalculations(TestCase):
+class TestReportConfig(TestCase):
     @property
     def today(self):
         return timezone.now().date()
@@ -260,6 +260,31 @@ class TestReportConfigCalculations(TestCase):
         next_report = config.current_due_report()
         self.assertNotEqual(report, next_report)
 
+    def test_past_due(self):
+        report = ReportFactory(past_due=True)
+        config = report.project.report_config
+        self.assertQuerysetEqual(config.past_due_reports(), [report], transform=lambda x: x)
+
+    def test_past_due_has_drafts(self):
+        report = ReportFactory(past_due=True, is_draft=True)
+        config = report.project.report_config
+        self.assertQuerysetEqual(config.past_due_reports(), [report], transform=lambda x: x)
+
+    def test_past_due_no_submitted(self):
+        report = ReportFactory(is_submitted=True, past_due=True)
+        config = report.project.report_config
+        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+
+    def test_past_due_no_future(self):
+        report = ReportFactory(end_date=self.today + relativedelta(days=1))
+        config = report.project.report_config
+        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+
+    def test_past_due_no_skipped(self):
+        report = ReportFactory(skipped=True, past_due=True)
+        config = report.project.report_config
+        self.assertQuerysetEqual(config.past_due_reports(), [], transform=lambda x: x)
+
 
 class TestReport(TestCase):
     @property
@@ -297,3 +322,19 @@ class TestReport(TestCase):
         ReportFactory(end_date=yesterday)
         report = ReportFactory(end_date=self.from_today(1), is_submitted=True)
         self.assertEqual(report.start_date, self.today)
+
+    def test_queryset_done_includes_submitted(self):
+        report = ReportFactory(is_submitted=True)
+        self.assertQuerysetEqual(Report.objects.done(), [report], transform=lambda x: x)
+
+    def test_queryset_done_includes_skipped(self):
+        report = ReportFactory(skipped=True)
+        self.assertQuerysetEqual(Report.objects.done(), [report], transform=lambda x: x)
+
+    def test_queryset_done_doesnt_includes_draft(self):
+        ReportFactory(is_draft=True)
+        self.assertQuerysetEqual(Report.objects.done(), [], transform=lambda x: x)
+
+    def test_queryset_done_doesnt_includes_to_do(self):
+        ReportFactory()
+        self.assertQuerysetEqual(Report.objects.done(), [], transform=lambda x: x)
