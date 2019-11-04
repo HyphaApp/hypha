@@ -33,6 +33,9 @@
                     <span class="payment-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
                 </td>
                 <td>
+                    {% if request.user.is_apply_staff %}
+                        <a href="{% url "apply:projects:reports:edit" pk=report.pk %}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

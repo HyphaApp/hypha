@@ -73,7 +73,16 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        if not form.instance.draft:
+        should_notify = True
+        if self.object.draft:
+            # It was a draft submission
+            should_notify = False
+        else:
+            if self.object.submitted != self.object.current.submitted:
+                # It was a staff edit - post submission
+                should_notify = False
+
+        if should_notify:
             messenger(
                 MESSAGES.SUBMIT_REPORT,
                 request=self.request,

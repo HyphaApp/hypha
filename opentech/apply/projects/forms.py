@@ -399,6 +399,10 @@ class ReportEditForm(forms.ModelForm):
         self.fields['file_list'].queryset = self.report_files
         self.user = user
 
+        # Cant change the privacy of a submitted report
+        if self.instance.current:
+            del self.fields['public']
+
     @transaction.atomic
     def save(self, commit=True):
         is_draft = 'save' in self.data
@@ -414,6 +418,10 @@ class ReportEditForm(forms.ModelForm):
         if is_draft:
             self.instance.draft = version
         else:
+            # If this is the first submission of the report we track that as the
+            # submitted date of the report
+            if not self.instance.submitted:
+                self.instance.submitted = version.submitted
             self.instance.current = version
             self.instance.draft = None
 
