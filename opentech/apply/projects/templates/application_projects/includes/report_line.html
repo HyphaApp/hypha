@@ -10,7 +10,7 @@
     {% endif %}
     {% if report.can_submit %}
     <a
-        class="payment-block__button button button--primary"
+        class="data-block__button button button--primary"
         href="{% url "apply:projects:reports:edit" pk=report.pk %}"
     >
         {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
