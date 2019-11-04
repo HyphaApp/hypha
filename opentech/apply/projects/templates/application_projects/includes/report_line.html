@@ -16,4 +16,10 @@
         {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
     </a>
     {% endif %}
+    {% if request.user.is_apply_staff and report.can_submit %}
+        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Skip" class="btn"></input>
+        </form>
+    {% endif %}
 </p>

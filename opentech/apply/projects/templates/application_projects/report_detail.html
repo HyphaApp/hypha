@@ -15,6 +15,9 @@
 
 <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
     <div class="wrapper--sidebar--inner">
+        {% if report.skipped %}
+            <h2>Report Skipped</h2>
+        {% else%}
         <h3>
             {% if object.public %}
                 Public
@@ -35,6 +38,7 @@
                 </ul>
             {% endif %}
         {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

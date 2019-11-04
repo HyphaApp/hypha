@@ -561,7 +561,7 @@ class ReportConfig(models.Model):
 
     def past_due_reports(self):
         return self.project.reports.filter(
-            current__isnull=True,
+            Q(current__isnull=True) & Q(skipped=False),
             end_date__lt=timezone.now().date(),
         ).order_by('end_date')
 
@@ -615,11 +615,14 @@ class ReportConfig(models.Model):
 
 class ReportQueryset(models.QuerySet):
     def done(self):
-        return self.filter(current__isnull=False)
+        return self.filter(
+            Q(current__isnull=False) | Q(skipped=True),
+        )
 
 
 class Report(models.Model):
     public = models.BooleanField(default=True)
+    skipped = models.BooleanField(default=False)
     end_date = models.DateField()
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
     submitted = models.DateTimeField(null=True)
