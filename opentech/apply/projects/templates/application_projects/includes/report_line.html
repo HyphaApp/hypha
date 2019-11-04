@@ -7,7 +7,7 @@
         {% endif %}
             period is <b>{{ report.start_date }}</b> to <b>{{ report.end_date }}</b>
         {% if report.is_very_late %}
-            ( ! )
+            <svg class="icon data-block__icon"><use xlink:href="#exclamation-point"></use></svg>
         {% endif %}
     </div>
 
