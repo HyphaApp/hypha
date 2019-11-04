@@ -492,7 +492,6 @@ class ReportFrequencyForm(forms.ModelForm):
             )
         return start_date
 
-
     def save(self, *args, **kwargs):
         self.instance.schedule_start = self.cleaned_data['start']
         return super().save(*args, **kwargs)
