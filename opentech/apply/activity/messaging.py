@@ -65,6 +65,7 @@ neat_related = {
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.SUBMIT_REPORT: 'report',
+    MESSAGES.SKIPPED_REPORT: 'report',
 }
 
 
@@ -240,6 +241,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
         MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
         MESSAGES.SUBMIT_REPORT: 'Submitted a report',
+        MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -339,6 +341,12 @@ class ActivityAdapter(AdapterBase):
             message.append(', '.join([str(user) for user in removed]) + '.')
 
         return ' '.join(message)
+
+    def handle_skipped_report(self, report, **kwargs):
+        if report.skipped:
+            return "Skipped a Report"
+        else:
+            return "Marked a Report as required"
 
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity
@@ -637,6 +645,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST: 'messages/email/payment_request_updated.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
+        MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
     }
 
     def get_subject(self, message_type, source):
@@ -803,6 +812,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
         MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document',
         MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
+        MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
@@ -818,6 +828,12 @@ class DjangoMessagesAdapter(AdapterBase):
             ' to ' +
             ', '.join(['"{}"'.format(source.title) for source in sources])
         )
+
+    def handle_skipped_report(self, report, **kwargs):
+        if report.skipped:
+            return f"Successfully skipped a Report for {report.start_date} to {report.end_date}"
+        else:
+            return f"Successfully unskipped a Report for {report.start_date} to {report.end_date}"
 
     def batch_transition(self, sources, transitions, **kwargs):
         base_message = 'Successfully updated:'
