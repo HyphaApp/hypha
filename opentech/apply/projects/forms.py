@@ -2,10 +2,12 @@ import functools
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from addressfield.fields import AddressField
 from opentech.apply.funds.models import ApplicationSubmission
@@ -28,6 +30,7 @@ from .models import (
     PaymentRequest,
     Project,
     Report,
+    ReportConfig,
     ReportVersion,
     ReportPrivateFiles,
 )
@@ -442,3 +445,54 @@ class ReportEditForm(forms.ModelForm):
             )
 
         return instance
+
+
+class ReportFrequencyForm(forms.ModelForm):
+    start = forms.DateField(label='Next report date')
+
+    class Meta:
+        model = ReportConfig
+        fields = ('occurrence', 'frequency', 'start')
+        labels = {
+            'occurrence': 'No.',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        today = timezone.now().date()
+        last_report = self.instance.last_report()
+
+        self.fields['start'].widget.attrs.update({
+            'min': max(
+                last_report.end_date if last_report else today,
+                today,
+            ),
+            'max': self.instance.project.end_date,
+        })
+
+    def clean_start(self):
+        start_date = self.cleaned_data['start']
+        last_report = self.instance.last_report()
+        if last_report and start_date <= last_report.end_date:
+            raise ValidationError(
+                _("Cannot start a schedule before the current reporting period"),
+                code="bad_start"
+            )
+
+        if start_date < timezone.now().date():
+            raise ValidationError(
+                _("Cannot start a schedule in the past"),
+                code="bad_start"
+            )
+
+        if start_date > self.instance.project.end_date:
+            raise ValidationError(
+                _("Cannot start a schedule beyond the end date"),
+                code="bad_start"
+            )
+        return start_date
+
+
+    def save(self, *args, **kwargs):
+        self.instance.schedule_start = self.cleaned_data['start']
+        return super().save(*args, **kwargs)
