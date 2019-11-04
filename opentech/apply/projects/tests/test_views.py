@@ -1309,7 +1309,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
         self.assertEqual(report.versions.last().content, 'Some text')
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
-        self.assertEqual(report.submitted, yesterday.date())
+        self.assertEqual(report.submitted.date(), yesterday.date())
         self.assertEqual(report.current.submitted.date(), timezone.now().date())
 
     def test_can_submit_future_report(self):
