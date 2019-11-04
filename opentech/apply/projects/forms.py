@@ -380,7 +380,8 @@ class UpdateProjectLeadForm(forms.ModelForm):
 
 
 class ReportEditForm(forms.ModelForm):
-    content = RichTextField(required=True)
+    public_content = RichTextField()
+    private_content = RichTextField()
     file_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=ReportPrivateFiles.objects.all(),
@@ -391,7 +392,12 @@ class ReportEditForm(forms.ModelForm):
 
     class Meta:
         model = Report
-        fields = ['public']
+        fields = (
+            'public_content',
+            'private_content',
+            'file_list',
+            'files',
+        )
 
     def __init__(self, *args, user=None, initial={}, **kwargs):
         self.report_files = initial.pop(
@@ -402,9 +408,15 @@ class ReportEditForm(forms.ModelForm):
         self.fields['file_list'].queryset = self.report_files
         self.user = user
 
-        # Cant change the privacy of a submitted report
-        if self.instance.current:
-            del self.fields['public']
+    def clean(self):
+        cleaned_data = super().clean()
+        public = cleaned_data['public_content']
+        private = cleaned_data['private_content']
+        if not private and not public:
+            missing_content = 'Must include either public or private content when submitting a report.'
+            self.add_error('public_content', missing_content)
+            self.add_error('private_content', missing_content)
+        return cleaned_data
 
     @transaction.atomic
     def save(self, commit=True):
@@ -412,7 +424,8 @@ class ReportEditForm(forms.ModelForm):
 
         version = ReportVersion.objects.create(
             report=self.instance,
-            content=self.cleaned_data['content'],
+            public_content=self.cleaned_data['public_content'],
+            private_content=self.cleaned_data['private_content'],
             submitted=timezone.now(),
             draft=is_draft,
             author=self.user,

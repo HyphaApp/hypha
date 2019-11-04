@@ -1257,40 +1257,57 @@ class TestStaffSubmitReport(BaseViewTestCase):
 
     def test_submit_report(self):
         report = ReportFactory()
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first().public_content, 'Some text')
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
 
-    def test_save_report_draft(self):
+    def test_submit_private_report(self):
         report = ReportFactory()
-        response = self.post_page(report, {'content': 'Some text', 'public': True, 'save': 'Save'})
+        response = self.post_page(report, {'private_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first().private_content, 'Some text')
+        self.assertEqual(report.versions.first(), report.current)
+        self.assertEqual(report.current.author, self.user)
+        self.assertIsNone(report.draft)
+
+    def test_cant_submit_blank_report(self):
+        report = ReportFactory()
+        response = self.post_page(report, {})
+        report.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(report.versions.count(), 0)
+
+    def test_save_report_draft(self):
+        report = ReportFactory()
+        response = self.post_page(report, {'public_content': 'Some text', 'save': 'Save'})
+        report.refresh_from_db()
+        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
+        self.assertEqual(report.versions.first().public_content, 'Some text')
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
     def test_save_report_with_draft(self):
         report = ReportFactory(is_draft=True)
         self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.last().content, 'Some text')
+        self.assertEqual(report.versions.last().public_content, 'Some text')
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
     def test_edit_submitted_report(self):
         report = ReportFactory(is_submitted=True)
         self.assertEqual(report.versions.first(), report.current)
-        response = self.post_page(report, {'content': 'Some text', 'public': True, 'save': ' Save'})
+        response = self.post_page(report, {'public_content': 'Some text', 'save': ' Save'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.last().content, 'Some text')
+        self.assertEqual(report.versions.last().public_content, 'Some text')
         self.assertEqual(report.versions.last(), report.draft)
         self.assertEqual(report.versions.first(), report.current)
 
@@ -1303,16 +1320,16 @@ class TestStaffSubmitReport(BaseViewTestCase):
         report.save()
         self.assertEqual(report.submitted, yesterday)
         self.assertEqual(report.versions.first(), report.current)
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.last().content, 'Some text')
+        self.assertEqual(report.versions.last().public_content, 'Some text')
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
-        self.assertEqual(report.submitted.date(), yesterday.date())
+        self.assertEqual(report.submitted, yesterday.date())
         self.assertEqual(report.current.submitted.date(), timezone.now().date())
 
-    def test_can_submit_future_report(self):
+    def test_cant_submit_future_report(self):
         submitted_report = ReportFactory(
             end_date=timezone.now() + relativedelta(days=1),
             is_submitted=True,
@@ -1321,25 +1338,8 @@ class TestStaffSubmitReport(BaseViewTestCase):
             end_date=timezone.now() + relativedelta(days=3),
             project=submitted_report.project,
         )
-        response = self.post_page(future_report, {'content': 'Some text', 'public': True})
+        response = self.post_page(future_report, {'public_content': 'Some text'})
         self.assertEqual(response.status_code, 404)
-
-    def test_change_privacy(self):
-        report = ReportFactory(public=True)
-        response = self.post_page(report, {'content': 'Some text', 'public': False})
-        report.refresh_from_db()
-        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertFalse(report.public)
-
-    def test_cant_change_privacy_submitted(self):
-        report = ReportFactory(
-            is_submitted=True,
-            public=True,
-        )
-        response = self.post_page(report, {'content': 'Some text', 'public': False})
-        report.refresh_from_db()
-        self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertTrue(report.public)
 
 
 class TestApplicantSubmitReport(BaseViewTestCase):
@@ -1364,48 +1364,58 @@ class TestApplicantSubmitReport(BaseViewTestCase):
 
     def test_submit_own_report(self):
         report = ReportFactory(project__user=self.user)
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first().public_content, 'Some text')
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
 
-    def test_change_privacy_own(self):
+    def test_submit_private_report(self):
         report = ReportFactory(project__user=self.user)
-        response = self.post_page(report, {'content': 'Some text', 'public': False})
+        response = self.post_page(report, {'private_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertFalse(report.public)
+        self.assertEqual(report.versions.first().private_content, 'Some text')
+        self.assertEqual(report.versions.first(), report.current)
+        self.assertEqual(report.current.author, self.user)
+        self.assertIsNone(report.draft)
+
+    def test_cant_submit_blank_report(self):
+        report = ReportFactory(project__user=self.user)
+        response = self.post_page(report, {})
+        report.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(report.versions.count(), 0)
 
     def test_save_report_draft(self):
         report = ReportFactory(project__user=self.user)
-        response = self.post_page(report, {'content': 'Some text', 'public': True, 'save': 'Save'})
+        response = self.post_page(report, {'public_content': 'Some text', 'save': 'Save'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.first().content, 'Some text')
+        self.assertEqual(report.versions.first().public_content, 'Some text')
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
     def test_save_report_with_draft(self):
         report = ReportFactory(is_draft=True, project__user=self.user)
         self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         report.refresh_from_db()
         self.assertRedirects(response, self.absolute_url(report.project.get_absolute_url()))
-        self.assertEqual(report.versions.last().content, 'Some text')
+        self.assertEqual(report.versions.last().public_content, 'Some text')
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
     def test_cant_edit_submitted_report(self):
         report = ReportFactory(is_submitted=True, project__user=self.user)
         self.assertEqual(report.versions.first(), report.current)
-        response = self.post_page(report, {'content': 'Some text', 'public': True, 'save': ' Save'})
+        response = self.post_page(report, {'public_content': 'Some text', 'save': ' Save'})
         self.assertEqual(response.status_code, 404)
 
     def test_cant_submit_other_report(self):
         report = ReportFactory()
-        response = self.post_page(report, {'content': 'Some text', 'public': True})
+        response = self.post_page(report, {'public_content': 'Some text'})
         self.assertEqual(response.status_code, 403)
 
 

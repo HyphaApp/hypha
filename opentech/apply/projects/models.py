@@ -653,7 +653,6 @@ class ReportQueryset(models.QuerySet):
 
 
 class Report(models.Model):
-    public = models.BooleanField(default=True)
     skipped = models.BooleanField(default=False)
     end_date = models.DateField()
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
@@ -718,7 +717,8 @@ class Report(models.Model):
 class ReportVersion(models.Model):
     report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
     submitted = models.DateTimeField()
-    content = models.TextField()
+    public_content = models.TextField()
+    private_content = models.TextField()
     draft = models.BooleanField()
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
