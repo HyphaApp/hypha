@@ -1,16 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import Http404
-from django.utils.decorators import method_decorator
 from django.core.exceptions import PermissionDenied
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
+from django.utils.decorators import method_decorator
 from django.views.generic import (
-    UpdateView
+    DetailView,
+    UpdateView,
 )
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateMediaView
 
-from ..models import Report, ReportConfig
+from ..models import Report, ReportConfig, ReportPrivateFiles
 from ..forms import ReportEditForm
 
 
@@ -32,6 +34,17 @@ class ReportAccessMixin:
             raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class ReportDetailView(ReportAccessMixin, DetailView):
+    model = Report
+
+    def dispatch(self, *args, **kwargs):
+        report = self.get_object()
+        if not report.current:
+            raise Http404
+        return super().dispatch(*args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -101,13 +114,22 @@ class ReportPrivateMedia(UserPassesTestMixin, PrivateMediaView):
     def dispatch(self, *args, **kwargs):
         report_pk = self.kwargs['pk']
         self.report = get_object_or_404(Report, pk=report_pk)
+        file_pk = kwargs.get('file_pk')
+        self.document = get_object_or_404(
+            ReportPrivateFiles.objects,
+            report__report=self.report,
+            pk=file_pk
+        )
+
+        if not hasattr(self.document.report, 'live_for_report'):
+            # this is not a document in the live report
+            # send the user to the report page to see latest version
+            return redirect(self.report.get_absolute_url())
 
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        file_pk = kwargs.get('file_pk')
-        document = get_object_or_404(self.report.files, pk=file_pk)
-        return document.document
+        return self.document.document
 
     def test_func(self):
         if self.request.user.is_apply_staff:
