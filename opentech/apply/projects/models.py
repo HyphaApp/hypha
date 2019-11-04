@@ -573,7 +573,10 @@ class ReportConfig(models.Model):
         next_report = self.current_due_report()
 
         if self.frequency == self.MONTH:
-            day_of_month = ordinal(next_report.end_date.day)
+            if self.schedule_start.day == 31:
+                day_of_month = 'last day'
+            else:
+                day_of_month = ordinal(next_report.end_date.day)
             if self.occurrence == 1:
                 return f"Monthly on the { day_of_month } of the month"
             return f"Every { self.occurrence } months on the { day_of_month } of the month"
@@ -616,9 +619,9 @@ class ReportConfig(models.Model):
                 next_due_date = self.next_date(last_report.end_date)
         else:
             # first report required
-            if schedule_date > today:
+            if self.schedule_start and self.schedule_start >= today:
                 # Schedule changed since project inception
-                next_due_date = schedule_date
+                next_due_date = self.schedule_start
             else:
                 # schedule_start is the first day the project so the "last" period
                 # ended one day before that. If date is in past we required report now

@@ -182,3 +182,16 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         if self.get_parent_object().is_in_progress:
             return super().get_form()
         return None
+
+    def form_valid(self, form):
+        config = form.instance
+        response = super().form_valid(form)
+        messenger(
+            MESSAGES.REPORT_FREQUENCY_CHANGED,
+            request=self.request,
+            user=self.request.user,
+            source=config.project,
+            related=config,
+        )
+
+        return response

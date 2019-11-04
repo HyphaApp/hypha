@@ -65,6 +65,7 @@ neat_related = {
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.SUBMIT_REPORT: 'report',
     MESSAGES.SKIPPED_REPORT: 'report',
+    MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
 }
 
 
@@ -235,6 +236,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
         MESSAGES.SUBMIT_REPORT: 'Submitted a report',
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -334,6 +336,10 @@ class ActivityAdapter(AdapterBase):
             message.append(', '.join([str(user) for user in removed]) + '.')
 
         return ' '.join(message)
+
+    def handle_report_frequency(self, config, **kwargs):
+        new_schedule = config.get_frequency_display()
+        return f"Updated reporting frequency. New schedule is: {new_schedule} starting on {config.schedule_start}"
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
@@ -645,6 +651,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
     }
 
     def get_subject(self, message_type, source):
@@ -809,6 +816,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document',
         MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
@@ -824,6 +832,10 @@ class DjangoMessagesAdapter(AdapterBase):
             ' to ' +
             ', '.join(['"{}"'.format(source.title) for source in sources])
         )
+
+    def handle_report_frequency(self, config, **kwargs):
+        new_schedule = config.get_frequency_display()
+        return f"Successfully updated reporting frequency. They will now report {new_schedule} starting on {config.schedule_start}"
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
