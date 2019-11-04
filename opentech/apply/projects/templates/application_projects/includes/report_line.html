@@ -1,25 +1,31 @@
-<p>
-    {% if current %}
-    The {% if report.can_submit %}current{% else %}next{% endif %} reporting
-    {% else %}
-    A report is due for the
-    {% endif %}
-    period is {{ report.start_date }} to {{ report.end_date }}
-    {% if report.is_very_late %}
-    ( ! )
-    {% endif %}
-    {% if report.can_submit %}
-    <a
-        class="data-block__button button button--primary"
-        href="{% url "apply:projects:reports:edit" pk=report.pk %}"
-    >
-        {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
-    </a>
-    {% endif %}
-    {% if request.user.is_apply_staff and report.can_submit %}
-        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-            {% csrf_token %}
-            <input type="submit" value="Skip" class="btn"></input>
-        </form>
-    {% endif %}
-</p>
+<li class="data-block__list-item">
+    <div class="data-block__info">
+        {% if current %}
+            The {% if report.can_submit %}current{% else %}next{% endif %} reporting
+        {% else %}
+            A report is due for the
+        {% endif %}
+            period is <b>{{ report.start_date }}</b> to <b>{{ report.end_date }}</b>
+        {% if report.is_very_late %}
+            ( ! )
+        {% endif %}
+    </div>
+
+    <div class="data-block__links">
+        {% if report.can_submit %}
+            <a
+                class="data-block__button button button--primary"
+                href="{% url "apply:projects:reports:edit" pk=report.pk %}"
+            >
+            {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
+            </a>
+        {% endif %}
+
+        {% if request.user.is_apply_staff and report.can_submit %}
+            <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Skip" class="btn data-block__action-link"></input>
+            </form>
+        {% endif %}
+    </div>
+</li>
