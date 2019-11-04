@@ -65,10 +65,12 @@
         }
     }
 
+    &__pagination,
     &__rejected {
         text-align: center;
     }
 
+    &__pagination-link,
     &__rejected-link {
         font-weight: $weight--bold;
     }

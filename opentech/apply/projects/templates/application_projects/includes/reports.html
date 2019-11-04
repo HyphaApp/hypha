@@ -44,7 +44,7 @@
             <p class="data-block__title">Past reports</p>
         </div>
         <div class="data-block__body">
-            <table class="data-block__table">
+            <table class="data-block__table js-past-reports-table">
                 <thead>
                     <tr>
                         <th class="data-block__table-date">Period End</th>
@@ -55,37 +55,38 @@
                 </thead>
                 <tbody>
                     {% for report in object.reports.done %}
-                    <tr>
-                        <td>
-                            <span class="data-block__mobile-label">Period End: </span>{{ report.end_date }}
-                        </td>
-                        <td>
-                            <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
-                        </td>
-                        <td>
-                            <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
-                        </td>
-                        <td class="data-block__links">
-                            <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
+                        <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
+                            <td>
+                                <span class="data-block__mobile-label">Period End: </span>{{ report.end_date }}
+                            </td>
+                            <td>
+                                <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
+                            </td>
+                            <td>
+                                <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
+                            </td>
+                            <td class="data-block__links">
+                                <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
 
-                            {% if request.user.is_apply_staff %}
-                                <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
-                                {% if report.skipped %}
-                                    <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
-                                    </form>
+                                {% if request.user.is_apply_staff %}
+                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
+                                    {% if report.skipped %}
+                                        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="submit" value="Unskip" class="btn"></input>
+                                        </form>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4">No reports submitted</td>
-                    </tr>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% if object.reports.done.count > 8 %}
+                <p class="data-block__pagination">
+                    <a class="data-block__pagination-link js-data-block-pagination" href="#">Show more</a>
+                </p>
+            {% endif %}
         </div>
     </div>
 </div>
