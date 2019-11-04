@@ -1407,3 +1407,70 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory()
         response = self.post_page(report, {'content': 'Some text', 'public': True})
         self.assertEqual(response.status_code, 403)
+
+
+class TestStaffReportDetail(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:reports:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_can_access_submitted_report(self):
+        report = ReportFactory(is_submitted=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_access_draft_report(self):
+        report = ReportFactory(is_draft=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_access_future_report(self):
+        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
+
+
+class TestApplicantReportDetail(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:reports:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_can_access_own_submitted_report(self):
+        report = ReportFactory(is_submitted=True, project__user=self.user)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_access_own_draft_report(self):
+        report = ReportFactory(is_draft=True, project__user=self.user)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_access_own_future_report(self):
+        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1), project__user=self.user)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_access_other_submitted_report(self):
+        report = ReportFactory(is_submitted=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_access_other_draft_report(self):
+        report = ReportFactory(is_draft=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
+
+    def test_cant_access_other_future_report(self):
+        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 404)
