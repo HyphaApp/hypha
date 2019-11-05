@@ -29,14 +29,14 @@
             <div class="modal" id="skip-report-{{report.id}}">
                 <h4 class="modal__header-bar modal__header-bar--no-bottom-space">Skip report</h4>
                 <div class="modal__copy">
-                    <p>You are about to skip the report for this period.</p>
-                    <p>Do you wish to contiune?</p>
+                    <p>You're skipping the report for <b>{{report.start_date}}</b> &ndash; <b>{{report.end_date}}</b></p>
+                    <p>This will result in a gap in reporting for the project. You can undo this at any time.</p>
                 </div>
                 <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                     {% csrf_token %}
                     <div class="modal__buttons">
-                        <input type="submit" value="Skip" class="button button--primary button--submit"></input>
-                        <button data-fancybox-close class="button button--submit button--white">Not yet</button>
+                        <input type="submit" value="Continue" class="button button--primary button--submit"></input>
+                        <button data-fancybox-close class="button button--submit button--white">Cancel</button>
                     </div>
                 </form>
             </div>
