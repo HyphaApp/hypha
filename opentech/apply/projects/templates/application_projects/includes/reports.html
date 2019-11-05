@@ -1,76 +1,96 @@
-<div id="payment-requests" class="payment-block">
-    <div class="payment-block__header">
-        <p class="payment-block__title">Reporting</p>
-    </div>
-    <div>
-        <h6>Report frequency</h6>
-        <p>
-            {{ object.report_config.get_frequency_display }}
-        </p>
-        {% if request.user.is_apply_staff %}
-        <p>
-            <div class="modal" id="change-frequency">
-                {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
-                <h4 class="modal__header-bar">Change reporting frequency</h4>
-                <p>Schedule reports every:</p>
-                {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue'%}
+<div class="wrapper wrapper--outer-space-large">
+    <div class="data-block">
+        <div class="data-block__header">
+            <p class="data-block__title">Reporting</p>
+        </div>
+        <div class="data-block__body">
+            <div>
+                <h6>Report frequency</h6>
+                <p>
+                    {{ object.report_config.get_frequency_display }}
+                </p>
+                {% if request.user.is_apply_staff %}
+                <p>
+                    <div class="modal" id="change-frequency">
+                        {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
+                        <h4 class="modal__header-bar">Change reporting frequency</h4>
+                        <p>Schedule reports every:</p>
+                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue'%}
+                    </div>
+                    <a data-fancybox
+                        data-src="#change-frequency"
+                        href="#">
+                        Change
+                    </a>
+                </p>
+                {% endif %}
             </div>
-            <a data-fancybox
-               data-src="#change-frequency"
-               href="#">
-                Change
-            </a>
-        </p>
-        {% endif %}
+            <ul class="data-block__list">
+                {% for report in object.report_config.past_due_reports %}
+                    {% include "application_projects/includes/report_line.html" with report=report %}
+                {% endfor %}
+                {% with next_report=object.report_config.current_due_report %}
+                    {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                {% endwith %}
+            </ul>
+        </div>
     </div>
-    <div>
-    {% for report in object.report_config.past_due_reports %}
-        {% include "application_projects/includes/report_line.html" with report=report %}
-    {% endfor %}
-    {% with next_report=object.report_config.current_due_report %}
-        {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
-    {% endwith %}
+</div>
 
+
+<div class="wrapper wrapper--outer-space-large">
+    <div class="data-block">
+        <div class="data-block__header">
+            <p class="data-block__title">Past reports</p>
+        </div>
+        <div class="data-block__body">
+            <table class="data-block__table js-past-reports-table">
+                <thead>
+                    <tr>
+                        <th class="data-block__table-date">Period End</th>
+                        <th class="data-block__table-date">Submitted</th>
+                        <th class="data-block__table-date">Privacy</th>
+                        <th class="data-block__table-update"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in object.reports.done %}
+                        <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
+                            <td>
+                                <span class="data-block__mobile-label">Period End: </span>{{ report.end_date }}
+                            </td>
+                            <td>
+                                <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
+                            </td>
+                            <td>
+                                <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
+                            </td>
+                            <td class="data-block__links">
+                                <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
+
+                                {% if request.user.is_apply_staff %}
+                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
+                                    {% if report.skipped %}
+                                        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No reports submitted</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if object.reports.done.count > 8 %}
+                <p class="data-block__pagination">
+                    <a class="data-block__pagination-link js-data-block-pagination" href="#">Show more</a>
+                </p>
+            {% endif %}
+        </div>
     </div>
-    <table class="payment-block__table">
-        <thead>
-            <tr>
-                <th class="payment-block__table-date">Period End</th>
-                <th class="payment-block__table-date">Submitted</th>
-                <th class="payment-block__table-date">Privacy</th>
-                <th class="payment-block__table-update"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in object.reports.done %}
-            <tr>
-                <td>
-                    <span class="payment-block__mobile-label">Period End: </span>{{ report.end_date }}
-                </td>
-                <td>
-                    <span class="payment-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
-                </td>
-                <td>
-                    <span class="payment-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
-                </td>
-                <td>
-                    {% if request.user.is_apply_staff %}
-                        <a href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
-                        {% if report.skipped %}
-                            <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Unskip" class="btn"></input>
-                            </form>
-                        {% endif %}
-                    {% endif %}
-                    <a href="{% url "apply:projects:reports:detail" pk=report.pk %}">view</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No reports submitted</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
