@@ -20,10 +20,10 @@
             src: 'https://dataviz.opentech.fund/impacts/',
             title: 'Impacts and Outcomes',
             width: '100%',
-            height: '460rem',
+            height: '550rem',
             frameborder: 0
         });
-        $('.section--share').before($dataviz_iframe2);
+        $('.rich-text').before($dataviz_iframe2);
     }
 
 })(jQuery);

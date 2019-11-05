@@ -6,20 +6,17 @@
     }
 
     &__item {
+        position: relative;
         border: 1px solid $color--mid-dark-grey;
-        padding: 1.5rem;
+        padding: 1rem;
         background-color: $color--white;
         flex: 1;
         display: block;
         margin: 0 0 1rem;
 
         @include media-query(tablet-portrait) {
-            margin: 0 1rem 0 0;
-            padding: 1.9rem 2.5rem;
-        }
-
-        @include media-query(tablet-landscape) {
-            margin: 0 2rem 0 0;
+            margin: 0 3rem 0 0;
+            padding: 1.5rem;
         }
 
         &:last-child {
@@ -34,20 +31,19 @@
     }
 
     &__number {
-        @extend %h1;
+        @extend %h3;
         line-height: 1;
-        margin: 0 0 .7rem;
+        margin: 0;
         color: $color--marine;
     }
 
     &__text {
         font-weight: $weight--bold;
-        margin: 0 0 1rem;
+        margin: .5rem 0;
         color: $color--dark-grey;
 
         @include media-query(small-tablet) {
-            margin: 0 0 1.5rem;
-            font-size: map-get($font-sizes, delta);
+            margin: .5rem 0;
         }
     }
 
@@ -57,11 +53,10 @@
         letter-spacing: .5px;
         transition: opacity $quick-transition;
 
-        @include media-query(small-tablet) {
-            font-size: map-get($font-sizes, epsilon);
-        }
-
         @include media-query(tablet-portrait) {
+            position: absolute;
+            top:  1rem;
+            right:  1rem;
             opacity: 0;
 
             #{$root}__item:hover & {
