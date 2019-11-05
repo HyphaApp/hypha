@@ -1012,4 +1012,3 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
             as_attachment=True,
             filename=self.object.title + '.pdf',
         )
-

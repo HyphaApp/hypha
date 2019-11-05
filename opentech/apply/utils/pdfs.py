@@ -271,5 +271,3 @@ def draw_content(content):
             *rest
         ])
     return paragraphs
-
-
