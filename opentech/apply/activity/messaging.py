@@ -67,6 +67,7 @@ neat_related = {
     MESSAGES.SUBMIT_REPORT: 'report',
     MESSAGES.SKIPPED_REPORT: 'report',
     MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
+    MESSAGES.REPORT_NOTIFY: 'report',
 }
 
 
@@ -653,6 +654,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
+        MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
     }
 
     def get_subject(self, message_type, source):

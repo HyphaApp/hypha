@@ -746,6 +746,7 @@ class Report(models.Model):
     end_date = models.DateField()
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
     submitted = models.DateTimeField(null=True)
+    notified = models.DateTimeField(null=True)
     current = models.OneToOneField(
         "ReportVersion",
         on_delete=models.CASCADE,

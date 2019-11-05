@@ -45,6 +45,7 @@ class MESSAGES(Enum):
     SUBMIT_REPORT = 'Submit Report'
     SKIPPED_REPORT = 'Skipped Report'
     REPORT_FREQUENCY_CHANGED = 'Report Frequency Changed'
+    REPORT_NOTIFY= 'Report Notify'
 
     @classmethod
     def choices(cls):
