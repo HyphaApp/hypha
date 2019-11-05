@@ -216,6 +216,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             'round',
             'lead',
             'user',
+            'screening_status',
             'previous__page',
             'previous__round',
             'previous__lead',
