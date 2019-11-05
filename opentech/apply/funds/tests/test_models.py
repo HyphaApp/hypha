@@ -402,6 +402,24 @@ class TestApplicationSubmission(TestCase):
         # Check we saved the file somewhere beneath it
         self.assertIn(filename, found_files)
 
+    def test_correct_file_path_generated(self):
+        submission = ApplicationSubmissionFactory()
+
+        for file_id in submission.file_field_ids:
+
+            def check_generated_file_path(file_to_test):
+                file_path_generated = file_to_test.generate_filename()
+                file_path_required = os.path.join('submission', str(submission.id), str(file_id), file_to_test.basename)
+
+                self.assertEqual(file_path_generated, file_path_required)
+
+            file_response = submission.data(file_id)
+            if isinstance(file_response, list):
+                for stream_file in file_response:
+                    check_generated_file_path(stream_file)
+            else:
+                check_generated_file_path(file_response)
+
     def test_create_revision_on_create(self):
         submission = ApplicationSubmissionFactory()
         self.assertEqual(submission.revisions.count(), 1)
