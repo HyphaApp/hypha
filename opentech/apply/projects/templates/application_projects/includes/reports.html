@@ -4,25 +4,20 @@
             <p class="data-block__title">Reporting</p>
         </div>
         <div class="data-block__body">
-            <div>
-                <h6>Report frequency</h6>
-                <p>
-                    {{ object.report_config.get_frequency_display }}
-                </p>
+            <div class="data-block__card">
+                <h6 class="data-block__card-title">Report frequency</h6>
+                <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                 {% if request.user.is_apply_staff %}
-                <p>
+                    <p class="data-block__card-copy">
+                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">Change</a>
+                    </p>
+                    <!-- Change report frequency modal -->
                     <div class="modal" id="change-frequency">
                         {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
                         <h4 class="modal__header-bar">Change reporting frequency</h4>
                         <p>Schedule reports every:</p>
                         {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue' extra_classes="form--report-frequency" report_frequency_form=True %}
                     </div>
-                    <a data-fancybox
-                        data-src="#change-frequency"
-                        href="#">
-                        Change
-                    </a>
-                </p>
                 {% endif %}
             </div>
             <ul class="data-block__list">
