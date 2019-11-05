@@ -1,29 +1,33 @@
-.payment-block {
-    border: 1px solid $color--mid-grey;
-    padding: 1rem;
+.data-block {
+    $root: &;
     margin-bottom: 1rem;
 
-    @include media-query(mob-landscape) {
-        padding: 2rem;
-    }
-
     &__header {
-        margin-bottom: 1rem;
-
-        @include media-query(tablet-portrait) {
-            margin-bottom: 1.5rem;
-        }
+        padding: 1rem;
+        background-color: $color--primary;
 
         @include media-query(mob-landscape) {
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
     }
 
+    &__body {
+        border: 1px solid $color--mid-grey;
+        border-top: 0;
+        padding: 1rem;
+
+        @include media-query(mob-landscape) {
+            padding: 2rem;
+        }
+    }
+
     &__title {
         font-size: map-get($font-sizes, delta);
         margin: 0 0 1rem;
+        color: $color--white;
 
         @include media-query(mob-landscape) {
             margin: 0;
@@ -32,6 +36,24 @@
 
     &__button {
         padding: .7rem 1.2rem;
+
+        #{$root}__header & {
+            background-color: $color--white;
+            color: $color--primary;
+
+            &:hover,
+            &:focus {
+                background-color: $color--white;
+            }
+        }
+
+        #{$root}__links & {
+            margin-right: 1rem;
+
+            &:only-child {
+                margin-right: 0;
+            }
+        }
     }
 
     &__status {
@@ -43,10 +65,12 @@
         }
     }
 
+    &__pagination,
     &__rejected {
         text-align: center;
     }
 
+    &__pagination-link,
     &__rejected-link {
         font-weight: $weight--bold;
     }
@@ -86,10 +110,6 @@
 
         tbody {
             font-size: map-get($font-sizes, zeta);
-
-            a {
-                text-decoration: underline;
-            }
         }
 
         tr {
@@ -104,27 +124,16 @@
                 padding: 0 0 .5rem;
                 word-break: break-word;
 
+                @include media-query(tablet-landscape) {
+                    padding: 1rem;
+                }
+
                 &:first-child {
                     padding: 1rem 0 .5rem;
 
                     @include media-query(tablet-landscape) {
                         padding: 1rem;
                     }
-                }
-
-                &:last-child {
-                    padding: 0 0 1rem;
-                    display: flex;
-                    flex-wrap: wrap;
-
-                    & > * {
-                        flex: 1 1 55px;
-                        max-width: 55px;
-                    }
-                }
-
-                @include media-query(tablet-landscape) {
-                    padding: 1rem;
                 }
             }
         }
@@ -147,6 +156,69 @@
 
     &__table-update {
         min-width: 160px;
-        width: 25%;
+        width: 20%;
+
+        @include media-query(desktop) {
+            width: 30%;
+        }
+    }
+
+    &__action-link {
+        font-size: map-get($font-sizes, zeta);
+        display: inline-block;
+        margin-right: 1rem;
+        text-decoration: underline;
+        color: $color--primary;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &__list-item {
+        border-bottom: 2px solid $color--light-grey;
+        padding: 1rem 0;
+
+        @include media-query(tablet-landscape) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        &:first-child {
+            padding-top: 0;
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        &:only-child {
+            padding: 0;
+        }
+    }
+
+    &__info {
+        margin: 0 1rem 1rem 0;
+
+        @include media-query(tablet-landscape) {
+            margin: 0 1rem 0 0;
+            flex: 1;
+        }
+    }
+
+    &__links {
+        display: flex;
+        align-items: center;
+
+        @include media-query(tablet-landscape) {
+            justify-content: flex-end;
+        }
+    }
+
+    &__icon {
+        width: 25px;
+        height: 25px;
+        fill: $color--tomato;
     }
 }
