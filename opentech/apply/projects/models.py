@@ -573,7 +573,7 @@ class ReportConfig(models.Model):
         next_report = self.current_due_report()
 
         if self.frequency == self.MONTH:
-            if self.schedule_start.day == 31:
+            if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = 'last day'
             else:
                 day_of_month = ordinal(next_report.end_date.day)
