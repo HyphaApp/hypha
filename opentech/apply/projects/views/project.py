@@ -68,7 +68,7 @@ from ..tables import (
     ProjectsListTable
 )
 
-from .report import ReportingMixin
+from .report import ReportingMixin, ReportFrequencyUpdate
 
 
 # APPROVAL VIEWS
@@ -423,6 +423,7 @@ class AdminProjectDetailView(
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
+        ReportFrequencyUpdate,
         UpdateLeadView,
         UploadContractView,
         UploadDocumentView,
