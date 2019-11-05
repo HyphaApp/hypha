@@ -15,7 +15,7 @@
                         {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
                         <h4 class="modal__header-bar">Change reporting frequency</h4>
                         <p>Schedule reports every:</p>
-                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue'%}
+                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue' extra_classes="form--report-frequency" report_frequency_form=True %}
                     </div>
                     <a data-fancybox
                         data-src="#change-frequency"
