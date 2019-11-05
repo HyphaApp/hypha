@@ -159,7 +159,8 @@ class ReportConfigFactory(factory.DjangoModelFactory):
 class ReportVersionFactory(factory.DjangoModelFactory):
     report = factory.SubFactory("opentech.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    content = factory.Faker('paragraph')
+    public_content = factory.Faker('paragraph')
+    private_content = factory.Faker('paragraph')
     draft = True
 
     class Meta:

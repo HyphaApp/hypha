@@ -75,7 +75,8 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
 
         if current:
             return {
-                'content': current.content,
+                'public_content': current.public_content,
+                'private_content': current.private_content,
                 'file_list': current.files.all(),
             }
 
@@ -167,6 +168,7 @@ class ReportSkipView(SingleObjectMixin, View):
         return redirect(report.project.get_absolute_url())
 
 
+@method_decorator(staff_required, name='dispatch')
 class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
     form_class = ReportFrequencyForm
     context_name = 'update_frequency_form'
