@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.projects.models import (
+    COMPLETE,
     Contract,
     DocumentCategory,
     IN_PROGRESS,
@@ -100,6 +101,9 @@ class ProjectFactory(factory.DjangoModelFactory):
         )
         in_progress = factory.Trait(
             status=IN_PROGRESS,
+        )
+        is_complete = factory.Trait(
+            status=COMPLETE,
         )
 
 
