@@ -342,7 +342,7 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
         return context
 
     def get_active_project_data(self, user):
-        return Project.objects.filter(user=user).in_progress().for_table()
+        return Project.objects.filter(user=user).active().for_table()
 
     def get_active_submissions(self, user):
         active_subs = ApplicationSubmission.objects.filter(
