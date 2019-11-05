@@ -10,6 +10,7 @@ from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
 from opentech.apply.projects.models import (
     Contract,
     DocumentCategory,
+    IN_PROGRESS,
     PacketFile,
     PaymentReceipt,
     PaymentRequest,
@@ -97,6 +98,9 @@ class ProjectFactory(factory.DjangoModelFactory):
         in_approval = factory.Trait(
             is_locked=True,
         )
+        in_progress = factory.Trait(
+            status=IN_PROGRESS,
+        )
 
 
 class ContractFactory(factory.DjangoModelFactory):
@@ -154,6 +158,11 @@ class ReportConfigFactory(factory.DjangoModelFactory):
     class Meta:
         model = ReportConfig
         django_get_or_create = ('project',)
+
+    class Params:
+        weeks = factory.Trait(
+            frequency=ReportConfig.WEEK,
+        )
 
 
 class ReportVersionFactory(factory.DjangoModelFactory):

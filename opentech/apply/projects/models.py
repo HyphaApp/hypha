@@ -285,8 +285,15 @@ PROJECT_STATUS_CHOICES = [
 
 
 class ProjectQuerySet(models.QuerySet):
-    def in_progress(self):
+    def active(self):
+        "Projects that are not finished"
         return self.exclude(status=COMPLETE)
+
+    def in_progress(self):
+        "Projects that users need to interact with, submitting reports or payment request"
+        return self.filter(
+            status__in=(IN_PROGRESS, CLOSING,)
+        )
 
     def complete(self):
         return self.filter(status=COMPLETE)
