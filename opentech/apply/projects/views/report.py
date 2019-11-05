@@ -13,10 +13,14 @@ from django.views.generic.detail import SingleObjectMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateMediaView
+from opentech.apply.utils.views import DelegatedViewMixin
 from opentech.apply.users.decorators import staff_required
 
 from ..models import Report, ReportConfig, ReportPrivateFiles
-from ..forms import ReportEditForm
+from ..forms import (
+    ReportEditForm,
+    ReportFrequencyForm,
+)
 
 
 class ReportingMixin:
@@ -161,3 +165,33 @@ class ReportSkipView(SingleObjectMixin, View):
                 related=report,
             )
         return redirect(report.project.get_absolute_url())
+
+
+class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
+    form_class = ReportFrequencyForm
+    context_name = 'update_frequency_form'
+    model = ReportConfig
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('user')
+        kwargs['instance'] = kwargs['instance'].report_config
+        return kwargs
+
+    def get_form(self):
+        if self.get_parent_object().is_in_progress:
+            return super().get_form()
+        return None
+
+    def form_valid(self, form):
+        config = form.instance
+        response = super().form_valid(form)
+        messenger(
+            MESSAGES.REPORT_FREQUENCY_CHANGED,
+            request=self.request,
+            user=self.request.user,
+            source=config.project,
+            related=config,
+        )
+
+        return response

@@ -246,6 +246,10 @@ class TestReportConfig(TestCase):
         self.assertEqual(Report.objects.count(), 2)
         self.assertEqual(report.end_date, next_due)
 
+    def test_today_schedule_gets_report_today(self):
+        config = ReportConfigFactory(schedule_start=self.today)
+        self.assertEqual(config.current_due_report().end_date, self.today)
+
     def test_past_due_report_future_schedule_creates_report(self):
         config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=3))
         ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
