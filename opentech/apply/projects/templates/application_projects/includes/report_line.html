@@ -22,10 +22,25 @@
         {% endif %}
 
         {% if request.user.is_apply_staff and report.can_submit %}
-            <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                {% csrf_token %}
-                <input type="submit" value="Skip" class="btn data-block__action-link"></input>
-            </form>
+
+            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="Skip" class="btn data-block__action-link"></input>
+
+            <!-- Skip report confirmation modal -->
+            <div class="modal" id="skip-report-{{report.id}}">
+                <h4 class="modal__header-bar modal__header-bar--no-bottom-space">Skip report</h4>
+                <div class="modal__copy">
+                    <p>You are about to skip the report for this period.</p>
+                    <p>Do you wish to contiune?</p>
+                </div>
+                <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal__buttons">
+                        <input type="submit" value="Skip" class="button button--primary button--submit"></input>
+                        <button data-fancybox-close class="button button--submit button--white">Not yet</button>
+                    </div>
+                </form>
+            </div>
+
         {% endif %}
     </div>
 </li>
