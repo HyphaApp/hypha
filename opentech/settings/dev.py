@@ -126,6 +126,7 @@ if DEBUG:
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": {
         'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
         'debug_toolbar.panels.settings.SettingsPanel',
         'debug_toolbar.panels.headers.HeadersPanel',
         'debug_toolbar.panels.request.RequestPanel',
@@ -140,7 +141,6 @@ DEBUG_TOOLBAR_CONFIG = {
     },
     "SHOW_COLLAPSED": True,
 }
-
 
 WEBPACK_LOADER['DEFAULT'].update({
     'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats.json'),
