@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = 'Notify users that they have a report due soon'
 
     def add_arguments(self, parser):
-        parser.add_argument('days', type=int)
+        parser.add_argument('days_before', type=int)
 
     def handle(self, *args, **options):
         site = ApplyHomePage.objects.first().get_site()
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         request._messages = FallbackStorage(request)
 
         today = timezone.now().date()
-        due_date = today + relativedelta(days=options['days'])
+        due_date = today + relativedelta(days=options['days_before'])
         for project in Project.objects.in_progress():
             next_report = project.report_config.current_due_report()
             due_soon = next_report.end_date == due_date
