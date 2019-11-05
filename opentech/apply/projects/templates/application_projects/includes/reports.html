@@ -3,6 +3,27 @@
         <p class="payment-block__title">Reporting</p>
     </div>
     <div>
+        <h6>Report frequency</h6>
+        <p>
+            {{ object.report_config.get_frequency_display }}
+        </p>
+        {% if request.user.is_apply_staff %}
+        <p>
+            <div class="modal" id="change-frequency">
+                {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
+                <h4 class="modal__header-bar">Change reporting frequency</h4>
+                <p>Schedule reports every:</p>
+                {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue'%}
+            </div>
+            <a data-fancybox
+               data-src="#change-frequency"
+               href="#">
+                Change
+            </a>
+        </p>
+        {% endif %}
+    </div>
+    <div>
     {% for report in object.report_config.past_due_reports %}
         {% include "application_projects/includes/report_line.html" with report=report %}
     {% endfor %}

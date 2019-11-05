@@ -7,6 +7,7 @@ import os
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.humanize.templatetags.humanize import ordinal
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -399,6 +400,15 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
         return first_approved_contract.approved_at.date()
 
+    @property
+    def end_date(self):
+        # Aiming for the proposed end date as the last day of the project
+        # If still ongoing assume today is the end
+        return max(
+            self.proposed_end.date(),
+            timezone.now().date(),
+        )
+
     def paid_value(self):
         return self.payment_requests.paid_value()
 
@@ -559,11 +569,35 @@ class ReportConfig(models.Model):
     occurrence = models.PositiveSmallIntegerField(default=1)
     frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
 
+    def get_frequency_display(self):
+        next_report = self.current_due_report()
+
+        if self.frequency == self.MONTH:
+            if self.schedule_start and self.schedule_start.day == 31:
+                day_of_month = 'last day'
+            else:
+                day_of_month = ordinal(next_report.end_date.day)
+            if self.occurrence == 1:
+                return f"Monthly on the { day_of_month } of the month"
+            return f"Every { self.occurrence } months on the { day_of_month } of the month"
+
+        weekday = next_report.end_date.strftime('%A')
+
+        if self.occurrence == 1:
+            return f"Every week on { weekday }"
+        return f"Every {self.occurrence} weeks on { weekday }"
+
     def past_due_reports(self):
         return self.project.reports.filter(
             Q(current__isnull=True) & Q(skipped=False),
             end_date__lt=timezone.now().date(),
         ).order_by('end_date')
+
+    def last_report(self):
+        today = timezone.now().date()
+        return self.project.reports.filter(
+            Q(end_date__lt=today) | Q(current__isnull=False)
+        ).first()
 
     def current_due_report(self):
         # Project not started - no reporting required
@@ -572,9 +606,7 @@ class ReportConfig(models.Model):
 
         today = timezone.now().date()
 
-        last_report = self.project.reports.filter(
-            Q(end_date__lt=today) | Q(current__isnull=False)
-        ).first()
+        last_report = self.last_report()
 
         schedule_date = self.schedule_start or self.project.start_date
 
@@ -587,9 +619,9 @@ class ReportConfig(models.Model):
                 next_due_date = self.next_date(last_report.end_date)
         else:
             # first report required
-            if schedule_date > today:
+            if self.schedule_start and self.schedule_start >= today:
                 # Schedule changed since project inception
-                next_due_date = schedule_date
+                next_due_date = self.schedule_start
             else:
                 # schedule_start is the first day the project so the "last" period
                 # ended one day before that. If date is in past we required report now
@@ -675,6 +707,12 @@ class Report(models.Model):
             return last_report.end_date + relativedelta(days=1)
 
         return self.project.start_date
+
+    def serialize(self):
+        return {
+            'endDate': self.end_date,
+            'projectEndDate': self.project.end_date,
+        }
 
 
 class ReportVersion(models.Model):
