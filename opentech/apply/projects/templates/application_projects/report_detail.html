@@ -18,14 +18,14 @@
         {% if report.skipped %}
             <h2>Report Skipped</h2>
         {% else%}
-        <h3>
-            {% if object.public %}
+            <h3>
                 Public
-            {% else %}
+            </h3>
+            {{ object.current.public_content|bleach|safe }}
+            <h3>
                 Private
-            {% endif %}
-        </h3>
-        {{ object.current.content|bleach|safe }}
+            </h3>
+            {{ object.current.private_content|bleach|safe }}
         {% for file in object.current.files.all %}
             {% if forloop.first %}
                 <h4>Files</h4>
