@@ -8,34 +8,6 @@ from .messaging import messenger, MESSAGES
 from .models import Activity, COMMENT
 
 
-ACTIVITY_LIMIT = 50
-
-
-class AllActivityContextMixin:
-    def get_context_data(self, **kwargs):
-        extra = {
-            'actions': Activity.actions.select_related(
-                'user',
-            ).prefetch_related(
-                'source',
-                'related_object',
-            )[:ACTIVITY_LIMIT],
-            'comments': Activity.comments.select_related(
-                'user',
-            ).prefetch_related(
-                'source',
-                'related_object',
-            )[:ACTIVITY_LIMIT],
-            'all_activity': Activity.objects.select_related(
-                'user',
-            ).prefetch_related(
-                'source',
-                'related_object',
-            )[:ACTIVITY_LIMIT],
-        }
-        return super().get_context_data(**extra, **kwargs)
-
-
 class ActivityContextMixin:
     def get_context_data(self, **kwargs):
         related_query = self.model.activities.rel.related_query_name
