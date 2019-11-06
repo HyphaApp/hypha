@@ -5,7 +5,7 @@
         </div>
         <div class="data-block__body">
             <div class="data-block__card">
-                <h6 class="data-block__card-title">Report frequency</h6>
+                <p class="data-block__card-title">Report frequency</p>
                 <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                 {% if request.user.is_apply_staff %}
                     <p class="data-block__card-copy">
