@@ -127,14 +127,21 @@ class ReportListTable(tables.Table):
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
         args=[tables.utils.A('pk')],
     )
-    start = tables.DateColumn(verbose_name='Start Date')
+    report_period = tables.Column(accessor='pk')
     submitted = tables.DateColumn()
+    lead = tables.Column(accessor='project.lead')
 
     class Meta:
         fields = [
             'project',
-            'start',
-            'end_date',
             'submitted',
         ]
+        sequence = [
+            'project',
+            'report_period',
+            '...'
+        ]
         model = Report
+
+    def render_report_period(self, record):
+        return f"{record.start} to {record.end_date}"
