@@ -1,4 +1,5 @@
 import collections
+import datetime
 import decimal
 import json
 import logging
@@ -12,8 +13,19 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import F, Max, Q, Sum, Value as V
-from django.db.models.functions import Coalesce
+from django.db.models import (
+    Case,
+    F,
+    ExpressionWrapper,
+    Max,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value as V,
+    When,
+)
+from django.db.models.functions import Cast, Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
@@ -299,6 +311,20 @@ class ProjectQuerySet(models.QuerySet):
     def with_last_payment(self):
         return self.annotate(
             last_payment_request=Max('payment_requests__requested_at'),
+        )
+
+    def with_start_date(self):
+        return self.annotate(
+            start=Cast(
+                Subquery(
+                    Contract.objects.filter(
+                        project=OuterRef('pk'),
+                    ).approved().order_by(
+                        'approved_at'
+                    ).values('approved_at')[:1]
+                ),
+                models.DateField(),
+            )
         )
 
     def for_table(self):
@@ -649,6 +675,40 @@ class ReportQueryset(models.QuerySet):
     def done(self):
         return self.filter(
             Q(current__isnull=False) | Q(skipped=True),
+        )
+
+    def submitted(self):
+        return self.filter(current__isnull=False)
+
+    def for_table(self):
+        return self.annotate(
+            last_end_date=Subquery(
+                Report.objects.filter(
+                    project=OuterRef('project_id'),
+                    end_date__lt=OuterRef('end_date')
+                ).values('end_date')[:1]
+            ),
+            project_start_date=Subquery(
+                Project.objects.filter(
+                    pk=OuterRef('project_id'),
+                ).with_start_date().values('start')[:1]
+            ),
+            start=Case(
+                When(
+                    last_end_date__isnull=False,
+                    # Expression Wrapper doesn't cast the calculated object
+                    # Use cast to get an actual date object
+                    then=Cast(
+                        ExpressionWrapper(
+                            F('last_end_date') + datetime.timedelta(days=1),
+                            output_field=models.DateTimeField(),
+                        ),
+                        models.DateField(),
+                    ),
+                ),
+                default=F('project_start_date'),
+                output_field=models.DateField(),
+            )
         )
 
 
