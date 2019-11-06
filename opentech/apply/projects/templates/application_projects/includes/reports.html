@@ -13,7 +13,7 @@
                     </p>
                     <!-- Change report frequency modal -->
                     <div class="modal" id="change-frequency">
-                        {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
+                        {{ report_data|json_script:"reportData" }}
                         <h4 class="modal__header-bar">Change reporting frequency</h4>
                         <div class="form__info-box">
                             <p>
