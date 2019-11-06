@@ -169,6 +169,7 @@
         margin-right: 1rem;
         text-decoration: underline;
         color: $color--primary;
+        word-break: normal;
 
         &:last-child {
             margin: 0;
