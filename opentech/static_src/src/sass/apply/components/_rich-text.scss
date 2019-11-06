@@ -4,7 +4,7 @@
 
     &--answers {
         > section {
-            margin: 0 0 1rem;
+            margin: 0 0 2rem;
 
             p:first-of-type {
                 margin-top: 0;
@@ -14,10 +14,28 @@
                 margin: 0;
             }
         }
+    }
 
-        h4 {
-            margin: 0;
-        }
+    h1 {
+        font-size: 20px;
+        font-family: $font--primary;
+    }
+
+    h2 {
+        font-size: 18px;
+        font-family: $font--primary;
+    }
+
+    h3,
+    h4:not(.question),
+    h5,
+    h6 {
+        font-size: 16px;
+        font-family: $font--primary;
+    }
+
+    .question {
+        margin: 0;
     }
 
     &--hidden {

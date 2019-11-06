@@ -15,7 +15,8 @@ from .views import (
     SubmissionSealedView,
     SubmissionDeleteView,
     SubmissionPrivateMediaView,
-    SubmissionDetailSimplifiedView
+    SubmissionDetailPDFView,
+    SubmissionDetailSimplifiedView,
 )
 from .api_views import (
     CommentEdit,
@@ -45,6 +46,7 @@ submission_urls = ([
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('simplified/', SubmissionDetailSimplifiedView.as_view(), name="simplified"),
+        path('download/', SubmissionDetailPDFView.as_view(), name="download"),
         path('delete/', SubmissionDeleteView.as_view(), name="delete"),
         path(
             'documents/<uuid:field_id>/<str:file_name>',
