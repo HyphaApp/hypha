@@ -10,17 +10,21 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegatedViewMixin
 from opentech.apply.users.decorators import staff_required
 
-from ..models import Report, ReportConfig, ReportPrivateFiles
+from ..filters import ReportListFilter
 from ..forms import (
     ReportEditForm,
     ReportFrequencyForm,
 )
+from ..models import Report, ReportConfig, ReportPrivateFiles
+from ..tables import ReportListTable
 
 
 class ReportingMixin:
@@ -197,3 +201,11 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         )
 
         return response
+
+
+@method_decorator(staff_required, name='dispatch')
+class ReportListView(SingleTableMixin, FilterView):
+    queryset = Report.objects.submitted().for_table()
+    filterset_class = ReportListFilter
+    table_class = ReportListTable
+    template_name = 'application_projects/report_list.html'

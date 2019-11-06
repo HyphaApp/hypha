@@ -4,7 +4,7 @@ import django_tables2 as tables
 from django.db.models import F, Sum
 from django.contrib.humanize.templatetags.humanize import intcomma
 
-from .models import PaymentRequest, Project
+from .models import PaymentRequest, Project, Report
 
 
 class BasePaymentRequestsTable(tables.Table):
@@ -119,3 +119,22 @@ class ProjectsListTable(BaseProjectsTable):
 
     def order_end_date(self, qs, desc):
         return qs.by_end_date(desc), True
+
+
+class ReportListTable(tables.Table):
+    project = tables.LinkColumn(
+        'funds:projects:reports:detail',
+        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        args=[tables.utils.A('pk')],
+    )
+    start = tables.DateColumn(verbose_name='Start Date')
+    submitted = tables.DateColumn()
+
+    class Meta:
+        fields = [
+            'project',
+            'start',
+            'end_date',
+            'submitted',
+        ]
+        model = Report
