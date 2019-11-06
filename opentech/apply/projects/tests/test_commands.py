@@ -15,14 +15,15 @@ from .factories import (
 )
 
 
-@override_settings(ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname])
 @override_settings(ROOT_URLCONF='opentech.apply.urls')
 class TestNotifyReportDue(TestCase):
     def test_notify_report_due_in_7_days(self):
         in_a_week = timezone.now() + relativedelta(days=7)
         ReportConfigFactory(schedule_start=in_a_week, project__in_progress=True)
         out = StringIO()
-        call_command('notify_report_due', 7, stdout=out)
+
+        with self.settings(ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]):
+            call_command('notify_report_due', 7, stdout=out)
         self.assertIn('Notified project', out.getvalue())
 
     def test_dont_notify_report_due_in_7_days_already_submitted(self):
