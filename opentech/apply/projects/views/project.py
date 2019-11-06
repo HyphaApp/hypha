@@ -438,6 +438,12 @@ class AdminProjectDetailView(
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
+
+        if self.object.is_in_progress:
+            context['report_data'] = {
+                'startDate': self.object.report_config.current_due_report().start_date,
+                'projectEndDate': self.object.end_date,
+            }
         return context
 
 
