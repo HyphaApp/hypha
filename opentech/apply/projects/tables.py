@@ -142,6 +142,7 @@ class ReportListTable(tables.Table):
             '...'
         ]
         model = Report
+        attrs = {'class': 'responsive-table'}
 
     def render_report_period(self, record):
         return f"{record.start} to {record.end_date}"
