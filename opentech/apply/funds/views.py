@@ -5,13 +5,15 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
-from django.http import HttpResponseRedirect, Http404
+from django.http import FileResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView
+from django.views.generic.detail import SingleObjectMixin
 
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
@@ -19,7 +21,6 @@ from django_tables2.views import SingleTableMixin
 from wagtail.core.models import Page
 
 from opentech.apply.activity.views import (
-    AllActivityContextMixin,
     ActivityContextMixin,
     CommentFormView,
     DelegatedViewMixin,
@@ -30,6 +31,7 @@ from opentech.apply.projects.forms import CreateProjectForm
 from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
+from opentech.apply.utils.pdfs import make_pdf
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
@@ -231,7 +233,7 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable):
+class SubmissionOverviewView(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
@@ -274,7 +276,7 @@ class SubmissionOverviewView(AllActivityContextMixin, BaseAdminSubmissionsTable)
         )
 
 
-class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
+class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
         BatchUpdateLeadView,
@@ -283,7 +285,7 @@ class SubmissionAdminListView(AllActivityContextMixin, BaseAdminSubmissionsTable
     ]
 
 
-class SubmissionReviewerListView(AllActivityContextMixin, BaseReviewerSubmissionsTable):
+class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
     template_name = 'funds/submissions.html'
 
 
@@ -293,7 +295,7 @@ class SubmissionListView(ViewDispatcher):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionsByRound(AllActivityContextMixin, BaseAdminSubmissionsTable, DelegateableListView):
+class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions_by_round.html'
     form_views = [
         BatchUpdateLeadView,
@@ -948,3 +950,34 @@ class SubmissionDetailSimplifiedView(DetailView):
             raise Http404
 
         return obj
+
+
+@method_decorator(staff_required, name='dispatch')
+class SubmissionDetailPDFView(SingleObjectMixin, View):
+    model = ApplicationSubmission
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+
+        if not hasattr(obj, 'project'):
+            raise Http404
+
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        pdf = make_pdf(
+            title=self.object.title,
+            meta=[
+                self.object.stage,
+                self.object.page,
+                self.object.round,
+                f"Lead: { self.object.lead }",
+            ],
+            content=self.object.output_text_answers()
+        )
+        return FileResponse(
+            pdf,
+            as_attachment=True,
+            filename=self.object.title + '.pdf',
+        )

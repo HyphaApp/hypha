@@ -14,7 +14,13 @@ def generate_submission_file_path(submission_id, field_id, file_name):
 
 class SubmissionStreamFieldFile(StreamFieldFile):
     def generate_filename(self):
-        return generate_submission_file_path(self.instance.pk, self.field.id, self.name)
+        from opentech.apply.funds.models.submissions import ApplicationRevision
+        submission_id = self.instance.pk
+
+        if isinstance(self.instance, ApplicationRevision):
+            submission_id = self.instance.submission.pk
+
+        return generate_submission_file_path(submission_id, self.field.id, self.name)
 
     @property
     def url(self):

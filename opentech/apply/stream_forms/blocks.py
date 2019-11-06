@@ -387,13 +387,6 @@ class ImageFieldBlock(UploadableMediaBlock):
         label = _('Image field')
         icon = 'image'
 
-    def get_field_kwargs(self, struct_value):
-        kwargs = super().get_field_kwargs(struct_value)
-        # We do not need this when we are on Django 2.1
-        # https://docs.djangoproject.com/en/2.1/releases/2.1/#forms
-        kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': 'image/*'})
-        return kwargs
-
 
 class FileFieldBlock(UploadableMediaBlock):
     """This doesn't know how to save the uploaded files

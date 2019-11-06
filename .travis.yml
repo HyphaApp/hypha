@@ -31,7 +31,7 @@ install:
   - pip install codecov
 
   # Install project dependencies
-  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
 
   # Install node
   - nvm install 10

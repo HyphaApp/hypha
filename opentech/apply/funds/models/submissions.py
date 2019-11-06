@@ -216,6 +216,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             'round',
             'lead',
             'user',
+            'screening_status',
             'previous__page',
             'previous__round',
             'previous__lead',
@@ -561,9 +562,10 @@ class ApplicationSubmission(
                 self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
+                self.search_data = ' '.join(self.prepare_search_values())
 
             self.draft_revision = revision
-            self.save()
+            self.save(skip_custom=True)
             return revision
         return None
 

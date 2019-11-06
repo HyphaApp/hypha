@@ -2,7 +2,7 @@
 {% load bleach_tags %}
 {% block data_display %}
     {% if data %}
-        {{ data|bleach }}
+        <p>{{ data|bleach }}</p>
     {% else %}
         {{ block.super }}
     {% endif %}

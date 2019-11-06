@@ -1,5 +1,4 @@
 {% extends "funds/base_submissions_table.html" %}
-{% load static %}
 {% load render_table from django_tables2 %}
 {% block title %}Submissions{% endblock %}
 
@@ -32,15 +31,4 @@
         </div>
     {% endblock %}
 </div>
-
-<a href="#" class="js-open-feed link link--open-feed">
-    <h4 class="heading heading--no-margin heading--activity-feed">Activity Feed</h4>
-</a>
-{% include "funds/includes/activity-feed.html" %}
-
-{% endblock %}
-
-{% block extra_js %}
-    {{ block.super }}
-    <script src="{% static 'js/apply/activity-feed.js' %}"></script>
 {% endblock %}

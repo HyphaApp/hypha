@@ -1,5 +1,6 @@
 from datetime import date
 
+from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -108,7 +109,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('approval_form'),
-        FieldPanel('reviewers'),
+        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('slack_channel'),
     ]
 
@@ -174,7 +175,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading="Dates"),
-        FieldPanel('reviewers'),
+        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         ReadOnlyPanel('get_workflow_name_display', heading="Workflow", help_text="Copied from the fund."),
         # Forms comes from parental key in models/forms.py
         ReadOnlyInlinePanel('forms', help_text="Copied from the fund."),
@@ -407,7 +408,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('approval_form'),
         FieldPanel('lead'),
-        FieldPanel('reviewers'),
+        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('slack_channel'),
     ]
 
