@@ -767,12 +767,6 @@ class Report(models.Model):
 
         return self.project.start_date
 
-    def serialize(self):
-        return {
-            'endDate': self.end_date,
-            'projectEndDate': self.project.end_date,
-        }
-
 
 class ReportVersion(models.Model):
     report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
