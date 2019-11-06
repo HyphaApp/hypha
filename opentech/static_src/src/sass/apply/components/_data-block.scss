@@ -221,4 +221,31 @@
         height: 25px;
         fill: $color--tomato;
     }
+
+    &__card {
+        padding-bottom: 1rem;
+        position: relative;
+        margin-bottom: 2rem;
+
+        &::after {
+            content: '';
+            width: calc(100% + 2rem);
+            position: absolute;
+            height: 2px;
+            display: block;
+            background: $color--mid-grey;
+            left: -1rem;
+            bottom: 0;
+
+            @include media-query(mob-landscape) {
+                width: calc(100% + 4rem);
+                left: -2rem;
+            }
+        }
+    }
+
+    &__card-copy,
+    &__card-title {
+        margin: 0 0 .5rem;
+    }
 }
