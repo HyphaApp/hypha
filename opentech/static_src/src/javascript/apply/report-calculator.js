@@ -2,7 +2,7 @@
 
     'use strict';
 
-    const reportData = JSON.parse(document.getElementById('lastReportData').textContent);
+    const reportData = JSON.parse(document.getElementById('reportData').textContent);
 
     // Form inputs
     const frequencyNumberInput = document.getElementById('id_occurrence');
@@ -39,11 +39,10 @@
         pluraliseTimePeriod(frequencyNumberInput.value);
     }
 
-    // Set the reporting period start date (endDate + 1)
+    // Set the reporting period start date 
     function setReportPeriodStart() {
-        const endDate = new Date(reportData.endDate);
-        endDate.setDate(endDate.getDate() + 1);
-        periodStartSlot.innerHTML = endDate.toISOString().slice(0, 10);
+        const startDate = new Date(reportData.startDate);
+        periodStartSlot.innerHTML = startDate.toISOString().slice(0, 10);
     }
 
     function addReportPeriodEvents() {
