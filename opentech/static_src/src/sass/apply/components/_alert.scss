@@ -1,0 +1,24 @@
+.alert {
+    border: 2px solid $color--lighter-blue;
+    padding: 1rem;
+    margin: 0 0 2rem;
+    background-color: $color--light-blue-90;
+    display: flex;
+    align-items: center;
+
+    @include media-query(tablet-portrait) {
+        padding: 1.5rem;
+    }
+
+    &__icon {
+        width: 25px;
+        height: 25px;
+        fill: $color--light-blue;
+        margin-right: .8rem;
+    }
+
+    &__text {
+        margin: 0;
+        flex: 1;
+    }
+}

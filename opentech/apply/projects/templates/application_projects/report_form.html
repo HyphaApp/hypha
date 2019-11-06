@@ -8,15 +8,21 @@
         <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
             Project
         </a>
-        <h2 class="heading heading--no-margin">Report for the period {{ report.start_date }} to {{ report.end_date }}</h2>
-        <h5 class="heading heading--no-margin">{{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
+        <h5 class="heading heading--no-margin">Submit a report</h5>
     </div>
 </div>
 
 {% include "forms/includes/form_errors.html" with form=form %}
 
-<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+<div class="wrapper wrapper--light-grey-bg wrapper--form">
     <div class="wrapper--sidebar--inner">
+
+        <div class="alert">
+            <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
+            <p class="alert__text">You are reporting for the period running from {{ report.start_date }} to {{ report.end_date }}</p>
+        </div>
+
         <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
             {{ form.media }}
