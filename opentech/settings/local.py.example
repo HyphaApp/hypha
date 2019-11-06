@@ -7,9 +7,12 @@ CACHES = {
     }
 }
 
-# Use the Django debug toolbar. First install via pip.
-# pip install django-debug-toolbar
-# DEBUGTOOLBAR = True
+# ALLOWED_HOSTS = ['apply.otf.test', 'otf.test', 'apply.hypha.test', 'hypha.test', '127.0.0.1']
+
+# BASE_URL = 'http://otf.test'
+
+# Turn off DEBUG mode.
+# DEBUG = False
 
 # Write log to local file.
 # LOCAL_FILE_LOGGING = True
@@ -17,16 +20,12 @@ CACHES = {
 # Write e-mails to local files.
 # LOCAL_FILE_EMAIL = True
 
-# On staging, uncomment the following to enable the styleguide
+# Enable the styleguide.
 # ENABLE_STYLEGUIDE = True
-
-# ALLOWED_HOSTS = ['apply.otf.test', 'otf.test', '127.0.0.1']
-
-# BASE_URL = 'http://otf.test'
 
 # SECRET_KEY = 'CHANGEME!!!'
 
-# Enable Wagtail Cache while developing
+# Enable Wagtail Cache.
 # WAGTAIL_CACHE = True
 
 # If you have a problem with "CSRF cookie not set".
