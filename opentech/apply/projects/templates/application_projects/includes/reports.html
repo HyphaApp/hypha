@@ -15,8 +15,23 @@
                     <div class="modal" id="change-frequency">
                         {{ object.report_config.last_report.serialize|json_script:"lastReportData" }}
                         <h4 class="modal__header-bar">Change reporting frequency</h4>
+                        <div class="form__info-box">
+                            <p>
+                                Next report will be due in
+                                <b class="js-next-report-due-slot">(please choose the next report date)</b>
+                                and the report period will be
+                                <b class="js-report-period-start"></b>
+                                to
+                                <b class="js-report-period-end">(please choose the next report date)</b>
+                                and then every
+                                <b class="js-frequency-number-slot"></b>
+                                <b class="js-frequency-period-slot"></b>
+                                after until the project end date:
+                                <span class="js-project-end-slot"></span>.
+                            </p>
+                        </div>
                         <p>Schedule reports every:</p>
-                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue' extra_classes="form--report-frequency" report_frequency_form=True %}
+                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue' extra_classes="form--report-frequency" %}
                     </div>
                 {% endif %}
             </div>

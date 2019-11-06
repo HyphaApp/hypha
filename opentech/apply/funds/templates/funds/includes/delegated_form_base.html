@@ -20,24 +20,6 @@
         {% endif %}
     {% endfor %}
 
-    {% if report_frequency_form %}
-        <div class="form__info-box">
-            <p>
-                Next report will be due in
-                <b class="js-next-report-due-slot">(please choose the next report date)</b>
-                and the report period will be
-                <b class="js-report-period-start"></b>
-                to
-                <b class="js-report-period-end">(please choose the next report date)</b>
-                and then every
-                <b class="js-frequency-number-slot"></b>
-                <b class="js-frequency-period-slot"></b>
-                after until the project end date:
-                <span class="js-project-end-slot"></span>.
-            </p>
-        </div>
-    {% endif %}
-
     {% if cancel %}
     <button
         type="button"
