@@ -381,10 +381,10 @@ class UpdateProjectLeadForm(forms.ModelForm):
 
 class ReportEditForm(forms.ModelForm):
     public_content = RichTextField(
-        help_text="This section will be shared with the wider community."
+        help_text="This section of the report will be shared with the broader community."
     )
     private_content = RichTextField(
-        help_text="This section will be shared with staff members only."
+        help_text="This section of the report will be shared with staff only."
     )
     file_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
