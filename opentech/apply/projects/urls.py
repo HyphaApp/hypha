@@ -15,6 +15,7 @@ from .views import (
     ProjectOverviewView,
     ProjectPrivateMediaView,
     ReportDetailView,
+    ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
@@ -44,6 +45,7 @@ urlpatterns = [
         ])),
     ], 'payments'))),
     path('reports/', include(([
+        path('', ReportListView.as_view(), name='all'),
         path('<int:pk>/', include([
             path('', ReportDetailView.as_view(), name='detail'),
             path('skip/', ReportSkipView.as_view(), name='skip'),
