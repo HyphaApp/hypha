@@ -36,7 +36,7 @@
     // Set the reporting frequency
     function setFrequency() {
         frequencyNumberSlot.innerHTML = frequencyNumberInput.value;
-        frequencyPeriodSlot.innerHTML = frequencyPeriodSelect.value;
+        pluraliseTimePeriod(frequencyNumberInput.value);
     }
 
     // Set the reporting period start date (endDate + 1)
