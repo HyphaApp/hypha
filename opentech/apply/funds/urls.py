@@ -18,7 +18,7 @@ from .views import (
     SubmissionDetailPDFView,
     SubmissionDetailSimplifiedView,
     SubmissionUserFlaggedView,
-    SubmissionStaffFlaggedView
+    SubmissionStaffFlaggedView,
 )
 from .api_views import (
     CommentEdit,
