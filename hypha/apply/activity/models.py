@@ -124,7 +124,7 @@ class Activity(models.Model):
         return self.visibility not in [ALL]
 
     def __str__(self):
-        return '{}: for "{}"'.format(self.get_type_display(), self.submission)
+        return '{}: for "{}"'.format(self.get_type_display(), self.source)
 
     @classmethod
     def visibility_for(cls, user):
