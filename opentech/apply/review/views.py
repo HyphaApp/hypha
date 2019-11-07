@@ -96,6 +96,10 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
             related=review,
         )
         response = super().form_valid(form)
+
+        # Automatic workflow actions.
+        review_workflow_actions(self.request, review.submission)
+
         return response
 
     def get_success_url(self):
@@ -164,37 +168,47 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
 
             # Automatic workflow actions.
-            submission_stepped_phases = self.submission.workflow.stepped_phases
-            action = None
-            if self.submission.status == INITIAL_STATE:
-                # Automatically transition the application to "Internal review".
-                action = submission_stepped_phases[1][0].name
-            elif self.submission.status == submission_stepped_phases[1][0].name and self.submission.reviews.count() > 1:
-                # Automatically transition the application to "Ready for discussion".
-                action = submission_stepped_phases[2][0].name
-            elif self.submission.status == 'proposal_discussion':
-                # Automatically transition the proposal to "Internal review".
-                action = 'proposal_internal_review'
-            elif self.submission.status == 'external_review' and self.submission.reviews.by_reviewers().count() > 1:
-                # Automatically transition the proposal to "Ready for discussion".
-                action = 'post_external_review_discussion'
-
-            # If action is set run perform_transition().
-            if action:
-                try:
-                    self.submission.perform_transition(
-                        action,
-                        self.request.user,
-                        request=self.request,
-                        notify=False,
-                    )
-                except (PermissionDenied, KeyError):
-                    pass
+            review_workflow_actions(self.request, self.submission)
 
         return response
 
     def get_success_url(self):
         return self.submission.get_absolute_url()
+
+
+def review_workflow_actions(request, submission):
+    submission_stepped_phases = submission.workflow.stepped_phases
+    action = None
+    if submission.status == INITIAL_STATE:
+        # Automatically transition the application to "Internal review".
+        action = submission_stepped_phases[1][0].name
+    elif submission.status == 'proposal_discussion':
+        # Automatically transition the proposal to "Internal review".
+        action = 'proposal_internal_review'
+    elif submission.status == submission_stepped_phases[1][0].name and submission.reviews.count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = submission_stepped_phases[2][0].name
+    elif submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = 'ext_post_external_review_discussion'
+    elif submission.status == 'com_external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = 'com_post_external_review_discussion'
+    elif submission.status == 'external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the proposal to "Ready for discussion".
+        action = 'post_external_review_discussion'
+
+    # If action is set run perform_transition().
+    if action:
+        try:
+            submission.perform_transition(
+                action,
+                request.user,
+                request=request,
+                notify=False,
+            )
+        except (PermissionDenied, KeyError):
+            pass
 
 
 class ReviewDisplay(UserPassesTestMixin, DetailView):
