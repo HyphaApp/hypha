@@ -31,7 +31,7 @@ from opentech.apply.projects.forms import CreateProjectForm
 from opentech.apply.projects.models import Project
 from opentech.apply.review.views import ReviewContextMixin
 from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.pdfs import make_pdf
+from opentech.apply.utils.pdfs import make_pdf, draw_submission_content
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
@@ -997,15 +997,23 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        content = draw_submission_content(
+            self.object.output_text_answers()
+        )
         pdf = make_pdf(
             title=self.object.title,
-            meta=[
-                self.object.stage,
-                self.object.page,
-                self.object.round,
-                f"Lead: { self.object.lead }",
-            ],
-            content=self.object.output_text_answers()
+            sections=[
+                {
+                    'content': content,
+                    'title': 'Submission',
+                    'meta': [
+                        self.object.stage,
+                        self.object.page,
+                        self.object.round,
+                        f"Lead: { self.object.lead }",
+                    ],
+                },
+            ]
         )
         return FileResponse(
             pdf,

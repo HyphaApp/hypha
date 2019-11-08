@@ -12,6 +12,7 @@ from .views import (
     ProjectDetailView,
     ProjectEditView,
     ProjectListView,
+    ProjectDetailPDFView,
     ProjectOverviewView,
     ProjectPrivateMediaView,
 )
@@ -26,6 +27,7 @@ urlpatterns = [
         path('edit/', ProjectEditView.as_view(), name="edit"),
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
+        path('download/', ProjectDetailPDFView.as_view(), name='download'),
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
     ])),
