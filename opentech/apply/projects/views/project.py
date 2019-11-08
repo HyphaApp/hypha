@@ -28,7 +28,11 @@ from django_tables2 import SingleTableMixin
 from opentech.apply.activity.messaging import MESSAGES, messenger
 from opentech.apply.activity.views import ActivityContextMixin, CommentFormView
 from opentech.apply.users.decorators import approver_required, staff_required
-from opentech.apply.utils.pdfs import make_pdf
+from opentech.apply.utils.pdfs import (
+    draw_project_content,
+    draw_submission_content,
+    make_pdf,
+)
 from opentech.apply.utils.storage import PrivateMediaView
 from opentech.apply.utils.views import (
     DelegateableView,
@@ -527,16 +531,39 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
     model = Project
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object().submission
+        self.object = self.get_object()
+        response = ProjectDetailSimplifiedView.as_view()(
+            request=self.request,
+            pk=self.object.pk,
+        )
+        project = draw_project_content(
+            response.render().content
+        )
+        submission = draw_submission_content(
+            self.object.submission.output_text_answers()
+        )
         pdf = make_pdf(
             title=self.object.title,
-            meta=[
-                self.object.stage,
-                self.object.page,
-                self.object.round,
-                f"Lead: { self.object.lead }",
+            sections=[
+                {
+                    'content': project,
+                    'title': 'Project Approval Form',
+                    'meta': [
+                        self.object.submission.page,
+                        self.object.submission.round,
+                        f"Lead: { self.object.lead }",
+                    ],
+                }, {
+                    'content': submission,
+                    'title': 'Submission',
+                    'meta': [
+                        self.object.submission.stage,
+                        self.object.submission.page,
+                        self.object.submission.round,
+                        f"Lead: { self.object.submission.lead }",
+                    ],
+                },
             ],
-            content=self.object.output_text_answers()
         )
         return FileResponse(
             pdf,
