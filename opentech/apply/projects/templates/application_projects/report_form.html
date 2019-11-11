@@ -1,6 +1,11 @@
 {% extends "base-apply.html" %}
 {% load static %}
 
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
 {% block title %}Edit Report | {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
@@ -34,13 +39,39 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <input class="button button--submit button--top-space button--white" type="submit" name="save" value="Save" />
-            <input class="button button--submit button--top-space button--primary" type="submit" name="submit" value="Submit" />
+
+            <input type="submit" id="submit-report-form" class="is-hidden" />
+            <input data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button" value="Save" />
+            <input data-fancybox data-src="#submit-report" class="button button--primary" type="button" value="Submit" />
+
+            <!-- Save report modal -->
+            <div class="modal" id="save-report">
+                <h4 class="modal__header-bar">Save report</h4>
+                <div class="modal__copy">
+                    <p>Saving a draft means this report will be visible to you and staff from your project page.</p>
+                </div>
+                <div class="modal__buttons">
+                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Save</label>
+                </div>
+            </div>
+
+            <!-- Submit report modal -->
+            <div class="modal" id="submit-report">
+                <h4 class="modal__header-bar">Submit report</h4>
+                <p>Are you sure you want to submit your report?</p>
+                <div class="modal__buttons">
+                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Submit</label>
+                </div>
+            </div>
         </form>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 <script src="{% static 'js/apply/list-input-files.js' %}"></script>
+<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
 {% endblock %}
