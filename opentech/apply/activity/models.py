@@ -90,7 +90,7 @@ class Activity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
     source_content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE, related_name='activity_source')
-    source_object_id = models.PositiveIntegerField(blank=True, null=True)
+    source_object_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     source = GenericForeignKey('source_content_type', 'source_object_id')
 
     message = models.TextField()
