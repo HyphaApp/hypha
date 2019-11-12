@@ -630,7 +630,7 @@ class ReportConfig(models.Model):
     def last_report(self):
         today = timezone.now().date()
         return self.project.reports.filter(
-            Q(end_date__lt=today) | Q(current__isnull=False)
+            Q(end_date__lt=today) | Q(skipped=True)
         ).first()
 
     def current_due_report(self):
@@ -666,8 +666,9 @@ class ReportConfig(models.Model):
 
         report, _ = self.project.reports.update_or_create(
             project=self.project,
-            end_date__gte=today,
             current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
             defaults={'end_date': next_due_date}
         )
         return report
