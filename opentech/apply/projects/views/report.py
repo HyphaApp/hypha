@@ -159,7 +159,9 @@ class ReportSkipView(SingleObjectMixin, View):
 
     def post(self, *args, **kwargs):
         report = self.get_object()
-        if not report.current:
+        unsubmitted = not report.current
+        not_current = report.project.report_config.current_due_report() != report
+        if unsubmitted and not_current:
             report.skipped = not report.skipped
             report.save()
             messenger(
