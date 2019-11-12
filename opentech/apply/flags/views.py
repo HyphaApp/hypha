@@ -1,17 +1,15 @@
-import json
-
-from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views import View
 
 from opentech.apply.funds.models import ApplicationSubmission
+from opentech.apply.users.decorators import staff_required
 
 from .models import Flag
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(staff_required, name='dispatch')
 class FlagSubmissionCreateView(View):
     model = Flag
 
@@ -27,9 +25,4 @@ class FlagSubmissionCreateView(View):
         if not created:
             flag.delete()
 
-        return HttpResponse(
-            json.dumps({
-                "result": created
-            }),
-            content_type="application/json"
-        )
+        return JsonResponse({"result": created})
