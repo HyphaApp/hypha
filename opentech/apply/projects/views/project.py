@@ -601,12 +601,9 @@ class ProjectEditView(ViewDispatcher):
 @method_decorator(staff_required, name='dispatch')
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
-    model = Project
+    queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = 'application_projects/project_list.html'
-
-    def get_queryset(self):
-        return Project.objects.for_table()
 
 
 @method_decorator(staff_required, name='dispatch')
