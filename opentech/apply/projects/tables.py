@@ -3,6 +3,7 @@ import textwrap
 import django_tables2 as tables
 from django.db.models import F, Sum
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.utils.safestring import mark_safe
 
 from .models import PaymentRequest, Project, Report
 
@@ -71,12 +72,28 @@ class BaseProjectsTable(tables.Table):
     )
     status = tables.Column(verbose_name='Status', accessor='get_status_display', order_by=('status',))
     fund = tables.Column(verbose_name='Fund', accessor='submission.page')
+    reporting = tables.Column(verbose_name='Reporting', accessor='pk')
     last_payment_request = tables.DateColumn()
     end_date = tables.DateColumn(verbose_name='End Date', accessor='proposed_end')
     fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
 
     def render_fund_allocation(self, record):
         return f'${intcomma(record.amount_paid)} / ${intcomma(record.value)}'
+
+    def render_reporting(self, record):
+        if not hasattr(record, 'report_config'):
+            return '-'
+
+        if record.report_config.is_up_to_date():
+            return 'Up to date'
+
+        if record.report_config.has_very_late_reports():
+            display = '<svg class="icon"><use xlink:href="#exclamation-point"></use></svg>'
+        else:
+            display = ''
+
+        display += f'{ record.report_config.outstanding_reports() } outstanding'
+        return mark_safe(display)
 
 
 class ProjectsDashboardTable(BaseProjectsTable):
@@ -85,12 +102,14 @@ class ProjectsDashboardTable(BaseProjectsTable):
             'title',
             'status',
             'fund',
+            'reporting',
             'last_payment_request',
             'end_date',
             'fund_allocation',
         ]
         model = Project
         orderable = False
+        attrs = {'class': 'projects-table'}
 
 
 class ProjectsListTable(BaseProjectsTable):
@@ -100,6 +119,7 @@ class ProjectsListTable(BaseProjectsTable):
             'status',
             'lead',
             'fund',
+            'reporting',
             'last_payment_request',
             'end_date',
             'fund_allocation',
@@ -107,6 +127,7 @@ class ProjectsListTable(BaseProjectsTable):
         model = Project
         orderable = True
         order_by = ('-end_date',)
+        attrs = {'class': 'projects-table'}
 
     def order_fund_allocation(self, qs, is_descending):
         direction = '-' if is_descending else ''
