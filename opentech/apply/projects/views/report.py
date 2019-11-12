@@ -53,7 +53,7 @@ class ReportDetailView(ReportAccessMixin, DetailView):
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
-        if not report.current and not report.skipped:
+        if not report.current or report.skipped:
             raise Http404
         return super().dispatch(*args, **kwargs)
 

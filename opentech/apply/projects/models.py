@@ -774,7 +774,7 @@ class Report(models.Model):
 
     @property
     def can_submit(self):
-        return self.start_date <= timezone.now().date()
+        return self.start_date <= timezone.now().date() and not self.skipped
 
     @property
     def submitted_date(self):
