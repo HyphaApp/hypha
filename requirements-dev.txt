@@ -7,4 +7,4 @@ flake8==3.7.9
 responses==0.10.6
 stellar==0.4.5
 wagtail-factories==2.0.0
-Werkzeug==0.14.1
+Werkzeug==0.15.3
