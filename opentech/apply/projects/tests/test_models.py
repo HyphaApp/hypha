@@ -303,10 +303,8 @@ class TestReport(TestCase):
         ReportFactory(project=report.project)
         self.assertFalse(report.is_very_late)
 
-    def test_late_if_two_ahead(self):
-        report = ReportFactory(end_date=self.from_today(-3))
-        ReportFactory(end_date=self.from_today(-2), project=report.project)
-        ReportFactory(project=report.project)
+    def test_late_if_two_weeks_behind(self):
+        report = ReportFactory(end_date=self.from_today(-15))
         self.assertTrue(report.is_very_late)
 
     def test_not_late_if_two_ahead_but_one_in_future(self):
