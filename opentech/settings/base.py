@@ -305,7 +305,7 @@ PASSWORD_RESET_TIMEOUT_DAYS = 8
 
 LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'Europe/London'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
