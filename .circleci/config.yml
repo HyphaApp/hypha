@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.8-stretch-node
+      - image: circleci/python:3.6.9-stretch-node
         environment:
           DATABASE_URL: postgresql://root@localhost/opentech?sslmode=disable
           PGHOST: localhost
@@ -14,7 +14,7 @@ jobs:
           DJANGO_SETTINGS_MODULE: opentech.settings.test
           SEND_MESSAGES: false
 
-      - image: circleci/postgres:10.5
+      - image: circleci/postgres:10.10
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: opentech
