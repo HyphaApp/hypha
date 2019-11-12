@@ -1,6 +1,7 @@
 import textwrap
 
 import django_tables2 as tables
+from django.db import models
 from django.db.models import F, Sum
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.utils.safestring import mark_safe
@@ -76,6 +77,13 @@ class BaseProjectsTable(tables.Table):
     last_payment_request = tables.DateColumn()
     end_date = tables.DateColumn(verbose_name='End Date', accessor='proposed_end')
     fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
+
+    def order_reporting(self, qs, is_descending):
+        direction = '-' if is_descending else ''
+
+        qs = qs.order_by(f'{direction}outstanding_reports')
+
+        return qs, True
 
     def render_fund_allocation(self, record):
         return f'${intcomma(record.amount_paid)} / ${intcomma(record.value)}'

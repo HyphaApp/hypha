@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import (
+    Count,
     Case,
     F,
     ExpressionWrapper,
@@ -313,6 +314,18 @@ class ProjectQuerySet(models.QuerySet):
             last_payment_request=Max('payment_requests__requested_at'),
         )
 
+    def with_outstanding_reports(self):
+        return self.annotate(
+            outstanding_reports=Subquery(
+                Report.objects.filter(
+                    project=OuterRef('pk'),
+                ).to_do().order_by().values('project').annotate(
+                    count=Count('pk'),
+                ).values('count'),
+                output_field=models.IntegerField(),
+            )
+        )
+
     def with_start_date(self):
         return self.annotate(
             start=Cast(
@@ -328,7 +341,7 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def for_table(self):
-        return self.with_amount_paid().with_last_payment().select_related(
+        return self.with_amount_paid().with_last_payment().with_outstanding_reports().select_related(
             'report_config',
             'submission__page',
             'lead',
