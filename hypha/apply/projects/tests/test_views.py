@@ -1428,10 +1428,10 @@ class TestStaffReportDetail(BaseViewTestCase):
         response = self.get_page(report)
         self.assertEqual(response.status_code, 200)
 
-    def test_can_access_skipped_report(self):
+    def test_cant_access_skipped_report(self):
         report = ReportFactory(skipped=True)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
 
     def test_cant_access_draft_report(self):
         report = ReportFactory(is_draft=True)
@@ -1483,3 +1483,49 @@ class TestApplicantReportDetail(BaseViewTestCase):
         report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
         response = self.get_page(report)
         self.assertEqual(response.status_code, 404)
+
+
+class TestSkipReport(BaseViewTestCase):
+    base_view_name = 'skip'
+    url_name = 'funds:projects:reports:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_can_skip_report(self):
+        report = ReportFactory(past_due=True)
+        response = self.post_page(report)
+        self.assertEqual(response.status_code, 200)
+        report.refresh_from_db()
+        self.assertTrue(report.skipped)
+
+    def test_can_unskip_report(self):
+        report = ReportFactory(skipped=True, past_due=True)
+        response = self.post_page(report)
+        self.assertEqual(response.status_code, 200)
+        report.refresh_from_db()
+        self.assertFalse(report.skipped)
+
+    def test_cant_skip_current_report(self):
+        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        response = self.post_page(report)
+        self.assertEqual(response.status_code, 200)
+        report.refresh_from_db()
+        self.assertFalse(report.skipped)
+
+    def test_cant_skip_submitted_report(self):
+        report = ReportFactory(is_submitted=True)
+        response = self.post_page(report, data={})
+        self.assertEqual(response.status_code, 200)
+        report.refresh_from_db()
+        self.assertFalse(report.skipped)
+
+    def test_can_skip_draft_report(self):
+        report = ReportFactory(is_draft=True, past_due=True)
+        response = self.post_page(report)
+        self.assertEqual(response.status_code, 200)
+        report.refresh_from_db()
+        self.assertTrue(report.skipped)
