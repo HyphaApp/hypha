@@ -7,7 +7,7 @@ cache:
     - node_modules
 
 # Use container-based infrastructure
-dist: trusty
+dist: bionic
 sudo: false
 
 # Services
@@ -15,7 +15,7 @@ services:
   - postgresql
 
 addons:
-  postgresql: "9.6"
+  postgresql: "10"
 
 env:
   global:
