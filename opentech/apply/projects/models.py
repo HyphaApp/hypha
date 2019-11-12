@@ -328,7 +328,11 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def for_table(self):
-        return self.with_amount_paid().with_last_payment()
+        return self.with_amount_paid().with_last_payment().select_related(
+            'report_config',
+            'submission__page',
+            'lead',
+        )
 
 
 class Project(BaseStreamForm, AccessFormData, models.Model):
@@ -613,11 +617,17 @@ class ReportConfig(models.Model):
             return f"Every week on { weekday }"
         return f"Every {self.occurrence} weeks on { weekday }"
 
+    def is_up_to_date(self):
+        return len(self.project.reports.to_do()) == 0
+
+    def outstanding_reports(self):
+        return len(self.project.reports.to_do())
+
+    def has_very_late_reports(self):
+        return self.project.reports.any_very_late()
+
     def past_due_reports(self):
-        return self.project.reports.filter(
-            Q(current__isnull=True) & Q(skipped=False),
-            end_date__lt=timezone.now().date(),
-        ).order_by('end_date')
+        return self.project.reports.to_do()
 
     def last_report(self):
         today = timezone.now().date()
@@ -676,6 +686,18 @@ class ReportQueryset(models.QuerySet):
         return self.filter(
             Q(current__isnull=False) | Q(skipped=True),
         )
+
+    def to_do(self):
+        today = timezone.now().date()
+        return self.filter(
+            current__isnull=True,
+            skipped=False,
+            end_date__lt=today,
+        ).order_by('end_date')
+
+    def any_very_late(self):
+        two_weeks_ago = timezone.now().date() - relativedelta(weeks=2)
+        return self.to_do().filter(end_date__lte=two_weeks_ago)
 
     def submitted(self):
         return self.filter(current__isnull=False)
@@ -744,11 +766,10 @@ class Report(models.Model):
 
     @property
     def is_very_late(self):
-        more_than_one_report_late = self.project.reports.filter(
-            Q(end_date__gt=self.end_date) & Q(end_date__lt=timezone.now().date())
-        ).count() >= 1
+        two_weeks_ago = timezone.now().date() - relativedelta(weeks=2)
+        two_weeks_late = self.end_date < two_weeks_ago
         not_submitted = not self.current
-        return not_submitted and more_than_one_report_late
+        return not_submitted and two_weeks_late
 
     @property
     def can_submit(self):
