@@ -3,6 +3,7 @@ import json
 
 import factory
 import pytz
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -14,6 +15,9 @@ from opentech.apply.projects.models import (
     PaymentRequest,
     Project,
     ProjectApprovalForm,
+    Report,
+    ReportConfig,
+    ReportVersion,
 )
 from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
@@ -98,6 +102,8 @@ class ProjectFactory(factory.DjangoModelFactory):
 class ContractFactory(factory.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)
     project = factory.SubFactory(ProjectFactory)
+    approved_at = factory.LazyFunction(timezone.now)
+    is_signed = True
 
     file = factory.django.FileField()
 
@@ -137,3 +143,62 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PaymentReceipt
+
+
+class ReportConfigFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory(
+        "opentech.apply.projects.tests.factories.ApprovedProjectFactory",
+        report_config=None,
+    )
+
+    class Meta:
+        model = ReportConfig
+        django_get_or_create = ('project',)
+
+
+class ReportVersionFactory(factory.DjangoModelFactory):
+    report = factory.SubFactory("opentech.apply.projects.tests.factories.ReportFactory")
+    submitted = factory.LazyFunction(timezone.now)
+    public_content = factory.Faker('paragraph')
+    private_content = factory.Faker('paragraph')
+    draft = True
+
+    class Meta:
+        model = ReportVersion
+
+    @factory.post_generation
+    def relate(obj, create, should_relate, **kwargs):
+        if not create:
+            return
+
+        if should_relate:
+            if obj.draft:
+                obj.report.draft = obj
+            else:
+                obj.report.current = obj
+                obj.report.submitted = obj.submitted
+            obj.report.save()
+
+
+class ReportFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory("opentech.apply.projects.tests.factories.ApprovedProjectFactory")
+    end_date = factory.LazyFunction(timezone.now)
+
+    class Meta:
+        model = Report
+
+    class Params:
+        past_due = factory.Trait(
+            end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
+        )
+        is_submitted = factory.Trait(
+            version=factory.RelatedFactory(ReportVersionFactory, 'report', draft=False, relate=True)
+        )
+        is_draft = factory.Trait(
+            version=factory.RelatedFactory(ReportVersionFactory, 'report', relate=True),
+        )
+
+
+class ApprovedProjectFactory(ProjectFactory):
+    contract = factory.RelatedFactory(ContractFactory, 'project')
+    report_config = factory.RelatedFactory(ReportConfigFactory, 'project')

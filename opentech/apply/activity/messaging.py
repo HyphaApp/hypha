@@ -63,6 +63,9 @@ neat_related = {
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.SUBMIT_REPORT: 'report',
+    MESSAGES.SKIPPED_REPORT: 'report',
+    MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
 }
 
 
@@ -133,14 +136,14 @@ class AdapterBase:
             event.source.id: event
             for event in events
         }
-        for recipient in self.batch_recipients(message_type, sources, **kwargs):
+        for recipient in self.batch_recipients(message_type, sources, user=user, **kwargs):
             recipients = recipient['recipients']
             sources = recipient['sources']
             events = [events_by_source[source.id] for source in sources]
             self.process_send(message_type, recipients, events, request, user, sources=sources, source=None, related=related, **kwargs)
 
     def process(self, message_type, event, request, user, source, related=None, **kwargs):
-        recipients = self.recipients(message_type, source=source, related=related, **kwargs)
+        recipients = self.recipients(message_type, source=source, related=related, user=user, **kwargs)
         self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
     def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
@@ -231,6 +234,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.APPROVE_CONTRACT: 'Approved contract',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
         MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
+        MESSAGES.SUBMIT_REPORT: 'Submitted a report',
+        MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -331,6 +337,16 @@ class ActivityAdapter(AdapterBase):
 
         return ' '.join(message)
 
+    def handle_report_frequency(self, config, **kwargs):
+        new_schedule = config.get_frequency_display()
+        return f"Updated reporting frequency. New schedule is: {new_schedule} starting on {config.schedule_start}"
+
+    def handle_skipped_report(self, report, **kwargs):
+        if report.skipped:
+            return "Skipped a Report"
+        else:
+            return "Marked a Report as required"
+
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity
         visibility = kwargs.get('visibility', ALL)
@@ -404,6 +420,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
+        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.'
     }
 
     def __init__(self):
@@ -630,8 +647,11 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
-        MESSAGES.UPDATE_PAYMENT_REQUEST: 'handle_update_payment_request',
+        MESSAGES.UPDATE_PAYMENT_REQUEST: 'messages/email/payment_request_updated.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
+        MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
+        MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
     }
 
     def get_subject(self, message_type, source):
@@ -673,15 +693,6 @@ class EmailAdapter(AdapterBase):
             old_phase = transitions[submission.id]
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
-    def handle_update_payment_request(self, user, **kwargs):
-        if user.is_applicant:
-            return
-
-        return self.render_message(
-            'messages/email/payment_request_updated.html',
-            **kwargs,
-        )
-
     def handle_payment_status_updated(self, related, **kwargs):
         return self.render_message(
             'messages/email/payment_request_status_updated.html',
@@ -707,7 +718,7 @@ class EmailAdapter(AdapterBase):
         if not comment.priviledged and not comment.user == source.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
-    def recipients(self, message_type, source, **kwargs):
+    def recipients(self, message_type, source, user, **kwargs):
         if is_ready_for_review(message_type):
             return self.reviewers(source)
 
@@ -729,6 +740,11 @@ class EmailAdapter(AdapterBase):
                 return []
 
             return [project_settings.compliance_email]
+
+        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST}:
+            # Don't tell the user if they did these activities
+            if user.is_applicant:
+                return []
 
         return [source.user.email]
 
@@ -799,6 +815,8 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
         MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document',
         MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
+        MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
+        MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
@@ -814,6 +832,16 @@ class DjangoMessagesAdapter(AdapterBase):
             ' to ' +
             ', '.join(['"{}"'.format(source.title) for source in sources])
         )
+
+    def handle_report_frequency(self, config, **kwargs):
+        new_schedule = config.get_frequency_display()
+        return f"Successfully updated reporting frequency. They will now report {new_schedule} starting on {config.schedule_start}"
+
+    def handle_skipped_report(self, report, **kwargs):
+        if report.skipped:
+            return f"Successfully skipped a Report for {report.start_date} to {report.end_date}"
+        else:
+            return f"Successfully unskipped a Report for {report.start_date} to {report.end_date}"
 
     def batch_transition(self, sources, transitions, **kwargs):
         base_message = 'Successfully updated:'

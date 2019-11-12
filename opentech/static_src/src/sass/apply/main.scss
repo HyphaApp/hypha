@@ -8,8 +8,8 @@
 @import 'base/typography';
 
 // Components
+@import 'components/alert';
 @import 'components/all-submissions-table';
-@import 'components/all-rounds-table';
 @import 'components/admin-bar';
 @import 'components/actions-bar';
 @import 'components/card';
@@ -39,6 +39,7 @@
 @import 'components/pagination';
 @import 'components/profile';
 @import 'components/related-sidebar';
+@import 'components/responsive-table';
 @import 'components/reviewer-dash-box';
 @import 'components/reviews-list';
 @import 'components/reviews-summary';
@@ -58,7 +59,7 @@
 @import 'components/stat-block';
 @import 'components/docs-block';
 @import 'components/funding-block';
-@import 'components/payment-block';
+@import 'components/data-block';
 @import 'components/invoice-block';
 
 // Layout

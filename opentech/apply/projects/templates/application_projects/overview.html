@@ -54,6 +54,19 @@
     </div>
     {% endif %}
 
+    {% if reports.table.data %}
+    <div class="wrapper wrapper--bottom-space">
+
+        {% include "funds/includes/table_filter_and_search.html" with filter=reports.filterset filter_action=reports.url heading="Reports" %}
+
+        {% render_table reports.table %}
+
+        <div class="all-submissions-table__more">
+            <a href="{{ reports.url }}">Show all</a>
+        </div>
+
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

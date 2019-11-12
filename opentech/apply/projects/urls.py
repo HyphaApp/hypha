@@ -15,6 +15,11 @@ from .views import (
     ProjectDetailPDFView,
     ProjectOverviewView,
     ProjectPrivateMediaView,
+    ReportDetailView,
+    ReportListView,
+    ReportPrivateMedia,
+    ReportSkipView,
+    ReportUpdateView,
 )
 
 app_name = 'projects'
@@ -41,4 +46,13 @@ urlpatterns = [
             path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
         ])),
     ], 'payments'))),
+    path('reports/', include(([
+        path('', ReportListView.as_view(), name='all'),
+        path('<int:pk>/', include([
+            path('', ReportDetailView.as_view(), name='detail'),
+            path('skip/', ReportSkipView.as_view(), name='skip'),
+            path('edit/', ReportUpdateView.as_view(), name='edit'),
+            path('documents/<int:file_pk>/', ReportPrivateMedia.as_view(), name="document"),
+        ])),
+    ], 'reports'))),
 ]

@@ -1,22 +1,36 @@
 import collections
+import datetime
 import decimal
 import json
 import logging
 import os
 
-
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.humanize.templatetags.humanize import ordinal
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import F, Max, Sum, Value as V
-from django.db.models.functions import Coalesce
+from django.db.models import (
+    Case,
+    F,
+    ExpressionWrapper,
+    Max,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value as V,
+    When,
+)
+from django.db.models.functions import Cast, Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.admin.edit_handlers import (
@@ -53,6 +67,10 @@ def receipt_path(instance, filename):
     return f'projects/{instance.payment_request.project_id}/payment_receipts/{filename}'
 
 
+def report_path(instance, filename):
+    return f'reports/{instance.report.report_id}/version/{instance.report_id}/{filename}'
+
+
 class Approval(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="approvals")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="approvals")
@@ -79,6 +97,7 @@ class Contract(models.Model):
 
     is_signed = models.BooleanField("Signed?", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
 
@@ -294,6 +313,20 @@ class ProjectQuerySet(models.QuerySet):
             last_payment_request=Max('payment_requests__requested_at'),
         )
 
+    def with_start_date(self):
+        return self.annotate(
+            start=Cast(
+                Subquery(
+                    Contract.objects.filter(
+                        project=OuterRef('pk'),
+                    ).approved().order_by(
+                        'approved_at'
+                    ).values('approved_at')[:1]
+                ),
+                models.DateField(),
+            )
+        )
+
     def for_table(self):
         return self.with_amount_paid().with_last_payment()
 
@@ -382,6 +415,24 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             contact_legal_name=submission.user.full_name,
             contact_address=submission.form_data.get('address', ''),
             value=submission.form_data.get('value', 0),
+        )
+
+    @property
+    def start_date(self):
+        # Assume project starts when OTF are happy with the first signed contract
+        first_approved_contract = self.contracts.approved().order_by('approved_at').first()
+        if not first_approved_contract:
+            return None
+
+        return first_approved_contract.approved_at.date()
+
+    @property
+    def end_date(self):
+        # Aiming for the proposed end date as the last day of the project
+        # If still ongoing assume today is the end
+        return max(
+            self.proposed_end.date(),
+            timezone.now().date(),
         )
 
     def paid_value(self):
@@ -527,3 +578,220 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ReportConfig(models.Model):
+    """Persists configuration about the reporting schedule etc"""
+
+    WEEK = "week"
+    MONTH = "month"
+    FREQUENCY_CHOICES = [
+        (WEEK, "Weeks"),
+        (MONTH, "Months"),
+    ]
+
+    project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
+    schedule_start = models.DateField(null=True)
+    occurrence = models.PositiveSmallIntegerField(default=1)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
+
+    def get_frequency_display(self):
+        next_report = self.current_due_report()
+
+        if self.frequency == self.MONTH:
+            if self.schedule_start and self.schedule_start.day == 31:
+                day_of_month = 'last day'
+            else:
+                day_of_month = ordinal(next_report.end_date.day)
+            if self.occurrence == 1:
+                return f"Monthly on the { day_of_month } of the month"
+            return f"Every { self.occurrence } months on the { day_of_month } of the month"
+
+        weekday = next_report.end_date.strftime('%A')
+
+        if self.occurrence == 1:
+            return f"Every week on { weekday }"
+        return f"Every {self.occurrence} weeks on { weekday }"
+
+    def past_due_reports(self):
+        return self.project.reports.filter(
+            Q(current__isnull=True) & Q(skipped=False),
+            end_date__lt=timezone.now().date(),
+        ).order_by('end_date')
+
+    def last_report(self):
+        today = timezone.now().date()
+        return self.project.reports.filter(
+            Q(end_date__lt=today) | Q(current__isnull=False)
+        ).first()
+
+    def current_due_report(self):
+        # Project not started - no reporting required
+        if not self.project.start_date:
+            return None
+
+        today = timezone.now().date()
+
+        last_report = self.last_report()
+
+        schedule_date = self.schedule_start or self.project.start_date
+
+        if last_report:
+            if last_report.end_date < schedule_date:
+                # reporting schedule changed schedule_start is now the next report date
+                next_due_date = schedule_date
+            else:
+                # we've had a report since the schedule date so base next deadline from the report
+                next_due_date = self.next_date(last_report.end_date)
+        else:
+            # first report required
+            if self.schedule_start and self.schedule_start >= today:
+                # Schedule changed since project inception
+                next_due_date = self.schedule_start
+            else:
+                # schedule_start is the first day the project so the "last" period
+                # ended one day before that. If date is in past we required report now
+                next_due_date = max(
+                    self.next_date(schedule_date - relativedelta(days=1)),
+                    today,
+                )
+
+        report, _ = self.project.reports.update_or_create(
+            project=self.project,
+            end_date__gte=today,
+            current__isnull=True,
+            defaults={'end_date': next_due_date}
+        )
+        return report
+
+    def next_date(self, last_date):
+        delta_frequency = self.frequency + 's'
+        delta = relativedelta(**{delta_frequency: self.occurrence})
+        next_date = last_date + delta
+        return next_date
+
+
+class ReportQueryset(models.QuerySet):
+    def done(self):
+        return self.filter(
+            Q(current__isnull=False) | Q(skipped=True),
+        )
+
+    def submitted(self):
+        return self.filter(current__isnull=False)
+
+    def for_table(self):
+        return self.annotate(
+            last_end_date=Subquery(
+                Report.objects.filter(
+                    project=OuterRef('project_id'),
+                    end_date__lt=OuterRef('end_date')
+                ).values('end_date')[:1]
+            ),
+            project_start_date=Subquery(
+                Project.objects.filter(
+                    pk=OuterRef('project_id'),
+                ).with_start_date().values('start')[:1]
+            ),
+            start=Case(
+                When(
+                    last_end_date__isnull=False,
+                    # Expression Wrapper doesn't cast the calculated object
+                    # Use cast to get an actual date object
+                    then=Cast(
+                        ExpressionWrapper(
+                            F('last_end_date') + datetime.timedelta(days=1),
+                            output_field=models.DateTimeField(),
+                        ),
+                        models.DateField(),
+                    ),
+                ),
+                default=F('project_start_date'),
+                output_field=models.DateField(),
+            )
+        )
+
+
+class Report(models.Model):
+    skipped = models.BooleanField(default=False)
+    end_date = models.DateField()
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
+    submitted = models.DateTimeField(null=True)
+    current = models.OneToOneField(
+        "ReportVersion",
+        on_delete=models.CASCADE,
+        related_name='live_for_report',
+        null=True,
+    )
+    draft = models.OneToOneField(
+        "ReportVersion",
+        on_delete=models.CASCADE,
+        related_name='draft_for_report',
+        null=True,
+    )
+
+    objects = ReportQueryset.as_manager()
+
+    class Meta:
+        ordering = ('-end_date',)
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
+
+    @property
+    def past_due(self):
+        return timezone.now().date() > self.end_date
+
+    @property
+    def is_very_late(self):
+        more_than_one_report_late = self.project.reports.filter(
+            Q(end_date__gt=self.end_date) & Q(end_date__lt=timezone.now().date())
+        ).count() >= 1
+        not_submitted = not self.current
+        return not_submitted and more_than_one_report_late
+
+    @property
+    def can_submit(self):
+        return self.start_date <= timezone.now().date()
+
+    @property
+    def submitted_date(self):
+        if self.submitted:
+            return self.submitted.date()
+
+    @cached_property
+    def start_date(self):
+        last_report = self.project.reports.filter(end_date__lt=self.end_date).first()
+        if last_report:
+            return last_report.end_date + relativedelta(days=1)
+
+        return self.project.start_date
+
+
+class ReportVersion(models.Model):
+    report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
+    submitted = models.DateTimeField()
+    public_content = models.TextField()
+    private_content = models.TextField()
+    draft = models.BooleanField()
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="reports",
+        null=True,
+    )
+
+
+class ReportPrivateFiles(models.Model):
+    report = models.ForeignKey("ReportVersion", on_delete=models.CASCADE, related_name="files")
+    document = models.FileField(upload_to=report_path, storage=PrivateStorage())
+
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)
+
+    def __str__(self):
+        return self.filename
+
+    def get_absolute_url(self):
+        return reverse('apply:projects:reports:document', kwargs={'pk': self.report.report_id, 'file_pk': self.pk})

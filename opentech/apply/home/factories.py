@@ -1,10 +1,17 @@
-import factory
 import wagtail_factories
 
 from .models import ApplyHomePage
 
 
+class ApplySiteFactory(wagtail_factories.SiteFactory):
+    class Meta:
+        django_get_or_create = ('hostname',)
+
+
 class ApplyHomePageFactory(wagtail_factories.PageFactory):
+    title = "Apply Home"
+    slug = 'apply'
+
     class Meta:
         model = ApplyHomePage
 
@@ -15,14 +22,3 @@ class ApplyHomePageFactory(wagtail_factories.PageFactory):
             return model_class.objects.get(slug=kwargs['slug'])
         except model_class.DoesNotExist:
             return super()._create(model_class, *args, **kwargs)
-
-    @factory.post_generation
-    def parent(self, create, extracted_parent, **parent_kwargs):
-        if create and not self.get_parent():
-            root = ApplyHomePage.get_first_root_node()
-            root.add_child(instance=self)
-
-    @factory.post_generation
-    def site(self, create, extracted_site, **site_kwargs):
-        if create:
-            wagtail_factories.SiteFactory(root_page=self, is_default_site=True)

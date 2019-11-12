@@ -42,6 +42,9 @@ class MESSAGES(Enum):
     DELETE_PAYMENT_REQUEST = 'Delete Payment Request'
     SENT_TO_COMPLIANCE = 'Project was sent to Compliance'
     UPDATE_PAYMENT_REQUEST = 'Updated Payment Request'
+    SUBMIT_REPORT = 'Submit Report'
+    SKIPPED_REPORT = 'Skipped Report'
+    REPORT_FREQUENCY_CHANGED = 'Report Frequency Changed'
 
     @classmethod
     def choices(cls):
