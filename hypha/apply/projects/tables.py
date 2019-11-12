@@ -77,6 +77,13 @@ class BaseProjectsTable(tables.Table):
     end_date = tables.DateColumn(verbose_name='End Date', accessor='proposed_end')
     fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
 
+    def order_reporting(self, qs, is_descending):
+        direction = '-' if is_descending else ''
+
+        qs = qs.order_by(f'{direction}outstanding_reports')
+
+        return qs, True
+
     def render_fund_allocation(self, record):
         return f'${intcomma(record.amount_paid)} / ${intcomma(record.value)}'
 
