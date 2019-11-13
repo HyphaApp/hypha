@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import (
+    Count,
     Case,
     F,
     ExpressionWrapper,
@@ -313,6 +314,18 @@ class ProjectQuerySet(models.QuerySet):
             last_payment_request=Max('payment_requests__requested_at'),
         )
 
+    def with_outstanding_reports(self):
+        return self.annotate(
+            outstanding_reports=Subquery(
+                Report.objects.filter(
+                    project=OuterRef('pk'),
+                ).to_do().order_by().values('project').annotate(
+                    count=Count('pk'),
+                ).values('count'),
+                output_field=models.IntegerField(),
+            )
+        )
+
     def with_start_date(self):
         return self.annotate(
             start=Cast(
@@ -328,7 +341,11 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def for_table(self):
-        return self.with_amount_paid().with_last_payment()
+        return self.with_amount_paid().with_last_payment().with_outstanding_reports().select_related(
+            'report_config',
+            'submission__page',
+            'lead',
+        )
 
 
 class Project(BaseStreamForm, AccessFormData, models.Model):
@@ -613,16 +630,22 @@ class ReportConfig(models.Model):
             return f"Every week on { weekday }"
         return f"Every {self.occurrence} weeks on { weekday }"
 
+    def is_up_to_date(self):
+        return len(self.project.reports.to_do()) == 0
+
+    def outstanding_reports(self):
+        return len(self.project.reports.to_do())
+
+    def has_very_late_reports(self):
+        return self.project.reports.any_very_late()
+
     def past_due_reports(self):
-        return self.project.reports.filter(
-            Q(current__isnull=True) & Q(skipped=False),
-            end_date__lt=timezone.now().date(),
-        ).order_by('end_date')
+        return self.project.reports.to_do()
 
     def last_report(self):
         today = timezone.now().date()
         return self.project.reports.filter(
-            Q(end_date__lt=today) | Q(current__isnull=False)
+            Q(end_date__lt=today) | Q(skipped=True)
         ).first()
 
     def current_due_report(self):
@@ -658,8 +681,9 @@ class ReportConfig(models.Model):
 
         report, _ = self.project.reports.update_or_create(
             project=self.project,
-            end_date__gte=today,
             current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
             defaults={'end_date': next_due_date}
         )
         return report
@@ -676,6 +700,18 @@ class ReportQueryset(models.QuerySet):
         return self.filter(
             Q(current__isnull=False) | Q(skipped=True),
         )
+
+    def to_do(self):
+        today = timezone.now().date()
+        return self.filter(
+            current__isnull=True,
+            skipped=False,
+            end_date__lt=today,
+        ).order_by('end_date')
+
+    def any_very_late(self):
+        two_weeks_ago = timezone.now().date() - relativedelta(weeks=2)
+        return self.to_do().filter(end_date__lte=two_weeks_ago)
 
     def submitted(self):
         return self.filter(current__isnull=False)
@@ -739,20 +775,37 @@ class Report(models.Model):
         return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
 
     @property
+    def previous(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__lt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).first()
+
+    @property
+    def next(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__gt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).order_by('end_date').first()
+
+    @property
     def past_due(self):
         return timezone.now().date() > self.end_date
 
     @property
     def is_very_late(self):
-        more_than_one_report_late = self.project.reports.filter(
-            Q(end_date__gt=self.end_date) & Q(end_date__lt=timezone.now().date())
-        ).count() >= 1
+        two_weeks_ago = timezone.now().date() - relativedelta(weeks=2)
+        two_weeks_late = self.end_date < two_weeks_ago
         not_submitted = not self.current
-        return not_submitted and more_than_one_report_late
+        return not_submitted and two_weeks_late
 
     @property
     def can_submit(self):
-        return self.start_date <= timezone.now().date()
+        return self.start_date <= timezone.now().date() and not self.skipped
 
     @property
     def submitted_date(self):

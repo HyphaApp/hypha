@@ -32,6 +32,7 @@
                     <p>You're skipping the report for <b>{{report.start_date}}</b> &ndash; <b>{{report.end_date}}</b></p>
                     <p>This will result in a gap in reporting for the project. You can undo this at any time.</p>
                 </div>
+                {% if not current %}
                 <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                     {% csrf_token %}
                     <div class="modal__buttons">
@@ -39,6 +40,7 @@
                         <button data-fancybox-close class="button button--submit button--white">Cancel</button>
                     </div>
                 </form>
+                {% endif %}
             </div>
 
         {% endif %}
