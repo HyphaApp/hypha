@@ -40,7 +40,8 @@
                 {% endif %}
             {% endfor %}
 
-            <input type="submit" id="submit-report-form" class="is-hidden" />
+            <input type="submit" id="submit-report-form-submit" name="submit" class="is-hidden" />
+            <input type="submit" id="submit-report-form-save" name="save" class="is-hidden" />
             <input data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button" value="Save" />
             <input data-fancybox data-src="#submit-report" class="button button--primary" type="button" value="Submit" />
 
@@ -52,7 +53,7 @@
                 </div>
                 <div class="modal__buttons">
                     <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Save</label>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">Save</label>
                 </div>
             </div>
 
@@ -62,7 +63,7 @@
                 <p>Are you sure you want to submit your report?</p>
                 <div class="modal__buttons">
                     <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Submit</label>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">Submit</label>
                 </div>
             </div>
         </form>
