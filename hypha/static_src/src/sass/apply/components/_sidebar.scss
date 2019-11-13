@@ -1,7 +1,6 @@
 .sidebar {
     @include media-query(tablet-portrait) {
         width: 345px;
-        margin: 20px 0 0;
     }
 
     &__inner {

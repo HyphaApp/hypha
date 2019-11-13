@@ -783,6 +783,24 @@ class Report(models.Model):
         return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
 
     @property
+    def previous(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__lt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).first()
+
+    @property
+    def next(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__gt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).order_by('end_date').first()
+
+    @property
     def past_due(self):
         return timezone.now().date() > self.end_date
 
