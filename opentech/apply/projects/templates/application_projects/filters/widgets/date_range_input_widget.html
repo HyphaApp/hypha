@@ -1,4 +1,7 @@
-{% include widget.subwidgets.0.template_name %}
-<span>to:</span>
-{% include widget.subwidgets.1.template_name %}
+{% for widget in widget.subwidgets %}
+    {% include widget.template_name %}
+    {% if forloop.last %}
+        <span>to:</span>
+    {% endif %}
+{% endfor %}
 
