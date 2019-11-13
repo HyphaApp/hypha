@@ -464,7 +464,7 @@ class ReportEditForm(forms.ModelForm):
 
 
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label='Next report date')
+    start = forms.DateField(label='Starting on:')
 
     class Meta:
         model = ReportConfig
