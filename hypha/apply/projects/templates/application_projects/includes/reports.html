@@ -59,7 +59,6 @@
                     <tr>
                         <th class="data-block__table-date">Period End</th>
                         <th class="data-block__table-date">Submitted</th>
-                        <th class="data-block__table-date">Privacy</th>
                         <th class="data-block__table-update"></th>
                     </tr>
                 </thead>
@@ -71,9 +70,6 @@
                             </td>
                             <td>
                                 <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
-                            </td>
-                            <td>
-                                <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
                             </td>
                             <td class="data-block__links">
                                 {% if not report.skipped %}
@@ -94,7 +90,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4">No reports submitted</td>
+                            <td colspan="3">No reports submitted</td>
                         </tr>
                     {% endfor %}
                 </tbody>
