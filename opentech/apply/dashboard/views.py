@@ -123,10 +123,11 @@ class AdminDashboardView(TemplateView):
 
     def get_my_flagged(self, request, qs):
         qs = qs.flagged_by(request.user).order_by('-submit_time')
+        row_attrs = dict({'data-flag-type': 'user'}, **SummarySubmissionsTable._meta.row_attrs)
 
         limit = 5
         return {
-            'table': SummarySubmissionsTable(qs[:limit], prefix='my-flagged-'),
+            'table': SummarySubmissionsTable(qs[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': qs.count() > limit,
         }
 

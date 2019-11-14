@@ -282,10 +282,11 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
 
     def get_staff_flagged(self):
         qs = super().get_queryset().flagged_staff().order_by('-submit_time')
+        row_attrs = dict({'data-flag-type': 'staff'}, **SummarySubmissionsTable._meta.row_attrs)
 
         limit = 5
         return {
-            'table': SummarySubmissionsTable(qs[:limit], prefix='staff-flagged-'),
+            'table': SummarySubmissionsTable(qs[:limit], prefix='staff-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': qs.count() > limit,
         }
 
