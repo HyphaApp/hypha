@@ -106,6 +106,16 @@
     }
 }
 
+// Small button mixin
+@mixin button--small {
+    padding: 2px;
+    font-size: 12px;
+
+    @include media-query(tablet-landscape) {
+        padding: 3px 5px;
+    }
+}
+
 // Viewport sized typography mixin that takes a min and max pixel-based value
 @mixin responsive-font-sizes($min, $max) {
 
