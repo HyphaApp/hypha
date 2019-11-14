@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0048_add_project_transition'),
+        ('activity', '0051_report_frequency_change'),
     ]
 
     operations = [
