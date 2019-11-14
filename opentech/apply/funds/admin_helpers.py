@@ -80,13 +80,13 @@ class ApplicationFormButtonHelper(ButtonHelper):
 
     def copy_form_button(self, pk, form_name, **kwargs):
         classnames = self.prepare_classnames(
-            start=self.edit_button_classnames + ['icon', 'icon-plus'],
+            start=self.edit_button_classnames,
             add=kwargs.get('classnames_add'),
             exclude=kwargs.get('classnames_exclude')
         )
         return {
             'classname': classnames,
-            'label': f'Create Copy',
+            'label': f'Copy',
             'title': f'Copy {form_name}',
             'url': self.url_helper.get_action_url('copy_form', admin.utils.quote(pk)),
         }
