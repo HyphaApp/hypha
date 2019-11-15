@@ -38,7 +38,8 @@ class AdminDashboardView(TemplateView):
             'my_reviewed': self.get_my_reviewed(self.request, submissions),
             'projects': self.get_my_projects(self.request),
             'projects_to_approve': self.get_my_projects_to_approve(self.request.user),
-            'rounds': self.get_rounds(self.request.user)
+            'rounds': self.get_rounds(self.request.user),
+            'my_flagged': self.get_my_flagged(self.request, submissions),
         }
         current_context = super().get_context_data(**kwargs)
         return {**current_context, **extra_context}
@@ -110,13 +111,24 @@ class AdminDashboardView(TemplateView):
         }
 
     def get_rounds(self, user):
+        limit = 6
         qs = (RoundsAndLabs.objects.with_progress()
                                    .active()
                                    .order_by('-end_date')
                                    .by_lead(user))
         return {
-            'closed': qs.closed()[:6],
-            'open': qs.open()[:6],
+            'closed': qs.closed()[:limit],
+            'open': qs.open()[:limit],
+        }
+
+    def get_my_flagged(self, request, qs):
+        qs = qs.flagged_by(request.user).order_by('-submit_time')
+        row_attrs = dict({'data-flag-type': 'user'}, **SummarySubmissionsTable._meta.row_attrs)
+
+        limit = 5
+        return {
+            'table': SummarySubmissionsTable(qs[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
+            'display_more': qs.count() > limit,
         }
 
 
@@ -159,9 +171,10 @@ class ReviewerDashboardView(TemplateView):
         return render(request, 'dashboard/reviewer_dashboard.html', context)
 
     def get_my_reviews(self, user, qs):
+        limit = 5
         my_review_qs = qs.in_review_for(user).order_by('-submit_time')
-        my_review_table = ReviewerSubmissionsTable(my_review_qs[:5], prefix='my-review-')
-        display_more = (my_review_qs.count() > 5)
+        my_review_table = ReviewerSubmissionsTable(my_review_qs[:limit], prefix='my-review-')
+        display_more = (my_review_qs.count() > limit)
 
         return my_review_qs, my_review_table, display_more
 
@@ -177,8 +190,9 @@ class ReviewerDashboardView(TemplateView):
         filterset = SubmissionReviewerFilterAndSearch(**kwargs)
         my_reviewed_qs = filterset.qs
 
-        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs[:5], prefix='my-reviewed-')
-        display_more_reviewed = (my_reviewed_qs.count() > 5)
+        limit = 5
+        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs[:limit], prefix='my-reviewed-')
+        display_more_reviewed = (my_reviewed_qs.count() > limit)
 
         return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
 

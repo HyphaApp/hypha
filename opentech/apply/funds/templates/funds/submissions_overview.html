@@ -23,12 +23,26 @@
     {% endif %}
 
     {% block table %}
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False heading="All Submissions" %}
+        <div class="wrapper wrapper--bottom-space">
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False heading="All Submissions" %}
 
-        {% render_table table %}
-        <div class="all-submissions-table__more">
-            <a href="{% url 'apply:submissions:list' %}">Show all</a>
+            {% render_table table %}
+            <div class="all-submissions-table__more">
+                <a href="{% url 'apply:submissions:list' %}">Show all</a>
+            </div>
         </div>
+
+        {% if staff_flagged.table.data %}
+        <div class="wrapper wrapper--bottom-space">
+            <h4 class="heading heading--normal">Staff Flagged Submissions</h4>
+            {% render_table staff_flagged.table %}
+            {% if staff_flagged.display_more %}
+                <div class="all-submissions-table__more">
+                    <a href="{% url 'apply:submissions:staff_flagged' %}">Show all</a>
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
     {% endblock %}
 </div>
 {% endblock %}

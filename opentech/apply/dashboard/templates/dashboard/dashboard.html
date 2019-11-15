@@ -54,6 +54,10 @@
         {% include "dashboard/includes/waiting-for-review.html" with in_review_count=awating_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
     </div>
 
+    <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
+        {% include "dashboard/includes/flagged.html" with my_flagged=my_flagged.table display_more=my_flagged.display_more %}
+    </div>
+
     {% if rounds.closed or rounds.open %}
         {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" %}
     {% endif %}
@@ -109,4 +113,5 @@
     <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
     <script src="{% static 'js/apply/tabs.js' %}"></script>
+    <script src="{% static 'js/apply/flag.js' %}"></script>
 {% endblock %}

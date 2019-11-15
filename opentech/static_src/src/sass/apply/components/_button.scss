@@ -326,4 +326,44 @@
             background-color: $color--button-disabled;
         }
     }
+
+    &--flag {
+        &.flagged {
+            position: relative;
+
+            &::after {
+                content: '\2691';
+                color:  $color--tomato;
+                position: absolute;
+                top:  4px;
+                padding-left: 5px;
+                font-size: map-get($font-sizes, delta);
+                line-height: 1;
+            }
+        }
+    }
+
+    &--unflag {
+        @include button($color--light-blue, $color--dark-blue);
+        @include button--small;
+        padding-right: 18px;
+
+        @include media-query(tablet-landscape) {
+            padding-right: 18px;
+        }
+
+        &.flagged {
+            &::after {
+                top:  2px;
+                padding-left: 3px;
+                font-size: map-get($font-sizes, zeta);
+            }
+        }
+    }
+
+    &--float {
+        position: absolute;
+        top:  2px;
+        right:  2px;
+    }
 }
