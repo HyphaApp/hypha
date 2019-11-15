@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from wagtail.contrib.modeladmin.forms import ParentChooserForm
-from wagtail.contrib.modeladmin.helpers import PageButtonHelper
+from wagtail.contrib.modeladmin.helpers import PageButtonHelper, ButtonHelper
 from wagtail.contrib.modeladmin.views import ChooseParentView
 from wagtail.core.models import Page
 
@@ -53,7 +53,7 @@ class ButtonsWithPreview(PageButtonHelper):
 
 
 class FormsFundRoundListFilter(admin.SimpleListFilter):
-    title = 'useage'
+    title = 'usage'
     parameter_name = 'form-usage'
 
     def lookups(self, request, model_admin):
@@ -69,3 +69,37 @@ class FormsFundRoundListFilter(admin.SimpleListFilter):
             query = {f'{value}form__isnull': False}
             return queryset.filter(**query).distinct()
         return queryset
+
+
+class ApplicationFormButtonHelper(ButtonHelper):
+    def prepare_classnames(self, start=None, add=None, exclude=None):
+        """Parse classname sets into final css classess list."""
+        classnames = start or []
+        classnames.extend(add or [])
+        return self.finalise_classname(classnames, exclude or [])
+
+    def copy_form_button(self, pk, form_name, **kwargs):
+        classnames = self.prepare_classnames(
+            start=self.edit_button_classnames,
+            add=kwargs.get('classnames_add'),
+            exclude=kwargs.get('classnames_exclude')
+        )
+        return {
+            'classname': classnames,
+            'label': f'Copy',
+            'title': f'Copy {form_name}',
+            'url': self.url_helper.get_action_url('copy_form', admin.utils.quote(pk)),
+        }
+
+    def get_buttons_for_obj(self, obj, exclude=None, *args, **kwargs):
+        """Override the getting of buttons, appending copy form button."""
+        buttons = super().get_buttons_for_obj(obj, *args, **kwargs)
+
+        copy_form_button = self.copy_form_button(
+            pk=getattr(obj, self.opts.pk.attname),
+            form_name=getattr(obj, 'name'),
+            **kwargs
+        )
+        buttons.append(copy_form_button)
+
+        return buttons

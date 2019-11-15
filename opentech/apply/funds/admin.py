@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
@@ -6,13 +7,16 @@ from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 from opentech.apply.funds.models import ReviewerRole, ScreeningStatus
 from opentech.apply.review.admin import ReviewFormAdmin
 from opentech.apply.utils.admin import ListRelatedMixin
+from opentech.apply.categories.admin import CategoryAdmin, MetaTermAdmin
+
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
     RoundFundChooserView,
+    ApplicationFormButtonHelper,
 )
+from .admin_views import CopyApplicationFormViewClass
 from .models import ApplicationForm, FundType, LabType, RequestForPartners, Round, SealedRound
-from opentech.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 
 
 class BaseRoundAdmin(ModelAdmin):
@@ -126,12 +130,28 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     list_display = ('name', 'used_by')
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = NoDeletePermission
+    button_helper_class = ApplicationFormButtonHelper
 
     related_models = [
         ('applicationbaseform', 'application'),
         ('roundbaseform', 'round'),
         ('labbaseform', 'lab'),
     ]
+
+    def copy_form_view(self, request, instance_pk):
+        kwargs = {'model_admin': self, 'form_pk': instance_pk}
+        view_class = CopyApplicationFormViewClass
+        return view_class.as_view(**kwargs)(request)
+
+    def get_admin_urls_for_registration(self):
+        """Add the url for creating form copy."""
+        urls = super().get_admin_urls_for_registration()
+        copy_form_url = url(
+            self.url_helper.get_action_url_pattern('copy_form'),
+            self.copy_form_view,
+            name=self.url_helper.get_action_url_name('copy_form')
+        )
+        return urls + (copy_form_url, )
 
 
 class ApplyAdminGroup(ModelAdminGroup):
