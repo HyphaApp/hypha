@@ -95,6 +95,9 @@ $site-width: 1280px;
 $wrapper--medium: 1020px;
 $wrapper--small: 790px;
 
+// Text line length
+$max-text-line-length: 50em;
+
 // Breakpoints
 $breakpoints: (
     'mob-portrait'      '(min-width: 320px)',

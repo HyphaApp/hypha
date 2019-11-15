@@ -142,6 +142,11 @@
         }
     }
 
+    &__comment {
+        word-break: break-word;
+        max-width: $max-text-line-length;
+    }
+
     &__related-item {
         svg {
             width: 10px;

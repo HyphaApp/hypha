@@ -1,6 +1,7 @@
 .rich-text {
     margin-bottom: 2rem;
     word-break: break-word;
+    max-width: $max-text-line-length;
 
     &--answers {
         > section {
@@ -44,6 +45,10 @@
         &.is-open {
             display: block;
         }
+    }
+
+    &__table {
+        overflow: auto;
     }
 
     a {
