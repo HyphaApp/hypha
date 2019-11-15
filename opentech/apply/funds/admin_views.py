@@ -1,12 +1,14 @@
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils.translation import ugettext as _
+from django.contrib.admin.utils import unquote
 
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages import get_valid_next_url_from_request
 from wagtail.core import hooks
 from wagtail.core.models import Page
+from wagtail.contrib.modeladmin.views import CreateView
 
 
 def custom_admin_round_copy_view(request, page):
@@ -77,3 +79,20 @@ def custom_admin_round_copy_view(request, page):
         if next_url:
             return redirect(next_url)
         return redirect('wagtailadmin_explore', parent_page.id)
+
+
+class CopyApplicationFormViewClass(CreateView):
+    """View class that can take an additional URL param for parent id."""
+
+    form_pk = None
+    form_instance = None
+
+    def __init__(self, model_admin, form_pk):
+        self.form_pk = unquote(form_pk)
+        object_qs = model_admin.model._default_manager.get_queryset()
+        object_qs = object_qs.filter(pk=self.form_pk)
+        self.form_instance = get_object_or_404(object_qs)
+        super().__init__(model_admin)
+
+    def get_initial(self):
+        return {'name': f'[CHANGE] Copy of {self.form_instance.name}', 'form_fields': self.form_instance.form_fields}
