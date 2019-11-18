@@ -11,7 +11,7 @@ from django.shortcuts import redirect, render, resolve_url
 from django.template.response import TemplateResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.http import is_safe_url, urlsafe_base64_decode
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -149,7 +149,7 @@ class ActivationView(TemplateView):
         """
         try:
             user = User.objects.get(**{
-                'pk': force_text(urlsafe_base64_decode(uidb64))
+                'pk': force_str(urlsafe_base64_decode(uidb64))
             })
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
