@@ -12,6 +12,7 @@ from opentech.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from .admin_helpers import (
     ButtonsWithPreview,
     FormsFundRoundListFilter,
+    RoundStateListFilter,
     RoundFundChooserView,
     ApplicationFormButtonHelper,
 )
@@ -32,6 +33,7 @@ class RoundAdmin(BaseRoundAdmin):
     model = Round
     menu_icon = 'repeat'
     list_display = ('title', 'fund', 'start_date', 'end_date', 'applications', 'review_forms')
+    list_filter = (RoundStateListFilter,)
 
     def applications(self, obj):
 

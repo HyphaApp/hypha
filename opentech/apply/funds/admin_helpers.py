@@ -71,6 +71,25 @@ class FormsFundRoundListFilter(admin.SimpleListFilter):
         return queryset
 
 
+class RoundStateListFilter(admin.SimpleListFilter):
+    title = 'state'
+    parameter_name = 'form-state'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('open', _('Open')),
+            ('closed', _('Closed')),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == 'open':
+            return queryset.open()
+        elif value == 'closed':
+            return queryset.closed()
+        return queryset
+
+
 class ApplicationFormButtonHelper(ButtonHelper):
     def prepare_classnames(self, start=None, add=None, exclude=None):
         """Parse classname sets into final css classess list."""
