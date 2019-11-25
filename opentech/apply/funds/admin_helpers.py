@@ -1,10 +1,13 @@
+from urllib.parse import urlencode
+
 from django import forms
 from django.contrib import admin
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 
 from wagtail.contrib.modeladmin.forms import ParentChooserForm
-from wagtail.contrib.modeladmin.helpers import PageButtonHelper, ButtonHelper
+from wagtail.contrib.modeladmin.helpers import PageAdminURLHelper, PageButtonHelper, ButtonHelper
 from wagtail.contrib.modeladmin.views import ChooseParentView
 from wagtail.core.models import Page
 
@@ -122,3 +125,11 @@ class ApplicationFormButtonHelper(ButtonHelper):
         buttons.append(copy_form_button)
 
         return buttons
+
+
+class RoundAdminURLHelper(PageAdminURLHelper):
+    @cached_property
+    def index_url(self):
+        # By default set open filter for Round listing page's index URL
+        params = {'form-state': 'open'}
+        return f"{self.get_action_url('index')}?{urlencode(params)}"
