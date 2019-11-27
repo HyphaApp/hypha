@@ -788,7 +788,7 @@ class EmailAdapter(AdapterBase):
             return self.render_message('messages/email/partners_update_partner.html', **kwargs)
 
     def render_message(self, template, **kwargs):
-        return render_to_string(template, kwargs)
+        return render_to_string(template, kwargs, kwargs['request'])
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
