@@ -6,7 +6,7 @@ from django.test import override_settings, RequestFactory
 from django.urls import reverse_lazy
 
 from opentech.apply.activity.models import Activity
-from opentech.apply.determinations.models import ACCEPTED, REJECTED
+from opentech.apply.determinations.models import ACCEPTED, REJECTED, NEEDS_MORE_INFO
 from opentech.apply.determinations.views import BatchDeterminationCreateView
 from opentech.apply.users.tests.factories import StaffFactory, UserFactory
 from opentech.apply.funds.models import ApplicationSubmission
@@ -358,6 +358,28 @@ class BatchDeterminationTestCase(BaseViewTestCase):
             submission = self.refresh(submission)
             self.assertEqual(submission.status, 'rejected')
             self.assertEqual(submission.determinations.count(), 1)
+
+        self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
+
+    def test_can_submit_batch_determination_more_info_comment(self):
+        submissions = ApplicationSubmissionFactory.create_batch(4)
+
+        url = self.url(None) + '?submissions=' + ','.join([str(submission.id) for submission in submissions]) + '&action=more_info'
+        data = {
+            'submissions': [submission.id for submission in submissions],
+            'data': 'some data',
+            'outcome': NEEDS_MORE_INFO,
+            'message': 'More Info',
+            'author': self.user.id,
+        }
+
+        response = self.client.post(url, data, secure=True, follow=True)
+
+        for submission in submissions:
+            submission = self.refresh(submission)
+            self.assertEqual(submission.status, 'more_info')
+            self.assertEqual(submission.determinations.count(), 1)
+            self.assertEqual(submission.activities.comments().count(), 1)
 
         self.assertRedirects(response, self.url_from_pattern('apply:submissions:list'))
 
