@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0050_add_report_skipping_activity'),
+        ('activity', '0051_add_report_skipping_activity'),
     ]
 
     operations = [
