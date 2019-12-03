@@ -1,5 +1,6 @@
 import json
 import requests
+import logging
 from collections import defaultdict
 
 from django.db import models
@@ -13,7 +14,7 @@ from .models import TEAM, ALL
 from .options import MESSAGES
 from .tasks import send_mail
 
-
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -773,11 +774,14 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
-            try:
-                from_email = source.page.specific.from_address
-            except AttributeError:  # we're dealing with a project
-                from_email = source.submission.page.specific.from_address
+            from_email = source.page.specific.from_address
+        except AttributeError:  # we're dealing with a project
+            from_email = source.submission.page.specific.from_address
+        except Exception as e:
+            from_address = None
+            logger.exception(e)
 
+        try:
             send_mail(
                 subject,
                 message,
