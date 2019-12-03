@@ -144,6 +144,12 @@ class AdapterBase:
         self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
     def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
+        try:
+            # If this was a batch action we want to pull out the submission
+            source = sources[0]
+        except IndexError:
+            pass
+
         kwargs = {
             'request': request,
             'user': user,
@@ -334,12 +340,6 @@ class ActivityAdapter(AdapterBase):
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity
         visibility = kwargs.get('visibility', ALL)
-
-        try:
-            # If this was a batch action we want to pull out the submission
-            source = sources[0]
-        except IndexError:
-            pass
 
         related = kwargs['related']
         if isinstance(related, dict):
@@ -773,11 +773,11 @@ class EmailAdapter(AdapterBase):
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
-            from_email = source.page.specific.from_address
-        except AttributeError:  # we're dealing with a project
-            from_email = source.submission.page.specific.from_address
+            try:
+                from_email = source.page.specific.from_address
+            except AttributeError:  # we're dealing with a project
+                from_email = source.submission.page.specific.from_address
 
-        try:
             send_mail(
                 subject,
                 message,
