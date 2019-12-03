@@ -778,7 +778,7 @@ class EmailAdapter(AdapterBase):
         except AttributeError:  # we're dealing with a project
             from_email = source.submission.page.specific.from_address
         except Exception as e:
-            from_address = None
+            from_email = None
             logger.exception(e)
 
         try:

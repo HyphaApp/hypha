@@ -325,7 +325,7 @@ SHORT_DATETIME_FORMAT = 'Y-m-d\TH:i:s'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, 'static_compiled'),
