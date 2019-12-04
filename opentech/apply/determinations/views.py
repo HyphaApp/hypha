@@ -142,7 +142,7 @@ class BatchDeterminationCreateView(CreateView):
                         message=determination.stripped_message,
                         timestamp=timezone.now(),
                         user=self.request.user,
-                        submission=submission,
+                        source=submission,
                         related_object=determination,
                     )
 
