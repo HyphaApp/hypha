@@ -25,7 +25,8 @@ class CommentForm(forms.ModelForm):
         self.allowed_visibility = self._meta.model.visibility_for(user)
         self.visibility_choices = self._meta.model.visibility_choices_for(user)
         visibility = self.fields['visibility']
-        visibility.initial = self.visibility_choices[0]
+        # Set default visibility to "team" for staff and to "applicant" for everyone else.
+        visibility.initial = self.visibility_choices[1] if user.is_apply_staff else self.visibility_choices[0]
         if len(self.visibility_choices) > 1:
             visibility.choices = self.visibility_choices
             visibility.help_text = mark_safe('<br>'.join(
