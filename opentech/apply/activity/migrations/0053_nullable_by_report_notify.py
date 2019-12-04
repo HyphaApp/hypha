@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0051_report_frequency_change'),
+        ('activity', '0052_report_frequency_change'),
     ]
 
     operations = [
