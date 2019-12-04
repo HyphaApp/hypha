@@ -130,6 +130,7 @@ class ApplicationFormButtonHelper(ButtonHelper):
 class RoundAdminURLHelper(PageAdminURLHelper):
     @cached_property
     def index_url(self):
-        # By default set open filter for Round listing page's index URL
-        params = {'form-state': 'open'}
+        # By default set open filter and sort on end date
+        # for Round listing page's index URL
+        params = {'form-state': 'open', 'o': '-3'}
         return f"{self.get_action_url('index')}?{urlencode(params)}"
