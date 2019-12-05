@@ -212,7 +212,7 @@ class DropdownFieldBlockFactory(FormFieldBlockFactory):
 
 
 class UploadableMediaFactory(FormFieldBlockFactory):
-    default_value = factory.django.FileField
+    default_value = factory.django.FileField()
 
     @classmethod
     def make_answer(cls, params=None):
@@ -220,12 +220,12 @@ class UploadableMediaFactory(FormFieldBlockFactory):
         params.setdefault('data', b'this is some content')
         if params.get('filename') is None:
             params['filename'] = 'example.pdf'
-        file_name, file = cls.default_value()._make_content(params)
+        file_name, file = cls.default_value._make_content(params)
         return SimpleUploadedFile(file_name, file.read())
 
 
 class ImageFieldBlockFactory(UploadableMediaFactory):
-    default_value = factory.django.ImageField
+    default_value = factory.django.ImageField()
 
     class Meta:
         model = stream_blocks.ImageFieldBlock

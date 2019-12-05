@@ -1,0 +1,77 @@
+{% extends "base-apply.html" %}
+{% load static %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block title %}Edit Report | {{ object.project.title }}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
+            Project
+        </a>
+        <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
+        <h5 class="heading heading--no-margin">Submit a report</h5>
+    </div>
+</div>
+
+{% include "forms/includes/form_errors.html" with form=form %}
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form">
+    <div class="wrapper--sidebar--inner">
+
+        <div class="alert">
+            <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
+            <p class="alert__text">You are reporting for the period running from {{ report.start_date }} to {{ report.end_date }}</p>
+        </div>
+
+        <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {{ form.media }}
+
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+
+            <input type="submit" id="submit-report-form" class="is-hidden" />
+            <input data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button" value="Save" />
+            <input data-fancybox data-src="#submit-report" class="button button--primary" type="button" value="Submit" />
+
+            <!-- Save report modal -->
+            <div class="modal" id="save-report">
+                <h4 class="modal__header-bar">Save report</h4>
+                <div class="modal__copy">
+                    <p>Saving a draft means this report will be visible to you and staff from your project page.</p>
+                </div>
+                <div class="modal__buttons">
+                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Save</label>
+                </div>
+            </div>
+
+            <!-- Submit report modal -->
+            <div class="modal" id="submit-report">
+                <h4 class="modal__header-bar">Submit report</h4>
+                <p>Are you sure you want to submit your report?</p>
+                <div class="modal__buttons">
+                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form" tabindex="0">Submit</label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+<script src="{% static 'js/apply/list-input-files.js' %}"></script>
+<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+{% endblock %}

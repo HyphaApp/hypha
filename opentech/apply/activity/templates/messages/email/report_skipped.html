@@ -1,0 +1,13 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+
+An {{ ORG_SHORT_NAME }} staff member has marked a report as {% if report.skipped %}no longer required{% else %}required{% endif %} for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.
+
+{% if not report.skipped %}
+This report was previously not required. Please ensure you now complete the report.
+{% endif %}
+
+Title: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}

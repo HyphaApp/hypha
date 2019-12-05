@@ -9,6 +9,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.text import mark_safe
@@ -37,6 +38,7 @@ from ..files import get_files
 from ..filters import (
     PaymentRequestListFilter,
     ProjectListFilter,
+    ReportListFilter,
 )
 from ..forms import (
     ApproveContractForm,
@@ -60,12 +62,16 @@ from ..models import (
     Contract,
     PacketFile,
     PaymentRequest,
-    Project
+    Project,
+    Report,
 )
 from ..tables import (
     PaymentRequestsListTable,
-    ProjectsListTable
+    ProjectsListTable,
+    ReportListTable,
 )
+
+from .report import ReportingMixin, ReportFrequencyUpdate
 
 
 # APPROVAL VIEWS
@@ -319,6 +325,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         with transaction.atomic():
             form.instance.approver = self.request.user
+            form.instance.approved_at = timezone.now()
             form.instance.project = self.project
             response = super().form_valid(form)
 
@@ -397,7 +404,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
 
 # PROJECT VIEW
-class BaseProjectDetailView(DetailView):
+class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['statuses'] = PROJECT_STATUS_CHOICES
@@ -419,6 +426,7 @@ class AdminProjectDetailView(
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
+        ReportFrequencyUpdate,
         UpdateLeadView,
         UploadContractView,
         UploadDocumentView,
@@ -430,6 +438,12 @@ class AdminProjectDetailView(
         context = super().get_context_data(**kwargs)
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
+
+        if self.object.is_in_progress:
+            context['report_data'] = {
+                'startDate': self.object.report_config.current_due_report().start_date,
+                'projectEndDate': self.object.end_date,
+            }
         return context
 
 
@@ -587,12 +601,9 @@ class ProjectEditView(ViewDispatcher):
 @method_decorator(staff_required, name='dispatch')
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
-    model = Project
+    queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = 'application_projects/project_list.html'
-
-    def get_queryset(self):
-        return Project.objects.for_table()
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -603,8 +614,17 @@ class ProjectOverviewView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['projects'] = self.get_projects(self.request)
         context['payment_requests'] = self.get_payment_requests(self.request)
+        context['reports'] = self.get_reports(self.request)
         context['status_counts'] = self.get_status_counts()
         return context
+
+    def get_reports(self, request):
+        reports = Report.objects.for_table().submitted()[:10]
+        return {
+            'filterset': ReportListFilter(request.GET or None, request=request, queryset=reports),
+            'table': ReportListTable(reports, order_by=()),
+            'url': reverse('apply:projects:reports:all'),
+        }
 
     def get_payment_requests(self, request):
         payment_requests = PaymentRequest.objects.order_by('date_to')[:10]

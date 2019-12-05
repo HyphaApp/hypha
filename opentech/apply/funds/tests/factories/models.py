@@ -72,21 +72,11 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
         workflow_stages = 1
 
     title = factory.Faker('sentence')
+    parent = factory.SubFactory(ApplyHomePageFactory)
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
     approval_form = factory.SubFactory('opentech.apply.projects.tests.factories.ProjectApprovalFormFactory')
-
-    @factory.post_generation
-    def parent(self, create, extracted_parent, **parent_kwargs):
-        # THIS MUST BE THE FIRST POST GENERATION METHOD OR THE OBJECT WILL BE UNSAVED
-        if create:
-            if extracted_parent and parent_kwargs:
-                raise ValueError('Cant pass a parent instance and attributes')
-
-            parent = extracted_parent or ApplyHomePageFactory(**parent_kwargs)
-
-            parent.add_child(instance=self)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
@@ -152,12 +142,7 @@ class RoundFactory(wagtail_factories.PageFactory):
     start_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * n + 1))
     end_date = factory.Sequence(lambda n: datetime.date.today() + datetime.timedelta(days=7 * (n + 1)))
     lead = factory.SubFactory(StaffFactory)
-
-    @factory.post_generation
-    def parent(self, create, extracted_parent, **parent_kwargs):
-        if create:
-            parent = extracted_parent or FundTypeFactory(**parent_kwargs)
-            parent.add_child(instance=self)
+    parent = factory.SubFactory(FundTypeFactory)
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):

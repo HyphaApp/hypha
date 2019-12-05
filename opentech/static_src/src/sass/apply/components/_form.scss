@@ -43,6 +43,23 @@
             }
         }
 
+        #{$root}--report-frequency & {
+            margin: 0;
+
+            // Number input
+            &:nth-of-type(1) {
+                width: 20%;
+                display: inline-block;
+                margin-right: 1rem;
+            }
+
+            // Frequency select
+            &:nth-of-type(2) {
+                width: 50%;
+                display: inline-block;
+            }
+        }
+
         &--wrap {
             flex-wrap: wrap;
         }
@@ -151,10 +168,20 @@
                 opacity: 1;
                 transition-delay: $base-delay * 10;
             }
+
+            .filters--dates & {
+                align-items: flex-end;
+                margin: 10px 0 30px;
+                padding: 0;
+            }
         }
 
         label {
             display: none;
+
+            .filters--dates & {
+                display: block;
+            }
         }
 
         // so the form can be output in any tag
@@ -176,6 +203,58 @@
             > * {
                 flex-basis: auto;
                 margin: 0;
+            }
+        }
+
+        > li {
+            padding: 0 1rem;
+
+            @include media-query(tablet-landscape) {
+                padding: 0;
+            }
+
+            // re-order from/to date inputs and text
+            .filters--dates & {
+                margin: 0 auto 1rem;
+                max-width: 320px;
+
+                @include media-query(mob-landscape) {
+                    display: flex;
+                    max-width: 600px;
+
+                    @supports (display: grid) {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-gap: 5px;
+                    }
+                }
+
+                @include media-query(tablet-landscape) {
+                    margin: 0 1rem 0 0;
+                    max-width: initial;
+                }
+
+                label {
+                    @supports (display: grid) {
+                        grid-column: 1;
+                        grid-row: 1;
+                    }
+                }
+
+                input {
+                    &:first-of-type {
+                        @supports (display: grid) {
+                            grid-column: 1;
+                        }
+                    }
+                }
+
+                span {
+                    @supports (display: grid) {
+                        grid-column: 2;
+                        grid-row: 1;
+                    }
+                }
             }
         }
     }
@@ -468,5 +547,14 @@
         padding: .4em;
         border: 1px solid $color--mid-grey;
         max-width: 410px;
+    }
+
+    &__info-box {
+        background-color: $color--light-blue-90;
+        padding: 1rem;
+
+        p {
+            margin: 0;
+        }
     }
 }
