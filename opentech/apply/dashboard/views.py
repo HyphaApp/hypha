@@ -225,15 +225,9 @@ class PartnerDashboardView(TemplateView):
 
     def get_partner_submissions(self, user, qs):
         partner_submissions_qs = qs.partner_for(user).order_by('-submit_time')
-        partner_submissions_table = ReviewerSubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
+        partner_submissions_table = SubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
 
         return partner_submissions_qs, partner_submissions_table
-
-    def get_my_reviewed(self, request, qs):
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs, prefix='my-reviewed-')
-
-        return my_reviewed_qs, my_reviewed_table
 
     def get_my_submissions(self, request, qs):
         my_submissions = qs.filter(
@@ -256,16 +250,12 @@ class PartnerDashboardView(TemplateView):
         # Submissions in which user added as partner
         partner_submissions_qs, partner_submissions = self.get_partner_submissions(self.request.user, qs)
 
-        # Partner's reviewed submissions
-        my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
-
         # Applications by partner
         my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
 
         context.update({
             'partner_submissions': partner_submissions,
             'partner_submissions_count': partner_submissions_qs.count(),
-            'my_reviewed': my_reviewed,
             'my_submissions': my_submissions,
             'my_inactive_submissions': my_inactive_submissions,
         })

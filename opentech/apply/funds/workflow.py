@@ -168,13 +168,13 @@ default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
 
 hidden_from_applicant_permissions = make_permissions(edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can])
 
-reviewer_review_permissions = make_permissions(edit=[staff_can, partner_can], review=[staff_can, reviewer_can, partner_can])
+reviewer_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can])
 
 community_review_permissions = make_permissions(edit=[staff_can], review=[staff_can, reviewer_can, community_can])
 
 applicant_edit_permissions = make_permissions(edit=[applicant_can, partner_can], review=[staff_can])
 
-staff_applicant_edit_permissions = make_permissions(edit=[staff_can, applicant_can])
+staff_applicant_edit_permissions = make_permissions(edit=[staff_can, applicant_can, partner_can])
 
 staff_edit_permissions = make_permissions(edit=[staff_can])
 

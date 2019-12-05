@@ -9,7 +9,7 @@
         <div>-</div>
         <div>-</div>
     {% else %}
-        {% if request.user == reviewer.reviewer or request.user.is_reviewer and reviewer.review.reviewer_visibility or request.user.is_partner and reviewer.review.reviewer_visibility or request.user.is_community_reviewer and reviewer.review.reviewer_visibility or request.user.is_apply_staff %}
+        {% if request.user == reviewer.reviewer or request.user.is_reviewer and reviewer.review.reviewer_visibility or request.user.is_community_reviewer and reviewer.review.reviewer_visibility or request.user.is_apply_staff %}
             <div>
                 <a href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
                     <div class="reviews-sidebar__name">
