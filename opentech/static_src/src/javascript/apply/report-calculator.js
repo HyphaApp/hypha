@@ -39,7 +39,7 @@
         pluraliseTimePeriod(frequencyNumberInput.value);
     }
 
-    // Set the reporting period start date 
+    // Set the reporting period start date
     function setReportPeriodStart() {
         const startDate = new Date(reportData.startDate);
         periodStartSlot.innerHTML = startDate.toISOString().slice(0, 10);
