@@ -7,7 +7,7 @@ boto3==1.9.245
 celery==4.3.0
 dj-database-url==0.5.0
 django-anymail==6.0.1
-django-basic-auth-ip-whitelist==0.2.1
+django-basic-auth-ip-whitelist==0.3.1
 django-bleach==0.5.3
 django-countries==5.5
 django-extensions==2.1.7
