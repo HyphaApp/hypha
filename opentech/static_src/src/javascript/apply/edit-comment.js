@@ -67,7 +67,7 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': $.cookie('csrftoken')
+                'X-CSRFToken': window.Cookies.get('csrftoken')
             },
             body: JSON.stringify({
                 message: editedComment
