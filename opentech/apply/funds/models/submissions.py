@@ -974,6 +974,9 @@ class AssignedReviewers(models.Model):
     class Meta:
         unique_together = (('submission', 'role'), ('submission', 'reviewer'))
 
+    def __hash__(self):
+        return hash(self.pk)
+
     def __str__(self):
         return f'{self.reviewer}'
 

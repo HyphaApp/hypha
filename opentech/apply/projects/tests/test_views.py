@@ -966,7 +966,7 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': None,
+            'invoice': '',
             'receipt_list': [receipt.pk],
         })
 
@@ -986,7 +986,7 @@ class TestApplicantEditPaymentRequestView(BaseViewTestCase):
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': None,
+            'invoice': '',
             'receipt_list': [],
         })
 
@@ -1018,7 +1018,7 @@ class TestStaffEditPaymentRequestView(BaseViewTestCase):
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': None,
+            'invoice': '',
             'receipt_list': [receipt.pk],
         })
 
