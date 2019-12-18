@@ -157,14 +157,17 @@
     });
 
     // Setting the CSRF token on AJAX requests.
-    var csrftoken = window.Cookies.get('csrftoken');
+    var csrftoken = false;
+    if (typeof window.Cookies !== 'undefined') {
+        csrftoken = window.Cookies.get('csrftoken');
+    }
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            if (csrftoken && !csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             }
         }
