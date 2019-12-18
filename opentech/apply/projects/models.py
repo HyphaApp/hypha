@@ -393,12 +393,16 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return self.get_status_display()
 
     def get_address_display(self):
-        address = json.loads(self.contact_address)
-        return ', '.join(
-            address.get(field)
-            for field in ADDRESS_FIELDS_ORDER
-            if address.get(field)
-        )
+        try:
+            address = json.loads(self.contact_address)
+        except json.JSONDecodeError:
+            return ''
+        else:
+            return ', '.join(
+                address.get(field)
+                for field in ADDRESS_FIELDS_ORDER
+                if address.get(field)
+            )
 
     @classmethod
     def create_from_submission(cls, submission):
