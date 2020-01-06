@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.text import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (
     CreateView,

@@ -90,12 +90,13 @@ class ReadOnlyInlinePanel(ReadOnlyPanel):
 
     def get_child_edit_handler(self):
         child_edit_handler = ReadOnlyPanel(self.attr)
-        return child_edit_handler.bind_to_model(getattr(self.instance, self.attr))
+        model = getattr(self.instance, self.attr)
+        return child_edit_handler.bind_to(model=model)
 
     def on_instance_bound(self):
         values = getattr(self.instance, self.attr).all()
         child_panel = self.get_child_edit_handler()
-        self.children = [child_panel.bind_to_instance(value, form=self.form, request=self.request) for value in values]
+        self.children = [child_panel.bind_to(instance=value, form=self.form, request=self.request) for value in values]
 
 
 class FilteredFieldPanel(FieldPanel):
