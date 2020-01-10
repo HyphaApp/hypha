@@ -1,5 +1,9 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% block content %}There has been a new comment on "{{ source.title }}"
+{% block content %}There has been a new comment on "{{ source.title }}" by {{ comment.user }}.
 
-{{ comment.user }}: {{ comment.message }}{% endblock %}
+Read the full comment here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications{% endblock %}
+
+{% block more_info %}
+If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}
+{% endblock %}
