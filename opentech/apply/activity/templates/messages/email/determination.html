@@ -7,9 +7,4 @@
 
 {{ determination.message|bleach|striptags }}
 
-{% for group in determination.detailed_data.values %}{{ group.title }}
-{% for question, answer in group.questions %}
-{% if answer %}{{ question }}:
-{{ answer|bleach|striptags }}{% endif %}{% endfor %}{% endfor %}
-
-Read the determination here: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}
+Read the full determination here: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}
