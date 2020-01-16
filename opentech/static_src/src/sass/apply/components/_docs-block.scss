@@ -8,9 +8,6 @@
     &__header {
         background-color: $color--light-blue;
         color: $color--white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         padding: 1rem;
     }
 
@@ -20,10 +17,6 @@
 
     &__inner {
         padding: 1rem;
-
-        @include media-query(tablet-portrait) {
-            padding: 2rem;
-        }
     }
 
     &__row {
@@ -32,8 +25,6 @@
         border-bottom: 1px solid $color--mid-grey;
 
         @include media-query(tablet-portrait) {
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -65,11 +56,9 @@
 
     &__title {
         margin: 0;
-        font-size: 1.2rem;
 
         @include media-query(tablet-landscape) {
             flex: 1;
-            font-size: 1.5rem;
         }
     }
 
@@ -82,8 +71,6 @@
 
         @include media-query(tablet-landscape) {
             margin-right: 1rem;
-            width: 30px;
-            height: 30px;
         }
 
         &.is-complete {
@@ -115,10 +102,6 @@
 
     &__buttons {
         padding: 0 1rem 1rem;
-
-        @include media-query(tablet-portrait) {
-            padding: 0 2rem 2rem;
-        }
 
         .button {
             padding: .5rem 1rem;
