@@ -1,0 +1,65 @@
+.page-boxes {
+    flex-flow: wrap;
+    justify-content: space-between;
+}
+
+.page-box {
+    padding: 1rem;
+    margin-bottom:  1rem;
+    background-color: $color--white;
+
+    @include media-query(tablet-portrait) {
+        padding: 2rem;
+        margin-bottom:  2rem;
+        width:  48%;
+    }
+
+    & > .wrapper {
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top:  0;
+            right:  0;
+            width: 40px;
+            height: 40px;
+            background-repeat: no-repeat;
+        }
+    }
+
+    .otf-icon-red {
+        &::before {
+            background-image: url('./../../images/learnings/otf-icon-red.svg');
+        }
+    }
+
+    .bullhorn-icon-red {
+        &::before {
+            background-image: url('./../../images/learnings/bullhorn-icon-red.svg');
+        }
+    }
+
+    .potion-icon-red {
+        &::before {
+            background-image: url('./../../images/learnings/potion-icon-red.svg');
+        }
+    }
+
+    .user-friends-icon-red {
+        &::before {
+            background-image: url('./../../images/learnings/user-friends-icon-red.svg');
+        }
+    }
+
+    b:first-of-type {
+        color: $color--pink;
+    }
+
+    h3,
+    h4,
+    h5 {
+        color: $color--dark-blue;
+    }
+
+}
