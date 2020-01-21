@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <div class="wrapper wrapper--flex">
+    <div class="wrapper">
         <article class="section section--main">
             {% if page.introduction %}
                 <h4 class="heading heading--introduction">{{ page.introduction }}</h4>
@@ -21,4 +21,5 @@
 
 {% block extra_js %}
     <script src="{% static 'js/public/dataviz-iframe.js' %}"></script>
+    <script src="{% static 'js/public/page-box.js' %}"></script>
 {% endblock %}

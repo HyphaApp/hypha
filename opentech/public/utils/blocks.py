@@ -33,10 +33,27 @@ class QuoteBlock(blocks.StructBlock):
         template = "blocks/quote_block.html"
 
 
+class BoxBlock(blocks.StructBlock):
+    box_content = blocks.RichTextBlock()
+    box_class = blocks.CharBlock(required=False)
+
+    class Meta:
+        icon = "placeholder"
+        template = "blocks/box_block.html"
+
+class ApplyLinkBlock(blocks.StructBlock):
+    application = blocks.PageChooserBlock()
+
+    class Meta:
+        icon = "link"
+        template = "blocks/apply_link_block.html"
+
 # Main streamfield block to be inherited by Pages
 class StoryBlock(blocks.StreamBlock):
     heading = blocks.CharBlock(classname="full title", icon='title')
     paragraph = blocks.RichTextBlock()
+    box = BoxBlock()
+    Apply_link = ApplyLinkBlock()
     image = ImageBlock()
     quote = QuoteBlock()
     embed = EmbedBlock()
