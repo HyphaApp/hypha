@@ -41,12 +41,14 @@ class BoxBlock(blocks.StructBlock):
         icon = "placeholder"
         template = "blocks/box_block.html"
 
+
 class ApplyLinkBlock(blocks.StructBlock):
     application = blocks.PageChooserBlock()
 
     class Meta:
         icon = "link"
         template = "blocks/apply_link_block.html"
+
 
 # Main streamfield block to be inherited by Pages
 class StoryBlock(blocks.StreamBlock):
