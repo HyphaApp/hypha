@@ -60,6 +60,7 @@ class AddressField(forms.CharField):
 
     def prepare_value(self, value):
         try:
-            return json.loads(value)
+            # Handle empty value with "or".
+            return json.loads(value or {})
         except TypeError:
             return value
