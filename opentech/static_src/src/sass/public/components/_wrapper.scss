@@ -244,4 +244,12 @@
     &--center {
         text-align: center;
     }
+
+    &--flex {
+        display:  flex;
+    }
+
+    &--page-box {
+        background-color: $color--light-grey;
+    }
 }
