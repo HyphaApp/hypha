@@ -55,7 +55,7 @@ class StoryBlock(blocks.StreamBlock):
     heading = blocks.CharBlock(classname="full title", icon='title')
     paragraph = blocks.RichTextBlock()
     box = BoxBlock()
-    Apply_link = ApplyLinkBlock()
+    apply_link = ApplyLinkBlock()
     image = ImageBlock()
     quote = QuoteBlock()
     embed = EmbedBlock()
