@@ -73,6 +73,8 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         related_name='funds',
     )
 
+    guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
+
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
@@ -110,6 +112,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('approval_form'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
     ]
 
@@ -400,6 +403,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name='labs',
     )
 
+    guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
+
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -409,6 +414,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel('approval_form'),
         FieldPanel('lead'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
     ]
 

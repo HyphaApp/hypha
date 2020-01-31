@@ -32,6 +32,17 @@
         @include button($color--purple, darken($color--purple, 20%));
     }
 
+    &--button-tertiary {
+        @include button(transparent, darken($color--purple, 20%));
+        color: $color--purple;
+        border-color: $color--purple;
+
+        &:focus,
+        &:hover {
+            color: $color--white;
+        }
+    }
+
     &--button-transparent {
         @include button(transparent, $color--darkest-blue);
         color: $color--white;
