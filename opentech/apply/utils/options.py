@@ -18,6 +18,7 @@ MCE_ATTRIBUTES = {
             {'title': 'Underline', 'icon': 'underline', 'format': 'underline'},
         ]},
     ],
+    'relative_urls': False,
 }
 MCE_ATTRIBUTES_SHORT = {**MCE_ATTRIBUTES, **{'height': 180}}
 
