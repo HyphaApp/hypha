@@ -1,10 +1,10 @@
 -r requirements.txt
 
-django-debug-toolbar==2.0
+django-debug-toolbar==2.2
 factory_boy==2.12
 Faker==1.0.8  # Pinning to avoid API changes to pydecimal in 0.x - could go higher in future
 flake8==3.7.9
-responses==0.10.6
+responses==0.10.9
 stellar==0.4.5
 wagtail-factories==2.0.0
-Werkzeug==0.15.3
+Werkzeug==0.16.1
