@@ -1,12 +1,12 @@
 export function fetchRound(id) {
     return {
-        path:`/apply/api/rounds/${id}/`,
+        path:`/v1/rounds/${id}/`,
     };
 }
 
 export function fetchRounds() {
     return {
-        path:`/apply/api/rounds/`,
+        path:`/v1/rounds/`,
         params: {
             page_size: 1000,
         },

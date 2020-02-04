@@ -1,6 +1,6 @@
 export function fetchSubmissionsByRound(id) {
     return {
-        path:'/apply/api/submissions/',
+        path:'/v1/submissions/',
         params: {
             round: id,
             page_size: 1000,
@@ -10,7 +10,7 @@ export function fetchSubmissionsByRound(id) {
 
 export function fetchSubmission(id) {
     return {
-        path: `/apply/api/submissions/${id}/`,
+        path: `/v1/submissions/${id}/`,
     };
 }
 
@@ -20,14 +20,14 @@ export function fetchSubmissionsByStatuses(statuses) {
     statuses.forEach(v => params.append('status', v));
 
     return {
-        path:'/apply/api/submissions/',
+        path:'/v1/submissions/',
         params,
     };
 }
 
 export function executeSubmissionAction(submissionID, action) {
     return {
-        path: `/apply/api/submissions/${submissionID}/actions/`,
+        path: `/v1/submissions/${submissionID}/actions/`,
         method: 'POST',
         options: {
             body: {

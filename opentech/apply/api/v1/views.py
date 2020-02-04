@@ -12,14 +12,17 @@ from rest_framework.exceptions import (NotFound, PermissionDenied,
 from rest_framework_api_key.permissions import HasAPIKey
 from django_filters import rest_framework as filters
 
-from opentech.api.pagination import StandardResultsSetPagination
+from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from opentech.apply.funds.workflow import PHASES
+
 from opentech.apply.activity.models import Activity, COMMENT
 from opentech.apply.activity.messaging import messenger, MESSAGES
 from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
 from opentech.apply.review.models import Review
 from opentech.apply.funds.models import FundType, LabType
 
-from .models import ApplicationSubmission, RoundsAndLabs
+from .pagination import StandardResultsSetPagination
+from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
     CommentSerializer,
     CommentCreateSerializer,
@@ -30,8 +33,6 @@ from .serializers import (
     SubmissionListSerializer,
     SubmissionDetailSerializer,
 )
-from .permissions import IsApplyStaffUser, IsAuthor
-from .workflow import PHASES
 
 
 class RoundLabFilter(filters.ModelChoiceFilter):
