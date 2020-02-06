@@ -38,6 +38,10 @@ def display_for(activity, user):
         message_data = json.loads(activity.message)
     except json.JSONDecodeError:
         return activity.message
+    else:
+        # A message with only numbers (int) is valid json so check we have "real" json.
+        if not isinstance(message_data, (dict, list)):
+            return activity.message
 
     visibile_for_user = activity.visibility_for(user)
 
