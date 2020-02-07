@@ -13,7 +13,7 @@ class CommentForm(forms.ModelForm):
         fields = ('message', 'visibility')
         labels = {
             'visibility': 'Visible to',
-            'message': '',
+            'message': 'Message',
         }
         widgets = {
             'visibility': forms.RadioSelect(),
