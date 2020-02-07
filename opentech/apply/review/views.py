@@ -233,7 +233,6 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         user = self.request.user
         author = review.author.reviewer
         submission = review.submission
-        partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
         if user.is_apply_staff:
             return True
@@ -242,9 +241,6 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
             return True
 
         if user.is_reviewer and review.reviewer_visibility:
-            return True
-
-        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
             return True
 
         if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
@@ -279,7 +275,6 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         user = self.request.user
         author = review.author.reviewer
         submission = review.submission
-        partner_has_access = submission.partners.filter(pk=user.pk).exists()
 
         if user.is_apply_staff:
             return True
@@ -288,9 +283,6 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
             return False
 
         if user.is_reviewer and review.reviewer_visibility:
-            return True
-
-        if user.is_partner and partner_has_access and review.reviewer_visibility and submission.user != user:
             return True
 
         if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:

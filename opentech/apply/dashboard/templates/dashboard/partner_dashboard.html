@@ -27,13 +27,6 @@
         {% endif %}
     </div>
 
-    {% if my_reviewed.data %}
-        <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">Your previous reviews</h4>
-            {% render_table my_reviewed %}
-        </div>
-    {% endif %}
-
     <div class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">Your active submissions</h4>
         {% for submission in my_submissions %}

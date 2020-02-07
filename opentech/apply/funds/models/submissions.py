@@ -46,7 +46,6 @@ from .utils import (
     LIMIT_TO_STAFF,
     LIMIT_TO_REVIEWER_GROUPS,
     LIMIT_TO_PARTNERS,
-    PARTNER_GROUP_NAME,
     REVIEW_GROUPS,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
@@ -645,8 +644,7 @@ class ApplicationSubmission(
     def missing_reviewers(self):
         reviewers_submitted = self.assigned.reviewed().values('reviewer')
         reviewers = self.reviewers.exclude(id__in=reviewers_submitted)
-        partners = self.partners.exclude(id__in=reviewers_submitted)
-        return reviewers.union(partners)
+        return reviewers
 
     @property
     def staff_not_reviewed(self):
@@ -655,10 +653,6 @@ class ApplicationSubmission(
     @property
     def reviewers_not_reviewed(self):
         return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
-
-    @property
-    def partners_not_reviewed(self):
-        return self.missing_reviewers.partners().exclude(id__in=self.staff_not_reviewed)
 
     def reviewed_by(self, user):
         return self.assigned.reviewed().filter(reviewer=user).exists()
@@ -675,9 +669,6 @@ class ApplicationSubmission(
             return True
 
         if user in self.reviewers_not_reviewed:
-            return True
-
-        if user in self.partners_not_reviewed:
             return True
 
         if user.is_community_reviewer and self.user != user and self.community_review and not self.reviewed_by(user):
@@ -822,7 +813,6 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def review_order(self):
         review_order = [
             STAFF_GROUP_NAME,
-            PARTNER_GROUP_NAME,
             COMMUNITY_REVIEWER_GROUP_NAME,
             REVIEWER_GROUP_NAME,
         ]
@@ -892,9 +882,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def get_or_create_for_user(self, submission, reviewer):
         groups = set(reviewer.groups.values_list('name', flat=True)) & set(REVIEW_GROUPS)
         if len(groups) > 1:
-            if PARTNER_GROUP_NAME in groups and reviewer in submission.partners.all():
-                groups = {PARTNER_GROUP_NAME}
-            elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
+            if COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
             elif reviewer.is_apply_staff:
                 groups = {STAFF_GROUP_NAME}
