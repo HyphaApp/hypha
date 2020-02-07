@@ -6,7 +6,7 @@ sentry-sdk==0.14.1
 boto3==1.9.245
 celery==4.4.0
 dj-database-url==0.5.0
-django-anymail==6.0.1
+django-anymail==7.0.0
 django-basic-auth-ip-whitelist==0.3.1
 django-bleach==0.6.1
 django-countries==5.5
