@@ -27,10 +27,11 @@ if 'MAILGUN_API_KEY' in env:
 if 'SENTRY_DSN' in env:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.celery import CeleryIntegration
     sentry_sdk.init(
         dsn=env['SENTRY_DSN'],
         environment=env.get('SENTRY_ENVIRONMENT', None),
-        integrations=[DjangoIntegration()]
+        integrations=[DjangoIntegration(), CeleryIntegration()]
     )
 
 # Heroku configuration.
