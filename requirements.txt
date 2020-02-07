@@ -15,7 +15,7 @@ django-filter==2.2.0
 django-fsm==2.6.1
 django-heroku==0.3.1
 django-hijack==2.1.10
-django-pagedown==1.0.6
+django-pagedown==2.0.3
 django-pwned-passwords==4.1.0
 django-redis==4.11.0
 django-referrer-policy==1.0
