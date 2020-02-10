@@ -28,7 +28,7 @@ before_script:
 
 # Package installation
 install:
-  - pip install codecov
+  - pip install coverage codecov phonenumberslite
 
   # Install project dependencies
   - pip install -r requirements-dev.txt
@@ -60,7 +60,7 @@ script:
   - python manage.py makemigrations --check --noinput --verbosity=0
 
   # Run tests
-  - coverage run --source='.' manage.py test .
+  - coverage run --source='opentech' manage.py test
 
 after_success:
   codecov
