@@ -10,10 +10,10 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from addressfield.fields import AddressField
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.stream_forms.fields import MultiFileField
-from opentech.apply.users.groups import STAFF_GROUP_NAME
-from opentech.apply.utils.fields import RichTextField
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.stream_forms.fields import MultiFileField
+from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.utils.fields import RichTextField
 
 from .models import (
     CHANGES_REQUESTED,

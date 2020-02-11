@@ -7,11 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from wagtail.core.blocks import RichTextBlock
 
-from opentech.apply.review.fields import ScoredAnswerField
-from opentech.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
-from opentech.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
-from opentech.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
-from opentech.apply.utils.options import RICH_TEXT_WIDGET_SHORT
+from hypha.apply.review.fields import ScoredAnswerField
+from hypha.apply.review.options import RECOMMENDATION_CHOICES, RATE_CHOICES_DICT, RATE_CHOICE_NA, NA, VISIBILITY, VISIBILILTY_HELP_TEXT, PRIVATE
+from hypha.apply.stream_forms.blocks import OptionalFormFieldBlock, CharFieldBlock, TextFieldBlock, CheckboxFieldBlock, DropdownFieldBlock
+from hypha.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
+from hypha.apply.utils.options import RICH_TEXT_WIDGET_SHORT
 
 
 class ScoreFieldBlock(OptionalFormFieldBlock):

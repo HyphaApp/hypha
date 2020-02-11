@@ -5,13 +5,13 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import override_settings, RequestFactory
 from django.urls import reverse_lazy
 
-from opentech.apply.activity.models import Activity
-from opentech.apply.determinations.models import ACCEPTED, REJECTED, NEEDS_MORE_INFO
-from opentech.apply.determinations.views import BatchDeterminationCreateView
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.utils.testing import BaseViewTestCase
+from hypha.apply.activity.models import Activity
+from hypha.apply.determinations.models import ACCEPTED, REJECTED, NEEDS_MORE_INFO
+from hypha.apply.determinations.views import BatchDeterminationCreateView
+from hypha.apply.users.tests.factories import StaffFactory, UserFactory
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.utils.testing import BaseViewTestCase
 
 from .factories import DeterminationFactory
 

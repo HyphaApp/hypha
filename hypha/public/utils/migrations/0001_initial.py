@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('twitter_handle', models.CharField(blank=True, help_text='Your Twitter username without the @, e.g. katyperry', max_length=255)),
                 ('facebook_app_id', models.CharField(blank=True, help_text='Your Facebook app ID.', max_length=255)),
                 ('default_sharing_text', models.CharField(blank=True, help_text='Default sharing text to use if social text has not been set on a page.', max_length=255)),
-                ('site_name', models.CharField(blank=True, default='opentech', help_text='Site name, used by Open Graph.', max_length=255)),
+                ('site_name', models.CharField(blank=True, default='hypha', help_text='Site name, used by Open Graph.', max_length=255)),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
             ],
             options={

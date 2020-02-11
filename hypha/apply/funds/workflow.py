@@ -14,7 +14,7 @@ Current limitations:
 * Changing the name of a phase will mean that any object which references it cannot progress. [will
 be fixed when streamfield, may require intermediate fix prior to launch]
 * Do not reorder without looking at workflow automations steps in form_valid() in
-opentech/apply/funds/views.py and opentech/apply/review/views.py.
+hypha/apply/funds/views.py and hypha/apply/review/views.py.
 """
 
 

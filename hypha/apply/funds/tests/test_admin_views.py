@@ -3,9 +3,9 @@ from django.test import TestCase
 from django.urls import reverse
 from wagtail.tests.utils import WagtailTestUtils
 
-from opentech.apply.home.factories import ApplyHomePageFactory
-from opentech.apply.users.groups import STAFF_GROUP_NAME
-from opentech.apply.users.tests.factories import SuperUserFactory
+from hypha.apply.home.factories import ApplyHomePageFactory
+from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.tests.factories import SuperUserFactory
 
 from .factories.models import RoundFactory
 from .test_admin_form import form_data

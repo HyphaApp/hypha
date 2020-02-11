@@ -6,7 +6,7 @@ from django.http import Http404
 
 from wagtail.core.models import Site
 
-from opentech.public.news.models import NewsPage, NewsType, NewsIndex, NewsFeedSettings
+from hypha.public.news.models import NewsPage, NewsType, NewsIndex, NewsFeedSettings
 
 
 class NewsFeed(Feed):

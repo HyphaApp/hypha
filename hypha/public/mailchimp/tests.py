@@ -60,7 +60,7 @@ class TestNewsletterView(TestCase):
         MAILCHIMP_LIST_ID='12345'
     )
     @responses.activate
-    @mock.patch('opentech.public.mailchimp.views.logger')
+    @mock.patch('hypha.public.mailchimp.views.logger')
     def test_error_with_mailchimp(self, logger):
         # Copied from the mailchimp playground
         response_data = {
@@ -76,5 +76,5 @@ class TestNewsletterView(TestCase):
         messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertIn('problem', str(messages[0]))
-        # See opentech/public/mailchimp/views.py warning()
+        # See hypha/public/mailchimp/views.py warning()
         # logger.error.assert_called_once_with(response_data)

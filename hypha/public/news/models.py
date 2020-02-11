@@ -17,7 +17,7 @@ from wagtail.admin.edit_handlers import (
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.search import index
 
-from opentech.public.utils.models import BasePage, RelatedPage
+from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import NewsStoryBlock
 

@@ -218,7 +218,7 @@ class SocialMediaSettings(BaseSetting):
     site_name = models.CharField(
         max_length=255,
         blank=True,
-        default='opentech',
+        default='hypha',
         help_text='Site name, used by Open Graph.',
     )
 

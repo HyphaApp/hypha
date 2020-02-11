@@ -9,7 +9,7 @@ from wagtail.core.blocks import RichTextBlock
 from wagtail.core.rich_text import RichText
 import wagtail_factories
 
-from opentech.apply.stream_forms import blocks as stream_blocks
+from hypha.apply.stream_forms import blocks as stream_blocks
 
 __all__ = ['BLOCK_FACTORY_DEFINITION', 'FormFieldBlockFactory',
            'CharFieldBlockFactory', 'NumberFieldBlockFactory',

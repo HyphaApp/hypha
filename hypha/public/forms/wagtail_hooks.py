@@ -2,7 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from wagtail.core import hooks
 
-from opentech.public.forms.models import FormPage
+from hypha.public.forms.models import FormPage
 
 
 @hooks.register('filter_form_submissions_for_user')

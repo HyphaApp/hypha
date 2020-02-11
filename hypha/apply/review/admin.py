@@ -3,8 +3,8 @@ from django.conf.urls import url
 from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
-from opentech.apply.review.models import ReviewForm
-from opentech.apply.utils.admin import ListRelatedMixin
+from hypha.apply.review.models import ReviewForm
+from hypha.apply.utils.admin import ListRelatedMixin
 
 from .admin_helpers import ButtonsWithClone
 

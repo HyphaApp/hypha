@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import opentech.apply.projects.models
+import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.TextField()),
-                ('document', models.FileField(upload_to=opentech.apply.projects.models.document_path)),
+                ('document', models.FileField(upload_to=hypha.apply.projects.models.document_path)),
                 ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='packet_files', to='application_projects.DocumentCategory')),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='packet_files', to='application_projects.Project')),
             ],

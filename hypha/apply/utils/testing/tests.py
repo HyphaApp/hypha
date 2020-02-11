@@ -17,7 +17,7 @@ def make_request(user=AnonymousUser(), data={}, method='get', site=None):
     return request
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class BaseViewTestCase(TestCase):
     url_name = ''  # resolvable url, you should use "path:to:view:{}" and {} with be replaced with base_view_name
     base_view_name = ''

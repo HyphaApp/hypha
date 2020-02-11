@@ -3,8 +3,8 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views import View
 
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.users.decorators import staff_required
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.users.decorators import staff_required
 
 from .models import Flag
 

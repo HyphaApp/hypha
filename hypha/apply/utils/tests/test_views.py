@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.views.generic import UpdateView
 
-from opentech.apply.utils.views import DelegatedViewMixin
+from hypha.apply.utils.views import DelegatedViewMixin
 
 
 class PatchedUpdateView(UpdateView):

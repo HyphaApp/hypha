@@ -21,9 +21,9 @@ from wagtail.core.models import Page
 from wagtail.core.rich_text import RichText
 from wagtail.images import get_image_model
 
-from opentech.apply.categories.models import Category, Option
-from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.public.projects.models import (
+from hypha.apply.categories.models import Category, Option
+from hypha.apply.categories.categories_seed import CATEGORIES
+from hypha.public.projects.models import (
     ProjectContactDetails,
     ProjectFunding,
     ProjectIndexPage,

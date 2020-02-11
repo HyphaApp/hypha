@@ -13,13 +13,13 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, CreateView
 
-from opentech.apply.activity.models import Activity
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
-from opentech.apply.projects.models import Project
-from opentech.apply.utils.views import CreateOrUpdateView, ViewDispatcher
-from opentech.apply.users.decorators import staff_required
+from hypha.apply.activity.models import Activity
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.projects.models import Project
+from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
+from hypha.apply.users.decorators import staff_required
 
 from .forms import (
     BatchConceptDeterminationForm,

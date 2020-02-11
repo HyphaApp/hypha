@@ -3,7 +3,7 @@ import re
 from django import template
 from django.utils.safestring import mark_safe
 
-from opentech.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.models import ApplicationSubmission
 
 register = template.Library()
 

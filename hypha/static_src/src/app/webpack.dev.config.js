@@ -13,7 +13,7 @@ devConfig.output.publicPath = 'http://localhost:3000/app/'
 devConfig.plugins = devConfig.plugins.concat([
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new BundleTracker({filename: './opentech/static_compiled/app/webpack-stats.json'}),
+    new BundleTracker({filename: './hypha/static_compiled/app/webpack-stats.json'}),
     new webpack.EnvironmentPlugin({
         API_BASE_URL: 'http://apply.localhost:8000/api',
     }),

@@ -8,7 +8,7 @@ from wagtail.search import index
 
 from wagtailcache.cache import cache_page, WagtailCacheMixin
 
-from opentech.apply.funds.models import ApplicationBase, LabBase
+from hypha.apply.funds.models import ApplicationBase, LabBase
 
 
 @method_decorator(cache_page, name='serve')

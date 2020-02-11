@@ -6,8 +6,8 @@ import pytz
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.projects.models import (
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.projects.models import (
     COMPLETE,
     Contract,
     DocumentCategory,
@@ -21,8 +21,8 @@ from opentech.apply.projects.models import (
     ReportConfig,
     ReportVersion,
 )
-from opentech.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
-from opentech.apply.users.tests.factories import StaffFactory, UserFactory
+from hypha.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
+from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
 ADDRESS = {
     'country': 'GB',
@@ -155,7 +155,7 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
 
 class ReportConfigFactory(factory.DjangoModelFactory):
     project = factory.SubFactory(
-        "opentech.apply.projects.tests.factories.ApprovedProjectFactory",
+        "hypha.apply.projects.tests.factories.ApprovedProjectFactory",
         report_config=None,
     )
 
@@ -170,7 +170,7 @@ class ReportConfigFactory(factory.DjangoModelFactory):
 
 
 class ReportVersionFactory(factory.DjangoModelFactory):
-    report = factory.SubFactory("opentech.apply.projects.tests.factories.ReportFactory")
+    report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
     public_content = factory.Faker('paragraph')
     private_content = factory.Faker('paragraph')
@@ -194,7 +194,7 @@ class ReportVersionFactory(factory.DjangoModelFactory):
 
 
 class ReportFactory(factory.DjangoModelFactory):
-    project = factory.SubFactory("opentech.apply.projects.tests.factories.ApprovedProjectFactory")
+    project = factory.SubFactory("hypha.apply.projects.tests.factories.ApprovedProjectFactory")
     end_date = factory.LazyFunction(timezone.now)
 
     class Meta:

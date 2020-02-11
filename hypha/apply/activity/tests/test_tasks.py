@@ -8,7 +8,7 @@ from .factories import MessageFactory
 
 
 class TestSendEmail(TestCase):
-    @patch('opentech.apply.activity.tasks.EmailMessage', autospec=True)
+    @patch('hypha.apply.activity.tasks.EmailMessage', autospec=True)
     def test_args_passed_to_django(self, email_mock):
         kwargs = {
             'subject': 'subject',

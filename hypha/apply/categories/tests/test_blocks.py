@@ -1,7 +1,7 @@
 from django import forms
 from django.test import TestCase
 
-from opentech.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.blocks import CategoryQuestionBlock
 
 from .factories import CategoryFactory, OptionFactory
 

@@ -13,8 +13,8 @@ from wagtail.admin.edit_handlers import (
 from wagtail.core.fields import StreamField
 from wagtail.search import index
 
-from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import (
+from hypha.public.utils.blocks import StoryBlock
+from hypha.public.utils.models import (
     BasePage,
     RelatedPage,
 )

@@ -13,10 +13,10 @@ from django.views.generic import (
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
-from opentech.apply.activity.messaging import MESSAGES, messenger
-from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.storage import PrivateMediaView
-from opentech.apply.utils.views import (
+from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.users.decorators import staff_required
+from hypha.apply.utils.storage import PrivateMediaView
+from hypha.apply.utils.views import (
     DelegateableView,
     DelegatedViewMixin,
     ViewDispatcher,

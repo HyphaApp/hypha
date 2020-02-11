@@ -10,9 +10,9 @@ from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
-from opentech.public import urls as public_urls
-from opentech.apply.users.urls import public_urlpatterns as user_urls
-from opentech.apply.users.views import LoginView
+from hypha.public import urls as public_urls
+from hypha.apply.users.urls import public_urlpatterns as user_urls
+from hypha.apply.users.views import LoginView
 
 urlpatterns = [
     path('django-admin/', admin.site.urls),

@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.sql import emit_post_migrate_signal
 from django.db import migrations
 
-from opentech.apply.users.groups import GROUPS, APPLICANT_GROUP_NAME
+from hypha.apply.users.groups import GROUPS, APPLICANT_GROUP_NAME
 
 
 def add_groups(apps, schema_editor):

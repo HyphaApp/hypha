@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-from opentech.apply.activity.models import COMMENT, APPLICANT, TEAM, ALL
+from hypha.apply.activity.models import COMMENT, APPLICANT, TEAM, ALL
 
 
 def update_visibility_options(apps, schema_editor):

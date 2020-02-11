@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 
-from opentech.apply.users.views import LoginView, AccountView, become, oauth, ActivationView, create_password
+from hypha.apply.users.views import LoginView, AccountView, become, oauth, ActivationView, create_password
 
 
 app_name = 'users'

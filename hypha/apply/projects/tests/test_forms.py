@@ -4,7 +4,7 @@ from unittest import mock
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
-from opentech.apply.users.tests.factories import (
+from hypha.apply.users.tests.factories import (
     UserFactory,
 )
 
@@ -165,7 +165,7 @@ class TestCreatePaymentRequestForm(TestCase):
         self.assertFalse(form.is_valid())
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestSelectDocumentForm(TestCase):
     def test_copying_files(self):
         category = DocumentCategoryFactory()

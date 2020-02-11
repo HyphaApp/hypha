@@ -10,8 +10,8 @@ from django.utils.safestring import mark_safe
 
 from wagtail.core.blocks import StaticBlock, StreamValue, StreamBlock
 
-from opentech.apply.stream_forms.blocks import FormFieldBlock, OptionalFormFieldBlock, TextFieldBlock
-from opentech.apply.utils.options import RICH_TEXT_WIDGET
+from hypha.apply.stream_forms.blocks import FormFieldBlock, OptionalFormFieldBlock, TextFieldBlock
+from hypha.apply.utils.options import RICH_TEXT_WIDGET
 
 
 def find_duplicates(items):

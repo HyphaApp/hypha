@@ -2,7 +2,7 @@
 
 import django.core.files.storage
 from django.db import migrations, models
-import opentech.apply.projects.models
+import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='packetfile',
             name='document',
-            field=models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=opentech.apply.projects.models.document_path),
+            field=models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.document_path),
         ),
     ]

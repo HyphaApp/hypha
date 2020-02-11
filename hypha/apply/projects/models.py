@@ -39,14 +39,14 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.core.fields import StreamField
 
-from opentech.apply.funds.models.mixins import AccessFormData
-from opentech.apply.stream_forms.blocks import FormFieldsBlock
-from opentech.apply.stream_forms.files import StreamFieldDataEncoder
-from opentech.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.funds.models.mixins import AccessFormData
+from hypha.apply.stream_forms.blocks import FormFieldsBlock
+from hypha.apply.stream_forms.files import StreamFieldDataEncoder
+from hypha.apply.stream_forms.models import BaseStreamForm
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
-from opentech.apply.activity.messaging import MESSAGES, messenger
-from opentech.apply.utils.storage import PrivateStorage
+from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.utils.storage import PrivateStorage
 
 logger = logging.getLogger(__name__)
 

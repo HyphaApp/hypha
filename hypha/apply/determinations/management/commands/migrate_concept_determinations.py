@@ -8,8 +8,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from opentech.apply.determinations.models import Determination
-from opentech.apply.funds.models import ApplicationSubmission
+from hypha.apply.determinations.models import Determination
+from hypha.apply.funds.models import ApplicationSubmission
 
 
 class Command(BaseCommand):

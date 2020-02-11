@@ -1,13 +1,13 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
 
-from opentech.apply.activity.models import Activity, APPLICANT, ALL
-from opentech.apply.activity.tests.factories import CommentFactory
+from hypha.apply.activity.models import Activity, APPLICANT, ALL
+from hypha.apply.activity.tests.factories import CommentFactory
 
-from opentech.apply.users.tests.factories import UserFactory
+from hypha.apply.users.tests.factories import UserFactory
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestCommentEdit(TestCase):
     def post_to_edit(self, comment_pk, message='my message'):
         return self.client.post(

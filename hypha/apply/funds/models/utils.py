@@ -10,9 +10,9 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.contrib.forms.models import AbstractEmailForm
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.stream_forms.models import AbstractStreamForm
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.stream_forms.models import AbstractStreamForm
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME, PARTNER_GROUP_NAME, COMMUNITY_REVIEWER_GROUP_NAME
 
 from ..workflow import WORKFLOWS
 

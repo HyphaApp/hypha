@@ -1,20 +1,20 @@
 from unittest import mock
 
-from opentech.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.models import ApplicationSubmission
 
-from opentech.apply.determinations.tests.factories import (
+from hypha.apply.determinations.tests.factories import (
     DeterminationFactory
 )
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     InvitedToProposalFactory,
 )
-from opentech.apply.users.tests.factories import (
+from hypha.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
     UserFactory,
 )
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseBatchProgressViewTestCase(BaseViewTestCase):
@@ -91,7 +91,7 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         redirect_url = self.url_from_pattern('apply:submissions:determinations:batch', absolute=False)
         self.assertEqual(response.request['PATH_INFO'][:len(redirect_url)], redirect_url)
 
-    @mock.patch('opentech.apply.funds.views.messenger')
+    @mock.patch('hypha.apply.funds.views.messenger')
     def test_messenger_not_called_with_failed(self, patched):
         submission = ApplicationSubmissionFactory()
         action = 'close-review'
@@ -100,7 +100,7 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         _, _, kwargs = patched.mock_calls[0]
         self.assertQuerysetEqual(kwargs['sources'], ApplicationSubmission.objects.none())
 
-    @mock.patch('opentech.apply.funds.views.messenger')
+    @mock.patch('hypha.apply.funds.views.messenger')
     def test_messenger_with_submission_in_review(self, patched):
         submission = ApplicationSubmissionFactory()
         action = 'open-review'

@@ -2,7 +2,7 @@ from django.db import models
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from opentech.apply.utils.image import generate_image_url
+from hypha.apply.utils.image import generate_image_url
 
 
 class ReviewerRole(models.Model):

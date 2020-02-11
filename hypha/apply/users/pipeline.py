@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import Group
 
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 
 def make_otf_staff(backend, user, response, *args, **kwargs):

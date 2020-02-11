@@ -8,8 +8,8 @@ from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from opentech.apply.funds.tests.factories import LabSubmissionFactory
-from opentech.apply.users.tests.factories import (
+from hypha.apply.funds.tests.factories import LabSubmissionFactory
+from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
     ReviewerFactory,
@@ -17,7 +17,7 @@ from opentech.apply.users.tests.factories import (
     SuperUserFactory,
     UserFactory
 )
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..forms import SetPendingForm
 from ..files import get_files
@@ -1190,7 +1190,7 @@ class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestProjectListView(TestCase):
     def test_staff_can_access_project_list_page(self):
         ProjectFactory(status=CONTRACTING)
@@ -1215,7 +1215,7 @@ class TestProjectListView(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestProjectOverviewView(TestCase):
     def test_staff_can_access(self):
         ProjectFactory(status=CONTRACTING)

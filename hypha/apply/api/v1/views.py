@@ -12,14 +12,14 @@ from rest_framework.exceptions import (NotFound, PermissionDenied,
 from rest_framework_api_key.permissions import HasAPIKey
 from django_filters import rest_framework as filters
 
-from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from opentech.apply.funds.workflow import PHASES
+from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.workflow import PHASES
 
-from opentech.apply.activity.models import Activity, COMMENT
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
-from opentech.apply.review.models import Review
-from opentech.apply.funds.models import FundType, LabType
+from hypha.apply.activity.models import Activity, COMMENT
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
+from hypha.apply.review.models import Review
+from hypha.apply.funds.models import FundType, LabType
 
 from .pagination import StandardResultsSetPagination
 from .permissions import IsApplyStaffUser, IsAuthor

@@ -1,4 +1,4 @@
-from opentech.apply.utils.image import generate_image_tag
+from hypha.apply.utils.image import generate_image_tag
 
 
 def render_icon(image):

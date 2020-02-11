@@ -1,7 +1,7 @@
 import os
 from django.urls import reverse
 
-from opentech.apply.stream_forms.files import StreamFieldFile
+from hypha.apply.stream_forms.files import StreamFieldFile
 
 
 def generate_submission_file_path(submission_id, field_id, file_name):
@@ -14,7 +14,7 @@ def generate_submission_file_path(submission_id, field_id, file_name):
 
 class SubmissionStreamFieldFile(StreamFieldFile):
     def generate_filename(self):
-        from opentech.apply.funds.models.submissions import ApplicationRevision
+        from hypha.apply.funds.models.submissions import ApplicationRevision
         submission_id = self.instance.pk
 
         if isinstance(self.instance, ApplicationRevision):

@@ -2,7 +2,7 @@ import django_filters as filters
 from django import forms
 from django.contrib.auth import get_user_model
 
-from opentech.apply.funds.tables import (
+from hypha.apply.funds.tables import (
     Select2ModelMultipleChoiceFilter,
     Select2MultipleChoiceFilter,
     get_used_funds

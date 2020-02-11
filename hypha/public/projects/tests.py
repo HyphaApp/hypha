@@ -2,8 +2,8 @@ import json
 
 from django.test import TestCase
 
-from opentech.apply.categories.models import Option
-from opentech.apply.categories.tests.factories import CategoryFactory, OptionFactory
+from hypha.apply.categories.models import Option
+from hypha.apply.categories.tests.factories import CategoryFactory, OptionFactory
 
 from .widgets import CategoriesWidget
 

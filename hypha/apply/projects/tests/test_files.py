@@ -2,7 +2,7 @@ from django.core.files import File
 from django.test import TestCase
 from more_itertools import collapse
 
-from opentech.apply.stream_forms.files import StreamFieldFile
+from hypha.apply.stream_forms.files import StreamFieldFile
 
 from ..files import flatten, get_files
 from .factories import ProjectFactory

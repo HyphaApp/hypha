@@ -2,14 +2,14 @@ import json
 import random
 import factory
 
-from opentech.apply.funds import blocks
-from opentech.apply.stream_forms.testing.factories import (
+from hypha.apply.funds import blocks
+from hypha.apply.stream_forms.testing.factories import (
     BLOCK_FACTORY_DEFINITION,
     FormFieldBlockFactory,
     ParagraphBlockFactory,
     StreamFieldUUIDFactory,
 )
-from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
+from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['CustomFormFieldsFactory', 'TitleBlockFactory', 'EmailBlockFactory', 'FullNameBlockFactory', 'ValueFieldBlockFactory']
 

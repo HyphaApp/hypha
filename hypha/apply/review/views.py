@@ -10,16 +10,16 @@ from django.views.generic import CreateView, ListView, DetailView, DeleteView, U
 
 from wagtail.core.blocks import RichTextBlock
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.funds.models import ApplicationSubmission, AssignedReviewers
-from opentech.apply.funds.workflow import INITIAL_STATE
-from opentech.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
-from opentech.apply.review.forms import ReviewModelForm, ReviewOpinionForm
-from opentech.apply.stream_forms.models import BaseStreamForm
-from opentech.apply.users.decorators import staff_required
-from opentech.apply.users.groups import REVIEWER_GROUP_NAME
-from opentech.apply.utils.views import CreateOrUpdateView
-from opentech.apply.utils.image import generate_image_tag
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers
+from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
+from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
+from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME
+from hypha.apply.utils.views import CreateOrUpdateView
+from hypha.apply.utils.image import generate_image_tag
 
 from .models import Review
 from .options import DISAGREE

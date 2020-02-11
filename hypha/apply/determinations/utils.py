@@ -1,4 +1,4 @@
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 
 from .models import DETERMINATION_TO_OUTCOME, TRANSITION_DETERMINATION
 

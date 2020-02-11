@@ -13,11 +13,11 @@ from django.db.utils import IntegrityError
 from django_fsm import FSMField
 from storages.backends.s3boto3 import S3Boto3Storage
 
-from opentech.apply.categories.models import Category, Option
-from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
-from opentech.apply.funds.models.forms import RoundBaseForm, LabBaseForm
-from opentech.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.categories.models import Category, Option
+from hypha.apply.categories.categories_seed import CATEGORIES
+from hypha.apply.funds.models import ApplicationSubmission, FundType, Round, LabType
+from hypha.apply.funds.models.forms import RoundBaseForm, LabBaseForm
+from hypha.apply.funds.workflow import INITIAL_STATE
 
 
 class MigrationStorage(S3Boto3Storage):

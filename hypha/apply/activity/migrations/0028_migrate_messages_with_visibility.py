@@ -3,7 +3,7 @@ import json
 
 from django.db import migrations
 
-from opentech.apply.activity.models import ACTION, TEAM, ALL
+from hypha.apply.activity.models import ACTION, TEAM, ALL
 
 
 def forward_visibility_options(apps, schema_editor):

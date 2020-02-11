@@ -1,5 +1,5 @@
-from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory
-from opentech.apply.utils.blocks import RichTextFieldBlock
+from hypha.apply.stream_forms.testing.factories import FormFieldBlockFactory
+from hypha.apply.utils.blocks import RichTextFieldBlock
 
 
 class RichTextFieldBlockFactory(FormFieldBlockFactory):

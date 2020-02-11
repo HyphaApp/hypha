@@ -3,7 +3,7 @@ import datetime
 import factory
 import wagtail_factories
 
-from opentech.apply.funds.models import (
+from hypha.apply.funds.models import (
     ApplicationSubmission,
     ApplicationRevision,
     AssignedReviewers,
@@ -15,7 +15,7 @@ from opentech.apply.funds.models import (
     ScreeningStatus,
     SealedRound,
 )
-from opentech.apply.funds.models.forms import (
+from hypha.apply.funds.models.forms import (
     ApplicationForm,
     ApplicationBaseForm,
     ApplicationBaseReviewForm,
@@ -24,11 +24,11 @@ from opentech.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
-from opentech.apply.funds.workflow import ConceptProposal, Request
-from opentech.apply.home.factories import ApplyHomePageFactory
-from opentech.apply.stream_forms.testing.factories import FormDataFactory
-from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
-from opentech.apply.users.tests.factories import StaffFactory, ApplicantFactory, GroupFactory
+from hypha.apply.funds.workflow import ConceptProposal, Request
+from hypha.apply.home.factories import ApplyHomePageFactory
+from hypha.apply.stream_forms.testing.factories import FormDataFactory
+from hypha.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
+from hypha.apply.users.tests.factories import StaffFactory, ApplicantFactory, GroupFactory
 
 from . import blocks
 
@@ -76,7 +76,7 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
-    approval_form = factory.SubFactory('opentech.apply.projects.tests.factories.ProjectApprovalFormFactory')
+    approval_form = factory.SubFactory('hypha.apply.projects.tests.factories.ProjectApprovalFormFactory')
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
@@ -107,7 +107,7 @@ class RequestForPartnersFactory(AbstractApplicationFactory):
 class AbstractRelatedFormFactory(factory.DjangoModelFactory):
     class Meta:
         abstract = True
-    form = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationFormFactory')
+    form = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationFormFactory')
 
 
 class ApplicationBaseFormFactory(AbstractRelatedFormFactory):
@@ -307,7 +307,7 @@ class ApplicationRevisionFactory(factory.DjangoModelFactory):
     class Meta:
         model = ApplicationRevision
 
-    submission = factory.SubFactory('opentech.apply.funds.tests.factories.ApplicationSubmissionFactory')
+    submission = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationSubmissionFactory')
     form_data = factory.SubFactory(
         ApplicationFormDataFactory,
         form_fields=factory.SelfAttribute('..submission.form_fields'),
@@ -319,7 +319,7 @@ class ApplicationRevisionFactory(factory.DjangoModelFactory):
 class AbstractReviewFormFactory(factory.DjangoModelFactory):
     class Meta:
         abstract = True
-    form = factory.SubFactory('opentech.apply.review.tests.factories.ReviewFormFactory')
+    form = factory.SubFactory('hypha.apply.review.tests.factories.ReviewFormFactory')
 
 
 class ApplicationBaseReviewFormFactory(AbstractReviewFormFactory):

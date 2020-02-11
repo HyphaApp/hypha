@@ -1,1 +1,1 @@
-default_app_config = 'opentech.apply.utils.app.UtilsConfig'
+default_app_config = 'hypha.apply.utils.app.UtilsConfig'

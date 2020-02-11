@@ -1,6 +1,6 @@
 import factory
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 
 from ..models import Determination, ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from ..views import get_form_for_stage

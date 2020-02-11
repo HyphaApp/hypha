@@ -4,8 +4,8 @@ from tinymce import TinyMCE
 from django.forms import widgets
 from django.utils.safestring import mark_safe
 
-from opentech.apply.review.options import RATE_CHOICES, NA
-from opentech.apply.utils.options import MCE_ATTRIBUTES_SHORT
+from hypha.apply.review.options import RATE_CHOICES, NA
+from hypha.apply.utils.options import MCE_ATTRIBUTES_SHORT
 
 
 class ScoredAnswerWidget(forms.MultiWidget):

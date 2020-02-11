@@ -1,8 +1,8 @@
 from django.conf import settings
 
-from opentech.apply.home.models import ApplyHomePage
-from opentech.public.home.models import HomePage
-from opentech.public.mailchimp.forms import NewsletterForm
+from hypha.apply.home.models import ApplyHomePage
+from hypha.public.home.models import HomePage
+from hypha.public.mailchimp.forms import NewsletterForm
 
 
 def global_vars(request):

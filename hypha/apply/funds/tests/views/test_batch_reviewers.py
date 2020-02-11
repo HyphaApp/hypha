@@ -1,16 +1,16 @@
 from django.utils.text import slugify
 
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedWithRoleReviewersFactory,
     ReviewerRoleFactory,
 )
-from opentech.apply.users.tests.factories import (
+from hypha.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
 )
-from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.review.tests.factories import ReviewFactory
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseBatchReviewerTestCase(BaseViewTestCase):

@@ -12,8 +12,8 @@ var options = {};
 // configuration. The "project" root path is where this gulpfile.js is located.
 options.rootPath = {
   project     : __dirname + '/',
-  app         : __dirname + '/opentech/',
-  theme       : __dirname + '/opentech/static_src/'
+  app         : __dirname + '/hypha/',
+  theme       : __dirname + '/hypha/static_src/'
 };
 
 options.theme = {

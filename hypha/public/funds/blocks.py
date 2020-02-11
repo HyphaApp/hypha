@@ -1,6 +1,6 @@
 from wagtail.core.blocks import StaticBlock
 
-from opentech.public.utils.blocks import StoryBlock
+from hypha.public.utils.blocks import StoryBlock
 
 
 class ProjectsBlock(StaticBlock):

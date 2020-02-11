@@ -8,10 +8,10 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from opentech.apply.funds.models import ApplicationSubmission, Round, LabType
-from opentech.apply.funds.models.forms import RoundBaseReviewForm, LabBaseReviewForm
-from opentech.apply.review.models import Review
-from opentech.apply.review.options import NA
+from hypha.apply.funds.models import ApplicationSubmission, Round, LabType
+from hypha.apply.funds.models.forms import RoundBaseReviewForm, LabBaseReviewForm
+from hypha.apply.review.models import Review
+from hypha.apply.review.options import NA
 
 
 class MigrateCommand(BaseCommand):

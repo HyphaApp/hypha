@@ -21,9 +21,9 @@ from wagtail.core.fields import StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
-from opentech.apply.categories.models import Option
-from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import (
+from hypha.apply.categories.models import Option
+from hypha.public.utils.blocks import StoryBlock
+from hypha.public.utils.models import (
     BaseFunding,
     BasePage,
     FundingMixin,

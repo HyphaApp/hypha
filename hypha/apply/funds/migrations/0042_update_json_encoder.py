@@ -2,7 +2,7 @@
 
 import django.contrib.postgres.fields.jsonb
 from django.db import migrations
-import opentech.apply.stream_forms.files
+import hypha.apply.stream_forms.files
 
 
 class Migration(migrations.Migration):
@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='applicationrevision',
             name='form_data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=opentech.apply.stream_forms.files.StreamFieldDataEncoder),
+            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
         ),
         migrations.AlterField(
             model_name='applicationsubmission',
             name='form_data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=opentech.apply.stream_forms.files.StreamFieldDataEncoder),
+            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
         ),
     ]

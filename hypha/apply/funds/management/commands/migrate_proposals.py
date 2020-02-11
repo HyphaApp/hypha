@@ -1,4 +1,4 @@
-from opentech.apply.funds.management.commands.migration_base import MigrateCommand
+from hypha.apply.funds.management.commands.migration_base import MigrateCommand
 
 
 class Command(MigrateCommand):

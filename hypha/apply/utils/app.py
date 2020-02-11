@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class UtilsConfig(AppConfig):
-    name = 'opentech.apply.utils'
+    name = 'hypha.apply.utils'
     label = 'apply_utils'

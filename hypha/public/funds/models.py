@@ -20,9 +20,9 @@ from wagtail.core.fields import StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.workflow import OPEN_CALL_PHASES
-from opentech.public.utils.models import (
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.workflow import OPEN_CALL_PHASES
+from hypha.public.utils.models import (
     BasePage,
     RelatedPage,
 )

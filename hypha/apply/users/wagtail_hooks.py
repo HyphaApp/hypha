@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from wagtail.core import hooks
 
-from opentech.apply.utils.notifications import slack_notify
+from hypha.apply.utils.notifications import slack_notify
 
 from .admin_views import index
 

@@ -20,20 +20,20 @@ from django_tables2.views import SingleTableMixin
 
 from wagtail.core.models import Page
 
-from opentech.apply.activity.views import (
+from hypha.apply.activity.views import (
     ActivityContextMixin,
     CommentFormView,
     DelegatedViewMixin,
 )
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
-from opentech.apply.projects.forms import CreateProjectForm
-from opentech.apply.projects.models import Project
-from opentech.apply.review.views import ReviewContextMixin
-from opentech.apply.users.decorators import staff_required
-from opentech.apply.utils.pdfs import make_pdf
-from opentech.apply.utils.storage import PrivateMediaView
-from opentech.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
+from hypha.apply.projects.forms import CreateProjectForm
+from hypha.apply.projects.models import Project
+from hypha.apply.review.views import ReviewContextMixin
+from hypha.apply.users.decorators import staff_required
+from hypha.apply.utils.pdfs import make_pdf
+from hypha.apply.utils.storage import PrivateMediaView
+from hypha.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
 
 from .differ import compare
 from .files import generate_submission_file_path

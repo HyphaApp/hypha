@@ -2,8 +2,8 @@ from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils.html import escape
 
-from opentech.apply.review.options import NA
-from opentech.apply.stream_forms.forms import StreamBaseForm
+from hypha.apply.review.options import NA
+from hypha.apply.stream_forms.forms import StreamBaseForm
 
 from .models import Review, ReviewOpinion
 from .options import OPINION_CHOICES, PRIVATE

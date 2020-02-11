@@ -1,1 +1,1 @@
-default_app_config = 'opentech.apply.home.apps.HomeConfig'
+default_app_config = 'hypha.apply.home.apps.HomeConfig'

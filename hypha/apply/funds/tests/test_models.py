@@ -10,13 +10,13 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from opentech.apply.funds.models import ApplicationSubmission
-from opentech.apply.funds.blocks import EmailBlock, FullNameBlock
-from opentech.apply.funds.workflow import Request
-from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.review.options import NO, MAYBE
-from opentech.apply.utils.testing import make_request
-from opentech.apply.users.tests.factories import StaffFactory
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
+from hypha.apply.funds.workflow import Request
+from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
+from hypha.apply.review.options import NO, MAYBE
+from hypha.apply.utils.testing import make_request
+from hypha.apply.users.tests.factories import StaffFactory
 
 from .factories import (
     ApplicationSubmissionFactory,
@@ -186,7 +186,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
             self.assertNotEqual(round_form, fund_form)
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestFormSubmission(TestCase):
     def setUp(self):
         self.User = get_user_model()
@@ -480,7 +480,7 @@ class TestApplicationSubmission(TestCase):
         self.assertTrue(submission.in_final_stage)
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()

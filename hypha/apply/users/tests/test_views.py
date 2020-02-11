@@ -2,7 +2,7 @@ from django.core import mail
 from django.test import override_settings, TestCase
 from django.urls import reverse
 
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 from .factories import (
     OAuthUserFactory,
     StaffFactory,
@@ -11,7 +11,7 @@ from .factories import (
 )
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class BaseTestProfielView(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -65,7 +65,7 @@ class TestPasswordReset(BaseViewTestCase):
         self.assertIn('https://testserver/account/password/reset/confirm', mail.outbox[0].body)
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestBecome(TestCase):
     def setUp(self):
         self.staff = StaffFactory()

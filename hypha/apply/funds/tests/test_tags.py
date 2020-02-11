@@ -1,10 +1,10 @@
 from django.template import Context, Template
 from django.test import override_settings, TestCase
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestTemplateTags(TestCase):
     def test_markdown_tags(self):
         template = Template('{% load markdown_tags %}{{ content|markdown|safe }}')

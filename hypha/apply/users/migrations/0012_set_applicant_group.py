@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import migrations
 
-from opentech.apply.users.groups import APPLICANT_GROUP_NAME
+from hypha.apply.users.groups import APPLICANT_GROUP_NAME
 
 
 def set_group(apps, schema_editor):

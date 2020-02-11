@@ -2,7 +2,7 @@ import json
 
 from django import forms
 
-from opentech.apply.categories.models import Category
+from hypha.apply.categories.models import Category
 
 
 class LazyChoices:

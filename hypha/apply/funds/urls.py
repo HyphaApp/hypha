@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from opentech.apply.projects import urls as projects_urls
+from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     RevisionCompareView,
@@ -50,11 +50,11 @@ submission_urls = ([
         ),
     ])),
     path('<int:submission_pk>/', include([
-        path('', include('opentech.apply.review.urls', namespace="reviews")),
+        path('', include('hypha.apply.review.urls', namespace="reviews")),
         path('revisions/', include(revision_urls, namespace="revisions")),
     ])),
-    path('', include('opentech.apply.determinations.urls', namespace="determinations")),
-    path('', include('opentech.apply.flags.urls', namespace="flags")),
+    path('', include('hypha.apply.determinations.urls', namespace="determinations")),
+    path('', include('hypha.apply.flags.urls', namespace="flags")),
     path('<slug:status>/', SubmissionsByStatus.as_view(), name='status'),
 ], 'submissions')
 

@@ -2,10 +2,10 @@ from django.test import TestCase
 
 import factory
 
-from opentech.apply.funds.models import FundType
+from hypha.apply.funds.models import FundType
 
 from .factories import ApplicationFormFactory, FundTypeFactory, workflow_for_stages
-from opentech.apply.review.tests.factories import ReviewFormFactory
+from hypha.apply.review.tests.factories import ReviewFormFactory
 
 
 def formset_base(field, total, delete, factory, same=False, form_stage_info=None):

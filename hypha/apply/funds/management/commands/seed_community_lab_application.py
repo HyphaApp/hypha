@@ -4,12 +4,12 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opentech.apply.funds.models import ApplicationForm, LabType
-from opentech.apply.funds.models.forms import LabBaseForm, LabBaseReviewForm
-from opentech.apply.review.models import ReviewForm
+from hypha.apply.funds.models import ApplicationForm, LabType
+from hypha.apply.funds.models.forms import LabBaseForm, LabBaseReviewForm
+from hypha.apply.review.models import ReviewForm
 
-from opentech.apply.home.models import ApplyHomePage
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.home.models import ApplyHomePage
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 CL_FUND_TITLE = 'Community lab (archive fund)'
 

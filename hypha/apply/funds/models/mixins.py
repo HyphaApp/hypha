@@ -1,13 +1,13 @@
 from django.utils.safestring import mark_safe
 from django.core.files import File
 
-from opentech.apply.stream_forms.blocks import (
+from hypha.apply.stream_forms.blocks import (
     FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
 )
-from opentech.apply.utils.blocks import SingleIncludeMixin
+from hypha.apply.utils.blocks import SingleIncludeMixin
 
-from opentech.apply.stream_forms.blocks import UploadableMediaBlock
-from opentech.apply.utils.storage import PrivateStorage
+from hypha.apply.stream_forms.blocks import UploadableMediaBlock
+from hypha.apply.utils.storage import PrivateStorage
 
 from ..files import SubmissionStreamFieldFile
 

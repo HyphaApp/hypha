@@ -2,8 +2,8 @@
 
 from django.db import migrations
 
-from opentech.apply.review.models import Review
-from opentech.apply.review.options import NA
+from hypha.apply.review.models import Review
+from hypha.apply.review.options import NA
 
 
 def review_score_update(apps, schema_editor):

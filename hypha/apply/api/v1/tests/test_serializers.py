@@ -1,12 +1,12 @@
 from django.test import override_settings, TestCase
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.review.tests.factories import ReviewFactory
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.review.tests.factories import ReviewFactory
 
 from ..serializers import ReviewSummarySerializer
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestReviewSummarySerializer(TestCase):
     def test_handles_no_reviews(self):
         submission = ApplicationSubmissionFactory()

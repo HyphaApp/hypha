@@ -6,9 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.core import blocks
 
 from addressfield.fields import AddressField, ADDRESS_FIELDS_ORDER
-from opentech.apply.categories.blocks import CategoryQuestionBlock
-from opentech.apply.stream_forms.blocks import FormFieldsBlock
-from opentech.apply.utils.blocks import (
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.stream_forms.blocks import FormFieldsBlock
+from hypha.apply.utils.blocks import (
     CustomFormFieldsBlock,
     MustIncludeFieldBlock,
     RichTextFieldBlock,

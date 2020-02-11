@@ -1,7 +1,7 @@
 from django.views.generic import CreateView
 from django.utils import timezone
 
-from opentech.apply.utils.views import DelegatedViewMixin
+from hypha.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
 from .messaging import messenger, MESSAGES

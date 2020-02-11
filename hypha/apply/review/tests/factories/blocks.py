@@ -2,11 +2,11 @@ import json
 import random
 import factory
 
-from opentech.apply.review import blocks
-from opentech.apply.review.options import YES, MAYBE, NO, PRIVATE, REVIEWER
-from opentech.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
+from hypha.apply.review import blocks
+from hypha.apply.review.options import YES, MAYBE, NO, PRIVATE, REVIEWER
+from hypha.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
     StreamFieldUUIDFactory
-from opentech.apply.utils.testing.factories import RichTextFieldBlockFactory
+from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['ReviewFormFieldsFactory', 'RecommendationBlockFactory', 'ScoreFieldBlockFactory']
 

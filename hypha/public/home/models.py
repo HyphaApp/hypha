@@ -7,9 +7,9 @@ from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPane
 from wagtail.core.fields import StreamField
 from wagtail.search import index
 
-from opentech.public.utils.models import BasePage, RelatedPage
+from hypha.public.utils.models import BasePage, RelatedPage
 
-from opentech.public.funds.models import FundPage, LabPage, RFPPage
+from hypha.public.funds.models import FundPage, LabPage, RFPPage
 
 from .blocks import OurWorkBlock
 

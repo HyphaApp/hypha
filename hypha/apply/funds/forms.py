@@ -7,8 +7,8 @@ from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from opentech.apply.categories.models import MetaTerm
-from opentech.apply.users.models import User
+from hypha.apply.categories.models import MetaTerm
+from hypha.apply.users.models import User
 
 from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
 from .utils import render_icon

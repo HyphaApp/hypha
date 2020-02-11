@@ -2,7 +2,7 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from opentech.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.models import ApplicationSubmission
 
 
 class Command(BaseCommand):

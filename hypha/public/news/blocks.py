@@ -1,6 +1,6 @@
 from wagtail.core import blocks
 
-from opentech.public.utils.blocks import StoryBlock
+from hypha.public.utils.blocks import StoryBlock
 
 
 class AwesomeTableWidgetBlock(blocks.StructBlock):

@@ -2,7 +2,7 @@ import csv
 
 from django.core.management.base import BaseCommand
 
-from opentech.apply.review.models import Review
+from hypha.apply.review.models import Review
 
 
 class Command(BaseCommand):

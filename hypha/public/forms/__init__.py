@@ -1,1 +1,1 @@
-default_app_config = 'opentech.public.forms.apps.FormsConfig'
+default_app_config = 'hypha.public.forms.apps.FormsConfig'

@@ -31,14 +31,14 @@ from django_fsm.signals import post_transition
 from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
 
-from opentech.apply.activity.messaging import messenger, MESSAGES
-from opentech.apply.categories.models import MetaTerm
-from opentech.apply.determinations.models import Determination
-from opentech.apply.flags.models import Flag
-from opentech.apply.review.models import ReviewOpinion
-from opentech.apply.review.options import MAYBE, AGREE, DISAGREE
-from opentech.apply.stream_forms.files import StreamFieldDataEncoder
-from opentech.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.categories.models import MetaTerm
+from hypha.apply.determinations.models import Determination
+from hypha.apply.flags.models import Flag
+from hypha.apply.review.models import ReviewOpinion
+from hypha.apply.review.options import MAYBE, AGREE, DISAGREE
+from hypha.apply.stream_forms.files import StreamFieldDataEncoder
+from hypha.apply.stream_forms.models import BaseStreamForm
 
 from .mixins import AccessFormData
 from .utils import (

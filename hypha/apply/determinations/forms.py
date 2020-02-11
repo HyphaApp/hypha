@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from opentech.apply.utils.fields import RichTextField
-from opentech.apply.funds.models import ApplicationSubmission
+from hypha.apply.utils.fields import RichTextField
+from hypha.apply.funds.models import ApplicationSubmission
 
 from .models import (
     Determination,

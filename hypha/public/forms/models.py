@@ -22,7 +22,7 @@ from wagtail.contrib.forms.models import (
 )
 from wagtail.search import index
 
-from opentech.public.utils.models import BasePage
+from hypha.public.utils.models import BasePage
 
 webform_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
 

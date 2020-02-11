@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from opentech.apply.users.tests.factories import ApplicantFactory, StaffFactory
+from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
 from ..models import (
     CHANGES_REQUESTED,

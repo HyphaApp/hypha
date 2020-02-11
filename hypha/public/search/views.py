@@ -7,7 +7,7 @@ from django.shortcuts import render
 from wagtail.core.models import Page
 from wagtail.search.models import Query
 
-from opentech.public.home.models import HomePage
+from hypha.public.home.models import HomePage
 
 
 def search(request):

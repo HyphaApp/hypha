@@ -3,7 +3,7 @@
 import django.core.files.storage
 from django.db import migrations, models
 import django.db.models.deletion
-import opentech.apply.projects.models
+import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             name='ReportPrivateFiles',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('document', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=opentech.apply.projects.models.report_path)),
+                ('document', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.report_path)),
             ],
         ),
         migrations.CreateModel(

@@ -1,1 +1,1 @@
-default_app_config = 'opentech.public.funds.apps.FundsConfig'
+default_app_config = 'hypha.public.funds.apps.FundsConfig'

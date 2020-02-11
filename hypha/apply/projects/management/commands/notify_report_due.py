@@ -6,9 +6,9 @@ from django.core.management.base import BaseCommand
 from django.http import HttpRequest
 from django.utils import timezone
 from django.urls import set_urlconf
-from opentech.apply.activity.messaging import MESSAGES, messenger
-from opentech.apply.home.models import ApplyHomePage
-from opentech.apply.projects.models import Project
+from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.home.models import ApplyHomePage
+from hypha.apply.projects.models import Project
 
 
 class Command(BaseCommand):
@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         site = ApplyHomePage.objects.first().get_site()
-        set_urlconf('opentech.apply.urls')
+        set_urlconf('hypha.apply.urls')
 
         # Mock a HTTPRequest in order to pass the site settings into the
         # templates

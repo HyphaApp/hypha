@@ -7,9 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 
-from opentech.apply.funds.models.mixins import AccessFormData
-from opentech.apply.stream_forms.models import BaseStreamForm
-from opentech.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME
+from hypha.apply.funds.models.mixins import AccessFormData
+from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME
 
 from .blocks import (
     ReviewCustomFormFieldsBlock,

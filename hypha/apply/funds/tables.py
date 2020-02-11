@@ -15,11 +15,11 @@ from django_tables2.utils import A
 
 from wagtail.core.models import Page
 
-from opentech.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
-from opentech.apply.funds.workflow import STATUSES, get_review_active_statuses
-from opentech.apply.users.groups import STAFF_GROUP_NAME
-from opentech.apply.utils.image import generate_image_tag
-from opentech.images.models import CustomImage
+from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
+from hypha.apply.funds.workflow import STATUSES, get_review_active_statuses
+from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.utils.image import generate_image_tag
+from hypha.images.models import CustomImage
 
 from .widgets import Select2MultiCheckboxesWidget
 

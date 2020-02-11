@@ -682,7 +682,7 @@ class EmailAdapter(AdapterBase):
         }
 
     def handle_transition(self, old_phase, source, **kwargs):
-        from opentech.apply.funds.workflow import PHASES
+        from hypha.apply.funds.workflow import PHASES
         submission = source
         # Retrive status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
@@ -743,7 +743,7 @@ class EmailAdapter(AdapterBase):
             return [partner.email for partner in partners]
 
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
-            from opentech.apply.projects.models import ProjectSettings
+            from hypha.apply.projects.models import ProjectSettings
             project_settings = ProjectSettings.objects.first()
 
             if project_settings is None:

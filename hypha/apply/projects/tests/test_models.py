@@ -4,8 +4,8 @@ from dateutil.relativedelta import relativedelta
 from django.test import TestCase
 from django.utils import timezone
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import ApplicantFactory, StaffFactory
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
 from ..models import (
     CHANGES_REQUESTED,

@@ -7,7 +7,7 @@ from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 
 class Command(BaseCommand):

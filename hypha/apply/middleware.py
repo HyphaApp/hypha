@@ -9,7 +9,7 @@ def apply_url_conf_middleware(get_response):
     def middleware(request):
         homepage = request.site.root_page.specific
         if isinstance(homepage, ApplyHomePage):
-            request.urlconf = 'opentech.apply.urls'
+            request.urlconf = 'hypha.apply.urls'
 
         response = get_response(request)
         return response

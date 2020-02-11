@@ -5,8 +5,8 @@ from wagtail.core import hooks
 
 from wagtailcache.cache import clear_cache
 
-from opentech.public.news.models import NewsType
-from opentech.public.people.models import PersonType
+from hypha.public.news.models import NewsType
+from hypha.public.people.models import PersonType
 
 
 class NewsTypeModelAdmin(ModelAdmin):

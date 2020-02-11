@@ -19,8 +19,8 @@ from wagtail.admin.edit_handlers import (
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
-from opentech.public.utils.blocks import StoryBlock
-from opentech.public.utils.models import BasePage, BaseFunding, FundingMixin, RelatedPage
+from hypha.public.utils.blocks import StoryBlock
+from hypha.public.utils.models import BasePage, BaseFunding, FundingMixin, RelatedPage
 
 
 class SocialMediaProfile(models.Model):

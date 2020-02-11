@@ -8,12 +8,12 @@ from .users import urls as users_urls
 from .dashboard import urls as dashboard_urls
 from .api import urls as api_urls
 
-from opentech.urls import base_urlpatterns
+from hypha.urls import base_urlpatterns
 
 
 urlpatterns = [
-    path('apply/', include('opentech.apply.funds.urls', 'apply')),
-    path('activity/', include('opentech.apply.activity.urls', 'activity')),
+    path('apply/', include('hypha.apply.funds.urls', 'apply')),
+    path('activity/', include('hypha.apply.activity.urls', 'activity')),
     path('', include(users_urls)),
     path('api/', include(api_urls)),
     path('dashboard/', include(dashboard_urls)),
@@ -30,4 +30,4 @@ if settings.DEBUG:
 urlpatterns += base_urlpatterns
 
 
-handler404 = 'opentech.apply.utils.views.page_not_found'
+handler404 = 'hypha.apply.utils.views.page_not_found'

@@ -1,4 +1,4 @@
-from opentech.apply.review.management.commands.migration_review_base import MigrateCommand
+from hypha.apply.review.management.commands.migration_review_base import MigrateCommand
 
 
 class Command(MigrateCommand):

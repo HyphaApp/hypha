@@ -2,9 +2,9 @@ import json
 
 from django import template
 
-from opentech.apply.determinations.models import Determination
-from opentech.apply.projects.models import Contract
-from opentech.apply.review.models import Review
+from hypha.apply.determinations.models import Determination
+from hypha.apply.projects.models import Contract
+from hypha.apply.review.models import Review
 
 from ..models import TEAM, ALL, REVIEWER
 

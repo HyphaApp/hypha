@@ -1,9 +1,9 @@
 from django.urls import reverse
 
-from opentech.apply.activity.models import Activity
-from opentech.apply.funds.tests.factories.models import ApplicationSubmissionFactory
-from opentech.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.activity.models import Activity
+from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactory
+from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory, ReviewOpinionFactory
 from ..models import Review, ReviewOpinion

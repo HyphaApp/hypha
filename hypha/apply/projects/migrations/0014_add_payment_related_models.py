@@ -5,7 +5,7 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import opentech.apply.projects.models
+import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
@@ -28,14 +28,14 @@ class Migration(migrations.Migration):
             name='PaymentReceipt',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=opentech.apply.projects.models.receipt_path)),
+                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.receipt_path)),
             ],
         ),
         migrations.CreateModel(
             name='PaymentRequest',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('invoice', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=opentech.apply.projects.models.invoice_path)),
+                ('invoice', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.invoice_path)),
                 ('value', models.DecimalField(decimal_places=2, default=0, max_digits=10, validators=[django.core.validators.MinValueValidator(Decimal('0.01'))])),
                 ('requested_at', models.DateTimeField(auto_now_add=True)),
                 ('date_from', models.DateTimeField()),

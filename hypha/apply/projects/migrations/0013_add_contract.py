@@ -3,7 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import opentech.apply.projects.models
+import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Contract',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to=opentech.apply.projects.models.contract_path)),
+                ('file', models.FileField(upload_to=hypha.apply.projects.models.contract_path)),
                 ('is_signed', models.BooleanField('Signed?', default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('approver', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='contracts', to=settings.AUTH_USER_MODEL)),

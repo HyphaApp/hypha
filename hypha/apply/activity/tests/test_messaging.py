@@ -9,20 +9,20 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.contrib.messages import get_messages
 
-from opentech.apply.utils.testing import make_request
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.utils.testing import make_request
+from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
     AssignedWithRoleReviewersFactory,
 )
-from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.users.tests.factories import (
+from hypha.apply.review.tests.factories import ReviewFactory
+from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ReviewerFactory,
     StaffFactory,
     UserFactory
 )
-from opentech.apply.projects.tests.factories import (
+from hypha.apply.projects.tests.factories import (
     ProjectFactory,
     PaymentRequestFactory
 )
@@ -58,7 +58,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
-@override_settings(ROOT_URLCONF='opentech.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
 class AdapterMixin(TestCase):
     adapter = None
     source_factory = None

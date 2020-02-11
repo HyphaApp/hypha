@@ -1,19 +1,19 @@
 from django.test import TestCase
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedWithRoleReviewersFactory,
     AssignedReviewersFactory,
     InvitedToProposalFactory,
     ReviewerRoleFactory,
 )
-from opentech.apply.review.tests.factories import ReviewFactory
-from opentech.apply.users.tests.factories import (
+from hypha.apply.review.tests.factories import ReviewFactory
+from hypha.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
 )
 
 
-from opentech.apply.funds.forms import UpdateReviewersForm
+from hypha.apply.funds.forms import UpdateReviewersForm
 
 
 class TestReviewerFormQueries(TestCase):

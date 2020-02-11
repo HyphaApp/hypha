@@ -1,14 +1,14 @@
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.funds.tests.factories import (
     LabFactory,
     RoundFactory,
 )
 
-from opentech.apply.users.tests.factories import (
+from hypha.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
     UserFactory,
 )
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseAllRoundsViewTestCase(BaseViewTestCase):

@@ -1,7 +1,7 @@
 import factory
 
-from opentech.apply.funds.tests.factories import ApplicationSubmissionFactory, AssignedReviewersFactory
-from opentech.apply.stream_forms.testing.factories import FormDataFactory
+from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory, AssignedReviewersFactory
+from hypha.apply.stream_forms.testing.factories import FormDataFactory
 
 from ...options import YES, NO, MAYBE, AGREE, DISAGREE, PRIVATE, REVIEWER
 from ...models import Review, ReviewForm, ReviewOpinion

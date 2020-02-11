@@ -1,1 +1,1 @@
-default_app_config = 'opentech.apply.activity.apps.ActivityConfig'
+default_app_config = 'hypha.apply.activity.apps.ActivityConfig'

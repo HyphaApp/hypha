@@ -1,6 +1,6 @@
 from django.test import TestCase, override_settings
 
-from opentech.apply.users.tests.factories import StaffFactory
+from hypha.apply.users.tests.factories import StaffFactory
 
 
 class TestProjectFeatureFlag(TestCase):

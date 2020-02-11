@@ -3,7 +3,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.db import migrations
 
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 
 class Migration(migrations.Migration):

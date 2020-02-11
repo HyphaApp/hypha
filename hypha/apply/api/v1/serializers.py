@@ -5,12 +5,12 @@ from django.contrib.auth import get_user_model
 from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
-from opentech.apply.activity.models import Activity
-from opentech.apply.determinations.views import DeterminationCreateOrUpdateView
-from opentech.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from opentech.apply.review.models import Review, ReviewOpinion
-from opentech.apply.review.options import RECOMMENDATION_CHOICES
-from opentech.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.activity.models import Activity
+from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
+from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.review.models import Review, ReviewOpinion
+from hypha.apply.review.options import RECOMMENDATION_CHOICES
+from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
 User = get_user_model()
 

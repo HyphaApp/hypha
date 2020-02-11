@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from opentech.apply.categories.models import Category, Option
-from opentech.apply.categories.categories_seed import CATEGORIES
+from hypha.apply.categories.models import Category, Option
+from hypha.apply.categories.categories_seed import CATEGORIES
 
 
 class Command(BaseCommand):

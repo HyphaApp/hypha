@@ -10,12 +10,12 @@ from django.db.utils import IntegrityError
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
 from wagtail.core.rich_text import RichText
 
-from opentech.apply.categories.models import Category, Option
-from opentech.apply.categories.categories_seed import CATEGORIES
-from opentech.apply.users.models import User
-from opentech.public.people.models import PersonPage
-from opentech.public.projects.models import ProjectPage
-from opentech.public.news.models import (
+from hypha.apply.categories.models import Category, Option
+from hypha.apply.categories.categories_seed import CATEGORIES
+from hypha.apply.users.models import User
+from hypha.public.people.models import PersonPage
+from hypha.public.projects.models import ProjectPage
+from hypha.public.news.models import (
     NewsIndex,
     NewsPage,
     NewsPageAuthor,

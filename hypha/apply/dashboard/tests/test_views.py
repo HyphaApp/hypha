@@ -1,9 +1,9 @@
-from opentech.apply.funds.tests.factories import (
+from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
     InvitedToProposalFactory,
 )
-from opentech.apply.projects.models import (
+from hypha.apply.projects.models import (
     CHANGES_REQUESTED,
     COMMITTED,
     DECLINED,
@@ -11,19 +11,19 @@ from opentech.apply.projects.models import (
     SUBMITTED,
     UNDER_REVIEW,
 )
-from opentech.apply.projects.tests.factories import (
+from hypha.apply.projects.tests.factories import (
     PaymentRequestFactory,
     ProjectFactory
 )
-from opentech.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from opentech.apply.users.groups import APPROVER_GROUP_NAME
-from opentech.apply.users.tests.factories import (
+from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
+from hypha.apply.users.groups import APPROVER_GROUP_NAME
+from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     GroupFactory,
     ReviewerFactory,
     StaffFactory
 )
-from opentech.apply.utils.testing.tests import BaseViewTestCase
+from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class TestApplicantDashboard(BaseViewTestCase):

@@ -1,6 +1,6 @@
 from wagtail.core import hooks
 
-from opentech.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 from .models import ApplyHomePage
 

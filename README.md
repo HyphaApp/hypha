@@ -10,7 +10,7 @@
 * Customize all aspects of the process, forms, workflows, review options, and more.
 * Automate workflows and integrate with other services (Slack, Mailgun, etc).
 * Regularly audited software with many privacy and security features.
-* View our [Roadmap](https://github.com/OpenTechFund/opentech.fund/wiki/Roadmap) for upcoming features and enhancements.
+* View our [Roadmap](https://github.com/OpenTechFund/hypha/wiki/Roadmap) for upcoming features and enhancements.
 
 *Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 

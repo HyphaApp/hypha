@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-# Copied from opentech.apply.users.groups at time of migration to avoid
+# Copied from hypha.apply.users.groups at time of migration to avoid
 # importing and creating a future dependency. Changes to Group names should
 # be handled in another migration
 

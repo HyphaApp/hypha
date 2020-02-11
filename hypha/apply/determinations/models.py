@@ -8,7 +8,7 @@ from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel,
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
 
-from opentech.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 
 
 REJECTED = 0

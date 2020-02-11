@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
-import opentech.public.funds.blocks
+import hypha.public.funds.blocks
 import wagtail.core.blocks
 import wagtail.core.fields
 import wagtail.documents.blocks

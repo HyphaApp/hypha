@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
-import opentech.apply.users.models
+import hypha.apply.users.models
 
 
 class Migration(migrations.Migration):
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AlterModelManagers(
             name='user',
             managers=[
-                ('objects', opentech.apply.users.models.UserManager()),
+                ('objects', hypha.apply.users.models.UserManager()),
             ],
         ),
         migrations.AlterField(
