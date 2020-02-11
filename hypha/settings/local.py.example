@@ -7,9 +7,9 @@ CACHES = {
     }
 }
 
-# ALLOWED_HOSTS = ['apply.otf.test', 'otf.test', 'apply.hypha.test', 'hypha.test', '127.0.0.1']
+# ALLOWED_HOSTS = ['apply.hypha.test', 'hypha.test', '127.0.0.1']
 
-# BASE_URL = 'http://otf.test'
+# BASE_URL = 'http://hypha.test'
 
 # Turn off DEBUG mode.
 # DEBUG = False

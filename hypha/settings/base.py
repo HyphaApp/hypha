@@ -1,5 +1,5 @@
 """
-Django settings for opentech project.
+Django settings for hypha project.
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -11,7 +11,7 @@ env = os.environ.copy()
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-APP_NAME = env.get('APP_NAME', 'opentech')
+APP_NAME = env.get('APP_NAME', 'hypha')
 
 DEBUG = False
 
@@ -65,32 +65,32 @@ if 'SERVER_EMAIL' in env:
 INSTALLED_APPS = [
     'scout_apm.django',
 
-    'opentech.images',
+    'hypha.images',
 
-    'opentech.apply.activity',
-    'opentech.apply.categories',
-    'opentech.apply.funds',
-    'opentech.apply.dashboard',
-    'opentech.apply.flags',
-    'opentech.apply.home',
-    'opentech.apply.users',
-    'opentech.apply.review',
-    'opentech.apply.determinations',
-    'opentech.apply.stream_forms',
-    'opentech.apply.utils',
-    'opentech.apply.projects.apps.ProjectsConfig',
+    'hypha.apply.activity',
+    'hypha.apply.categories',
+    'hypha.apply.funds',
+    'hypha.apply.dashboard',
+    'hypha.apply.flags',
+    'hypha.apply.home',
+    'hypha.apply.users',
+    'hypha.apply.review',
+    'hypha.apply.determinations',
+    'hypha.apply.stream_forms',
+    'hypha.apply.utils',
+    'hypha.apply.projects.apps.ProjectsConfig',
 
-    'opentech.public.funds',
-    'opentech.public.home',
-    'opentech.public.mailchimp',
-    'opentech.public.navigation',
-    'opentech.public.news',
-    'opentech.public.people',
-    'opentech.public.projects',
-    'opentech.public.search',
-    'opentech.public.standardpages',
-    'opentech.public.forms',
-    'opentech.public.utils',
+    'hypha.public.funds',
+    'hypha.public.home',
+    'hypha.public.mailchimp',
+    'hypha.public.navigation',
+    'hypha.public.news',
+    'hypha.public.people',
+    'hypha.public.projects',
+    'hypha.public.search',
+    'hypha.public.standardpages',
+    'hypha.public.forms',
+    'hypha.public.utils',
 
     'social_django',
 
@@ -159,15 +159,15 @@ MIDDLEWARE = [
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
     'django_otp.middleware.OTPMiddleware',
 
-    'opentech.apply.users.middleware.SocialAuthExceptionMiddleware',
+    'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
-    'opentech.apply.middleware.apply_url_conf_middleware',
+    'hypha.apply.middleware.apply_url_conf_middleware',
 ]
 
-ROOT_URLCONF = 'opentech.urls'
+ROOT_URLCONF = 'hypha.urls'
 
 TEMPLATES = [
     {
@@ -184,10 +184,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'wagtail.contrib.settings.context_processors.settings',
-                'opentech.public.utils.context_processors.global_vars',
+                'hypha.public.utils.context_processors.global_vars',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
-                'opentech.apply.projects.context_processors.projects_enabled',
+                'hypha.apply.projects.context_processors.projects_enabled',
             ],
         },
     },
@@ -195,7 +195,7 @@ TEMPLATES = [
 
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
-WSGI_APPLICATION = 'opentech.wsgi.application'
+WSGI_APPLICATION = 'hypha.wsgi.application'
 
 
 # Database
@@ -341,8 +341,8 @@ MEDIA_URL = env.get('MEDIA_URL', '/media/')
 
 AUTH_USER_MODEL = 'users.User'
 
-WAGTAIL_USER_EDIT_FORM = 'opentech.apply.users.forms.CustomUserEditForm'
-WAGTAIL_USER_CREATION_FORM = 'opentech.apply.users.forms.CustomUserCreationForm'
+WAGTAIL_USER_EDIT_FORM = 'hypha.apply.users.forms.CustomUserEditForm'
+WAGTAIL_USER_CREATION_FORM = 'hypha.apply.users.forms.CustomUserCreationForm'
 WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
 
 LOGIN_URL = 'users_public:login'
@@ -372,7 +372,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'opentech': {
+        'hypha': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
@@ -403,7 +403,7 @@ LOGGING = {
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "opentech"
+WAGTAIL_SITE_NAME = "hypha"
 
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
@@ -439,7 +439,7 @@ DEBUGTOOLBAR = False
 if 'STAFF_EMAIL_DOMAINS' in env:
     STAFF_EMAIL_DOMAINS = env['STAFF_EMAIL_DOMAINS'].split(',')
 else:
-    STAFF_EMAIL_DOMAINS = ['opentech.fund']
+    STAFF_EMAIL_DOMAINS = []
 
 # Social Auth
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
@@ -470,7 +470,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
-    'opentech.apply.users.pipeline.make_otf_staff',
+    'hypha.apply.users.pipeline.make_otf_staff',
 )
 
 # Bleach Settings
@@ -493,7 +493,7 @@ FILE_ACCEPT_ATTR_VALUE = ", ".join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS
 # Hijack Settings
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
-HIJACK_DECORATOR = 'opentech.apply.users.decorators.superuser_decorator'
+HIJACK_DECORATOR = 'hypha.apply.users.decorators.superuser_decorator'
 
 
 # Messaging Settings
@@ -518,8 +518,8 @@ else:
 # S3 configuration
 
 if 'AWS_STORAGE_BUCKET_NAME' in env:
-    DEFAULT_FILE_STORAGE = 'opentech.storage_backends.PublicMediaStorage'
-    PRIVATE_FILE_STORAGE = 'opentech.storage_backends.PrivateMediaStorage'
+    DEFAULT_FILE_STORAGE = 'hypha.storage_backends.PublicMediaStorage'
+    PRIVATE_FILE_STORAGE = 'hypha.storage_backends.PrivateMediaStorage'
 
     AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
 
@@ -615,7 +615,7 @@ REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'app/',
-        'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats-prod.json'),
+        'STATS_FILE': os.path.join(BASE_DIR, './hypha/static_compiled/app/webpack-stats-prod.json'),
     }
 }
 

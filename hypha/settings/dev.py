@@ -8,7 +8,7 @@ SECRET_KEY = 'CHANGEME!!!'
 
 WAGTAIL_CACHE = False
 
-ALLOWED_HOSTS = ['apply.localhost', 'localhost', '127.0.0.1', 'dev.otf.is', 'dev-apply.otf.is']
+ALLOWED_HOSTS = ['apply.localhost', 'localhost', '127.0.0.1', 'hypha.test', 'apply.hypha.test']
 
 BASE_URL = 'http://localhost:8000'
 
@@ -97,7 +97,7 @@ if LOCAL_FILE_LOGGING:
                 'handlers': ['logfile'],
                 'level': 'DEBUG',
             },
-            'opentech': {
+            'hypha': {
                 'handlers': ['logfile'],
                 'level': 'DEBUG',
             },
@@ -143,5 +143,5 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 WEBPACK_LOADER['DEFAULT'].update({
-    'STATS_FILE': os.path.join(BASE_DIR, './opentech/static_compiled/app/webpack-stats.json'),
+    'STATS_FILE': os.path.join(BASE_DIR, './hypha/static_compiled/app/webpack-stats.json'),
 })
