@@ -429,6 +429,7 @@ class SlackAdapter(AdapterBase):
         super().__init__()
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
+        self.comments_room = settings.SLACK_DESTINATION_ROOM_COMMENTS
 
     def slack_links(self, links, sources):
         return ', '.join(
@@ -591,7 +592,7 @@ class SlackAdapter(AdapterBase):
 
         return f'<{user.slack}>'
 
-    def slack_channels(self, source):
+    def slack_channels(self, source, **kwargs):
         target_rooms = [self.target_room]
         try:
             extra_rooms = source.get_from_parent('slack_channel').split(',')
@@ -600,6 +601,13 @@ class SlackAdapter(AdapterBase):
             pass
         else:
             target_rooms.extend(extra_rooms)
+
+        try:
+            if self.comments_room and kwargs['comment']:
+                target_rooms.extend([self.comments_room])
+        except KeyError:
+            # Not a comment.
+            pass
 
         # Make sure each channel name starts with a "#".
         target_rooms = [
@@ -611,7 +619,7 @@ class SlackAdapter(AdapterBase):
         return target_rooms
 
     def send_message(self, message, recipient, source, **kwargs):
-        target_rooms = self.slack_channels(source)
+        target_rooms = self.slack_channels(source, **kwargs)
 
         if not self.destination or not any(target_rooms):
             errors = list()
