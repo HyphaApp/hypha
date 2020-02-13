@@ -59,6 +59,8 @@ if 'EMAIL_SUBJECT_PREFIX' in env:
 if 'SERVER_EMAIL' in env:
     SERVER_EMAIL = DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
 
+# Template variants
+HYPHA_ALT_TEMPLATE_PREFIX = env.get('HYPHA_ALT_TEMPLATE_PREFIX', '')
 
 # Application definition
 

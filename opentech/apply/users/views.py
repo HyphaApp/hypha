@@ -118,7 +118,7 @@ def become(request):
 def oauth(request):
     """Generic, empty view for the OAuth associations."""
 
-    return TemplateResponse(request, 'users/oauth.html', {})
+    return TemplateResponse(request, f'users/{settings.HYPHA_ALT_TEMPLATE_PREFIX}oauth.html', {})
 
 
 class ActivationView(TemplateView):
@@ -130,7 +130,7 @@ class ActivationView(TemplateView):
             login(request, user)
             return redirect('users:activate_password')
 
-        return render(request, 'users/activation/invalid.html')
+        return render(request, f'users/activation/{settings.HYPHA_ALT_TEMPLATE_PREFIX}invalid.html')
 
     def valid(self, user, token):
         """
@@ -172,6 +172,6 @@ def create_password(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AdminPasswordChangeForm(request.user)
-    return render(request, 'users/change_password.html', {
+    return render(request, f'users/{settings.HYPHA_ALT_TEMPLATE_PREFIX}change_password.html', {
         'form': form
     })

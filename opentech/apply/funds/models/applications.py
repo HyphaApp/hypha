@@ -82,7 +82,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     def get_template(self, request, *args, **kwargs):
         # We want to force children to use our base template
         # template attribute is ignored by children
-        return 'funds/application_base.html'
+        return f'funds/{settings.HYPHA_ALT_TEMPLATE_PREFIX}application_base.html'
 
     def detail(self):
         # The location to find out more information
@@ -189,11 +189,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def get_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
-        return 'funds/round.html'
+        return f'funds/{settings.HYPHA_ALT_TEMPLATE_PREFIX}round.html'
 
     def get_landing_page_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
-        return 'funds/round_landing.html'
+        return f'funds/{settings.HYPHA_ALT_TEMPLATE_PREFIX}round_landing.html'
 
     @cached_property
     def fund(self):

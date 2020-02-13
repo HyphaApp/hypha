@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
 from django.http import HttpResponseForbidden
@@ -10,9 +11,11 @@ from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from django.shortcuts import redirect
 
 
-def page_not_found(request, exception=None, template_name='apply/404.html'):
+def page_not_found(request, exception=None, template_name=None):
+    if not template_name:
+        template_name = f'apply/{settings.HYPHA_ALT_TEMPLATE_PREFIX}404.html'
     if not request.user.is_authenticated:
-        template_name = '404.html'
+        template_name = f'{settings.HYPHA_ALT_TEMPLATE_PREFIX}404.html'
     return defaults.page_not_found(request, exception, template_name)
 
 
