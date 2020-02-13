@@ -1,0 +1,39 @@
+//============================================================================//
+//
+//  POSITIONING UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// ELEMENTS
+
+.fix {
+  position: fixed !important; // stylelint-disable-line declaration-no-important
+}
+
+.rel {
+  position: relative !important; // stylelint-disable-line declaration-no-important
+}
+
+.abs {
+  position: absolute !important; // stylelint-disable-line declaration-no-important
+}
+
+.static {
+  position: static !important; // stylelint-disable-line declaration-no-important
+}
+
+.abs-bottom {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
+.abs-top {
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}

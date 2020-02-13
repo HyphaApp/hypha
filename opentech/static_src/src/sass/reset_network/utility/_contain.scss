@@ -1,0 +1,19 @@
+//============================================================================//
+//
+//  CONTAIN UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// ELEMENTS
+
+.contain {
+  width: 100%;
+  max-width: #{$global-page-width}px;
+  margin: 0 auto;
+
+  @include media-min-xl {
+    width: #{$global-page-width}px;
+  }
+}

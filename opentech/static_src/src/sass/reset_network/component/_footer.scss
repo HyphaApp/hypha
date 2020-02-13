@@ -1,0 +1,19 @@
+//================================================================================================//
+//
+//  FOOTER COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.footer {
+  @include gutters();
+  position: relative;
+  text-align: center;
+}
+
+.footer__copyright {
+  @include themeSwitch(color, text-dark, text-light);
+}

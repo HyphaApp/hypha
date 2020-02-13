@@ -1,0 +1,21 @@
+//================================================================================================//
+//
+//  LINKS COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.links {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.links__item {
+  position: relative;
+  border-bottom: 1px solid color(seed-black);
+  margin-bottom: 20px;
+}

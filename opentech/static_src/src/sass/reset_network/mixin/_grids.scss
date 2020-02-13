@@ -1,0 +1,71 @@
+//================================================================================================//
+//
+//  GRID TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+// MIXINS
+
+// COLUMNS
+@mixin col-width($number-of-cols: 1, $total-cols: $grid-cols, $max-width: $grid-width-max) {
+  flex: 0 0 auto;
+  width: calc-col-width($max-width, $total-cols, $number-of-cols) + 0%;
+}
+
+@mixin create-cols($cols: $grid-cols, $size: auto) {
+  @for $i from 1 to ($cols) {
+    @if $size == auto {
+      .column-#{$i}-#{$cols} {
+        @include col-width($i, $cols);
+      }
+    }
+    @else {
+      .column-#{$i}-#{$cols}\@#{$size} {
+        @include col-width($i, $cols);
+      }
+    }
+  }
+}
+
+// OFFSET
+@mixin col-offset($number-of-cols: 1, $total-cols: $grid-cols, $max-width: $grid-width-max) {
+  margin-left: calc-col-width($max-width, $total-cols, $number-of-cols) + 0%;
+}
+
+// GUTTER
+@mixin col-gutter($x: $grid-gutter) {
+  $h: ($x / 2);
+  $v: ($x / 2);
+  padding: #{ceil($v)}px #{floor($h)}px #{floor($v)}px #{ceil($h)}px;
+}
+
+@mixin col-gutter-horizontal($x: $grid-gutter) {
+  $h: ($x / 2);
+  padding-right: #{floor($h)}px;
+  padding-left: #{ceil($h)}px;
+}
+
+@mixin col-gutter-vertical($x: $grid-gutter) {
+  $v: ($x / 2);
+  padding-top: #{ceil($v)}px;
+  padding-bottom: #{floor($v)}px;
+}
+
+@mixin col-gutter-reverse($x: $grid-gutter) {
+  $h: -($x / 2);
+  $v: -($x / 2);
+  margin: #{ceil($v)}px #{floor($h)}px #{floor($v)}px #{ceil($h)}px;
+}
+
+@mixin col-gutter-horizontal-reverse($x: $grid-gutter) {
+  $h: -($x / 2);
+  margin-right: #{floor($h)}px;
+  margin-left: #{ceil($h)}px;
+}
+
+@mixin col-gutter-vertical-reverse($x: $grid-gutter) {
+  $v: -($x / 2);
+  margin-top: #{ceil($v)}px;
+  margin-bottom: #{floor($v)}px;
+}

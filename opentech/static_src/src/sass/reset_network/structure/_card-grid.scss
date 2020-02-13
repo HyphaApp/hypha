@@ -1,0 +1,116 @@
+
+//================================================================================================//
+//
+//  CARD-GRID STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+// CONTAINER
+
+// COMPONENT
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0 -#{$size-md}px 0 -#{$size-md}px;
+  padding: 0;
+  justify-content: center;
+  position: relative;
+  flex: 1 0 auto;
+  width: calc(100% + #{$size-md}px);
+  max-width: calc(100% + #{$size-md}px);
+
+  &:first-child {
+    margin: 0;
+  }
+
+  @include media-min-sm() {
+    justify-content: flex-start;
+    margin: #{$size-lg}px 0 0;
+  }
+
+  @include is-old-ie() {
+    @include clearfix();
+  }
+}
+
+.card-grid__item {
+  margin: 0;
+  padding: 0 #{$size-md}px #{$size-md}px 0;
+  width: 100%;
+
+  @include is-old-ie() {
+    float: left;
+  }
+
+  @include media-min-xs() {
+    width: 100%;
+  }
+
+  @include media-min-sm() {
+    width: 50%;
+  }
+
+  @include media-min-md() {
+    width: 33.33333%;
+  }
+
+  .card-grid--duo & {
+    width: 100%;
+
+    @include media-min-xs {
+      width: 100%;
+    }
+
+    @include media-min-sm {
+      width: 50%;
+    }
+
+    @include media-min-md {
+      width: 50%;
+    }
+  }
+
+  .card-grid--tri & {
+    width: 50%;
+
+    @include media-min-sm {
+      width: 33.33333%;
+    }
+
+    @include media-min-md {
+      width: 33.33333%;
+    }
+  }
+
+  .card-grid--quad & {
+    width: 50%;
+
+    @include media-min-sm {
+      width: 33.33333%;
+    }
+
+    @include media-min-md {
+      width: 25%;
+    }
+  }
+
+  .card-grid--quint & {
+    width: 50%;
+
+    @include media-min-xs {
+      width: 33.33333%;
+    }
+
+    @include media-min-sm {
+      width: 25%;
+    }
+
+    @include media-min-md {
+      width: 20%;
+    }
+  }
+}

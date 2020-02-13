@@ -1,0 +1,20 @@
+//============================================================================//
+//
+// GENERICS
+// First layer that produces any CSS. Very high-level, far reaching styles.
+// This layer is seldom modified, and is usually the same across any projects.
+// Normalize should always be the first inlude here. The styles outline here are
+// bare, unclassed HTML elements. This layer is the last one with element-based
+// selectors, and is very rarely added to or modified after initial setup.
+//
+//============================================================================//
+
+@import 'generic/normalize';
+@import 'generic/defaults';
+@import 'generic/typography';
+@import 'generic/autofill';
+@import 'generic/anchor';
+@import 'generic/placeholder';
+@import 'generic/selection';
+@import 'generic/scrollbar';
+@import 'generic/bodylock';

@@ -1,0 +1,48 @@
+//============================================================================//
+//
+//  GLOBAL ANCHOR
+//  N.B: DON'T modify only fix issues and fold back into typography module
+//
+//============================================================================//
+
+// VARS
+
+$anchor:                          color(seed-blue) !default;
+$anchor-background:               color(seed-black, null, 0) !default;
+$anchor-hover:                    color(seed-blue, -25) !default;
+$anchor-active:                   color(seed-red) !default;
+$anchor-tap:                      color(seed-black) !default;
+$anchor-access-border:            color(seed-green) !default;
+$anchor-focus-border:             color(seed-orange) !default;
+
+// ELEMENTS
+
+a {
+  @include animate(color background-color outline);
+  text-decoration-skip-ink: auto;
+  font-weight: $font-weight-regular;
+  text-decoration: underline;
+
+  &:link,
+  &:visited {
+    text-decoration: underline;
+  }
+
+  &:hover {
+    outline: 0;
+
+    &[accesskey] {
+      outline: 1px dotted $anchor-access-border;
+    }
+  }
+
+  &:focus {
+    outline: 2px solid $anchor-focus-border;
+    color: $anchor-active;
+  }
+
+  .focus-disabled &:focus,
+  &:active {
+    outline: none;
+  }
+}

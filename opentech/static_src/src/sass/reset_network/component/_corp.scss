@@ -1,0 +1,87 @@
+//================================================================================================//
+//
+//  CORP COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.corp {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  min-width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  @include media-min-sm {
+    justify-content: center;
+  }
+}
+
+.corp__item {
+  flex: 0 0 auto;
+  position: relative;
+
+  @include media-max-sm {
+    &:nth-child(2n+2)::after {
+      display: none;
+    }
+  }
+
+  @include media-min-sm {
+    flex: 0 0 auto;
+  }
+
+  &::after {
+    @include themeSwitch(background-color);
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 1px;
+    height: 20px;
+    transform: translateY(-50%);
+  }
+
+  &:last-child::after {
+    display: none;
+  }
+}
+
+.corp-link {
+  @include animate(background-color opacity);
+  @include font-size-sm();
+  display: block;
+  text-decoration: none;
+  padding: 4px 19px;
+
+  &:link,
+  &:visited {
+    text-decoration: none;
+  }
+
+  &:focus {
+    outline: none;
+    opacity: .8;
+
+    .focus-disabled & {
+      opacity: .8;
+    }
+  }
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &:active {
+    outline: none;
+    opacity: .5;
+  }
+}

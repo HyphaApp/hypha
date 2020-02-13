@@ -1,0 +1,64 @@
+//================================================================================================//
+//
+//  SURFACE STRUCTURE
+//
+//================================================================================================//
+
+// ELEMENTS
+
+.surface {
+  display: block;
+  overflow: hidden;
+  padding-top: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.surface--3-2 {
+  padding-top: percentage(2 / 3);
+}
+
+.surface--4-3 {
+  padding-top: percentage(3 / 4);
+}
+
+.surface--16-9 {
+  padding-top: percentage(9 / 16);
+}
+
+.surface--21-9 {
+  padding-top: percentage(9 / 21);
+}
+
+.surface--5-7 {
+  padding-top: percentage(7 / 5);
+}
+
+.surface--7-5 {
+  padding-top: percentage(5 / 7);
+}
+
+.surface__plane {
+  bottom: 0;
+  display: block;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+
+  @include print {
+    background-image: none !important; /* stylelint-disable-line declaration-no-important */
+  }
+}
+
+.surface__image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 100%;
+  height: auto;
+}

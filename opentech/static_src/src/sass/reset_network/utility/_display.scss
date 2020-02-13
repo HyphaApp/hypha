@@ -1,0 +1,66 @@
+//============================================================================//
+//
+//  DISPLAY UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// ELEMENTS
+
+.block {
+  display: block !important; // stylelint-disable-line declaration-no-important
+}
+
+.inline-block {
+  display: inline-block !important; // stylelint-disable-line declaration-no-important
+}
+
+.inline {
+  display: inline !important; // stylelint-disable-line declaration-no-important
+}
+
+.print-only {
+  display: none;
+}
+
+.is-visible {
+  opacity: 1 !important; // stylelint-disable-line declaration-no-important
+}
+
+.is-hidden {
+  opacity: 0 !important; // stylelint-disable-line declaration-no-important
+}
+
+// HIDING/SHOWING STATEFUL ELEMENTS
+
+.hide-visually {
+  border: none;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.show\@sm {
+  display: none;
+}
+
+@include media-max-sm {
+  .show\@sm {
+    display: block !important; // stylelint-disable-line declaration-no-important
+  }
+
+  .hide\@sm {
+    display: none !important; // stylelint-disable-line declaration-no-important
+  }
+}
+
+@include print {
+  .print-only {
+    display: block;
+  }
+}

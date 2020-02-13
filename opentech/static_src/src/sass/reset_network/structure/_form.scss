@@ -1,0 +1,162 @@
+//================================================================================================//
+//
+//  FORMS STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+$addon-offset: 2;
+$field-offset: 1;
+$form-field-spacing: 15 !default;
+$validation-default: color(text-darkest) !default;
+$validation-default-bg: color(seed-grey, 75) !default;
+$validation-default-border: color(seed-grey) !default;
+$validation-warning: $color-warning !default;
+$validation-warning-bg: $color-warning-bg !default;
+$validation-warning-border: $color-warning-border !default;
+$validation-error: $color-error !default;
+$validation-error-bg: $color-error-bg !default;
+$validation-error-border: $color-error-border !default;
+$validation-success: $color-success !default;
+$validation-success-bg: $color-success-bg !default;
+$validation-success-border: $color-success-border !default;
+
+// ELEMENTS
+
+.form {
+  padding: 0;
+  margin: 0;
+}
+
+.form--compact {}
+
+.form-legend {
+  @include font-primary();
+  @include font-size-xxl();
+  font-family: $font-family-secondary;
+  font-weight: $font-weight-heavy;
+  padding: 0;
+  margin: 0 0 #{$form-field-spacing}px;
+  display: block;
+  position: relative;
+}
+
+.form-fieldset {
+  border: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.form-summary {
+  margin: 0 0 #{$form-field-spacing}px;
+
+  .form-legend + &,
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.form-alert-tray {}
+
+.form-fieldset--highlight {
+  background-color: color(seed-white);
+  border-width: 2px;
+  border-color: color(seed-grey);
+  padding: 20px;
+}
+
+.form-row {
+  @include gutter-bottom();
+  @include animate(opacity);
+  min-width: 100%;
+  position: relative;
+  opacity: 1;
+
+  &.is-disabled {
+    opacity: .5;
+    pointer-events: none;
+  }
+}
+
+.form-row--compact {
+  margin: 0;
+}
+
+.form-row__label {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  align-items: center;
+}
+
+.form-row__note {
+  @include themeSwitch('color', text-dark, text-light);
+  position: relative;
+  width: 100%;
+  margin: -5px 0 5px;
+}
+
+.form-row__validation {
+  @include font-size-sm();
+  width: 100%;
+  margin: 0;
+  border-width: 0 0 0 5px;
+  border-style: solid;
+  padding: 5px 5px 5px 10px;
+  background-color: $validation-default-bg;
+  border-color: $validation-default-border;
+  color: $validation-default;
+
+  &.is-error {
+    background-color: $validation-error-bg;
+    border-color: $validation-error-border;
+    color: $validation-error;
+  }
+
+  &.is-warning {
+    background-color: $validation-warning-bg;
+    border-color: $validation-warning-border;
+    color: $validation-warning;
+  }
+
+  &.is-success {
+    background-color: $validation-success-bg;
+    border-color: $validation-success-border;
+    color: $validation-success;
+  }
+}
+
+.form-actions {
+  @include gutters-vertical();
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  padding: #{$gutter-sm}px 0 0;
+
+  @include media-min-md {
+    padding: #{$gutter-lg}px 0 0;
+  }
+
+  @include themeSwitch('border-color');
+}
+
+.form-header {
+  display: flex;
+
+  @include media-min-xs {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.form-header__help {
+
+}
+
+.form-footnotes {
+  @include font-size-sm();
+  color: color(seed-grey, -25);
+  font-style: italic;
+  padding: 20px 0 0;
+}
