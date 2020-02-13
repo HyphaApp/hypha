@@ -79,7 +79,7 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
 
     class Meta:
         model = Determination
-        fields = ['outcome', 'message', 'submission', 'author', 'data']
+        fields = ['outcome', 'message', 'submission', 'author', 'data', 'send_notice']
 
         widgets = {
             'submission': forms.HiddenInput(),
@@ -138,7 +138,7 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
     def data_fields(self):
         return [
             field for field in self.fields
-            if field not in ['submissions', 'outcome', 'author']
+            if field not in ['submissions', 'outcome', 'author', 'send_notice']
         ]
 
     def _post_clean(self):
@@ -236,8 +236,6 @@ class BaseConceptDeterminationForm(forms.Form):
         help_text=''
     )
     comments.group = 1
-
-    # TODO option to not send message, or resend
 
 
 class BaseProposalDeterminationForm(forms.Form):
@@ -344,6 +342,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 field.required = False
 
         self.fields = self.apply_form_settings('concept', self.fields)
+        self.fields.move_to_end('send_notice')
 
         action = kwargs.get('action')
         stages_num = len(submission.workflow.stages)
@@ -379,6 +378,7 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
             self.fields[field].disabled = True
 
         self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+        self.fields.move_to_end('send_notice')
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():

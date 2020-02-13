@@ -658,8 +658,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.EDIT: 'messages/email/edit.html',
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.DETERMINATION_OUTCOME: 'messages/email/determination.html',
-        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
+        MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
         MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
@@ -724,7 +724,17 @@ class EmailAdapter(AdapterBase):
             **kwargs,
         )
 
-    def batch_determination(self, determinations, sources, **kwargs):
+    def handle_determination(self, determination, source, **kwargs):
+        submission = source
+        if determination.send_notice:
+            return self.render_message(
+                'messages/email/determination.html',
+                source=submission,
+                determination=determination,
+                **kwargs
+            )
+
+    def handle_batch_determination(self, determinations, sources, **kwargs):
         submissions = sources
         kwargs.pop('source')
         for submission in submissions:
