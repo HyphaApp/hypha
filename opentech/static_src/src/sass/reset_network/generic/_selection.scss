@@ -1,0 +1,18 @@
+//============================================================================//
+//
+//  GLOBAL GENERIC SELECTION
+//  N.B: DON'T modify only fix issues and fold back into placeholder module
+//
+//============================================================================//
+
+// VARS
+
+$color-selection: #99f !default;
+
+// ELEMENTS
+
+::-moz-selection,
+::selection {
+  color: $color-selection;
+  text-shadow: none;
+}

@@ -1,0 +1,108 @@
+//================================================================================================//
+//
+//  WRAP COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$spinner-border: color(seed-grey);
+$spinner-background: transparent;
+$z-index-unsupported: 1000 !default;
+
+// CONTAINER
+
+.loader-container {
+  position: relative;
+}
+
+// ELEMENTS
+
+.loader {
+  @include animate(opacity transform);
+  opacity: 0;
+  position: absolute;
+  transform: translateY(-100%);
+  background-color: transparent;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+
+  &::before {
+    border-color: $btn-default-label $btn-default-label transparent;
+
+    width: 16px;
+    height: 16px;
+    border-width: 4px;
+  }
+
+  &::after {
+    border-color: transparent $btn-default-label $btn-default-label;
+    width: 28px;
+    height: 28px;
+    border-width: 6px;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    border-style: solid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) rotate(0);
+    border-radius: 50%;
+  }
+
+  .is-loading & {
+    opacity: 1;
+    transform: translateY(0);
+
+    &::before {
+      animation: spinner-reverse-spin 1300ms infinite $easing-inverse;
+    }
+
+    &::after {
+      animation: spinner-spin 1000ms infinite $easing-inout;
+    }
+  }
+}
+
+.loader--page {
+  background-color: $global-page-bg;
+  align-items: center;
+  z-index: $z-index-unsupported;
+  position: fixed;
+}
+
+.loader--sm {
+  &::before {
+    border-width: 2px;
+    width: 12px;
+    height: 12px;
+  }
+
+  &::after {
+    border-width: 3px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.loader--lg {
+  &::before {
+    border-width: 5px;
+    width: 26px;
+    height: 26px;
+  }
+
+  &::after {
+    border-width: 8px;
+    width: 36px;
+    height: 36px;
+  }
+}

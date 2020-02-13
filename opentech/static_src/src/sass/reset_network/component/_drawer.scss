@@ -1,0 +1,103 @@
+//================================================================================================//
+//
+//  DRAWER COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$shade-background: color(seed-black, null, .8) !default;
+$shade-background-transparent: color(seed-black, null, 0) !default;
+$drawer-background: color(seed-white) !default;
+$drawer-shadow: 0 0 10px color(seed-black) !default;
+$drawer-shadow-transparent: 0 0 10px color(seed-black, null, 0) !default;
+$drawer-close-icon: color(seed-white) !default;
+
+// ELEMENTS
+
+.drawer {
+  @include animate(background-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: $z-index-menu;
+  background-color: $shade-background-transparent;
+  pointer-events: none;
+
+  &.is-active {
+    background-color: $shade-background;
+    pointer-events: all;
+  }
+}
+
+.drawer__close {
+  @include animate(opacity);
+  left: -5px;
+  position: absolute;
+  top: 15px;
+  transform: translateX(-100%);
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0;
+  display: block;
+
+  @include media-min-sm {
+    top: 5px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .drawer.is-active & {
+    opacity: 1;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 26px;
+    background-color: $drawer-close-icon;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+
+    @include media-min-sm {
+      width: 4px;
+      height: 32px;
+    }
+  }
+
+  &::before {
+    transform: translate3d(-50%, -50%, 0) rotate(45deg);
+  }
+
+  &::after {
+    transform: translate3d(-50%, -50%, 0) rotate(315deg);
+  }
+}
+
+.drawer__content {
+  @include animate(transform);
+  width: 87vw;
+  height: 100%;
+  max-width: 400px;
+  transform: translateX(100%);
+  box-shadow: $drawer-shadow-transparent;
+  background-color: $drawer-background;
+  position: relative;
+  will-change: transform;
+
+  .drawer.is-active & {
+    transform: translateX(0);
+    box-shadow: $drawer-shadow;
+    pointer-events: all;
+  }
+}

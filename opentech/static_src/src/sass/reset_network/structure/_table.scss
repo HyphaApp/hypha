@@ -1,0 +1,96 @@
+//================================================================================================//
+//
+//  TABLE STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+$generic-table-border: color(seed-grey, 10) !default;
+$generic-table-header-background: color(seed-grey) !default;
+$generic-table-header-text: color(seed-white) !default;
+$generic-table-cell-background: color(seed-white) !default;
+$generic-table-cell-background-even: color(seed-white, -2) !default;
+$generic-table-swipe-text: color(seed-grey) !default;
+
+// CONTAINER
+
+.table-wrapper {
+  position: relative;
+  padding: 2px;
+  border: 2px solid $generic-table-border;
+  background-color: $generic-table-cell-background;
+
+  @include media-min-sm {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+
+  &::after {
+    @include font-size-min();
+    display: block;
+    content: '\25C0 Swipe \25b6';
+    position: absolute;
+    text-transform: uppercase;
+    top: -20px;
+    right: 10px;
+    color: $generic-table-swipe-text;
+    font-weight: $font-weight-heavy;
+
+    @include media-min-sm {
+      display: none;
+    }
+  }
+}
+
+.table-scroll {
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+// ELEMENTS
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+
+  .table-scroll & {
+    min-width: 700px;
+  }
+}
+
+.table__head {
+  background-color: $generic-table-header-background;
+  color: $generic-table-header-text;
+}
+
+.table__body {
+  background-color: $generic-table-cell-background;
+}
+
+.table__row {}
+
+.table__row--head {
+  border-bottom: 2px solid $generic-table-border;
+}
+
+.table__header,
+.table__cell {
+  text-align: center;
+  padding: 10px 15px;
+  vertical-align: top;
+
+  &:first-child {
+    text-align: left;
+  }
+
+  .table__row--head & {
+    padding: 10px 15px;
+    vertical-align: middle;
+  }
+
+  .table__row:nth-child(even) & {
+    background-color: $generic-table-cell-background-even;
+  }
+}

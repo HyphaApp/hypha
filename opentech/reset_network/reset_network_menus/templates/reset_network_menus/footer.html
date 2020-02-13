@@ -1,0 +1,13 @@
+{% load wagtailcore_tags %}
+<ul class="corp">
+  {% for menu_item in menu_items %}
+  <li class="corp__item">
+    <a
+      class="corp-link {% if current_url == menu_item.value.page.url %}is-active{% endif %}"
+      href="{% pageurl menu_item.value.page %}"
+    >
+        {% firstof menu_item.value.title menu_item.value.page 'Link' %}
+    </a>
+  </li>
+  {% endfor %}
+</ul>

@@ -1,0 +1,39 @@
+//================================================================================================//
+//
+//  SIZE NOT SUPPORTED COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$z-index-unsupported: 10000 !default;
+$mq-min-suported-height: 329px;
+$mq-min-supported-width: 599px;
+$takeover-background: color(seed-grey, 75);
+$takeover-text: color(seed-grey);
+$takeover-text-shadow: 1px 1px 0 color(seed-white);
+
+// ELEMENTS
+
+.size-not-supported {
+  align-items: center;
+  background-color: $takeover-background;
+  bottom: 0;
+  color: $takeover-text;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  padding: #{$size-md}px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  text-shadow: $takeover-text-shadow;
+  top: 0;
+  z-index: $z-index-unsupported;
+}
+
+@media only screen and (max-height: $mq-min-suported-height) {
+  .size-not-supported {
+    display: flex !important; // stylelint-disable-line declaration-no-important
+  }
+}

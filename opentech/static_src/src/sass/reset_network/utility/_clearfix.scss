@@ -1,0 +1,13 @@
+//============================================================================//
+//
+//  CLEARFIX UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// ELEMENTS
+
+.clearfix {
+  @include clearfix();
+}

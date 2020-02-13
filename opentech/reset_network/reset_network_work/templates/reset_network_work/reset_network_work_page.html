@@ -1,0 +1,28 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{{ page.content_text }}</p>
+
+{% for pillar in page.reset_network_work_pillar.all %}
+<div>
+  {{ pillar.heading }}
+  {{ pillar.text }}
+  {% image pillar.image width-400 %}
+{% endfor %}
+
+<h2>Regions</h2>
+
+{% for region in page.reset_network_work_region.all %}
+<div>
+  {{ region.heading }}
+  {{ region.text|richtext }}
+</div>
+{% endfor %}
+
+{% endblock %}
