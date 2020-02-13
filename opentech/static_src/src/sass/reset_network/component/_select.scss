@@ -1,0 +1,171 @@
+//================================================================================================//
+//
+//  SELECT COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$select-bg: color(seed-white, -7) !default;
+$select-border: color(seed-black) !default;
+$select-border-hover: color(seed-grey) !default;
+$select-warning-bg: $color-warning-bg !default;
+$select-warning-border: $color-warning-border !default;
+$select-error-bg: $color-error-bg !default;
+$select-error-border: $color-error-border !default;
+$select-success-bg: $color-success-bg !default;
+$select-success-border: $color-success-border !default;
+$select-success-bg: $color-success-bg !default;
+$select-success-border: $color-success-border !default;
+$select-disabled-bg: $color-disabled-bg !default;
+$select-disabled-border: $color-disabled-border !default;
+$select-field-bg: color(seed-white, null, 0) !default;
+$select-field-disabled: color(seed-white, -50) !default;
+$select-line-height: 1.2 !default;
+$select-inset-shadow: inset 0 5px 5px -5px color(seed-grey, 25) !default;
+$select-tabs-bg: color(seed-blue) !default;
+$select-tabs-bg-hover: color(seed-blue, 10) !default;
+$select-multiple-height: 127 !default;
+
+// ELEMENTS
+
+.select {
+  @include animate(border-color background-color);
+  background-color: $select-bg;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $select-border;
+  padding: 0;
+
+  &::before,
+  &::after {
+    @include animate(border-color background-color);
+    content: '';
+    position: absolute;
+    display: block;
+    z-index: 2;
+    pointer-events: none;
+    border-width: 2px 2px 0 0;
+    border-color: $select-border;
+    border-style: solid;
+    height: 6px;
+    width: 6px;
+    transform: translateY(50%) rotate(135deg);
+    top: 45%;
+    right: 22px;
+  }
+
+  &::after {
+    top: 45%;
+    right: 22px;
+    transform: translateY(-50%) rotate(315deg);
+  }
+
+  &.is-active,
+  &:hover {
+    border-color: $select-border-hover;
+
+    &::before,
+    &::after {
+      border-color: $select-border-hover;
+    }
+  }
+
+  .is-warning & {
+    border-color: $select-warning-bg;
+    background-color: $select-warning-border;
+  }
+
+  .is-error & {
+    border-color: $select-error-bg;
+    background-color: $select-error-border;
+  }
+
+  .is-success & {
+    border-color: $select-success-bg;
+    background-color: $select-success-border;
+  }
+
+  .is-disabled & {
+    border-color: $select-disabled-bg;
+    background-color: $select-disabled-bg;
+  }
+}
+
+.select--nav {
+  align-items: center;
+  background-color: $select-tabs-bg;
+  border: none;
+  cursor: pointer;
+  display: flex;
+
+  &::before,
+  &::after {
+    display: none;
+  }
+
+  &:hover {
+    background-color: $select-tabs-bg-hover;
+  }
+}
+
+.select--multiple {
+  &::before,
+  &::after {
+    display: none;
+  }
+}
+
+.select__field {
+  @include animate(border-color);
+  @include font-size($font-size-lg - 1);
+  border-radius: 0;
+  appearance: none;
+  background-color: $select-field-bg;
+  line-height: $select-line-height;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 0;
+  box-sizing: border-box;
+  padding: 20px 40px 19px 20px;
+
+  &::-moz-focus-inner,
+  &:-moz-focusring {
+    border: 0;
+    outline: 0;
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+  }
+
+  &::-ms-expand {
+    display: none;
+  }
+
+  &.required,
+  &[required] {
+    border-color: $select-border;
+  }
+
+  &:disabled,
+  &[disabled] {
+    color: $select-field-disabled;
+    cursor: not-allowed;
+  }
+
+  &[multiple] {
+    height: #{$select-multiple-height}px;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus-border;
+
+    .focus-disabled & {
+      outline: none;
+    }
+  }
+}

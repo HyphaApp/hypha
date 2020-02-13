@@ -1,0 +1,18 @@
+//============================================================================//
+//
+//  COMPONENT INIT
+//  CONTAINS STANDARD VARS, FUNCTIONS AND MIXINS (NOTHING THAT OUTPUTS CSS)
+//
+//============================================================================//
+
+// FUNCTIONS
+
+@import 'reset_network/mixin/calculations';
+@import 'reset_network/mixin/color';
+@import 'reset_network/mixin';
+
+// VARIABLES
+// Global settings for your project
+
+@import 'reset_network/color';
+@import 'reset_network/variables';

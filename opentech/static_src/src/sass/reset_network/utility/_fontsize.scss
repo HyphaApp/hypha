@@ -1,0 +1,49 @@
+//================================================================================================//
+//
+//  FONTSIZE UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//================================================================================================//
+
+// ELEMENTS
+
+.font-size-omega {
+  @include font-size($font-size-omega);
+}
+
+.font-size-max {
+  @include font-size($font-size-max);
+}
+
+.font-size-xxl {
+  @include font-size($font-size-xxl);
+}
+
+.font-size-xl {
+  @include font-size($font-size-xl);
+}
+
+.font-size-lg {
+  @include font-size($font-size-lg);
+}
+
+.font-size-md {
+  @include font-size($font-size-md);
+}
+
+.font-size-sm {
+  @include font-size($font-size-sm);
+}
+
+.font-size-xs {
+  @include font-size($font-size-xs);
+}
+
+.font-size-xxs {
+  @include font-size($font-size-xxs);
+}
+
+.font-size-min {
+  @include font-size($font-size-min);
+}

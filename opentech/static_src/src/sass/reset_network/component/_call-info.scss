@@ -1,0 +1,38 @@
+//================================================================================================//
+//
+//  CALL INFO COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.call-info {
+  padding: #{$gutter-xs}px;
+  background-color: color(seed-grey, 50);
+  color: color(text-darkest);
+
+  &.in-place {
+    position: relative;
+    margin: 0 0 -#{$gutter-sm}px 0;
+
+    @include media-min-sm {
+      position: absolute;
+      left: 0;
+      bottom: -#{$gutter-lg}px;
+    }
+
+    @include media-min-md {
+      bottom: -#{$gutter-xl}px;
+    }
+  }
+}
+
+.call-info__content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+

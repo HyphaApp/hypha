@@ -1,0 +1,166 @@
+//================================================================================================//
+//
+//  GRID STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+$grid-cols: 12 !default;
+$grid-gutter: 21 !default;
+$grid-width-max: 1260 !default;
+
+// ELEMENTS
+
+.wrap {
+  @include clearfix();
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.grid {
+  align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  list-style: none;
+  flex: 0 0 auto;
+  max-width: #{$grid-width-max}px;
+  width: 100%;
+
+  @include media-min-sm {
+    flex-direction: row;
+  }
+
+  @include is-old-ie() {
+    @include clearfix();
+    width: #{$grid-width-max}px;
+    margin: 0 auto;
+  }
+}
+
+.grid--top {
+  align-items: flex-start;
+}
+
+.grid--middle {
+  align-items: center;
+}
+
+.grid--bottom {
+  align-items: flex-end;
+}
+
+.grid--center {
+  justify-content: center;
+}
+
+.grid--right {
+  justify-content: flex-end;
+}
+
+.grid--rtl {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.grid--flush {
+  padding: 0;
+}
+
+[class*=column-] {
+  flex: 0 0 100%;
+  width: 100%;
+  position: relative;
+  min-height: 1px;
+  margin: 0;
+}
+
+.column-1 {
+  flex: 1 0 auto;
+  max-width: 100%;
+}
+
+.column--stretch {
+  align-self: stretch;
+}
+
+.column--top {
+  align-self: flex-start;
+}
+
+.column--middle {
+  align-self: center;
+}
+
+.column--bottom {
+  align-self: flex-end;
+}
+
+.column--flush {
+  padding: 0;
+}
+
+@include media-max-sm {
+  @include create-cols(4, xs);
+  @include create-cols(3, xs);
+
+  .column-1\@xs {
+    flex: 0 0 100%; // full width at xs screen only
+    max-width: 100%;
+  }
+}
+
+@include media-min-sm {
+  .grid--nested {
+    margin: 0 -#{floor($grid-gutter / 2)}px 0 -#{ceil($grid-gutter / 2)}px;
+    width: calc(100% + #{$grid-gutter}px);
+  }
+
+  [class*=column-] {
+    @include col-gutter-vertical();
+    @include col-gutter-horizontal();
+  }
+
+  @include create-cols($grid-cols);
+
+  .column--flush-v {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .column--flush-h {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .grid {
+    @include is-old-ie() {
+      width: #{$grid-width-max}px;
+    }
+  }
+}
+
+@include media-min-sm-max-md {
+  @include create-cols(6, sm);
+
+  .column-1\@sm {
+    flex: 0 0 100%; // full width at small screen only
+    width: 100%;
+  }
+
+  .grid {
+    @include is-old-ie() {
+      width: #{$grid-width-max}px;
+    }
+  }
+}
+
+@include media-grid-max {
+  .grid {
+    max-width: #{$grid-width-max}px;
+  }
+}

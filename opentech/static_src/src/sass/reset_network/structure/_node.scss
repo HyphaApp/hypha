@@ -1,0 +1,90 @@
+//================================================================================================//
+//
+//  NODE STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+$node-bar-bg: color(seed-blue);
+$node-section-intro-border: color(seed-grey, 40);
+$node-section-bar-bg: color(seed-white);
+
+// ELEMENTS
+
+.node {
+  @include gutters-xl();
+  min-height: 400px;
+  position: relative;
+  width: 100%;
+}
+
+.node__header {
+  @include gutter-bottom();
+}
+
+.node__title {
+  @include font-size-xxl();
+}
+
+.node__lead {
+  @include gutter-bottom();
+  @include font-size-xxl();
+  font-family: $font-family-secondary;
+}
+
+.node__content {
+  @include media-min-md {
+    padding: 0 50px;
+  }
+  @include media-min-lg {
+    padding: 0 #{$sidebar-offset}px;
+  }
+}
+
+.node__footer {}
+
+// NODE SECTION
+
+.node-section {
+  position: relative;
+  margin: 0 0 40px;
+
+  @include media-min-sm {
+    margin: 0 0 60px;
+  }
+
+  &:last-child {
+    margin: 0;
+  }
+}
+
+.node-section--intro {
+  border-color: $node-section-intro-border;
+  padding: 0 0 60px;
+  border-width: 0 0 5px;
+  border-style: dashed;
+}
+
+.node-section__header {
+  position: relative;
+  padding: 0 0 #{ceil($font-size-base * $line-height / 2)}px;
+  margin: 0 0 #{ceil($font-size-base * $line-height / 2)}px;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 50px;
+    height: 4px;
+    background-color: $node-section-bar-bg;
+  }
+}
+
+.node-section__title {
+  @include font-size-xl();
+}
+
+.node-section__content {}

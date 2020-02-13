@@ -1,0 +1,55 @@
+//================================================================================================//
+//
+//  LABEL COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$label: color(text-darkest) !default;
+$label-required: color(seed-red) !default;
+$label-error: $color-error !default;
+$label-warning: $color-warning !default;
+$label-success: $color-success !default;
+$label-disabled: color(seed-grey) !default;
+
+// ELEMENTS
+
+.label {
+  @include animate(color);
+  @include font-size-md();
+  position: relative;
+  font-weight: $font-weight-regular;
+  color: $label;
+
+  &::after {
+    @include font-size-xl();
+    content: '*';
+    color: $label-required;
+    font-weight: $font-weight-regular;
+    margin-left: 5px;
+    display: none;
+  }
+
+  .is-error & {
+    color: $label-error;
+  }
+
+  .is-success & {
+    color: $label-success;
+  }
+
+  .is-warning & {
+    color: $label-warning;
+  }
+
+  .is-disabled & {
+    color: $label-disabled;
+  }
+
+  .is-required & {
+    &::after {
+      display: inline-block;
+    }
+  }
+}

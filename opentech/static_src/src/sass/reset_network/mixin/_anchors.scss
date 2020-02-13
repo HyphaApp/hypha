@@ -1,0 +1,82 @@
+//================================================================================================//
+//
+//  ANCHOR TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+@mixin link-lightest() {
+  color: color(text-lightest);
+
+  &::after {
+    background-color: color(text-lightest);
+  }
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:focus,
+  .focus-disabled &:focus,
+  &:active {
+    color: color(text-lightest);
+  }
+}
+
+@mixin link-light() {
+  color: color(text-light);
+
+  &::after {
+    background-color: color(text-light);
+  }
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:focus,
+  .focus-disabled &:focus,
+  &:active {
+    color: color(text-light);
+
+    strong {
+      color: color(text-lightest);
+    }
+  }
+}
+
+@mixin link-darkest() {
+  color: color(text-darkest);
+
+  &::after {
+    background-color: color(text-darkest);
+  }
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:focus,
+  .focus-disabled &:focus,
+  &:active {
+    color: color(text-darkest);
+  }
+}
+
+@mixin link-dark() {
+  color: color(text-dark);
+
+  &::after {
+    background-color: color(text-dark);
+  }
+
+  &:link,
+  &:visited,
+  &:hover,
+  &:focus,
+  .focus-disabled &:focus,
+  &:active {
+    color: color(text-dark);
+
+    strong {
+      color: color(text-darkest);
+    }
+  }
+}

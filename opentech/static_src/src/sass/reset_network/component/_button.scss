@@ -1,0 +1,302 @@
+//================================================================================================//
+//
+//  BUTTON COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$btn-opacity-disabled: .5 !default;
+
+$btn-default-bg: color(seed-black) !default;
+$btn-default-bg-focus: color(seed-black) !default;
+$btn-default-bg-active: color(seed-black) !default;
+$btn-default-bg-disabled: color(seed-black) !default;
+
+$btn-default-drop-bg: color(seed-black, null, 0) !default;
+$btn-default-drop-bg-focus: color(seed-black, null, .1) !default;
+$btn-default-drop-bg-active: color(seed-black, null, .25) !default;
+$btn-default-drop-bg-disabled: color(seed-black, null, 0) !default;
+
+$btn-default-label: color(seed-white) !default;
+$btn-default-label-focus: color(seed-white) !default;
+$btn-default-label-active: color(seed-yellow, 50) !default;
+$btn-default-label-disabled: color(seed-grey, 50) !default;
+
+$btn-primary-bg: color(seed-black) !default;
+$btn-primary-label: color(seed-white) !default;
+$btn-primary-label-focus: color(seed-white) !default;
+$btn-primary-label-active: color(seed-white) !default;
+
+$btn-group-radius: $size-xs !default;
+
+$btn-icon-xs: 8 !default;
+$btn-icon-sm: 12 !default;
+$btn-icon-md: 16 !default;
+$btn-icon-lg: 32 !default;
+$btn-icon-xl: 55 !default;
+
+// CONTAINERS
+
+// ELEMENT
+
+button.button,
+a.button {
+  @include animate(background-color);
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  margin-right: 10px;
+  display: inline-flex;
+  flex-direction: row;
+  padding: 0;
+  text-align: center;
+  align-items: flex-start;
+  justify-content: stretch;
+  vertical-align: middle;
+  opacity: 1;
+  overflow: hidden;
+  min-width: 220px;
+  border-width: 2px;
+  border-style: solid;
+
+  .theme-grey &,
+  .theme-dark &,
+  .theme-darkest & {
+    border-color: color(seed-white);
+    color: color(seed-white);
+  }
+
+  .theme-light &,
+  .theme-lightest & {
+    border-color: color(seed-black);
+    color: color(seed-black);
+  }
+
+  &:link,
+  &:visited {
+    outline: none;
+    text-decoration: none;
+
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      color: color(seed-white);
+      border-color: color(seed-white);
+      background-color: transparent;
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      color: color(seed-black);
+      border-color: color(seed-black);
+    }
+  }
+
+  &:focus {
+    outline: #{$size-min}px dotted $color-focus-border;
+  }
+
+  &.is-active,
+  &:focus,
+  &:hover {
+    background-color: transparent;
+  }
+
+  &:active {
+    background-color: transparent;
+  }
+
+  &.is-disabled,
+  &:disabled,
+  &[disabled] {
+    background-color: transparent;
+    opacity: $btn-opacity-disabled;
+    pointer-events: none;
+    cursor: not-allowed;
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      background-color: transparent;
+    }
+  }
+
+  &.is-loading {
+    pointer-events: none;
+
+    &:hover,
+    &:active {
+      cursor: default;
+    }
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.button__drop {
+  @include animate(background-color transform);
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateX(-100%);
+
+  .button &,
+  .button:visited &,
+  .button:focus & {
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      background-color: color(seed-white);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      background-color: color(seed-black);
+    }
+  }
+
+  .button:hover &,
+  .button:active & {
+    transform: translateX(0);
+
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      background-color: color(seed-white);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      background-color: color(seed-black);
+    }
+  }
+
+  .button:disabled &,
+  .button.is-disabled &,
+  .button[disabled] & {
+    background-color: $btn-default-drop-bg-disabled;
+  }
+}
+
+.button__label {
+  @include font-size-sm();
+  @include animate(color opacity);
+  flex: 1 1 100%;
+  position: relative;
+  display: block;
+  text-align: center;
+  line-height: 1;
+  z-index: 2;
+  opacity: 1;
+  padding: #{$size-xl}px #{$size-xxl}px;
+
+  .button &,
+  .button:link &,
+  .button:visited & {
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      color: color(seed-white);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      color: color(seed-black);
+    }
+  }
+
+  .button:hover &,
+  .button:focus &,
+  .button:active & {
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      color: color(seed-black);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      color: color(seed-white);
+    }
+  }
+
+  .button.is-disabled &,
+  .button:disabled &,
+  .button[disabled] & {
+    color: $btn-default-label-disabled;
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      color: $btn-default-label-disabled;
+    }
+  }
+}
+
+.button__icon {
+  @include animate(opacity);
+  fill: $btn-default-label;
+  height: #{$btn-icon-md}px;
+  width: #{$btn-icon-md}px;
+  min-width: 0;
+  opacity: 1;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  .button &,
+  .button:link &,
+  .button:visited & {
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      fill: color(seed-white);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      fill: color(seed-black);
+    }
+  }
+
+  .button:hover &,
+  .button:focus &,
+  .button:active & {
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      fill: color(seed-black);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      fill: color(seed-white);
+    }
+  }
+
+  .button.is-disabled &,
+  .button:disabled &,
+  .button[disabled] & {
+    fill: $btn-default-label-disabled;
+
+    &:link,
+    &:visited,
+    &:hover,
+    &:active {
+      fill: $btn-default-label-disabled;
+    }
+  }
+
+  .button__label + & {
+    margin-left: 5px;
+  }
+}

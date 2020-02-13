@@ -1,0 +1,21 @@
+{% load wagtailcore_tags %}
+<nav role="navigation">
+  <ul class="main-nav">
+    {% for menu_item in menu_items %}
+    <li class="main-nav__item">
+      <a
+        class="main-nav-link {% if current_url == menu_item.value.page.url %}is-active{% endif %}"
+        href="{% pageurl menu_item.value.page %}"
+        data-theme="dark"
+      >{% firstof menu_item.value.title menu_item.value.page 'Link' %}</a>
+    </li>
+    {% endfor %}
+    <li class="main-nav__item">
+      <a
+        class="main-nav-link {% if current_url == menu_item.value.page.url %}is-active{% endif %}"
+        href="{{ APPLY_SITE.root_url }}{% url 'users_public:login' %}"
+        data-theme="dark"
+      >Login</a>
+    </li>
+  </ul>
+</nav>

@@ -1,0 +1,15 @@
+//============================================================================//
+//
+//  GLOBAL GENERIC PLACEHOLDER
+//  N.B: DON'T modify only fix issues and fold back into placeholder module
+//
+//============================================================================//
+
+// VARS
+
+$placeholder-color: color(seed-grey) !default;
+$placeholder-opacity: .8 !default;
+
+// ELEMENTS
+
+@include placeholder($placeholder-color, $placeholder-opacity);

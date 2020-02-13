@@ -1,0 +1,23 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{{ page.content_text }}
+
+<div>
+  {% for block in page.section_1 %}
+  {% if block.block_type == 'sub_heading' %}
+  <h2>{{ block.value }}</h2>
+  {% endif %}
+  {% if block.block_type == 'persons' %}
+  {% include "reset_network_person/person.html" with person=block %}
+  {% endif %}
+  {% endfor %}
+</div>
+
+{% endblock %}
