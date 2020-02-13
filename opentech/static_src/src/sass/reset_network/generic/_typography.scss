@@ -1,0 +1,74 @@
+//============================================================================//
+//
+//  GLOBAL GENERIC TYPOGRAPHY
+//  N.B: DON'T modify only fix issues and fold back into typography module
+//
+//============================================================================//
+
+// VARS
+$paragraph-break: #{floor(($font-size-base * $line-height) / 2)}px !default;
+
+// ELEMENTS
+
+body {
+  @include font-size-sm();
+  @include font-base();
+  font-weight: $font-weight-regular;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  @include media-min-sm {
+    @include font-size-md();
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-top: 0;
+  margin-bottom: $paragraph-break;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li {
+  padding: 0;
+  word-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.2;
+
+  small {
+    font-size: 80%;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+ul,
+ol {
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,14 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{{ page.content_text | richtext }}
+
+<a href="mailto:{{ page.content_email }} ">{{ page.content_email }}</a>
+
+{% endblock %}
+

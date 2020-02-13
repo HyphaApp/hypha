@@ -1,0 +1,25 @@
+//================================================================================================//
+//
+//  THEME TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+@mixin themeSwitch($attr, $dark: seed-black, $light: seed-white) {
+  .theme-lightest &,
+  .theme-light &,
+  .theme-grey & {
+    @for $i from 1 through length($attr) {
+      $a: nth($attr, $i);
+      #{$a}: color($dark);
+    }
+  }
+
+  .theme-darkest &,
+  .theme-dark & {
+    @for $i from 1 through length($attr) {
+      $a: nth($attr, $i);
+      #{$a}: color($light);
+    }
+  }
+}

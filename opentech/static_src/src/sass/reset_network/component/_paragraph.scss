@@ -1,0 +1,483 @@
+//================================================================================================//
+//
+//  para COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$aside-width-sm: 480;
+$aside-width-lg: 535;
+$aside-width-xl: 590;
+
+$content-width: 650;
+$content-column-width-xs: 375;
+$content-column-width-sm: 425;
+$content-column-width-lg: 510;
+$content-column-width-xxl: 930;
+$content-intro-width: 820;
+
+$para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
+
+// ELEMENTS
+
+.para {
+  @include gutters-paragraph();
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  @include media-min-sm {
+    flex-direction: row;
+  }
+
+  &.theme-lightest {
+    + .para.theme-lightest {
+      padding-top: 0;
+    }
+  }
+
+  &.theme-light {
+    + .para.theme-light {
+      padding-top: 0;
+    }
+  }
+
+  &.theme-grey {
+    + .para.theme-grey {
+      padding-top: 0;
+    }
+  }
+
+  &.theme-dark {
+    + .para.theme-dark {
+      padding-top: 0;
+    }
+  }
+
+  &.theme-darkest {
+    + .para.theme-darkest {
+      padding-top: 0;
+    }
+  }
+
+  &:last-of-type {
+    padding-bottom: #{$gutter}px;
+
+    @include media-min-sm {
+      padding-bottom: #{$gutter-sm}px;
+    }
+
+    @include media-min-md {
+      padding-bottom: #{$gutter}px;
+    }
+  }
+
+  &.para--padding-offset-xl {
+    @include media-min-sm {
+      padding-bottom: #{$gutter-lg * 2}px;
+    }
+
+    @include media-min-md {
+      padding-bottom: #{$gutter-lg * 3}px;
+    }
+  }
+}
+
+.para--cards {
+  padding-top: #{$gutter}px;
+
+  @include media-min-sm {
+    padding-top: #{$gutter}px;
+  }
+
+  @include media-min-md {
+    padding-top: #{$gutter}px;
+  }
+}
+
+.para--intro {
+  padding-bottom: #{($gutter-xl * 2) + $gutter-xs}px;
+}
+
+.para--cards {
+
+}
+
+.para--content-left {}
+
+.para--content-right {
+  @include media-min-sm {
+    flex-direction: row-reverse;
+  }
+}
+
+.para__wrap {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  max-width: 100%;
+
+  @include media-min-xs {
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+
+  @include media-min-sm {
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .para--content-left &,
+  .para--lead &,
+  .para--rte &,
+  .para--intro & {
+    @include media-min-sm {
+      padding: 0 0 0 #{$para-sidebar-offset};
+    }
+
+    @include media-min-xl {
+      padding: 0 0 0 #{$sidebar-offset}px;
+    }
+  }
+
+  .para--content-left & {
+    @include media-min-sm {
+      justify-content: space-between;
+    }
+  }
+
+  .para--content-right & {
+    @include media-min-sm {
+      justify-content: flex-start;
+    }
+
+    @include media-min-md {
+      justify-content: space-between;
+      padding: 0 #{$para-sidebar-offset} 0 0;
+    }
+
+    @include media-min-xl {
+      padding: 0 #{$sidebar-offset}px 0 0;
+    }
+  }
+
+  .para--links & {
+    @include media-min-xs {
+      justify-content: flex-start;
+    }
+
+    @include media-min-sm {
+      padding: 0;
+      justify-content: space-between;
+    }
+
+    @include media-min-lg {
+      padding: 0 #{$para-sidebar-offset / 2} 0 0;
+    }
+
+    @include media-min-xl {
+      padding: 0 #{$sidebar-offset / 2}px 0 0;
+    }
+  }
+
+  .para--cards & {
+    @include media-min-sm {
+      padding: 0 0 0 #{$para-sidebar-offset};
+    }
+
+    @include media-min-md {
+      padding: 0 0 0 #{$para-sidebar-offset};
+    }
+
+    @include media-min-lg {
+      padding: 0 #{$para-sidebar-offset / 2} 0 #{$para-sidebar-offset};
+    }
+
+    @include media-min-xl {
+      padding: 0 #{$sidebar-offset / 2}px 0 #{$sidebar-offset}px;
+    }
+  }
+}
+
+.para__content {
+  flex: 1 1 auto;
+  max-width: 100%;
+  align-items: center;
+
+  .para--content-left & {
+    @include media-min-sm {
+      order: 1;
+    }
+  }
+
+  .para--content-right & {
+  }
+
+  .para--aside-lg & { }
+
+  .para--aside-xl & { }
+
+  .para--content-left &,
+  .para--content-right & {
+    @include media-min-sm {
+      max-width: #{$content-width}px;
+    }
+  }
+
+  .para--col-xs & {
+    @include media-min-sm {
+      max-width: #{$content-column-width-xs}px;
+    }
+  }
+
+  .para--col-sm & {
+    @include media-min-sm {
+      max-width: #{$content-column-width-sm}px;
+    }
+  }
+
+  .para--links & {
+    @include media-min-sm {
+      max-width: #{$content-column-width-lg}px;
+    }
+
+    @include media-min-md {
+      max-width: 650px;
+    }
+
+    @include media-min-lg {
+      max-width: 650px;
+    }
+  }
+
+  .para--cards & {
+    @include media-min-sm {
+      max-width: 810px;
+    }
+
+    @include media-min-md {
+      max-width: 1065px;
+    }
+  }
+}
+
+.para__title {
+  @include font-size-xxl();
+  font-family: $font-family-secondary;
+  flex: 0 0 100%;
+
+  h2 {
+    @include font-size-xxl();
+    font-weight: $font-weight-regular;
+
+    .para__intro {
+      @include font-size-omega();
+    }
+  }
+}
+
+.para__body {
+  @include pad-gutter-top();
+  align-self: center;
+  max-width: #{$content-intro-width}px;
+
+  .para--lead & {
+    font-weight: $font-weight-regular;
+    padding-top: 0;
+
+    @include font-size-xl();
+    font-family: $font-family-secondary;
+
+    @include media-min-md {
+      @include font-size-xxl();
+    }
+  }
+
+  .para--intro & {
+    column-count: 1;
+    column-gap: 35px;
+    break-inside: auto;
+
+    @include media-min-xs {
+      column-count: 2;
+    }
+
+    @include media-min-sm {
+      column-count: 1;
+      column-width: 100%;
+    }
+
+    @include media-min-md {
+      column-count: 2;
+      column-gap: 70px;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  .para--cards & {
+    max-width: 100%;
+  }
+}
+
+.para__aside {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  z-index: 5;
+  flex: 0 1 100%;
+  margin: 0 auto #{$gutter}px;
+  max-width: #{$aside-width-sm}px;
+  max-height: #{$aside-width-sm}px;
+
+  @include media-min-sm {
+    width: #{$aside-width-sm / 2}px;
+    margin: 0;
+  }
+
+  @include media-min-md {
+    width: #{$aside-width-sm / 1.5}px;
+  }
+
+  @include media-min-lg {
+    width: #{$aside-width-sm}px;
+  }
+
+  .para--content-left & {
+    @include media-min-sm {
+      order: 2;
+      flex: 0 0 30vw;
+      transform: translateX(#{$gutter-sm}px);
+    }
+
+    @include media-min-md {
+      transform: translateX(#{$gutter}px);
+    }
+  }
+
+  .para--content-right & {
+    @include media-min-sm {
+      transform: translateX(-#{$gutter-sm}px);
+      flex: 0 0 30vw;
+    }
+
+    @include media-min-md {
+      transform: translateX(-#{$gutter}px);
+    }
+  }
+
+  .para--aside-offset & {
+    @include media-min-sm {
+      margin-top: -#{$gutter-lg * 2}px;
+    }
+
+    @include media-min-md {
+      margin-top: -#{$gutter-xl * 2}px;
+    }
+  }
+
+  .para--aside-offset-xl & {
+    @include media-min-sm {
+      margin-top: -#{$gutter-lg * 2}px;
+    }
+
+    @include media-min-md {
+      margin-top: -#{$gutter-xl * 3}px;
+    }
+  }
+
+  .para--aside-lg & {
+    max-width: #{$aside-width-lg}px;
+    max-height: #{$aside-width-lg}px;
+
+    @include media-min-sm { }
+
+    @include media-min-md {
+      flex: 0 0 40vw;
+    }
+  }
+
+  .para--aside-xl & {
+    max-width: #{$aside-width-xl}px;
+    max-height: #{$aside-width-xl}px;
+
+    @include media-min-sm { }
+
+    @include media-min-md {
+      flex: 0 0 45vw;
+    }
+  }
+
+  .para--intro + .para--aside-offset-xl & {
+    margin-top: -#{$gutter-lg * 3.5}px;
+
+    @include media-min-sm {
+      margin-top: -#{$gutter-lg * 2}px;
+    }
+
+    @include media-min-md {
+      margin-top: -#{$gutter-lg * 5}px;
+    }
+  }
+}
+
+.para__action {
+  @include gutter-top();
+}
+
+.para__link {
+  @include animate(opacity);
+  @include font-size-sm();
+  font-family: $font-family-primary;
+  margin-left: 10px;
+
+  &,
+  &:link,
+  &:visited {
+    opacity: .5;
+    text-decoration: none;
+
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      color: color(seed-black);
+    }
+
+    .theme-light &,
+    .theme-lightest & {
+      color: color(seed-white);
+    }
+  }
+
+  &:hover,
+  &:active {
+    opacity: 1;
+  }
+}
+
+// TITLE IMAGE AREA
+
+.title-image {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.title-image--sm {
+  @include media-min-xs() {
+    display: none;
+  }
+}
+
+.title-image--lg {
+  display: none;
+  @include media-min-xs() {
+    display: block;
+  }
+}

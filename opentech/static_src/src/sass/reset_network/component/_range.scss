@@ -1,0 +1,141 @@
+//================================================================================================//
+//
+//  RANGE COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$range-track: color(seed-white, -25) !default;
+$range-track-hover: color(seed-white, -10) !default;
+$range-track-border: color(seed-white, -25) !default;
+$range-track-border-hover: color(seed-grey) !default;
+$range-thumb: color(seed-grey, -50) !default;
+$range-thumb-border: color(seed-grey, -50) !default;
+$range-thumb-hover: color(seed-blue) !default;
+$range-thumb-border-hover: color(seed-blue) !default;
+$range-thumb-radius: 10 !default;
+$range-thumb-height: 20 !default;
+$range-thumb-width: 20 !default;
+$range-thumb-border-width: 2 !default;
+$range-track-width: 100% !default;
+$range-track-height: 10 !default;
+$range-track-border-width: 0 !default;
+$range-track-radius: 9 !default;
+$range-inset-shadow: inset 0 5px 5px -5px color(seed-grey, 25);
+$range-thumb-inset-shadow: inset 0 5px 5px -5px color(seed-white), 0 2px 10px -2px color(seed-black);
+
+// ELEMENTS
+
+.range {
+  border-width: 0;
+  background-color: transparent;
+  padding: 0 10px;
+  margin: 0 -10px;
+  width: calc(100% + 20px);
+}
+
+.range__field {
+  cursor: pointer;
+  appearance: none;
+  margin: #{$range-thumb-height / 2}px 0;
+  padding: 0;
+  width: $range-track-width;
+  overflow: visible;
+  background-color: transparent;
+
+  &:hover,
+  &:focus {
+    &::-webkit-slider-runnable-track {
+      background: $range-track-hover;
+      border-color: $range-track-border-hover;
+    }
+
+    &::-ms-fill-lower {
+      background: $range-track-hover;
+      border-color: $range-track-border-hover;
+    }
+
+    &::-ms-fill-upper {
+      background: $range-track-hover;
+      border-color: $range-track-border-hover;
+    }
+
+    &::-moz-range-track {
+      background: $range-track-hover;
+      border-color: $range-track-border-hover;
+    }
+
+    &::-webkit-slider-thumb {
+      background: $range-thumb-hover;
+      border-color: $range-thumb-border-hover;
+    }
+
+    &::-moz-range-thumb {
+      background: $range-thumb-hover;
+      border-color: $range-thumb-border-hover;
+    }
+
+    &::-ms-thumb {
+      background: $range-thumb-hover;
+      border-color: $range-thumb-border-hover;
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track($range-track-height, $range-track-width);
+    background-color: $range-track;
+    border: none;
+    border-radius: #{$range-track-radius}px;
+  }
+
+  &::-webkit-slider-thumb {
+    @include animate(background-color border-color);
+    @include thumb($range-thumb, $range-thumb-radius, $range-thumb-height, $range-thumb-width);
+    -webkit-appearance: none;
+    margin-top: #{(($range-track-border-width + $range-track-height) / 2) - ($range-thumb-height / 2)}px;
+    border: #{$range-thumb-border-width}px solid $range-thumb-border;
+    box-shadow: $range-thumb-inset-shadow;
+  }
+
+  &::-moz-range-track {
+    @include track($range-track-height, $range-track-width);
+    background-color: $range-track;
+    border: none;
+    border-radius: #{$range-track-radius}px;
+  }
+
+  &::-moz-range-thumb {
+    @include animate(background-color border-color);
+    @include thumb($range-thumb, $range-thumb-radius, $range-thumb-height, $range-thumb-width);
+    margin-top: #{(($range-track-border-width + $range-track-height) / 2) - ($range-thumb-height / 2)}px;
+    border: #{$range-thumb-border-width}px solid $range-thumb-border;
+    box-shadow: $range-thumb-inset-shadow;
+  }
+
+  &::-ms-track {
+    @include track($range-track-height, $range-track-width);
+    background: transparent;
+    border-color: transparent;
+    border-width: 0;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower {
+    background-color: $range-track;
+    border: none;
+    border-radius: #{$range-track-radius * 2}px;
+  }
+
+  &::-ms-fill-upper {
+    background-color: $range-track;
+    border: none;
+    border-radius: #{$range-track-radius * 2}px;
+  }
+
+  &::-ms-thumb {
+    @include animate(background-color border-color);
+    @include thumb($range-thumb, $range-thumb-radius, $range-thumb-height, $range-thumb-width);
+    margin-top: 0;
+  }
+}

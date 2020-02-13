@@ -1,0 +1,76 @@
+//================================================================================================//
+//
+//  DEBUG SCOPE
+//  N.B: DON'T modify only fix issues and fold back into debug module
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.debug {
+  // stylelint-disable
+  // INLINE STYLE
+  *[style] {
+      outline: 5px solid red !important;
+  }
+
+  // IMAGES
+  img {
+      outline: 5px solid red !important;
+  }
+
+  img[alt] {
+      outline: none !important;
+  }
+
+  img[alt=""] {
+      outline-color: yellow !important;
+  }
+
+  // LINKS
+  a[href="#"] {
+      outline: 5px solid yellow !important;
+  }
+
+  // EMPTY ELEMENTS
+  [class=""],
+  [id=""],
+  p:empty,
+  a:empty,
+  span:empty,
+  ul:empty,
+  ol:empty,
+  li:empty,
+  dl:empty,
+  dt:empty,
+  dd:empty,
+  table:empty,
+  td:empty,
+  th:empty,
+  thead:empty,
+  tbody:empty {
+      outline: 5px solid yellow !important;
+  }
+
+  // DEPRECIATED IN HTML5
+  basefont,
+  big,
+  center,
+  font,
+  strike,
+  tt,
+  frame,
+  frameset,
+  noframes,
+  acronym,
+  applet,
+  isindex,
+  dir,
+  b {
+      outline: 5px solid red !important;
+  }
+
+  // stylelint-enable 
+}

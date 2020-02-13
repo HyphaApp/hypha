@@ -1,0 +1,173 @@
+
+{% extends "reset_network/base.html" %}
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}theme-darkest{% endblock %}
+
+{% block content %}
+
+<div class="banner banner--tall theme-darkest" data-theme="dark">
+  <div class="banner__wrap contain">
+    <div class="banner__content">
+      <div class="gif-img js-gif-img" aria-hidden="true">
+        {% if page.content_heading_gif_desktop %}
+        <img class="gif-img__img hide@sm" src="{{ page.content_heading_gif_desktop.url }}"/>
+        {% endif %}
+        {% if page.content_heading_gif_mobile %}
+        <img class="gif-img__img show@sm" src="{{ page.content_heading_gif_mobile.url }}"/>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# main content #}
+<section class="para para--lead theme-dark" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <div class="para__title sr-only">
+        <h1>{{ page.content_heading }}</h1>
+      </div>
+      <div class="para__body rte">
+        {{ page.content_text|linebreaks  }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 1 #}
+<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_1_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_1_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_1_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 2 #}
+<section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_2_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_2_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_2_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 3 #}
+<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_3_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_3_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_3_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 4 #}
+<section class="para para--content-left para--aside-lg para--padding-offset-xl para--col-sm theme-dark" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_4_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_4_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_4_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 5 #}
+<section class="para para--content-right para--aside-lg para--col-sm para--aside-offset-xl theme-darkest" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_5_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_5_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+      {{ page.section_5_text|linebreaks }}
+      </div>
+      <div class="para__action">
+        {% if page.section_5_link and page.section_5_link_text %}
+          <a href="{% pageurl page.section_5_link %}" class="button">
+            <span class="button__drop"></span>
+            <span class="button__label">{{ page.section_5_link_text }}</span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# section 6 #}
+<section class="para para--content-left para--aside-lg para--col-sm theme-darkest" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_6_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_6_heading }}</h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_6_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

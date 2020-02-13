@@ -1,0 +1,15 @@
+
+//============================================================================//
+//
+//  GLOBAL GENERIC AUTOFILL
+//  N.B: DON'T modify only fix issues and fold back into placeholder module
+//
+//============================================================================//
+
+// VARS
+
+// ELEMENTS
+
+input:-webkit-autofill {
+  -webkit-box-shadow: inset 0 0 0 9999px color(seed-white);
+}

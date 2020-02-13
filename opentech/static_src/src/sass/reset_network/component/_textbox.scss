@@ -1,0 +1,92 @@
+//================================================================================================//
+//
+//  TEXTBOX COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$textbox-bg: color(seed-white) !default;
+$textbox-border: color(seed-grey) !default;
+$textbox-border-hover: color(seed-black) !default;
+$textbox-border-warning: color(seed-orange) !default;
+$textbox-border-error: color(seed-red) !default;
+$textbox-border-success: color(seed-green) !default;
+$textbox-field-background: color(seed-white, null, 0) !default;
+$textbox-field-background-focus: color(seed-white) !default;
+$textbox-field-text-disabled: color(seed-grey) !default;
+$textbox-line-height: 1.2 !default;
+$textbox-line-height-multiline: 1.5 !default;
+$textbox-radius: 0 !default;
+$textbox-inset-shadow: inset 0 5px 5px -5px color(seed-grey, 25) !default;
+$textbox-warning: $color-warning !default;
+$textbox-warning-border: $color-warning-border !default;
+$textbox-warning-bg: $color-warning-bg !default;
+$textbox-error: $color-error !default;
+$textbox-error-border: $color-error-border !default;
+$textbox-error-bg: $color-error-bg !default;
+$textbox-success: $color-success !default;
+$textbox-success-border: $color-success-border !default;
+$textbox-success-bg: $color-success-bg !default;
+$textbox-disabled: $color-disabled !default;
+$textbox-disabled-border: $color-disabled-border !default;
+$textbox-disabled-bg: $color-disabled-bg !default;
+
+// ELEMENTS
+
+.textbox {
+  @include animate(border-color);
+  background-color: $textbox-bg;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $textbox-border;
+  border-radius: #{$textbox-radius}px;
+  min-height: 34px;
+
+  &.is-active,
+  &:hover {
+    border-color: $textbox-border-hover;
+  }
+
+  .is-warning & {
+    border-color: $textbox-warning-border;
+    background-color: $textbox-warning-bg;
+  }
+
+  .is-error & {
+    border-color: $textbox-error-border;
+    background-color: $textbox-error-bg;
+  }
+
+  .is-success & {
+    border-color: $textbox-success-border;
+    background-color: $textbox-success-bg;
+  }
+
+  .is-disabled & {
+    border-color: $textbox-disabled-border;
+    background-color: $textbox-disabled-bg;
+  }
+}
+
+.textbox__field {
+  @include animate(outline);
+  outline: 2px solid color(seed-white, null, 0);
+  border-width: 0;
+  border-radius: #{$size-xs}px;
+  background-color: color(seed-white, null, 0);
+  line-height: 1;
+  min-height: 38px;
+
+  &:focus {
+    outline: 2px solid $color-focus-border;
+
+    .focus-disabled & {
+      outline: none;
+    }
+  }
+}
+
+textarea.textbox__field {
+  min-height: 150px;
+}

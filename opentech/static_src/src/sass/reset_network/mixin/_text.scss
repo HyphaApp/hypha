@@ -1,0 +1,24 @@
+//================================================================================================//
+//
+//  TEXT TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+@mixin text-start() {
+  text-align: left;
+  @include rtl() {
+    text-align: right;
+  }
+}
+
+@mixin text-end() {
+  text-align: right;
+  @include rtl() {
+    text-align: left;
+  }
+}
+
+@mixin text-center() {
+  text-align: center;
+}

@@ -1,0 +1,239 @@
+//================================================================================================//
+//
+//  INPUT STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+$addon-offset: 2 !default;
+$field-offset: 1 !default;
+$inline-label-margin: 220 !default;
+$input-note: color(text-dark) !default;
+$input-disabled: color(text-dark) !default;
+
+// CONTAINERS
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+
+  @include media-min-xs {
+    flex-direction: row;
+  }
+
+  .input + .input {
+    margin: 10px 0 0;
+
+    @include media-min-xs {
+      margin: 0 0 0 10px;
+    }
+  }
+}
+
+.input-group--vertical {
+  flex-direction: column;
+
+  .input + .input {
+    margin: 10px 0 0;
+  }
+}
+
+.input-group--flush {
+  .input + .input {
+    margin: 0;
+
+    @include media-min-xs {
+      margin: 0;
+    }
+  }
+}
+
+// ELEMENTS
+
+.input {
+  position: relative;
+  width: 100%;
+}
+
+.input--inline {
+  @include media-min-xs {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.input--compact {}
+
+.input--xs {
+  @include media-min-xs {
+    width: 12%;
+    min-width: 100px;
+    max-width: 150px;
+  }
+}
+
+.input--sm {
+  @include media-min-xs {
+    min-width: 100px;
+    width: 25%;
+  }
+}
+
+.input--md {
+  @include media-min-xs {
+    min-width: 175px;
+    width: 50%;
+  }
+}
+
+.input--lg {
+  @include media-min-xs {
+    min-width: 250px;
+    width: 75%;
+  }
+}
+
+.input__label {
+  margin: 0 0 5px;
+  display: block;
+
+  .input--inline & {
+    @include media-min-xs {
+      margin: 0 10px;
+      text-align: right;
+      min-width: 120px;
+      width: 25%;
+      max-width: #{$inline-label-margin}px;
+    }
+  }
+
+  .input--compact & {
+    @include media-min-xs {
+      width: auto;
+      max-width: none;
+      min-width: 0;
+    }
+  }
+}
+
+.input__addon {
+  @include font-size-md();
+  padding: #{$size-sm + $addon-offset}px #{$size-sm}px #{$size-sm - $addon-offset}px;
+  position: relative;
+  line-height: 1;
+  flex: 0 0 auto;
+  z-index: 1;
+  white-space: nowrap;
+
+  .input__field + & {
+    padding-left: 0;
+  }
+
+  .input__focus + & {
+    padding: #{$size-sm + $addon-offset}px #{$size-sm}px #{$size-sm - $addon-offset}px 0;
+  }
+}
+
+.input__wrap {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+
+  .input--realign & {
+    flex-direction: column;
+    align-items: center;
+
+    @include media-min-sm {
+      flex-direction: row;
+    }
+  }
+}
+
+.input__field {
+  @include font-size-md();
+  border-radius: 0;
+  border: none;
+  position: relative;
+  padding: 20px 20px 19px 20px;
+  z-index: 1;
+  flex: 1 1 auto;
+
+  .input__addon + & {
+    padding-left: 0;
+    flex: 1 1 auto;
+  }
+
+  .input--realign & {
+    width: 100%;
+  }
+
+  .input--realign .input__addon + & {
+    padding-left: 6px;
+
+    @include media-min-xs {
+      padding-left: 0;
+    }
+  }
+
+  &[disabled],
+  &:disabled {
+    color: $input-disabled;
+    cursor: default !important; // stylelint-disable-line declaration-no-important
+  }
+
+  &[type=week],
+  &[type=time],
+  &[type=month],
+  &[type=date],
+  &[type=datetime-local] {
+    padding: 6px 10px 5px 6px;
+  }
+
+  &[type=color] {
+    padding: 1px 2px;
+    min-height: 38px;
+  }
+
+  &[type=radio],
+  &[type=checkbox] {
+    appearance: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.input__button {
+  position: relative;
+  z-index: 1;
+
+  .input > & {
+    margin-top: 5px 0 0;
+    width: 100%;
+  }
+
+  .input--inline > & {
+    @include media-min-xs {
+      width: auto;
+      margin: 0;
+      align-self: stretch;
+    }
+  }
+}
+
+.input__validation {
+  margin-top: 5px;
+}
+
+.input__note {
+  @include themeSwitch(color, text-dark, text-light);
+  position: relative;
+  width: 100%;
+  margin: -5px 0 5px 0;
+}

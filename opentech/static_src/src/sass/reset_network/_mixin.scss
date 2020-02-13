@@ -1,0 +1,21 @@
+//============================================================================//
+//
+// MIXINS
+// The mixins layer comes after the Settings layer because a mixin may require
+// one of the global settings as a default parameter.
+//
+//============================================================================//
+
+@import 'mixin/anchors';
+@import 'mixin/animations';
+@import 'mixin/clearing';
+@import 'mixin/fonts';
+@import 'mixin/fontsizes';
+@import 'mixin/grids';
+@import 'mixin/gutters';
+@import 'mixin/mediaqueries';
+@import 'mixin/modes';
+@import 'mixin/input';
+@import 'mixin/placeholder';
+@import 'mixin/text';
+@import 'mixin/theme';

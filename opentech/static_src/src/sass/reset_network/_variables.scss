@@ -1,0 +1,190 @@
+//============================================================================//
+//
+//  GLOBAL VARIABLES
+//  N.B: DON'T modify only fix issues and fold back into main module
+//
+//============================================================================//
+
+// SETUP
+// FONT SIZES
+$font-size-base: 16;
+
+$font-size-min: 8;
+$font-size-xxxs: 10;
+$font-size-xxs: 11;
+$font-size-xs: 12;
+$font-size-sm: 14;
+$font-size-md: $font-size-base;
+$font-size-lg: 18;
+$font-size-xl: 23;
+$font-size-xxl: 38;
+$font-size-xxxl: 45;
+$font-size-max: 58;
+$font-size-omega: 72;
+
+$font-weight-light: 100;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-heavy: 700;
+
+// PADDING/MARGIN/GUTTER SIZING
+$size-min: 1;
+$size-xxs: 2;
+$size-xs: 5;
+$size-sm: 10;
+$size-md: 15;
+$size-lg: 20;
+$size-xl: 25;
+$size-xxl: 30;
+$size-max: 40;
+
+// MEDIA BREAKS
+$media-xxs: 320;
+$media-xs: 640;
+$media-sm: 768;
+$media-md: 992;
+$media-lg: 1200;
+$media-xl: 1540;
+$media-xxl: 1920;
+
+$media-min: $media-xxs;
+$media-max: $media-lg;
+
+// GRID
+$grid-width-lg: 1440;
+$grid-width-max: $grid-width-lg;
+
+$grid-cols: 12;
+$grid-gutter: 21;
+
+// LAYOUT
+$sidebar-offset: 250;
+
+// GUTTERS
+$gutter-xs: 25;
+$gutter-sm: 30;
+$gutter: 50;
+$gutter-lg: 60;
+$gutter-xl: 85;
+$gutter-xxl: 115;
+$gutter-max: 160;
+
+// ELEVATION
+$z-index-content:             0;
+$z-index-spinner:             5;
+$z-index-tools:               10;
+$z-index-tooltip:             20;
+$z-index-mask:                30;
+$z-index-modal:               40;
+$z-index-menu:                60;
+$z-index-notification:        70;
+$z-index-unsupported:         80;
+$z-index-loading:             90;
+$z-index-access:              100;
+
+//============================================================================//
+//
+//  PROJECT VARIABLES
+//
+//============================================================================//
+
+// GENERICS
+$global-fieldset-border:      color(seed-grey, -50);
+$global-svg-fill:             color(seed-black);
+$global-abbr-border:          color(seed-green);
+$global-page-bg:              color(seed-black);
+$global-text:                 color(text-darkest);
+$global-mark-bg:              color(seed-red);
+
+$global-line-height:          1.2;
+$global-page-width:           1440;
+
+// COLOURS
+$color-info:                  color(seed-blue, -50);
+$color-info-bg:               color(seed-blue, 75);
+$color-info-border:           color(seed-blue);
+
+$color-warning:               color(seed-orange, -50);
+$color-warning-bg:            color(seed-orange, 75);
+$color-warning-border:        color(seed-orange);
+
+$color-error:                 color(seed-red, -50);
+$color-error-bg:              color(seed-red, 75);
+$color-error-border:          color(seed-red);
+
+$color-success:               color(seed-green, -50);
+$color-success-bg:            color(seed-green, 75);
+$color-success-border:        color(seed-green);
+
+$color-disabled:              color(seed-grey, -25);
+$color-disabled-bg:           color(seed-grey, 50);
+$color-disabled-border:       color(seed-grey);
+
+$color-anchor-link:           color(seed-blue, -25);
+$color-anchor-visited:        color(seed-blue, -50);
+$color-anchor-hover:          color(seed-blue, 25);
+$color-anchor-focus:          color(seed-green);
+$color-anchor-active:         color(seed-red);
+$color-anchor-tap:            color(seed-black);
+
+$color-access-border:         color(seed-green);
+$color-focus-border:          color(seed-orange);
+$color-focus-bg:              color(seed-orange);
+$color-placeholder:           color(seed-grey, -25);
+$color-selection:             color(seed-blue, 25);
+
+// ICONS
+$icon-xs:                     8;
+$icon-sm:                     12;
+$icon-md:                     16;
+$icon-lg:                     32;
+$icon-xl:                     55;
+
+$btn-icon-xs:                 8;
+$btn-icon-sm:                 12;
+$btn-icon-md:                 16;
+$btn-icon-lg:                 32;
+$btn-icon-xl:                 55;
+
+// ANIMATIONS
+$easing:                      cubic-bezier(.4, 0, .2, 1);
+$easing-inout:                cubic-bezier(.3, 0, .7, 1);
+$easing-inverse:              cubic-bezier(0, .7, 1, .3);
+$animation-speed-fast:        250ms;
+$animation-speed-medium:      500ms;
+$animation-speed-slow:        750ms;
+$interaction-percent:         5%;
+
+// TYPOGRAPHY
+$font-folder :                '/static/fonts/';
+$font-family-base:            Helvetica, Arial, sans-serif;
+$font-family-primary:         Helvetica, Arial, sans-serif;
+$font-family-secondary:       Sectra, serif;
+
+$letter-spacing:              .35;
+$line-height:                 1.75;
+$line-height-heading:         1.2;
+
+// SCROLLBARS
+$color-scrollbar-bg:          transparent;
+$color-scrollbar-border:      transparent;
+$color-scrollbar-thumb:       color(seed-black, null, .75);
+$scrollbar-size:              10px;
+
+// DEPTH
+$depth-shadow-0: 0 0 0 0 color(seed-black, null, 0), 0 0 0 0 color(seed-black, null, 0);
+$depth-shadow-1: 0 1px 4px 0 color(seed-black, null, .8), 0 0 0 0 color(seed-black, null, 0);
+$depth-shadow-2: 0 6px 10px 0 color(seed-black, null, .5), 0 2px 2px 0 color(seed-black, null, .8);
+$depth-shadow-3: 0 13px 25px 0 color(seed-black, null, .5), 0 11px 7px 0 color(seed-black, null, .95);
+$depth-shadow-4: 0 20px 40px 0 color(seed-black, null, .5), 0 14px 2px 0 color(seed-black, null, .95);
+$depth-shadow-5: 0 27px 55px 0 color(seed-black, null, .5), 0 17px 17px 0 color(seed-black, null, .95);
+
+// TEXT DEPTH
+$text-shadow-0: 0 0 0 color(seed-black, null, 0), 0 0 0 color(seed-black, null, 0);
+$text-shadow-1: 0 1px 2px color(seed-black, null, .5), 0 0 0 color(seed-black, null, 0);
+$text-shadow-2: 0 6px 10px color(seed-black, null, .5), 0 2px 2px color(seed-black, null, .41);
+$text-shadow-3: 0 13px 25px color(seed-black, null, .5), 0 11px 7px color(seed-black, null, .41);
+$text-shadow-4: 0 20px 40px color(seed-black, null, .5), 0 14px 2px color(seed-black, null, .43);
+$text-shadow-5: 0 27px 55px color(seed-black, null, .5), 0 17px 17px color(seed-black, null, .45);
+
+$btn-svg-shadow-1: 0 1px 2px color(seed-black, null, .5);

@@ -1,0 +1,202 @@
+//================================================================================================//
+//
+//  RTE Module
+//
+//================================================================================================//
+
+// VARS
+
+// MODULE
+
+.rte {
+  line-height: $line-height;
+
+  h1 {
+    @include font-size-max;
+  }
+
+  h2,
+  h3 {
+    @include font-size-xl;
+    @include media-min-sm {
+      @include font-size-xxl;
+    }
+  }
+
+  h3 {
+    border-width: 0 0 1px;
+    border-style: solid;
+    padding: 0 0 #{$gutter-xs}px;
+    margin: 0 0 #{$gutter-xs}px;
+
+    @include media-min-md {
+      padding: 0 0 #{$gutter-sm}px;
+      margin: 0 0 #{$gutter-sm}px;
+    }
+
+    .theme-dark & {
+      color: color(seed-white);
+    }
+  }
+
+  h4 {
+    @include font-size-md;
+    @include media-min-sm {
+      @include font-size-lg;
+    }
+  }
+
+  h5 {
+    @include font-size-sm;
+    @include media-min-sm {
+      @include font-size-md;
+    }
+  }
+
+  h6 {
+    @include font-size-sm;
+    font-style: italic;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @include gutters-vertical();
+    font-family: $font-family-secondary;
+    font-weight: $font-weight-regular;
+    line-height: $line-height-heading;
+
+    + h1,
+    + h2,
+    + h3,
+    + h4,
+    + h5,
+    + h6 {
+      margin: 0 0 #{ceil($font-size-base * $line-height)}px;
+    }
+  }
+
+  hr {
+    display: block;
+    height: 2px;
+    border-width: 0;
+
+    &::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  ol,
+  ul {
+    margin: 0 0 #{ceil($font-size-base * $line-height)}px;
+    padding: 0 0 0 #{$size-xl}px;
+
+    ol,
+    ul {
+      margin: 0 0 #{ceil($font-size-base * $line-height / 2)}px;
+    }
+  }
+
+  li {
+    margin-bottom: 0;
+  }
+
+  b,
+  strong {
+    font-weight: $font-weight-heavy;
+  }
+
+  i,
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  strike {
+    text-decoration: line-through;
+  }
+
+  del {
+    text-decoration: line-through;
+  }
+
+  // TABLES
+
+  table {
+    border-collapse: collapse;
+    border-width: 2px 0 0 2px;
+    border-style: solid;
+    width: 100%;
+  }
+
+  tr {}
+
+  th,
+  td {
+    text-align: center;
+    padding: 10px 15px;
+    vertical-align: top;
+    border-width: 0 2px 2px 0;
+    border-style: solid;
+
+    &:first-child {
+      text-align: left;
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  thead th,
+  thead td {
+    padding: 10px 15px;
+    vertical-align: middle;
+  }
+
+  blockquote {
+    @include font-size-xl();
+    padding: 0 0 0 20px;
+    border-width: 0 0 0 10px;
+    border-style: solid;
+
+    footer {
+      @include font-size-sm();
+
+      &::before {
+        content: '\2014';
+      }
+    }
+  }
+
+  pre {}
+
+  address,
+  blockquote,
+  dl,
+  hr,
+  p,
+  table {
+    margin: 0 0 #{ceil($font-size-base * $line-height)}px;
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}

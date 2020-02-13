@@ -1,0 +1,87 @@
+//================================================================================================//
+//
+//  CAROUSEL COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$carousel-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
+$carousel-max-width: 820px;
+
+// CONTAINERS
+
+.hero-carousel {
+  @include gutters-hero-carousel();
+  backface-visibility: hidden;
+  opacity: 0;
+  overflow-x: hidden;
+  transition: opacity $animation-speed-slow;
+  will-change: opacity;
+
+  &.is-displayed {
+    opacity: 1;
+  }
+
+  &.is-collapsed {
+    .hero-carousel__item {
+      transition: opacity $animation-speed-slow;
+    }
+
+    .hero-carousel__lvl-3 {
+      margin: 0 !important; // stylelint-disable-line declaration-no-important
+      transition: margin $animation-speed-slow;
+    }
+  }
+}
+
+.hero-carousel__lvl-1 {
+  @include media-min-sm {
+    padding: 0 0 0 #{$carousel-sidebar-offset};
+  }
+
+  @include media-min-xl {
+    padding: 0 0 0 #{$sidebar-offset}px;
+  }
+}
+
+.hero-carousel__lvl-2 {
+  max-width: $carousel-max-width;
+}
+
+.hero-carousel__lvl-3 {
+  will-change: margin;
+}
+
+.hero-carousel__list {
+  list-style: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0 0 56.25%;
+  position: relative;
+}
+
+.hero-carousel__item {
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  opacity: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity $animation-speed-fast;
+  max-width: 100%;
+  will-change: opacity;
+
+  &.is-displayed {
+    opacity: 1;
+  }
+}
+
+.hero-carousel__image {
+  @include animate(max-width);
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+}
