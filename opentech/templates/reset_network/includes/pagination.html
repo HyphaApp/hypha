@@ -1,0 +1,24 @@
+{{ resource }}
+{% if resource.paginator.num_pages > 1 %}
+<div class="pagination">
+  {% if resource.has_previous %}
+  <span class="previous">
+    <a href="?page=1">First</a>
+    <a href="?page={{ resource.previous_page_number }}">Prev</a>
+  </span>
+  {% endif %}
+  <ul class="pages">
+    {% for page_num in resource.paginator.page_range %}
+    <li class="pages__item{% if page_num == resource.number %} active{% endif %}">
+      <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% if resource.has_next %}
+  <span class="next">
+    <a href="?page={{ resource.next_page_number }}">Next</a>
+    <a href="?page={{ resource.paginator.num_pages }}">Last</a>
+  </span>
+  {% endif %}
+</div>
+{% endif %}

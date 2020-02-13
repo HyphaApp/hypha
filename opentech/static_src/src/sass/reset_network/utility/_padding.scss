@@ -1,0 +1,93 @@
+//================================================================================================//
+//
+//  PADDING UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//================================================================================================//
+
+// ELEMENTS
+
+.padding-0 {
+  padding: 0;
+}
+
+.padding-xs {
+  padding: #{$size-xs}px;
+}
+
+.padding-sm {
+  padding: #{$size-sm}px;
+}
+
+.padding-md {
+  padding: #{$size-md}px;
+}
+
+.padding-lg {
+  padding: #{$size-lg}px;
+}
+
+.padding-xl {
+  padding: #{$size-xl}px;
+}
+
+.padding-vertical-0 {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.padding-vertical-xs {
+  padding-bottom: #{$size-xs}px;
+  padding-top: #{$size-xs}px;
+}
+
+.padding-vertical-sm {
+  padding-bottom: #{$size-sm}px;
+  padding-top: #{$size-sm}px;
+}
+
+.padding-vertical-md {
+  padding-bottom: #{$size-md}px;
+  padding-top: #{$size-md}px;
+}
+
+.padding-vertical-lg {
+  padding-bottom: #{$size-lg}px;
+  padding-top: #{$size-lg}px;
+}
+
+.padding-vertical-xl {
+  padding-bottom: #{$size-xl}px;
+  padding-top: #{$size-xl}px;
+}
+
+.padding-horizontal-0 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.padding-horizontal-xs {
+  padding-left: #{$size-xs}px;
+  padding-right: #{$size-xs}px;
+}
+
+.padding-horizontal-sm {
+  padding-left: #{$size-sm}px;
+  padding-right: #{$size-sm}px;
+}
+
+.padding-horizontal-md {
+  padding-left: #{$size-md}px;
+  padding-right: #{$size-md}px;
+}
+
+.padding-horizontal-lg {
+  padding-left: #{$size-lg}px;
+  padding-right: #{$size-lg}px;
+}
+
+.padding-horizontal-xl {
+  padding-left: #{$size-xl}px;
+  padding-right: #{$size-xl}px;
+}

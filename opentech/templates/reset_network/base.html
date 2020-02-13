@@ -1,0 +1,79 @@
+{% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags menu_tags cookie_accept_tags %}
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} |
+{% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}
+</title>
+<link rel="stylesheet" href="{% static 'css/reset_network.css' %}">
+{% block extra_css %}{% endblock %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+</head>
+<body class="{% block body_class %}theme-grey{% endblock %}">
+
+{% wagtailuserbar %}
+
+{% include 'reset_network/includes/access.html' %}
+
+{% include 'reset_network/includes/messages.html' %}
+
+<div class="stage">
+
+  <button type="button" class="stage__drawer-toggle-btn" aria-label="Open menu" id="open-drawer-btn"></button>
+
+  <div id="stage-header" class="stage__header" aria-hidden="true">
+    <div class="artifact artifact--1">Project Alpha</div>
+    <div class="artifact artifact--2">
+      <span class="artifact-feature artifact-feature--1"></span>
+      <span class="artifact-feature artifact-feature--2"></span>
+    </div>
+    <div class="artifact artifact--3"></div>
+    <div class="artifact artifact--4">
+      <span class="artifact-feature artifact-feature--1"></span>
+      <span class="artifact-feature artifact-feature--2"></span>
+      <span class="artifact-feature artifact-feature--3"></span>
+      <span class="artifact-feature artifact-feature--4"></span>
+      <span class="artifact-feature artifact-feature--5"></span>
+    </div>
+  </div>
+
+  <div class="stage__nav" id="stage-nav">
+    <div class="main-nav-container">
+      {% resetnetworkmainmenu %}
+    </div>
+  </div>
+
+  <div class="stage__drawer" aria-hidden="true" id="stage-drawer">
+    <button class="stage__drawer-close" type="button" aria-label="Close menu" id="close-drawer-btn"></button>
+    <div class="main-nav-container scrollbars">
+      {% resetnetworkmainmenu %}
+    </div>
+  </div>
+
+  <main id="#content" class="stage__main" data-stage>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="stage__footer footer contain">
+    {% resetnetworkfootermenu %}
+  </footer>
+</div>
+
+{% include 'reset_network/includes/foot.html' %}
+
+{% resetnetworkcookieaccept %}
+
+{% include "reset_network/includes/svgs.html" %}
+
+{% block extra_js %}{% endblock %}
+<script src="{% static 'js/reset-network/animations.js' %}"></script>
+<script src="{% static 'js/reset-network/tracking.js' %}"></script>
+<script src="{% static 'js/reset-network/carousel.js' %}"></script>
+<script src="{% static 'js/reset-network/menu.js' %}"></script>
+<script src="{% static 'js/reset-network/scroll.js' %}"></script>
+
+</body>
+</html>

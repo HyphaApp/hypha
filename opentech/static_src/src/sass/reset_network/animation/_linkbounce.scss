@@ -1,0 +1,50 @@
+//================================================================================================//
+//
+//  LinkBounce ANIMATIONS
+//
+//================================================================================================//
+
+// KEYFRAMES
+
+@keyframes linkBounce {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(20px);
+  }
+}
+@keyframes linkBounceShort {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes linkAfterCenterBounce {
+  0%,
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-50%) translateX(20px);
+  }
+}
+
+@keyframes linkBounceVertical {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(20px);
+  }
+}

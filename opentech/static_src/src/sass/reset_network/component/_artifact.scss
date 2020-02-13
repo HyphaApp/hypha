@@ -1,0 +1,277 @@
+//================================================================================================//
+//
+//  ARTIFACT COMPONENT
+//
+//================================================================================================//
+
+/************************************ VARS ************************************/
+
+// Colors
+$color-artifact-bg-light: #fff;
+$color-artifact-bg-dark: #000;
+
+// Gap between circle and little rectangles
+$artifact-gutter: 23px;
+$artifact-gutter-lg: 24px;
+$artifact-gutter-xl: 44px;
+
+// Gap between little rectangles
+$artifact-feature-gap-sm: 2px;
+$artifact-feature-gap: 8px;
+$artifact-feature-gap-lg: 14px;
+$artifact-feature-gap-xl: 18px;
+
+// Little rectangle size
+$artifact-feature-width-sm: 24px;
+$artifact-feature-height-sm: 9px;
+$artifact-feature-width: 52px;
+$artifact-feature-height: 22px;
+$artifact-feature-width-lg: 75px;
+$artifact-feature-height-lg: 30px;
+$artifact-feature-width-xl: 102px;
+$artifact-feature-height-xl: 42px;
+
+// Circle size
+$artifact-3-dimension-sm: 42px;
+$artifact-3-dimension: 150px;
+$artifact-3-dimension-lg: 220px;
+$artifact-3-dimension-xl: 300px;
+
+/******************************** COMPONENTS **********************************/
+
+.artifact {
+  backface-visibility: hidden;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transition: color $animation-speed-fast, background-color $animation-speed-fast, height $animation-speed-slow, width $animation-speed-slow, left $animation-speed-slow, top $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
+  will-change: color, background-color, width, height, left, top, transform, opacity;
+
+  .has-no-artifacts-animation & {
+    transition: none;
+  }
+}
+
+.artifact-feature {
+  backface-visibility: hidden;
+  background-color: $color-artifact-bg-light;
+  display: block;
+  height: $artifact-feature-height;
+  transition: background-color $animation-speed-fast, width $animation-speed-slow, height $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
+  width: $artifact-feature-width;
+  will-change: background-color, width, height, transform, opacity;
+
+  .has-no-artifacts-animation & {
+    transition: none;
+  }
+
+  [data-theme="light"] & {
+    background-color: $color-artifact-bg-dark;
+  }
+
+  @include media-min-xs {
+    height: $artifact-feature-height-lg;
+    width: $artifact-feature-width-lg;
+  }
+
+  @include media-min-md {
+    height: $artifact-feature-height-xl;
+    width: $artifact-feature-width-xl;
+  }
+
+  .is-collapsed-artifacts & {
+    height: $artifact-feature-height-sm;
+    width: $artifact-feature-width-sm;
+  }
+}
+
+/********************************* VARIANTS ***********************************/
+
+// Copy
+.artifact--1 {
+  color: $color-artifact-bg-light;
+  font-size: 14px;
+  top: 0;
+  transform: translateX(-50%);
+
+  &[data-theme="light"] {
+    color: $color-artifact-bg-dark;
+  }
+
+  @include media-min-xs {
+    font-size: 15px;
+  }
+
+  .is-collapsed-artifacts.is-cornered-artifacts & {
+    left: 0;
+    transform: translateX(0);
+  }
+}
+
+// 2 lines
+.artifact--2 {
+  height: ($artifact-feature-height * 2) + $artifact-feature-gap;
+  transform: translate(calc(-50% - #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), calc(-50% - 46px));
+
+  @include media-max-xs {
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+      opacity: 0 !important; // stylelint-disable-line declaration-no-important
+    }
+  }
+
+  @include media-min-xs {
+    height: ($artifact-feature-height-lg * 2) + $artifact-feature-gap-lg;
+    transform: translate(calc(-50% - #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 70px));
+  }
+
+  @include media-min-md {
+    height: ($artifact-feature-height-xl * 2) + $artifact-feature-gap-xl;
+    transform: translate(calc(-50% - #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 94px));
+  }
+
+  .artifact-feature--2 {
+    transform: translateY($artifact-feature-gap);
+
+    @include media-min-xs {
+      transform: translateY($artifact-feature-gap-lg);
+    }
+
+    @include media-min-md {
+      transform: translateY($artifact-feature-gap-xl);
+    }
+  }
+
+  .is-collapsed-artifacts & {
+    height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
+    left: 0;
+    transform: translate(0, -50%);
+
+    .artifact-feature--2 {
+      transform: translateY($artifact-feature-gap-sm);
+    }
+  }
+
+  .is-collapsed-artifacts.is-cornered-artifacts & {
+    top: 100%;
+    transform: translate(0, -100%);
+  }
+}
+
+// Circle
+.artifact--3 {
+  background-color: $color-artifact-bg-light;
+  border-radius: 50%;
+  height: $artifact-3-dimension;
+  transform: translate(-50%, -50%);
+  width: $artifact-3-dimension;
+
+  &[data-theme="light"] {
+    background-color: $color-artifact-bg-dark;
+  }
+
+  @include media-max-xs {
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+      opacity: 0 !important; // stylelint-disable-line declaration-no-important
+    }
+  }
+
+  @include media-min-xs {
+    height: $artifact-3-dimension-lg;
+    width: $artifact-3-dimension-lg;
+  }
+
+  @include media-min-md {
+    height: $artifact-3-dimension-xl;
+    width: $artifact-3-dimension-xl;
+  }
+
+  .is-collapsed-artifacts & {
+    height: $artifact-3-dimension-sm;
+    width: $artifact-3-dimension-sm;
+  }
+
+  .is-collapsed-artifacts.is-cornered-artifacts & {
+    left: 100%;
+    top: 100%;
+    transform: translate(-100%, -100%);
+  }
+}
+
+// 5 lines
+.artifact--4 {
+  height: ($artifact-feature-height * 5) + ($artifact-feature-gap * 4);
+  transform: translate(calc(-50% + #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), -50%);
+
+  .artifact-feature--2 { transform: translateY($artifact-feature-gap * 1); }
+  .artifact-feature--3 { transform: translateY($artifact-feature-gap * 2); }
+  .artifact-feature--4 { transform: translateY($artifact-feature-gap * 3); }
+  .artifact-feature--5 { transform: translateY($artifact-feature-gap * 4); }
+
+  @include media-max-sm {
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+      height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
+
+      .artifact-feature--3,
+      .artifact-feature--4,
+      .artifact-feature--5 {
+        opacity: 0;
+      }
+
+      .is-complete-artifacts-animation & {
+        .artifact-feature--1,
+        .artifact-feature--2 {
+          transition: all 400ms;
+        }
+      }
+
+      .is-displayed-drawer & {
+        .artifact-feature--1,
+        .artifact-feature--2 {
+          width: 34px;
+        }
+
+        .artifact-feature--1 { transform: rotate(45deg) translate(7px, 1px); }
+        .artifact-feature--2 { transform: rotate(-45deg) translate(5px, 0); }
+      }
+    }
+  }
+
+  @include media-min-xs {
+    height: ($artifact-feature-height-lg * 5) + ($artifact-feature-gap-lg * 4);
+    transform: translate(calc(-50% + #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 4px));
+
+    .artifact-feature--2 { transform: translateY($artifact-feature-gap-lg * 1); }
+    .artifact-feature--3 { transform: translateY($artifact-feature-gap-lg * 2); }
+    .artifact-feature--4 { transform: translateY($artifact-feature-gap-lg * 3); }
+    .artifact-feature--5 { transform: translateY($artifact-feature-gap-lg * 4); }
+  }
+
+  @include media-min-md {
+    height: ($artifact-feature-height-xl * 5) + ($artifact-feature-gap-xl * 4);
+    transform: translate(calc(-50% + #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 4px));
+
+    .artifact-feature--2 { transform: translateY($artifact-feature-gap-xl * 1); }
+    .artifact-feature--3 { transform: translateY($artifact-feature-gap-xl * 2); }
+    .artifact-feature--4 { transform: translateY($artifact-feature-gap-xl * 3); }
+    .artifact-feature--5 { transform: translateY($artifact-feature-gap-xl * 4); }
+  }
+
+  .is-collapsed-artifacts & {
+    height: ($artifact-feature-height-sm * 5) + ($artifact-feature-gap-sm * 4);
+    left: 100%;
+    transform: translate(-100%, -50%);
+
+    .artifact-feature--2 { transform: translateY($artifact-feature-gap-sm * 1); }
+    .artifact-feature--3 { transform: translateY($artifact-feature-gap-sm * 2); }
+    .artifact-feature--4 { transform: translateY($artifact-feature-gap-sm * 3); }
+    .artifact-feature--5 { transform: translateY($artifact-feature-gap-sm * 4); }
+  }
+
+  .is-collapsed-artifacts.is-cornered-artifacts & {
+    left: 100%;
+    top: 0;
+    transform: translate(-100%, 0);
+  }
+}

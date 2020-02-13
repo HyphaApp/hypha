@@ -1,0 +1,38 @@
+//================================================================================================//
+//
+//  MODE TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+// VARS
+$DEV: false !default;
+$HEALTHCHECK: false !default;
+$IE: false !default;
+$RTL: false !default;
+
+// MIXINS
+
+@mixin is-dev() {
+  @if $DEV {
+    @content;
+  }
+}
+
+@mixin is-ie() {
+  html.ie & {
+    @content;
+  }
+}
+
+@mixin is-old-ie() {
+  html.ie-old & {
+    @content;
+  }
+}
+
+@mixin rtl() {
+  html[dir=rtl] & {
+    @content;
+  }
+}

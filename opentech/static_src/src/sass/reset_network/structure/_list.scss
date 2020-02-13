@@ -1,0 +1,28 @@
+//================================================================================================//
+//
+//  LIST STRUCTURE
+//
+//================================================================================================//
+
+// ELEMENTS
+
+.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list--horizontal {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list__item {
+  margin: 0;
+  padding: 0;
+
+  .list--horizontal > & {
+    display: inline-block;
+  }
+}

@@ -1,0 +1,180 @@
+//================================================================================================//
+//
+//  CHECKBOX COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$checkbox-label-checked: color(seed-blue, -25) !default;
+$checkbox-label-disabled: color(seed-grey) !default;
+$checkbox-field-background: color(seed-white) !default;
+$checkbox-field-background-disabled: color(seed-white, -15) !default;
+$checkbox-field-background-focus: color(seed-white) !default;
+$checkbox-field-border: color(seed-grey) !default;
+$checkbox-field-border-hover: color(seed-black) !default;
+$checkbox-field-border-error: color(seed-red) !default;
+$checkbox-field-border-disabled: color(seed-grey) !default;
+$checkbox-field-mark: color(seed-blue) !default;
+$checkbox-field-mark-disabled: color(seed-orange) !default;
+
+// CONTAINER
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+
+  @include media-min-xs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 500px;
+
+    .checkbox {
+      width: 50%;
+      padding-right: 20px;
+    }
+  }
+
+  .checkbox + .checkbox {
+    margin: 10px 0 0;
+
+    @include media-min-sm {
+      margin: 0;
+    }
+  }
+}
+
+// ELEMENTS
+.checkbox {
+  position: relative;
+}
+
+.checkbox__field {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  top: 3px;
+  left: 0;
+  z-index: 5;
+  padding: 0;
+
+  &::-ms-check {
+    display: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:checked {
+    background: transparent;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.checkbox__label {
+  @include animate(color);
+  @include font-size-md();
+  padding: 2px 10px 4px 40px;
+  cursor: pointer;
+
+  .checkbox__field:checked ~ & {
+    color: $checkbox-label-checked;
+  }
+
+  .checkbox__field[disabled] ~ &,
+  .checkbox__field:disabled ~ & {
+    color: $checkbox-label-disabled;
+    cursor: not-allowed;
+  }
+
+  &::after {
+    content: '';
+  }
+}
+
+.checkbox__fake {
+  @include animate(border-color background-color);
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: $checkbox-field-background;
+  border: 1px solid $checkbox-field-border;
+  top: 3px;
+  left: 0;
+
+  &::before,
+  &::after {
+    @include animate(transform);
+    background-color: $checkbox-field-mark;
+    content: ' ';
+    display: block;
+    position: absolute;
+    width: 2px;
+    height: 12px;
+    left: 50%;
+    top: 50%;
+    will-change: transform;
+  }
+
+  &::before {
+    transform: translate3d(1px, -6px, 0) scale(0) rotate(35deg);
+    height: 13px;
+  }
+
+  &::after {
+    transform: translate3d(-4px, 0, 0) scale(0) rotate(-45deg);
+    height: 6px;
+  }
+
+  &:hover,
+  .checkbox__field:hover ~ &,
+  .focus-disabled .checkbox__field:focus ~ & {
+    border-color: $checkbox-field-border-hover;
+  }
+
+  .checkbox__field:checked ~ & {
+    &::before {
+      transform: translate3d(1px, -6px, 0) scale(1) rotate(35deg);
+      height: 13px;
+    }
+
+    &::after {
+      transform: translate3d(-4px, 0, 0) scale(1) rotate(-45deg);
+    }
+  }
+
+  .checkbox__field:focus ~ & {
+    border: 1px solid $color-focus-border;
+    outline: none;
+  }
+
+  .is-disabled &,
+  .checkbox__field:disabled ~ & {
+    border-color: $checkbox-field-border-disabled;
+    background-color: $checkbox-field-background-disabled;
+
+    &::before,
+    &::after {
+      background-color: $checkbox-field-mark-disabled;
+      background-color: $checkbox-field-border-disabled;
+    }
+  }
+
+  .is-error & {
+    border-color: $checkbox-field-border-error;
+  }
+}
+
+// STATES
+
+// VARIANTS

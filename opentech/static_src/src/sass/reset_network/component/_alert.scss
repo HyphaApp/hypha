@@ -1,0 +1,86 @@
+//================================================================================================//
+//
+//  ALERT COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$alert-default: color(text-darkest) !default;
+$alert-default-bg: color(seed-grey, 75) !default;
+$alert-default-border: color(seed-grey) !default;
+$alert-info: $color-info !default;
+$alert-info-bg: $color-info-bg !default;
+$alert-info-border: $color-info-border !default;
+$alert-warning: $color-warning !default;
+$alert-warning-bg: $color-warning-bg !default;
+$alert-warning-border: $color-warning-border !default;
+$alert-error: $color-error !default;
+$alert-error-bg: $color-error-bg !default;
+$alert-error-border: $color-error-border !default;
+$alert-success: $color-success !default;
+$alert-success-bg: $color-success-bg !default;
+$alert-success-border: $color-success-border !default;
+
+// CONTAINER
+
+.alert-tray {
+  margin: 0 0 #{$size-lg}px;
+}
+
+// ELEMENTS
+
+.alert {
+  background-color: $alert-default-bg;
+  border-color: $alert-default-border;
+  border-style: solid;
+  border-width: 0 0 0 #{$size-xs}px;
+  color: $alert-default;
+  overflow: hidden;
+  padding: #{$size-sm}px;
+  margin: 0 0 #{$size-sm}px;
+
+  .alert-tray & {
+    &:last-child {
+      margin: 0;
+    }
+  }
+}
+
+.alert--success {
+  color: $alert-success;
+  background-color: $alert-success-bg;
+  border-color: $alert-success-border;
+}
+
+.alert--info {
+  color: $alert-info;
+  background-color: $alert-info-bg;
+  border-color: $alert-info-border;
+}
+
+.alert--warning {
+  color: $alert-warning;
+  background-color: $alert-warning-bg;
+  border-color: $alert-warning-border;
+}
+
+.alert--error {
+  color: $alert-error;
+  background-color: $alert-error-bg;
+  border-color: $alert-error-border;
+}
+
+.alert__body {
+  position: relative;
+}
+
+.alert__close {
+  @include font-size-xl;
+  float: right;
+  margin: 0 0 0 #{$size-md}px;
+
+  &::before {
+    content: '\2716';
+  }
+}

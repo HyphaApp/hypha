@@ -1,0 +1,7 @@
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
+        {% endfor %}
+    </ul>
+{% endif %}
