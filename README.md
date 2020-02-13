@@ -1,4 +1,4 @@
-# ResetNetwork / Hypha
+# Hypha
 
 [![<OpenTechFund>](https://circleci.com/gh/OpenTechFund/hypha.svg?style=shield)](https://circleci.com/gh/OpenTechFund/hypha)
 
