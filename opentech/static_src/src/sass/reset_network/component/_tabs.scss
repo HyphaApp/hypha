@@ -1,0 +1,147 @@
+//================================================================================================//
+//
+//  TABS COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$tab-default-bg: color(seed-white, null, .5) !default;
+$tab-default-bg-focus: color(seed-white) !default;
+$tab-default-bg-active: color(seed-blue) !default;
+$tab-default-drop-bg: color(seed-blue, null, 0) !default;
+$tab-default-drop-bg-focus: color(seed-blue, null, .5) !default;
+$tab-default-drop-bg-active: color(seed-blue, null, .75) !default;
+$tab-default-label: color(seed-blue) !default;
+$tab-default-label-focus: color(seed-white) !default;
+$tab-default-label-active: color(seed-white) !default;
+
+// TAB LIST
+
+.tabs {
+  padding: 0;
+  margin: #{$size-md}px 0 0 0;
+  display: flex;
+  list-style: none;
+}
+
+.tabs__item {
+  margin-right: #{$size-xs}px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+// TAB
+
+.tab {
+  @include animate(background-color);
+  position: relative;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  opacity: 1;
+  background-color: $tab-default-bg;
+  overflow: hidden;
+
+  &:link,
+  &:visited {
+    background-color: $tab-default-bg;
+    outline: none;
+    text-decoration: none;
+  }
+
+  &:focus {
+    outline: 2px solid $color-focus-border;
+  }
+
+  &.is-active,
+  &:focus,
+  &:hover {
+    background-color: trans;
+  }
+
+  &:active {
+    background-color: $tab-default-bg-active;
+  }
+
+  &:active,
+  .is-active > &,
+  .focus-disabled &:focus {
+    color: $tab-default-label-active;
+    background-color: $tab-default-bg-active;
+    outline-width: 0;
+  }
+}
+
+.tab__drop {
+  @include animate(background-color);
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  padding: #{$size-sm}px #{$size-md}px;
+  background-color: $tab-default-drop-bg;
+  width: 100%;
+
+  :hover > &,
+  :visited > &,
+  :focus > & {
+    background-color: $tab-default-drop-bg-focus;
+  }
+
+  :active > & {
+    background-color: $tab-default-drop-bg-active;
+  }
+
+  &.is-current {
+    background-color: $tab-default-drop-bg-active;
+  }
+}
+
+.tab__label {
+  @include animate(color opacity);
+  @include font-size-md();
+  color: $tab-default-label;
+  text-align: center;
+  flex-grow: 1;
+  line-height: 1;
+
+  .tab &,
+  .tab:link &,
+  .tab:visited & {
+    color: $tab-default-label;
+  }
+
+  .tab:hover &,
+  .tab:visited &,
+  .tab:focus & {
+    color: $tab-default-label-focus;
+  }
+
+  .tab:active & {
+    color: $tab-default-label-active;
+  }
+}
+
+.tab-panels {
+  border-width: 4px 0 0;
+  border-style: solid;
+  border-color: color(seed-blue);
+  padding: #{$size-sm}px;
+}
+
+.tab-panel {
+  display: none;
+  padding: #{$size-sm}px;
+
+  &.is-active {
+    display: block;
+  }
+}

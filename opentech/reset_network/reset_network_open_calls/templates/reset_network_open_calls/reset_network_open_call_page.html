@@ -1,0 +1,22 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{% if page.fund and page.is_open %}
+<div>
+  {% if page.deadline %}
+  Deadline: {{ page.deadline|date:"M j, Y" }}
+  {% endif %}
+  <a href="{% pageurl page.fund %}">Apply for this fund</a>
+</div>
+{% else %}
+Closed
+{% endif %}
+
+{{ page.content_text|richtext }}
+
+{% endblock %}

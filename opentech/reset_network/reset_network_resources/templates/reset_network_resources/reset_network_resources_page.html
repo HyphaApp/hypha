@@ -1,0 +1,33 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{% if categories and categories|length %}
+<ul>
+  <li>
+    <a href="{% pageurl page %}">All categories</a>
+  </li>
+  {% for c in categories %}
+  <li {% if category == c.name %}class="is-active"{% endif %}>
+    <a href="{% pageurl page %}?category={{ c }}">{{ c.name }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{% for resource in resources %}
+<div>
+  [ Article ]
+  {{ resource.card_heading }}
+  {{ resource.card_text }}
+  {% image resource.card_image width-400 %}
+  <a href="{% pageurl resource %}">View</a>
+</div>
+{% endfor %}
+
+{% endblock %}

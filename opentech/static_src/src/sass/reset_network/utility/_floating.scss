@@ -1,0 +1,41 @@
+//============================================================================//
+//
+//  POSITIONING UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// ELEMENTS
+
+@include media-min-sm {
+  .right\@sm {
+    float: right;
+  }
+
+  .left\@sm {
+    float: left;
+  }
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.center {
+  margin: inherit auto;
+}
+
+.pull-left {
+  float: left;
+  margin-right: #{$size-md}px;
+}
+
+.pull-right {
+  float: right;
+  margin-left: #{$size-md}px;
+}

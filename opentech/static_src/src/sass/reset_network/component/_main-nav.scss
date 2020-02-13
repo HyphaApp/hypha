@@ -1,0 +1,144 @@
+//================================================================================================//
+//
+//  NAV COMPONENTS
+//
+//================================================================================================//
+
+// VARS
+
+$color-link-dark: #000;
+$color-link-light: #fff;
+
+// ELEMENTS
+
+.main-nav-container {
+  @include gutters-menu();
+  height: 100%;
+
+  nav {
+    @include media-min-sm {
+      max-width: 170px;
+      min-width: 120px;
+      pointer-events: all;
+      width: 15%;
+    }
+  }
+
+  &.is-centered {
+    display: flex;
+
+    .main-nav {
+      padding-top: 0;
+    }
+
+    .main-nav__item {
+      padding: 0;
+    }
+  }
+}
+
+.main-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  pointer-events: all;
+  width: 100%;
+
+  @include media-min-sm {
+    padding: 110px 0 0 0;
+  }
+}
+
+.main-nav__item {
+  flex: 1 0 auto;
+  max-height: 52px;
+  padding: 0 0 20px;
+}
+
+.main-nav-section {
+  display: block;
+  padding: 4px 10px;
+  font-weight: $font-weight-heavy;
+}
+
+a.main-nav-link {
+  @include animate(opacity color, $animation-speed-fast);
+  @include font-size-md();
+  display: inline-block;
+  padding: 4px 0;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    @include animate(transform opacity);
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    transform: translateY(10px);
+    opacity: 0;
+  }
+
+  &,
+  &:link,
+  &:visited {
+    text-decoration: none;
+    opacity: .5;
+  }
+
+  &:focus {
+    .focus-disabled & {}
+  }
+
+  &:hover {
+    opacity: 1;
+
+    &::after {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .is-current > &,
+  &:active {
+    opacity: 1;
+  }
+
+  .is-current > & {
+    font-weight: $font-weight-heavy;
+  }
+
+  &[data-theme="dark"] {
+    &,
+    &:link,
+    &:visited,
+    &:active {
+      color: color(seed-white);
+    }
+
+    &::after {
+      background-color: color(seed-white);
+    }
+  }
+
+  &[data-theme="light"] {
+    &,
+    &:link,
+    &:visited,
+    &:active {
+      color: color(seed-black);
+    }
+
+    &::after {
+      background-color: color(seed-black);
+    }
+  }
+}

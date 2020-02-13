@@ -1,0 +1,153 @@
+//================================================================================================//
+//
+//  GUTTERS TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+// MIXINS
+
+// GUTTERS
+
+@mixin gutters() {
+  padding: #{$gutter-sm}px;
+
+  @include media-min-md {
+    padding: #{$gutter}px;
+  }
+}
+
+@mixin gutters-menu() {
+  padding: #{$gutter-xxl}px #{$gutter-sm}px;
+
+  @include media-min-md {
+    padding: #{$gutter-xxl}px #{$gutter}px;
+  }
+}
+
+@mixin gutters-xl() {
+  padding: #{$gutter-sm}px;
+
+  @include media-min-sm {
+    padding: #{$gutter-lg}px;
+  }
+
+  @include media-min-md {
+    padding: #{$gutter-xxl}px #{$gutter-xl}px #{$gutter-max}px;
+  }
+}
+
+@mixin gutters-sm() {
+  padding: #{$gutter-sm}px;
+
+  @include media-min-md {
+    padding: #{$gutter-sm}px;
+  }
+}
+
+@mixin gutters-xs() {
+  padding: #{$gutter-xs}px;
+}
+
+@mixin gutters-banner() {
+  padding: #{$gutter-xl}px #{$gutter-sm}px #{$gutter-sm}px;
+
+  @include media-min-sm {
+    padding: #{$gutter-xl}px #{$gutter-sm}px #{$gutter-sm}px;
+  }
+
+  @include media-min-md {
+    padding: #{$gutter-xl}px #{$gutter}px #{$gutter}px;
+  }
+}
+
+@mixin gutters-hero-carousel() {
+  @include media-min-sm {
+    padding: #{$gutter-lg}px #{$gutter-sm}px 0;
+  }
+
+  @include media-min-md {
+    padding: #{$gutter-xl}px #{$gutter}px 0;
+  }
+}
+
+@mixin gutters-paragraph() {
+  padding: #{$gutter}px #{$gutter-sm}px;
+
+  @include media-min-sm {
+    padding: #{$gutter-lg}px #{$gutter-sm}px;
+  }
+
+  @include media-min-md {
+    padding: #{$gutter-xxl}px #{$gutter}px #{$gutter-max}px;
+  }
+}
+
+@mixin gutters-horizontal() {
+  padding: 0 #{$gutter-sm}px;
+
+  @include media-min-md {
+    padding: 0 #{$gutter}px;
+  }
+}
+
+@mixin gutters-horizontal-xl() {
+  padding: 0 #{$gutter-sm}px;
+
+  @include media-min-sm {
+    padding: 0 #{$gutter-lg}px;
+  }
+
+  @include media-min-md {
+    padding: 0 #{$gutter-xl}px;
+  }
+}
+
+@mixin gutters-vertical() {
+  margin: #{$gutter-sm}px 0;
+
+  @include media-min-md {
+    margin: #{$gutter}px 0;
+  }
+}
+
+@mixin gutter-top() {
+  margin: #{$gutter-sm}px 0 0;
+
+  @include media-min-sm {
+    margin: #{$gutter}px 0 0;
+  }
+}
+
+@mixin pad-gutter-top() {
+  padding: #{$gutter-sm}px 0 0;
+
+  @include media-min-sm {
+    padding: 45px 0 0;
+  }
+}
+
+@mixin gutter-bottom() {
+  margin: 0 0 #{$gutter-sm}px;
+
+  @include media-min-md {
+    margin: 0 0 #{$gutter}px;
+  }
+}
+
+// Remove ALL the gutters
+@mixin no-gutters() {
+  padding: 0;
+
+  @include media-min-xs {
+    padding: 0;
+  }
+
+  @include media-min-sm {
+    padding: 0;
+  }
+
+  @include media-min-md {
+    padding: 0;
+  }
+}

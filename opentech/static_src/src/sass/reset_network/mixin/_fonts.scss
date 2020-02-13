@@ -1,0 +1,63 @@
+//================================================================================================//
+//
+//  FONT DISPLAY TOOLS
+//
+//================================================================================================//
+
+// MIXINS
+$font-folder : '/static/fonts/' !default;
+
+@mixin create-font($family, $filename, $weight: $font-weight-regular, $style: normal) {
+  font-family: $family;
+  font-display: swap;
+  src: url(#{'\'' + $font-folder + $filename + '.eot\''});
+  src:
+    url(#{'\'' + $font-folder + $filename + '.eot?#iefix\''}) format('embedded-opentype'),
+    url(#{'\'' + $font-folder + $filename + '.woff2\''}) format('woff2'),
+    url(#{'\'' + $font-folder + $filename + '.woff\''}) format('woff'),
+    url(#{'\'' + $font-folder + $filename + '.ttf\''}) format('truetype');
+  font-weight: $weight;
+  font-style: $style;
+}
+
+@mixin font-primary {
+  font-family: $font-family-primary;
+}
+
+@mixin font-primary-light {
+  font-family: $font-family-primary;
+  font-weight: $font-weight-light;
+}
+
+@mixin font-primary-heavy {
+  font-family: $font-family-primary;
+  font-weight: $font-weight-heavy;
+}
+
+@mixin font-secondary {
+  font-family: $font-family-secondary;
+}
+
+@mixin font-secondary-light {
+  font-family: $font-family-secondary;
+  font-weight: $font-weight-light;
+}
+
+@mixin font-secondary-heavy {
+  font-family: $font-family-secondary;
+  font-weight: $font-weight-heavy;
+}
+
+@mixin font-base {
+  font-family: $font-family-base;
+}
+
+@mixin font-base-light {
+  font-family: $font-family-base;
+  font-weight: $font-weight-light;
+}
+
+@mixin font-base-heavy {
+  font-family: $font-family-base;
+  font-weight: $font-weight-heavy;
+}

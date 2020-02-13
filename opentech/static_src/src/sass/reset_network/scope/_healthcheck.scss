@@ -1,0 +1,45 @@
+//================================================================================================//
+//
+//  HEALTHCHECK SCOPE
+//  N.B: DON'T modify only fix issues and fold back into healthcheck module
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.healthcheck {
+  /* stylelint-disable */
+  // Outline all classes.
+  [class] {
+    outline: 5px solid lightgrey;
+  }
+
+  // Outline all BEM Elements.
+  [class*="__"] {
+    outline: 5px solid grey;
+  }
+
+  // Outline all BEM Modifiers.
+  [class*="--"] {
+    outline: 5px solid darkgrey;
+  }
+
+  // Outline all Object classes.
+  [class^="o-"],
+  [class*=" o-"] {
+    outline: 5px solid orange;
+  }
+
+  // Outline all Component classes.
+  [class^="c-"],
+  [class*=" c-"] {
+    outline: 5px solid cyan;
+  }
+
+  // Outline all Hack classes.
+  [class^="_"] {
+    outline: 5px solid red;
+  }
+}

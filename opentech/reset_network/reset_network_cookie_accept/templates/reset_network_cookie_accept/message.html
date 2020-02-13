@@ -1,0 +1,29 @@
+{% load wagtailcore_tags %}
+
+<div class="cookie-wrap is-hidden" id="cookie-notice">
+  <div class="cookie-message">
+    <div class="cookie-message__content">
+      <div class="cookie-message__title">
+        {{ cookie_accept.content_heading }}
+      </div>
+      <div class="cookie-message__body rte">
+        {{ cookie_accept.content_text | richtext }}
+      </div>
+      <div class="cookie-message__actions">
+        <button class="button" type="button" data-tracking="false">
+          <span class="button__drop"></span>
+          <span class="button__label">
+            {{ cookie_accept.content_decline_text }}
+          </span>
+          </span>
+        </button>
+        <button class="button" type="button" data-tracking="true">
+          <span class="button__drop"></span>
+          <span class="button__label">
+            {{ cookie_accept.content_accept_text }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

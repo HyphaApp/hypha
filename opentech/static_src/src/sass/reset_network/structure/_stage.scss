@@ -1,0 +1,102 @@
+//================================================================================================//
+//
+//  STAGE STRUCTURE
+//
+//================================================================================================//
+
+// VARS
+
+// ELEMENTS
+
+.stage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.stage__drawer-toggle-btn {
+  height: 30px;
+  position: fixed;
+  right: #{$gutter-sm - 5}px;
+  top: #{$gutter-sm - 5}px;
+  width: 35px;
+  z-index: $z-index-menu - 1;
+
+  @include media-min-sm {
+    display: none;
+  }
+}
+
+.stage__drawer {
+  background-color: color(seed-black);
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transform: translateX(100%);
+  transition: transform 500ms;
+  z-index: $z-index-menu;
+
+  .is-displayed-drawer & {
+    transform: translateX(0);
+  }
+
+  @include media-min-sm {
+    display: none;
+  }
+}
+
+.stage__drawer-close {
+  height: 30px;
+  position: fixed;
+  right: #{$gutter-sm - 5}px;
+  top: #{$gutter-sm - 5}px;
+  width: 35px;
+}
+
+.stage__header {
+  backface-visibility: hidden;
+  bottom: #{$gutter-sm}px;
+  left: #{$gutter-sm}px;
+  pointer-events: none;
+  position: fixed;
+  right: #{$gutter-sm}px;
+  top: #{$gutter-sm}px;
+  transform: translateZ(0);
+  z-index: $z-index-menu + 1;
+
+  @include media-min-md {
+    bottom: #{$gutter}px;
+    left: #{$gutter}px;
+    right: #{$gutter}px;
+    top: #{$gutter}px;
+  }
+}
+
+.stage__main {
+  flex-grow: 1;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.stage__footer {
+  width: 100%;
+}
+
+.stage__nav {
+  display: none;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  position: fixed;
+  z-index: $z-index-menu - 1;
+
+  @include media-min-sm {
+    display: block;
+  }
+}
