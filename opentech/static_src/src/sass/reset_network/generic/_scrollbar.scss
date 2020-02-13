@@ -1,0 +1,25 @@
+//============================================================================//
+//
+//  GLOBAL GENERIC ANGULAR SCROLLBAR
+//
+//============================================================================//
+
+// VARS
+
+$scrollbar-thumb: color(seed-grey, 10) !default;
+$scrollbar-track: color(seed-grey, -45) !default;
+
+// ELEMENTS
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: $scrollbar-track;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $scrollbar-thumb;
+}

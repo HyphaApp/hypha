@@ -1,0 +1,39 @@
+//============================================================================//
+//
+//  DEPTH UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//============================================================================//
+
+// VARS
+
+// ELEMENTS
+
+[class*=-depth] {
+  @include animate(box-shadow);
+}
+
+.depth-0 {
+  box-shadow: $depth-shadow-0;
+}
+
+.depth-1 {
+  box-shadow: $depth-shadow-1;
+}
+
+.depth-2 {
+  box-shadow: $depth-shadow-2;
+}
+
+.depth-3 {
+  box-shadow: $depth-shadow-3;
+}
+
+.depth-4 {
+  box-shadow: $depth-shadow-4;
+}
+
+.depth-5 {
+  box-shadow: $depth-shadow-5;
+}

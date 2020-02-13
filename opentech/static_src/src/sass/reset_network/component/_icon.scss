@@ -1,0 +1,56 @@
+//================================================================================================//
+//
+//  ICON COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$icon-xs: 6 !default;
+$icon-sm: 8 !default;
+$icon-md: 16 !default;
+$icon-lg: 32 !default;
+$icon-xl: 55 !default;
+
+// ELEMENTS
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+
+  svg {
+    @include animate(fill);
+    height: 100%;
+    transform: scale(1);
+    width: 100%;
+  }
+}
+
+// VARIANTS
+
+.icon--xs {
+  height: #{$icon-xs}px;
+  width: #{$icon-xs}px;
+}
+
+.icon--sm {
+  height: #{$icon-sm}px;
+  width: #{$icon-sm}px;
+}
+
+.icon--md {
+  height: #{$icon-md}px;
+  width: #{$icon-md}px;
+}
+
+.icon--lg {
+  height: #{$icon-lg}px;
+  width: #{$icon-lg}px;
+}
+
+.icon--xl {
+  height: #{$icon-xl}px;
+  width: #{$icon-xl}px;
+}

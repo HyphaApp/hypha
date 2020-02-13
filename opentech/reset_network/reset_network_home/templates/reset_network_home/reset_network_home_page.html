@@ -1,0 +1,180 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<section class="theme-darkest" data-theme="dark">
+  <div class="hero-carousel" id="hero-carousel">
+    <div class="hero-carousel__lvl-1 contain">
+      <div class="hero-carousel__lvl-2">
+        <div class="hero-carousel__lvl-3">
+          <ul class="hero-carousel__list">
+            {% for image in page.reset_network_home_page_hero_images.all %}
+            <li class="hero-carousel__item">{% image image.image fill-1440x810-c100 class="hero-carousel__image" %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="para para--intro theme-darkest" data-theme="dark">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <div class="para__title">
+        <h1 class="sr-only">{{ page.content_heading }}</h1>
+        <div class="gif-img js-gif-img" aria-hidden="true">
+          {% if page.content_heading_gif_desktop %}
+          <img class="gif-img__img hide@sm" src="{{ page.content_heading_gif_desktop.url }}"/>
+          {% endif %}
+          {% if page.content_heading_gif_mobile %}
+          <img class="gif-img__img show@sm" src="{{ page.content_heading_gif_mobile.url }}"/>
+          {% endif %}
+        </div>
+      </div>
+      <div class="para__body rte">
+        {{ page.content_text|linebreaks }}
+      </div>
+      {% if page.content_link and page.content_link_text %}
+      <div class="para__action">
+        <a href="{% pageurl page.content_link %}" class="button">
+          <span class="button__drop"></span>
+          <span class="button__label">{{ page.content_link_text }}</span>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="para para--col-xs para--content-left para--aside-offset-xl para--aside-xl theme-lightest" data-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_1_image fill-590x590-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      {% if page.section_1_heading %}
+        <div class="para__title">
+          <h2>{{ page.section_1_heading }}</h2>
+        </div>
+      {% endif %}
+      <div class="para__body rte">
+        {{ page.section_1_text|linebreaks }}
+      </div>
+      {% if page.section_1_link and page.section_1_link_text %}
+      <div class="para__action">
+        <a href="{% pageurl page.section_1_link %}" class="button">
+          <span class="button__drop"></span>
+          <span class="button__label">{{ page.section_1_link_text }}</span>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# only show the section if there are open calls #}
+{% with open_calls=page.reset_network_home_page_open_calls.all %}
+{% if open_calls and open_calls|length %}
+<section class="para para--content-right para--links theme-lightest" data-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__aside">
+      <div class="surface surface--1-1">
+        <div class="surface__plane">
+          {% image page.section_2_image fill-500x500-c100 class="surface__image" %}
+        </div>
+      </div>
+    </div>
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.section_2_heading }}
+          {% if page.section_2_link and page.section_2_link_text %}
+            <a href="{% pageurl page.section_2_link %}" class="para__link">{{ page.section_2_link_text }}</a>
+          {% endif %}
+        </h2>
+      </div>
+      <div class="para__body rte">
+        {{ page.section_2_text }}
+      </div>
+      <div class="para__body">
+        <ul class="links">
+          {% for open_call in open_calls %}
+          {% with item=open_call.open_call_link_page.specific %}
+          <li class="links__item">
+            <a href="{% pageurl item %}" class="card-link">
+              <span class="card-link__drop">
+                <span class="card-link__label">{{ item.card_heading }}</span>
+                <svg class="card-link__icon icon icon--arrow">
+                    <use xlink:href="#arrow"></use>
+                </svg>
+              </span>
+            </a>
+          </li>
+          {% endwith %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endwith %}
+
+{# only show the section if there are featured items #}
+{% with featured_items=page.reset_network_home_page_featured.all %}
+{% if featured_items and featured_items|length %}
+<section class="para para--cards theme-grey" data-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      {% if page.section_3_heading %}
+      <div class="para__title">
+        <h2>{{ page.section_3_heading }}
+          {% if page.section_3_link and page.section_3_link_text %}
+          <a href="{% pageurl page.section_3_link %}" class="para__link">{{ page.section_3_link_text }}</a>
+          {% endif %}
+        </h2>
+      </div>
+        {% endif %}
+      {% if page.section_3_text %}
+        <div class="para__body rte">
+          {{ page.section_3_text }}
+        </div>
+        {% endif %}
+      <div class="para__body">
+        <ul class="cards">
+          {% for featured_item in featured_items %}
+          <li class="cards__item">
+            <a href="{{ featured_item.link }}" class="card card--vertical">
+              <span class="card__content">
+                <span class="card__image surface surface--1-1">
+                  <span class="surface__plane">
+                    {% image featured_item.image fill-400x400-c100 class="surface__image" %}
+                  </span>
+                </span>
+                <span class="card__body">
+                  <span class="card__title">{{ featured_item.heading }}</span>
+                  <span class="rte">{{ featured_item.text }}</span>
+                </span>
+                <svg class="card__icon icon icon--arrow">
+                  <use xlink:href="#arrow"></use>
+                </svg>
+              </span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endwith %}
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+
+{% for record in person.value %}
+{% with record.person as person %}
+<div>
+  <div>
+    {{ person.name }}
+  </div>
+  <div>
+    {{ person.role }}
+  </div>
+  <div>
+    {{ person.about }}
+  </div>
+  <div>
+    <a href="{{ person.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="{{ person.twitter }}" target="_blank" rel="noopener">Twitter</a>
+  </div>
+  {% image person.image width-400 %}
+</div>
+{% endwith %}
+{% endfor %}

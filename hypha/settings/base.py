@@ -12,6 +12,7 @@ env = os.environ.copy()
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+APP = 'resetnetwork'
 APP_NAME = env.get('APP_NAME', 'hypha')
 
 DEBUG = False
@@ -93,6 +94,20 @@ INSTALLED_APPS = [
     'hypha.public.forms',
     'hypha.public.utils',
 
+    # reset network specific pages
+    'hypha.reset_network.reset_network_about',
+    'hypha.reset_network.reset_network_basic_page',
+    'hypha.reset_network.reset_network_contact_us',
+    'hypha.reset_network.reset_network_cookie_accept',
+    'hypha.reset_network.reset_network_home',
+    'hypha.reset_network.reset_network_menus',
+    'hypha.reset_network.reset_network_open_calls',
+    'hypha.reset_network.reset_network_people',
+    'hypha.reset_network.reset_network_person',
+    'hypha.reset_network.reset_network_resources',
+    'hypha.reset_network.reset_network_work',
+
+
     'social_django',
 
     'wagtail.contrib.modeladmin',
@@ -166,6 +181,8 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
     'hypha.apply.middleware.apply_url_conf_middleware',
+
+    'hypha.reset_network.middleware.redirect_apply_homepage_middleware',
 ]
 
 ROOT_URLCONF = 'hypha.urls'
@@ -176,6 +193,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(PROJECT_DIR, 'templates'),
             os.path.join(PROJECT_DIR, 'apply', 'templates'),
+            os.path.join(PROJECT_DIR, 'reset_network', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

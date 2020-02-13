@@ -1,0 +1,39 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+{# only show the section if there are open calls otherwise show the form #}
+{% if open_calls and open_calls|length %}
+
+{{ page.content_heading }}
+{{ page.content_text }}
+
+{% for open_call in open_calls %}
+  {% with item=open_call.specific %}
+  <div>
+    {{ item.card_heading }}
+    {{ item.card_text }}
+    {{ item.deadline }}
+    <a href="{% pageurl item %}">View details</a>
+  </div>
+  {% endwith %}
+{% endfor %}
+{% include "reset_network/includes/pagination.html" with resource=open_calls %}
+
+{% else %}
+
+{{ page.no_open_calls_heading }}
+{{ page.no_open_calls_text }}
+
+<form action="." method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Keep me informed</button>
+</form>
+
+{% endif %}
+
+{% endblock %}

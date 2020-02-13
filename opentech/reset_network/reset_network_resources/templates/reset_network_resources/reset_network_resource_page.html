@@ -1,0 +1,44 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+
+<h1>{{ page.content_heading }}</h1>
+
+{% image page.content_image width-400 %}
+
+<a href="{% pageurl page.get_parent %}">Back to {{ page.get_parent.specific.content_heading }}</a>
+
+{{ page.content_text|richtext }}
+
+{# asset downloads #}
+{% with assets=page.reset_network_resource_page_assets.all %}
+{% if assets and assets|length %}
+
+{{ page.content_assets_heading }}
+
+{% for asset in assets %}
+<div>
+  {{ asset.heading }}
+  {{ asset.text }}
+  <a href="{{ asset.asset.file.url }}">{{ asset.asset.file.size|filesizeformat }}</a>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{# asset links #}
+{% with links=page.reset_network_resource_page_links.all %}
+{% if links and links|length %}
+
+{{ page.content_links_heading }}
+
+{% for link in links %}
+<a href="{{ link.link }}" target="_blank" rel="noopener">{{ link.heading }}</a>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% endblock %}

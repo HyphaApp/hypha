@@ -1,0 +1,56 @@
+//================================================================================================//
+//
+//  BANNER COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$banner-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
+$banner-width: 820px;
+
+// ELEMENTS
+
+.banner {
+  @include gutters-banner();
+  overflow-x: hidden;
+  display: flex;
+}
+
+.banner--tall {
+  @include media-min-sm {
+    min-height: 600px;
+  }
+}
+
+.banner__wrap {
+  display: flex;
+  backface-visibility: hidden;
+  flex-direction: column;
+
+  .banner--tall & {
+    justify-content: center;
+  }
+}
+
+.banner__nav {
+  flex: 0 0 100%;
+
+  @include media-min-sm {
+    flex: 0 0 #{$sidebar-offset}px;
+  }
+}
+
+.banner__content {
+  position: relative;
+
+  .banner--tall & {
+    @include media-min-sm {
+      padding-left: #{$para-sidebar-offset};
+    }
+
+    @include media-min-xl {
+      padding-left: #{$sidebar-offset}px;
+    }
+  }
+}

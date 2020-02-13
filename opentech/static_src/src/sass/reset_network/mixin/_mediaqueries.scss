@@ -1,0 +1,131 @@
+//================================================================================================//
+//
+//  MEDIAQUERY TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+// VARS
+
+$media-xxs: 320 !default;
+$media-xs: 640 !default;
+$media-sm: 768 !default;
+$media-md: 992 !default;
+$media-lg: 1200 !default;
+$media-xl: 1600 !default;
+$media-xxl: 1920 !default;
+
+$media-min: $media-xxs !default;
+$media-max: $media-lg !default;
+
+// MIXINS
+
+@mixin media-min-xs {
+  @media only screen and (min-width: #{$media-xs}px) {
+    @content;
+  }
+}
+
+@mixin media-max-xs {
+  @media only screen and (max-width: #{$media-xs - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-xs-max-sm {
+  @media only screen and (min-width: #{$media-xs}px) and (max-width: #{$media-sm - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-xs-max-md {
+  @media only screen and (min-width: #{$media-xs}px) and (max-width: #{$media-md - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-sm {
+  @media only screen and (min-width: #{$media-sm}px) {
+    @content;
+  }
+}
+
+@mixin media-max-sm {
+  @media only screen and (max-width: #{$media-sm - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-sm-max-md {
+  @media only screen and (min-width: #{$media-sm}px) and (max-width: #{$media-md - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-sm-max-lg {
+  @media only screen and (min-width: #{$media-sm}px) and (max-width: #{$media-lg - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-max-md {
+  @media only screen and (max-width: #{$media-lg - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-md {
+  @media only screen and (min-width: #{$media-md}px) {
+    @content;
+  }
+}
+
+@mixin media-min-md-max-lg {
+  @media only screen and (min-width: #{$media-md}px) and (max-width: #{$media-lg - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-min-lg {
+  @media only screen and (min-width: #{$media-lg}px) {
+    @content;
+  }
+}
+
+@mixin media-min-xl {
+  @media only screen and (min-width: #{$media-xl}px) {
+    @content;
+  }
+}
+
+@mixin media-min-xxl {
+  @media only screen and (min-width: #{$media-xxl}px) {
+    @content;
+  }
+}
+
+@mixin media-grid-max {
+  @media only screen and (min-width: #{$grid-width-max}px) {
+    @content;
+  }
+}
+
+/* stylelint-disable media-feature-name-no-unknown */
+@mixin retina {
+  @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (min--moz-device-pixel-ratio: 2),
+    only screen and (-o-min-device-pixel-ratio: 2/1),
+    only screen and (min-device-pixel-ratio: 2),
+    only screen and (min-resolution: 192dpi),
+    only screen and (min-resolution: 2dppx) {
+    @content;
+  }
+}
+/* stylelint-enable media-feature-name-no-unknown */
+
+@mixin print {
+  @media print {
+    @content;
+  }
+}

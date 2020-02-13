@@ -1,0 +1,16 @@
+//================================================================================================//
+//
+//  CLEARING TOOLS
+//  N.B: Only mixins here NEVER anything that outputs CSS directly
+//
+//================================================================================================//
+
+// MIXINS
+
+@mixin clearfix() {
+  &::after {
+    clear: both;
+    content: '';
+    display: block;
+  }
+}

@@ -1,0 +1,19 @@
+//================================================================================================//
+//
+//  IMAGE UTILITIES
+//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  http://csswizardry.com/2016/05/the-importance-of-important/
+//
+//================================================================================================//
+
+// ELEMENTS
+
+.image-cover {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.image-contain {
+  background-repeat: no-repeat;
+  background-size: contain;
+}

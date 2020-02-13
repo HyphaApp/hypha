@@ -1,0 +1,23 @@
+{% extends "reset_network/base.html" %}
+
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}theme-darkest{% endblock %}
+{% block content %}
+
+<div class="para para--rte theme-darkest" data-theme="dark">
+  <div class="para__wrap contain">
+    <article class="para__content">
+      <header class="para__title sr-only">
+        <h1>{{ page.content_heading }}</h1>
+      </header>
+      <div class="para__body rte">
+        {{ page.content_text|richtext  }}
+      </div>
+    </article>
+  </div>
+</div>
+
+{% endblock %}
+
