@@ -15,13 +15,6 @@ from hypha.apply.users.urls import public_urlpatterns as user_urls
 from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.public import urls as public_urls
 
-
-# if settings.APP == 'resetnetwork':
-#     public_urls = []
-# else:
-#     from opentech.public import urls as public_urls
-
-
 urlpatterns = [
     path('django-admin/', admin.site.urls),
     path(
@@ -44,9 +37,6 @@ urlpatterns = [
     path('tinymce/', include('tinymce.urls')),
     path('select2/', include('django_select2.urls')),
 ]
-
-if settings.APP == 'resetnetwork':
-    pass
 
 
 if settings.DEBUG:
@@ -77,12 +67,12 @@ urlpatterns += [
     path('', include(wagtail_urls)),
 ]
 
+
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
 
-    urlpatterns = [path('__debug__/', include(debug_toolbar.urls)), ] + urlpatterns
 
 base_urlpatterns = [*urlpatterns]
