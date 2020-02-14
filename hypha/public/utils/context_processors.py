@@ -13,7 +13,7 @@ def global_vars(request):
         'ORG_EMAIL': settings.ORG_EMAIL,
     }
 
-    if settings.APP == 'resetnetwork':
+    if settings.SITE_NAME == 'reset':
 
         response['APPLY_SITE'] = ApplyHomePage.objects.first().get_site()
         response['PUBLIC_SITE']: ResetNetworkHomePage.objects.first().get_site()
