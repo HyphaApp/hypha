@@ -12,7 +12,6 @@ env = os.environ.copy()
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-APP = 'resetnetwork'
 APP_NAME = env.get('APP_NAME', 'hypha')
 
 DEBUG = False
@@ -31,6 +30,10 @@ ORG_LONG_NAME = env.get('ORG_LONG_NAME', 'Acme Corporation')
 ORG_SHORT_NAME = env.get('ORG_SHORT_NAME', 'ACME')
 ORG_EMAIL = env.get('ORG_EMAIL', 'info@example.org')
 ORG_GUIDE_URL = env.get('ORG_GUIDE_URL', 'https://guide.example.org/')
+
+
+# Site name for various custom site settings.
+SITE_NAME = env.get('SITE_NAME', 'hypha')
 
 
 # Email settings
