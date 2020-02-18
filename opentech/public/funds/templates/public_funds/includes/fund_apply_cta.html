@@ -15,6 +15,11 @@
             <a href="{% pageurl apply_page %}" class="link link--button-secondary">
                 {% trans "Apply for this" %} {% verbose_name apply_page %}
             </a>
+            {% if apply_page.specific.guide_link %}
+                <a href="{{ apply_page.specific.guide_link }}" class="link link--button-tertiary">
+                    {% trans "Application guide" %}
+                </a>
+            {% endif %}
         {% else %}
             <h3 class="heading heading--no-margin">
                 {% trans "CLOSED" %}

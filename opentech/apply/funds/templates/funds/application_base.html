@@ -6,7 +6,6 @@
 {% block header_modifier %}header--light-bg{% endblock %}
 
 {% block content %}
-
 {% if form.errors or form.non_field_errors %}
 <div class="wrapper wrapper--medium wrapper--error">
     <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
@@ -26,6 +25,11 @@
         {# the page has no open rounds and we arent on a round page #}
         <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
     {% else%}
+        {% if page.get_parent.specific.guide_link %}
+            <a href="{{ page.get_parent.specific.guide_link }}" class="link link--fixed-apply">
+                {% trans "Application guide" %}
+            </a>
+        {% endif %}
         <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
             {{ form.media }}
             {% csrf_token %}
