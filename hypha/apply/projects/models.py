@@ -14,16 +14,16 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import (
-    Count,
     Case,
-    F,
+    Count,
     ExpressionWrapper,
+    F,
     Max,
     OuterRef,
     Q,
     Subquery,
     Sum,
-    Value as V,
+    Value,
     When,
 )
 from django.db.models.functions import Cast, Coalesce
@@ -182,7 +182,7 @@ class PaymentRequestQueryset(models.QuerySet):
         return self.exclude(status=DECLINED)
 
     def total_value(self, field):
-        return self.aggregate(total=Coalesce(Sum(field), V(0)))['total']
+        return self.aggregate(total=Coalesce(Sum(field), Value(0)))['total']
 
     def paid_value(self):
         return self.filter(status=PAID).total_value('paid_value')
@@ -309,7 +309,7 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('payment_requests__paid_value'), V(0)),
+            amount_paid=Coalesce(Sum('payment_requests__paid_value'), Value(0)),
         )
 
     def with_last_payment(self):
