@@ -1,0 +1,33 @@
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+    "wagtailcache": {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+# ALLOWED_HOSTS = ['apply.hypha.test', 'hypha.test', '127.0.0.1']
+
+# BASE_URL = 'http://hypha.test'
+
+# Turn off DEBUG mode.
+# DEBUG = False
+
+# Write log to local file.
+# LOCAL_FILE_LOGGING = True
+
+# Write e-mails to local files.
+# LOCAL_FILE_EMAIL = True
+
+# Enable the styleguide.
+# ENABLE_STYLEGUIDE = True
+
+# SECRET_KEY = 'CHANGEME!!!'
+
+# Enable Wagtail Cache.
+# WAGTAIL_CACHE = True
+
+# If you have a problem with "CSRF cookie not set".
+# CSRF_COOKIE_SAMESITE = None
+# SESSION_COOKIE_SAMESITE = None

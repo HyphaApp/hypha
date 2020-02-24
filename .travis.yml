@@ -19,7 +19,7 @@ addons:
 
 env:
   global:
-    - DJANGO_SETTINGS_MODULE=opentech.settings.test
+    - DJANGO_SETTINGS_MODULE=hypha.settings.test
     - DATABASE_URL=postgres://postgres@localhost/test_db
 
 before_script:
@@ -48,7 +48,7 @@ install:
 # Run the tests
 script:
   # Run python code style checks
-  - flake8 ./opentech
+  - flake8 ./hypha
 
   # Collect static
   - python manage.py collectstatic --noinput --verbosity=0

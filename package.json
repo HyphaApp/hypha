@@ -1,5 +1,5 @@
 {
-    "name": "Opentech",
+    "name": "Hypha",
     "version": "1.0.0",
     "description": "The node.js requirements to build this project.",
     "main": "gulpfile.js",
@@ -75,7 +75,7 @@
     "scripts": {
         "test": "gulp deploy",
         "heroku-postbuild": "gulp deploy",
-        "webpack-watch": "webpack-dev-server --config ./opentech/static_src/src/app/webpack.dev.config.js "
+        "webpack-watch": "webpack-dev-server --config ./hypha/static_src/src/app/webpack.dev.config.js "
     },
     "engines": {
         "node": "10.10.x"

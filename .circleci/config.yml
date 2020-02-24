@@ -8,16 +8,16 @@ jobs:
     docker:
       - image: circleci/python:3.6.9-stretch-node
         environment:
-          DATABASE_URL: postgresql://root@localhost/opentech?sslmode=disable
+          DATABASE_URL: postgresql://root@localhost/hypha?sslmode=disable
           PGHOST: localhost
           PGUSER: root
-          DJANGO_SETTINGS_MODULE: opentech.settings.test
+          DJANGO_SETTINGS_MODULE: hypha.settings.test
           SEND_MESSAGES: false
 
       - image: circleci/postgres:10.10
         environment:
           POSTGRES_USER: root
-          POSTGRES_DB: opentech
+          POSTGRES_DB: hypha
 
     working_directory: ~/repo
 
@@ -74,9 +74,9 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            flake8 ./opentech
+            flake8 ./hypha
             python manage.py collectstatic --noinput --verbosity=0
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
-            coverage run --source='opentech' manage.py test
+            coverage run --source='hypha' manage.py test
             codecov
