@@ -2,10 +2,9 @@ import json
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
 from wagtail.core import blocks
 
-from addressfield.fields import AddressField, ADDRESS_FIELDS_ORDER
+from addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.stream_forms.blocks import FormFieldsBlock
 from hypha.apply.utils.blocks import (

@@ -2,14 +2,14 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from hypha.apply.utils.fields import RichTextField
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.utils.fields import RichTextField
 
 from .models import (
-    Determination,
-    DeterminationFormSettings,
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
+    Determination,
+    DeterminationFormSettings,
 )
 from .utils import determination_actions
 

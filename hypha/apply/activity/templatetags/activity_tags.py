@@ -6,7 +6,7 @@ from hypha.apply.determinations.models import Determination
 from hypha.apply.projects.models import Contract
 from hypha.apply.review.models import Review
 
-from ..models import TEAM, ALL, REVIEWER
+from ..models import ALL, REVIEWER, TEAM
 
 register = template.Library()
 

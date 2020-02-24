@@ -6,11 +6,16 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView, DeleteView, UpdateView
-
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from wagtail.core.blocks import RichTextBlock
 
-from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers
 from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
@@ -18,8 +23,8 @@ from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
-from hypha.apply.utils.views import CreateOrUpdateView
 from hypha.apply.utils.image import generate_image_tag
+from hypha.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
 from .options import DISAGREE

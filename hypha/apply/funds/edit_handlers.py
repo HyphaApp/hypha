@@ -1,10 +1,9 @@
 from django.forms import Field, Widget
 from django.forms.utils import pretty_name
-from django.urls import reverse
 from django.template.loader import render_to_string
-
-from wagtail.core.models import Page
+from django.urls import reverse
 from wagtail.admin.edit_handlers import EditHandler, FieldPanel
+from wagtail.core.models import Page
 
 
 def reverse_edit(obj):

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
-from django.forms import ClearableFileInput, FileField, CheckboxInput
+from django.forms import CheckboxInput, ClearableFileInput, FileField
 
 
 class MultiFileInput(ClearableFileInput):

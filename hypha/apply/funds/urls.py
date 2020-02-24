@@ -6,21 +6,20 @@ from .views import (
     RevisionCompareView,
     RevisionListView,
     RoundListView,
-    SubmissionsByRound,
-    SubmissionsByStatus,
+    SubmissionDeleteView,
+    SubmissionDetailPDFView,
+    SubmissionDetailSimplifiedView,
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
     SubmissionOverviewView,
-    SubmissionSealedView,
-    SubmissionDeleteView,
     SubmissionPrivateMediaView,
-    SubmissionDetailPDFView,
-    SubmissionDetailSimplifiedView,
-    SubmissionUserFlaggedView,
+    SubmissionsByRound,
+    SubmissionsByStatus,
+    SubmissionSealedView,
     SubmissionStaffFlaggedView,
+    SubmissionUserFlaggedView,
 )
-
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),

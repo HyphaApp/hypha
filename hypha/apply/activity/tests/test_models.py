@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from .factories import CommentFactory
 from ..models import Activity
+from .factories import CommentFactory
 
 
 class TestActivityOnlyIncludesCurrent(TestCase):

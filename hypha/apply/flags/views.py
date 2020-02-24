@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponseNotAllowed, JsonResponse
 from django.utils.decorators import method_decorator
-from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views import View
 
 from hypha.apply.funds.models import ApplicationSubmission

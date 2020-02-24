@@ -1,22 +1,22 @@
-from datetime import date, timedelta
 import itertools
 import os
+from datetime import date, timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
+from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import Request
+from hypha.apply.review.options import MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from hypha.apply.review.options import NO, MAYBE
-from hypha.apply.utils.testing import make_request
 from hypha.apply.users.tests.factories import StaffFactory
+from hypha.apply.utils.testing import make_request
 
 from .factories import (
     ApplicationSubmissionFactory,

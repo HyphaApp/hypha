@@ -1,6 +1,5 @@
 import argparse
 import json
-
 from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
@@ -8,8 +7,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from hypha.apply.funds.models import ApplicationSubmission, Round, LabType
-from hypha.apply.funds.models.forms import RoundBaseReviewForm, LabBaseReviewForm
+from hypha.apply.funds.models import ApplicationSubmission, LabType, Round
+from hypha.apply.funds.models.forms import LabBaseReviewForm, RoundBaseReviewForm
 from hypha.apply.review.models import Review
 from hypha.apply.review.options import NA
 

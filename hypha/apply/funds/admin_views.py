@@ -1,14 +1,13 @@
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, get_object_or_404
-from django.utils.translation import ugettext as _
 from django.contrib.admin.utils import unquote
-
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext as _
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages import get_valid_next_url_from_request
+from wagtail.contrib.modeladmin.views import CreateView
 from wagtail.core import hooks
 from wagtail.core.models import Page
-from wagtail.contrib.modeladmin.views import CreateView
 
 
 def custom_admin_round_copy_view(request, page):

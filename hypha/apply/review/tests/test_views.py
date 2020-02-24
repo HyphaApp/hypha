@@ -5,9 +5,14 @@ from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactor
 from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
-from .factories import ReviewFactory, ReviewFormFieldsFactory, ReviewFormFactory, ReviewOpinionFactory
 from ..models import Review, ReviewOpinion
-from ..options import NA, AGREE, DISAGREE
+from ..options import AGREE, DISAGREE, NA
+from .factories import (
+    ReviewFactory,
+    ReviewFormFactory,
+    ReviewFormFieldsFactory,
+    ReviewOpinionFactory,
+)
 
 
 class StaffReviewsTestCase(BaseViewTestCase):

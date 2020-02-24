@@ -31,10 +31,9 @@ from .models import (
     Project,
     Report,
     ReportConfig,
-    ReportVersion,
     ReportPrivateFiles,
+    ReportVersion,
 )
-
 
 User = get_user_model()
 

@@ -1,14 +1,12 @@
 import json
 
-from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.validators import URLValidator
-
+from django.db import models
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
@@ -16,19 +14,13 @@ from wagtail.admin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
-
 from wagtail.core.fields import StreamField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from hypha.apply.categories.models import Option
 from hypha.public.utils.blocks import StoryBlock
-from hypha.public.utils.models import (
-    BaseFunding,
-    BasePage,
-    FundingMixin,
-    RelatedPage,
-)
+from hypha.public.utils.models import BaseFunding, BasePage, FundingMixin, RelatedPage
 
 from .widgets import CategoriesWidget
 

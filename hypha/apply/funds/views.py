@@ -1,72 +1,89 @@
 from copy import copy
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
-from django.http import FileResponse, HttpResponseRedirect, Http404
+from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView, DeleteView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    FormView,
+    ListView,
+    UpdateView,
+)
 from django.views.generic.detail import SingleObjectMixin
-
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
-
 from wagtail.core.models import Page
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import (
     ActivityContextMixin,
     CommentFormView,
     DelegatedViewMixin,
 )
-from hypha.apply.activity.messaging import messenger, MESSAGES
-from hypha.apply.determinations.views import BatchDeterminationCreateView, DeterminationCreateOrUpdateView
+from hypha.apply.determinations.views import (
+    BatchDeterminationCreateView,
+    DeterminationCreateOrUpdateView,
+)
 from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.pdfs import make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegateableListView, DelegateableView, ViewDispatcher
+from hypha.apply.utils.views import (
+    DelegateableListView,
+    DelegateableView,
+    ViewDispatcher,
+)
 
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
-    BatchUpdateSubmissionLeadForm,
-    BatchUpdateReviewersForm,
     BatchProgressSubmissionForm,
+    BatchUpdateReviewersForm,
+    BatchUpdateSubmissionLeadForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
+    UpdateMetaTermsForm,
+    UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
-    UpdatePartnersForm,
-    UpdateMetaTermsForm,
 )
 from .models import (
-    ApplicationSubmission,
     ApplicationRevision,
-    RoundsAndLabs,
+    ApplicationSubmission,
+    LabBase,
     RoundBase,
-    LabBase
+    RoundsAndLabs,
 )
 from .paginators import LazyPaginator
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
     ReviewerSubmissionsTable,
-    RoundsTable,
     RoundsFilter,
+    RoundsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
-from .workflow import INITIAL_STATE, STAGE_CHANGE_ACTIONS, PHASES_MAPPING, review_statuses
+from .workflow import (
+    INITIAL_STATE,
+    PHASES_MAPPING,
+    STAGE_CHANGE_ACTIONS,
+    review_statuses,
+)
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):

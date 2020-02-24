@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
 from django.http import HttpResponseForbidden
+from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.views import defaults
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
-from django.shortcuts import redirect
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):

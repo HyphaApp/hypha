@@ -3,7 +3,6 @@ from django.core.files.storage import get_storage_class
 from django.http import FileResponse
 from django.views.generic import View
 
-
 private_file_storage = getattr(settings, 'PRIVATE_FILE_STORAGE', None)
 PrivateStorage = get_storage_class(private_file_storage)
 

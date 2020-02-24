@@ -1,17 +1,17 @@
 from functools import partialmethod
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
     Case,
     Count,
-    IntegerField,
     F,
+    IntegerField,
     OuterRef,
     Prefetch,
     Q,
@@ -19,51 +19,49 @@ from django.db.models import (
     Sum,
     When,
 )
-from django.db.models.expressions import RawSQL, OrderBy
+from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.functions import Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
-
-from django_fsm import can_proceed, FSMField, transition, RETURN_VALUE
+from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
 from django_fsm.signals import post_transition
-
-from wagtail.core.fields import StreamField
 from wagtail.contrib.forms.models import AbstractFormSubmission
+from wagtail.core.fields import StreamField
 
-from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
 from hypha.apply.review.models import ReviewOpinion
-from hypha.apply.review.options import MAYBE, AGREE, DISAGREE
+from hypha.apply.review.options import AGREE, DISAGREE, MAYBE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 
+from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
+from ..workflow import (
+    COMMUNITY_REVIEW_PHASES,
+    DETERMINATION_RESPONSE_PHASES,
+    INITIAL_STATE,
+    PHASES,
+    PHASES_MAPPING,
+    STAGE_CHANGE_ACTIONS,
+    WORKFLOWS,
+    UserPermissions,
+    active_statuses,
+    get_review_active_statuses,
+    review_statuses,
+)
 from .mixins import AccessFormData
 from .utils import (
     COMMUNITY_REVIEWER_GROUP_NAME,
-    LIMIT_TO_STAFF,
-    LIMIT_TO_REVIEWER_GROUPS,
     LIMIT_TO_PARTNERS,
+    LIMIT_TO_REVIEWER_GROUPS,
+    LIMIT_TO_STAFF,
     REVIEW_GROUPS,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
     WorkflowHelpers,
-)
-from ..blocks import ApplicationCustomFormFieldsBlock, NAMED_BLOCKS
-from ..workflow import (
-    active_statuses,
-    DETERMINATION_RESPONSE_PHASES,
-    get_review_active_statuses,
-    INITIAL_STATE,
-    PHASES,
-    PHASES_MAPPING,
-    review_statuses,
-    STAGE_CHANGE_ACTIONS,
-    UserPermissions,
-    WORKFLOWS,
-    COMMUNITY_REVIEW_PHASES,
 )
 
 

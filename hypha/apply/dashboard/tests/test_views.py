@@ -1,6 +1,6 @@
 from hypha.apply.funds.tests.factories import (
-    ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
+    ApplicationSubmissionFactory,
     InvitedToProposalFactory,
 )
 from hypha.apply.projects.models import (
@@ -11,17 +11,14 @@ from hypha.apply.projects.models import (
     SUBMITTED,
     UNDER_REVIEW,
 )
-from hypha.apply.projects.tests.factories import (
-    PaymentRequestFactory,
-    ProjectFactory
-)
+from hypha.apply.projects.tests.factories import PaymentRequestFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.groups import APPROVER_GROUP_NAME
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     GroupFactory,
     ReviewerFactory,
-    StaffFactory
+    StaffFactory,
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 

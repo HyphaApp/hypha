@@ -1,37 +1,37 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db import transaction
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch, Q
 from django.utils import timezone
-
+from django_filters import rest_framework as filters
+from rest_framework import generics, mixins, permissions
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.response import Response
+from rest_framework_api_key.permissions import HasAPIKey
 from wagtail.core.models import Page
 
-from rest_framework import generics, mixins, permissions
-from rest_framework.response import Response
-from rest_framework.exceptions import (NotFound, PermissionDenied,
-                                       ValidationError)
-from rest_framework_api_key.permissions import HasAPIKey
-from django_filters import rest_framework as filters
-
-from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from hypha.apply.funds.workflow import PHASES
-
-from hypha.apply.activity.models import Activity, COMMENT
-from hypha.apply.activity.messaging import messenger, MESSAGES
+from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
+from hypha.apply.funds.models import (
+    ApplicationSubmission,
+    FundType,
+    LabType,
+    RoundsAndLabs,
+)
+from hypha.apply.funds.workflow import PHASES
 from hypha.apply.review.models import Review
-from hypha.apply.funds.models import FundType, LabType
 
 from .pagination import StandardResultsSetPagination
 from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
-    CommentSerializer,
     CommentCreateSerializer,
     CommentEditSerializer,
+    CommentSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
-    SubmissionListSerializer,
     SubmissionDetailSerializer,
+    SubmissionListSerializer,
 )
 
 

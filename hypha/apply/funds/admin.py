@@ -4,21 +4,28 @@ from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
+from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
 from hypha.apply.review.admin import ReviewFormAdmin
 from hypha.apply.utils.admin import ListRelatedMixin
-from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 
 from .admin_helpers import (
+    ApplicationFormButtonHelper,
     ButtonsWithPreview,
     FormsFundRoundListFilter,
-    RoundStateListFilter,
-    RoundFundChooserView,
     RoundAdminURLHelper,
-    ApplicationFormButtonHelper,
+    RoundFundChooserView,
+    RoundStateListFilter,
 )
 from .admin_views import CopyApplicationFormViewClass
-from .models import ApplicationForm, FundType, LabType, RequestForPartners, Round, SealedRound
+from .models import (
+    ApplicationForm,
+    FundType,
+    LabType,
+    RequestForPartners,
+    Round,
+    SealedRound,
+)
 
 
 class BaseRoundAdmin(ModelAdmin):

@@ -3,7 +3,6 @@ from unittest.mock import patch
 from django.test import TestCase
 
 from ..tasks import send_mail
-
 from .factories import MessageFactory
 
 

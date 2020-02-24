@@ -5,9 +5,14 @@ from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
-from .groups import (APPLICANT_GROUP_NAME, APPROVER_GROUP_NAME,
-                     COMMUNITY_REVIEWER_GROUP_NAME, PARTNER_GROUP_NAME,
-                     REVIEWER_GROUP_NAME, STAFF_GROUP_NAME)
+from .groups import (
+    APPLICANT_GROUP_NAME,
+    APPROVER_GROUP_NAME,
+    COMMUNITY_REVIEWER_GROUP_NAME,
+    PARTNER_GROUP_NAME,
+    REVIEWER_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
 from .utils import send_activation_email
 
 

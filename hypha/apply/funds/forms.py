@@ -3,16 +3,16 @@ from itertools import groupby
 from operator import methodcaller
 
 from django import forms
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from .models import AssignedReviewers, ApplicationSubmission, ReviewerRole
+from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
 from .utils import render_icon
-from .widgets import Select2MultiCheckboxesWidget, MetaTermSelect2Widget
+from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
 
 

@@ -1,8 +1,9 @@
 from django.test import TestCase
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from .factories import ReviewFactory, ReviewOpinionFactory
+
 from ..options import MAYBE, NO, YES
+from .factories import ReviewFactory, ReviewOpinionFactory
 
 
 class TestReviewQueryset(TestCase):

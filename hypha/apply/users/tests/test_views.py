@@ -1,14 +1,10 @@
 from django.core import mail
-from django.test import override_settings, TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.utils.testing.tests import BaseViewTestCase
-from .factories import (
-    OAuthUserFactory,
-    StaffFactory,
-    SuperUserFactory,
-    UserFactory,
-)
+
+from .factories import OAuthUserFactory, StaffFactory, SuperUserFactory, UserFactory
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')

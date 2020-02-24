@@ -5,9 +5,12 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
-
 from wagtail.contrib.modeladmin.forms import ParentChooserForm
-from wagtail.contrib.modeladmin.helpers import PageAdminURLHelper, PageButtonHelper, ButtonHelper
+from wagtail.contrib.modeladmin.helpers import (
+    ButtonHelper,
+    PageAdminURLHelper,
+    PageButtonHelper,
+)
 from wagtail.contrib.modeladmin.views import ChooseParentView
 from wagtail.core.models import Page
 

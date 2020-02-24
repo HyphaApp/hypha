@@ -1,7 +1,5 @@
 import mistune
-
 from django.contrib.auth import get_user_model
-
 from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 

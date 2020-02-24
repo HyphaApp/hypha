@@ -2,7 +2,6 @@ from django import template
 
 from hypha.public.navigation.models import NavigationSettings
 
-
 register = template.Library()
 
 

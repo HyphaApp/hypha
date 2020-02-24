@@ -18,15 +18,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
-
 from hijack.views import login_with_id
 from two_factor.views import LoginView as TwoFactorLoginView
-
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
 from .forms import BecomeUserForm, ProfileForm
-
 
 User = get_user_model()
 
