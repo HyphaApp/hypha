@@ -39,7 +39,6 @@ su - vagrant -c "$PIP install -r $PROJECT_DIR/requirements-dev.txt"
 chmod a+x $PROJECT_DIR/manage.py
 
 
-# running migrations here is typically not necessary because of fab pull_data
 # su - vagrant -c "$PYTHON $PROJECT_DIR/manage.py migrate --noinput"
 
 
