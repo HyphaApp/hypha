@@ -1,12 +1,15 @@
-from django.utils.safestring import mark_safe
 from django.core.files import File
+from django.utils.safestring import mark_safe
 
 from hypha.apply.stream_forms.blocks import (
-    FileFieldBlock, FormFieldBlock, GroupToggleBlock, ImageFieldBlock, MultiFileFieldBlock
+    FileFieldBlock,
+    FormFieldBlock,
+    GroupToggleBlock,
+    ImageFieldBlock,
+    MultiFileFieldBlock,
+    UploadableMediaBlock,
 )
 from hypha.apply.utils.blocks import SingleIncludeMixin
-
-from hypha.apply.stream_forms.blocks import UploadableMediaBlock
 from hypha.apply.utils.storage import PrivateStorage
 
 from ..files import SubmissionStreamFieldFile

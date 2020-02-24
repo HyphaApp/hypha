@@ -1,8 +1,8 @@
 from django.urls import include, path
 
-from .search import views as search_views
 from .mailchimp import urls as newsletter_urls
 from .news import feeds as news_feeds
+from .search import views as search_views
 
 urlpatterns = [
     path('search/', search_views.search, name='search'),

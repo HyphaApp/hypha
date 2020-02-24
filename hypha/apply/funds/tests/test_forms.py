@@ -1,19 +1,15 @@
 from django.test import TestCase
+
+from hypha.apply.funds.forms import UpdateReviewersForm
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
-    AssignedWithRoleReviewersFactory,
     AssignedReviewersFactory,
+    AssignedWithRoleReviewersFactory,
     InvitedToProposalFactory,
     ReviewerRoleFactory,
 )
 from hypha.apply.review.tests.factories import ReviewFactory
-from hypha.apply.users.tests.factories import (
-    ReviewerFactory,
-    StaffFactory,
-)
-
-
-from hypha.apply.funds.forms import UpdateReviewersForm
+from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory
 
 
 class TestReviewerFormQueries(TestCase):

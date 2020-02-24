@@ -1,6 +1,5 @@
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass
-
 from wagtail.contrib.forms.forms import BaseForm
 
 

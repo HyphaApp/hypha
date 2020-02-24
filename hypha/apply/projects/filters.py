@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from hypha.apply.funds.tables import (
     Select2ModelMultipleChoiceFilter,
     Select2MultipleChoiceFilter,
-    get_used_funds
+    get_used_funds,
 )
 
 from .models import (

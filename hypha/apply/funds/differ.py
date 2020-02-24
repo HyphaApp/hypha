@@ -1,8 +1,7 @@
 import re
-
-from bleach.sanitizer import Cleaner
 from difflib import SequenceMatcher
 
+from bleach.sanitizer import Cleaner
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 

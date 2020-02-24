@@ -19,7 +19,7 @@ from django.views.generic import (
     DetailView,
     FormView,
     TemplateView,
-    UpdateView
+    UpdateView,
 )
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -28,18 +28,10 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.users.decorators import approver_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import (
-    DelegateableView,
-    DelegatedViewMixin,
-    ViewDispatcher,
-)
+from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ..files import get_files
-from ..filters import (
-    PaymentRequestListFilter,
-    ProjectListFilter,
-    ReportListFilter,
-)
+from ..filters import PaymentRequestListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -52,7 +44,7 @@ from ..forms import (
     StaffUploadContractForm,
     UpdateProjectLeadForm,
     UploadContractForm,
-    UploadDocumentForm
+    UploadDocumentForm,
 )
 from ..models import (
     CONTRACTING,
@@ -65,16 +57,9 @@ from ..models import (
     Project,
     Report,
 )
-from ..tables import (
-    PaymentRequestsListTable,
-    ProjectsListTable,
-    ReportListTable,
-)
+from ..tables import PaymentRequestsListTable, ProjectsListTable, ReportListTable
+from .report import ReportFrequencyUpdate, ReportingMixin
 
-from .report import ReportingMixin, ReportFrequencyUpdate
-
-
-# APPROVAL VIEWS
 
 @method_decorator(staff_required, name='dispatch')
 class SendForApprovalView(DelegatedViewMixin, UpdateView):

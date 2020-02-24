@@ -13,8 +13,8 @@ from ..models import (
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
-    Project,
     PaymentRequest,
+    Project,
     Report,
     ReportConfig,
 )
@@ -23,8 +23,8 @@ from .factories import (
     PacketFileFactory,
     PaymentRequestFactory,
     ProjectFactory,
-    ReportFactory,
     ReportConfigFactory,
+    ReportFactory,
 )
 
 

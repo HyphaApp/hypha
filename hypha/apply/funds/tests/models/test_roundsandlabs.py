@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from hypha.apply.funds.models import RoundsAndLabs
-
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     FundTypeFactory,

@@ -1,19 +1,12 @@
 from unittest import mock
 
+from hypha.apply.determinations.tests.factories import DeterminationFactory
 from hypha.apply.funds.models import ApplicationSubmission
-
-from hypha.apply.determinations.tests.factories import (
-    DeterminationFactory
-)
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     InvitedToProposalFactory,
 )
-from hypha.apply.users.tests.factories import (
-    ReviewerFactory,
-    StaffFactory,
-    UserFactory,
-)
+from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 

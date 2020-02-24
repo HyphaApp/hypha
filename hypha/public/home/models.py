@@ -1,15 +1,19 @@
 import datetime
+
 from django.db import models
-
 from modelcluster.fields import ParentalKey
-
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, PageChooserPanel, MultiFieldPanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    PageChooserPanel,
+    StreamFieldPanel,
+)
 from wagtail.core.fields import StreamField
 from wagtail.search import index
 
-from hypha.public.utils.models import BasePage, RelatedPage
-
 from hypha.public.funds.models import FundPage, LabPage, RFPPage
+from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import OurWorkBlock
 

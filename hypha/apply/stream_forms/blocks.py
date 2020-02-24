@@ -1,8 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 import bleach
 from dateutil.parser import isoparse, parse
-from django_bleach.templatetags.bleach_tags import bleach_value
-
 from django import forms
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
@@ -12,10 +10,22 @@ from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django_bleach.templatetags.bleach_tags import bleach_value
 from unidecode import unidecode
 from wagtail.core.blocks import (
-    StructBlock, TextBlock, CharBlock, BooleanBlock, ListBlock, StreamBlock,
-    DateBlock, TimeBlock, DateTimeBlock, ChoiceBlock, RichTextBlock, StaticBlock, URLBlock
+    BooleanBlock,
+    CharBlock,
+    ChoiceBlock,
+    DateBlock,
+    DateTimeBlock,
+    ListBlock,
+    RichTextBlock,
+    StaticBlock,
+    StreamBlock,
+    StructBlock,
+    TextBlock,
+    TimeBlock,
+    URLBlock,
 )
 
 from .fields import MultiFileField

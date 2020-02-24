@@ -1,9 +1,7 @@
 from django import template
-
 from wagtail.core.utils import camelcase_to_underscore
 
 from hypha.public.utils.models import SocialMediaSettings
-
 
 register = template.Library()
 

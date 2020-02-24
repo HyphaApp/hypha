@@ -1,11 +1,11 @@
 from dateutil.relativedelta import relativedelta
-
 from django.conf import settings
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management.base import BaseCommand
 from django.http import HttpRequest
-from django.utils import timezone
 from django.urls import set_urlconf
+from django.utils import timezone
+
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.home.models import ApplyHomePage
 from hypha.apply.projects.models import Project

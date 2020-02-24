@@ -1,4 +1,5 @@
 from collections import Counter
+
 from wagtail.admin.forms import WagtailAdminPageForm
 
 from .workflow import WORKFLOWS

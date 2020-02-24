@@ -3,7 +3,14 @@ import uuid
 import factory
 from django.utils import timezone
 
-from hypha.apply.activity.models import Activity, Event, TEAM, Message, MESSAGES, REVIEWER
+from hypha.apply.activity.models import (
+    MESSAGES,
+    REVIEWER,
+    TEAM,
+    Activity,
+    Event,
+    Message,
+)
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import UserFactory
 

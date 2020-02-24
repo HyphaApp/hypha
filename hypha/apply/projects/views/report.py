@@ -5,24 +5,18 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import (
-    DetailView,
-    UpdateView,
-)
+from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
-from hypha.apply.users.decorators import staff_required
 
 from ..filters import ReportListFilter
-from ..forms import (
-    ReportEditForm,
-    ReportFrequencyForm,
-)
+from ..forms import ReportEditForm, ReportFrequencyForm
 from ..models import Report, ReportConfig, ReportPrivateFiles
 from ..tables import ReportListTable
 

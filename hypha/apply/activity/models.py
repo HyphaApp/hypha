@@ -2,11 +2,10 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, When, Value
+from django.db.models import Case, Value, When
 from django.db.models.functions import Concat
 
 from .options import MESSAGES
-
 
 COMMENT = 'comment'
 ACTION = 'action'

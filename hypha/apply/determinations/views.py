@@ -11,15 +11,15 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import DetailView, CreateView
+from django.views.generic import CreateView, DetailView
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
-from hypha.apply.activity.messaging import messenger, MESSAGES
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 from hypha.apply.projects.models import Project
-from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from hypha.apply.users.decorators import staff_required
+from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 
 from .forms import (
     BatchConceptDeterminationForm,
@@ -27,8 +27,12 @@ from .forms import (
     ConceptDeterminationForm,
     ProposalDeterminationForm,
 )
-from .models import Determination, DeterminationMessageSettings, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
-
+from .models import (
+    NEEDS_MORE_INFO,
+    TRANSITION_DETERMINATION,
+    Determination,
+    DeterminationMessageSettings,
+)
 from .utils import (
     can_create_determination,
     can_edit_determination,

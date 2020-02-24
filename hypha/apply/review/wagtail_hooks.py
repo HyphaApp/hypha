@@ -1,5 +1,4 @@
 from django.contrib.auth.models import Permission
-
 from wagtail.core import hooks
 
 

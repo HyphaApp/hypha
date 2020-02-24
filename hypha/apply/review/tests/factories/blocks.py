@@ -1,11 +1,15 @@
 import json
 import random
+
 import factory
 
 from hypha.apply.review import blocks
-from hypha.apply.review.options import YES, MAYBE, NO, PRIVATE, REVIEWER
-from hypha.apply.stream_forms.testing.factories import FormFieldBlockFactory, CharFieldBlockFactory, \
-    StreamFieldUUIDFactory
+from hypha.apply.review.options import MAYBE, NO, PRIVATE, REVIEWER, YES
+from hypha.apply.stream_forms.testing.factories import (
+    CharFieldBlockFactory,
+    FormFieldBlockFactory,
+    StreamFieldUUIDFactory,
+)
 from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
 __all__ = ['ReviewFormFieldsFactory', 'RecommendationBlockFactory', 'ScoreFieldBlockFactory']

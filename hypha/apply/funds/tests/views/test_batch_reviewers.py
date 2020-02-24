@@ -5,11 +5,8 @@ from hypha.apply.funds.tests.factories import (
     AssignedWithRoleReviewersFactory,
     ReviewerRoleFactory,
 )
-from hypha.apply.users.tests.factories import (
-    ReviewerFactory,
-    StaffFactory,
-)
 from hypha.apply.review.tests.factories import ReviewFactory
+from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 

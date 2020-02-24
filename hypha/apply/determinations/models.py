@@ -4,12 +4,16 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from wagtail.admin.edit_handlers import TabbedInterface, ObjectList, FieldPanel, MultiFieldPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    MultiFieldPanel,
+    ObjectList,
+    TabbedInterface,
+)
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
 
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
-
 
 REJECTED = 0
 NEEDS_MORE_INFO = 1

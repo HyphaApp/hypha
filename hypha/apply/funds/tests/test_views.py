@@ -8,15 +8,13 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
-from hypha.apply.activity.models import Activity, TEAM
-from hypha.apply.projects.models import Project
-from hypha.apply.projects.tests.factories import ProjectFactory
+from hypha.apply.activity.models import TEAM, Activity
 from hypha.apply.determinations.tests.factories import DeterminationFactory
 from hypha.apply.funds.tests.factories import (
-    ApplicationSubmissionFactory,
     ApplicationRevisionFactory,
-    AssignedWithRoleReviewersFactory,
+    ApplicationSubmissionFactory,
     AssignedReviewersFactory,
+    AssignedWithRoleReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
     ReviewerRoleFactory,
@@ -24,12 +22,14 @@ from hypha.apply.funds.tests.factories import (
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
+from hypha.apply.projects.models import Project
+from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
+    ApplicantFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    ApplicantFactory,
 )
 from hypha.apply.utils.testing import make_request
 from hypha.apply.utils.testing.tests import BaseViewTestCase

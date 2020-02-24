@@ -1,13 +1,5 @@
-from hypha.apply.funds.tests.factories import (
-    LabFactory,
-    RoundFactory,
-)
-
-from hypha.apply.users.tests.factories import (
-    ReviewerFactory,
-    StaffFactory,
-    UserFactory,
-)
+from hypha.apply.funds.tests.factories import LabFactory, RoundFactory
+from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 

@@ -4,39 +4,35 @@ import json
 from unittest.mock import Mock, patch
 
 import responses
-
+from django.contrib.messages import get_messages
 from django.core import mail
 from django.test import TestCase, override_settings
-from django.contrib.messages import get_messages
 
-from hypha.apply.utils.testing import make_request
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
     AssignedWithRoleReviewersFactory,
 )
+from hypha.apply.projects.tests.factories import PaymentRequestFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ReviewerFactory,
     StaffFactory,
-    UserFactory
+    UserFactory,
 )
-from hypha.apply.projects.tests.factories import (
-    ProjectFactory,
-    PaymentRequestFactory
-)
+from hypha.apply.utils.testing import make_request
 
-from ..models import Activity, Event, Message, TEAM, ALL
 from ..messaging import (
-    AdapterBase,
+    MESSAGES,
     ActivityAdapter,
+    AdapterBase,
     EmailAdapter,
     MessengerBackend,
-    neat_related,
-    MESSAGES,
     SlackAdapter,
+    neat_related,
 )
+from ..models import ALL, TEAM, Activity, Event, Message
 from .factories import CommentFactory, EventFactory, MessageFactory
 
 

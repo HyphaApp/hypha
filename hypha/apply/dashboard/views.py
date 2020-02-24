@@ -12,16 +12,13 @@ from hypha.apply.funds.tables import (
     SubmissionsTable,
     SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
-    review_filter_for_user
+    review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import (
-    PaymentRequest,
-    Project
-)
+from hypha.apply.projects.models import PaymentRequest, Project
 from hypha.apply.projects.tables import (
     PaymentRequestsDashboardTable,
-    ProjectsDashboardTable
+    ProjectsDashboardTable,
 )
 from hypha.apply.utils.views import ViewDispatcher
 

@@ -4,9 +4,7 @@ from unittest import mock
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
-from hypha.apply.users.tests.factories import (
-    UserFactory,
-)
+from hypha.apply.users.tests.factories import UserFactory
 
 from ..files import get_files
 from ..forms import (
@@ -17,20 +15,14 @@ from ..forms import (
     StaffUploadContractForm,
     UploadContractForm,
     filter_choices,
-    filter_request_choices
+    filter_request_choices,
 )
-from ..models import (
-    CHANGES_REQUESTED,
-    DECLINED,
-    PAID,
-    SUBMITTED,
-    UNDER_REVIEW,
-)
+from ..models import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
 from .factories import (
     DocumentCategoryFactory,
     PaymentRequestFactory,
     ProjectFactory,
-    address_to_form_data
+    address_to_form_data,
 )
 
 

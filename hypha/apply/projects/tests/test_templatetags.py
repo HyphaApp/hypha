@@ -12,14 +12,10 @@ from ..models import (
     IN_PROGRESS,
     PAID,
     SUBMITTED,
-    UNDER_REVIEW
+    UNDER_REVIEW,
 )
 from ..templatetags.contract_tools import user_can_upload_contract
-from ..templatetags.payment_request_tools import (
-    can_change_status,
-    can_delete,
-    can_edit
-)
+from ..templatetags.payment_request_tools import can_change_status, can_delete, can_edit
 from .factories import ContractFactory, PaymentRequestFactory, ProjectFactory
 
 

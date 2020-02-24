@@ -1,9 +1,8 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
 
-from hypha.apply.activity.models import Activity, APPLICANT, ALL
+from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
-
 from hypha.apply.users.tests.factories import UserFactory
 
 

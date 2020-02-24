@@ -7,8 +7,8 @@ from .views import (
     RoundLabDetail,
     RoundLabList,
     SubmissionAction,
-    SubmissionList,
     SubmissionDetail,
+    SubmissionList,
 )
 
 app_name = 'v1'

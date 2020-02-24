@@ -1,6 +1,7 @@
-import os
 import io
+import os
 
+from bs4 import BeautifulSoup, NavigableString
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import Color, white
 from reportlab.lib.styles import ParagraphStyle as PS
@@ -17,9 +18,6 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
-
-
-from bs4 import BeautifulSoup, NavigableString
 
 styles = {
     'Question': PS(fontName='MontserratBold', fontSize=14, name='Question', spaceAfter=0, spaceBefore=18, leading=21),

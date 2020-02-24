@@ -4,8 +4,8 @@ import factory
 import wagtail_factories
 
 from hypha.apply.funds.models import (
-    ApplicationSubmission,
     ApplicationRevision,
+    ApplicationSubmission,
     AssignedReviewers,
     FundType,
     LabType,
@@ -16,9 +16,9 @@ from hypha.apply.funds.models import (
     SealedRound,
 )
 from hypha.apply.funds.models.forms import (
-    ApplicationForm,
     ApplicationBaseForm,
     ApplicationBaseReviewForm,
+    ApplicationForm,
     LabBaseForm,
     LabBaseReviewForm,
     RoundBaseForm,
@@ -27,11 +27,14 @@ from hypha.apply.funds.models.forms import (
 from hypha.apply.funds.workflow import ConceptProposal, Request
 from hypha.apply.home.factories import ApplyHomePageFactory
 from hypha.apply.stream_forms.testing.factories import FormDataFactory
-from hypha.apply.users.groups import STAFF_GROUP_NAME, REVIEWER_GROUP_NAME
-from hypha.apply.users.tests.factories import StaffFactory, ApplicantFactory, GroupFactory
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.tests.factories import (
+    ApplicantFactory,
+    GroupFactory,
+    StaffFactory,
+)
 
 from . import blocks
-
 
 __all__ = [
     'FundTypeFactory',

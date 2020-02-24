@@ -1,7 +1,7 @@
 from decimal import Decimal
 from io import BytesIO
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
@@ -15,19 +15,13 @@ from hypha.apply.users.tests.factories import (
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
-    UserFactory
+    UserFactory,
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
-from ..forms import SetPendingForm
 from ..files import get_files
-from ..models import (
-    CHANGES_REQUESTED,
-    COMMITTED,
-    CONTRACTING,
-    IN_PROGRESS,
-    SUBMITTED,
-)
+from ..forms import SetPendingForm
+from ..models import CHANGES_REQUESTED, COMMITTED, CONTRACTING, IN_PROGRESS, SUBMITTED
 from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,

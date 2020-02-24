@@ -1,10 +1,9 @@
 import uuid
 
+import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.utils.text import slugify
-
-import factory
 
 from ..groups import (
     APPLICANT_GROUP_NAME,
