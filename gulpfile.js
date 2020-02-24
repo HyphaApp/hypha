@@ -59,7 +59,7 @@ var gulp      = require('gulp'),
   $           = require('gulp-load-plugins')(),
   del         = require('del'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
-  sass        = require('gulp-dart-sass'),
+  sass        = require('gulp-sass'),
   cleanCSS    = require('gulp-clean-css'),
   touch       = require('gulp-touch-cmd'),
   webpack     = require('webpack'),
@@ -67,6 +67,9 @@ var gulp      = require('gulp'),
   DevServer   = require('webpack-dev-server'),
   exec        = require('child_process').exec;
 
+
+// Use Dart Sass instead of default node Sass.
+sass.compiler = require('sass');
 
 // Load webpack config
 var webpackDev = () => require(options.theme.app + 'webpack.dev.config.js');
