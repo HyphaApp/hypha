@@ -19,7 +19,7 @@ executors:
           PGUSER: root
           DJANGO_SETTINGS_MODULE: hypha.settings.test
           SEND_MESSAGES: false
-      - image: circleci/postgres:10.10
+      - image: circleci/postgres:10.11
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: hypha
@@ -118,12 +118,12 @@ jobs:
             codecov
 
   lint:
-    executor: python 
+    executor: python
     working_directory: ~/repo
     steps:
       - checkout
       - attach_workspace:
-          at: ~/repo 
+          at: ~/repo
       - run:
           name: run tests
           command: |
@@ -133,13 +133,13 @@ jobs:
 
 workflows:
     version: 2.1
-    process: 
+    process:
       jobs:
-        - build-fe 
+        - build-fe
         - build-be
         - test:
             requires:
-            - build-fe 
+            - build-fe
             - build-be
         - lint:
             requires:
