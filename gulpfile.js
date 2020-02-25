@@ -68,6 +68,9 @@ var gulp      = require('gulp'),
   exec        = require('child_process').exec;
 
 
+// Use Dart Sass instead of default node Sass.
+sass.compiler = require('sass');
+
 // Load webpack config
 var webpackDev = () => require(options.theme.app + 'webpack.dev.config.js');
 var webpackProd = () => require(options.theme.app + 'webpack.prod.config.js');

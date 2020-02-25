@@ -44,6 +44,7 @@
         "redux-logger": "^3.0.6",
         "redux-thunk": "^2.3.0",
         "reselect": "^4.0.0",
+        "sass": "^1.25.0",
         "smoothscroll-polyfill": "^0.4.4",
         "uuid": "^3.3.2"
     },
@@ -60,7 +61,6 @@
         "gulp-eslint": "^5.0.0",
         "gulp-sass-lint": "^1.4.0",
         "gulp-sourcemaps": "^2.6.5",
-        "node-sass": "^4.12.0",
         "react-hot-loader": "^4.8.4",
         "redux-devtools-extension": "^2.13.8",
         "sass-loader": "^7.1.0",
