@@ -651,8 +651,14 @@ class ReportConfig(models.Model):
 
     def last_report(self):
         today = timezone.now().date()
+        # Get the most recent report that was either:
+        # - due by today and not submitted
+        # - was skipped but due after today
+        # - was submitted but due after today
         return self.project.reports.filter(
-            Q(end_date__lt=today) | Q(skipped=True)
+            Q(end_date__lt=today) |
+            Q(skipped=True) |
+            Q(submitted__isnull=False)
         ).first()
 
     def current_due_report(self):

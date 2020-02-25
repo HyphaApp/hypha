@@ -30,7 +30,8 @@ class TestNotifyReportDue(TestCase):
             end_date=config.schedule_start,
         )
         out = StringIO()
-        call_command('notify_report_due', 7, stdout=out)
+        with self.settings(ALLOWED_HOSTS=[ApplyHomePage.objects.first().get_site().hostname]):
+            call_command('notify_report_due', 7, stdout=out)
         self.assertNotIn('Notified project', out.getvalue())
 
     def test_dont_notify_already_notified(self):

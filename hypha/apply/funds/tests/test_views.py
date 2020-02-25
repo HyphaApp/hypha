@@ -176,9 +176,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(new_title, submission.title)
 
     def test_not_included_fields_render(self):
-        submission = ApplicationSubmissionFactory(form_fields__exclude__value=True)
+        submission = ApplicationSubmissionFactory(form_fields__exclude__checkbox=True)
         response = self.get_page(submission)
-        self.assertNotContains(response, 'Value')
+        self.assertNotContains(response, 'check_one')
 
     def test_can_screen_submission(self):
         screening_outcome = ScreeningStatusFactory()

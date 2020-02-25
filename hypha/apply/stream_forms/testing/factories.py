@@ -179,7 +179,7 @@ class CheckboxFieldBlockFactory(FormFieldBlockFactory):
 
 
 class CheckboxesFieldBlockFactory(FormFieldBlockFactory):
-    checkboxes = ['check_one', 'check_two', 'check_three']
+    checkboxes = ['check_multiple_one', 'check_multiple_two', 'check_multiple_three']
 
     class Meta:
         model = stream_blocks.CheckboxesFieldBlock
