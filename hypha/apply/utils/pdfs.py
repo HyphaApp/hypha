@@ -11,19 +11,18 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate,
-    KeepTogether,
     Frame,
+    KeepTogether,
     ListFlowable,
     ListItem,
     NextPageTemplate,
     PageBreak,
-    Paragraph,
     PageTemplate,
+    Paragraph,
     Spacer,
     Table,
     TableStyle,
 )
-
 
 STYLES = {
     'Question': PS(fontName='MontserratBold', fontSize=14, name='Question', spaceAfter=0, spaceBefore=18, leading=21),

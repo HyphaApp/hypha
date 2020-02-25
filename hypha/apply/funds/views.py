@@ -39,7 +39,7 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
-from hypha.apply.utils.pdfs import make_pdf, draw_submission_content
+from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
     DelegateableListView,
