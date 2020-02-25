@@ -111,7 +111,6 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py collectstatic --noinput --verbosity=0
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
             coverage run --source='hypha' manage.py test
