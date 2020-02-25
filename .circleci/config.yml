@@ -2,23 +2,71 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
-jobs:
-  build:
+version: 2.1
+executors:
+  python:
     docker:
-      - image: circleci/python:3.6.9-stretch-node
+      - image: circleci/python:3.6.10
+  node:
+    docker:
+      - image: circleci/node:10
+  with-database:
+    docker:
+      - image: circleci/python:3.6.10
         environment:
           DATABASE_URL: postgresql://root@localhost/hypha?sslmode=disable
           PGHOST: localhost
           PGUSER: root
           DJANGO_SETTINGS_MODULE: hypha.settings.test
           SEND_MESSAGES: false
-
-      - image: circleci/postgres:10.10
+      - image: circleci/postgres:10.11
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: hypha
 
+jobs:
+  build-fe:
+    executor: node
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: set owner on /usr/local
+          command: sudo chown -R circleci:circleci /usr/local
+
+      - restore_cache:
+          keys:
+            - v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-npm-{{ .Branch }}-
+            - v2-npm-
+
+      - run:
+          name: install node dependencies
+          command: |
+            npm install --quiet
+            npm install -g gulp-cli
+
+      - save_cache:
+          paths:
+            - ./node_modules
+            - /usr/local/lib/node_modules
+            - /usr/local/bin
+          key: v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: builds static assets
+          command: gulp deploy
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - hypha/static_compiled
+
+
+  build-be:
+    executor: python
     working_directory: ~/repo
 
     steps:
@@ -34,12 +82,6 @@ jobs:
             - v2-python-{{ .Branch }}-
             - v2-python-
 
-      - restore_cache:
-          keys:
-            - v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v2-npm-{{ .Branch }}-
-            - v2-npm-
-
       - run:
           name: install python dependencies
           command: |
@@ -48,36 +90,57 @@ jobs:
             pip install coverage codecov
             pip install -r requirements-dev.txt
 
-      - run:
-          name: install node dependencies
-          command: |
-            npm install --quiet
-            npm install -g gulp-cli
-
       - save_cache:
           paths:
             - ./venv
           key: v2-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
 
-      - save_cache:
+      - persist_to_workspace:
+          root: ~/repo
           paths:
-            - ./node_modules
-            - /usr/local/lib/node_modules
-            - /usr/local/bin
-          key: v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - venv
 
+  test:
+    executor: with-database
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
       - run:
-          name: buils static assets
-          command: gulp deploy
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python manage.py collectstatic --noinput --verbosity=0
+            python manage.py check
+            python manage.py makemigrations --check --noinput --verbosity=1
+            coverage run --source='hypha' manage.py test
+            codecov
 
+  lint:
+    executor: python
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
       - run:
           name: run tests
           command: |
             . venv/bin/activate
             flake8 ./hypha
             make sort
-            python manage.py collectstatic --noinput --verbosity=0
-            python manage.py check
-            python manage.py makemigrations --check --noinput --verbosity=1
-            coverage run --source='hypha' manage.py test
-            codecov
+
+workflows:
+    version: 2.1
+    process:
+      jobs:
+        - build-fe
+        - build-be
+        - test:
+            requires:
+            - build-fe
+            - build-be
+        - lint:
+            requires:
+              - build-be
