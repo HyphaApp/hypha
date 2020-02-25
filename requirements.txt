@@ -21,7 +21,7 @@ django-pwned-passwords==4.1.0
 django-redis==4.11.0
 django-referrer-policy==1.0
 django-storages==1.7.1
-django-tables2==1.21.2
+django-tables2==2.2.1
 django-tinymce4-lite==1.7.5
 django-two-factor-auth==1.9.1
 django-webpack-loader==0.6.0
