@@ -1529,3 +1529,40 @@ class TestSkipReport(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()
         self.assertTrue(report.skipped)
+
+
+class TestStaffProjectPDFExport(BaseViewTestCase):
+    base_view_name = 'download'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_can_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_reponse_object_is_pdf(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.filename, project.title + '.pdf')
+
+
+class ApplicantStaffProjectPDFExport(BaseViewTestCase):
+    base_view_name = 'download'
+    url_name = 'funds:projects:{}'
+    user_factory = ApplicantFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_cant_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 403)
