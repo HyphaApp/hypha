@@ -15,7 +15,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import UserFactory
 
 
-class CommentFactory(factory.DjangoModelFactory):
+class ActivityFactory(factory.DjangoModelFactory):
     class Meta:
         model = Activity
 
@@ -28,6 +28,8 @@ class CommentFactory(factory.DjangoModelFactory):
     message = factory.Faker('sentence')
     timestamp = factory.LazyFunction(timezone.now)
 
+
+class CommentFactory(ActivityFactory):
     @classmethod
     def _get_manager(cls, model_class):
         return model_class.comments
