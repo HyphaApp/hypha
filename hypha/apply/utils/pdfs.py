@@ -36,29 +36,38 @@ def font(font_name):
     return os.path.join(font_location, font_name)
 
 
-pdfmetrics.registerFont(TTFont('Montserrat', font('Montserrat-Regular.ttf')))
-pdfmetrics.registerFont(TTFont('MontserratBold', font('Montserrat-Bold.ttf')))
-pdfmetrics.registerFont(TTFont('MontserratItalic', font('Montserrat-Italic.ttf')))
-pdfmetrics.registerFont(TTFont('MontserratBoldItalic', font('Montserrat-BoldItalic.ttf')))
-pdfmetrics.registerFontFamily(
-    'Montserrat',
-    normal='Montserrat',
-    bold='MontserratBold',
-    italic='MontserratItalic',
-    boldItalic='MontserratBoldItalic'
-)
+PREPARED_FONTS = False
 
-pdfmetrics.registerFont(TTFont('NotoSans', font('NotoSans-Regular.ttf')))
-pdfmetrics.registerFont(TTFont('NotoSansBold', font('NotoSans-Bold.ttf')))
-pdfmetrics.registerFont(TTFont('NotoSansItalic', font('NotoSans-Italic.ttf')))
-pdfmetrics.registerFont(TTFont('NotoSansBoldItalic', font('NotoSans-BoldItalic.ttf')))
-pdfmetrics.registerFontFamily(
-    'NotoSans',
-    normal='NotoSans',
-    bold='NotoSansBold',
-    italic='NotoSansItalic',
-    boldItalic='NotoSansBoldItalic'
-)
+
+def prepare_fonts():
+    global PREPARED_FONTS
+    if PREPARED_FONTS:
+        return
+    pdfmetrics.registerFont(TTFont('Montserrat', font('Montserrat-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('MontserratBold', font('Montserrat-Bold.ttf')))
+    pdfmetrics.registerFont(TTFont('MontserratItalic', font('Montserrat-Italic.ttf')))
+    pdfmetrics.registerFont(TTFont('MontserratBoldItalic', font('Montserrat-BoldItalic.ttf')))
+    pdfmetrics.registerFontFamily(
+        'Montserrat',
+        normal='Montserrat',
+        bold='MontserratBold',
+        italic='MontserratItalic',
+        boldItalic='MontserratBoldItalic'
+    )
+
+    pdfmetrics.registerFont(TTFont('NotoSans', font('NotoSans-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('NotoSansBold', font('NotoSans-Bold.ttf')))
+    pdfmetrics.registerFont(TTFont('NotoSansItalic', font('NotoSans-Italic.ttf')))
+    pdfmetrics.registerFont(TTFont('NotoSansBoldItalic', font('NotoSans-BoldItalic.ttf')))
+    pdfmetrics.registerFontFamily(
+        'NotoSans',
+        normal='NotoSans',
+        bold='NotoSansBold',
+        italic='NotoSansItalic',
+        boldItalic='NotoSansBoldItalic'
+    )
+    PREPARED_FONTS = True
+
 
 DARK_GREY = Color(0.0154, 0.0154, 0, 0.7451)
 
@@ -69,6 +78,7 @@ FRAME_PADDING = 6
 
 
 def make_pdf(title, meta, content):
+    prepare_fonts()
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,
