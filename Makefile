@@ -1,14 +1,23 @@
-.PHONY:
+.PHONY: help
 help:
 	@echo "Usage:"
 	@echo "    make help             prints this help."
-	@echo "    make fix              fix import sort order."
-	@echo "    make sort             run the linter."
+	@echo "    make lint             run all python linting."
+	@echo "    make sort             run the isort import linter."
+	@echo "    make sort-fix         fix import sort order."
+	@echo "    make style            run the python code style linter."
 
-.PHONY: fix
-fix:
-	isort -y
+.PHONY: lint
+lint: sort style
 
 .PHONY: sort
 sort:
-	@echo "Running Isort" && isort --check-only --diff || exit 1
+	@echo "Checking imports with isort" && isort --check-only --diff
+
+.PHONY: sort-fix
+sort-fix:
+	@echo "Fixing imports with isort" && isort --apply
+
+.PHONY: style
+style:
+	@echo "Checking code style with flake8" && flake8
