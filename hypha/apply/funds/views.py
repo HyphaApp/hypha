@@ -39,7 +39,7 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
-from hypha.apply.utils.pdfs import make_pdf
+from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
     DelegateableListView,
@@ -1016,15 +1016,23 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        content = draw_submission_content(
+            self.object.output_text_answers()
+        )
         pdf = make_pdf(
             title=self.object.title,
-            meta=[
-                self.object.stage,
-                self.object.page,
-                self.object.round,
-                f"Lead: { self.object.lead }",
-            ],
-            content=self.object.output_text_answers()
+            sections=[
+                {
+                    'content': content,
+                    'title': 'Submission',
+                    'meta': [
+                        self.object.stage,
+                        self.object.page,
+                        self.object.round,
+                        f"Lead: { self.object.lead }",
+                    ],
+                },
+            ]
         )
         return FileResponse(
             pdf,

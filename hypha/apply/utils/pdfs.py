@@ -1,5 +1,6 @@
 import io
 import os
+from itertools import cycle
 
 from bs4 import BeautifulSoup, NavigableString
 from reportlab.lib import pagesizes
@@ -9,18 +10,23 @@ from reportlab.lib.utils import simpleSplit
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
+    BaseDocTemplate,
+    Frame,
     KeepTogether,
     ListFlowable,
     ListItem,
+    NextPageTemplate,
+    PageBreak,
+    PageTemplate,
     Paragraph,
-    SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
 )
 
-styles = {
+STYLES = {
     'Question': PS(fontName='MontserratBold', fontSize=14, name='Question', spaceAfter=0, spaceBefore=18, leading=21),
+    'QuestionSmall': PS(fontName='MontserratBold', fontSize=12, name='QuestionSmall', spaceAfter=0, spaceBefore=16, leading=18),
     'Normal': PS(fontName='NotoSans', name='Normal'),
     'Heading1': PS(fontName='NotoSansBold', fontSize=12, name='Heading1', spaceAfter=4, spaceBefore=12, leading=18),
     'Heading2': PS(fontName='NotoSansBold', fontSize=10, name='Heading2', spaceAfter=4, spaceBefore=10, leading=15),
@@ -77,31 +83,61 @@ PAGE_WIDTH, PAGE_HEIGHT = pagesizes.legal
 FRAME_PADDING = 6
 
 
-def make_pdf(title, meta, content):
+def do_nothing(doc, canvas):
+    pass
+
+
+class ReportDocTemplate(BaseDocTemplate):
+    def build(self, flowables, onFirstPage=do_nothing, onLaterPages=do_nothing):
+        frame = Frame(self.leftMargin, self.bottomMargin, self.width, self.height, id='normal')
+        self.addPageTemplates([
+            PageTemplate(id='Header', autoNextPageTemplate='Main', frames=frame, onPage=onFirstPage, pagesize=self.pagesize),
+            PageTemplate(id='Main', frames=frame, onPage=onLaterPages, pagesize=self.pagesize),
+        ])
+        super().build(flowables)
+
+
+def make_pdf(title, sections):
     prepare_fonts()
     buffer = io.BytesIO()
-    doc = SimpleDocTemplate(
+
+    doc = ReportDocTemplate(
         buffer,
         pagesize=(PAGE_WIDTH, PAGE_HEIGHT),
         title=title,
     )
 
-    blocks = []
-    extra_content = draw_content(content)
-    blocks = [*blocks, *extra_content]
+    story = []
+    for section in sections:
+        story.extend(section['content'])
+        story.append(NextPageTemplate('Header'))
+        story.append(PageBreak())
 
-    def title_page(canvas, doc):
+    current_section = None
+    sections = cycle(sections)
+
+    def header_page(canvas, doc):
+        nonlocal current_section
+        current_section = next(sections)
         canvas.saveState()
-        title_spacer = draw_title_block(canvas, doc, title, meta)
+        title_spacer = draw_title_block(
+            canvas,
+            doc,
+            current_section['title'],
+            title,
+            current_section['meta'],
+        )
         canvas.restoreState()
-        blocks.insert(0, title_spacer)
+        story.insert(0, title_spacer)
 
-    def later_page(canvas, doc):
+    def main_page(canvas, doc):
+        nonlocal current_section
         canvas.saveState()
-        draw_header(canvas, doc, title)
+        spacer = draw_header(canvas, doc, current_section['title'], title)
+        story.insert(0, spacer)
         canvas.restoreState()
 
-    doc.build(blocks, onFirstPage=title_page, onLaterPages=later_page)
+    doc.build(story, onFirstPage=header_page, onLaterPages=main_page)
 
     buffer.seek(0)
     return buffer
@@ -111,57 +147,20 @@ def split_text(canvas, text, width):
     return simpleSplit(text, canvas._fontname, canvas._fontsize, width)
 
 
-def draw_header(canvas, doc, title):
+def draw_header(canvas, doc, page_title, title):
     title_size = 10
 
-    canvas.setFillColor(DARK_GREY)
-    canvas.rect(
-        0,
-        PAGE_HEIGHT - doc.topMargin,
-        PAGE_WIDTH,
-        doc.topMargin,
-        stroke=False,
-        fill=True,
-    )
     # Set canvas font to correctly calculate the splitting
-
     canvas.setFont("MontserratBold", title_size)
-    canvas.setFillColor(white)
 
     text_width = PAGE_WIDTH - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
     split_title = split_text(canvas, title, text_width)
 
-    pos = (
-        (PAGE_HEIGHT - doc.topMargin) +  # bottom of top margin
-        1.5 * len(split_title) * title_size +  # text
-        title_size / 2  # bottom padding
-    )
-
-    for line in split_title:
-        pos -= title_size
-        canvas.drawString(
-            doc.leftMargin + FRAME_PADDING,
-            pos,
-            line,
-        )
-        pos -= title_size / 2
-
-
-def draw_title_block(canvas, doc, title, meta):
-    title_size = 30
-    meta_size = 10
-
-    text_width = PAGE_WIDTH - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
-
-    # Set canvas font to correctly calculate the splitting
-    canvas.setFont("MontserratBold", title_size)
-    canvas.setFillColor(white)
-    split_title = split_text(canvas, title, text_width)
-
+    # only count title - assume 1 line of title in header
     total_height = (
         doc.topMargin +
-        len(split_title) * (title_size + title_size / 2) +  # title + spacing
-        meta_size * 4  # 1 for text 3 for spacing
+        1.5 * (len(split_title) - 1) * title_size +
+        title_size / 2  # bottom padding
     )
 
     canvas.setFillColor(DARK_GREY)
@@ -174,10 +173,82 @@ def draw_title_block(canvas, doc, title, meta):
         fill=True,
     )
 
+    pos = (
+        (PAGE_HEIGHT - doc.topMargin) +  # bottom of top margin
+        title_size / 2 +  # spacing below page title
+        1.5 * 1 * title_size  # text
+    )
+
+    canvas.setFillColor(white)
+
+    canvas.drawString(
+        doc.leftMargin + FRAME_PADDING,
+        pos,
+        page_title,
+    )
+
+    pos -= title_size / 2
+
+    for line in split_title:
+        pos -= title_size
+        canvas.drawString(
+            doc.leftMargin + FRAME_PADDING,
+            pos,
+            line,
+        )
+        pos -= title_size / 2
+
+    return Spacer(1, total_height - doc.topMargin)
+
+
+def draw_title_block(canvas, doc, page_title, title, meta):
+    page_title_size = 20
+    title_size = 30
+    meta_size = 10
+
+    text_width = PAGE_WIDTH - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
+
+    # Set canvas font to correctly calculate the splitting
     canvas.setFont("MontserratBold", title_size)
     canvas.setFillColor(white)
-    pos = PAGE_HEIGHT - doc.topMargin
+    split_title = split_text(canvas, title, text_width)
 
+    canvas.setFont("MontserratBold", meta_size)
+    canvas.setFillColor(white)
+    meta_text = '  |  '.join(str(text) for text in meta)
+    split_meta = split_text(canvas, meta_text, text_width)
+
+    total_height = (
+        doc.topMargin +
+        page_title_size + page_title_size * 3 / 4 +  # page title + spaceing
+        len(split_title) * (title_size + title_size / 2) +  # title + spacing
+        (1.5 * len(split_meta) + 3) * meta_size  # 1.5 per text line + 3 for spacing
+    )
+
+    canvas.setFillColor(DARK_GREY)
+    canvas.rect(
+        0,
+        PAGE_HEIGHT - total_height,
+        PAGE_WIDTH,
+        total_height,
+        stroke=False,
+        fill=True,
+    )
+
+    canvas.setFont("MontserratBold", page_title_size)
+    canvas.setFillColor(white)
+    pos = PAGE_HEIGHT - doc.topMargin
+    pos -= page_title_size
+    canvas.drawString(
+        doc.leftMargin + FRAME_PADDING,
+        pos,
+        page_title,
+    )
+
+    pos -= page_title_size * 3 / 4
+
+    canvas.setFont("MontserratBold", title_size)
+    canvas.setFillColor(white)
     for line in split_title:
         pos -= title_size
         canvas.drawString(
@@ -189,20 +260,28 @@ def draw_title_block(canvas, doc, title, meta):
 
     canvas.setFont("MontserratBold", meta_size)
     canvas.setFillColor(white)
-    meta_text = '  |  '.join(str(text) for text in meta)
 
     pos -= meta_size * 2
-    canvas.drawString(
-        doc.leftMargin + FRAME_PADDING,
-        pos,
-        meta_text,
-    )
+
+    for line in split_meta:
+        canvas.drawString(
+            doc.leftMargin + FRAME_PADDING,
+            pos,
+            line,
+        )
+        pos -= meta_size / 2
 
     return Spacer(1, total_height - doc.topMargin)
 
 
-def handle_block(block):
+def handle_block(block, custom_style=None):
     paragraphs = []
+    if not custom_style:
+        custom_style = {}
+
+    styles = {**STYLES}
+    for style, overwrite in custom_style.items():
+        styles[style] = STYLES[overwrite]
 
     for tag in block:
         if isinstance(tag, NavigableString):
@@ -243,6 +322,7 @@ def handle_block(block):
                 )
             )
         else:
+            style = None
             if tag.name in {'p'}:
                 style = styles['Normal']
             elif tag.name == 'h2':
@@ -254,18 +334,22 @@ def handle_block(block):
             elif tag.name == 'h5':
                 style = styles['Heading5']
 
-            text = tag.get_text()
-            if text:
-                paragraphs.append(Paragraph(text, style))
+            if style:
+                text = tag.get_text()
+                if text:
+                    paragraphs.append(Paragraph(text, style))
+            else:
+                paragraphs.extend(handle_block(tag))
     return paragraphs
 
 
-def draw_content(content):
+def draw_submission_content(content):
+    prepare_fonts()
     paragraphs = []
 
     for section in BeautifulSoup(content, "html5lib").find_all('section'):
         question_text = section.select_one('.question').get_text()
-        question = Paragraph(question_text, styles['Question'])
+        question = Paragraph(question_text, STYLES['Question'])
 
         # Keep the question and the first block of the answer together
         # this keeps 1 line answers tidy and ensures that bigger responses break
@@ -278,4 +362,14 @@ def draw_content(content):
             ]),
             *rest
         ])
+    return paragraphs
+
+
+def draw_project_content(content):
+    prepare_fonts()
+    paragraphs = []
+    for section in BeautifulSoup(content, "html5lib").find_all(class_='simplified__wrapper'):
+        flowables = handle_block(section, custom_style={"Heading3": "Question", "Heading5": "QuestionSmall"})
+        paragraphs.extend(flowables)
+
     return paragraphs

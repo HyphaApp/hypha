@@ -15,7 +15,7 @@
             <div class="docs-block__row-inner">
                 <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">View</a>
                 {% if not user.is_applicant %}
-                    <a class="docs-block__link" href="#">Download</a>
+                    <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">Download</a>
                 {% endif %}
             </div>
         </li>

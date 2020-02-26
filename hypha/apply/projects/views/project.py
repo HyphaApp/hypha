@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import Http404
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -21,12 +22,18 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.users.decorators import approver_required, staff_required
+from hypha.apply.utils.pdfs import (
+    draw_project_content,
+    draw_submission_content,
+    make_pdf,
+)
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -516,6 +523,52 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 class ProjectDetailSimplifiedView(DetailView):
     model = Project
     template_name_suffix = '_simplified_detail'
+
+
+@method_decorator(staff_required, name='dispatch')
+class ProjectDetailPDFView(SingleObjectMixin, View):
+    model = Project
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        response = ProjectDetailSimplifiedView.as_view()(
+            request=self.request,
+            pk=self.object.pk,
+        )
+        project = draw_project_content(
+            response.render().content
+        )
+        submission = draw_submission_content(
+            self.object.submission.output_text_answers()
+        )
+        pdf = make_pdf(
+            title=self.object.title,
+            sections=[
+                {
+                    'content': project,
+                    'title': 'Project Approval Form',
+                    'meta': [
+                        self.object.submission.page,
+                        self.object.submission.round,
+                        f"Lead: { self.object.lead }",
+                    ],
+                }, {
+                    'content': submission,
+                    'title': 'Submission',
+                    'meta': [
+                        self.object.submission.stage,
+                        self.object.submission.page,
+                        self.object.submission.round,
+                        f"Lead: { self.object.submission.lead }",
+                    ],
+                },
+            ],
+        )
+        return FileResponse(
+            pdf,
+            as_attachment=True,
+            filename=self.object.title + '.pdf',
+        )
 
 
 class ProjectApprovalEditView(UpdateView):
