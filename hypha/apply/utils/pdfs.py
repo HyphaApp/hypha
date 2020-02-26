@@ -344,6 +344,7 @@ def handle_block(block, custom_style=None):
 
 
 def draw_submission_content(content):
+    prepare_fonts()
     paragraphs = []
 
     for section in BeautifulSoup(content, "html5lib").find_all('section'):
@@ -365,6 +366,7 @@ def draw_submission_content(content):
 
 
 def draw_project_content(content):
+    prepare_fonts()
     paragraphs = []
     for section in BeautifulSoup(content, "html5lib").find_all(class_='simplified__wrapper'):
         flowables = handle_block(section, custom_style={"Heading3": "Question", "Heading5": "QuestionSmall"})
