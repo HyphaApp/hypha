@@ -13,9 +13,19 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Case, ExpressionWrapper, F, Max, OuterRef, Q, Subquery, Sum
-from django.db.models import Value as V
-from django.db.models import When
+from django.db.models import (
+    Case,
+    Count,
+    ExpressionWrapper,
+    F,
+    Max,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast, Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -172,7 +182,7 @@ class PaymentRequestQueryset(models.QuerySet):
         return self.exclude(status=DECLINED)
 
     def total_value(self, field):
-        return self.aggregate(total=Coalesce(Sum(field), V(0)))['total']
+        return self.aggregate(total=Coalesce(Sum(field), Value(0)))['total']
 
     def paid_value(self):
         return self.filter(status=PAID).total_value('paid_value')
@@ -299,12 +309,24 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('payment_requests__paid_value'), V(0)),
+            amount_paid=Coalesce(Sum('payment_requests__paid_value'), Value(0)),
         )
 
     def with_last_payment(self):
         return self.annotate(
             last_payment_request=Max('payment_requests__requested_at'),
+        )
+
+    def with_outstanding_reports(self):
+        return self.annotate(
+            outstanding_reports=Subquery(
+                Report.objects.filter(
+                    project=OuterRef('pk'),
+                ).to_do().order_by().values('project').annotate(
+                    count=Count('pk'),
+                ).values('count'),
+                output_field=models.IntegerField(),
+            )
         )
 
     def with_start_date(self):
@@ -322,7 +344,7 @@ class ProjectQuerySet(models.QuerySet):
         )
 
     def for_table(self):
-        return self.with_amount_paid().with_last_payment().select_related(
+        return self.with_amount_paid().with_last_payment().with_outstanding_reports().select_related(
             'report_config',
             'submission__page',
             'lead',
@@ -629,8 +651,14 @@ class ReportConfig(models.Model):
 
     def last_report(self):
         today = timezone.now().date()
+        # Get the most recent report that was either:
+        # - due by today and not submitted
+        # - was skipped but due after today
+        # - was submitted but due after today
         return self.project.reports.filter(
-            Q(end_date__lt=today) | Q(current__isnull=False)
+            Q(end_date__lt=today) |
+            Q(skipped=True) |
+            Q(submitted__isnull=False)
         ).first()
 
     def current_due_report(self):
@@ -666,8 +694,9 @@ class ReportConfig(models.Model):
 
         report, _ = self.project.reports.update_or_create(
             project=self.project,
-            end_date__gte=today,
             current__isnull=True,
+            skipped=False,
+            end_date__gte=today,
             defaults={'end_date': next_due_date}
         )
         return report
@@ -760,6 +789,24 @@ class Report(models.Model):
         return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
 
     @property
+    def previous(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__lt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).first()
+
+    @property
+    def next(self):
+        return Report.objects.submitted().filter(
+            project=self.project_id,
+            end_date__gt=self.end_date,
+        ).exclude(
+            pk=self.pk,
+        ).order_by('end_date').first()
+
+    @property
     def past_due(self):
         return timezone.now().date() > self.end_date
 
@@ -772,7 +819,7 @@ class Report(models.Model):
 
     @property
     def can_submit(self):
-        return self.start_date <= timezone.now().date()
+        return self.start_date <= timezone.now().date() and not self.skipped
 
     @property
     def submitted_date(self):

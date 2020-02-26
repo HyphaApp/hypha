@@ -57,7 +57,7 @@
     {% if reports.table.data %}
     <div class="wrapper wrapper--bottom-space">
 
-        {% include "funds/includes/table_filter_and_search.html" with filter=reports.filterset filter_action=reports.url heading="Reports" %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=reports.filterset filter_action=reports.url heading="Reports" filter_classes="filters--dates" %}
 
         {% render_table reports.table %}
 

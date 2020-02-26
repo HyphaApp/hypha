@@ -18,11 +18,11 @@
                         <div class="form__info-box">
                             <p>
                                 Next report will be due in
-                                <b class="js-next-report-due-slot">(please choose the next report date)</b>
+                                <b class="js-next-report-due-slot"></b>
                                 and the report period will be
                                 <b class="js-report-period-start"></b>
                                 to
-                                <b class="js-report-period-end">(please choose the next report date)</b>
+                                <b class="js-report-period-end"></b>
                                 and then every
                                 <b class="js-frequency-number-slot"></b>
                                 <b class="js-frequency-period-slot"></b>
@@ -59,7 +59,6 @@
                     <tr>
                         <th class="data-block__table-date">Period End</th>
                         <th class="data-block__table-date">Submitted</th>
-                        <th class="data-block__table-date">Privacy</th>
                         <th class="data-block__table-update"></th>
                     </tr>
                 </thead>
@@ -72,15 +71,15 @@
                             <td>
                                 <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
                             </td>
-                            <td>
-                                <span class="data-block__mobile-label">Privacy: </span>{% if report.public %}Public{% else %}Private{% endif %}
-                            </td>
                             <td class="data-block__links">
-                                <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
+                                {% if not report.skipped %}
+                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
 
-                                {% if request.user.is_apply_staff %}
-                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
-                                    {% if report.skipped %}
+                                    {% if request.user.is_apply_staff %}
+                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
+                                    {% endif %}
+                                {% else %}
+                                    {% if request.user.is_apply_staff %}
                                         <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                                             {% csrf_token %}
                                             <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
@@ -91,7 +90,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4">No reports submitted</td>
+                            <td colspan="3">No reports submitted</td>
                         </tr>
                     {% endfor %}
                 </tbody>

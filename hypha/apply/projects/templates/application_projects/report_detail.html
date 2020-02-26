@@ -14,31 +14,67 @@
         </div>
     </div>
 
-    <div class="wrapper wrapper--form">
-        {% if report.skipped %}
-            <h2>Report Skipped</h2>
-        {% else %}
-            <h3>Public</h3>
-            <div class="rich-text">
-                {{ object.current.public_content|bleach|safe }}
+    <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
+        <div class="wrapper--sidebar--inner">
+            <div class="alert">
+                <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
+                <p class="alert__text">This report is for the period {{ report.start_date }} to {{ report.end_date }}</p>
             </div>
 
-            <h3>Private</h3>
-            <div class="rich-text">
-                {{ object.current.private_content|bleach|safe }}
+            <div class="card card--solid">
+                {% if report.skipped %}
+                    <h2>Report Skipped</h2>
+                {% else %}
+                    <h4>Public Report</h4>
+                    <div class="rich-text">
+                        {{ object.current.public_content|bleach|safe }}
+                    </div>
+
+                    <h4>Private Report</h4>
+                    <div class="rich-text">
+                        {{ object.current.private_content|bleach|safe }}
+                    </div>
+                    {% for file in object.current.files.all %}
+                        {% if forloop.first %}
+                            <h4>Attachements</h4>
+                            <ul>
+                        {% endif %}
+
+                        <li><a href="{{ file.get_absolute_url }}">{{ file.filename }}</a></li>
+
+                        {% if forloop.last %}
+                            </ul>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
-            {% for file in object.current.files.all %}
-                {% if forloop.first %}
-                    <h4>Files</h4>
-                    <ul>
+        </div>
+        <aside class="sidebar">
+            {% if request.user.is_apply_staff or report.previous or report.next %}
+            <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+                {% if request.user.is_apply_staff %}
+                    <a
+                        class="button button--bottom-space button--primary button--full-width"
+                        href="{% url "apply:projects:reports:edit" pk=report.pk %}">
+                        Edit
+                    </a>
                 {% endif %}
-
-                <li><a href="{{ file.get_absolute_url }}">{{ file.filename }}</a></li>
-
-                {% if forloop.last %}
-                    </ul>
+                {% if report.previous %}
+                    <a
+                        class="button button--bottom-space button--primary button--full-width"
+                        href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
+                        View previous report
+                    </a>
                 {% endif %}
-            {% endfor %}
-        {% endif %}
+                {% if report.next %}
+                    <a
+                        class="button button--bottom-space button--primary button--full-width"
+                        href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
+                        View next report
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </aside>
     </div>
 {% endblock %}

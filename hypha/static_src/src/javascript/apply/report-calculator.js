@@ -22,6 +22,7 @@
         setProjectEnd();
         setFrequency();
         setReportPeriodStart();
+        setReportPeriod();
 
         // Add event listeners
         addFrequencyEvents();
@@ -35,6 +36,7 @@
 
     // Set the reporting frequency
     function setFrequency() {
+        frequencyPeriodSlot.innerHTML = `${frequencyPeriodSlot.value}`;
         frequencyNumberSlot.innerHTML = frequencyNumberInput.value;
         pluraliseTimePeriod(frequencyNumberInput.value);
     }
@@ -45,34 +47,36 @@
         periodStartSlot.innerHTML = startDate.toISOString().slice(0, 10);
     }
 
-    function addReportPeriodEvents() {
-        startDateInput.oninput = e => {
-            // Update the reporting period end date (next report date)
-            periodEndSlot.innerHTML = e.target.value;
+    function setReportPeriod() {
+        // Update the reporting period end date (next report date)
+        periodEndSlot.innerHTML = startDateInput.value;
 
-            // Update the reporting period range (next report date - today)
-            const daysDiff = dateDiffInDays(new Date(), new Date(e.target.value));
-            const weeksAndDays = getWeeks(daysDiff);
-            const {weeks, days} = weeksAndDays;
-            const pluraliseWeeks = weeks === 1 ? '' : 's';
-            const pluraliseDays = days === 1 ? '' : 's';
+        // Update the reporting period range (next report date - today)
+        const daysDiff = dateDiffInDays(new Date(), new Date(startDateInput.value));
+        const weeksAndDays = getWeeks(daysDiff);
+        const {weeks, days} = weeksAndDays;
+        const pluraliseWeeks = weeks === 1 ? '' : 's';
+        const pluraliseDays = days === 1 ? '' : 's';
 
-            nextReportDueSlot.innerHTML = `
+        nextReportDueSlot.innerHTML = `
                 ${weeks > 0 ? `${weeks} week${pluraliseWeeks}` : ''} ${days} day${pluraliseDays}
             `;
+    }
+
+    function addReportPeriodEvents() {
+        startDateInput.oninput = () => {
+            setReportPeriod();
         };
     }
 
     // Update reporting frequency as the options are changed
     function addFrequencyEvents() {
-        frequencyNumberInput.oninput = e => {
-            frequencyNumberSlot.innerHTML = e.target.value;
-            pluraliseTimePeriod(e.target.value);
+        frequencyNumberInput.oninput = () => {
+            setFrequency();
         };
 
-        frequencyPeriodSelect.onchange = e => {
-            frequencyPeriodSlot.innerHTML = `${e.target.value}`;
-            pluraliseTimePeriod(frequencyNumberInput.value);
+        frequencyPeriodSelect.onchange = () => {
+            setFrequency();
         };
     }
 

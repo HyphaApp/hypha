@@ -1,6 +1,8 @@
 import django_filters as filters
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import Q
+from django_select2.forms import Select2Widget
 
 from hypha.apply.funds.tables import (
     Select2ModelMultipleChoiceFilter,
@@ -9,6 +11,8 @@ from hypha.apply.funds.tables import (
 )
 
 from .models import (
+    CLOSING,
+    IN_PROGRESS,
     PROJECT_STATUS_CHOICES,
     REQUEST_STATUS_CHOICES,
     PaymentRequest,
@@ -34,14 +38,35 @@ class PaymentRequestListFilter(filters.FilterSet):
 
 
 class ProjectListFilter(filters.FilterSet):
+    REPORTING_CHOICES = (
+        (0, 'Up to date'),
+        (1, 'Behind schedule'),
+    )
+
     fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
     lead = Select2ModelMultipleChoiceFilter(label='Lead', queryset=get_project_leads)
     status = Select2MultipleChoiceFilter(label='Status', choices=PROJECT_STATUS_CHOICES)
     query = filters.CharFilter(field_name='title', lookup_expr="icontains", widget=forms.HiddenInput)
+    reporting = filters.ChoiceFilter(
+        choices=REPORTING_CHOICES,
+        method="filter_reporting",
+        widget=Select2Widget(attrs={
+            'data-placeholder': 'Reporting',
+            'data-minimum-results-for-search': -1,
+        }),
+    )
 
     class Meta:
         fields = ['status', 'lead', 'fund']
         model = Project
+
+    def filter_reporting(self, queryset, name, value):
+        if value == '1':
+            return queryset.filter(outstanding_reports__gt=0)
+        return queryset.filter(
+            Q(outstanding_reports__lt=1) | Q(outstanding_reports__isnull=True),
+            status__in=(IN_PROGRESS, CLOSING),
+        )
 
 
 class DateRangeInputWidget(filters.widgets.SuffixedMultiWidget):

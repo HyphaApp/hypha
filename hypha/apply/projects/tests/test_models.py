@@ -197,6 +197,32 @@ class TestReportConfig(TestCase):
 
         self.assertEqual(next_date, self.today + delta)
 
+    def test_last_report_gets_report_in_past(self):
+        config = ReportConfigFactory()
+        past_report = ReportFactory(
+            project=config.project,
+            end_date=self.today - relativedelta(days=3),
+        )
+        self.assertEqual(past_report, config.last_report())
+
+    def test_last_report_gets_submitted_report_in_past(self):
+        config = ReportConfigFactory()
+        past_report = ReportFactory(
+            project=config.project,
+            end_date=self.today - relativedelta(days=3),
+            is_submitted=True,
+        )
+        self.assertEqual(past_report, config.last_report())
+
+    def test_last_report_gets_skipped(self):
+        config = ReportConfigFactory()
+        skipped_report = ReportFactory(
+            project=config.project,
+            end_date=self.today + relativedelta(days=3),
+            skipped=True,
+        )
+        self.assertEqual(skipped_report, config.last_report())
+
     def test_months_always_relative(self):
         config = ReportConfigFactory(occurrence=2)
         last_report = self.today - relativedelta(day=25, months=1)
@@ -225,6 +251,13 @@ class TestReportConfig(TestCase):
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, self.today)
+
+    def test_no_report_creates_report_if_current_skipped(self):
+        config = ReportConfigFactory()
+        skipped_report = ReportFactory(end_date=self.today + relativedelta(days=3))
+        report = config.current_due_report()
+        self.assertEqual(Report.objects.count(), 2)
+        self.assertNotEqual(skipped_report, report)
 
     def test_no_report_schedule_in_future_creates_report(self):
         config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=2))
