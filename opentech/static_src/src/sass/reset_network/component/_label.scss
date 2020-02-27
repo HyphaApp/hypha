@@ -23,7 +23,7 @@ $label-disabled: color(seed-grey) !default;
   color: $label;
 
   &::after {
-    @include font-size-xl();
+    @include font-size-md();
     content: '*';
     color: $label-required;
     font-weight: $font-weight-regular;

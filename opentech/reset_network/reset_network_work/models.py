@@ -47,7 +47,7 @@ class ResetNetworkWorkPage(Page):
     content_heading = models.CharField(verbose_name='Heading', max_length=255, blank=False)
     content_text = models.TextField(verbose_name='Text', blank=True)
 
-    region_heading = models.CharField(verbose_name='Heading', max_length=255, blank=False)
+    region_heading = models.CharField(verbose_name='Heading', max_length=255, null=True, blank=True)
 
     content_panels = Page.content_panels + [
         MultiFieldPanel([

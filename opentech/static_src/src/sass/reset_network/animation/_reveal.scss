@@ -1,0 +1,13 @@
+.reveal {
+  backface-visibility: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity $animation-speed-very-slow, transform $animation-speed-slow;
+  transition-delay: 400ms;
+  will-change: opacity, transform;
+
+  &.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

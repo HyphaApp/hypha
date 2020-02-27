@@ -16,9 +16,9 @@ from wagtail.admin.views.pages import delete
 from wagtail.core.models import Page
 
 
-def page_not_found(request, exception=None, template_name='apply/404.html'):
+def page_not_found(request, exception=None, template_name='apply/reset_network_404.html'):
     if not request.user.is_authenticated:
-        template_name = '404.html'
+        template_name = 'reset_network_404.html'
     return defaults.page_not_found(request, exception, template_name)
 
 

@@ -23,12 +23,14 @@ options.theme = {
   app       : options.rootPath.theme + 'src/app/',
   img       : options.rootPath.theme + 'src/images/',
   font      : options.rootPath.theme + 'src/fonts/',
+  favicon   : options.rootPath.theme + 'src/favicon/',
   dest      : options.rootPath.app   + 'static_compiled/',
   css       : options.rootPath.app   + 'static_compiled/css/',
   js_dest   : options.rootPath.app   + 'static_compiled/js/',
   app_dest  : options.rootPath.app   + 'static_compiled/app/',
   img_dest  : options.rootPath.app   + 'static_compiled/images/',
-  font_dest : options.rootPath.app   + 'static_compiled/fonts/'
+  font_dest : options.rootPath.app   + 'static_compiled/fonts/',
+  favicon_dest : options.rootPath.app   + 'static_compiled/favicon/'
 };
 
 // Define the node-sass configuration. The includePaths is critical!
@@ -206,6 +208,11 @@ gulp.task('fonts', function copy () {
   return gulp.src(options.theme.font + '**/*.*').pipe(gulp.dest(options.theme.font_dest));
 });
 
+// Copy fonts.
+gulp.task('favicon', function copy () {
+  return gulp.src(options.theme.favicon + '**/*.*').pipe(gulp.dest(options.theme.favicon_dest));
+});
+
 // Run Djangos collectstatic command.
 gulp.task('collectstatic', function (collect) {
   exec('python manage.py collectstatic --no-post-process --noinput --verbosity 0', function (err, stdout, stderr) {
@@ -278,13 +285,14 @@ gulp.task('watch:app', function watch (callback) {
     });
 })
 
-gulp.task('watch', gulp.parallel('watch:css', 'watch:js',  'watch:images', 'watch:fonts', 'watch:static'));
-
 // Build everything.
-gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'lint'), 'collectstatic'));
+gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'favicon', 'lint'), 'collectstatic'));
+
+// Watch everything.
+gulp.task('watch', gulp.series('build', gulp.parallel('watch:css', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static')));
 
 // Deploy everything.
-gulp.task('deploy', gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts'));
+gulp.task('deploy', gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'favicon'));
 
 // The default task.
 gulp.task('default', gulp.series('build'));

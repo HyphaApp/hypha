@@ -1,0 +1,85 @@
+//================================================================================================//
+//
+//  RESOURCE COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+// CONTAINERS
+
+// ELEMENTS
+
+.resource-head {
+  position: relative;
+  max-width: 800px;
+}
+
+.resource-head__type {
+  padding-top: #{$gutter}px;
+
+  @include media-min-md {
+    padding-top: #{$gutter-xl}px;
+  }
+}
+
+.resource-head__title {
+  @include font-size-xxl();
+  font-family: $font-family-secondary;
+  padding-bottom: #{$gutter}px;
+  margin: 0;
+
+  @include media-min-sm {
+    @include font-size-max();
+    max-width: 650px;
+    min-height: 120px;
+  }
+}
+
+.resource-head__image {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+  max-width: 200px;
+  max-height: 200px;
+  width: 100%;
+  opacity: .5;
+
+  @include media-min-md {
+    max-width: 320px;
+    max-height: 320px;
+  }
+}
+
+.back-link {
+  @include animate(opacity);
+  @include themeSwitch(color fill);
+  @include font-size-sm();
+  line-height: 1;
+  display: inline-block;
+  position: relative;
+  padding-left: 23px;
+
+  &,
+  &:link,
+  &:visited {
+    opacity: .5;
+    text-decoration: none;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    opacity: 1;
+  }
+}
+
+.back-link__icon {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  display: block;
+}

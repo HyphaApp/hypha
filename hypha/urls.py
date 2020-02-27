@@ -20,7 +20,7 @@ urlpatterns = [
     path(
         'admin/login/',
         LoginView.as_view(
-            template_name='users/login.html',
+            template_name='users/reset_network_login.html',
             redirect_authenticated_user=True
         ),
         name='wagtailadmin_login'
@@ -48,7 +48,7 @@ if settings.DEBUG:
 
     urlpatterns += [
         # Add views for testing 404 and 500 templates
-        path('test404/', TemplateView.as_view(template_name='404.html')),
+        path('test404/', TemplateView.as_view(template_name='reset_network_404.html')),
         path('test500/', TemplateView.as_view(template_name='500.html')),
     ]
 

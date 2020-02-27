@@ -25,62 +25,91 @@ $alert-success-border: $color-success-border !default;
 // CONTAINER
 
 .alert-tray {
-  margin: 0 0 #{$size-lg}px;
+  position: fixed;
+  bottom: #{$gutter-sm}px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 500px;
+  width: calc(100% - #{$gutter-sm * 2}px);
+  z-index: $z-index-notification;
 }
 
 // ELEMENTS
 
 .alert {
-  background-color: $alert-default-bg;
-  border-color: $alert-default-border;
-  border-style: solid;
-  border-width: 0 0 0 #{$size-xs}px;
+  @include animate(transform opacity, $animation-speed-medium);
+  background-color: $color-info;
   color: $alert-default;
   overflow: hidden;
-  padding: #{$size-sm}px;
-  margin: 0 0 #{$size-sm}px;
+  padding: #{$gutter-sm / 2}px;
+  margin: 0 0 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 
   .alert-tray & {
     &:last-child {
       margin: 0;
     }
   }
+
+  .is-hidden & {
+    opacity: 0;
+    transform: translateY(calc(100% + #{$gutter-sm}px));
+
+    @include media-min-xs {
+      transform: translateY(calc(100% + #{$gutter}px));
+    }
+  }
 }
 
 .alert--success {
-  color: $alert-success;
-  background-color: $alert-success-bg;
-  border-color: $alert-success-border;
-}
-
-.alert--info {
-  color: $alert-info;
-  background-color: $alert-info-bg;
-  border-color: $alert-info-border;
+  background-color: $color-success;
 }
 
 .alert--warning {
-  color: $alert-warning;
-  background-color: $alert-warning-bg;
-  border-color: $alert-warning-border;
+  background-color: $color-warning;
 }
 
 .alert--error {
-  color: $alert-error;
-  background-color: $alert-error-bg;
-  border-color: $alert-error-border;
+  background-color: $color-error;
 }
 
 .alert__body {
+  @include font-size-md();
+  color: color(seed-white);
   position: relative;
+  flex: 0 1 100%;
 }
 
 .alert__close {
   @include font-size-xl;
+  color: transparent;
   float: right;
+  overflow: hidden;
+  position: relative;
   margin: 0 0 0 #{$size-md}px;
+  width: 20px;
+  height: 20px;
+
+  &::after,
+  &::before {
+    background-color: color(seed-white);
+    content: '';
+    display: block;
+    height: 3px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+  }
 
   &::before {
-    content: '\2716';
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  &::after {
+    transform: translateY(-50%) rotate(-45deg);
   }
 }
