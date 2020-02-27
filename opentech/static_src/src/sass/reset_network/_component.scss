@@ -7,20 +7,24 @@
 //
 //============================================================================//
 
+@import 'component/apply-form';
 @import 'component/radio';
 @import 'component/gif-img';
 @import 'component/checkbox';
 @import 'component/cookie';
+@import 'component/asset';
 @import 'component/hero-carousel';
 @import 'component/textbox';
 @import 'component/select';
 @import 'component/upload';
 @import 'component/label';
+@import 'component/messages';
 @import 'component/icon';
 @import 'component/button';
 @import 'component/alert';
 @import 'component/size-not-supported';
 @import 'component/paragraph';
+@import 'component/resources';
 @import 'component/not-supported';
 @import 'component/main-nav';
 @import 'component/header';
@@ -34,3 +38,6 @@
 @import 'component/info';
 @import 'component/card';
 @import 'component/links';
+@import 'component/person';
+@import 'component/call-apply';
+@import 'component/resource';

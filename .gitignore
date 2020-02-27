@@ -13,6 +13,7 @@ node_modules/
 /npm-debug.log
 /.idea/
 salesforce.env
+/.vscode/
 
 # Distribution / packaging
 .Python

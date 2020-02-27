@@ -9,9 +9,12 @@
 // ELEMENTS
 
 .contain {
-  width: 100%;
-  max-width: #{$global-page-width}px;
   margin: 0 auto;
+  width: 100%;
+
+  @include media-min-md {
+    max-width: #{$global-page-width}px;
+  }
 
   @include media-min-xl {
     width: #{$global-page-width}px;

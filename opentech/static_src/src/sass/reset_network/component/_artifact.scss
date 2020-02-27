@@ -89,6 +89,24 @@ $artifact-3-dimension-xl: 300px;
 
 /********************************* VARIANTS ***********************************/
 
+.artifact-link {
+  pointer-events: all;
+
+  &,
+  &:link,
+  &:visited {
+    text-decoration: none;
+  }
+
+  [data-theme="light"] > & {
+    @include link-darkest();
+  }
+
+  [data-theme="dark"] > & {
+    @include link-lightest();
+  }
+}
+
 // Copy
 .artifact--1 {
   color: $color-artifact-bg-light;
@@ -115,7 +133,7 @@ $artifact-3-dimension-xl: 300px;
   height: ($artifact-feature-height * 2) + $artifact-feature-gap;
   transform: translate(calc(-50% - #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), calc(-50% - 46px));
 
-  @include media-max-xs {
+  @include media-max-sm {
     .is-collapsed-artifacts.is-cornered-artifacts & {
       opacity: 0 !important; // stylelint-disable-line declaration-no-important
     }
@@ -171,7 +189,7 @@ $artifact-3-dimension-xl: 300px;
     background-color: $color-artifact-bg-dark;
   }
 
-  @include media-max-xs {
+  @include media-max-sm {
     .is-collapsed-artifacts.is-cornered-artifacts & {
       opacity: 0 !important; // stylelint-disable-line declaration-no-important
     }

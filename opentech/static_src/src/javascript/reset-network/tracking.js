@@ -1,90 +1,145 @@
-'use strict';
+/* eslint-env jquery */
 
-/**
- * Check whether an tracking cookie has been dropped. If it has then do nothing
- * or init as appropraite. If it hasn't then display the acceptance notice then
- * do nothing or init as appropriate.
- */
+(function () {
 
-var TRACKING = {
+    'use strict';
 
-  paq: window._paq || [],
-  cookieName: 'tracking',
+    // *************************************************************************
+    // ***************************** COOKIE NOTICE *****************************
+    // *************************************************************************
 
-  init: function() {
-    var $doc = $(document);
+    var COOKIES = {
 
-    // Does the tracking cookie exist? If tracking is permitted init tracking
-    if (TRACKING.isCookieSet()) {
-      if (TRACKING.getCookieValue()) {
-        TRACKING.embedTrackingCode();
-      }
-      setTimeout(function() { // timeout to ensure carousel init is ready for the trigger
-        $doc.trigger('cookie-notice-hidden');
-      });
-      return;
-    }
+        $html: $('html'),
+        $doc: $(document),
+        $notice: null,
 
-    // Display cookie acceptance notice and await descision
-    setTimeout(function() { // timeout to ensure cookie notice is ready for the trigger
-      $doc.trigger('cookie-notice-displayed');
-    });
-    $doc.bind('cookie-notice-dismissed', function(e, trackingPermitted) {
-      TRACKING.setCookie(trackingPermitted);
-      if (trackingPermitted) {
-        TRACKING.embedTrackingCode();
-      }
-      setTimeout(function() { // timeout to ensure carousel init is ready for the trigger
-        $doc.trigger('cookie-notice-hidden');
-      });
-    });
-  },
+        init: function () {
+            COOKIES.$notice = $('#cookie-notice');
+            COOKIES.$doc.bind('cookie-notice-displayed', COOKIES.showNotice);
+        },
 
-  setCookie: function(value) {
-    var expires = new Date();
-    var value = value || false;
-    var name = 'cookieName=' + TRACKING.cookieName;
+        showNotice: function () {
+            COOKIES.$notice.removeClass('is-hidden--before');
+            COOKIES.$html.addClass('has-overflow-hidden');
+            COOKIES.$notice.find('button').on('click', function () {
+                var trackingPermitted = $(this).attr('data-tracking') === 'true' ? true : false;
+                COOKIES.hideNotice(trackingPermitted);
+            });
+        },
 
-    expires.setFullYear(expires.getFullYear() + 1); // set expirary for one year
-    document.cookie = name + '=' + value + '; expires=' + expires.toUTCString() + ';path=/';
-  },
+        hideNotice: function (trackingPermitted) {
+            COOKIES.$notice.addClass('is-hidden--after');
+            COOKIES.$html.removeClass('has-overflow-hidden');
+            COOKIES.$doc.trigger('cookie-notice-dismissed', trackingPermitted);
+        }
+    };
 
-  isCookieSet: function() {
-    if (document.cookie.split(';').filter(function(item) {
-      return item.trim().indexOf('cookieName=' + TRACKING.cookieName) === 0;
-    }).length) {
-      return true;
-    }
-    return false;
-  },
+    // *************************************************************************
+    // ******************************* TRACKING ********************************
+    // *************************************************************************
 
-  getCookieValue: function() {
-    if (document.cookie.split(';').filter(function(item) {
-      return item.indexOf('cookieName=' + TRACKING.cookieName + '=true') >= 0
-    }).length) {
-      return true;
-    }
-    return false;
-  },
+    /**
+     * Check whether an tracking cookie has been dropped. If it has then do nothing
+     * or init as appropraite. If it hasn't then display the acceptance notice then
+     * do nothing or init as appropriate.
+     */
 
-  embedTrackingCode: function() {
-    TRACKING.paq.push(['trackPageView']);
-    TRACKING.paq.push(['enableLinkTracking']);
+    var TRACKING = {
 
-    // @TODO populate $MATOMO_URL & $IDSITE
+        $doc: $(document),
+        cookieName: 'acceptCookie',
 
-    // var u="//{$MATOMO_URL}/";
-    // TRACKING.paq.push(['setTrackerUrl', u+'matomo.php']);
-    // TRACKING.paq.push(['setSiteId', {$IDSITE}]);
+        init: function () {
 
-    // var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    // g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  },
+            // Does the tracking cookie exist? If tracking is permitted init tracking
+            if (TRACKING.isCookieSet()) {
+                if (TRACKING.getCookieValue()) {
+                    TRACKING.embedTrackingCode();
+                }
+                setTimeout(function () { // timeout to ensure carousel init is ready for the trigger
+                    TRACKING.$doc.trigger('cookie-notice-hidden');
+                });
+                return;
+            }
 
-};
+            // Display cookie acceptance notice and await descision
+            setTimeout(function () { // timeout to ensure cookie notice is ready for the trigger
+                TRACKING.$doc.trigger('cookie-notice-displayed');
+            });
+            TRACKING.$doc.bind('cookie-notice-dismissed', function (e, trackingPermitted) {
+                TRACKING.setCookie(trackingPermitted);
+                if (trackingPermitted) {
+                    TRACKING.embedTrackingCode();
+                }
+                setTimeout(function () { // timeout to ensure carousel init is ready for the trigger
+                    TRACKING.$doc.trigger('cookie-notice-hidden');
+                });
+            });
+        },
 
-(function($) {
-  $(document).ready(function() {
-    TRACKING.init();
-  });
-})(jQuery);
+        setCookie: function (value) {
+            var val = value || false;
+            var cookie = TRACKING.cookieName + '=' + val.toString() + ';path=/';
+            if (window.location.protocol === 'https:') {
+                cookie += ';secure';
+            }
+            document.cookie = cookie;
+        },
+
+        isCookieSet: function () {
+            if (document.cookie.split(';').filter(function (item) {
+                return item.indexOf(TRACKING.cookieName) >= 0;
+            }).length) {
+                return true;
+            }
+            return false;
+        },
+
+        getCookieValue: function () {
+            if (document.cookie.split(';').filter(function (item) {
+                return item.indexOf(TRACKING.cookieName + '=true') >= 0;
+            }).length) {
+                return true;
+            }
+            return false;
+        },
+
+        embedTrackingCode: function () {
+
+            if (!window.matomo || !window.matomo.url || !window.matomo.siteid) {
+                return;
+            }
+
+            var url = 'https://' + window.matomo.url + 'matomo.php';
+            var siteid = window.matomo.siteid;
+            var src = '//cdn.matomo.cloud/' + window.matomo.url + 'matomo.js';
+
+            var d = document;
+            var g = d.createElement('script');
+            var s = d.getElementsByTagName('script')[0];
+            g.type = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src = src;
+            s.parentNode.insertBefore(g, s);
+
+            g.onload = g.onreadystatechange = function () {
+                if (!this.readyState || this.readyState === 'complete') {
+                    window.Matomo.getAsyncTracker().setTrackerUrl(url);
+                    window.Matomo.getAsyncTracker().setSiteId(siteid);
+                    window.Matomo.getAsyncTracker().enableLinkTracking();
+                    window.Matomo.getAsyncTracker().trackPageView();
+                }
+            };
+        }
+    };
+
+    (function ($) {
+        $(document).ready(function () {
+            COOKIES.init();
+            TRACKING.init();
+        });
+    })(jQuery);
+
+})();

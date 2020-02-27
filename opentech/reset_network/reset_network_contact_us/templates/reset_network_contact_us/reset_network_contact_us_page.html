@@ -1,14 +1,24 @@
 {% extends "reset_network/base.html" %}
-
+{% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
+
+{% block body_class %}base-darkest{% endblock %}
 
 {% block content %}
 
-<h1>{{ page.content_heading }}</h1>
-
-{{ page.content_text | richtext }}
-
-<a href="mailto:{{ page.content_email }} ">{{ page.content_email }}</a>
+  <section class="para para--lead theme-darkest" data-section-theme="dark">
+    <div class="para__wrap contain reveal">
+      <div class="para__content">
+        <div class="para__title">
+          <h1>{{ page.content_heading }}</h1>
+        </div>
+        <div class="para__body">
+          {{ page.content_text|richtext }}
+          <a href="mailto:{{ page.content_email }} ">{{ page.content_email }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
 {% endblock %}
 

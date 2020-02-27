@@ -6,17 +6,17 @@
 //================================================================================================//
 
 @mixin themeSwitch($attr, $dark: seed-black, $light: seed-white) {
+  .theme-grey &,
   .theme-lightest &,
-  .theme-light &,
-  .theme-grey & {
+  .theme-light & {
     @for $i from 1 through length($attr) {
       $a: nth($attr, $i);
       #{$a}: color($dark);
     }
   }
 
-  .theme-darkest &,
-  .theme-dark & {
+  .theme-dark &,
+  .theme-darkest & {
     @for $i from 1 through length($attr) {
       $a: nth($attr, $i);
       #{$a}: color($light);

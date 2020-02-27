@@ -9,7 +9,17 @@
 // MODULE
 
 .rte {
-  line-height: $line-height;
+  @include font-size-xs();
+  line-height: 1.8;
+
+  @include media-min-xs {
+    @include font-size-sm();
+    line-height: $line-height;
+  }
+
+  @include media-min-sm {
+    @include font-size-md();
+  }
 
   h1 {
     @include font-size-max;
@@ -69,6 +79,10 @@
     font-weight: $font-weight-regular;
     line-height: $line-height-heading;
 
+    &:first-child {
+        margin-top: 0;
+    }
+
     + h1,
     + h2,
     + h3,
@@ -76,6 +90,10 @@
     + h5,
     + h6 {
       margin: 0 0 #{ceil($font-size-base * $line-height)}px;
+    }
+
+    &:first-child {
+      margin-top: 0;
     }
   }
 
@@ -92,7 +110,26 @@
   }
 
   ul {
-    list-style: disc;
+    list-style: none;
+  }
+
+  ul > li {
+    position: relative;
+
+    &::before {
+        @include themeSwitch(background-color, seed-black, seed-white);
+        content: '';
+        display: block;
+        height: 2px;
+        position: absolute;
+        top: 10px;
+        left: -25px;
+        width: 15px;
+
+        @include media-min-sm {
+            top: 12px;
+        }
+    }
   }
 
   ol {
@@ -198,5 +235,9 @@
     &:last-child {
       margin: 0;
     }
+  }
+
+  a {
+    font-weight: $font-weight-heavy;
   }
 }

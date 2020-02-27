@@ -1,0 +1,30 @@
+//------------------------------------------------------------------//
+//
+//  CALL APPLY COMPONENT
+//
+//------------------------------------------------------------------//
+
+// VARS
+
+// COMPONENT
+
+.call-apply {
+    @include gutters-sm();
+    background-color: color(seed-grey-light);
+    position: absolute;
+    width: calc(100% + #{$gutter-sm * 2}px);
+    bottom: -#{$gutter-max}px;
+    margin-left: -#{$gutter-sm}px;
+    display: flex;
+    justify-content: space-between;
+
+    .para__action & {
+        position: static;
+    }
+
+    @include media-min-sm {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+

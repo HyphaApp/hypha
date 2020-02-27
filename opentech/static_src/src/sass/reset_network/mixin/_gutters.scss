@@ -18,10 +18,10 @@
 }
 
 @mixin gutters-menu() {
-  padding: #{$gutter-xxl}px #{$gutter-sm}px;
+  padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter-sm}px;
 
   @include media-min-md {
-    padding: #{$gutter-xxl}px #{$gutter}px;
+    padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter}px;
   }
 }
 
@@ -119,6 +119,14 @@
   }
 }
 
+@mixin pad-gutter-top-sm() {
+  padding: #{$gutter-sm}px 0 0;
+
+  @include media-min-sm {
+    padding: #{$gutter-sm}px 0 0;
+  }
+}
+
 @mixin pad-gutter-top() {
   padding: #{$gutter-sm}px 0 0;
 
@@ -132,6 +140,30 @@
 
   @include media-min-md {
     margin: 0 0 #{$gutter}px;
+  }
+}
+
+@mixin gutter-bottom-xl() {
+  margin: 0 0 #{$gutter}px;
+
+  @include media-min-md {
+    margin: 0 0 #{$gutter-xl}px;
+  }
+}
+
+@mixin gutter-bottom-sm() {
+  margin: 0 0 #{$gutter-sm}px;
+
+  @include media-min-md {
+    margin: 0 0 #{$gutter-sm}px;
+  }
+}
+
+@mixin gutter-top-sm() {
+  margin: #{$gutter-sm}px 0 0;
+
+  @include media-min-md {
+    margin: #{$gutter-sm}px 0 0;
   }
 }
 

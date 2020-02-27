@@ -3,21 +3,56 @@
 
 {% for record in person.value %}
 {% with record.person as person %}
-<div>
-  <div>
-    {{ person.name }}
+<div class="person js-person">
+
+  <div class="person__title person__title--mob js-title">
+    <div class="person__name">
+      {{ person.name }}
+    </div>
+    <div class="person__role">
+      {{ person.role }}
+    </div>
   </div>
-  <div>
-    {{ person.role }}
+
+  <div class="person__tray">
+    <div class="person__info-wrap">
+
+      <div class="js-person-target">
+        <div class="person__title">
+          <div class="person__name">
+            {{ person.name }}
+          </div>
+          <div class="person__role">
+            {{ person.role }}
+          </div>
+        </div>
+        <div class="person__hover js-img">
+          {% image person.image fill-400x400-c100 %}
+        </div>
+        <div class="person__info">
+          {{ person.about|linebreaks }}
+        </div>
+      </div>
+
+      {% if person.linkedin or person.twitter %}
+        <div class="person__social">
+          <ul class="socials">
+            {% if person.linkedin %}
+              <li class="socials__item">
+                <a class="social-link" href="{{ person.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+              </li>
+            {% endif %}
+            {% if person.twitter %}
+              <li class="socials__item">
+                <a class="social-link" href="{{ person.twitter }}" target="_blank" rel="noopener">Twitter</a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      {% endif %}
+
+    </div>
   </div>
-  <div>
-    {{ person.about }}
-  </div>
-  <div>
-    <a href="{{ person.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
-    <a href="{{ person.twitter }}" target="_blank" rel="noopener">Twitter</a>
-  </div>
-  {% image person.image width-400 %}
 </div>
 {% endwith %}
 {% endfor %}

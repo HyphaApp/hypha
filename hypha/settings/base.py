@@ -743,3 +743,9 @@ os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if 'AWS_STORAGE_BUCKET_NAME' in env:
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
+
+
+# Matomo tracking
+
+MATOMO_URL = env.get('MATOMO_URL', False)
+MATOMO_SITEID = env.get('MATOMO_SITEID', False)

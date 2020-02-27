@@ -1,0 +1,31 @@
+{% extends 'reset_network/base.html' %}
+{% load i18n %}
+
+{% block body_class %}base-dark{% endblock %}
+{% block title %}{% trans "Invalid activation" %}{% endblock %}
+{% block page_title %}{% trans "Invalid activation URL" %}{% endblock %}
+{% block content %}
+
+<section class="para theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+    <div class="para__title">
+      <h1>Invalid activation</h1>
+    </div>
+    <div class="para__body">
+      <div class="form-summary">
+        <p><strong>Two possible reasons:</strong></p>
+        <ul>
+          <li>The activation link has expired.</li>
+          <li>The account has already been activated.</li>
+        </ul>
+        <p>First test to <a href="{% url 'users:password_reset' %}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}.</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+

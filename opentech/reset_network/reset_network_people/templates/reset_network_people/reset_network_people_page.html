@@ -3,21 +3,38 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
+{% block body_class %}base-light{% endblock %}
+
 {% block content %}
 
-<h1>{{ page.content_heading }}</h1>
+<section class="para para--lead theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>{{ page.content_heading }}</h1>
+      </div>
+      <div class="para__body">
+        {{ page.content_text|linebreaks }}
+      </div>
+    </div>
+  </div>
+</section>
 
-{{ page.content_text }}
-
-<div>
-  {% for block in page.section_1 %}
-  {% if block.block_type == 'sub_heading' %}
-  <h2>{{ block.value }}</h2>
-  {% endif %}
-  {% if block.block_type == 'persons' %}
-  {% include "reset_network_person/person.html" with person=block %}
-  {% endif %}
-  {% endfor %}
-</div>
+<section class="para para--people theme-light para--overflow-hidden" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      {% for block in page.section_1 %}
+        {% if block.block_type == 'sub_heading' %}
+          <div class="people-title">
+            <h2>{{ block.value }}</h2>
+          </div>
+        {% endif %}
+        {% if block.block_type == 'persons' %}
+          {% include "reset_network_person/person.html" with person=block %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
 {% endblock %}
