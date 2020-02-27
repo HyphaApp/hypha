@@ -15,5 +15,14 @@
 }
 
 .footer__copyright {
-  @include themeSwitch(color, text-dark, text-light);
+  .base-grey &,
+  .base-lightest &,
+  .base-light & {
+    color: color(text-darkest);
+  }
+
+  .base-dark &,
+  .base-darkest & {
+    color: color(text-lightest);
+  }
 }

@@ -154,7 +154,7 @@ $input-disabled: color(text-dark) !default;
   }
 }
 
-.input__field {
+.input input {
   @include font-size-md();
   border-radius: 0;
   border: none;

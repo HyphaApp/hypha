@@ -6,10 +6,12 @@
 
 // VARS
 
+$animation-distance: 150px;
+
 // ELEMENTS
 
 .cookie-wrap {
-  @include animate(opacity, 500ms, $easing, 250ms);
+  @include animate(opacity, 750ms);
   align-items: center;
   backface-visibility: hidden;
   background-color: color(seed-black, null, .6);
@@ -23,20 +25,30 @@
   will-change: opacity;
   z-index: $z-index-notification;
 
-  &.is-hidden {
+  &.is-hidden--before {
     opacity: 0;
     pointer-events: none;
 
     .cookie-message {
       opacity: 0;
-      transform: translateY(-150px);
+      transform: translateY($animation-distance);
+    }
+  }
+
+  &.is-hidden--after {
+    opacity: 0;
+    pointer-events: none;
+
+    .cookie-message {
+      opacity: 0;
+      transform: translateY(-$animation-distance);
     }
   }
 }
 
 .cookie-message {
-  @include animate(transform opacity, 250ms);
-  @include gutters-sm();
+  @include animate(transform opacity, 750ms);
+  @include gutters();
   backface-visibility: hidden;
   will-change: transform, opacity;
   width: calc(100% - 40px);
@@ -53,8 +65,8 @@
 }
 
 .cookie-message__title {
-  @include font-size-xxl();
-  @include gutter-bottom();
+  @include font-size-xl();
+  @include gutter-bottom-sm();
   font-family: $font-family-secondary;
   color: color(seed-white);
 }
@@ -82,16 +94,20 @@
     }
 
     @include media-min-xs {
-      min-width: 164px;
+      min-width: 175px;
       margin: 0 0 0 10px;
 
       &:first-child {
         margin: 0;
       }
     }
+
+    @include media-min-md {
+      min-width: 155px;
+    }
   }
 
   .button__label {
-    padding: 20px 30px;
+    padding: 18px 30px;
   }
 }

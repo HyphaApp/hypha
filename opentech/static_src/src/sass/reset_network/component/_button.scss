@@ -36,13 +36,15 @@ $btn-icon-md: 16 !default;
 $btn-icon-lg: 32 !default;
 $btn-icon-xl: 55 !default;
 
+$btn-color-active: #f5ff00;
+
 // CONTAINERS
 
 // ELEMENT
 
 button.button,
 a.button {
-  @include animate(background-color);
+  @include animate(background-color, 250ms);
   position: relative;
   border: 0;
   cursor: pointer;
@@ -60,57 +62,48 @@ a.button {
   border-width: 2px;
   border-style: solid;
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    border-color: color(seed-white);
-    color: color(seed-white);
-  }
-
-  .theme-light &,
-  .theme-lightest & {
-    border-color: color(seed-black);
-    color: color(seed-black);
-  }
-
+  &,
   &:link,
   &:visited {
     outline: none;
     text-decoration: none;
 
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      color: color(seed-white);
-      border-color: color(seed-white);
+    .theme-lightest &,
+    .theme-light & {
+      border-color: color(seed-black);
       background-color: transparent;
     }
 
-    .theme-light &,
-    .theme-lightest & {
-      color: color(seed-black);
-      border-color: color(seed-black);
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+      border-color: color(seed-white);
+      background-color: transparent;
     }
   }
 
   &:focus {
-    outline: #{$size-min}px dotted $color-focus-border;
+    outline: 2px solid $color-focus-border;
+  }
+
+  .focus-disabled &:focus,
+  &:active {
+    outline: none;
   }
 
   &.is-active,
   &:focus,
-  &:hover {
-    background-color: transparent;
-  }
+  &:hover {}
 
   &:active {
-    background-color: transparent;
+    &::before {
+      transform: translateX(0);
+    }
   }
 
   &.is-disabled,
   &:disabled,
   &[disabled] {
-    background-color: transparent;
     opacity: $btn-opacity-disabled;
     pointer-events: none;
     cursor: not-allowed;
@@ -118,9 +111,7 @@ a.button {
     &:link,
     &:visited,
     &:hover,
-    &:active {
-      background-color: transparent;
-    }
+    &:active { }
   }
 
   &.is-loading {
@@ -135,47 +126,116 @@ a.button {
   &:last-child {
     margin-right: 0;
   }
+
+  /****************************** ACTIVE STATE ********************************/
+
+  &::before {
+    @include animate(background-color transform, 250ms);
+    background: $btn-color-active;
+    content: '';
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transform: translateX(-100%);
+    width: 100%;
+    z-index: 2;
+  }
+
+  &.is-clicked {
+
+  }
+
+  &.is-clicked--reveal {
+    &::before {
+      transform: translateX(0);
+    }
+  }
+
+  &.is-clicked--exit {
+    &::before {
+      transform: translateX(100%);
+    }
+  }
+}
+
+button.button--alt,
+a.button--alt {
+  &,
+  &:link,
+  &:visited {
+    @include themeSwitch(background-color, seed-white, seed-black);
+    @include themeSwitch(border-color, seed-white, seed-black);
+  }
 }
 
 .button__drop {
-  @include animate(background-color transform);
+  @include animate(background-color transform, 250ms);
   display: block;
-  width: 100%;
   height: 100%;
-  position: absolute;
   left: 0;
+  position: absolute;
   top: 0;
   transform: translateX(-100%);
+  width: 100%;
+  z-index: 1;
 
   .button &,
-  .button:visited &,
+  .button:link &,
+  .button:visited & {
+    @include themeSwitch(background-color, seed-black, seed-white);
+  }
+
+  .button--alt &,
+  .button--alt:link &,
+  .button--alt:visited & {
+    @include themeSwitch(background-color, seed-white, seed-black);
+  }
+
   .button:focus & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
+    transform: translateX(0);
+    @include themeSwitch(background-color, seed-orange, seed-orange);
+  }
+
+  .button:focus &,
+  .button:active & {
+    .focus-disabled .theme-lightest &,
+    .focus-disabled .theme-light & {
+      background-color: color(seed-black);
+    }
+
+    .focus-disabled .theme-grey &,
+    .focus-disabled .theme-dark &,
+    .focus-disabled .theme-darkest & {
+      background-color: color(seed-white);
+    }
+  }
+
+  .button--alt:focus &,
+  .button--alt:active & {
+    .focus-disabled .theme-lightest &,
+    .focus-disabled .theme-light & {
       background-color: color(seed-white);
     }
 
-    .theme-light &,
-    .theme-lightest & {
+    .focus-disabled .theme-grey &,
+    .focus-disabled .theme-dark &,
+    .focus-disabled .theme-darkest & {
       background-color: color(seed-black);
     }
   }
 
-  .button:hover &,
-  .button:active & {
+  .button.is-clicked &,
+  .button:hover & {
+    @include themeSwitch(background-color, seed-black, seed-white);
     transform: translateX(0);
+  }
 
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      background-color: color(seed-white);
-    }
-
-    .theme-light &,
-    .theme-lightest & {
-      background-color: color(seed-black);
-    }
+  .button--alt.is-clicked &,
+  .button--alt:hover &,
+  .button--alt:active & {
+    @include themeSwitch(background-color, seed-white, seed-black);
   }
 
   .button:disabled &,
@@ -186,117 +246,77 @@ a.button {
 }
 
 .button__label {
+  @include animate(color opacity, 250ms);
   @include font-size-sm();
-  @include animate(color opacity);
-  flex: 1 1 100%;
-  position: relative;
   display: block;
-  text-align: center;
+  flex: 1 1 100%;
   line-height: 1;
-  z-index: 2;
   opacity: 1;
   padding: #{$size-xl}px #{$size-xxl}px;
+  position: relative;
+  text-align: center;
+  z-index: 3;
 
-  .button &,
-  .button:link &,
-  .button:visited & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
+  .button:focus & {
+    @include themeSwitch(color, seed-black, seed-black);
+  }
+
+  .button:focus &,
+  .button:active & {
+    .focus-disabled .theme-lightest &,
+    .focus-disabled .theme-light & {
       color: color(seed-white);
     }
 
-    .theme-light &,
-    .theme-lightest & {
+    .focus-disabled .theme-grey &,
+    .focus-disabled .theme-dark &,
+    .focus-disabled .theme-darkest & {
       color: color(seed-black);
     }
   }
 
-  .button:hover &,
-  .button:focus &,
-  .button:active & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      color: color(seed-black);
-    }
+  .button &,
+  .button:link &,
+  .button:visited & {
+    @include themeSwitch(color, seed-black, seed-white);
+  }
 
-    .theme-light &,
-    .theme-lightest & {
-      color: color(seed-white);
-    }
+  .button--alt &,
+  .button--alt:link &,
+  .button--alt:visited & {
+    @include themeSwitch(color, seed-white, seed-black);
+  }
+
+  .button.is-clicked--reveal.is-clicked--exit &,
+  .button:hover &,
+  .button:active & {
+    @include themeSwitch(color, seed-white, seed-black);
+  }
+
+  .button--alt.is-clicked--reveal.is-clicked--exit &,
+  .button--alt:hover & {
+    @include themeSwitch(color, seed-black, seed-white);
+  }
+
+  .button.is-clicked--reveal &,
+  .button:active & {
+    @include themeSwitch(color, seed-black, seed-black);
+  }
+
+  .button--alt.is-clicked--reveal &,
+  .button--alt:active & {
+    @include themeSwitch(color, seed-black, seed-black);
   }
 
   .button.is-disabled &,
   .button:disabled &,
   .button[disabled] & {
-    color: $btn-default-label-disabled;
-
+    &,
     &:link,
     &:visited,
     &:hover,
     &:active {
       color: $btn-default-label-disabled;
     }
-  }
-}
-
-.button__icon {
-  @include animate(opacity);
-  fill: $btn-default-label;
-  height: #{$btn-icon-md}px;
-  width: #{$btn-icon-md}px;
-  min-width: 0;
-  opacity: 1;
-
-  &:first-child {
-    margin-left: 0;
-  }
-
-  .button &,
-  .button:link &,
-  .button:visited & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      fill: color(seed-white);
-    }
-
-    .theme-light &,
-    .theme-lightest & {
-      fill: color(seed-black);
-    }
-  }
-
-  .button:hover &,
-  .button:focus &,
-  .button:active & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      fill: color(seed-black);
-    }
-
-    .theme-light &,
-    .theme-lightest & {
-      fill: color(seed-white);
-    }
-  }
-
-  .button.is-disabled &,
-  .button:disabled &,
-  .button[disabled] & {
-    fill: $btn-default-label-disabled;
-
-    &:link,
-    &:visited,
-    &:hover,
-    &:active {
-      fill: $btn-default-label-disabled;
-    }
-  }
-
-  .button__label + & {
-    margin-left: 5px;
   }
 }

@@ -55,15 +55,14 @@ a.card {
   overflow: hidden;
   height: 100%;
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
+  .theme-light &,
+  .theme-lightest & {
     &,
     &:link,
     &:visited {
       text-decoration: none;
-      background-color: color(seed-black);
-      color: color(text-lightest);
+      background-color: color(seed-white); // sass-lint:disable-line no-important
+      color: color(text-darkest); // sass-lint:disable-line no-important
     }
 
     &:hover {
@@ -84,14 +83,15 @@ a.card {
     }
   }
 
-  .theme-light &,
-  .theme-lightest & {
+  .theme-grey &,
+  .theme-dark &,
+  .theme-darkest & {
     &,
     &:link,
     &:visited {
       text-decoration: none;
-      background-color: color(seed-white);
-      color: color(text-darkest);
+      background-color: color(seed-black) !important; // sass-lint:disable-line no-important
+      color: color(text-lightest) !important; // sass-lint:disable-line no-important
     }
 
     &:hover {
@@ -136,7 +136,7 @@ a.card {
 }
 
 .card__title {
-  @include font-size-xl();
+  @include font-size-lg();
   margin-bottom: #{$gutter-xs}px;
   font-family: $font-family-secondary;
   display: block;
@@ -216,8 +216,17 @@ a.card-link {
 }
 
 .card-link__label {
-  @include font-size-xl();
   font-family: $font-family-secondary;
+  font-size: 17px;
+
+  @include media-min-sm {
+    @include font-size-lg();
+  }
+
+  a.card-link--sm & {
+    @include font-size-md();
+    font-family: $font-family-primary;
+  }
 }
 
 .card-link__icon {
@@ -231,5 +240,9 @@ a.card-link {
     animation-timing-function: $easing;
     animation-iteration-count: infinite;
     animation-name: linkBounce;
+  }
+
+  a.card-link--sm & {
+    display: none;
   }
 }

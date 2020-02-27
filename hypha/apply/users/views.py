@@ -127,7 +127,7 @@ class ActivationView(TemplateView):
             login(request, user)
             return redirect('users:activate_password')
 
-        return render(request, 'users/activation/invalid.html')
+        return render(request, 'users/activation/reset_network_invalid.html')
 
     def valid(self, user, token):
         """
@@ -169,6 +169,6 @@ def create_password(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AdminPasswordChangeForm(request.user)
-    return render(request, 'users/change_password.html', {
+    return render(request, 'users/reset_network_change_password.html', {
         'form': form
     })

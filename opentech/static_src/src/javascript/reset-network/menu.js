@@ -1,31 +1,37 @@
-'use strict';
+/* eslint-env jquery */
 
-var MENU = {
+(function () {
 
-  $container: null,
-  $nav: null,
+    'use strict';
 
-  init: function() {
-    MENU.$container = $('#stage-nav .main-nav-container');
-    MENU.$nav = $('#stage-nav .main-nav');
-    MENU.check();
-    var timeout = null;
-    window.addEventListener('resize', function () {
-      clearTimeout(timeout);
-      timeout = setTimeout(MENU.check, 250);
-    });
-  },
+    var MENU = {
 
-  check: function() {
-    MENU.$container.removeClass('is-centered');
-    if (MENU.$nav.outerHeight() >= MENU.$container.height()) {
-      MENU.$container.addClass('is-centered');
-    }
-  }
-};
+        $container: null,
+        $nav: null,
 
-(function ($) {
-  $(document).ready(function () {
-    MENU.init();
-  });
-})(jQuery);
+        init: function () {
+            MENU.$container = $('#stage-nav .main-nav-container');
+            MENU.$nav = $('#stage-nav .main-nav');
+            MENU.check();
+            var timeout = null;
+            window.addEventListener('resize', function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(MENU.check, 250);
+            });
+        },
+
+        check: function () {
+            MENU.$container.removeClass('is-centered');
+            if (MENU.$nav.outerHeight() >= MENU.$container.height()) {
+                MENU.$container.addClass('is-centered');
+            }
+        }
+    };
+
+    (function ($) {
+        $(document).ready(function () {
+            MENU.init();
+        });
+    })(jQuery);
+
+})();
