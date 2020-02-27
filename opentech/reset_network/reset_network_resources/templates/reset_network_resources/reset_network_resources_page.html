@@ -3,31 +3,105 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
+{% block body_class %}base-darkest{% endblock %}
 {% block content %}
 
-<h1>{{ page.content_heading }}</h1>
+<section class="para para--lead theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="resources">
 
-{% if categories and categories|length %}
-<ul>
-  <li>
-    <a href="{% pageurl page %}">All categories</a>
-  </li>
-  {% for c in categories %}
-  <li {% if category == c.name %}class="is-active"{% endif %}>
-    <a href="{% pageurl page %}?category={{ c }}">{{ c.name }}</a>
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+        <div class="resources__title para__title">
+          <h1>{{ page.content_heading }}</h1>
+        </div>
 
-{% for resource in resources %}
-<div>
-  [ Article ]
-  {{ resource.card_heading }}
-  {{ resource.card_text }}
-  {% image resource.card_image width-400 %}
-  <a href="{% pageurl resource %}">View</a>
+        <div class="resources__content para__body">
+
+          {% if categories and categories|length %}
+            <div class="resources__select js-resources-select">
+              <div class="resources__select-wrapper">
+                <button type="button" class="resources__select-btn js-resources-select-btn">
+                  {% if not category %}
+                    All categories
+                  {% else %}
+                    {{ category }}
+                  {% endif %}
+                </button>
+                <div class="resources__select-drop js-resources-select-drop">
+                  <ul class="resources__select-list js-resources-select-list">
+                    <li class="resources__select-item">
+                      <a
+                        class="resources__select-link{% if category == 'None' %} is-active{% endif %}"
+                        href="{% pageurl page %}"
+                      >All categories</a>
+                    </li>
+                    {% for c in categories %}
+                      <li class="resources__select-item">
+                        <a
+                          class="resources__select-link{% if category == c.name %} is-active{% endif %}"
+                          href="{% pageurl page %}?category={{ c }}"
+                        >{{ c.name }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if categories and categories|length %}
+            <div class="resources__carousel">
+              <div class="resources__carousel-wrapper" aria-hidden="true">
+                <ul class="resources__carousel-imgs-list js-resources-carousel">
+                  {% for resource in resources %}
+                    <li class="resources__carousel-imgs-item">
+                      {% image resource.content_image fill-350x350-c100 %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <ul class="resources__carousel-copy-list js-resources-copy">
+                {% for resource in resources %}
+                  <li class="resources__carousel-copy-item" data-resources-copy="{{forloop.counter0}}">
+                    <p class="resources__carousel-copy-small">[ Article ]</p>
+                    <h2 class="resources__carousel-copy-title">{{ resource.card_heading }}</h2>
+                    <p class="resources__carousel-copy-text">{{ resource.card_text }}</p>
+                    <a href="{% pageurl resource %}" class="button">
+                      <span class="button__drop"></span>
+                      <span class="button__label">View</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if categories and categories|length %}
+            <div class="resources__mob">
+              <ul class="resources__mob-list">
+                {% for resource in resources %}
+                  <li class="resources__mob-item">
+                    <div class="resources__mob-resource">
+                      {% image resource.content_image fill-300x300-c100 %}
+                      <p class="resources__mob-copy-small">[ Article ]</p>
+                      <h2 class="resources__mob-copy-title">{{ resource.card_heading }}</h2>
+                      <p class="resources__mob-copy-text">{{ resource.card_text }}</p>
+                      <a href="{% pageurl resource %}" class="button">
+                        <span class="button__drop"></span>
+                        <span class="button__label">View</span>
+                      </a>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
-{% endfor %}
 
 {% endblock %}

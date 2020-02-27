@@ -11,6 +11,8 @@ def global_vars(request):
         'ORG_LONG_NAME': settings.ORG_LONG_NAME,
         'ORG_SHORT_NAME': settings.ORG_SHORT_NAME,
         'ORG_EMAIL': settings.ORG_EMAIL,
+        'MATOMO_URL': settings.MATOMO_URL,
+        'MATOMO_SITEID': settings.MATOMO_SITEID,
     }
 
     if settings.SITE_NAME == 'reset':

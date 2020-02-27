@@ -3,26 +3,81 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
+{% block body_class %}
+{% if page.region_heading and page.reset_network_work_region.all|length %}
+base-dark
+{% else %}
+base-darkest
+{% endif %}
+{% endblock %}
+
 {% block content %}
 
-<h1>{{ page.content_heading }}</h1>
+<section class="para para--lead theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>{{ page.content_heading }}</h1>
+      </div>
+      <div class="para__body">
+        {{ page.content_text }}
+      </div>
+    </div>
+  </div>
+</section>
 
-{{ page.content_text }}</p>
-
+<div class="offset-wrap">
 {% for pillar in page.reset_network_work_pillar.all %}
-<div>
-  {{ pillar.heading }}
-  {{ pillar.text }}
-  {% image pillar.image width-400 %}
+  <section class="para para--pillar para--aside-xs theme-darkest" data-section-theme="dark">
+    <div class="para__wrap contain reveal">
+      <div class="para__aside">
+        <div class="surface surface--1-1">
+          <div class="surface__plane">
+            {% image pillar.image fill-590x590-c100 class="surface__image" %}
+          </div>
+        </div>
+      </div>
+      <article class="para__content">
+        <header class="para__title">
+          <h3>{{ pillar.heading }}</h3>
+        </header>
+        <div class="para__body rte">
+          {{ pillar.text|richtext }}
+        </div>
+      </article>
+    </div>
+  </section>
 {% endfor %}
+</div>
 
-<h2>Regions</h2>
+{% if page.region_heading and page.reset_network_work_region.all|length %}
+<section class="para para--title theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.region_heading }}</h2>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% for region in page.reset_network_work_region.all %}
-<div>
-  {{ region.heading }}
-  {{ region.text|richtext }}
-</div>
+
+<section class="para para--region theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h3>{{ region.heading }}</h3>
+      </div>
+      <div class="para__body rte">
+        {{ region.text|richtext }}
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endfor %}
+
+{% endif %}
 
 {% endblock %}

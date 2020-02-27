@@ -3,12 +3,12 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
-{% block body_class %}theme-darkest{% endblock %}
+{% block body_class %}base-darkest{% endblock %}
 
 {% block content %}
 
-<div class="banner banner--tall theme-darkest" data-theme="dark">
-  <div class="banner__wrap contain">
+<div class="banner banner--tall theme-darkest" data-section-theme="dark">
+  <div class="banner__wrap contain reveal">
     <div class="banner__content">
       <div class="gif-img js-gif-img" aria-hidden="true">
         {% if page.content_heading_gif_desktop %}
@@ -23,13 +23,13 @@
 </div>
 
 {# main content #}
-<section class="para para--lead theme-dark" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--lead theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__content">
       <div class="para__title sr-only">
         <h1>{{ page.content_heading }}</h1>
       </div>
-      <div class="para__body rte">
+      <div class="para__body">
         {{ page.content_text|linebreaks  }}
       </div>
     </div>
@@ -37,8 +37,8 @@
 </section>
 
 {# section 1 #}
-<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -58,8 +58,8 @@
 </section>
 
 {# section 2 #}
-<section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -79,8 +79,8 @@
 </section>
 
 {# section 3 #}
-<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -100,8 +100,8 @@
 </section>
 
 {# section 4 #}
-<section class="para para--content-left para--aside-lg para--padding-offset-xl para--col-sm theme-dark" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-left para--aside-lg para--padding-offset-xl para--col-sm theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -121,8 +121,8 @@
 </section>
 
 {# section 5 #}
-<section class="para para--content-right para--aside-lg para--col-sm para--aside-offset-xl theme-darkest" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-right para--aside-lg para--col-sm para--aside-offset-xl theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -150,8 +150,8 @@
 </section>
 
 {# section 6 #}
-<section class="para para--content-left para--aside-lg para--col-sm theme-darkest" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--content-left para--aside-lg para--col-sm theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">

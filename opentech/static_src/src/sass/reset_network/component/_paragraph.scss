@@ -1,11 +1,12 @@
 //================================================================================================//
 //
-//  para COMPONENT
+//  PARAGRAPH COMPONENT
 //
 //================================================================================================//
 
 // VARS
 
+$aside-width-xs: 310;
 $aside-width-sm: 480;
 $aside-width-lg: 535;
 $aside-width-xl: 590;
@@ -14,10 +15,17 @@ $content-width: 650;
 $content-column-width-xs: 375;
 $content-column-width-sm: 425;
 $content-column-width-lg: 510;
-$content-column-width-xxl: 930;
-$content-intro-width: 820;
+$content-column-width-xl: 545;
+$content-column-width-xxl: 650;
+$content-intro-width: 870;
 
 $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
+
+// CONTAINERS
+
+.offset-wrap {
+
+}
 
 // ELEMENTS
 
@@ -84,24 +92,104 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
   }
 }
 
+.para--overflow-hidden {
+  overflow: hidden;
+}
+
 .para--cards {
   padding-top: #{$gutter}px;
 
   @include media-min-sm {
-    padding-top: #{$gutter}px;
+    padding-top: #{$gutter-lg}px;
   }
 
   @include media-min-md {
+    padding-top: #{$gutter-xl}px;
+  }
+}
+
+.para--head {
+    padding-bottom: #{$gutter-max}px;
+
+    @include media-min-sm {
+        padding-bottom: #{$gutter-max}px;
+    }
+
+    @include media-min-md {
+        padding-bottom: #{$gutter-max}px;
+    }
+}
+
+.para--back {
+  padding-top: #{$gutter-sm}px;
+  padding-bottom: 0;
+
+  @include media-min-sm {
+    padding-top: #{$gutter-sm}px;
+    padding-bottom: 0;
+  }
+
+  @include media-min-md {
+    padding-top: #{$gutter-sm}px;
+    padding-bottom: 0;
+  }
+}
+
+.para--article {
+  padding-bottom: #{$gutter-sm}px;
+  padding-top: 0;
+
+  @include media-min-sm {
+    padding-bottom: #{$gutter-sm}px;
+    padding-top: 0;
+  }
+
+  @include media-min-md {
+    padding-bottom: #{$gutter}px;
+    padding-top: 0;
+  }
+}
+
+.para--assets,
+.para--external,
+.para--region,
+.para--title,
+.para--pillar {
+  padding-bottom: #{$gutter}px;
+
+  @include media-min-sm {
+    padding-bottom: #{$gutter}px;
+  }
+
+  @include media-min-md {
+    padding-bottom: #{$gutter}px;
+  }
+
+  .offset-wrap & {
     padding-top: #{$gutter}px;
+
+    @include media-min-sm {
+      padding-top: #{$gutter}px;
+    }
+
+    @include media-min-md {
+      padding-top: #{$gutter}px;
+    }
+
+    &:last-child {
+      @include media-min-sm {
+        padding-bottom: #{$gutter-lg}px;
+      }
+
+      @include media-min-md {
+        padding-bottom: #{$gutter-xxl}px;
+      }
+    }
   }
 }
 
 .para--intro {
   padding-bottom: #{($gutter-xl * 2) + $gutter-xs}px;
-}
-
-.para--cards {
-
 }
 
 .para--content-left {}
@@ -120,30 +208,47 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
   position: relative;
   max-width: 100%;
 
+  .para--article &,
+  .para--assets &,
+  .para--external & {
+    justify-content: flex-start;
+  }
+
   @include media-min-xs {
     flex-wrap: nowrap;
-    max-width: 100%;
+    max-width: #{$content-column-width-xl}px;
   }
 
   @include media-min-sm {
+    max-width: 100%;
     flex-direction: row;
     align-items: stretch;
     flex-wrap: nowrap;
+    padding: 0 0 0 #{$para-sidebar-offset};
   }
 
-  .para--content-left &,
-  .para--lead &,
-  .para--rte &,
-  .para--intro & {
+  @include media-min-xl {
+    padding: 0 0 0 #{$sidebar-offset}px;
+  }
+
+  .para--pillar & {
     @include media-min-sm {
       padding: 0 0 0 #{$para-sidebar-offset};
     }
+    @include media-min-md {
+      padding: 0 #{$para-sidebar-offset};
+    }
 
     @include media-min-xl {
-      padding: 0 0 0 #{$sidebar-offset}px;
+      padding: 0 #{$sidebar-offset}px;
     }
   }
 
+  .para--region & {
+    justify-content: flex-start;
+  }
+
+  .para--pillar &,
   .para--content-left & {
     @include media-min-sm {
       justify-content: space-between;
@@ -208,18 +313,60 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
   max-width: 100%;
   align-items: center;
 
+  .para--title + .para--region & {
+    &::before {
+      @include media-min-sm {
+        display: none;
+      }
+    }
+  }
+
+  .para--region & {
+    position: relative;
+    max-width: #{$content-intro-width}px;
+    padding-top: #{$gutter}px;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: color(seed-black, 25);
+    }
+
+    @include media-min-sm {
+      padding-top: #{$gutter}px;
+      flex-direction: row;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    @include media-min-md {
+      padding-top: #{$gutter}px;
+    }
+  }
+
   .para--content-left & {
     @include media-min-sm {
       order: 1;
     }
   }
 
-  .para--content-right & {
+  .para--people & {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
   }
 
-  .para--aside-lg & { }
-
-  .para--aside-xl & { }
+  .para--pillar & {
+    @include media-min-sm {
+      margin-left: #{$gutter}px;
+      max-width: #{$content-column-width-sm}px;
+    }
+  }
 
   .para--content-left &,
   .para--content-right & {
@@ -237,6 +384,12 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
   .para--col-sm & {
     @include media-min-sm {
       max-width: #{$content-column-width-sm}px;
+    }
+  }
+
+  .para--col-xl & {
+    @include media-min-sm {
+      max-width: #{$content-column-width-xl}px;
     }
   }
 
@@ -266,17 +419,95 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 }
 
 .para__title {
-  @include font-size-xxl();
   font-family: $font-family-secondary;
+  max-width: #{$content-intro-width}px;
   flex: 0 0 100%;
 
-  h2 {
-    @include font-size-xxl();
-    font-weight: $font-weight-regular;
-
-    .para__intro {
-      @include font-size-omega();
+  .para--region & {
+    @include media-min-sm {
+      flex: 0 1 100%;
+      max-width: 255px;
+      margin-right: #{$gutter}px;
     }
+  }
+
+  h1 {
+    @include font-size-xl();
+
+    @include media-min-xs {
+      @include font-size-xl();
+    }
+
+    @include media-min-sm {
+      @include font-size-xxl();
+    }
+
+    .para--head & {
+        @include font-size-xl();
+
+        @include media-min-xs {
+            @include font-size-xxl();
+        }
+
+        @include media-min-md {
+            @include font-size-max();
+        }
+    }
+  }
+
+     h2 {
+        @include font-size-lg();
+        font-size: 20px;
+
+        @include media-min-xs {
+            @include font-size-xl();
+        }
+
+        @include media-min-sm {
+            @include font-size-xxl();
+        }
+
+        .para--primary & {
+            @include font-size-xl();
+
+            @include media-min-sm {
+                @include font-size-xxl();
+            }
+
+            @include media-min-md {
+                @include font-size-xxl();
+            }
+        }
+
+        .para--assets &,
+        .para--external & {
+            @include font-size-xl();
+
+            @include media-min-sm {
+                @include font-size-xl();
+            }
+
+            @include media-min-md {
+                @include font-size-xl();
+            }
+        }
+    }
+
+  h3 {
+    @include font-size-md();
+    font-size: 20px;
+
+    @include media-min-xs {
+      @include font-size-lg();
+    }
+
+    @include media-min-sm {
+      @include font-size-xl();
+    }
+  }
+
+  .para--lead & {
+    @include gutter-bottom();
   }
 }
 
@@ -284,6 +515,21 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
   @include pad-gutter-top();
   align-self: center;
   max-width: #{$content-intro-width}px;
+  position: relative;
+
+  .para--assets &,
+  .para--external &,
+  .para--pillar & {
+    @include pad-gutter-top-sm();
+  }
+
+  .para--region & {
+    @include media-min-sm {
+      flex: 0 1 100%;
+      max-width: 535px;
+      padding-top: 0;
+    }
+  }
 
   .para--lead & {
     font-weight: $font-weight-regular;
@@ -392,6 +638,17 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
   }
 
+  .para--aside-xs & {
+    max-width: #{$aside-width-xs}px;
+    max-height: #{$aside-width-xs}px;
+
+    @include media-min-sm { }
+
+    @include media-min-md {
+      flex: 0 0 25vw;
+    }
+  }
+
   .para--aside-lg & {
     max-width: #{$aside-width-lg}px;
     max-height: #{$aside-width-lg}px;
@@ -429,11 +686,12 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 
 .para__action {
   @include gutter-top();
+  max-width: #{$content-intro-width}px;
 }
 
 .para__link {
   @include animate(opacity);
-  @include font-size-sm();
+  @include font-size-xxs();
   font-family: $font-family-primary;
   margin-left: 10px;
 
@@ -443,15 +701,15 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     opacity: .5;
     text-decoration: none;
 
+    .theme-light &,
+    .theme-lightest & {
+      color: color(seed-white);
+    }
+
     .theme-grey &,
     .theme-dark &,
     .theme-darkest & {
       color: color(seed-black);
-    }
-
-    .theme-light &,
-    .theme-lightest & {
-      color: color(seed-white);
     }
   }
 
