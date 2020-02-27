@@ -6,11 +6,14 @@
 
     var SCROLL = {
 
+        isTouch: false,
+
         init: function () {
 
             // Is touch?
             if ('ontouchstart' in document.documentElement) {
                 document.documentElement.classList.add('is-touch');
+                SCROLL.isTouch = true;
             }
             else {
                 document.documentElement.classList.add('is-not-touch');
@@ -89,21 +92,19 @@
                 var $doc = $(document);
                 SCROLL.LOCK.$scroll = $('html, body');
 
-                // on scroll
-                // what section are you over (is clipped by page top)
-                // if scrolled 50% or less snap back to start BUT if scrolled an amount that's great than half the height then don't (allow user to
-                // continue reading the section
-                // if scrolled more than 50% then move onto the end of the section (unless some of the section is below the fold)
-
                 $doc.bind('on-scroll', SCROLL.LOCK.onScroll);
                 $doc.bind('section-themes', function (e, data) {
                     SCROLL.LOCK.themes = data;
                 });
-
             },
 
             onScroll: function () {
-                if (!SCROLL.LOCK.themes.length) {
+                if (
+                    !SCROLL.LOCK.themes.length || // No sections to lock to
+                    !$('#hero-carousel').length || // Only scroll-lock on the homepage
+                    SCROLL.isTouch || // Disable scroll-lock on touch devices
+                    window.innerWidth <= 768 // Disable scroll-lock on mobile
+                ) {
                     return;
                 }
 
@@ -128,11 +129,6 @@
 
                 // Prevent disruption to a current scroll to animation
                 if (SCROLL.LOCK.scrolling) {
-                    return;
-                }
-
-                // Only scroll lock on the homepage
-                if (!$('#hero-carousel').length) {
                     return;
                 }
 
