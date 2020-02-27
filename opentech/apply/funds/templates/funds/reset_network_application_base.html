@@ -1,53 +1,69 @@
 {% extends "reset_network/base.html" %}
 
+{% block body_class %}base-grey{% endblock %}
 {% load wagtailcore_tags static i18n util_tags %}
 {# Dont include fixed apply button on this page #}
 {% block apply_button %}{% endblock %}
-{% block header_modifier %}header--light-bg{% endblock %}
-
 {% block content %}
 
-{% if form.errors or form.non_field_errors %}
-<div class="wrapper wrapper--medium wrapper--error">
-    <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
-    <h5 class="heading heading--no-margin heading--regular">There were some errors with your form. Please amend the fields highlighted below</h5>
-    {% if form.non_field_errors %}
-        <ul>
-            {% for error in form.non_field_errors %}
-                <li class="error">{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</div>
-{% endif %}
+<section class="para theme-light" data-section-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
 
-<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
-    {% if not page.open_round and not page.start_date and not request.is_preview %}
-        {# the page has no open rounds and we arent on a round page #}
-        <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
-    {% else%}
-        <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
-            {{ form.media }}
+      {% if form.errors or form.non_field_errors %}
+        <div class="form-summary">
+          <p class="form-err-txt">There were some errors with your form. Please amend the fields highlighted below</h5>
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <p class="form-err-txt">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {# the page has no open rounds and we arent on a round page #}
+      {% if not page.open_round and not page.start_date and not request.is_preview %}
+        <div class="reveal">
+          <div class="para__title">
+            <h1>Sorry</h1>
+          </div>
+          <div class="para__body">
+            <p>{% blocktrans %}This {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</p>
+          </div>
+        </div>
+      {% else %}
+
+        <div class="para__body reveal">
+          <form class="form apply-form rte" action="/test500/" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            <div>{{ form.media }}</div>
 
             {% for field in form %}
-                {% if field.field %}
-                    {% include "forms/includes/field.html" with is_application=True %}
+              {% if field.field %}
+                {% include "forms/includes/field.html" with is_application=True %}
+              {% else %}
+                {% if field.group_number > 1 %}
+                  <div class="field-group-{{ field.group_number }}{% if not show_all_group_fields %} js-hidden{% endif %}">
+                    {{ field }}
+                  </div>
                 {% else %}
-                    {% if field.group_number > 1 %}
-                        <div class="field-group-{{ field.group_number }}{% if not show_all_group_fields %} js-hidden{% endif %}">
-                            {{ field }}
-                        </div>
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
+                  {{ field }}
                 {% endif %}
+              {% endif %}
             {% endfor %}
-            <button class="link link--button-secondary" type="submit" disabled>{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit for review{% endif %}</button>
-        </form>
-        <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
-    {% endif %}
-</div>
+
+            <button class="button" type="submit">
+              <span class="button__drop"></span>
+              <span class="button__label">{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit for review{% endif %}</span>
+            </button>
+
+          </form>
+        </div>
+
+      {% endif %}
+    </div>
+  </div>
+</section>
 {% endblock %}
 
 {% block extra_js %}

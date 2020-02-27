@@ -1,0 +1,29 @@
+{% load i18n %}
+
+<div class="form-row">
+
+  {% if wizard.steps.prev %}
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="button">
+      <span class="button__drop"></span>
+      <span class="button__label">Back</span>
+    </button>
+  {% else %}
+    <button disabled name="" type="button" class="button">
+      <span class="button__drop"></span>
+      <span class="button__label">Back</span>
+    </button>
+  {% endif %}
+
+  <button type="submit" class="button button--primary">
+    <span class="button__drop"></span>
+    <span class="button__label">Next</span>
+  </button>
+
+  {% if cancel_url %}
+    <a href="{% url 'users:account' %}" class="button">
+      <span class="button__drop"></span>
+      <span class="button__label">Cancel</span>
+    </a>
+  {% endif %}
+
+</div>

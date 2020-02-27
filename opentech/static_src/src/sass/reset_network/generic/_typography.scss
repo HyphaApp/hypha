@@ -11,15 +11,10 @@ $paragraph-break: #{floor(($font-size-base * $line-height) / 2)}px !default;
 // ELEMENTS
 
 body {
-  @include font-size-sm();
   @include font-base();
   font-weight: $font-weight-regular;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-
-  @include media-min-sm {
-    @include font-size-md();
-  }
 }
 
 h1,
@@ -31,6 +26,7 @@ h6,
 p {
   margin-top: 0;
   margin-bottom: $paragraph-break;
+  font-weight: $font-weight-regular;
 }
 
 h1,
