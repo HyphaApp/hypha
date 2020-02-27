@@ -1,0 +1,26 @@
+{% extends 'reset_network/base.html' %}
+{% load i18n %}
+
+{% block body_class %}base-dark{% endblock %}
+{% block title %}{% trans "Reset password" %}{% endblock %}
+{% block page_title %}{% trans "Password change successful" %}{% endblock %}
+{% block content %}
+
+<section class="para theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>Password change successful</h1>
+      </div>
+      <div class="para__body">
+        <div class="form-summary">
+          <p>
+            <a href="{% url 'users_public:login' %}">{% trans "Log in" %}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -688,3 +688,7 @@ if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
 PROJECTS_AUTO_CREATE = False
 if env.get('PROJECTS_AUTO_CREATE', 'false').lower().strip() == 'true':
     PROJECTS_AUTO_CREATE = True
+
+# Matomo tracking
+MATOMO_URL = env.get('MATOMO_URL', False)
+MATOMO_SITEID = env.get('MATOMO_SITEID', False)

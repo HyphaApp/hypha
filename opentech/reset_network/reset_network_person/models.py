@@ -16,10 +16,10 @@ class ResetNetworkPerson(models.Model):
 
     name = models.CharField(max_length=255, blank=False)
     role = models.CharField(max_length=255, blank=False)
-    about = models.TextField()
+    about = models.TextField(null=True, blank=True)
     image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
-    linkedin = models.URLField()
-    twitter = models.URLField()
+    linkedin = models.URLField(null=True, blank=True)
+    twitter = models.URLField(null=True, blank=True)
 
     panels = [
         MultiFieldPanel([

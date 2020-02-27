@@ -1,0 +1,71 @@
+{% extends 'reset_network/base.html' %}
+{% load i18n %}
+
+{% block body_class %}base-dark{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+
+<section class="para theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>{{ title }}</h1>
+      </div>
+      <div class="para__body">
+
+        {% if validlink %}
+          <form class="form" method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-summary">
+              {% if form.errors %}
+
+                {% if form.non_field_errors %}
+                  {% for error in form.non_field_errors %}
+                    <p class="form-err-txt">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
+
+                {% blocktrans count counter=form.errors.items|length %}
+                  <p class="form-err-txt">Please correct the error below.</p>
+                {% plural %}
+                  <p class="form-err-txt">Please correct the errors below.</p>
+                {% endblocktrans %}
+
+              {% else %}
+                <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
+              {% endif %}
+            </div>
+
+            {% for field in form %}
+            <div class="form-row">
+              <div class="input">
+                <label class="input__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <div class="input__wrap textbox">
+                  {{ field }}
+                  <div class="textbox__focus"></div>
+                </div>
+                {% for error in field.errors %}
+                  <p class="form-field-err-txt">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+
+          <div class="form-row">
+            <button class="button" type="submit">
+              <span class="button__drop"></span>
+              <span class="button__label">Reset password</span>
+            </button>
+          </div>
+
+        {% else %}
+          <p>The password reset link was invalid, possibly because it has already been used. Please request a new password reset.</p>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

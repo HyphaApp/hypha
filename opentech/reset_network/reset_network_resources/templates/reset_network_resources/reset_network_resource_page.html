@@ -2,30 +2,98 @@
 
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
+{% load resource_tags %}
 
+{% block body_class %}base-lightest{% endblock %}
 {% block content %}
 
-<h1>{{ page.content_heading }}</h1>
+<div class="para theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
 
-{% image page.content_image width-400 %}
+      <div class="resource-head">
+        <div class="resource-head__type">[Article]</div>
+        <h1 class="resource-head__title">{{ page.content_heading }}</h1>
 
-<a href="{% pageurl page.get_parent %}">Back to {{ page.get_parent.specific.content_heading }}</a>
+        <div class="resource-head__image">
+          <div class="surface surface--1-1">
+            <div class="surface__plane">
+              {% image page.content_image fill-590x590-c100 class="surface__image" %}
+            </div>
+          </div>
+        </div>
+      </div>
 
-{{ page.content_text|richtext }}
+    </div>
+  </div>
+</div>
+
+<div class="para para--xl para--back theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <a class="back-link" href="{% pageurl page.get_parent %}">
+        <i class="back-link__icon">
+          <svg class="icon icon--arrow">
+            <use xlink:href="#back"></use>
+          </svg>
+        </i>
+        Back to {{ page.get_parent }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="para para--article para--col-xxl para--rte theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+    <article class="para__content">
+      <header class="para__title sr-only">
+        <h1>{{ page.content_heading }}</h1>
+      </header>
+      <div class="para__body rte">
+        {{ page.content_text|richtext }}
+      </div>
+    </article>
+  </div>
+</div>
 
 {# asset downloads #}
 {% with assets=page.reset_network_resource_page_assets.all %}
 {% if assets and assets|length %}
 
-{{ page.content_assets_heading }}
+<div class="para para--col-xxl para--assets theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.content_assets_heading }}</h2>
+      </div>
 
-{% for asset in assets %}
-<div>
-  {{ asset.heading }}
-  {{ asset.text }}
-  <a href="{{ asset.asset.file.url }}">{{ asset.asset.file.size|filesizeformat }}</a>
+      <div class="para__body">
+        <ul class="assets">
+          {% for asset in assets %}
+            <li class="assets__item">
+              <div class="asset">
+                <div class="asset__content">
+                  <div class="asset__title">
+                    {{ asset.heading }}
+                  </div>
+                    {{ asset.text }}
+                </div>
+                <a class="asset-link" href="{{ asset.asset.file.url }}">
+                  <svg class="asset-link__icon icon icon--download"><use xlink:href="#download"></use></svg>
+                  <span class="asset-link__size">
+                  {{ asset|resilientfilesizeformat }}
+                  </span>
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
 </div>
-{% endfor %}
+
 {% endif %}
 {% endwith %}
 
@@ -33,11 +101,34 @@
 {% with links=page.reset_network_resource_page_links.all %}
 {% if links and links|length %}
 
-{{ page.content_links_heading }}
+<div class="para para--col-xxl para--external theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.content_links_heading }}</h2>
+      </div>
 
-{% for link in links %}
-<a href="{{ link.link }}" target="_blank" rel="noopener">{{ link.heading }}</a>
-{% endfor %}
+      <div class="para__body">
+      <ul class="links">
+          {% for link in links %}
+          <li class="links__item">
+              <a href="{{ link.link }}" class="card-link card-link--sm" target="_blank" rel="noopener noreferer">
+                <span class="card-link__drop">
+                  <span class="card-link__label">{{ link.heading }}</span>
+                  <svg class="card-link__icon icon icon--arrow">
+                      <use xlink:href="#arrow"></use>
+                  </svg>
+                </span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% endif %}
 {% endwith %}
 

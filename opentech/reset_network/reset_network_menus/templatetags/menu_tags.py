@@ -18,7 +18,9 @@ def resetnetworkmainmenu(context):
     site = context.get('PUBLIC_SITE', request.site)
 
     if site:
-        response['menu_items'] = ResetNetworkMenusMain.for_site(site).items
+        menu_items = ResetNetworkMenusMain.for_site(site).items
+        menu_items = [i for i in menu_items if i.value['page'] and i.value['page'].live]
+        response['menu_items'] = menu_items
 
     return response
 
@@ -36,6 +38,8 @@ def resetnetworkfootermenu(context):
     site = context.get('PUBLIC_SITE', request.site)
 
     if site:
-        response['menu_items'] = ResetNetworkMenusFooter.for_site(site).items
+        menu_items = ResetNetworkMenusFooter.for_site(site).items
+        menu_items = [i for i in menu_items if i.value['page'] and i.value['page'].live]
+        response['menu_items'] = menu_items
 
     return response

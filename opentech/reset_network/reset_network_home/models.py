@@ -5,6 +5,7 @@ import django.db.models.options as options
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.documents.edit_handlers import DocumentChooserPanel
+from opentech.reset_network.reset_network_open_calls.models import ResetNetworkOpenCallPage
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('description',)
 
@@ -130,3 +131,11 @@ class ResetNetworkHomePage(Page):
             InlinePanel('reset_network_home_page_featured', label='Featured Card', heading='Featured'),
         ], heading='Content - Section 3 (Resources)'),
     ]
+
+    def get_context(self, request, *args, **kwargs):
+
+        open_calls = ResetNetworkOpenCallPage.objects.live().public()
+
+        context = super().get_context(request, *args, **kwargs)
+        context['open_calls'] = open_calls
+        return context

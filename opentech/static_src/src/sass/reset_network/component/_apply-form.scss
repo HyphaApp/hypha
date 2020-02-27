@@ -1,0 +1,280 @@
+//================================================================================================//
+//
+//  APPLY FORM COMPONENT
+//
+//================================================================================================//
+
+// VARS
+
+$color-required-red: #e96c70;
+$color-border: #e8e8e8;
+$color-group: #f7f7f7;
+
+$input-padding: 14px;
+$input-min-height: 52px;
+$max-width: 500px;
+
+// CONTAINER
+
+// ELEMENTS
+
+.apply-form.rte {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+  }
+
+  ul {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  label {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .field-group-wrapper {
+    background-color: $color-group;
+    border: 1px solid $color-border;
+    padding: 30px 15px;
+
+    @include media-min-sm {
+      padding: 30px;
+    }
+
+    &.js-hidden {
+      display: none;
+    }
+
+    .form__group:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .form__required {
+    color: $color-required-red;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .rich-text,
+  .form__group,
+  .field-group-wrapper {
+    margin-bottom: 50px;
+  }
+
+  .form__item {
+    line-height: 1;
+    margin-top: 15px;
+  }
+
+  .form__open-icon {
+    height: 20px;
+    width: 20px;
+  }
+
+  .form__question {
+    font-size: 16px;
+  }
+
+  .form__help {
+    font-size: 15px;
+    margin: 0;
+    opacity: .5;
+  }
+
+  .form__help-link {
+    margin: 0;
+
+    a {
+      font-size: 15px;
+      font-weight: initial;
+      opacity: .5;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .rich-text {
+    p {
+      font-size: 19px;
+    }
+  }
+
+  .form__question--choice_field {
+    background: transparent;
+    border: none;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
+  .address {
+    .form__group {
+      max-width: $max-width;
+    }
+
+    [type="text"] {
+      margin-top: 15px;
+    }
+  }
+
+  .select2 {
+    display: block;
+  }
+
+  .select2-selection {
+    background: transparent;
+    border-radius: 0;
+    border: 1px solid color(seed-black);
+    height: auto;
+    margin-top: 15px;
+    max-width: $max-width;
+    padding: $input-padding;
+    width: 100%;
+  }
+
+  .select2-selection__arrow {
+    display: none;
+  }
+
+  .form__select {
+    max-width: $max-width;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      border-style: solid;
+      height: 0;
+      pointer-events: none;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      width: 0;
+    }
+
+    &::before {
+      border-width: 0 4.5px 7.8px 4.5px;
+      border-color: transparent transparent color(seed-black) transparent;
+      transform: translateY(calc(-50% - 8px));
+    }
+
+    &::after {
+      border-width: 7.8px 4.5px 0 4.5px;
+      border-color: color(seed-black) transparent transparent transparent;
+      transform: translateY(calc(-50% + 8px));
+    }
+  }
+
+  .form__file-list {
+    display: none;
+  }
+
+  .wmd-preview-title {
+    font-size: 16px;
+    line-height: 1.625;
+    margin: 15px 0;
+
+    small {
+      font-size: 16px;
+    }
+  }
+
+  .wmd-preview {
+    background-color: color(seed-white);
+    border: 2px solid $color-border;
+    padding: 25px;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0 0 25px;
+    }
+
+    ul {
+      list-style: disc;
+      margin: 0 0 25px;
+      padding: 0 0 0 25px;
+    }
+  }
+
+  input {
+    min-height: $input-min-height;
+
+    &[type="text"],
+    &[type="number"],
+    &[type="date"],
+    &[type="time"],
+    &[type="email"],
+    &[type="file"] {
+      border: 2px solid $color-border;
+      padding: $input-padding;
+      width: 100%;
+    }
+
+    &[type="number"],
+    &[type="date"],
+    &[type="time"] {
+      max-width: $max-width;
+    }
+
+    &[type="radio"],
+    &[type="checkbox"] {
+      margin-right: 10px;
+      position: relative;
+      top: -2px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    &[type="file"] {
+      background-color: color(seed-white);
+      font-size: 14px;
+      max-width: $max-width;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  textarea {
+    border: 2px solid $color-border;
+    min-height: $input-min-height;
+    padding: $input-padding;
+    width: 100%;
+  }
+
+  select {
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 0;
+    border: 1px solid color(seed-black);
+    min-height: $input-min-height;
+    padding: $input-padding;
+    width: 100%;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
