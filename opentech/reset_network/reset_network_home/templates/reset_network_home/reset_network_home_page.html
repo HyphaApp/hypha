@@ -1,11 +1,13 @@
 {% extends "reset_network/base.html" %}
 
+{% block body_class %}base-grey{% endblock %}
+
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
 {% block content %}
 
-<section class="theme-darkest" data-theme="dark">
+<section class="theme-darkest" data-section-theme="dark">
   <div class="hero-carousel" id="hero-carousel">
     <div class="hero-carousel__lvl-1 contain">
       <div class="hero-carousel__lvl-2">
@@ -21,8 +23,8 @@
   </div>
 </section>
 
-<section class="para para--intro theme-darkest" data-theme="dark">
-  <div class="para__wrap contain">
+<section class="para para--intro theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
     <div class="para__content">
       <div class="para__title">
         <h1 class="sr-only">{{ page.content_heading }}</h1>
@@ -50,8 +52,8 @@
   </div>
 </section>
 
-<section class="para para--col-xs para--content-left para--aside-offset-xl para--aside-xl theme-lightest" data-theme="light">
-  <div class="para__wrap contain">
+<section class="para para--primary para--col-xs para--content-left para--aside-offset-xl para--aside-xl theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -81,10 +83,9 @@
 </section>
 
 {# only show the section if there are open calls #}
-{% with open_calls=page.reset_network_home_page_open_calls.all %}
 {% if open_calls and open_calls|length %}
-<section class="para para--content-right para--links theme-lightest" data-theme="light">
-  <div class="para__wrap contain">
+<section class="para para--primary para--content-right para--links theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
         <div class="surface__plane">
@@ -106,18 +107,16 @@
       <div class="para__body">
         <ul class="links">
           {% for open_call in open_calls %}
-          {% with item=open_call.open_call_link_page.specific %}
           <li class="links__item">
-            <a href="{% pageurl item %}" class="card-link">
+            <a href="{% pageurl open_call %}" class="card-link">
               <span class="card-link__drop">
-                <span class="card-link__label">{{ item.card_heading }}</span>
+                <span class="card-link__label">{{ open_call.card_heading }}</span>
                 <svg class="card-link__icon icon icon--arrow">
                     <use xlink:href="#arrow"></use>
                 </svg>
               </span>
             </a>
           </li>
-          {% endwith %}
           {% endfor %}
         </ul>
       </div>
@@ -125,13 +124,12 @@
   </div>
 </section>
 {% endif %}
-{% endwith %}
 
 {# only show the section if there are featured items #}
 {% with featured_items=page.reset_network_home_page_featured.all %}
 {% if featured_items and featured_items|length %}
-<section class="para para--cards theme-grey" data-theme="light">
-  <div class="para__wrap contain">
+<section class="para para--primary para--cards theme-grey" data-section-theme="light">
+  <div class="para__wrap contain reveal">
     <div class="para__content">
       {% if page.section_3_heading %}
       <div class="para__title">

@@ -1,0 +1,55 @@
+
+//================================================================================================//
+//
+//  BASE THEME
+//
+//================================================================================================//
+
+// VARS
+
+// THEME
+
+.base-darkest {
+  background-color: color(seed-black);
+  color: color(text-lightest);
+
+  a {
+    @include link-lightest();
+  }
+}
+
+.base-dark {
+  background-color: color(seed-black, 11);
+  color: color(text-lightest);
+
+  a {
+    @include link-lightest();
+  }
+}
+
+.base-grey {
+  background-color: color(seed-grey);
+  color: color(text-darkest);
+
+  a {
+    @include link-darkest();
+  }
+}
+
+.base-light {
+  background-color: color(seed-grey-light);
+  color: color(text-darkest);
+
+  a {
+    @include link-darkest();
+  }
+}
+
+.base-lightest {
+  background-color: color(seed-white);
+  color: color(text-darkest);
+
+  a {
+    @include link-darkest();
+  }
+}

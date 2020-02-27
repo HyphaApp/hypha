@@ -15,13 +15,11 @@ $color-link-light: #fff;
   @include gutters-menu();
   height: 100%;
 
-  nav {
-    @include media-min-sm {
-      max-width: 170px;
-      min-width: 120px;
-      pointer-events: all;
-      width: 15%;
-    }
+  @include media-min-sm {
+    max-width: 250px;
+    min-width: 130px;
+    pointer-events: all;
+    width: 15%;
   }
 
   &.is-centered {
@@ -37,19 +35,45 @@ $color-link-light: #fff;
   }
 }
 
-.main-nav {
+.mobile-nav-container {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 56px;
+}
+
+.mobile-nav-wrapper {
   display: flex;
-  flex-direction: column;
   height: 100%;
-  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.main-nav {
   list-style: none;
   margin: 0;
   padding: 0;
   pointer-events: all;
   width: 100%;
 
-  @include media-min-sm {
-    padding: 110px 0 0 0;
+  .mobile-nav-wrapper & {
+    display: block;
+    width: 190px;
+    margin: auto;
+  }
+
+  .main-nav-wrapper & {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    flex-direction: column;
+
+    @include media-min-sm {
+      padding: 110px 0 0 0;
+    }
   }
 }
 
@@ -57,6 +81,12 @@ $color-link-light: #fff;
   flex: 1 0 auto;
   max-height: 52px;
   padding: 0 0 20px;
+
+  .mobile-nav-wrapper & {
+    flex: 0 0 auto;
+    max-height: none;
+    padding: 0 0 20px;
+  }
 }
 
 .main-nav-section {
@@ -73,6 +103,12 @@ a.main-nav-link {
   position: relative;
   overflow: hidden;
 
+  .mobile-nav-wrapper & {
+    @include font-size-sm();
+    display: block;
+    padding: 15px 0;
+  }
+
   &::after {
     @include animate(transform opacity);
     content: '';
@@ -85,6 +121,11 @@ a.main-nav-link {
     right: 0;
     transform: translateY(10px);
     opacity: 0;
+
+    .mobile-nav-wrapper & {
+      transform: translateY(2px);
+      opacity: .5;
+    }
   }
 
   &,
@@ -92,6 +133,10 @@ a.main-nav-link {
   &:visited {
     text-decoration: none;
     opacity: .5;
+
+    .mobile-nav-wrapper & {
+      opacity: .9;
+    }
   }
 
   &:focus {

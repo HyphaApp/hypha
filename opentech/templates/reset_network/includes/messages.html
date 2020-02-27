@@ -1,7 +1,7 @@
 {% if messages %}
-    <ul class="messages">
+    <div class="alert-tray">
         {% for message in messages %}
-            {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
+            {% include "reset_network/includes/message_item.html" with message=message tag=message.tags close=True %}
         {% endfor %}
-    </ul>
+    </div>
 {% endif %}

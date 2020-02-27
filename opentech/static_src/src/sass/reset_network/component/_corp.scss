@@ -39,7 +39,6 @@
   }
 
   &::after {
-    @include themeSwitch(background-color);
     content: '';
     display: inline-block;
     position: absolute;
@@ -48,6 +47,17 @@
     width: 1px;
     height: 20px;
     transform: translateY(-50%);
+
+    .base-grey &,
+    .base-lightest &,
+    .base-light & {
+      background-color: color(text-darkest);
+    }
+  
+    .base-dark &,
+    .base-darkest & {
+      background-color: color(text-lightest);
+    }
   }
 
   &:last-child::after {

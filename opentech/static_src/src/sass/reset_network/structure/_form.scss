@@ -49,7 +49,7 @@ $validation-success-border: $color-success-border !default;
 }
 
 .form-summary {
-  margin: 0 0 #{$form-field-spacing}px;
+  @include gutter-bottom();
 
   .form-legend + &,
   &:first-child {
@@ -67,7 +67,7 @@ $validation-success-border: $color-success-border !default;
 }
 
 .form-row {
-  @include gutter-bottom();
+  @include gutter-bottom-sm();
   @include animate(opacity);
   min-width: 100%;
   position: relative;
@@ -140,23 +140,24 @@ $validation-success-border: $color-success-border !default;
   @include themeSwitch('border-color');
 }
 
-.form-header {
-  display: flex;
-
-  @include media-min-xs {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
-
-.form-header__help {
-
-}
-
 .form-footnotes {
   @include font-size-sm();
   color: color(seed-grey, -25);
   font-style: italic;
   padding: 20px 0 0;
+}
+
+.form-btn-u {
+  text-decoration: underline;
+}
+
+.form-err-txt,
+.form-field-err-txt {
+  color: color(seed-red, -40);
+  font-weight: $font-weight-heavy;
+}
+
+.form-field-err-txt {
+  font-size: 14px;
+  margin: 5px 0 0;
 }

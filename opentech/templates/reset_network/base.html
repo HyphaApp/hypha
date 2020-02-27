@@ -9,10 +9,21 @@
 </title>
 <link rel="stylesheet" href="{% static 'css/reset_network.css' %}">
 {% block extra_css %}{% endblock %}
+
+<link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/reset_network/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/reset_network/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/reset_network/favicon-16x16.png">
+<link rel="manifest" href="/static/favicon/reset_network/site.webmanifest">
+<link rel="mask-icon" href="/static/favicon/reset_network/safari-pinned-tab.svg" color="#000000">
+<link rel="shortcut icon" href="/static/favicon/reset_network/favicon.ico">
+<meta name="msapplication-TileColor" content="#000000">
+<meta name="msapplication-config" content="/static/favicon/reset_network/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 </head>
-<body class="{% block body_class %}theme-grey{% endblock %}">
+<body class="{% block body_class %}base-grey{% endblock %}">
 
 {% wagtailuserbar %}
 
@@ -25,7 +36,9 @@
   <button type="button" class="stage__drawer-toggle-btn" aria-label="Open menu" id="open-drawer-btn"></button>
 
   <div id="stage-header" class="stage__header" aria-hidden="true">
-    <div class="artifact artifact--1">Project Alpha</div>
+    <div class="artifact artifact--1">
+      <a class="artifact-link" href="{{ request.site.root_url }}">Project Alpha</a>
+    </div>
     <div class="artifact artifact--2">
       <span class="artifact-feature artifact-feature--1"></span>
       <span class="artifact-feature artifact-feature--2"></span>
@@ -42,22 +55,26 @@
 
   <div class="stage__nav" id="stage-nav">
     <div class="main-nav-container">
-      {% resetnetworkmainmenu %}
+      <nav class="main-nav-wrapper" id="navigation" role="navigation">
+        {% resetnetworkmainmenu %}
+      </nav>
     </div>
   </div>
 
-  <div class="stage__drawer" aria-hidden="true" id="stage-drawer">
-    <button class="stage__drawer-close" type="button" aria-label="Close menu" id="close-drawer-btn"></button>
-    <div class="main-nav-container scrollbars">
-      {% resetnetworkmainmenu %}
-    </div>
-  </div>
-
-  <main id="#content" class="stage__main" data-stage>
+  <main id="content" class="stage__main" data-stage>
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="stage__footer footer contain">
+  <div class="stage__drawer" aria-hidden="true" id="stage-drawer">
+    <button class="stage__drawer-close" type="button" aria-label="Close menu" id="close-drawer-btn"></button>
+    <div class="mobile-nav-container scrollbars">
+      <div class="mobile-nav-wrapper scroller">
+        {% resetnetworkmainmenu %}
+      </div>
+    </div>
+  </div>
+
+  <footer class="stage__footer footer contain reveal">
     {% resetnetworkfootermenu %}
   </footer>
 </div>
@@ -69,7 +86,20 @@
 {% include "reset_network/includes/svgs.html" %}
 
 {% block extra_js %}{% endblock %}
+
+{% if MATOMO_URL and MATOMO_SITEID %}
+{# we are only expecting strings, so make sure we escape the values #}
+<script>
+  var matomo = {
+    'url': '{{ MATOMO_URL }}',
+    'siteid': '{{ MATOMO_SITEID }}'
+  };
+</script>
+{% endif %}
+<script src="{% static 'js/reset-network/slick.min.js' %}"></script>
+<script src="{% static 'js/reset-network/focus.js' %}"></script>
 <script src="{% static 'js/reset-network/animations.js' %}"></script>
+<script src="{% static 'js/reset-network/people.js' %}"></script>
 <script src="{% static 'js/reset-network/tracking.js' %}"></script>
 <script src="{% static 'js/reset-network/carousel.js' %}"></script>
 <script src="{% static 'js/reset-network/menu.js' %}"></script>

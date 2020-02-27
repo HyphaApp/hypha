@@ -1,39 +1,102 @@
 {% extends "reset_network/base.html" %}
 
+{% load static %}
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
+
+{% block body_class %}{% if open_calls and open_calls|length %}base-lightest{% else %}base-darkest{% endif %}{% endblock %}
+
 {% block content %}
 
-{# only show the section if there are open calls otherwise show the form #}
-{% if open_calls and open_calls|length %}
-
-{{ page.content_heading }}
-{{ page.content_text }}
-
-{% for open_call in open_calls %}
-  {% with item=open_call.specific %}
-  <div>
-    {{ item.card_heading }}
-    {{ item.card_text }}
-    {{ item.deadline }}
-    <a href="{% pageurl item %}">View details</a>
+<section class="para para--lead theme-lightest reveal" data-theme="lightest" data-section-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>{{ page.content_heading }}</h1>
+      </div>
+      <div class="para__body">
+        {{ page.content_text|linebreaks }}
+      </div>
+    </div>
   </div>
-  {% endwith %}
-{% endfor %}
+</section>
+
+{% if open_calls and open_calls|length %}
+<section class="para theme-lightest" data-section-theme="light">
+    <div class="para__wrap contain reveal">
+        <div class="para__content">
+            {% for open_call in open_calls %}
+                {% with item=open_call.specific %}
+                    <div class="call-card">
+                        {{ item.card_heading }}
+                        {{ item.card_text }}
+                        {{ item.deadline|date:"jS F Y" }}
+                        <a href="{% pageurl item %}">View details</a>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
 {% include "reset_network/includes/pagination.html" with resource=open_calls %}
 
 {% else %}
 
-{{ page.no_open_calls_heading }}
-{{ page.no_open_calls_text }}
+<section class="para theme-darkest" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h2>{{ page.no_open_calls_heading }}</h2>
+      </div>
+      <div class="para__body">
+        <form class="form wagtail-form" action="#" data-actionpath="{% pageurl page %}" method="POST">
+          {% csrf_token %}
 
-<form action="." method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Keep me informed</button>
-</form>
+          <div class="form-summary">
+            <p>{{ page.no_open_calls_text }}</p>
+          </div>
+
+          {% for field in form %}
+
+            {% if field.id_for_label != "id_confirm" %}
+              <div class="form-row">
+                <div class="input">
+                  <label class="input__label sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  <div class="input__wrap textbox">
+                    {{ field }}
+                    <div class="textbox__focus"></div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if field.id_for_label == "id_confirm" %}
+              <div class="form-row">
+                <div class="input checkbox">
+                  {{ field }}
+                  <span class="checkbox__fake"></span>
+                  <label for="{{ field.id_for_label }}" class="input__label input__label--check checkbox__label">{{ field.help_text }}<label>
+                </div>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+          <button type="submit" class="button" disabled>
+            <span class="button__drop"></span>
+            <span class="button__label">Keep me informed</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/public/protect-form.js' %}"></script>
 {% endblock %}

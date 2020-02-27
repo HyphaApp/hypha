@@ -1,0 +1,24 @@
+{% extends 'reset_network/base.html' %}
+{% load i18n %}
+
+{% block body_class %}base-dark{% endblock %}
+{% block page_title %}Check your email{% endblock %}
+{% block title %}Reset password{% endblock %}
+{% block content %}
+
+<section class="para theme-dark" data-section-theme="dark">
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      <div class="para__title">
+        <h1>Check your email</h1>
+      </div>
+      <div class="para__body">
+        <div class="form-summary">
+          <p>A link to reset your password has been emailed to you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
