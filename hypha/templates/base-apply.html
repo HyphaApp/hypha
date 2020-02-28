@@ -48,8 +48,19 @@
 
             <div class="header__inner wrapper wrapper--large">
                 <a href="{% slugurl 'home' %}" aria-label="Home link">
-                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop--dark"></use></svg>
-                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                    {% if settings.utils.SystemMessagesSettings.site_logo_default %}
+                        {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
+                        <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
+                        {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
+                            {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
+                            <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                        {% else %}
+                            <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
+                        {% endif %}
+                    {% else %}
+                        <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop--dark"></use></svg>
+                        <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                    {% endif %}
                 </a>
 
                 <div class="header__inner header__inner--mobile-buttons">
