@@ -14,7 +14,7 @@
 
 *Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 
-*Deploy with [Heroku](/wiki/Deployment:-Heroku), [Docker](/wiki/Deployment:-Docker), or [your own server](/wiki/Deployment:-Standalone-App).*
+*Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).*
 
 ## Maintainers
 
