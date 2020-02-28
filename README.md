@@ -1,8 +1,7 @@
 # Hypha
 
-<a href="https://travis-ci.org/opentechfund/opentech.fund">
- <img src="https://travis-ci.org/opentechfund/opentech.fund.svg?branch=master" alt="Build Status" />
-</a>
+[![<OpenTechFund>](https://circleci.com/gh/OpenTechFund/hypha.svg?style=shield)](https://circleci.com/gh/OpenTechFund/hypha)
+
 
 ## Submission management software
 
