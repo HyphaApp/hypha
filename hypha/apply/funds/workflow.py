@@ -268,6 +268,7 @@ SingleStageDefinition = [
     {
         'determination': {
             'transitions': {
+                'post_review_discussion': 'Ready For Discussion (back)',
                 'accepted': 'Accept',
                 'rejected': 'Dismiss',
             },
@@ -396,6 +397,7 @@ SingleStageExternalDefinition = [
     {
         'ext_determination': {
             'transitions': {
+                'ext_post_external_review_discussion': 'Ready For Discussion (back)',
                 'ext_accepted': 'Accept',
                 'ext_rejected': 'Dismiss',
             },
@@ -549,6 +551,7 @@ SingleStageCommunityDefinition = [
     {
         'com_determination': {
             'transitions': {
+                'com_post_external_review_discussion': 'Ready For Discussion (back)',
                 'com_accepted': 'Accept',
                 'com_rejected': 'Dismiss',
             },
@@ -647,7 +650,7 @@ DoubleStageDefinition = [
     {
         'concept_determination': {
             'transitions': {
-                'concept_review_more_info': 'Request More Information',
+                'concept_review_discussion': 'Ready For Discussion (back)',
                 'invited_to_proposal': 'Invite to Proposal',
                 'concept_rejected': 'Dismiss',
             },
@@ -798,9 +801,9 @@ DoubleStageDefinition = [
     {
         'proposal_determination': {
             'transitions': {
+                'post_external_review_discussion': 'Ready For Discussion (back)',
                 'proposal_accepted': 'Accept',
                 'proposal_rejected': 'Dismiss',
-                'post_external_review_discussion': 'Ready For Discussion (back)',
             },
             'display': 'Ready for Final Determination',
             'permissions': hidden_from_applicant_permissions,
