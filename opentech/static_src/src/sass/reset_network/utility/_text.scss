@@ -1,21 +1,23 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  TEXT UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
 //
-//============================================================================//
+//  sass-lint:disable no-important
+//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .text-left {
-  text-align: left !important; // stylelint-disable-line declaration-no-important
+    text-align: left !important; // stylelint-disable-line declaration-no-important
 }
 
 .text-right {
-  text-align: right !important; // stylelint-disable-line declaration-no-important
+    text-align: right !important; // stylelint-disable-line declaration-no-important
 }
 
 .text-center {
-  text-align: center !important; // stylelint-disable-line declaration-no-important
+    text-align: center !important; // stylelint-disable-line declaration-no-important
 }

@@ -126,8 +126,8 @@
                     ANIMATIONS.ARTIFACTS.setTheme();
                 });
 
-                // Only animate artifact reveal on the homepage
-                if (!$('#hero-carousel').length) {
+                // Only animate artifact reveal on desktop homepage
+                if (!$('#hero-carousel').length || window.innerWidth <= 768) {
                     $('html').addClass('has-no-artifacts-animation');
                     ANIMATIONS.ARTIFACTS.$stageHeader.addClass('is-collapsed-artifacts is-cornered-artifacts');
                 }
@@ -325,7 +325,7 @@
         BUTTONS: {
 
             init: function () {
-                $('a.button').on('click', function (e) {
+                $('[data-button]').on('click', function (e) {
                     e.preventDefault();
 
                     var $this = $(this);

@@ -1,248 +1,339 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  CARD COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
+$content-max-card-width: 870;
+$content-max-card-content-width: 450;
 
 // CONTAINERS
 
 .cards {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .cards--featured {
-  @include media-min-sm {
-    flex-direction: column;
-  }
+    @include media-min-sm {
+        flex-direction: column;
+    }
 }
 
 .cards__item {
-  padding: 0;
-  margin-bottom: #{$gutter-sm}px;
-  flex: 1 1 100%;
-  align-items: stretch;
+    padding: 0;
+    margin-bottom: #{$gutter-sm}px;
+    flex: 1 1 100%;
+    align-items: stretch;
 
-  @include media-min-xs-max-md {
-    flex: 0 1 calc(50% - #{$gutter-sm / 2}px);
-    margin-right: #{$gutter-sm}px;
-
-    &:nth-child(2n+2) {
-      margin-right: 0;
+    &:last-of-type {
+        margin-bottom: #{$gutter-sm}px;
     }
-  }
-  @include media-min-md {
-    flex: 0 1 calc(33.33333% - #{($gutter-sm * 2) / 3}px);
-    margin-bottom: 0;
-    margin-right: #{$gutter-sm}px;
 
-    &:nth-child(3n+3) {
-      margin-right: 0;
+    @include media-min-xs-max-md {
+        flex: 0 1 calc(50% - #{$gutter-sm / 2}px);
+        margin-right: #{$gutter-sm}px;
+
+        &:nth-child(2n+2) {
+            margin-right: 0;
+        }
     }
-  }
+
+    @include media-min-md {
+        flex: 0 1 calc(33.33333% - #{($gutter-sm * 2) / 3}px);
+        margin-right: #{$gutter-sm}px;
+
+        &:nth-child(3n+3) {
+            margin-right: 0;
+        }
+    }
 }
 
 // ELEMENTS
 
 a.card {
-  display: block;
-  overflow: hidden;
-  height: 100%;
-
-  .theme-light &,
-  .theme-lightest & {
-    &,
-    &:link,
-    &:visited {
-      text-decoration: none;
-      background-color: color(seed-white); // sass-lint:disable-line no-important
-      color: color(text-darkest); // sass-lint:disable-line no-important
-    }
+    display: block;
+    overflow: hidden;
+    height: 100%;
 
     &:hover {
-      outline: 0;
-
-      &[accesskey] {
-        outline: 1px dotted $anchor-access-border;
-      }
+        &.card--vertical .card__image .surface__plane {
+            transform: scale(1.1);
+        }
     }
 
-    &:focus {
-      outline: 2px solid $anchor-focus-border;
+    .theme-light &,
+    .theme-lightest & {
+
+        &,
+        &:link,
+        &:visited {
+            text-decoration: none;
+            background-color: color(seed-white);
+            color: color(text-darkest) !important; // sass-lint:disable-line no-important
+        }
+
+        &:hover {
+            outline: 0;
+
+            &[accesskey] {
+                outline: 1px dotted $anchor-access-border;
+            }
+        }
+
+        &:focus {
+            outline: 2px solid $anchor-focus-border;
+        }
+
+        .focus-disabled &:focus,
+        &:active {
+            outline: none;
+        }
     }
 
-    .focus-disabled &:focus,
-    &:active {
-      outline: none;
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+
+        &,
+        &:link,
+        &:visited {
+            text-decoration: none;
+            background-color: color(seed-black);
+            color: color(text-lightest) !important; // sass-lint:disable-line no-important
+        }
+
+        &:hover {
+            outline: 0;
+
+            &[accesskey] {
+                outline: 1px dotted $anchor-access-border;
+            }
+        }
+
+        &:focus {
+            outline: 2px solid $anchor-focus-border;
+        }
+
+        .focus-disabled &:focus,
+        &:active {
+            outline: none;
+        }
     }
-  }
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    &,
-    &:link,
-    &:visited {
-      text-decoration: none;
-      background-color: color(seed-black) !important; // sass-lint:disable-line no-important
-      color: color(text-lightest) !important; // sass-lint:disable-line no-important
+    * {
+        pointer-events: none;
     }
-
-    &:hover {
-      outline: 0;
-
-      &[accesskey] {
-        outline: 1px dotted $anchor-access-border;
-      }
-    }
-
-    &:focus {
-      outline: 2px solid $anchor-focus-border;
-    }
-
-    .focus-disabled &:focus,
-    &:active {
-      outline: none;
-    }
-  }
-
-  * {
-    pointer-events: none;
-  }
 }
 
 .card__image {
-  min-width: calc(100% + 2px);
-  margin: 0 -1px;
+    min-width: calc(100% + 2px);
+    margin: 0 -1px;
+    overflow: hidden;
+
+    .surface__plane {
+        transition: transform 600ms;
+    }
 }
 
 .card__content {
-  display: flex;
-  width: 100%;
+    display: flex;
+    width: 100%;
 
-  .card--vertical & {
-    flex-direction: column;
-  }
+    .card--vertical & {
+        flex-direction: column;
+    }
 }
 
 .card__body {
-  padding: #{$gutter-xs}px;
+    padding: #{$gutter-xs}px;
 }
 
 .card__title {
-  @include font-size-lg();
-  margin-bottom: #{$gutter-xs}px;
-  font-family: $font-family-secondary;
-  display: block;
+    @include font-size-lg();
+    margin-bottom: #{$gutter-xs}px;
+    font-family: $font-family-secondary;
+    display: block;
 }
 
 .card__icon {
-  align-self: flex-end;
-  height: 24px;
-  width: 24px;
-  margin: 0 20px 20px 0;
+    align-self: flex-end;
+    height: 24px;
+    width: 24px;
+    margin: 0 20px 20px 0;
 
-  @include media-min-xs {
-    display: none;
-  }
+    @include media-min-xs {
+        display: none;
+    }
 
-  .card:hover & {
-    animation-play-state: running;
-    animation-duration: 1s;
-    animation-timing-function: $easing;
-    animation-iteration-count: infinite;
-    animation-name: linkBounce;
-  }
+    .card:hover & {
+        animation-play-state: running;
+        animation-duration: 1s;
+        animation-timing-function: $easing;
+        animation-iteration-count: infinite;
+        animation-name: linkBounce;
+    }
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    fill: color(seed-white);
-  }
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+        fill: color(seed-white);
+    }
 
-  .theme-light &,
-  .theme-lightest & {
-    fill: color(seed-white);
-  }
+    .theme-light &,
+    .theme-lightest & {
+        fill: color(seed-white);
+    }
 }
 
 // CARD-LINK
 
 a.card-link {
-  width: 100%;
-  display: block;
+    width: 100%;
+    display: block;
 
-  &,
-  &:link,
-  &:visited {
-    text-decoration: none;
-    font-weight: $font-weight-regular;
-  }
-
-  &:hover {
-    outline: 0;
-
-    &[accesskey] {
-      outline: 1px dotted $anchor-access-border;
+    &,
+    &:link,
+    &:visited {
+        text-decoration: none;
+        font-weight: $font-weight-regular;
     }
-  }
 
-  &:focus {
-    outline: 2px solid $anchor-focus-border;
-  }
+    &:hover {
+        outline: 0;
 
-  .focus-disabled &:focus,
-  &:active {
-    outline: none;
-  }
+        &[accesskey] {
+            outline: 1px dotted $anchor-access-border;
+        }
+    }
+
+    &:focus {
+        outline: 2px solid $anchor-focus-border;
+    }
+
+    .focus-disabled &:focus,
+    &:active {
+        outline: none;
+    }
 }
 
 .card-link__drop {
-  position: relative;
-  padding: 10px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    position: relative;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-  @include media-min-sm {
-    padding: 20px 0;
-  }
+    @include media-min-sm {
+        padding: 20px 0;
+    }
 }
 
 .card-link__label {
-  font-family: $font-family-secondary;
-  font-size: 17px;
+    font-family: $font-family-secondary;
+    font-size: 17px;
 
-  @include media-min-sm {
-    @include font-size-lg();
-  }
+    @include media-min-sm {
+        @include font-size-lg();
+    }
 
-  a.card-link--sm & {
-    @include font-size-md();
-    font-family: $font-family-primary;
-  }
+    a.card-link--sm & {
+        @include font-size-md();
+        font-family: $font-family-primary;
+    }
 }
 
 .card-link__icon {
-  margin-left: 20px;
-  height: 24px;
-  width: 24px;
+    margin-left: 20px;
+    height: 24px;
+    width: 24px;
 
-  .card-link:hover & {
-    animation-play-state: running;
-    animation-duration: 1s;
-    animation-timing-function: $easing;
-    animation-iteration-count: infinite;
-    animation-name: linkBounce;
-  }
+    .card-link:hover & {
+        animation-play-state: running;
+        animation-duration: 1s;
+        animation-timing-function: $easing;
+        animation-iteration-count: infinite;
+        animation-name: linkBounce;
+    }
 
-  a.card-link--sm & {
-    display: none;
-  }
+    a.card-link--sm & {
+        display: none;
+    }
+}
+
+// CALL CARD
+
+.call-card {
+    @include gutters-sm();
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: calc(100% + #{$gutter-sm * 2}px);
+    border-bottom: 2px solid color(seed-black, 25);
+    margin-left: -#{$gutter-sm}px;
+
+    @include media-min-xs {
+        width: 100%;
+        max-width: #{$content-max-card-width}px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+        border-bottom: 0;
+        margin-left: 0;
+    }
+
+    + .call-card {
+        @include media-min-xs {
+            margin-top: #{$gutter-sm}px;
+        }
+    }
+}
+
+.call-card__content {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    max-width: #{$content-max-card-content-width}px;
+}
+
+.call-card__body {
+    @include font-size-sm();
+    flex: 1 1 100%;
+
+
+    @include media-min-sm() {
+        @include font-size-md();
+    }
+}
+
+.call-card__title {
+    font-size: 20px;
+    font-family: $font-family-secondary;
+
+    @include media-min-sm {
+        @include font-size-lg();
+    }
+
+    @include media-min-md {
+        @include font-size-xl();
+    }
+}
+
+.call-card__deadline {
+    margin-top: #{$gutter-sm}px;
+    @include font-size-xs();
+}
+
+.call-card__action {
+    padding-top: #{$gutter-sm}px;
+    display: flex;
+    align-items: flex-end;
 }

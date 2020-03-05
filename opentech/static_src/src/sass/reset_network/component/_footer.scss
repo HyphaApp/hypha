@@ -1,28 +1,32 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  FOOTER COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .footer {
-  @include gutters();
-  position: relative;
-  text-align: center;
+    @include gutters();
+    position: relative;
+    text-align: center;
 }
 
 .footer__copyright {
-  .base-grey &,
-  .base-lightest &,
-  .base-light & {
-    color: color(text-darkest);
-  }
 
-  .base-dark &,
-  .base-darkest & {
-    color: color(text-lightest);
-  }
+    .base-grey &,
+    .base-lightest &,
+    .base-light & {
+        color: color(text-darkest);
+    }
+
+    .base-dark &,
+    .base-darkest & {
+        color: color(text-lightest);
+    }
 }

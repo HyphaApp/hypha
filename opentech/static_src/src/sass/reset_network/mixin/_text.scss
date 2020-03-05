@@ -1,24 +1,29 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  TEXT TOOLS
 //  N.B: Only mixins here NEVER anything that outputs CSS directly
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 @mixin text-start() {
-  text-align: left;
-  @include rtl() {
-    text-align: right;
-  }
+    text-align: left;
+
+    @include rtl() {
+        text-align: right;
+    }
 }
 
 @mixin text-end() {
-  text-align: right;
-  @include rtl() {
-    text-align: left;
-  }
+    text-align: right;
+
+    @include rtl() {
+        text-align: left;
+    }
 }
 
 @mixin text-center() {
-  text-align: center;
+    text-align: center;
 }

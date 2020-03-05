@@ -1,12 +1,15 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC DEFAULTS
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 html,
 body {
-  &.has-overflow-hidden {
-    overflow: hidden;
-  }
+    &.has-overflow-hidden {
+        overflow: hidden;
+    }
 }

@@ -1,50 +1,58 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
-//  LinkBounce ANIMATIONS
+//  LINKBOUNCE ANIMATIONS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // KEYFRAMES
 
 @keyframes linkBounce {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
 
-  50% {
-    transform: translateX(-10px);
-  }
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-10px);
+    }
 }
-@keyframes linkBounceShort {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
 
-  50% {
-    transform: translateX(5px);
-  }
+@keyframes linkBounceShort {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
 }
 
 @keyframes linkAfterCenterBounce {
-  0%,
-  100% {
-    transform: translateY(-50%) translateX(0);
-  }
 
-  50% {
-    transform: translateY(-50%) translateX(20px);
-  }
+    0%,
+    100% {
+        transform: translateY(-50%) translateX(0);
+    }
+
+    50% {
+        transform: translateY(-50%) translateX(20px);
+    }
 }
 
 @keyframes linkBounceVertical {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
 
-  50% {
-    transform: translateY(20px);
-  }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(20px);
+    }
 }

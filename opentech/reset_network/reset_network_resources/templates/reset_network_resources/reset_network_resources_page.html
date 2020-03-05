@@ -55,10 +55,15 @@
                 <ul class="resources__carousel-imgs-list js-resources-carousel">
                   {% for resource in resources %}
                     <li class="resources__carousel-imgs-item">
-                      {% image resource.content_image fill-350x350-c100 %}
+                      {% image resource.card_image fill-350x350-c100 %}
                     </li>
                   {% endfor %}
                 </ul>
+                <div class="resources__carousel-cta">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" /></svg>
+                  SCROLL
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+                </div>
               </div>
               <ul class="resources__carousel-copy-list js-resources-copy">
                 {% for resource in resources %}
@@ -66,7 +71,7 @@
                     <p class="resources__carousel-copy-small">[ Article ]</p>
                     <h2 class="resources__carousel-copy-title">{{ resource.card_heading }}</h2>
                     <p class="resources__carousel-copy-text">{{ resource.card_text }}</p>
-                    <a href="{% pageurl resource %}" class="button">
+                    <a href="{% pageurl resource %}" class="button button--sm" data-button="">
                       <span class="button__drop"></span>
                       <span class="button__label">View</span>
                     </a>
@@ -82,11 +87,11 @@
                 {% for resource in resources %}
                   <li class="resources__mob-item">
                     <div class="resources__mob-resource">
-                      {% image resource.content_image fill-300x300-c100 %}
+                      {% image resource.card_image fill-300x300-c100 %}
                       <p class="resources__mob-copy-small">[ Article ]</p>
                       <h2 class="resources__mob-copy-title">{{ resource.card_heading }}</h2>
                       <p class="resources__mob-copy-text">{{ resource.card_text }}</p>
-                      <a href="{% pageurl resource %}" class="button">
+                      <a href="{% pageurl resource %}" class="button button--sm" data-button="">
                         <span class="button__drop"></span>
                         <span class="button__label">View</span>
                       </a>

@@ -1,17 +1,20 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC BODYLOCK
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // SETUP
 
 html.is-locked {
-  overflow: hidden;
-
-  body {
     overflow: hidden;
-    position: fixed;
-    width: 100%;
-  }
+
+    body {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
 }
