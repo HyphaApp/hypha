@@ -1,102 +1,105 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  MESSAGE COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .messages {
-  @include animate(transform opacity, $animation-speed-medium);
-  bottom: 27px;
-  margin: 0;
-  list-style: none;
-  min-width: 250px;
-  padding: 0;
-  position: fixed;
-  right: 30px;
-  z-index: $z-index-notification;
-
-  @include media-min-xs {
-    bottom: 47px;
-    min-width: 350px;
-    right: 50px;
-  }
-
-  &.is-hidden {
-    opacity: 0;
-    transform: translateY(calc(100% + 27px));
+    @include animate(transform opacity, $animation-speed-medium);
+    bottom: 27px;
+    margin: 0;
+    list-style: none;
+    min-width: 250px;
+    padding: 0;
+    position: fixed;
+    right: 30px;
+    z-index: $z-index-notification;
 
     @include media-min-xs {
-      transform: translateY(calc(100% + 47px));
+        bottom: 47px;
+        min-width: 350px;
+        right: 50px;
     }
-  }
+
+    &.is-hidden {
+        opacity: 0;
+        transform: translateY(calc(100% + 27px));
+
+        @include media-min-xs {
+            transform: translateY(calc(100% + 47px));
+        }
+    }
 }
 
 .messages__text {
-  background-color: $color-info;
-  margin: 0 0 3px;
-  padding: 25px;
+    background-color: $color-info;
+    margin: 0 0 3px;
+    padding: 25px;
 }
 
 .messages__text--warning {
-  background-color: $color-warning;
+    background-color: $color-warning;
 }
 
 .messages__text--error {
-  background-color: $color-error;
+    background-color: $color-error;
 }
 
 .messages__text--success {
-  background-color: $color-success;
+    background-color: $color-success;
 }
 
 .messages__inner {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 .messages__icon {
-  display: none;
+    display: none;
 }
 
 .messages__copy {
-  font-size: 17px;
-  margin: 0;
+    font-size: 17px;
+    margin: 0;
 
-  @include media-min-xs {
-    font-size: 18px;
-  }
+    @include media-min-xs {
+        font-size: 18px;
+    }
 }
 
 .messages__button {
-  color: transparent;
-  display: block;
-  height: 25px;
-  overflow: hidden;
-  position: relative;
-  width: 25px;
-
-  &::after,
-  &::before {
-    background-color: color(seed-white);
-    content: '';
+    color: transparent;
     display: block;
-    height: 3px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 50%;
-  }
+    height: 25px;
+    overflow: hidden;
+    position: relative;
+    width: 25px;
 
-  &::before {
-    transform: translateY(-50%) rotate(45deg);
-  }
+    &::after,
+    &::before {
+        background-color: color(seed-white);
+        content: '';
+        display: block;
+        height: 3px;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 50%;
+    }
 
-  &::after {
-    transform: translateY(-50%) rotate(-45deg);
-  }
+    &::before {
+        transform: translateY(-50%) rotate(45deg);
+    }
+
+    &::after {
+        transform: translateY(-50%) rotate(-45deg);
+    }
 }

@@ -1,9 +1,10 @@
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
 
 
-class ResetNetworkBasicPage(Page):
+class ResetNetworkBasicPage(ResetNetworkBasePage):
     class Meta:
         verbose_name = "Reset Network Basic Page"
 

@@ -1,34 +1,37 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  WRAP COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .wrap {
-  width: 100%;
-  padding: 0;
+    width: 100%;
+    padding: 0;
 
-  @include media-min-sm {
-    padding: #{$size-xxl}px 0;
-  }
+    @include media-min-sm {
+        padding: #{$size-xxl}px 0;
+    }
 }
 
 .wrap--light {
-  background-color: color(seed-white);
+    background-color: color(seed-white);
 }
 
 .wrap--dark {
-  background-color: color(seed-grey);
+    background-color: color(seed-grey);
 }
 
 .wrap__body {
-  max-width: #{$grid-width-max}px;
-  width: 100%;
-  margin: 0 auto;
+    max-width: #{$grid-width-max}px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 // VARIANTS

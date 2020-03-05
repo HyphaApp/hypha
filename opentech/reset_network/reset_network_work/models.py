@@ -1,9 +1,10 @@
-from wagtail.images.edit_handlers import ImageChooserPanel
-from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
-from modelcluster.fields import ParentalKey
 from django.db import models
+from modelcluster.fields import ParentalKey
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Page, Orderable
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 class ResetNetworkWorkPagePillar(Orderable):
@@ -36,7 +37,7 @@ class ResetNetworkWorkPageRegion(Orderable):
     ]
 
 
-class ResetNetworkWorkPage(Page):
+class ResetNetworkWorkPage(ResetNetworkBasePage):
 
     class Meta:
         verbose_name = "Reset Network Work Page"

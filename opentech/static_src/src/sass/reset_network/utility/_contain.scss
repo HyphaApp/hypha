@@ -1,22 +1,26 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  CONTAIN UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .contain {
-  margin: 0 auto;
-  width: 100%;
+    margin: 0 auto;
+    width: 100%;
 
-  @include media-min-md {
-    max-width: #{$global-page-width}px;
-  }
+    @include media-min-md {
+        max-width: #{$global-page-width}px;
+    }
 
-  @include media-min-xl {
-    width: #{$global-page-width}px;
-  }
+    @include media-min-xl {
+        width: #{$global-page-width}px;
+    }
 }

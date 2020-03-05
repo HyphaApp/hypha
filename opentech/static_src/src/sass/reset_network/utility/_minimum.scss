@@ -1,14 +1,15 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  MINIMUM UTILITY
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//================================================================================================//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .min {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }

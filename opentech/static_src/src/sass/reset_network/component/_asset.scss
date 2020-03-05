@@ -1,108 +1,110 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  ASSET COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // CONTAINERS
 
 .assets {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 .assets__item {
-  position: relative;
-  margin-bottom: #{$gutter-sm}px;
+    position: relative;
+    margin-bottom: #{$gutter-sm}px;
 }
 
 // ELEMENTS
 
 .asset {
-  @include themeSwitch(background-color, seed-black, seed-white);
-  @include themeSwitch(color, seed-white, seed-black);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
+    @include theme-switch(background-color, seed-black, seed-white);
+    @include theme-switch(color, seed-white, seed-black);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
 
-  @include media-min-xs {
-    flex-direction: row;
-  }
+    @include media-min-xs {
+        flex-direction: row;
+    }
 }
 
 .asset__content {
-  @include gutters-sm();
-  flex: 1 1 100%;
-  border-width: 0 0 2px 0;
-  border-style: solid;
+    @include gutters-sm();
+    flex: 1 1 100%;
+    border-width: 0 0 2px;
+    border-style: solid;
 
-  @include media-min-xs {
-    border-width: 0 2px 0 0;
-  }
+    @include media-min-xs {
+        border-width: 0 2px 0 0;
+    }
 
-  .theme-light &,
-  .theme-lightest & {
-    border-color: color(seed-white, null, .25);
-  }
+    .theme-light &,
+    .theme-lightest & {
+        border-color: color(seed-white, null, .25);
+    }
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    border-color: color(seed-black, null, .25);
-  }
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+        border-color: color(seed-black, null, .25);
+    }
 }
 
 .asset__title {
-  @include gutter-bottom-sm();
-  @include font-size-lg();
-  font-family: $font-family-secondary;
+    @include font-size-lg();
+    margin-bottom: 10px;
+    font-family: $font-family-secondary;
 }
 
 a.asset-link {
-  @include animate(opacity);
-  @include gutters-sm();
-  flex: 0 0 190px;
-  display: block;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    @include animate(opacity);
+    @include gutters-sm();
+    flex: 0 0 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  &,
-  &:link,
-  &:visited {
-    opacity: .5;
-    text-decoration: none;
-  }
+    &,
+    &:link,
+    &:visited {
+        opacity: 1;
+        text-decoration: none;
+    }
 
-  &:hover,
-  &:active {
-    opacity: 1;
-  }
+    &:hover,
+    &:active {
+        opacity: .5;
+    }
 }
 
 .asset-link__icon {
-  display: block;
-  height: 40px;
-  width: 30px;
-  margin-bottom: 10px;
+    display: block;
+    height: 40px;
+    width: 30px;
+    margin-bottom: 10px;
 
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    fill: color(seed-white);
-  }
+    .theme-grey &,
+    .theme-dark &,
+    .theme-darkest & {
+        fill: color(seed-white);
+    }
 
-  .theme-light &,
-  .theme-lightest & {
-    fill: color(seed-white);
-  }
+    .theme-light &,
+    .theme-lightest & {
+        fill: color(seed-white);
+    }
 }
 
 .asset-link__size {
-  @include themeSwitch(color, seed-white, seed-black);
+    @include theme-switch(color, seed-white, seed-black);
 }

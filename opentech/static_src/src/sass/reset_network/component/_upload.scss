@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  UPLOAD COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -37,181 +40,181 @@ $upload-disabled-bg: $color-disabled-bg !default;
 .upload {}
 
 .upload__field {
-  display: none;
+    display: none;
 }
 
 .upload-button {
-  @include animate(background-color, opacity);
-  position: relative;
-  border: 0;
-  cursor: pointer;
-  margin-right: 10px;
-  display: inline-flex;
-  flex-direction: row;
-  padding: 0;
-  text-align: center;
-  align-items: flex-start;
-  justify-content: stretch;
-  vertical-align: middle;
-  opacity: 1;
-  background-color: $upload-bg;
-  overflow: hidden;
+    @include animate(background-color, opacity);
+    position: relative;
+    border: 0;
+    cursor: pointer;
+    margin-right: 10px;
+    display: inline-flex;
+    flex-direction: row;
+    padding: 0;
+    text-align: center;
+    align-items: flex-start;
+    justify-content: stretch;
+    vertical-align: middle;
+    opacity: 1;
+    background-color: $upload-bg;
+    overflow: hidden;
 
-  &:focus {
-    outline: #{$size-min}px dotted $color-focus-border;
-  }
-
-  &.is-active,
-  &:focus,
-  &:hover {
-    background-color: $upload-bg-focus;
-  }
-
-  &:active {
-    background-color: $upload-bg-active;
-  }
-
-  &.is-disabled,
-  input:disabled ~ &,
-  input[disabled] ~ & {
-    background-color: $upload-bg-disabled;
-    opacity: $upload-opacity-disabled;
-    pointer-events: none;
-    cursor: not-allowed;
-
-    &:hover,
-    &:active {
-      background-color: $upload-bg-disabled;
-    }
-  }
-
-  &.is-loading {
-    pointer-events: none;
-
-    &:hover,
-    &:active {
-      cursor: default;
-    }
-  }
-
-  .is-success & {
-    background-color: $upload-success-bg;
-
-    &:link,
-    &:visited {
-      background-color: $upload-success-bg;
+    &:focus {
+        outline: #{$size-min}px dotted $color-focus-border;
     }
 
     &.is-active,
     &:focus,
     &:hover {
-      background-color: $upload-success-bg;
+        background-color: $upload-bg-focus;
     }
 
     &:active {
-      background-color: $upload-success-bg;
-    }
-  }
-
-  .is-warning & {
-    background-color: $upload-warning-bg;
-
-    &:link,
-    &:visited {
-      background-color: $upload-warning-bg;
+        background-color: $upload-bg-active;
     }
 
-    &.is-active,
-    &:focus,
-    &:hover {
-      background-color: $upload-warning-bg;
+    &.is-disabled,
+    input:disabled~&,
+    input[disabled]~& {
+        background-color: $upload-bg-disabled;
+        opacity: $upload-opacity-disabled;
+        pointer-events: none;
+        cursor: not-allowed;
+
+        &:hover,
+        &:active {
+            background-color: $upload-bg-disabled;
+        }
     }
 
-    &:active {
-      background-color: $upload-warning-bg;
-    }
-  }
+    &.is-loading {
+        pointer-events: none;
 
-  .is-error & {
-    background-color: $upload-error-bg;
-
-    &:link,
-    &:visited {
-      background-color: $upload-error-bg;
+        &:hover,
+        &:active {
+            cursor: default;
+        }
     }
 
-    &.is-active,
-    &:focus,
-    &:hover {
-      background-color: $upload-error-bg;
+    .is-success & {
+        background-color: $upload-success-bg;
+
+        &:link,
+        &:visited {
+            background-color: $upload-success-bg;
+        }
+
+        &.is-active,
+        &:focus,
+        &:hover {
+            background-color: $upload-success-bg;
+        }
+
+        &:active {
+            background-color: $upload-success-bg;
+        }
     }
 
-    &:active {
-      background-color: $upload-error-bg;
+    .is-warning & {
+        background-color: $upload-warning-bg;
+
+        &:link,
+        &:visited {
+            background-color: $upload-warning-bg;
+        }
+
+        &.is-active,
+        &:focus,
+        &:hover {
+            background-color: $upload-warning-bg;
+        }
+
+        &:active {
+            background-color: $upload-warning-bg;
+        }
     }
-  }
+
+    .is-error & {
+        background-color: $upload-error-bg;
+
+        &:link,
+        &:visited {
+            background-color: $upload-error-bg;
+        }
+
+        &.is-active,
+        &:focus,
+        &:hover {
+            background-color: $upload-error-bg;
+        }
+
+        &:active {
+            background-color: $upload-error-bg;
+        }
+    }
 }
 
 .upload-button__drop {
-  @include animate(background-color border-color);
-  display: flex;
-  flex-direction: row;
-  padding: #{$size-sm + 2}px #{$size-xxl}px #{$size-sm}px;
-  background-color: $upload-drop-bg;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  border-width: 1px;
-  border-style: solid;
+    @include animate(background-color border-color);
+    display: flex;
+    flex-direction: row;
+    padding: #{$size-sm + 2}px #{$size-xxl}px #{$size-sm}px;
+    background-color: $upload-drop-bg;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-width: 1px;
+    border-style: solid;
 
-  .upload-button:hover &,
-  .upload-button:focus & {
-    background-color: $upload-drop-bg-focus;
-  }
+    .upload-button:hover &,
+    .upload-button:focus & {
+        background-color: $upload-drop-bg-focus;
+    }
 
-  .upload-button:active & {
-    background-color: $upload-drop-bg-active;
-  }
+    .upload-button:active & {
+        background-color: $upload-drop-bg-active;
+    }
 
-  .is-disabled .upload-button &,
-  input:disabled ~ .upload-button &,
-  input[disabled] ~ .upload-button & {
-    background-color: $upload-drop-bg-disabled;
-  }
+    .is-disabled .upload-button &,
+    input:disabled~.upload-button &,
+    input[disabled]~.upload-button & {
+        background-color: $upload-drop-bg-disabled;
+    }
 }
 
 .upload-button__label {
-  @include animate(color opacity);
-  @include font-size-md();
-  font-weight: $font-weight-regular;
-  color: $upload-label;
-  text-align: center;
-  line-height: 1;
-
-  .upload-button &,
-  .upload-button:visited & {
+    @include animate(color opacity);
+    @include font-size-md();
+    font-weight: $font-weight-regular;
     color: $upload-label;
-  }
+    text-align: center;
+    line-height: 1;
 
-  .upload-button:hover &,
-  .upload-button:focus & {
-    color: $upload-label-focus;
-  }
-
-  .upload-button:active & {
-    color: $upload-label-active;
-  }
-
-  .is-disabled .upload-button &,
-  .input:disabled ~ .upload-button &,
-  .input[disabled] ~ .upload-button & {
-    color: $upload-label-disabled;
-
-    &:hover,
-    &:active {
-      color: $upload-label-disabled;
+    .upload-button &,
+    .upload-button:visited & {
+        color: $upload-label;
     }
-  }
+
+    .upload-button:hover &,
+    .upload-button:focus & {
+        color: $upload-label-focus;
+    }
+
+    .upload-button:active & {
+        color: $upload-label-active;
+    }
+
+    .is-disabled .upload-button &,
+    .input:disabled~.upload-button &,
+    .input[disabled]~.upload-button & {
+        color: $upload-label-disabled;
+
+        &:hover,
+        &:active {
+            color: $upload-label-disabled;
+        }
+    }
 }

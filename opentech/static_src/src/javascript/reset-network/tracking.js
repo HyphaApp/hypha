@@ -106,14 +106,13 @@
         },
 
         embedTrackingCode: function () {
-
             if (!window.matomo || !window.matomo.url || !window.matomo.siteid) {
                 return;
             }
 
-            var url = 'https://' + window.matomo.url + 'matomo.php';
+            var url = 'https://' + window.matomo.url + '.matomo.cloud/matomo.php';
             var siteid = window.matomo.siteid;
-            var src = '//cdn.matomo.cloud/' + window.matomo.url + 'matomo.js';
+            var src = '//cdn.matomo.cloud/' + window.matomo.url + '.matomo.cloud/matomo.js';
 
             var d = document;
             var g = d.createElement('script');

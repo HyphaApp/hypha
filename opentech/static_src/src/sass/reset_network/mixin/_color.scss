@@ -1,64 +1,77 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  COLOR FUNCTIONS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // FUNCTIONS
 
 @function color($color, $tint: null, $alpha: 1, $mix: null, $lib: $colors) {
 
-  @if map-has-key($lib, $color) {
-    $col: map-get($lib, $color);
-    @if ($tint != null) {
-      @return _tint($col, $tint, $alpha, $mix);
+    @if map-has-key($lib, $color) {
+        $col: map-get($lib, $color);
+
+        @if ($tint !=null) {
+            @return _tint($col, $tint, $alpha, $mix);
+        }
+
+        @if ($alpha < 1) {
+            @return _fadeout($col, $alpha);
+        }
+
+        @return $col;
     }
-    @if ($alpha < 1) {
-      @return _fadeout($col, $alpha);
-    }
-    @return $col;
-  }
-  @warn "Unknown `#{$color}` in `#{$lib}`.";
-  @return null;
+
+    @warn 'Unknown `#{$color}` in `#{$lib}`.';
+    @return null;
 }
 
 @function _tint($col, $tint, $alpha, $mix) {
 
-  $tnt: 0;
+    $tnt: 0;
 
-  @if (type_of($tint) == number) {
-    $tnt: abs($tint);
-  }
-  @else {
-    @warn "Values for tint needs to be between -100 and 100";
-    @return null;
-  }
-
-  @if ($mix == null) {
-    @if ($tint > 0) {
-      $mix: seed-white;
+    @if (type_of($tint)==number) { // sass-lint:disable-line function-name-format
+        $tnt: abs($tint);
     }
+
     @else {
-      $mix: seed-black;
+        @warn 'Values for tint needs to be between -100 and 100';
+        @return null;
     }
-  }
 
-  @if ($tnt > 0) {
-    $mix: color($mix);
-    @if ($alpha < 1) {
-      @return _fadeout(mix($mix, $col, $tnt), $alpha);
+    @if ($mix==null) {
+        @if ($tint > 0) {
+            $mix: seed-white;
+        }
+
+        @else {
+            $mix: seed-black;
+        }
     }
-    @return mix($mix, $col, $tnt);
-  }
-  @warn "Unknown `#{$tint}` in $tints.";
-  @return null;
+
+    @if ($tnt > 0) {
+        $mix: color($mix);
+
+        @if ($alpha < 1) {
+            @return _fadeout(mix($mix, $col, $tnt), $alpha);
+        }
+
+        @return mix($mix, $col, $tnt);
+    }
+
+    @warn 'Unknown `#{$tint}` in $tints.';
+    @return null;
 }
 
 @function _fadeout($col, $alpha) {
-  @if ($alpha < 1) {
-    $a: 1 - $alpha;
-    @return fade-out($col, $a);
-  }
-  @warn "Values are incompatable with _transparent.";
-  @return null;
+    @if ($alpha < 1) {
+        $a: 1 - $alpha;
+        @return fade-out($col, $a);
+    }
+
+    @warn 'Values are incompatable with _transparent.';
+    @return null;
 }

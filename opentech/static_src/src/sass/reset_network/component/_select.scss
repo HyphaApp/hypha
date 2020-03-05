@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  SELECT COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -30,142 +33,145 @@ $select-multiple-height: 127 !default;
 // ELEMENTS
 
 .select {
-  @include animate(border-color background-color);
-  background-color: $select-bg;
-  border-width: 1px;
-  border-style: solid;
-  border-color: $select-border;
-  padding: 0;
-
-  &::before,
-  &::after {
     @include animate(border-color background-color);
-    content: '';
-    position: absolute;
-    display: block;
-    z-index: 2;
-    pointer-events: none;
-    border-width: 2px 2px 0 0;
-    border-color: $select-border;
+    background-color: $select-bg;
+    border-width: 1px;
     border-style: solid;
-    height: 6px;
-    width: 6px;
-    transform: translateY(50%) rotate(135deg);
-    top: 45%;
-    right: 22px;
-  }
-
-  &::after {
-    top: 45%;
-    right: 22px;
-    transform: translateY(-50%) rotate(315deg);
-  }
-
-  &.is-active,
-  &:hover {
-    border-color: $select-border-hover;
+    border-color: $select-border;
+    padding: 0;
 
     &::before,
     &::after {
-      border-color: $select-border-hover;
+        @include animate(border-color background-color);
+        content: '';
+        position: absolute;
+        display: block;
+        z-index: 2;
+        pointer-events: none;
+        border-width: 2px 2px 0 0;
+        border-color: $select-border;
+        border-style: solid;
+        height: 6px;
+        width: 6px;
+        transform: translateY(50%) rotate(135deg);
+        top: 45%;
+        right: 22px;
     }
-  }
 
-  .is-warning & {
-    border-color: $select-warning-bg;
-    background-color: $select-warning-border;
-  }
+    &::after {
+        top: 45%;
+        right: 22px;
+        transform: translateY(-50%) rotate(315deg);
+    }
 
-  .is-error & {
-    border-color: $select-error-bg;
-    background-color: $select-error-border;
-  }
+    &.is-active,
+    &:hover {
+        border-color: $select-border-hover;
 
-  .is-success & {
-    border-color: $select-success-bg;
-    background-color: $select-success-border;
-  }
+        &::before,
+        &::after {
+            border-color: $select-border-hover;
+        }
+    }
 
-  .is-disabled & {
-    border-color: $select-disabled-bg;
-    background-color: $select-disabled-bg;
-  }
+    .is-warning & {
+        border-color: $select-warning-bg;
+        background-color: $select-warning-border;
+    }
+
+    .is-error & {
+        border-color: $select-error-bg;
+        background-color: $select-error-border;
+    }
+
+    .is-success & {
+        border-color: $select-success-bg;
+        background-color: $select-success-border;
+    }
+
+    .is-disabled & {
+        border-color: $select-disabled-bg;
+        background-color: $select-disabled-bg;
+    }
 }
 
 .select--nav {
-  align-items: center;
-  background-color: $select-tabs-bg;
-  border: none;
-  cursor: pointer;
-  display: flex;
-
-  &::before,
-  &::after {
-    display: none;
-  }
-
-  &:hover {
-    background-color: $select-tabs-bg-hover;
-  }
-}
-
-.select--multiple {
-  &::before,
-  &::after {
-    display: none;
-  }
-}
-
-.select__field {
-  @include animate(border-color);
-  @include font-size($font-size-lg - 1);
-  border-radius: 0;
-  appearance: none;
-  background-color: $select-field-bg;
-  line-height: $select-line-height;
-  border-style: solid;
-  border-color: transparent;
-  border-width: 0;
-  box-sizing: border-box;
-  padding: 20px 40px 19px 20px;
-
-  &::-moz-focus-inner,
-  &:-moz-focusring {
+    align-items: center;
+    background-color: $select-tabs-bg;
     border: 0;
-    outline: 0;
-    color: transparent;
-    text-shadow: 0 0 0 #000;
-  }
-
-  &::-ms-expand {
-    display: none;
-  }
-
-  &.required,
-  &[required] {
-    border-color: $select-border;
-  }
-
-  &:disabled,
-  &[disabled] {
-    color: $select-field-disabled;
-    cursor: not-allowed;
-  }
-
-  &[multiple] {
-    height: #{$select-multiple-height}px;
+    cursor: pointer;
+    display: flex;
 
     &::before,
     &::after {
-      display: none;
+        display: none;
     }
-  }
 
-  &:focus {
-    outline: 2px solid $color-focus-border;
-
-    .focus-disabled & {
-      outline: none;
+    &:hover {
+        background-color: $select-tabs-bg-hover;
     }
-  }
+}
+
+.select--multiple {
+
+    &::before,
+    &::after {
+        display: none;
+    }
+}
+
+.select__field {
+    @include animate(border-color);
+    @include font-size($font-size-lg - 1);
+    border-radius: 0;
+    appearance: none;
+    background-color: $select-field-bg;
+    line-height: $select-line-height;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0;
+    box-sizing: border-box;
+    padding: 20px 40px 19px 20px;
+
+    // sass-lint:disable no-vendor-prefixes
+    &::-moz-focus-inner,
+    &:-moz-focusring {
+        border: 0;
+        outline: 0;
+        color: transparent;
+        text-shadow: 0 0 0 color(seed-black);
+    }
+
+    &::-ms-expand {
+        display: none;
+    }
+    // sass-lint:enable no-vendor-prefixes
+
+    &.required,
+    &[required] {
+        border-color: $select-border;
+    }
+
+    &:disabled,
+    &[disabled] {
+        color: $select-field-disabled;
+        cursor: not-allowed;
+    }
+
+    &[multiple] {
+        height: #{$select-multiple-height}px;
+
+        &::before,
+        &::after {
+            display: none;
+        }
+    }
+
+    &:focus {
+        outline: 2px solid $color-focus-border;
+
+        .focus-disabled & {
+            outline: none;
+        }
+    }
 }

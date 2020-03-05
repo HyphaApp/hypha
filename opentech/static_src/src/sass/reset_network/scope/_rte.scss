@@ -1,243 +1,266 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  RTE Module
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
+$rte-bottom-border: rgb(100, 100, 100);
 
 // MODULE
 
 .rte {
-  @include font-size-xs();
-  line-height: 1.8;
-
-  @include media-min-xs {
-    @include font-size-sm();
-    line-height: $line-height;
-  }
-
-  @include media-min-sm {
     @include font-size-md();
-  }
+    line-height: $line-height;
 
-  h1 {
-    @include font-size-max;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @include gutters-headings-vertical();
+        font-family: $font-family-secondary;
+        line-height: $line-height-heading;
 
-  h2,
-  h3 {
-    @include font-size-xl;
-    @include media-min-sm {
-      @include font-size-xxl;
-    }
-  }
+        +h1,
+        +h2,
+        +h3,
+        +h4,
+        +h5,
+        +h6 {
+            margin: 0 0 #{ceil($font-size-base * $line-height-heading)}px;
+        }
 
-  h3 {
-    border-width: 0 0 1px;
-    border-style: solid;
-    padding: 0 0 #{$gutter-xs}px;
-    margin: 0 0 #{$gutter-xs}px;
-
-    @include media-min-md {
-      padding: 0 0 #{$gutter-sm}px;
-      margin: 0 0 #{$gutter-sm}px;
-    }
-
-    .theme-dark & {
-      color: color(seed-white);
-    }
-  }
-
-  h4 {
-    @include font-size-md;
-    @include media-min-sm {
-      @include font-size-lg;
-    }
-  }
-
-  h5 {
-    @include font-size-sm;
-    @include media-min-sm {
-      @include font-size-md;
-    }
-  }
-
-  h6 {
-    @include font-size-sm;
-    font-style: italic;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @include gutters-vertical();
-    font-family: $font-family-secondary;
-    font-weight: $font-weight-regular;
-    line-height: $line-height-heading;
-
-    &:first-child {
-        margin-top: 0;
-    }
-
-    + h1,
-    + h2,
-    + h3,
-    + h4,
-    + h5,
-    + h6 {
-      margin: 0 0 #{ceil($font-size-base * $line-height)}px;
-    }
-
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-
-  hr {
-    display: block;
-    height: 2px;
-    border-width: 0;
-
-    &::after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-  }
-
-  ul {
-    list-style: none;
-  }
-
-  ul > li {
-    position: relative;
-
-    &::before {
-        @include themeSwitch(background-color, seed-black, seed-white);
-        content: '';
-        display: block;
-        height: 2px;
-        position: absolute;
-        top: 10px;
-        left: -25px;
-        width: 15px;
-
-        @include media-min-sm {
-            top: 12px;
+        &:first-child {
+            margin-top: 0;
         }
     }
-  }
 
-  ol {
-    list-style: decimal;
-  }
+    h1 {
+        @include font-size-xl;
+        padding-bottom: #{$gutter-lg}px;
 
-  ol,
-  ul {
-    margin: 0 0 #{ceil($font-size-base * $line-height)}px;
-    padding: 0 0 0 #{$size-xl}px;
+        @include media-min-sm {
+            padding-bottom: #{$gutter-xl}px;
+            @include font-size-xxl;
+        }
+        @include media-min-md {
+            padding-bottom: #{$gutter-xxl}px;
+            @include font-size-max;
+        }
+
+    }
+
+    h2 {
+        @include font-size-xl;
+        border-width: 0 0 1px;
+        border-style: solid;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+
+        .theme-light &,
+        .theme-lightest & {
+            border-color: color(seed-black, null, .35);
+        }
+
+        .theme-grey &,
+        .theme-dark &,
+        .theme-darkest & {
+            border-color: color(seed-white, null, .35);
+        }
+
+        @include media-min-sm {
+            @include font-size-xxl;
+            padding-bottom: 17.5px;
+            margin-bottom: 30px;
+        }
+        @include media-min-md {
+            @include font-size-xxl;
+            padding-bottom: 20px;
+            margin-bottom: 35px;
+        }
+    }
+
+    h3 {
+        @include font-size(20);
+        margin-bottom: 20px;
+
+        @include media-min-sm {
+            @include font-size-lg;
+        }
+
+        @include media-min-sm {
+            @include font-size-xl;
+        }
+    }
+
+    h4 {
+        @include font-size(20);
+        margin-bottom: 15px;
+
+        @include media-min-sm {
+            @include font-size-lg;
+        }
+    }
+
+    h5 {
+        @include font-size-md;
+        margin-bottom: 15px;
+        font-weight: $font-weight-heavy;
+    }
+
+    h6 {
+        @include font-size-md;
+        font-style: italic;
+    }
+
+    hr {
+        display: block;
+        height: 2px;
+        border-width: 0;
+
+        &::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+    }
+
+    ul {
+        list-style: none;
+        padding: 0 0 0 40px;
+
+        > li {
+            position: relative;
+
+            &::before {
+                @include theme-switch(background-color, seed-black, seed-white);
+                content: '';
+                display: block;
+                height: 2px;
+                position: absolute;
+                top: 12px;
+                left: -30px;
+                width: 15px;
+                opacity: .5;
+            }
+        }
+    }
+
+    ol {
+        padding: 0 0 0 30px;
+        list-style: decimal;
+
+        > li {
+            padding-left: 10px;
+        }
+    }
 
     ol,
     ul {
-      margin: 0 0 #{ceil($font-size-base * $line-height / 2)}px;
-    }
-  }
+        margin: 0 0 #{ceil($font-size-base * $line-height)}px;
 
-  li {
-    margin-bottom: 0;
-  }
-
-  b,
-  strong {
-    font-weight: $font-weight-heavy;
-  }
-
-  i,
-  em {
-    font-style: italic;
-  }
-
-  u {
-    text-decoration: underline;
-  }
-
-  strike {
-    text-decoration: line-through;
-  }
-
-  del {
-    text-decoration: line-through;
-  }
-
-  // TABLES
-
-  table {
-    border-collapse: collapse;
-    border-width: 2px 0 0 2px;
-    border-style: solid;
-    width: 100%;
-  }
-
-  tr {}
-
-  th,
-  td {
-    text-align: center;
-    padding: 10px 15px;
-    vertical-align: top;
-    border-width: 0 2px 2px 0;
-    border-style: solid;
-
-    &:first-child {
-      text-align: left;
+        ol,
+        ul {
+            margin: 0 0 #{ceil($font-size-base * $line-height / 2)}px;
+        }
     }
 
-    &:last-child {
-      text-align: right;
+    li {
+        margin-bottom: 10px;
     }
-  }
 
-  thead th,
-  thead td {
-    padding: 10px 15px;
-    vertical-align: middle;
-  }
-
-  blockquote {
-    @include font-size-xl();
-    padding: 0 0 0 20px;
-    border-width: 0 0 0 10px;
-    border-style: solid;
-
-    footer {
-      @include font-size-sm();
-
-      &::before {
-        content: '\2014';
-      }
+    b,
+    strong {
+        font-weight: $font-weight-heavy;
     }
-  }
 
-  pre {}
-
-  address,
-  blockquote,
-  dl,
-  hr,
-  p,
-  table {
-    margin: 0 0 #{ceil($font-size-base * $line-height)}px;
-
-    &:last-child {
-      margin: 0;
+    i,
+    em {
+        font-style: italic;
     }
-  }
 
-  a {
-    font-weight: $font-weight-heavy;
-  }
+    u {
+        text-decoration: underline;
+    }
+
+    strike {
+        text-decoration: line-through;
+    }
+
+    del {
+        text-decoration: line-through;
+    }
+
+    // TABLES
+
+    table {
+        border-collapse: collapse;
+        border-width: 2px 0 0 2px;
+        border-style: solid;
+        width: 100%;
+    }
+
+    tr {}
+
+    th,
+    td {
+        text-align: center;
+        padding: 10px 15px;
+        vertical-align: top;
+        border-width: 0 2px 2px 0;
+        border-style: solid;
+
+        &:first-child {
+            text-align: left;
+        }
+
+        &:last-child {
+            text-align: right;
+        }
+    }
+
+    thead th,
+    thead td {
+        padding: 10px 15px;
+        vertical-align: middle;
+    }
+
+    blockquote {
+        @include font-size-xl();
+        padding: 0 0 0 20px;
+        border-width: 0 0 0 10px;
+        border-style: solid;
+
+        footer {
+            @include font-size-sm();
+
+            &::before {
+                content: '\2014';
+            }
+        }
+    }
+
+    pre {}
+
+    address,
+    blockquote,
+    dl,
+    hr,
+    p,
+    table {
+        margin: 0 0 10px;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    a {
+        font-weight: $font-weight-heavy;
+    }
 }

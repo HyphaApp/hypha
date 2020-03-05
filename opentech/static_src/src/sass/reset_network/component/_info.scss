@@ -1,20 +1,23 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  INFO COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .info {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 .info__item {
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
 }

@@ -1,20 +1,21 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  A11Y UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .sr-only {
-  border: none;
-  clip: rect(0, 0, 0, 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
 }

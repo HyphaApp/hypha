@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  PARAGRAPH COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -11,13 +14,12 @@ $aside-width-sm: 480;
 $aside-width-lg: 535;
 $aside-width-xl: 590;
 
-$content-width: 650;
 $content-column-width-xs: 375;
 $content-column-width-sm: 425;
 $content-column-width-lg: 510;
 $content-column-width-xl: 545;
 $content-column-width-xxl: 650;
-$content-intro-width: 870;
+$content-column-width-max: 870;
 
 $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 
@@ -30,85 +32,86 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 // ELEMENTS
 
 .para {
-  @include gutters-paragraph();
-  position: relative;
-  display: flex;
-  flex-direction: column;
-
-  @include media-min-sm {
-    flex-direction: row;
-  }
-
-  &.theme-lightest {
-    + .para.theme-lightest {
-      padding-top: 0;
-    }
-  }
-
-  &.theme-light {
-    + .para.theme-light {
-      padding-top: 0;
-    }
-  }
-
-  &.theme-grey {
-    + .para.theme-grey {
-      padding-top: 0;
-    }
-  }
-
-  &.theme-dark {
-    + .para.theme-dark {
-      padding-top: 0;
-    }
-  }
-
-  &.theme-darkest {
-    + .para.theme-darkest {
-      padding-top: 0;
-    }
-  }
-
-  &:last-of-type {
-    padding-bottom: #{$gutter}px;
+    @include gutters-paragraph();
+    position: relative;
+    display: flex;
+    flex-direction: column;
 
     @include media-min-sm {
-      padding-bottom: #{$gutter-sm}px;
+        flex-direction: row;
     }
 
-    @include media-min-md {
-      padding-bottom: #{$gutter}px;
-    }
-  }
-
-  &.para--padding-offset-xl {
-    @include media-min-sm {
-      padding-bottom: #{$gutter-lg * 2}px;
+    &.theme-lightest {
+        +.para.theme-lightest {
+            padding-top: 0;
+        }
     }
 
-    @include media-min-md {
-      padding-bottom: #{$gutter-lg * 3}px;
+    &.theme-light {
+        +.para.theme-light {
+            padding-top: 0;
+        }
     }
-  }
+
+    &.theme-grey {
+        +.para.theme-grey {
+            padding-top: 0;
+        }
+    }
+
+    &.theme-dark {
+        +.para.theme-dark {
+            padding-top: 0;
+        }
+    }
+
+    &.theme-darkest {
+        +.para.theme-darkest {
+            padding-top: 0;
+        }
+    }
+
+    &:last-of-type {
+        padding-bottom: #{$gutter}px;
+
+        @include media-min-sm {
+            padding-bottom: #{$gutter-sm}px;
+        }
+
+        @include media-min-md {
+            padding-bottom: #{$gutter}px;
+        }
+    }
+
+    &.para--padding-offset-xl {
+        @include media-min-sm {
+            padding-bottom: #{$gutter-lg * 2}px;
+        }
+
+        @include media-min-md {
+            padding-bottom: #{$gutter-lg * 3}px;
+        }
+    }
 }
 
 .para--overflow-hidden {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .para--cards {
-  padding-top: #{$gutter}px;
+    padding-top: #{$gutter}px;
 
-  @include media-min-sm {
-    padding-top: #{$gutter-lg}px;
-  }
+    @include media-min-sm {
+        padding-top: #{$gutter-lg}px;
+    }
 
-  @include media-min-md {
-    padding-top: #{$gutter-xl}px;
-  }
+    @include media-min-md {
+        padding-top: #{$gutter-xl}px;
+    }
 }
 
 .para--head {
+    overflow: hidden;
     padding-bottom: #{$gutter-max}px;
 
     @include media-min-sm {
@@ -120,34 +123,43 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
 }
 
+.para--head:first-child,
+.para--lead:first-child {
+    padding-top: #{$gutter-xl}px;
+
+    @include media-min-sm {
+        padding-top: #{$gutter-xl}px;
+    }
+}
+
 .para--back {
-  padding-top: #{$gutter-sm}px;
-  padding-bottom: 0;
-
-  @include media-min-sm {
     padding-top: #{$gutter-sm}px;
     padding-bottom: 0;
-  }
 
-  @include media-min-md {
-    padding-top: #{$gutter-sm}px;
-    padding-bottom: 0;
-  }
+    @include media-min-sm {
+        padding-top: #{$gutter-sm}px;
+        padding-bottom: 0;
+    }
+
+    @include media-min-md {
+        padding-top: #{$gutter-sm}px;
+        padding-bottom: 0;
+    }
 }
 
 .para--article {
-  padding-bottom: #{$gutter-sm}px;
-  padding-top: 0;
-
-  @include media-min-sm {
     padding-bottom: #{$gutter-sm}px;
     padding-top: 0;
-  }
 
-  @include media-min-md {
-    padding-bottom: #{$gutter}px;
-    padding-top: 0;
-  }
+    @include media-min-sm {
+        padding-bottom: #{$gutter-sm}px;
+        padding-top: 0;
+    }
+
+    @include media-min-md {
+        padding-bottom: #{$gutter}px;
+        padding-top: 0;
+    }
 }
 
 .para--assets,
@@ -155,308 +167,311 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 .para--region,
 .para--title,
 .para--pillar {
-  padding-bottom: #{$gutter}px;
-
-  @include media-min-sm {
     padding-bottom: #{$gutter}px;
-  }
-
-  @include media-min-md {
-    padding-bottom: #{$gutter}px;
-  }
-
-  .offset-wrap & {
-    padding-top: #{$gutter}px;
 
     @include media-min-sm {
-      padding-top: #{$gutter}px;
+        padding-bottom: #{$gutter}px;
     }
 
     @include media-min-md {
-      padding-top: #{$gutter}px;
+        padding-bottom: #{$gutter}px;
     }
 
-    &:last-child {
-      @include media-min-sm {
-        padding-bottom: #{$gutter-lg}px;
-      }
+    .offset-wrap & {
+        padding-top: #{$gutter}px;
 
-      @include media-min-md {
-        padding-bottom: #{$gutter-xxl}px;
-      }
+        @include media-min-sm {
+            padding-top: #{$gutter}px;
+        }
+
+        @include media-min-md {
+            padding-top: #{$gutter}px;
+        }
+
+        &:last-child {
+            @include media-min-sm {
+                padding-bottom: #{$gutter-lg}px;
+            }
+
+            @include media-min-md {
+                padding-bottom: #{$gutter-xxl}px;
+            }
+        }
     }
-  }
 }
 
 .para--intro {
-  padding-bottom: #{($gutter-xl * 2) + $gutter-xs}px;
+    padding-bottom: #{($gutter-xl * 2) + $gutter-xs}px;
 }
 
 .para--content-left {}
 
 .para--content-right {
-  @include media-min-sm {
-    flex-direction: row-reverse;
-  }
+    @include media-min-sm {
+        flex-direction: row-reverse;
+    }
 }
 
 .para__wrap {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
-  position: relative;
-  max-width: 100%;
-
-  .para--article &,
-  .para--assets &,
-  .para--external & {
-    justify-content: flex-start;
-  }
-
-  @include media-min-xs {
-    flex-wrap: nowrap;
-    max-width: #{$content-column-width-xl}px;
-  }
-
-  @include media-min-sm {
-    max-width: 100%;
-    flex-direction: row;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    padding: 0 0 0 #{$para-sidebar-offset};
-  }
-
-  @include media-min-xl {
-    padding: 0 0 0 #{$sidebar-offset}px;
-  }
-
-  .para--pillar & {
-    @include media-min-sm {
-      padding: 0 0 0 #{$para-sidebar-offset};
-    }
-    @include media-min-md {
-      padding: 0 #{$para-sidebar-offset};
-    }
-
-    @include media-min-xl {
-      padding: 0 #{$sidebar-offset}px;
-    }
-  }
-
-  .para--region & {
-    justify-content: flex-start;
-  }
-
-  .para--pillar &,
-  .para--content-left & {
-    @include media-min-sm {
-      justify-content: space-between;
-    }
-  }
-
-  .para--content-right & {
-    @include media-min-sm {
-      justify-content: flex-start;
-    }
-
-    @include media-min-md {
-      justify-content: space-between;
-      padding: 0 #{$para-sidebar-offset} 0 0;
-    }
-
-    @include media-min-xl {
-      padding: 0 #{$sidebar-offset}px 0 0;
-    }
-  }
-
-  .para--links & {
-    @include media-min-xs {
-      justify-content: flex-start;
-    }
-
-    @include media-min-sm {
-      padding: 0;
-      justify-content: space-between;
-    }
-
-    @include media-min-lg {
-      padding: 0 #{$para-sidebar-offset / 2} 0 0;
-    }
-
-    @include media-min-xl {
-      padding: 0 #{$sidebar-offset / 2}px 0 0;
-    }
-  }
-
-  .para--cards & {
-    @include media-min-sm {
-      padding: 0 0 0 #{$para-sidebar-offset};
-    }
-
-    @include media-min-md {
-      padding: 0 0 0 #{$para-sidebar-offset};
-    }
-
-    @include media-min-lg {
-      padding: 0 #{$para-sidebar-offset / 2} 0 #{$para-sidebar-offset};
-    }
-
-    @include media-min-xl {
-      padding: 0 #{$sidebar-offset / 2}px 0 #{$sidebar-offset}px;
-    }
-  }
-}
-
-.para__content {
-  flex: 1 1 auto;
-  max-width: 100%;
-  align-items: center;
-
-  .para--title + .para--region & {
-    &::before {
-      @include media-min-sm {
-        display: none;
-      }
-    }
-  }
-
-  .para--region & {
-    position: relative;
-    max-width: #{$content-intro-width}px;
-    padding-top: #{$gutter}px;
-
-    &::before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background-color: color(seed-black, 25);
-    }
-
-    @include media-min-sm {
-      padding-top: #{$gutter}px;
-      flex-direction: row;
-      display: flex;
-      align-items: flex-start;
-    }
-
-    @include media-min-md {
-      padding-top: #{$gutter}px;
-    }
-  }
-
-  .para--content-left & {
-    @include media-min-sm {
-      order: 1;
-    }
-  }
-
-  .para--people & {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
-    align-items: stretch;
-  }
-
-  .para--pillar & {
-    @include media-min-sm {
-      margin-left: #{$gutter}px;
-      max-width: #{$content-column-width-sm}px;
-    }
-  }
-
-  .para--content-left &,
-  .para--content-right & {
-    @include media-min-sm {
-      max-width: #{$content-width}px;
-    }
-  }
-
-  .para--col-xs & {
-    @include media-min-sm {
-      max-width: #{$content-column-width-xs}px;
-    }
-  }
-
-  .para--col-sm & {
-    @include media-min-sm {
-      max-width: #{$content-column-width-sm}px;
-    }
-  }
-
-  .para--col-xl & {
-    @include media-min-sm {
-      max-width: #{$content-column-width-xl}px;
-    }
-  }
-
-  .para--links & {
-    @include media-min-sm {
-      max-width: #{$content-column-width-lg}px;
-    }
-
-    @include media-min-md {
-      max-width: 650px;
-    }
-
-    @include media-min-lg {
-      max-width: 650px;
-    }
-  }
-
-  .para--cards & {
-    @include media-min-sm {
-      max-width: 810px;
-    }
-
-    @include media-min-md {
-      max-width: 1065px;
-    }
-  }
-}
-
-.para__title {
-  font-family: $font-family-secondary;
-  max-width: #{$content-intro-width}px;
-  flex: 0 0 100%;
-
-  .para--region & {
-    @include media-min-sm {
-      flex: 0 1 100%;
-      max-width: 255px;
-      margin-right: #{$gutter}px;
-    }
-  }
-
-  h1 {
-    @include font-size-xl();
+    justify-content: center;
+    position: relative;
+    max-width: 100%;
 
     @include media-min-xs {
-      @include font-size-xl();
+        flex-wrap: nowrap;
+        max-width: #{$content-column-width-xl}px;
     }
 
     @include media-min-sm {
-      @include font-size-xxl();
+        max-width: 100%;
+        flex-direction: row;
+        align-items: stretch;
+        flex-wrap: nowrap;
+        padding: 0 0 0 #{$para-sidebar-offset};
     }
 
-    .para--head & {
-        @include font-size-xl();
+    @include media-min-xl {
+        padding: 0 0 0 #{$sidebar-offset}px;
+    }
 
-        @include media-min-xs {
-            @include font-size-xxl();
+    .para--pillar & {
+        @include media-min-sm {
+            padding: 0 0 0 #{$para-sidebar-offset};
         }
 
         @include media-min-md {
-            @include font-size-max();
+            padding: 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-xl {
+            padding: 0 #{$sidebar-offset}px;
         }
     }
-  }
 
-     h2 {
-        @include font-size-lg();
+    .para--region & {
+        justify-content: flex-start;
+    }
+
+    .para--pillar &,
+    .para--content-left & {
+        @include media-min-sm {
+            justify-content: space-between;
+        }
+    }
+
+    .para--content-right & {
+        @include media-min-sm {
+            justify-content: flex-start;
+        }
+
+        @include media-min-md {
+            justify-content: space-between;
+            padding: 0 #{$para-sidebar-offset} 0 0;
+        }
+
+        @include media-min-xl {
+            padding: 0 #{$sidebar-offset}px 0 0;
+        }
+    }
+
+    .para--links & {
+        @include media-min-xs {
+            justify-content: flex-start;
+        }
+
+        @include media-min-sm {
+            padding: 0;
+            justify-content: space-between;
+        }
+
+        @include media-min-lg {
+            padding: 0 #{$para-sidebar-offset / 2} 0 0;
+        }
+
+        @include media-min-xl {
+            padding: 0 #{$sidebar-offset / 2}px 0 0;
+        }
+    }
+
+    .para--back &,
+    .para--head &,
+    .para--assets &,
+    .para--external &,
+    .para--article &,
+    .para--cards & {
+        @include media-min-sm {
+            padding: 0 0 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-md {
+            padding: 0 0 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-lg {
+            padding: 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-xl {
+            padding: 0 #{$sidebar-offset}px;
+        }
+    }
+}
+
+.para__content {
+    flex: 1 1 auto;
+    max-width: 100%;
+    align-items: center;
+
+    .para--title+.para--region & {
+        &::before {
+            @include media-min-sm {
+                display: none;
+            }
+        }
+    }
+
+    .para--region & {
+        position: relative;
+        max-width: #{$content-column-width-max}px;
+        padding-top: #{$gutter}px;
+
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            left: -#{$gutter-sm}px;
+            right: 0;
+            height: 1px;
+            width: calc(100% + #{$gutter-sm * 2}px);
+            background-color: color(seed-black, 25);
+
+            @include media-min-xs {
+                width: 100%;
+                left: 0;
+            }
+        }
+
+        @include media-min-sm {
+            padding-top: #{$gutter}px;
+            flex-direction: row;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        @include media-min-md {
+            padding-top: #{$gutter}px;
+        }
+    }
+
+    .para--content-left & {
+        @include media-min-sm {
+            order: 1;
+        }
+    }
+
+    .para--people & {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    .para--pillar & {
+        @include media-min-sm {
+            margin-left: #{$gutter}px;
+            max-width: #{$content-column-width-sm}px;
+        }
+    }
+
+    .para--content-left &,
+    .para--content-right & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-xxl}px;
+        }
+    }
+
+    .para--col-xs & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-xs}px;
+        }
+    }
+
+    .para--col-sm & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-sm}px;
+        }
+    }
+
+    .para--col-xl & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-xl}px;
+        }
+    }
+
+    .para--col-xxl & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-xxl}px;
+        }
+    }
+
+    .para--links & {
+        @include media-min-sm {
+            max-width: #{$content-column-width-lg}px;
+        }
+
+        @include media-min-md {
+            max-width: 650px;
+        }
+
+        @include media-min-lg {
+            max-width: 650px;
+        }
+    }
+
+    .para--cards & {
+        @include media-min-sm {
+            max-width: 810px;
+        }
+
+        @include media-min-md {
+            max-width: 1065px;
+        }
+    }
+}
+
+.para__title {
+    font-family: $font-family-secondary;
+    max-width: #{$content-column-width-max}px;
+    flex: 0 0 100%;
+
+    h1 {
+        @include font-size-xl();
+
+        @include media-min-xs {
+            @include font-size-xl();
+        }
+
+        @include media-min-sm {
+            @include font-size-xxl();
+        }
+
+        .para--head & {
+            @include font-size-xl();
+
+            @include media-min-xs {
+                @include font-size-xxl();
+            }
+
+            @include media-min-md {
+                @include font-size-max();
+            }
+        }
+    }
+
+    h2 {
         font-size: 20px;
 
         @include media-min-xs {
@@ -467,11 +482,11 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
             @include font-size-xxl();
         }
 
-        .para--primary & {
-            @include font-size-xl();
+        .para--title & {
+            @include font-size-lg();
 
             @include media-min-sm {
-                @include font-size-xxl();
+                @include font-size-xl();
             }
 
             @include media-min-md {
@@ -491,251 +506,309 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
                 @include font-size-xl();
             }
         }
+
+        .para--primary & {
+            @include font-size-xl();
+
+            @include media-min-sm {
+                @include font-size-xxl();
+            }
+
+            @include media-min-md {
+                @include font-size-xxl();
+            }
+        }
     }
 
-  h3 {
-    @include font-size-md();
-    font-size: 20px;
+    h3 {
+        @include font-size-md();
 
-    @include media-min-xs {
-      @include font-size-lg();
+        @include media-min-xs {
+            @include font-size-lg();
+        }
+
+        @include media-min-sm {
+            @include font-size-xl();
+        }
+
     }
 
-    @include media-min-sm {
-      @include font-size-xl();
+    .para--lead & {
+        @include gutter-bottom();
     }
-  }
 
-  .para--lead & {
-    @include gutter-bottom();
-  }
+    .para--region &,
+    .para--pillar & {
+        h3 {
+            font-size: 20px;
+
+            @include media-min-xs {
+                @include font-size-lg();
+            }
+
+            @include media-min-sm {
+                @include font-size-xl();
+            }
+        }
+
+    }
+
+    .para--region & {
+        @include media-min-sm {
+            flex: 0 1 100%;
+            max-width: 255px;
+            margin-right: #{$gutter}px;
+        }
+    }
 }
 
 .para__body {
-  @include pad-gutter-top();
-  align-self: center;
-  max-width: #{$content-intro-width}px;
-  position: relative;
+    @include pad-gutter-top();
+    align-self: center;
+    max-width: #{$content-column-width-max}px;
+    position: relative;
 
-  .para--assets &,
-  .para--external &,
-  .para--pillar & {
-    @include pad-gutter-top-sm();
-  }
-
-  .para--region & {
-    @include media-min-sm {
-      flex: 0 1 100%;
-      max-width: 535px;
-      padding-top: 0;
-    }
-  }
-
-  .para--lead & {
-    font-weight: $font-weight-regular;
-    padding-top: 0;
-
-    @include font-size-xl();
-    font-family: $font-family-secondary;
-
-    @include media-min-md {
-      @include font-size-xxl();
-    }
-  }
-
-  .para--intro & {
-    column-count: 1;
-    column-gap: 35px;
-    break-inside: auto;
-
-    @include media-min-xs {
-      column-count: 2;
+    .para--assets &,
+    .para--external &,
+    .para--pillar & {
+        @include pad-gutter-top-sm();
     }
 
-    @include media-min-sm {
-      column-count: 1;
-      column-width: 100%;
+    .para--region & {
+        @include media-min-sm {
+            flex: 0 1 100%;
+            max-width: 535px;
+            padding-top: 0;
+        }
     }
 
-    @include media-min-md {
-      column-count: 2;
-      column-gap: 70px;
+    .para--external & {
+        padding-top: 5px;
+
+        @include media-min-sm() {
+            padding-top: 5px;
+        }
+
+        @include media-min-md() {
+            padding-top: 5px;
+        }
     }
 
-    &:first-child {
-      padding-top: 0;
-    }
-  }
+    .para--lead & {
+        font-size: 24px;
+        line-height: 1.4;
+        font-weight: $font-weight-regular;
+        font-family: $font-family-secondary;
 
-  .para--cards & {
-    max-width: 100%;
-  }
+        padding-top: 0;
+
+        @include media-min-sm {
+            @include font-size-xl();
+        }
+
+        @include media-min-md {
+            @include font-size-xxl();
+        }
+    }
+
+    .para--intro & {
+        column-count: 1;
+        column-gap: 35px;
+        break-inside: auto;
+
+        @include media-min-xs {
+            column-count: 2;
+        }
+
+        @include media-min-sm {
+            column-count: 1;
+            column-width: 100%;
+        }
+
+        @include media-min-md {
+            column-count: 2;
+            column-gap: 70px;
+        }
+
+        &:first-child {
+            padding-top: 0;
+        }
+    }
+
+    .para--cards & {
+        max-width: 100%;
+    }
+
+    .para--head & {
+        padding-top: 0;
+    }
 }
 
 .para__aside {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  z-index: 5;
-  flex: 0 1 100%;
-  margin: 0 auto #{$gutter}px;
-  max-width: #{$aside-width-sm}px;
-  max-height: #{$aside-width-sm}px;
-
-  @include media-min-sm {
-    width: #{$aside-width-sm / 2}px;
-    margin: 0;
-  }
-
-  @include media-min-md {
-    width: #{$aside-width-sm / 1.5}px;
-  }
-
-  @include media-min-lg {
-    width: #{$aside-width-sm}px;
-  }
-
-  .para--content-left & {
-    @include media-min-sm {
-      order: 2;
-      flex: 0 0 30vw;
-      transform: translateX(#{$gutter-sm}px);
-    }
-
-    @include media-min-md {
-      transform: translateX(#{$gutter}px);
-    }
-  }
-
-  .para--content-right & {
-    @include media-min-sm {
-      transform: translateX(-#{$gutter-sm}px);
-      flex: 0 0 30vw;
-    }
-
-    @include media-min-md {
-      transform: translateX(-#{$gutter}px);
-    }
-  }
-
-  .para--aside-offset & {
-    @include media-min-sm {
-      margin-top: -#{$gutter-lg * 2}px;
-    }
-
-    @include media-min-md {
-      margin-top: -#{$gutter-xl * 2}px;
-    }
-  }
-
-  .para--aside-offset-xl & {
-    @include media-min-sm {
-      margin-top: -#{$gutter-lg * 2}px;
-    }
-
-    @include media-min-md {
-      margin-top: -#{$gutter-xl * 3}px;
-    }
-  }
-
-  .para--aside-xs & {
-    max-width: #{$aside-width-xs}px;
-    max-height: #{$aside-width-xs}px;
-
-    @include media-min-sm { }
-
-    @include media-min-md {
-      flex: 0 0 25vw;
-    }
-  }
-
-  .para--aside-lg & {
-    max-width: #{$aside-width-lg}px;
-    max-height: #{$aside-width-lg}px;
-
-    @include media-min-sm { }
-
-    @include media-min-md {
-      flex: 0 0 40vw;
-    }
-  }
-
-  .para--aside-xl & {
-    max-width: #{$aside-width-xl}px;
-    max-height: #{$aside-width-xl}px;
-
-    @include media-min-sm { }
-
-    @include media-min-md {
-      flex: 0 0 45vw;
-    }
-  }
-
-  .para--intro + .para--aside-offset-xl & {
-    margin-top: -#{$gutter-lg * 3.5}px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    z-index: 5;
+    flex: 0 1 100%;
+    margin: 0 auto #{$gutter}px;
+    max-width: #{$aside-width-sm}px;
+    max-height: #{$aside-width-sm}px;
 
     @include media-min-sm {
-      margin-top: -#{$gutter-lg * 2}px;
+        width: #{$aside-width-sm / 2}px;
+        margin: 0;
     }
 
     @include media-min-md {
-      margin-top: -#{$gutter-lg * 5}px;
+        width: #{$aside-width-sm / 1.5}px;
     }
-  }
+
+    @include media-min-lg {
+        width: #{$aside-width-sm}px;
+    }
+
+    .para--content-left & {
+        @include media-min-sm {
+            order: 2;
+            flex: 0 0 30vw;
+            transform: translateX(#{$gutter-sm}px);
+        }
+
+        @include media-min-md {
+            transform: translateX(#{$gutter}px);
+        }
+    }
+
+    .para--content-right & {
+        @include media-min-sm {
+            transform: translateX(-#{$gutter-sm}px);
+            flex: 0 0 30vw;
+        }
+
+        @include media-min-md {
+            transform: translateX(-#{$gutter}px);
+        }
+    }
+
+    .para--aside-offset & {
+        @include media-min-sm {
+            margin-top: -#{$gutter-lg * 2}px;
+        }
+
+        @include media-min-md {
+            margin-top: -#{$gutter-xl * 2}px;
+        }
+    }
+
+    .para--aside-offset-xl & {
+        @include media-min-sm {
+            margin-top: -#{$gutter-lg * 2}px;
+        }
+
+        @include media-min-md {
+            margin-top: -#{$gutter-xl * 3}px;
+        }
+    }
+
+    .para--aside-xs & {
+        max-width: #{$aside-width-xs}px;
+        max-height: #{$aside-width-xs}px;
+
+        @include media-min-sm {}
+
+        @include media-min-md {
+            flex: 0 0 25vw;
+        }
+    }
+
+    .para--aside-lg & {
+        max-width: #{$aside-width-lg}px;
+        max-height: #{$aside-width-lg}px;
+
+        @include media-min-sm {}
+
+        @include media-min-md {
+            flex: 0 0 40vw;
+        }
+    }
+
+    .para--aside-xl & {
+        max-width: #{$aside-width-xl}px;
+        max-height: #{$aside-width-xl}px;
+
+        @include media-min-sm {}
+
+        @include media-min-md {
+            flex: 0 0 45vw;
+        }
+    }
+
+    .para--intro+.para--aside-offset-xl & {
+        margin-top: -#{$gutter-lg * 3.5}px;
+
+        @include media-min-sm {
+            margin-top: -#{$gutter-lg * 2}px;
+        }
+
+        @include media-min-md {
+            margin-top: -#{$gutter-lg * 5}px;
+        }
+    }
 }
 
 .para__action {
-  @include gutter-top();
-  max-width: #{$content-intro-width}px;
+    @include gutter-top();
+    max-width: #{$content-column-width-max}px;
 }
 
 .para__link {
-  @include animate(opacity);
-  @include font-size-xxs();
-  font-family: $font-family-primary;
-  margin-left: 10px;
+    @include animate(opacity);
+    @include font-size-xxs();
+    font-family: $font-family-primary;
+    margin-left: 10px;
 
-  &,
-  &:link,
-  &:visited {
-    opacity: .5;
-    text-decoration: none;
+    &,
+    &:link,
+    &:visited {
+        opacity: .5;
+        text-decoration: none;
 
-    .theme-light &,
-    .theme-lightest & {
-      color: color(seed-white);
+        .theme-light &,
+        .theme-lightest & {
+            color: color(seed-white);
+        }
+
+        .theme-grey &,
+        .theme-dark &,
+        .theme-darkest & {
+            color: color(seed-black);
+        }
     }
 
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      color: color(seed-black);
+    &:hover,
+    &:active {
+        opacity: 1;
     }
-  }
-
-  &:hover,
-  &:active {
-    opacity: 1;
-  }
 }
 
 // TITLE IMAGE AREA
 
 .title-image {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
 }
 
 .title-image--sm {
-  @include media-min-xs() {
-    display: none;
-  }
+    @include media-min-xs() {
+        display: none;
+    }
 }
 
 .title-image--lg {
-  display: none;
-  @include media-min-xs() {
-    display: block;
-  }
+    display: none;
+
+    @include media-min-xs() {
+        display: block;
+    }
 }
