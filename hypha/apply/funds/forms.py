@@ -6,6 +6,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django_select2.forms import Select2Widget
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
@@ -238,8 +239,6 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, instance)
-            else:
-                AssignedReviewers.objects.filter(role=role, submission=instance).delete()
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
@@ -303,9 +302,6 @@ class BatchUpdateReviewersForm(forms.Form):
         for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, *submissions)
-            else:
-                for submission in submissions:
-                    AssignedReviewers.objects.filter(role=role, submission=submission).delete()
 
         return None
 
@@ -318,6 +314,9 @@ def make_role_reviewer_fields():
         field_name = 'role_reviewer_' + slugify(str(role))
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
+            widget=Select2Widget(attrs={
+                'data-placeholder': 'Select a reviewer',
+            }),
             required=False,
             label=mark_safe(render_icon(role.icon) + f'{role.name} Reviewer'),
         )
