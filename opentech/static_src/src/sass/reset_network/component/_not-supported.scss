@@ -1,41 +1,45 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  SUPPORT COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .not-supported {
-  background-color: color(seed-white);
-  box-shadow: $depth-shadow-1;
-  height: auto;
-  left: #{$size-lg}px;
-  min-height: #{$font-size-xl}px;
-  padding: #{$size-sm}px #{$size-xl}px #{$size-sm}px #{$size-sm}px;
-  position: absolute;
-  right: #{$size-lg}px;
-  text-align: center;
-  top: #{$size-lg}px;
-  z-index: $z-index-notification;
+    background-color: color(seed-white);
+    box-shadow: $depth-shadow-1;
+    height: auto;
+    left: #{$size-lg}px;
+    min-height: #{$font-size-xl}px;
+    padding: #{$size-sm}px #{$size-xl}px #{$size-sm}px #{$size-sm}px;
+    position: absolute;
+    right: #{$size-lg}px;
+    text-align: center;
+    top: #{$size-lg}px;
+    z-index: $z-index-notification;
 }
 
 .not-supported__close {
-  @include font-size-xl;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  right: #{$size-sm}px;
-  top: #{$size-sm}px;
+    @include font-size-xl;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: #{$size-sm}px;
+    top: #{$size-sm}px;
 }
 
 .ios-old,
 .android-old,
 .ie-old {
-  .not-supported {
-    display: block !important; // stylelint-disable-line declaration-no-important
-  }
+    .not-supported {
+        display: block !important; // sass-lint:disable-line no-important
+    }
 }
+

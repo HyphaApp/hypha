@@ -14,7 +14,9 @@
         </div>
         <div class="para__body">
           {{ page.content_text|richtext }}
+          {% if page.content_email %}
           <a href="mailto:{{ page.content_email }} ">{{ page.content_email }}</a>
+          {% endif %}
         </div>
       </div>
     </div>

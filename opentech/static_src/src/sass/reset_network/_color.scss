@@ -1,32 +1,32 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL COLORS
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 // COLORS
 
 $colors: (
-  seed-black: #000,
-  seed-white: #fff,
-  seed-grey: #d3d3d3,
-  seed-grey-light: #f0f0f0,
-  seed-red: #e2383d,
-  seed-pink: #cc5e7b,
-  seed-purple: #bb7aaa,
-  seed-indigo: #9e8adb,
-  seed-blue: #5aa2e0,
-  seed-cyan: #41b7cc,
-  seed-teal: #4ebeac,
-  seed-green: #9acc54,
-  seed-emerald: #62c884,
-  seed-yellow: #f4ec31,
-  seed-gold: #d7b431,
-  seed-orange: #f5a61d,
-  seed-rust: #f5733a,
-  seed-brown: #693d32,
-  text-darkest: #000,
-  text-dark: #959595,
-  text-light: #b6b6b6,
-  text-lightest: #fff
+    seed-black: rgb(0, 0, 0),
+    seed-white: rgb(255, 255, 255),
+    seed-grey: rgb(211, 211, 211),
+    seed-grey-light: rgb(240, 240, 240),
+    seed-red: rgb(226, 56, 61),
+    seed-pink: rgb(204, 94, 123),
+    seed-purple: rgb(187, 122, 170),
+    seed-indigo: rgb(158, 138, 219),
+    seed-blue: rgb(90, 162, 224),
+    seed-cyan: rgb(65, 183, 204),
+    seed-teal: rgb(78, 190, 172),
+    seed-green: rgb(154, 204, 84),
+    seed-emerald: rgb(98, 200, 132),
+    seed-yellow: rgb(244, 236, 49),
+    seed-gold: rgb(215, 180, 49),
+    seed-orange: rgb(245, 166, 29),
+    seed-rust: rgb(245, 115, 58),
+    seed-brown: rgb(105, 61, 50),
+    text-darkest: rgb(0, 0, 0),
+    text-dark: rgb(149, 149, 149),
+    text-light: rgb(182, 182, 182),
+    text-lightest: hsl(0, 0%, 100%)
 );

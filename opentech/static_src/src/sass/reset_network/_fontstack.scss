@@ -1,22 +1,21 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  FONT STACK SCSS
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 @font-face {
-  @include create-font(Sectra, sectra/GT-Sectra-Regular, $font-weight-regular);
+    @include create-font(Sectra, sectra/GT-Sectra-Regular, $font-weight-regular);
 }
 
 @font-face {
-  @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Regular, $font-weight-regular);
+    @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Regular, $font-weight-regular);
 }
 
 @font-face {
-  @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Bold, $font-weight-heavy);
+    @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Bold, $font-weight-heavy);
 }
 
 @font-face {
-  @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Light, $font-weight-light);
+    @include create-font(NeueMontreal, neuemontreal/NeueMontreal-Light, $font-weight-light);
 }
-

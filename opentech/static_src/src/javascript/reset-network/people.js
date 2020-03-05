@@ -112,11 +112,11 @@
                     var $currImg = PEOPLE.HOVER.currImg || $target.find('.js-img');
                     var offsetX = PEOPLE.HOVER.offsetX || $target.offset().left;
                     var offsetY = PEOPLE.HOVER.offsetY || $target.offset().top - window.scrollY;
-                    var imgLeft = x - offsetX;
-                    var imgRight = y - offsetY;
+                    var imgX = x - offsetX;
+                    var imgY = y - offsetY;
 
                     $currImg.css({
-                        transform: 'translate(calc(-50% + ' + imgLeft + 'px), calc(-50% + ' + imgRight + 'px))'
+                        transform: 'translate(' + imgX + 'px, calc(-100% + ' + imgY + 'px))'
                     });
                 });
             },

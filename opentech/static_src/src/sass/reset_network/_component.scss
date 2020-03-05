@@ -1,11 +1,11 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 // COMPONENTS
 // This layer is where we begin to style recognisable pieces of UI. This layer
 // is more explicit than the last in that we are now styling explicit, designed
 // pieces of the DOM.
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 @import 'component/apply-form';
 @import 'component/radio';
@@ -41,3 +41,4 @@
 @import 'component/person';
 @import 'component/call-apply';
 @import 'component/resource';
+@import 'component/pagination';

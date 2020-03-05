@@ -1,25 +1,28 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  MEDIA STRUCTURE
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .media {
-  align-items: flex-start;
-  display: flex;
+    align-items: flex-start;
+    display: flex;
 }
 
 .media__adj {
-  margin: 0 #{$size-md}px 0 0;
+    margin: 0 #{$size-md}px 0 0;
 
-  .media--alt & {
-    margin: 0 0 0 #{$size-md}px;
-    order: 1;
-  }
+    .media--alt & {
+        margin: 0 0 0 #{$size-md}px;
+        order: 1;
+    }
 }
 
 .media__body {
-  flex: 1;
+    flex: 1;
 }

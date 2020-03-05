@@ -2,6 +2,9 @@
 //
 //  CALL APPLY COMPONENT
 //
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
 //------------------------------------------------------------------//
 
 // VARS
@@ -10,6 +13,7 @@
 
 .call-apply {
     @include gutters-sm();
+    @include font-size-xs();
     background-color: color(seed-grey-light);
     position: absolute;
     width: calc(100% + #{$gutter-sm * 2}px);
@@ -17,14 +21,174 @@
     margin-left: -#{$gutter-sm}px;
     display: flex;
     justify-content: space-between;
+    flex-direction: row;
 
     .para__action & {
         position: static;
     }
 
     @include media-min-sm {
+        @include font-size-md();
         width: 100%;
         margin-left: 0;
     }
 }
 
+.call-apply__content {
+    line-height: $line-height;
+}
+
+a.call-button {
+    position: relative;
+    border: 0;
+    cursor: pointer;
+    display: inline-flex;
+    flex-direction: row;
+    padding: 0;
+    text-align: center;
+    align-items: flex-start;
+    justify-content: stretch;
+    vertical-align: middle;
+    opacity: 1;
+    overflow: hidden;
+
+    @include media-min-xs {
+        min-width: 220px;
+    }
+
+    &,
+    &:link,
+    &:visited {
+        outline: none;
+        text-decoration: none;
+        background-color: color(seed-black);
+        font-weight: $font-weight-regular;
+    }
+
+    &:focus {
+        outline: 2px solid $color-focus-border;
+    }
+
+    .focus-disabled &:focus,
+    &:active {
+        outline: none;
+    }
+
+    &:active {
+        border-color: $btn-color-active;
+
+        &::before {
+            transform: translateX(0);
+        }
+    }
+
+    /****************************** ACTIVE STATE ********************************/
+
+    &::before {
+        @include animate(background-color transform, 250ms);
+        background: $btn-color-active;
+        content: '';
+        display: block;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        transform: translateX(-100%);
+        width: 100%;
+        z-index: 2;
+    }
+
+    &.is-clicked {}
+
+    &.is-clicked--reveal {
+        &::before {
+            transform: translateX(0);
+        }
+    }
+
+    &.is-clicked--exit {
+        &::before {
+            transform: translateX(100%);
+        }
+    }
+}
+
+.call-button__drop {
+    @include animate(background-color transform, 250ms);
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transform: translateX(-100%);
+    width: 100%;
+    z-index: 1;
+
+    a.call-button &,
+    a.call-button:link &,
+    a.call-button:visited & {
+        background-color: color(seed-white);
+    }
+
+    a.call-button:focus & {
+        transform: translateX(0);
+        background-color: color(seed-orange);
+    }
+
+    a.call-button:focus &,
+    a.call-button:active & {
+        .focus-disabled  & {
+            background-color: color(seed-white);
+        }
+    }
+
+
+    a.call-button.is-clicked &,
+    a.call-button:hover & {
+        background-color: color(seed-white);
+        transform: translateX(0);
+    }
+}
+
+.call-button__label {
+    @include animate(color border-color opacity, 250ms);
+    @include font-size-sm();
+    display: block;
+    flex: 1 1 100%;
+    line-height: 1;
+    opacity: 1;
+    position: relative;
+    text-align: center;
+    z-index: 3;
+    padding: #{$size-xl}px #{$size-md}px;
+
+    @include media-min-sm {
+        padding: #{$size-xl}px #{$size-xxl}px;
+
+    }
+
+    a.call-button &,
+    a.call-button:link &,
+    a.call-button:visited & {
+        color: color(seed-white);
+    }
+
+    a.call-button:focus &,
+    a.call-button:hover &,
+    a.call-button:active & {
+        color: color(seed-black);
+
+        .focus-disabled & {
+            color: color(seed-black);
+        }
+    }
+
+    a.call-button.is-clicked--reveal.is-clicked--exit &,
+    a.call-button.is-clicked--reveal & {
+        color: color(seed-black);
+
+        .focus-disabled & {
+            color: color(seed-black);
+        }
+    }
+}

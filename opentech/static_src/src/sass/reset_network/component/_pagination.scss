@@ -1,0 +1,161 @@
+//------------------------------------------------------------------//
+//
+//  PAGINATION COMPONENT
+//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
+
+// VARS
+$pagination-max-card-width: 870;
+
+// ELEMENTS
+
+.pagination {
+    width: 100%;
+}
+
+.pagination__content {
+    position: relative;
+    width: 100%;
+    margin-left: 0;
+
+    @include media-min-xs {
+        padding: 0 100px;
+        max-width: #{$content-max-card-width}px;
+    }
+}
+
+.pagination__next {
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: none;
+
+    @include media-min-xs {
+        display: block;
+    }
+}
+
+.pagination__previous {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+
+    @include media-min-xs {
+        display: block;
+    }
+}
+
+.pages {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.pages__item {
+    margin: 0 5px;
+    padding: 0;
+
+    @include media-min-sm() {
+        margin: 0 #{$gutter-sm / 2}px;
+    }
+
+    @include media-min-md() {
+        margin: 0 #{$gutter-sm}px;
+    }
+}
+
+.page-link {
+    @include animate(opacity color, $animation-speed-fast);
+    @include font-size-md();
+    display: block;
+    padding: 15px 5px;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        @include animate(transform opacity);
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: 0;
+        height: 3px;
+        width: 100%;
+        left: 0;
+        right: 0;
+        transform: translateY(10px);
+        opacity: 0;
+    }
+
+    &,
+    &:link,
+    &:visited {
+        text-decoration: none;
+        opacity: .5;
+
+        .mobile-nav-wrapper & {
+            opacity: .9;
+        }
+    }
+
+    &:focus {
+        .focus-disabled & {}
+    }
+
+    .active > &,
+    &:hover {
+        opacity: 1;
+
+        &::after {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .is-current>&,
+    .active > &
+    &:active {
+        opacity: 1;
+    }
+
+    .is-current>& {
+        font-weight: $font-weight-heavy;
+    }
+
+    &[data-theme='dark'] {
+
+        &,
+        &:link,
+        &:visited,
+        &:active,
+        .active > & {
+            color: color(seed-white);
+        }
+
+        &::after {
+            background-color: color(seed-white);
+        }
+    }
+
+    &[data-theme='light'] {
+
+        &,
+        &:link,
+        &:visited,
+        &:active,
+        .active > & {
+            color: color(seed-black);
+        }
+
+        &::after {
+            background-color: color(seed-black);
+        }
+    }
+}
