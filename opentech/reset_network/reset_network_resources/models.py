@@ -1,11 +1,15 @@
 from django.db import models
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from taggit.models import TaggedItemBase
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel
-from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.core import blocks
+from wagtail.core.fields import StreamField
 from wagtail.core.models import Page, Orderable
 from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.embeds.blocks import EmbedBlock
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 
@@ -42,7 +46,7 @@ class ResetNetworkResourcePageCategory(TaggedItemBase):
     content_object = ParentalKey('ResetNetworkResourcePage', related_name='reset_network_resource_page_category', on_delete=models.CASCADE)
 
 
-class ResetNetworkResourcesPage(Page):
+class ResetNetworkResourcesPage(ResetNetworkBasePage):
 
     class Meta:
         verbose_name = "Reset Network Resources Page"
@@ -62,8 +66,13 @@ class ResetNetworkResourcesPage(Page):
 
         category = request.GET.get('category', None)
 
-        categories = ResetNetworkResourcePage.categories.order_by('name').all()
-
+        categories = []
+        # inefficient. need to review how to achive this via a query
+        for r in ResetNetworkResourcePage.objects.live().public():
+            for c in r.categories.all():
+                if c not in categories:
+                    categories.append(c)
+        categories = sorted(categories, key=lambda c: c.name)
         resources = ResetNetworkResourcePage.objects.live().public().order_by('id').all()
         if category:
             resources = resources.filter(categories__name=category)
@@ -75,7 +84,7 @@ class ResetNetworkResourcesPage(Page):
         return context
 
 
-class ResetNetworkResourcePage(Page):
+class ResetNetworkResourcePage(ResetNetworkBasePage):
 
     class Meta:
         verbose_name = "Reset Network Resource Page"
@@ -87,7 +96,11 @@ class ResetNetworkResourcePage(Page):
     content_image = models.ForeignKey('images.CustomImage', verbose_name='Image',
                                       null=True, blank=True, related_name='+',
                                       on_delete=models.SET_NULL)
-    content_text = RichTextField(blank=True, verbose_name='Text')
+    content_text = StreamField([
+        ('text', blocks.RichTextBlock()),
+        ('image', ImageChooserBlock()),
+        ('embed', EmbedBlock())
+    ])
 
     categories = ClusterTaggableManager(through=ResetNetworkResourcePageCategory, blank=True)
 
@@ -104,7 +117,7 @@ class ResetNetworkResourcePage(Page):
         MultiFieldPanel([
             FieldPanel('content_heading'),
             ImageChooserPanel('content_image'),
-            FieldPanel('content_text'),
+            StreamFieldPanel('content_text'),
             FieldPanel('categories'),
         ], heading='Content'),
         MultiFieldPanel([

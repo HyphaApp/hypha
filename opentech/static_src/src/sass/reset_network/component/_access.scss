@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  ACCESSIBILITY COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -16,73 +19,73 @@ $access-active: color(seed-red, 75);
 // CONTAINER
 
 .access-tray {
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: -200px;
-  z-index: $z-index-access;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: -200px;
+    z-index: $z-index-access;
 }
 
 // ELEMENTS
 
 .access {
-  left: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  height: 1px;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    height: 1px;
 }
 
 .access__item {
-  margin: 0;
-  padding: 0;
-  height: 1px;
+    margin: 0;
+    padding: 0;
+    height: 1px;
 }
 
 .access-bar {
-  @include animate(background-color transform);
-  background-color: $access-background;
-  color: $access-text;
-  display: block;
-  left: 0;
-  line-height: 1;
-  padding: #{$size-md}px;
-  position: absolute;
-  right: 0;
-  top: 0;
-
-  &:link,
-  &:visited {
+    @include animate(background-color transform);
     background-color: $access-background;
     color: $access-text;
-    text-decoration: none;
-  }
+    display: block;
+    left: 0;
+    line-height: 1;
+    padding: #{$size-md}px;
+    position: absolute;
+    right: 0;
+    top: 0;
 
-  &:hover,
-  &:focus {
-    color: $access-text;
-    outline: 0;
-    transform: translateY(200px);
-  }
+    &:link,
+    &:visited {
+        background-color: $access-background;
+        color: $access-text;
+        text-decoration: none;
+    }
 
-  &:hover {
-    background-color: $access-background-highlight;
-  }
+    &:hover,
+    &:focus {
+        color: $access-text;
+        outline: 0;
+        transform: translateY(200px);
+    }
 
-  &:active {}
+    &:hover {
+        background-color: $access-background-highlight;
+    }
+
+    &:active {}
 }
 
 .access-bar__highlight {
-  color: $access-highlight;
+    color: $access-highlight;
 
-  .access-bar:hover > &,
-  .access-bar:focus > & {
-    text-decoration: underline;
-  }
+    .access-bar:hover>&,
+    .access-bar:focus>& {
+        text-decoration: underline;
+    }
 
-  .access-bar:active > & {
-    color: $access-active;
-  }
+    .access-bar:active>& {
+        color: $access-active;
+    }
 }

@@ -1,109 +1,134 @@
 {% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags menu_tags cookie_accept_tags %}
 <!doctype html>
 <html class="no-js" lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} |
-{% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}
-</title>
-<link rel="stylesheet" href="{% static 'css/reset_network.css' %}">
-{% block extra_css %}{% endblock %}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/reset_network/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/reset_network/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/reset_network/favicon-16x16.png">
-<link rel="manifest" href="/static/favicon/reset_network/site.webmanifest">
-<link rel="mask-icon" href="/static/favicon/reset_network/safari-pinned-tab.svg" color="#000000">
-<link rel="shortcut icon" href="/static/favicon/reset_network/favicon.ico">
-<meta name="msapplication-TileColor" content="#000000">
-<meta name="msapplication-config" content="/static/favicon/reset_network/browserconfig.xml">
-<meta name="theme-color" content="#ffffff">
+    <title>{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% firstof page.seo_title page.title %}</title>
+    <meta name="description" content="{{ page.search_description }}" />
+    {% image page.social_image width-320 as social_img %}
+    <meta name="twitter:card" content="summary" />
+    {% if settings.utils.SocialMediaSettings.twitter_handle %}
+    <meta name="twitter:site" content="@{{ settings.utils.SocialMediaSettings.twitter_handle }}" />
+    {% endif %}
+    <meta name="twitter:title" content="{% firstof page.seo_title page.title %}" />
+    <meta name="twitter:description" content="{% firstof page.social_text settings.utils.SocialMediaSettings.default_sharing_text %}">
+    {% if page.social_image %}
+    <meta name="twitter:image" content="{{ request.site.root_url }}{{ social_img.url }}">
+    {% endif %}
 
-<script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/main.js' %}"></script>
-</head>
-<body class="{% block body_class %}base-grey{% endblock %}">
+    {% if settings.utils.SocialMediaSettings.facebook_app_id %}
+    <meta property="fb:app_id" content="{{ settings.utils.SocialMediaSettings.facebook_app_id }}" />
+    {% endif %}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ page.url }}" />
+    <meta property="og:title" content="{% firstof page.seo_title page.title %}" />
+    {% if page.social_image %}
+    <meta property="og:image" content="{{ request.site.root_url }}{{ social_img.url }}" />
+    {% endif %}
+    <meta property="og:description" content="{% firstof page.social_text settings.utils.SocialMediaSettings.default_sharing_text %}" />
+    <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
 
-{% wagtailuserbar %}
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/reset_network/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/reset_network/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/reset_network/favicon-16x16.png">
+    <link rel="manifest" href="/static/favicon/reset_network/site.webmanifest">
+    <link rel="mask-icon" href="/static/favicon/reset_network/safari-pinned-tab.svg" color="#000000">
+    <link rel="shortcut icon" href="/static/favicon/reset_network/favicon.ico">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-config" content="/static/favicon/reset_network/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
-{% include 'reset_network/includes/access.html' %}
+    <link rel="stylesheet" href="{% static 'css/reset_network.css' %}">
+    {% block extra_css %}{% endblock %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </head>
+  <body class="{% block body_class %}base-grey{% endblock %}">
 
-{% include 'reset_network/includes/messages.html' %}
+  {% wagtailuserbar %}
 
-<div class="stage">
+  {% include 'reset_network/includes/access.html' %}
 
-  <button type="button" class="stage__drawer-toggle-btn" aria-label="Open menu" id="open-drawer-btn"></button>
+  {% include 'reset_network/includes/messages.html' %}
 
-  <div id="stage-header" class="stage__header" aria-hidden="true">
-    <div class="artifact artifact--1">
-      <a class="artifact-link" href="{{ request.site.root_url }}">Project Alpha</a>
-    </div>
-    <div class="artifact artifact--2">
-      <span class="artifact-feature artifact-feature--1"></span>
-      <span class="artifact-feature artifact-feature--2"></span>
-    </div>
-    <div class="artifact artifact--3"></div>
-    <div class="artifact artifact--4">
-      <span class="artifact-feature artifact-feature--1"></span>
-      <span class="artifact-feature artifact-feature--2"></span>
-      <span class="artifact-feature artifact-feature--3"></span>
-      <span class="artifact-feature artifact-feature--4"></span>
-      <span class="artifact-feature artifact-feature--5"></span>
-    </div>
-  </div>
+  <div class="stage">
 
-  <div class="stage__nav" id="stage-nav">
-    <div class="main-nav-container">
-      <nav class="main-nav-wrapper" id="navigation" role="navigation">
-        {% resetnetworkmainmenu %}
-      </nav>
-    </div>
-  </div>
+    <button type="button" class="stage__drawer-toggle-btn" aria-label="Open menu" id="open-drawer-btn"></button>
 
-  <main id="content" class="stage__main" data-stage>
-    {% block content %}{% endblock %}
-  </main>
-
-  <div class="stage__drawer" aria-hidden="true" id="stage-drawer">
-    <button class="stage__drawer-close" type="button" aria-label="Close menu" id="close-drawer-btn"></button>
-    <div class="mobile-nav-container scrollbars">
-      <div class="mobile-nav-wrapper scroller">
-        {% resetnetworkmainmenu %}
+    <div id="stage-header" class="stage__header" aria-hidden="true">
+      <div class="artifact artifact--1">
+        <a class="artifact-link" href="{{ request.site.root_url }}">
+          <svg class="artifact-link-svg" version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 385.8 110.3"><path d="M230.3 51.7c-1.7-12.7-11.9-22.9-30.4-22.9-18.1 0-28.8 9.8-28.8 21.8 0 18.1 17.5 19.4 29.2 22.3 11 2.7 21.1 3.3 21.1 14.5 0 5.1-5.1 11.9-18.2 11.9-17.8 0-21.7-7.3-22.8-15.2h-12.1c1.5 15.5 12.4 25.7 34.9 25.7 17.5 0 30.3-9.2 30.3-23.2 0-19-15.5-21.2-29.2-24.6-10.7-2.6-21.1-3.3-21.1-12.4 0-6 5.9-10.4 16.7-10.4 13.5 0 16.9 6.7 18.3 12.4h12.1zM278.9 39.3c14.5 0 23.8 10.2 23.8 22.6H254c0-12.3 10.4-22.6 24.9-22.6m.1 60c-16.7 0-25-13-25-26.8h60.7c0-27.3-11.7-43.7-35.9-43.7-22.4 0-36.9 14.9-36.9 40.5 0 24.1 14.2 40.5 37.5 40.5 19.1 0 30.1-11.4 34-25.8h-12.1c-1.2 5.3-6.9 15.3-22.3 15.3M358.3 39.3V28.8h-15.1V12h-12.1v16.8h-11.3v10.5h11.3v49.6c0 15.7 7.8 19.7 18.1 19.7 3.2 0 6.3-.3 9-.9V97.2c-10.2.8-15.1-.8-15.1-9.5V39.3h15.2zM124.8 39.3c14.5 0 23.8 10.2 23.8 22.6H99.9c0-12.3 10.4-22.6 24.9-22.6m.1 60c-16.7 0-25-13-25-26.8h60.7c0-27.3-11.7-43.7-35.9-43.7-22.4 0-36.9 14.9-36.9 40.5 0 24.1 14.2 40.5 37.5 40.5 19.1 0 30.1-11.4 34-25.8h-12.1c-1.2 5.3-6.9 15.3-22.3 15.3M13.6 12.1h27c11.1 0 25.2 1.4 25.2 20 0 18.7-14 20-25.2 20h-27v-40zM0 107.7h13.6V64.2h33.5l18.5 43.5h14.7l-20.6-48c12-4 19.6-14.5 19.6-29.1C79.2 11.4 64.9 0 43.7 0H0v107.7zM377.6 108.6c4.3 0 7.8-3.5 7.8-7.8s-3.5-7.8-7.8-7.8-7.8 3.5-7.8 7.8c.1 4.3 3.5 7.8 7.8 7.8"/></svg>
+        </a>
+      </div>
+      <div class="artifact artifact--2">
+        <span class="artifact-feature artifact-feature--1"></span>
+        <span class="artifact-feature artifact-feature--2"></span>
+      </div>
+      <div class="artifact artifact--3"></div>
+      <div class="artifact artifact--4">
+        <span class="artifact-feature artifact-feature--1"></span>
+        <span class="artifact-feature artifact-feature--2"></span>
+        <span class="artifact-feature artifact-feature--3"></span>
+        <span class="artifact-feature artifact-feature--4"></span>
+        <span class="artifact-feature artifact-feature--5"></span>
       </div>
     </div>
+
+    <div class="stage__nav" id="stage-nav">
+      <div class="main-nav-container">
+        <nav class="main-nav-wrapper" id="navigation" role="navigation">
+          {% resetnetworkmainmenu %}
+        </nav>
+      </div>
+    </div>
+
+    <main id="content" class="stage__main" data-stage>
+      {% block content %}{% endblock %}
+    </main>
+
+    <div class="stage__drawer" aria-hidden="true" id="stage-drawer">
+      <button class="stage__drawer-close" type="button" aria-label="Close menu" id="close-drawer-btn"></button>
+      <div class="mobile-nav-container scrollbars">
+        <div class="mobile-nav-wrapper scroller">
+          {% resetnetworkmainmenu %}
+        </div>
+      </div>
+    </div>
+
+    <footer class="stage__footer footer contain reveal">
+      {% resetnetworkfootermenu %}
+    </footer>
   </div>
 
-  <footer class="stage__footer footer contain reveal">
-    {% resetnetworkfootermenu %}
-  </footer>
-</div>
+  {% include 'reset_network/includes/foot.html' %}
 
-{% include 'reset_network/includes/foot.html' %}
+  {% resetnetworkcookieaccept %}
 
-{% resetnetworkcookieaccept %}
+  {% include "reset_network/includes/svgs.html" %}
 
-{% include "reset_network/includes/svgs.html" %}
+  {% block extra_js %}{% endblock %}
 
-{% block extra_js %}{% endblock %}
+  {% if MATOMO_URL and MATOMO_SITEID %}
+  {# we are only expecting strings, so make sure we escape the values #}
+  <script>
+    var matomo = {
+      'url': '{{ MATOMO_URL }}',
+      'siteid': '{{ MATOMO_SITEID }}'
+    };
+  </script>
+  {% endif %}
+  <script src="{% static 'js/reset-network/slick.min.js' %}"></script>
+  <script src="{% static 'js/reset-network/apply-form.js' %}"></script>
+  <script src="{% static 'js/reset-network/focus.js' %}"></script>
+  <script src="{% static 'js/reset-network/animations.js' %}"></script>
+  <script src="{% static 'js/reset-network/people.js' %}"></script>
+  <script src="{% static 'js/reset-network/tracking.js' %}"></script>
+  <script src="{% static 'js/reset-network/carousel.js' %}"></script>
+  <script src="{% static 'js/reset-network/menu.js' %}"></script>
+  <script src="{% static 'js/reset-network/scroll.js' %}"></script>
 
-{% if MATOMO_URL and MATOMO_SITEID %}
-{# we are only expecting strings, so make sure we escape the values #}
-<script>
-  var matomo = {
-    'url': '{{ MATOMO_URL }}',
-    'siteid': '{{ MATOMO_SITEID }}'
-  };
-</script>
-{% endif %}
-<script src="{% static 'js/reset-network/slick.min.js' %}"></script>
-<script src="{% static 'js/reset-network/focus.js' %}"></script>
-<script src="{% static 'js/reset-network/animations.js' %}"></script>
-<script src="{% static 'js/reset-network/people.js' %}"></script>
-<script src="{% static 'js/reset-network/tracking.js' %}"></script>
-<script src="{% static 'js/reset-network/carousel.js' %}"></script>
-<script src="{% static 'js/reset-network/menu.js' %}"></script>
-<script src="{% static 'js/reset-network/scroll.js' %}"></script>
-
-</body>
+  </body>
 </html>

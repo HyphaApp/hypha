@@ -42,7 +42,7 @@
       </div>
       {% if page.content_link and page.content_link_text %}
       <div class="para__action">
-        <a href="{% pageurl page.content_link %}" class="button">
+        <a href="{% pageurl page.content_link %}" data-button="" class="button">
           <span class="button__drop"></span>
           <span class="button__label">{{ page.content_link_text }}</span>
         </a>
@@ -72,7 +72,7 @@
       </div>
       {% if page.section_1_link and page.section_1_link_text %}
       <div class="para__action">
-        <a href="{% pageurl page.section_1_link %}" class="button">
+        <a href="{% pageurl page.section_1_link %}" data-button="" class="button">
           <span class="button__drop"></span>
           <span class="button__label">{{ page.section_1_link_text }}</span>
         </a>

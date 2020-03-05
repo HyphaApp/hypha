@@ -1,8 +1,14 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  CHECKBOX COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//  vendor prefixes used are for inputs only
+//  sass-lint:disable no-vendor-prefixes
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -21,195 +27,196 @@ $checkbox-field-mark-disabled: color(seed-orange) !default;
 // CONTAINER
 
 .checkbox-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 auto;
-  width: 100%;
-  max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: 100%;
 
-  @include media-min-xs {
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-width: 500px;
+    @include media-min-xs {
+        flex-direction: row;
+        flex-wrap: wrap;
+        max-width: 500px;
 
-    .checkbox {
-      width: 50%;
-      padding-right: 20px;
+        .checkbox {
+            width: 50%;
+            padding-right: 20px;
+        }
     }
-  }
 
-  .checkbox + .checkbox {
-    margin: 10px 0 0;
+    .checkbox+.checkbox {
+        margin: 10px 0 0;
 
-    @include media-min-sm {
-      margin: 0;
+        @include media-min-sm {
+            margin: 0;
+        }
     }
-  }
 }
 
 // ELEMENTS
 .checkbox {
-  position: relative;
+    position: relative;
 }
 
 .checkbox input {
-  -webkit-appearance: none;
-  appearance: none;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  top: 3px;
-  left: 0;
-  z-index: 5;
-  padding: 0;
+    -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+    appearance: none;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    top: 3px;
+    left: 0;
+    z-index: 5;
+    padding: 0;
 
-  &::-ms-check {
-    display: none;
-  }
+    &::-ms-check { // sass-lint:disable-line no-vendor-prefixes
+        display: none;
+    }
 
-  &:focus {
-    outline: none;
-  }
+    &:focus {
+        outline: none;
+    }
 
-  &:checked {
-    background: transparent;
-  }
+    &:checked {
+        background: transparent;
+    }
 
-  &[disabled] {
-    cursor: not-allowed;
-  }
+    &[disabled] {
+        cursor: not-allowed;
+    }
 }
 
 .checkbox__label {
-  @include animate(color);
-  @include font-size-md();
-  padding: 2px 10px 4px 40px;
-  cursor: pointer;
+    @include animate(color);
+    @include font-size-md();
+    padding: 2px 10px 4px 40px;
+    cursor: pointer;
 
-  .checkbox__field:checked ~ & {
-    color: $checkbox-label-checked;
-  }
+    .checkbox__field:checked~& {
+        color: $checkbox-label-checked;
+    }
 
-  .checkbox__field[disabled] ~ &,
-  .checkbox__field:disabled ~ & {
-    color: $checkbox-label-disabled;
-    cursor: not-allowed;
-  }
+    .checkbox__field[disabled]~&,
+    .checkbox__field:disabled~& {
+        color: $checkbox-label-disabled;
+        cursor: not-allowed;
+    }
 
-  &::after {
-    content: '';
-  }
+    &::after {
+        content: '';
+    }
 }
 
 .checkbox__fake {
-  @include animate(border-color background-color);
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-width: 2px;
-  border-style: solid;
-  background-color: $checkbox-field-background;
-  border-color: $checkbox-field-border;
-  top: 3px;
-  left: 0;
-
-  .theme-grey &,
-  .theme-dark &,
-  .theme-darkest & {
-    color: color(seed-white);
-    border-color: color(seed-white, null, .5);
-    background-color: transparent;
-  }
-
-  .theme-light &,
-  .theme-lightest & {
-    color: color(seed-black);
-    border-color: color(seed-black, null, .5);
-    background-color: transparent;
-  }
-
-  &::before,
-  &::after {
-    @include animate(transform);
-    background-color: $checkbox-field-mark;
-    content: ' ';
-    display: block;
+    @include animate(border-color background-color);
     position: absolute;
-    width: 2px;
-    height: 12px;
-    left: 50%;
-    top: 50%;
-    will-change: transform;
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    border-style: solid;
+    background-color: $checkbox-field-background;
+    border-color: $checkbox-field-border;
+    top: 3px;
+    left: 0;
 
     .theme-grey &,
     .theme-dark &,
     .theme-darkest & {
-      background-color: color(seed-white);
+        color: color(seed-white);
+        border-color: color(seed-white, null, .5);
+        background-color: transparent;
     }
 
     .theme-light &,
     .theme-lightest & {
-      background-color: color(seed-black);
+        color: color(seed-black);
+        border-color: color(seed-black, null, .5);
+        background-color: transparent;
     }
-  }
-
-  &::before {
-    transform: translate3d(1px, -6px, 0) scale(0) rotate(35deg);
-    height: 13px;
-  }
-
-  &::after {
-    transform: translate3d(-4px, 0, 0) scale(0) rotate(-45deg);
-    height: 6px;
-  }
-
-  &:hover,
-  .checkbox input:hover ~ &,
-  .focus-disabled .checkbox input:focus ~ & {
-    .theme-grey &,
-    .theme-dark &,
-    .theme-darkest & {
-      border-color: color(seed-white, null, 1);
-    }
-
-    .theme-light &,
-    .theme-lightest & {
-      border-color: color(seed-black, null, 1);
-    }
-  }
-
-  .checkbox input:checked ~ & {
-    &::before {
-      transform: translate3d(1px, -6px, 0) scale(1) rotate(35deg);
-      height: 13px;
-    }
-
-    &::after {
-      transform: translate3d(-4px, 0, 0) scale(1) rotate(-45deg);
-    }
-  }
-
-  .checkbox input:focus ~ & {
-    border: 1px solid $color-focus-border;
-    outline: none;
-  }
-
-  .is-disabled &,
-  .checkbox input:disabled ~ & {
-    border-color: $checkbox-field-border-disabled;
-    background-color: $checkbox-field-background-disabled;
 
     &::before,
     &::after {
-      background-color: $checkbox-field-mark-disabled;
-      background-color: $checkbox-field-border-disabled;
-    }
-  }
+        @include animate(transform);
+        background-color: $checkbox-field-mark;
+        content: ' ';
+        display: block;
+        position: absolute;
+        width: 2px;
+        height: 12px;
+        left: 50%;
+        top: 50%;
+        will-change: transform;
 
-  .is-error & {
-    border-color: $checkbox-field-border-error;
-  }
+        .theme-grey &,
+        .theme-dark &,
+        .theme-darkest & {
+            background-color: color(seed-white);
+        }
+
+        .theme-light &,
+        .theme-lightest & {
+            background-color: color(seed-black);
+        }
+    }
+
+    &::before {
+        transform: translate3d(1px, -6px, 0) scale(0) rotate(35deg);
+        height: 13px;
+    }
+
+    &::after {
+        transform: translate3d(-4px, 0, 0) scale(0) rotate(-45deg);
+        height: 6px;
+    }
+
+    &:hover,
+    .checkbox input:hover~&,
+    .focus-disabled .checkbox input:focus~& {
+
+        .theme-grey &,
+        .theme-dark &,
+        .theme-darkest & {
+            border-color: color(seed-white, null, 1);
+        }
+
+        .theme-light &,
+        .theme-lightest & {
+            border-color: color(seed-black, null, 1);
+        }
+    }
+
+    .checkbox input:checked~& {
+        &::before {
+            transform: translate3d(1px, -6px, 0) scale(1) rotate(35deg);
+            height: 13px;
+        }
+
+        &::after {
+            transform: translate3d(-4px, 0, 0) scale(1) rotate(-45deg);
+        }
+    }
+
+    .checkbox input:focus~& {
+        border: 1px solid $color-focus-border;
+        outline: none;
+    }
+
+    .is-disabled &,
+    .checkbox input:disabled~& {
+        border-color: $checkbox-field-border-disabled;
+        background-color: $checkbox-field-background-disabled;
+
+        &::before,
+        &::after {
+            background-color: $checkbox-field-mark-disabled;
+            border-color: $checkbox-field-border-disabled;
+        }
+    }
+
+    .is-error & {
+        border-color: $checkbox-field-border-error;
+    }
 }
 
 // STATES

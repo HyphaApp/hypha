@@ -1,24 +1,27 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  GIF HEADER IMAGE
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .gif-img {
-  opacity: 0;
-  overflow: hidden;
+    opacity: 0;
+    overflow: hidden;
 
-  &.is-displayed {
-    opacity: 1;
-  }
+    &.is-displayed {
+        opacity: 1;
+    }
 }
 
 .gif-img__img {
-  width: 100%;
-  height: auto;
-  max-width: 820px;
+    width: 100%;
+    height: auto;
+    max-width: 870px;
 }

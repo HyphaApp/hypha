@@ -1,25 +1,29 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  THEME TOOLS
 //  N.B: Only mixins here NEVER anything that outputs CSS directly
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
-@mixin themeSwitch($attr, $dark: seed-black, $light: seed-white) {
-  .theme-grey &,
-  .theme-lightest &,
-  .theme-light & {
-    @for $i from 1 through length($attr) {
-      $a: nth($attr, $i);
-      #{$a}: color($dark);
-    }
-  }
+@mixin theme-switch($attr, $dark: seed-black, $light: seed-white) {
 
-  .theme-dark &,
-  .theme-darkest & {
-    @for $i from 1 through length($attr) {
-      $a: nth($attr, $i);
-      #{$a}: color($light);
+    .theme-grey &,
+    .theme-lightest &,
+    .theme-light & {
+        @for $i from 1 through length($attr) {
+            $a: nth($attr, $i);
+            #{$a}: color($dark);
+        }
     }
-  }
+
+    .theme-dark &,
+    .theme-darkest & {
+        @for $i from 1 through length($attr) {
+            $a: nth($attr, $i);
+            #{$a}: color($light);
+        }
+    }
 }

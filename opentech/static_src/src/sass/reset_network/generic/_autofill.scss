@@ -1,15 +1,19 @@
-
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC AUTOFILL
 //  N.B: DON'T modify only fix issues and fold back into placeholder module
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
+// sass-lint:disable no-vendor-prefixes
 input:-webkit-autofill {
-  -webkit-box-shadow: inset 0 0 0 9999px color(seed-white);
+    -webkit-box-shadow: inset 0 0 0 9999px color(seed-white);
 }
+// sass-lint:enable no-vendor-prefixes

@@ -1,19 +1,22 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  SPINNER ANIMATIONS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // KEYFRAMES
 
 @keyframes spinner-spin {
-  100% {
-    transform: translate3d(-50%, -50%, 0) rotate(360deg);
-  }
+    100% {
+        transform: translate3d(-50%, -50%, 0) rotate(360deg);
+    }
 }
 
 @keyframes spinner-reverse-spin {
-  100% {
-    transform: translate3d(-50%, -50%, 0) rotate(-360deg);
-  }
+    100% {
+        transform: translate3d(-50%, -50%, 0) rotate(-360deg);
+    }
 }

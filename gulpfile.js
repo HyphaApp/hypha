@@ -289,7 +289,7 @@ gulp.task('watch:app', function watch (callback) {
 gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'favicon', 'lint'), 'collectstatic'));
 
 // Watch everything.
-gulp.task('watch', gulp.series('build', gulp.parallel('watch:css', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static')));
+gulp.task('watch', gulp.series('build', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static')));
 
 // Deploy everything.
 gulp.task('deploy', gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'favicon'));

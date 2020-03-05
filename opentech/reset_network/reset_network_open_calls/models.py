@@ -1,16 +1,17 @@
 from django.conf import settings
+from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from opentech.apply.activity.tasks import send_mail
-from wagtail.core.fields import RichTextField
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
+from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
-from django.contrib import messages
 
 
-class ResetNetworkOpenCallsPage(Page):
+class ResetNetworkOpenCallsPage(ResetNetworkBasePage):
     class Meta:
         verbose_name = "Reset Network Open Calls Page"
 
@@ -93,7 +94,7 @@ class ResetNetworkOpenCallsPage(Page):
         )
 
 
-class ResetNetworkOpenCallPage(Page):
+class ResetNetworkOpenCallPage(ResetNetworkBasePage):
     class Meta:
         verbose_name = "Reset Network Open Call Page"
 

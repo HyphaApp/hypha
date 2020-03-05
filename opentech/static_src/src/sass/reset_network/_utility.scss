@@ -1,11 +1,11 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 // UTILITIES
 // This is the highest specificity layer - it includes the most explicit
 // types of rule, with the most narrow focus. Declarations in this layer can
 // carry !important.
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 @import 'utility/a11y';
 @import 'utility/contain';

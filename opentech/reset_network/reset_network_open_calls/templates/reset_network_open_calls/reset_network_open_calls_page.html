@@ -24,23 +24,48 @@
 
 {% if open_calls and open_calls|length %}
 <section class="para theme-lightest" data-section-theme="light">
-    <div class="para__wrap contain reveal">
-        <div class="para__content">
-            {% for open_call in open_calls %}
-                {% with item=open_call.specific %}
-                    <div class="call-card">
-                        {{ item.card_heading }}
-                        {{ item.card_text }}
-                        {{ item.deadline|date:"jS F Y" }}
-                        <a href="{% pageurl item %}">View details</a>
-                    </div>
-                {% endwith %}
-            {% endfor %}
+  <div class="para__wrap contain reveal">
+    <div class="para__content">
+      {% for open_call in open_calls %}
+      {% with item=open_call.specific %}
+      <div class="call-card theme-darkest">
+        <div class="call-card__content">
+          <h2 class="call-card__title">{{ item.card_heading }}</h2>
+          <div class="call-card__body">
+            {{ item.card_text }}
+          </div>
+          {# dont show if its open and there is no deadline #}
+          {% if item.is_open and item.deadline %}
+          <div class="call-card__deadline">
+            [ Deadline: {{ item.deadline|date:"jS F Y" }} ]
+          </div>
+          {% endif %}
+          {% if not item.is_open %}
+          <div class="call-card__deadline">
+            [ Closed ]
+          </div>
+          {% endif %}
         </div>
+        <div class="call-card__action">
+          <a class="button" data-button="" href="{% pageurl item %}">
+            <span class="button__drop"></span>
+            <span class="button__label">View details</span>
+          </a>
+        </div>
+      </div>
+      {% endwith %}
+      {% endfor %}
     </div>
+  </div>
 </section>
 
-{% include "reset_network/includes/pagination.html" with resource=open_calls %}
+<div class="para theme-lightest" data-section-theme="light">
+  <div class="para__wrap contain reveal">
+
+    {% include "reset_network/includes/pagination.html" with resource=open_calls %}
+
+  </div>
+</div>
 
 {% else %}
 
@@ -60,30 +85,31 @@
 
           {% for field in form %}
 
-            {% if field.id_for_label != "id_confirm" %}
-              <div class="form-row">
-                <div class="input">
-                  <label class="input__label sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  <div class="input__wrap textbox">
-                    {{ field }}
-                    <div class="textbox__focus"></div>
-                  </div>
-                </div>
+          {% if field.id_for_label != "id_confirm" %}
+          <div class="form-row">
+            <div class="input">
+              <label class="input__label sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <div class="input__wrap textbox">
+                {{ field }}
+                <div class="textbox__focus"></div>
               </div>
-            {% endif %}
+            </div>
+          </div>
+          {% endif %}
 
-            {% if field.id_for_label == "id_confirm" %}
-              <div class="form-row">
-                <div class="input checkbox">
-                  {{ field }}
-                  <span class="checkbox__fake"></span>
-                  <label for="{{ field.id_for_label }}" class="input__label input__label--check checkbox__label">{{ field.help_text }}<label>
-                </div>
-              </div>
-            {% endif %}
+          {% if field.id_for_label == "id_confirm" %}
+          <div class="form-row">
+            <div class="input checkbox">
+              {{ field }}
+              <span class="checkbox__fake"></span>
+              <label for="{{ field.id_for_label }}"
+                class="input__label input__label--check checkbox__label">{{ field.help_text }}<label>
+            </div>
+          </div>
+          {% endif %}
 
           {% endfor %}
-          <button type="submit" class="button" disabled>
+          <button type="submit" class="button" data-button="" disabled>
             <span class="button__drop"></span>
             <span class="button__label">Keep me informed</span>
           </button>
@@ -98,5 +124,5 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'js/public/protect-form.js' %}"></script>
+<script src="{% static 'js/public/protect-form.js' %}"></script>
 {% endblock %}

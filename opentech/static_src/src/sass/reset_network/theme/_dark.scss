@@ -1,19 +1,21 @@
-
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  DARK THEME
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // THEME
 
 .theme-dark {
-  background-color: color(seed-black, 11);
-  color: color(text-lightest);
+    background-color: color(seed-black, 11);
+    color: color(text-lightest);
 
-  a {
-    @include link-lightest();
-  }
+    a {
+        @include link-lightest();
+    }
 }
