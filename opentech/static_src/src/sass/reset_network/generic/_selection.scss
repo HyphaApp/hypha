@@ -1,18 +1,23 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC SELECTION
 //  N.B: DON'T modify only fix issues and fold back into placeholder module
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
-$color-selection: #99f !default;
+$color-selection: rgb(153, 153, 255) !default;
 
 // ELEMENTS
 
+// sass-lint:disable no-vendor-prefixes
 ::-moz-selection,
 ::selection {
-  color: $color-selection;
-  text-shadow: none;
+    color: $color-selection;
+    text-shadow: none;
 }
+// sass-lint:enable no-vendor-prefixes

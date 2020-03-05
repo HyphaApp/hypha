@@ -73,3 +73,5 @@ if settings.DEBUG:
 
 
 base_urlpatterns = [*urlpatterns]
+
+handler404 = 'opentech.apply.utils.views.page_not_found'

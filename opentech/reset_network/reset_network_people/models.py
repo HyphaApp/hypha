@@ -1,13 +1,14 @@
 from django.db import models
+from opentech.reset_network.reset_network_person.models import ResetNetworkPerson
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldPanel, StreamFieldPanel
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page
 from wagtail.snippets.blocks import SnippetChooserBlock
-from opentech.reset_network.reset_network_person.models import ResetNetworkPerson
 
 
-class ResetNetworkPeoplePage(Page):
+class ResetNetworkPeoplePage(ResetNetworkBasePage):
     class Meta:
         verbose_name = "Reset Network People Page"
 

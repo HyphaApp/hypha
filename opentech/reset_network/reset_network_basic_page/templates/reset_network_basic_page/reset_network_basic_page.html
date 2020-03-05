@@ -6,12 +6,9 @@
 {% block body_class %}base-darkest{% endblock %}
 {% block content %}
 
-<div class="para para--rte theme-darkest" data-section-theme="dark">
+<div class="para para--article para--head para--col-xxl theme-darkest" data-section-theme="dark">
   <div class="para__wrap contain">
     <article class="para__content">
-      <header class="para__title sr-only">
-        <h1>{{ page.content_heading }}</h1>
-      </header>
       <div class="para__body rte">
         {{ page.content_text|richtext  }}
       </div>

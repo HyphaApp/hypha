@@ -1,4 +1,4 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 // GENERICS
 // First layer that produces any CSS. Very high-level, far reaching styles.
@@ -7,7 +7,7 @@
 // bare, unclassed HTML elements. This layer is the last one with element-based
 // selectors, and is very rarely added to or modified after initial setup.
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 @import 'generic/normalize';
 @import 'generic/defaults';

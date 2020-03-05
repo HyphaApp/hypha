@@ -1,41 +1,45 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  SCROLLBARS UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//============================================================================//
+//  vendor prefixes used are for browser theming only
+//  sass-lint:disable no-vendor-prefixes
+//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .is-not-touch {
-  .scrollbars::-webkit-scrollbar {
-    width: #{$size-lg}px;
-  }
+    .scrollbars::-webkit-scrollbar {
+        width: #{$size-lg}px;
+    }
 
-  .scrollbars::-webkit-scrollbar-track {
-    border-radius: 0;
-    background-color: color(seed-grey, 50);
-  }
+    .scrollbars::-webkit-scrollbar-track {
+        border-radius: 0;
+        background-color: color(seed-grey, 50);
+    }
 
-  .scrollbars::-webkit-scrollbar-thumb {
-    border-radius: 0;
-    background-color: color(seed-grey, -50);
-  }
+    .scrollbars::-webkit-scrollbar-thumb {
+        border-radius: 0;
+        background-color: color(seed-grey, -50);
+    }
 }
 
 .scroll-container {
-  position: relative;
+    position: relative;
 }
 
 .scroller {
-  overflow: hidden;
-  overflow-y: auto;
-  height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    height: 100%;
 }
 
 .scroller-horizontal {
-  overflow: hidden;
-  overflow-x: auto;
-  width: 100%;
+    overflow: hidden;
+    overflow-x: auto;
+    width: 100%;
 }

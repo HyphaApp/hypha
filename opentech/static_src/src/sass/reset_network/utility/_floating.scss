@@ -1,41 +1,42 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  POSITIONING UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 @include media-min-sm {
-  .right\@sm {
-    float: right;
-  }
+    .right\@sm {
+        float: right;
+    }
 
-  .left\@sm {
-    float: left;
-  }
+    .left\@sm {
+        float: left;
+    }
 }
 
 .right {
-  float: right;
+    float: right;
 }
 
 .left {
-  float: left;
+    float: left;
 }
 
 .center {
-  margin: inherit auto;
+    margin: inherit auto;
 }
 
 .pull-left {
-  float: left;
-  margin-right: #{$size-md}px;
+    float: left;
+    margin-right: #{$size-md}px;
 }
 
 .pull-right {
-  float: right;
-  margin-left: #{$size-md}px;
+    float: right;
+    margin-left: #{$size-md}px;
 }

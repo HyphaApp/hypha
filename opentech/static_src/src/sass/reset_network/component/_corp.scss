@@ -1,97 +1,108 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  CORP COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .corp {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  min-width: 100%;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-
-  @include media-min-sm {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    min-width: 100%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-  }
+
+    @include media-min-xs {
+        flex-direction: row;
+    }
+
+    @include media-min-sm {
+        justify-content: center;
+    }
 }
 
 .corp__item {
-  flex: 0 0 auto;
-  position: relative;
-
-  @include media-max-sm {
-    &:nth-child(2n+2)::after {
-      display: none;
-    }
-  }
-
-  @include media-min-sm {
     flex: 0 0 auto;
-  }
+    position: relative;
 
-  &::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    top: 50%;
-    right: 0;
-    width: 1px;
-    height: 20px;
-    transform: translateY(-50%);
-
-    .base-grey &,
-    .base-lightest &,
-    .base-light & {
-      background-color: color(text-darkest);
+    @include media-max-sm {
+        &:nth-child(2n+2)::after {
+            display: none;
+        }
     }
-  
-    .base-dark &,
-    .base-darkest & {
-      background-color: color(text-lightest);
-    }
-  }
 
-  &:last-child::after {
-    display: none;
-  }
+    @include media-min-sm {
+        flex: 0 0 auto;
+    }
+
+    &::after {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 1px;
+        height: 20px;
+        transform: translateY(-50%);
+
+        .base-grey &,
+        .base-lightest &,
+        .base-light & {
+            background-color: color(text-darkest);
+        }
+
+        .base-dark &,
+        .base-darkest & {
+            background-color: color(text-lightest);
+        }
+
+        @include media-max-xs {
+            display: none;
+        }
+    }
+
+    &:last-child::after {
+        display: none;
+    }
 }
 
 .corp-link {
-  @include animate(background-color opacity);
-  @include font-size-sm();
-  display: block;
-  text-decoration: none;
-  padding: 4px 19px;
-
-  &:link,
-  &:visited {
+    @include animate(background-color opacity);
+    @include font-size-sm();
+    display: block;
     text-decoration: none;
-  }
+    padding: 4px 19px;
 
-  &:focus {
-    outline: none;
-    opacity: .8;
-
-    .focus-disabled & {
-      opacity: .8;
+    &:link,
+    &:visited {
+        text-decoration: none;
     }
-  }
 
-  &:hover {
-    opacity: .8;
-  }
+    &:focus {
+        outline: none;
+        opacity: .8;
 
-  &:active {
-    outline: none;
-    opacity: .5;
-  }
+        .focus-disabled & {
+            opacity: .8;
+        }
+    }
+
+    &:hover {
+        opacity: .8;
+    }
+
+    &:active {
+        outline: none;
+        opacity: .5;
+    }
 }

@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  ICON COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -15,42 +18,42 @@ $icon-xl: 55 !default;
 // ELEMENTS
 
 .icon {
-  align-items: center;
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
 
-  svg {
-    @include animate(fill);
-    height: 100%;
-    transform: scale(1);
-    width: 100%;
-  }
+    svg {
+        @include animate(fill);
+        height: 100%;
+        transform: scale(1);
+        width: 100%;
+    }
 }
 
 // VARIANTS
 
 .icon--xs {
-  height: #{$icon-xs}px;
-  width: #{$icon-xs}px;
+    height: #{$icon-xs}px;
+    width: #{$icon-xs}px;
 }
 
 .icon--sm {
-  height: #{$icon-sm}px;
-  width: #{$icon-sm}px;
+    height: #{$icon-sm}px;
+    width: #{$icon-sm}px;
 }
 
 .icon--md {
-  height: #{$icon-md}px;
-  width: #{$icon-md}px;
+    height: #{$icon-md}px;
+    width: #{$icon-md}px;
 }
 
 .icon--lg {
-  height: #{$icon-lg}px;
-  width: #{$icon-lg}px;
+    height: #{$icon-lg}px;
+    width: #{$icon-lg}px;
 }
 
 .icon--xl {
-  height: #{$icon-xl}px;
-  width: #{$icon-xl}px;
+    height: #{$icon-xl}px;
+    width: #{$icon-xl}px;
 }

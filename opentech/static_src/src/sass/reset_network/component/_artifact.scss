@@ -1,14 +1,17 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  ARTIFACT COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 /************************************ VARS ************************************/
 
 // Colors
-$color-artifact-bg-light: #fff;
-$color-artifact-bg-dark: #000;
+$color-artifact-bg-light: color(seed-white);
+$color-artifact-bg-dark: color(seed-black);
 
 // Gap between circle and little rectangles
 $artifact-gutter: 23px;
@@ -40,256 +43,308 @@ $artifact-3-dimension-xl: 300px;
 /******************************** COMPONENTS **********************************/
 
 .artifact {
-  backface-visibility: hidden;
-  left: 50%;
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  transition: color $animation-speed-fast, background-color $animation-speed-fast, height $animation-speed-slow, width $animation-speed-slow, left $animation-speed-slow, top $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
-  will-change: color, background-color, width, height, left, top, transform, opacity;
+    backface-visibility: hidden;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transition: color $animation-speed-fast, background-color $animation-speed-fast, height $animation-speed-slow, width $animation-speed-slow, left $animation-speed-slow, top $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
+    will-change: color, background-color, width, height, left, top, transform, opacity;
 
-  .has-no-artifacts-animation & {
-    transition: none;
-  }
+    .has-no-artifacts-animation & {
+        transition: none;
+    }
 }
 
 .artifact-feature {
-  backface-visibility: hidden;
-  background-color: $color-artifact-bg-light;
-  display: block;
-  height: $artifact-feature-height;
-  transition: background-color $animation-speed-fast, width $animation-speed-slow, height $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
-  width: $artifact-feature-width;
-  will-change: background-color, width, height, transform, opacity;
+    backface-visibility: hidden;
+    background-color: $color-artifact-bg-light;
+    display: block;
+    height: $artifact-feature-height;
+    transition: background-color $animation-speed-fast, width $animation-speed-slow, height $animation-speed-slow, transform $animation-speed-slow, opacity $animation-speed-fast;
+    width: $artifact-feature-width;
+    will-change: background-color, width, height, transform, opacity;
 
-  .has-no-artifacts-animation & {
-    transition: none;
-  }
+    .has-no-artifacts-animation & {
+        transition: none;
+    }
 
-  [data-theme="light"] & {
-    background-color: $color-artifact-bg-dark;
-  }
+    [data-theme='light'] & {
+        background-color: $color-artifact-bg-dark;
+    }
 
-  @include media-min-xs {
-    height: $artifact-feature-height-lg;
-    width: $artifact-feature-width-lg;
-  }
+    @include media-min-xs {
+        height: $artifact-feature-height-lg;
+        width: $artifact-feature-width-lg;
+    }
 
-  @include media-min-md {
-    height: $artifact-feature-height-xl;
-    width: $artifact-feature-width-xl;
-  }
+    @include media-min-md {
+        height: $artifact-feature-height-xl;
+        width: $artifact-feature-width-xl;
+    }
 
-  .is-collapsed-artifacts & {
-    height: $artifact-feature-height-sm;
-    width: $artifact-feature-width-sm;
-  }
+    .is-collapsed-artifacts & {
+        height: $artifact-feature-height-sm;
+        width: $artifact-feature-width-sm;
+    }
 }
 
 /********************************* VARIANTS ***********************************/
 
 .artifact-link {
-  pointer-events: all;
+    transition: outline 0ms;
+    pointer-events: all;
 
-  &,
-  &:link,
-  &:visited {
-    text-decoration: none;
-  }
+    [data-theme='light'] > & .artifact-link-svg {
+        fill: color(text-darkest);
+    }
 
-  [data-theme="light"] > & {
-    @include link-darkest();
-  }
+    [data-theme='dark'] > & .artifact-link-svg {
+        fill: color(text-lightest);
+    }
+}
 
-  [data-theme="dark"] > & {
-    @include link-lightest();
-  }
+.artifact-link-svg {
+    height: 18px;
+    transition: fill $animation-speed-fast;
+    width: 63px;
 }
 
 // Copy
 .artifact--1 {
-  color: $color-artifact-bg-light;
-  font-size: 14px;
-  top: 0;
-  transform: translateX(-50%);
+    color: $color-artifact-bg-light;
+    font-size: 14px;
+    top: 0;
+    transform: translateX(-50%);
 
-  &[data-theme="light"] {
-    color: $color-artifact-bg-dark;
-  }
+    &[data-theme='light'] {
+        color: $color-artifact-bg-dark;
+    }
 
-  @include media-min-xs {
-    font-size: 15px;
-  }
+    @include media-min-xs {
+        font-size: 15px;
+    }
 
-  .is-collapsed-artifacts.is-cornered-artifacts & {
-    left: 0;
-    transform: translateX(0);
-  }
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+        left: 0;
+        transform: translateX(0);
+    }
 }
 
 // 2 lines
 .artifact--2 {
-  height: ($artifact-feature-height * 2) + $artifact-feature-gap;
-  transform: translate(calc(-50% - #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), calc(-50% - 46px));
+    height: ($artifact-feature-height * 2) + $artifact-feature-gap;
+    transform: translate(calc(-50% - #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), calc(-50% - 46px));
 
-  @include media-max-sm {
-    .is-collapsed-artifacts.is-cornered-artifacts & {
-      opacity: 0 !important; // stylelint-disable-line declaration-no-important
+    @include media-max-sm {
+        .is-collapsed-artifacts.is-cornered-artifacts & {
+            opacity: 0 !important; // sass-lint:disable-line no-important
+        }
     }
-  }
-
-  @include media-min-xs {
-    height: ($artifact-feature-height-lg * 2) + $artifact-feature-gap-lg;
-    transform: translate(calc(-50% - #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 70px));
-  }
-
-  @include media-min-md {
-    height: ($artifact-feature-height-xl * 2) + $artifact-feature-gap-xl;
-    transform: translate(calc(-50% - #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 94px));
-  }
-
-  .artifact-feature--2 {
-    transform: translateY($artifact-feature-gap);
 
     @include media-min-xs {
-      transform: translateY($artifact-feature-gap-lg);
+        height: ($artifact-feature-height-lg * 2) + $artifact-feature-gap-lg;
+        transform: translate(calc(-50% - #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 70px));
     }
 
     @include media-min-md {
-      transform: translateY($artifact-feature-gap-xl);
+        height: ($artifact-feature-height-xl * 2) + $artifact-feature-gap-xl;
+        transform: translate(calc(-50% - #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 94px));
     }
-  }
-
-  .is-collapsed-artifacts & {
-    height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
-    left: 0;
-    transform: translate(0, -50%);
 
     .artifact-feature--2 {
-      transform: translateY($artifact-feature-gap-sm);
-    }
-  }
+        transform: translateY($artifact-feature-gap);
 
-  .is-collapsed-artifacts.is-cornered-artifacts & {
-    top: 100%;
-    transform: translate(0, -100%);
-  }
+        @include media-min-xs {
+            transform: translateY($artifact-feature-gap-lg);
+        }
+
+        @include media-min-md {
+            transform: translateY($artifact-feature-gap-xl);
+        }
+    }
+
+    .is-collapsed-artifacts & {
+        height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
+        left: 0;
+        transform: translate(0, -50%);
+
+        .artifact-feature--2 {
+            transform: translateY($artifact-feature-gap-sm);
+        }
+    }
+
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+        top: 100%;
+        transform: translate(0, -100%);
+    }
 }
 
 // Circle
 .artifact--3 {
-  background-color: $color-artifact-bg-light;
-  border-radius: 50%;
-  height: $artifact-3-dimension;
-  transform: translate(-50%, -50%);
-  width: $artifact-3-dimension;
+    background-color: $color-artifact-bg-light;
+    border-radius: 50%;
+    height: $artifact-3-dimension;
+    transform: translate(-50%, -50%);
+    width: $artifact-3-dimension;
 
-  &[data-theme="light"] {
-    background-color: $color-artifact-bg-dark;
-  }
-
-  @include media-max-sm {
-    .is-collapsed-artifacts.is-cornered-artifacts & {
-      opacity: 0 !important; // stylelint-disable-line declaration-no-important
+    &[data-theme='light'] {
+        background-color: $color-artifact-bg-dark;
     }
-  }
 
-  @include media-min-xs {
-    height: $artifact-3-dimension-lg;
-    width: $artifact-3-dimension-lg;
-  }
+    @include media-max-sm {
+        .is-collapsed-artifacts.is-cornered-artifacts & {
+            opacity: 0 !important; // sass-lint:disable-line no-important
+        }
+    }
 
-  @include media-min-md {
-    height: $artifact-3-dimension-xl;
-    width: $artifact-3-dimension-xl;
-  }
+    @include media-min-xs {
+        height: $artifact-3-dimension-lg;
+        width: $artifact-3-dimension-lg;
+    }
 
-  .is-collapsed-artifacts & {
-    height: $artifact-3-dimension-sm;
-    width: $artifact-3-dimension-sm;
-  }
+    @include media-min-md {
+        height: $artifact-3-dimension-xl;
+        width: $artifact-3-dimension-xl;
+    }
 
-  .is-collapsed-artifacts.is-cornered-artifacts & {
-    left: 100%;
-    top: 100%;
-    transform: translate(-100%, -100%);
-  }
+    .is-collapsed-artifacts & {
+        height: $artifact-3-dimension-sm;
+        width: $artifact-3-dimension-sm;
+    }
+
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+        left: 100%;
+        top: 100%;
+        transform: translate(-100%, -100%);
+    }
 }
 
 // 5 lines
 .artifact--4 {
-  height: ($artifact-feature-height * 5) + ($artifact-feature-gap * 4);
-  transform: translate(calc(-50% + #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), -50%);
+    height: ($artifact-feature-height * 5) + ($artifact-feature-gap * 4);
+    transform: translate(calc(-50% + #{$artifact-3-dimension/2 + $artifact-feature-width/2 + $artifact-gutter}), -50%);
 
-  .artifact-feature--2 { transform: translateY($artifact-feature-gap * 1); }
-  .artifact-feature--3 { transform: translateY($artifact-feature-gap * 2); }
-  .artifact-feature--4 { transform: translateY($artifact-feature-gap * 3); }
-  .artifact-feature--5 { transform: translateY($artifact-feature-gap * 4); }
-
-  @include media-max-sm {
-    .is-collapsed-artifacts.is-cornered-artifacts & {
-      height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
-
-      .artifact-feature--3,
-      .artifact-feature--4,
-      .artifact-feature--5 {
-        opacity: 0;
-      }
-
-      .is-complete-artifacts-animation & {
-        .artifact-feature--1,
-        .artifact-feature--2 {
-          transition: all 400ms;
-        }
-      }
-
-      .is-displayed-drawer & {
-        .artifact-feature--1,
-        .artifact-feature--2 {
-          width: 34px;
-        }
-
-        .artifact-feature--1 { transform: rotate(45deg) translate(7px, 1px); }
-        .artifact-feature--2 { transform: rotate(-45deg) translate(5px, 0); }
-      }
+    .artifact-feature--2 {
+        transform: translateY($artifact-feature-gap * 1);
     }
-  }
 
-  @include media-min-xs {
-    height: ($artifact-feature-height-lg * 5) + ($artifact-feature-gap-lg * 4);
-    transform: translate(calc(-50% + #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 4px));
+    .artifact-feature--3 {
+        transform: translateY($artifact-feature-gap * 2);
+    }
 
-    .artifact-feature--2 { transform: translateY($artifact-feature-gap-lg * 1); }
-    .artifact-feature--3 { transform: translateY($artifact-feature-gap-lg * 2); }
-    .artifact-feature--4 { transform: translateY($artifact-feature-gap-lg * 3); }
-    .artifact-feature--5 { transform: translateY($artifact-feature-gap-lg * 4); }
-  }
+    .artifact-feature--4 {
+        transform: translateY($artifact-feature-gap * 3);
+    }
 
-  @include media-min-md {
-    height: ($artifact-feature-height-xl * 5) + ($artifact-feature-gap-xl * 4);
-    transform: translate(calc(-50% + #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 4px));
+    .artifact-feature--5 {
+        transform: translateY($artifact-feature-gap * 4);
+    }
 
-    .artifact-feature--2 { transform: translateY($artifact-feature-gap-xl * 1); }
-    .artifact-feature--3 { transform: translateY($artifact-feature-gap-xl * 2); }
-    .artifact-feature--4 { transform: translateY($artifact-feature-gap-xl * 3); }
-    .artifact-feature--5 { transform: translateY($artifact-feature-gap-xl * 4); }
-  }
+    @include media-max-sm {
+        .is-collapsed-artifacts.is-cornered-artifacts & {
+            height: ($artifact-feature-height-sm * 2) + $artifact-feature-gap-sm;
 
-  .is-collapsed-artifacts & {
-    height: ($artifact-feature-height-sm * 5) + ($artifact-feature-gap-sm * 4);
-    left: 100%;
-    transform: translate(-100%, -50%);
+            .artifact-feature--3,
+            .artifact-feature--4,
+            .artifact-feature--5 {
+                opacity: 0;
+            }
 
-    .artifact-feature--2 { transform: translateY($artifact-feature-gap-sm * 1); }
-    .artifact-feature--3 { transform: translateY($artifact-feature-gap-sm * 2); }
-    .artifact-feature--4 { transform: translateY($artifact-feature-gap-sm * 3); }
-    .artifact-feature--5 { transform: translateY($artifact-feature-gap-sm * 4); }
-  }
+            .is-complete-artifacts-animation & {
 
-  .is-collapsed-artifacts.is-cornered-artifacts & {
-    left: 100%;
-    top: 0;
-    transform: translate(-100%, 0);
-  }
+                .artifact-feature--1,
+                .artifact-feature--2 {
+                    transition: all 400ms;
+                }
+            }
+
+            .is-displayed-drawer & {
+
+                .artifact-feature--1,
+                .artifact-feature--2 {
+                    width: 34px;
+                }
+
+                .artifact-feature--1 {
+                    transform: rotate(45deg) translate(10px, 2px);
+                }
+
+                .artifact-feature--2 {
+                    transform: rotate(-45deg) translate(4px, 3px);
+                }
+            }
+        }
+    }
+
+    @include media-min-xs {
+        height: ($artifact-feature-height-lg * 5) + ($artifact-feature-gap-lg * 4);
+        transform: translate(calc(-50% + #{$artifact-3-dimension-lg/2 + $artifact-feature-width-lg/2 + $artifact-gutter-lg}), calc(-50% - 4px));
+
+        .artifact-feature--2 {
+            transform: translateY($artifact-feature-gap-lg * 1);
+        }
+
+        .artifact-feature--3 {
+            transform: translateY($artifact-feature-gap-lg * 2);
+        }
+
+        .artifact-feature--4 {
+            transform: translateY($artifact-feature-gap-lg * 3);
+        }
+
+        .artifact-feature--5 {
+            transform: translateY($artifact-feature-gap-lg * 4);
+        }
+    }
+
+    @include media-min-md {
+        height: ($artifact-feature-height-xl * 5) + ($artifact-feature-gap-xl * 4);
+        transform: translate(calc(-50% + #{$artifact-3-dimension-xl/2 + $artifact-feature-width-xl/2 + $artifact-gutter-xl}), calc(-50% - 4px));
+
+        .artifact-feature--2 {
+            transform: translateY($artifact-feature-gap-xl * 1);
+        }
+
+        .artifact-feature--3 {
+            transform: translateY($artifact-feature-gap-xl * 2);
+        }
+
+        .artifact-feature--4 {
+            transform: translateY($artifact-feature-gap-xl * 3);
+        }
+
+        .artifact-feature--5 {
+            transform: translateY($artifact-feature-gap-xl * 4);
+        }
+    }
+
+    .is-collapsed-artifacts & {
+        height: ($artifact-feature-height-sm * 5) + ($artifact-feature-gap-sm * 4);
+        left: 100%;
+        transform: translate(-100%, -50%);
+
+        .artifact-feature--2 {
+            transform: translateY($artifact-feature-gap-sm * 1);
+        }
+
+        .artifact-feature--3 {
+            transform: translateY($artifact-feature-gap-sm * 2);
+        }
+
+        .artifact-feature--4 {
+            transform: translateY($artifact-feature-gap-sm * 3);
+        }
+
+        .artifact-feature--5 {
+            transform: translateY($artifact-feature-gap-sm * 4);
+        }
+    }
+
+    .is-collapsed-artifacts.is-cornered-artifacts & {
+        left: 100%;
+        top: 0;
+        transform: translate(-100%, 0);
+    }
 }

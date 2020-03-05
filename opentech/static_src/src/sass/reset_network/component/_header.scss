@@ -1,20 +1,23 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  HEADER COMPONENT
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .header {
-  background-color: color(seed-white);
-  position: relative;
+    background-color: color(seed-white);
+    position: relative;
 }
 
 .header__content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

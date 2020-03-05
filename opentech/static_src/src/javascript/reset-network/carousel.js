@@ -19,7 +19,7 @@
 
             $carousel: null,
             $imgs: null,
-            speedImgChange: 400,
+            speedImgChange: 700,
             collapsed: false,
 
             utils: {
@@ -51,6 +51,10 @@
 
                 CAROUSEL.HERO.$carousel = $('#hero-carousel');
                 CAROUSEL.HERO.$imgs = CAROUSEL.HERO.$carousel.find('.hero-carousel__item');
+
+                if (window.innerWidth <= 768) {
+                    CAROUSEL.HERO.$carousel.addClass('is-collapsed');
+                }
 
                 var $document = $(document);
                 var $firstCarouselItem = CAROUSEL.HERO.$imgs.first();
@@ -84,24 +88,24 @@
                 // Wait for cookie notice dismissal before permitting animations
                 $document.bind('cookie-notice-hidden', dfdCookieNotice.resolve);
 
-                // Commence hero animations, ensure all images are displayed once before commencing logo animation
+                // Commence hero animations
                 setTimeout(dfdMinTimeout.resolve, 500);
                 $.when.apply($, promises).then(function () {
-                    var duration = CAROUSEL.HERO.$imgs.length * CAROUSEL.HERO.speedImgChange;
-
                     CAROUSEL.HERO.collapsed = true;
                     CAROUSEL.HERO.animate();
 
-                    setTimeout(function () {
-                        $document.on('scroll', function () {
+                    $document.on('scroll', function () {
+                        clearInterval(CAROUSEL.HERO.animateInterval);
+                        $document.off('scroll');
+                        setTimeout(function () {
                             $document.trigger('artifacts-animate');
-                            $document.off('scroll');
-                        });
-                    }, duration);
+                        }, 250); // enough time to allow for completion of an in-progress carousel image change
+                    });
                 });
 
                 // Collapse the carousel when the logo moves to the corners
                 $document.bind('artifacts-cornered', function () {
+                    CAROUSEL.HERO.animate();
                     CAROUSEL.HERO.$carousel.addClass('is-collapsed');
                 });
             },
@@ -163,7 +167,26 @@
             },
 
             init: function () {
+
                 CAROUSEL.RESOURCES.$carousel = $('.js-resources-carousel');
+
+                // If there is only 1 item in the carousel just show 1 slide
+                // If there are 2 items in the carousel dupe them to create a functional carousel
+                var itemsLength = CAROUSEL.RESOURCES.$carousel.children('li').length;
+                if (itemsLength < 3) {
+                    if (itemsLength === 1) {
+                        CAROUSEL.RESOURCES.config.slidesToShow = 1;
+                        CAROUSEL.RESOURCES.$carousel.addClass('has-one-item');
+                    }
+                    else if (itemsLength === 2) {
+                        $('.js-resources-carousel li:nth-child(1)').clone().appendTo('.js-resources-carousel');
+                        $('.js-resources-carousel li:nth-child(2)').clone().appendTo('.js-resources-carousel');
+
+                        $('.js-resources-copy li:nth-child(1)').clone().attr('data-resources-copy', 2).appendTo('.js-resources-copy');
+                        $('.js-resources-copy li:nth-child(2)').clone().attr('data-resources-copy', 3).appendTo('.js-resources-copy');
+                    }
+                }
+
                 CAROUSEL.RESOURCES.$copyItems = $('.js-resources-copy li');
 
                 // Fade in first slide on init
