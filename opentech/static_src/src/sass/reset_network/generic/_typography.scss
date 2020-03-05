@@ -1,21 +1,26 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC TYPOGRAPHY
 //  N.B: DON'T modify only fix issues and fold back into typography module
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 $paragraph-break: #{floor(($font-size-base * $line-height) / 2)}px !default;
 
 // ELEMENTS
 
+// sass-lint:disable no-vendor-prefixes
 body {
-  @include font-base();
-  font-weight: $font-weight-regular;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+    @include font-base();
+    font-weight: $font-weight-regular;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
+// sass-lint:enable no-vendor-prefixes
 
 h1,
 h2,
@@ -24,9 +29,9 @@ h4,
 h5,
 h6,
 p {
-  margin-top: 0;
-  margin-bottom: $paragraph-break;
-  font-weight: $font-weight-regular;
+    margin-top: 0;
+    margin-bottom: $paragraph-break;
+    font-weight: $font-weight-regular;
 }
 
 h1,
@@ -37,8 +42,8 @@ h5,
 h6,
 p,
 li {
-  padding: 0;
-  word-wrap: break-word;
+    padding: 0;
+    word-wrap: break-word;
 }
 
 h1,
@@ -47,11 +52,11 @@ h3,
 h4,
 h5,
 h6 {
-  line-height: 1.2;
+    line-height: 1.2;
 
-  small {
-    font-size: 80%;
-  }
+    small {
+        font-size: 80%;
+    }
 }
 
 h1,
@@ -64,7 +69,7 @@ p,
 li,
 ul,
 ol {
-  &:last-child {
-    margin-bottom: 0;
-  }
+    &:last-child {
+        margin-bottom: 0;
+    }
 }

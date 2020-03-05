@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  FORMS STRUCTURE
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -25,139 +28,139 @@ $validation-success-border: $color-success-border !default;
 // ELEMENTS
 
 .form {
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .form--compact {}
 
 .form-legend {
-  @include font-primary();
-  @include font-size-xxl();
-  font-family: $font-family-secondary;
-  font-weight: $font-weight-heavy;
-  padding: 0;
-  margin: 0 0 #{$form-field-spacing}px;
-  display: block;
-  position: relative;
+    @include font-primary();
+    @include font-size-xxl();
+    font-family: $font-family-secondary;
+    font-weight: $font-weight-heavy;
+    padding: 0;
+    margin: 0 0 #{$form-field-spacing}px;
+    display: block;
+    position: relative;
 }
 
 .form-fieldset {
-  border: none;
-  margin: 0 0 20px;
-  padding: 0;
+    border: 0;
+    margin: 0 0 20px;
+    padding: 0;
 }
 
 .form-summary {
-  @include gutter-bottom();
+    @include gutter-bottom();
 
-  .form-legend + &,
-  &:first-child {
-    margin-top: 0;
-  }
+    .form-legend+&,
+    &:first-child {
+        margin-top: 0;
+    }
 }
 
 .form-alert-tray {}
 
 .form-fieldset--highlight {
-  background-color: color(seed-white);
-  border-width: 2px;
-  border-color: color(seed-grey);
-  padding: 20px;
+    background-color: color(seed-white);
+    border-width: 2px;
+    border-color: color(seed-grey);
+    padding: 20px;
 }
 
 .form-row {
-  @include gutter-bottom-sm();
-  @include animate(opacity);
-  min-width: 100%;
-  position: relative;
-  opacity: 1;
+    @include gutter-bottom-sm();
+    @include animate(opacity);
+    min-width: 100%;
+    position: relative;
+    opacity: 1;
 
-  &.is-disabled {
-    opacity: .5;
-    pointer-events: none;
-  }
+    &.is-disabled {
+        opacity: .5;
+        pointer-events: none;
+    }
 }
 
 .form-row--compact {
-  margin: 0;
+    margin: 0;
 }
 
 .form-row__label {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 5px;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+    align-items: center;
 }
 
 .form-row__note {
-  @include themeSwitch('color', text-dark, text-light);
-  position: relative;
-  width: 100%;
-  margin: -5px 0 5px;
+    @include theme-switch('color', text-dark, text-light);
+    position: relative;
+    width: 100%;
+    margin: -5px 0 5px;
 }
 
 .form-row__validation {
-  @include font-size-sm();
-  width: 100%;
-  margin: 0;
-  border-width: 0 0 0 5px;
-  border-style: solid;
-  padding: 5px 5px 5px 10px;
-  background-color: $validation-default-bg;
-  border-color: $validation-default-border;
-  color: $validation-default;
+    @include font-size-sm();
+    width: 100%;
+    margin: 0;
+    border-width: 0 0 0 5px;
+    border-style: solid;
+    padding: 5px 5px 5px 10px;
+    background-color: $validation-default-bg;
+    border-color: $validation-default-border;
+    color: $validation-default;
 
-  &.is-error {
-    background-color: $validation-error-bg;
-    border-color: $validation-error-border;
-    color: $validation-error;
-  }
+    &.is-error {
+        background-color: $validation-error-bg;
+        border-color: $validation-error-border;
+        color: $validation-error;
+    }
 
-  &.is-warning {
-    background-color: $validation-warning-bg;
-    border-color: $validation-warning-border;
-    color: $validation-warning;
-  }
+    &.is-warning {
+        background-color: $validation-warning-bg;
+        border-color: $validation-warning-border;
+        color: $validation-warning;
+    }
 
-  &.is-success {
-    background-color: $validation-success-bg;
-    border-color: $validation-success-border;
-    color: $validation-success;
-  }
+    &.is-success {
+        background-color: $validation-success-bg;
+        border-color: $validation-success-border;
+        color: $validation-success;
+    }
 }
 
 .form-actions {
-  @include gutters-vertical();
-  border-width: 1px 0 0 0;
-  border-style: solid;
-  padding: #{$gutter-sm}px 0 0;
+    @include gutters-vertical();
+    border-width: 1px 0 0;
+    border-style: solid;
+    padding: #{$gutter-sm}px 0 0;
 
-  @include media-min-md {
-    padding: #{$gutter-lg}px 0 0;
-  }
+    @include media-min-md {
+        padding: #{$gutter-lg}px 0 0;
+    }
 
-  @include themeSwitch('border-color');
+    @include theme-switch('border-color');
 }
 
 .form-footnotes {
-  @include font-size-sm();
-  color: color(seed-grey, -25);
-  font-style: italic;
-  padding: 20px 0 0;
+    @include font-size-sm();
+    color: color(seed-grey, -25);
+    font-style: italic;
+    padding: 20px 0 0;
 }
 
 .form-btn-u {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .form-err-txt,
 .form-field-err-txt {
-  color: color(seed-red, -40);
-  font-weight: $font-weight-heavy;
+    color: color(seed-red, -40);
+    font-weight: $font-weight-heavy;
 }
 
 .form-field-err-txt {
-  font-size: 14px;
-  margin: 5px 0 0;
+    font-size: 14px;
+    margin: 5px 0 0;
 }

@@ -1,6 +1,6 @@
 {% extends "reset_network/base.html" %}
 
-{% block body_class %}base-grey{% endblock %}
+{% block body_class %}base-light{% endblock %}
 {% load wagtailcore_tags static i18n util_tags %}
 {# Dont include fixed apply button on this page #}
 {% block apply_button %}{% endblock %}
@@ -34,7 +34,7 @@
       {% else %}
 
         <div class="para__body reveal">
-          <form class="form apply-form rte" action="/test500/" method="POST" enctype="multipart/form-data">
+          <form class="form apply-form rte application-form" action="/test500/" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div>{{ form.media }}</div>
 
@@ -52,7 +52,7 @@
               {% endif %}
             {% endfor %}
 
-            <button class="button" type="submit">
+            <button class="button" type="submit" disabled>
               <span class="button__drop"></span>
               <span class="button__label">{% if page.action_text %}{{ page.action_text|safe }}{% else %}Submit for review{% endif %}</span>
             </button>

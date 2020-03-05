@@ -1,12 +1,13 @@
 from django.db import models
-from wagtail.core.models import Page
+from opentech.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.core.models import Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 
 # Create your models here.
-class ResetNetworkAboutPage(Page):
+class ResetNetworkAboutPage(ResetNetworkBasePage):
     class Meta:
         verbose_name = "Reset Network About Page"
 

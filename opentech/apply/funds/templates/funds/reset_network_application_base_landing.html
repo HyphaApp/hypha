@@ -1,12 +1,22 @@
 {% extends "reset_network/base.html" %}
-{% block header_modifier %}header--light-bg{% endblock %}
+
+{% block body_class %}base-light{% endblock %}
 {% block content %}
-<div class="wrapper wrapper--small">
-    <h3>Thank you for your submission to the {{ ORG_LONG_NAME }}.</h3>
-    <div class="rich-text">
-        <p>An e-mail with more information has been sent to the address you entered.</p>
-        <p>If you do not receive an e-mail within 15 minutes please check your
-spam folder and contact {{ ORG_EMAIL }} for further assistance.</p>
+
+<section class="para theme-light" data-section-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <div class="reveal">
+        <div class="para__title">
+          <h1>Thank you for your submission to the {{ ORG_LONG_NAME }}.</h1>
+        </div>
+        <div class="para__body">
+          <p>An e-mail with more information has been sent to the address you entered.</p>
+          <p>If you do not receive an e-mail within 15 minutes please check your spam folder and contact {{ ORG_EMAIL }} for further assistance.</p>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</section>
+
 {% endblock %}

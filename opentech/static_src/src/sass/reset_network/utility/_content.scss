@@ -1,15 +1,16 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  CONTENT UTILITIES
-//  ImportantRules are OK for utility classes -- they are not ok elsewhere
+//  no-importants are OK for utility classes -- they are not ok elsewhere
 //  http://csswizardry.com/2016/05/the-importance-of-important/
+//  sass-lint:disable no-important
 //
-//============================================================================//
+//------------------------------------------------------------------//
 
 // ELEMENTS
 
 .colon {
-  &::after {
-    content: ': ';
-  }
+    &::after {
+        content: ': ';
+    }
 }

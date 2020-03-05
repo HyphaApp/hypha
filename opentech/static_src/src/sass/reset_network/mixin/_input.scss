@@ -1,19 +1,22 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  INPUT TOOLS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 @mixin track($height: 5, $width: 100%) {
-  @include animate(background-color);
-  height: #{$height}px;
-  width: $width;
+    @include animate(background-color);
+    height: #{$height}px;
+    width: $width;
 }
 
-@mixin thumb($color: #fff, $radius: 2.5, $height: 5, $width: 5) {
-  background-color: $color;
-  border: none;
-  border-radius: #{$radius}px;
-  height: #{$height}px;
-  width: #{$width}px;
+@mixin thumb($color: rgb(255, 255, 255), $radius: 2.5, $height: 5, $width: 5) {
+    background-color: $color;
+    border: 0;
+    border-radius: #{$radius}px;
+    height: #{$height}px;
+    width: #{$width}px;
 }

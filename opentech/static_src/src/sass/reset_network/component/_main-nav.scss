@@ -1,189 +1,194 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  NAV COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
-$color-link-dark: #000;
-$color-link-light: #fff;
+$color-link-dark: color(seed-black) !default;
+$color-link-light: color(seed-white) !default;
 
 // ELEMENTS
 
 .main-nav-container {
-  @include gutters-menu();
-  height: 100%;
+    @include gutters-menu();
+    height: 100%;
 
-  @include media-min-sm {
-    max-width: 250px;
-    min-width: 130px;
-    pointer-events: all;
-    width: 15%;
-  }
-
-  &.is-centered {
-    display: flex;
-
-    .main-nav {
-      padding-top: 0;
+    @include media-min-sm {
+        max-width: 250px;
+        min-width: 130px;
+        pointer-events: all;
+        width: 15%;
     }
 
-    .main-nav__item {
-      padding: 0;
+    &.is-centered {
+        display: flex;
+
+        .main-nav {
+            padding-top: 0;
+        }
+
+        .main-nav__item {
+            padding: 0;
+        }
     }
-  }
 }
 
 .mobile-nav-container {
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 56px;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 56px;
 }
 
 .mobile-nav-wrapper {
-  display: flex;
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
+    display: flex;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 .main-nav {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  pointer-events: all;
-  width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    pointer-events: all;
+    width: 100%;
 
-  .mobile-nav-wrapper & {
-    display: block;
-    width: 190px;
-    margin: auto;
-  }
-
-  .main-nav-wrapper & {
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    flex-direction: column;
-
-    @include media-min-sm {
-      padding: 110px 0 0 0;
+    .mobile-nav-wrapper & {
+        display: block;
+        width: 190px;
+        margin: auto;
     }
-  }
+
+    .main-nav-wrapper & {
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        flex-direction: column;
+
+        @include media-min-sm {
+            padding: 110px 0 0;
+        }
+    }
 }
 
 .main-nav__item {
-  flex: 1 0 auto;
-  max-height: 52px;
-  padding: 0 0 20px;
-
-  .mobile-nav-wrapper & {
-    flex: 0 0 auto;
-    max-height: none;
+    flex: 1 0 auto;
+    max-height: 52px;
     padding: 0 0 20px;
-  }
+
+    .mobile-nav-wrapper & {
+        flex: 0 0 auto;
+        max-height: none;
+        padding: 0 0 20px;
+    }
 }
 
 .main-nav-section {
-  display: block;
-  padding: 4px 10px;
-  font-weight: $font-weight-heavy;
+    display: block;
+    padding: 4px 10px;
+    font-weight: $font-weight-heavy;
 }
 
 a.main-nav-link {
-  @include animate(opacity color, $animation-speed-fast);
-  @include font-size-md();
-  display: inline-block;
-  padding: 4px 0;
-  position: relative;
-  overflow: hidden;
-
-  .mobile-nav-wrapper & {
-    @include font-size-sm();
-    display: block;
-    padding: 15px 0;
-  }
-
-  &::after {
-    @include animate(transform opacity);
-    content: '';
-    display: block;
-    position: absolute;
-    bottom: 0;
-    height: 3px;
-    width: 100%;
-    left: 0;
-    right: 0;
-    transform: translateY(10px);
-    opacity: 0;
+    @include animate(opacity color, $animation-speed-fast);
+    @include font-size-md();
+    display: inline-block;
+    padding: 4px 0;
+    position: relative;
+    overflow: hidden;
 
     .mobile-nav-wrapper & {
-      transform: translateY(2px);
-      opacity: .5;
+        @include font-size-sm();
+        display: block;
+        padding: 15px 0;
     }
-  }
-
-  &,
-  &:link,
-  &:visited {
-    text-decoration: none;
-    opacity: .5;
-
-    .mobile-nav-wrapper & {
-      opacity: .9;
-    }
-  }
-
-  &:focus {
-    .focus-disabled & {}
-  }
-
-  &:hover {
-    opacity: 1;
 
     &::after {
-      transform: translateY(0);
-      opacity: 1;
+        @include animate(transform opacity);
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: 0;
+        height: 3px;
+        width: 100%;
+        left: 0;
+        right: 0;
+        transform: translateY(10px);
+        opacity: 0;
+
+        .mobile-nav-wrapper & {
+            transform: translateY(2px);
+            opacity: .5;
+        }
     }
-  }
 
-  .is-current > &,
-  &:active {
-    opacity: 1;
-  }
-
-  .is-current > & {
-    font-weight: $font-weight-heavy;
-  }
-
-  &[data-theme="dark"] {
     &,
     &:link,
-    &:visited,
+    &:visited {
+        text-decoration: none;
+        opacity: .5;
+
+        .mobile-nav-wrapper & {
+            opacity: .9;
+        }
+    }
+
+    &:focus {
+        .focus-disabled & {}
+    }
+
+    &:hover {
+        opacity: 1;
+
+        &::after {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    &.is-active,
     &:active {
-      color: color(seed-white);
+        opacity: 1;
     }
 
-    &::after {
-      background-color: color(seed-white);
-    }
-  }
-
-  &[data-theme="light"] {
-    &,
-    &:link,
-    &:visited,
-    &:active {
-      color: color(seed-black);
+    &.is-active {
+        font-weight: $font-weight-heavy;
     }
 
-    &::after {
-      background-color: color(seed-black);
+    &[data-theme='dark'] {
+
+        &,
+        &:link,
+        &:visited,
+        &:active {
+            color: color(seed-white);
+        }
+
+        &::after {
+            background-color: color(seed-white);
+        }
     }
-  }
+
+    &[data-theme='light'] {
+
+        &,
+        &:link,
+        &:visited,
+        &:active {
+            color: color(seed-black);
+        }
+
+        &::after {
+            background-color: color(seed-black);
+        }
+    }
 }

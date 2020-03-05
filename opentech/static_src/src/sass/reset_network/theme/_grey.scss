@@ -1,19 +1,21 @@
-
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  GREY THEME
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // THEME
 
 .theme-grey {
-  background-color: color(seed-grey);
-  color: color(text-darkest);
+    background-color: color(seed-grey);
+    color: color(text-darkest);
 
-  a {
-    @include link-darkest();
-  }
+    a {
+        @include link-darkest();
+    }
 }

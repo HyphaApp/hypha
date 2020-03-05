@@ -3,7 +3,13 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
-{% block body_class %}base-darkest{% endblock %}
+{% block body_class %}
+  {% if page.section_5_image or page.section_5_heading or page.section_5_text or page.section_5_link or page.section_5_link_text or page.section_6_image or page.section_6_heading or page.section_6_text %}
+  base-darkest
+  {% else %}
+  base-dark
+  {% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -37,6 +43,7 @@
 </section>
 
 {# section 1 #}
+{% if page.section_1_image or page.section_1_heading or page.section_1_text %}
 <section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -56,8 +63,10 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {# section 2 #}
+{% if page.section_2_image or page.section_2_heading or page.section_2_text %}
 <section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -77,8 +86,10 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {# section 3 #}
+{% if page.section_3_image or page.section_3_heading or page.section_3_text %}
 <section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -98,8 +109,10 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {# section 4 #}
+{% if page.section_4_image or page.section_4_heading or page.section_4_text %}
 <section class="para para--content-left para--aside-lg para--padding-offset-xl para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -119,8 +132,10 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {# section 5 #}
+{% if page.section_5_image or page.section_5_heading or page.section_5_text or page.section_5_link and page.section_5_link_text %}
 <section class="para para--content-right para--aside-lg para--col-sm para--aside-offset-xl theme-darkest" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -139,7 +154,7 @@
       </div>
       <div class="para__action">
         {% if page.section_5_link and page.section_5_link_text %}
-          <a href="{% pageurl page.section_5_link %}" class="button">
+          <a href="{% pageurl page.section_5_link %}" class="button" data-button="">
             <span class="button__drop"></span>
             <span class="button__label">{{ page.section_5_link_text }}</span>
           </a>
@@ -148,8 +163,10 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {# section 6 #}
+{% if page.section_6_image or page.section_6_heading or page.section_6_text %}
 <section class="para para--content-left para--aside-lg para--col-sm theme-darkest" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
@@ -169,5 +186,6 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 {% endblock %}

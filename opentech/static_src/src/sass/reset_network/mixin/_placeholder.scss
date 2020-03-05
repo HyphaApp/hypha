@@ -1,27 +1,31 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  PLACEHOLDER
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
+// sass-lint:disable no-vendor-prefixes
 @mixin placeholder($color, $opacity: .5) {
-  ::-webkit-input-placeholder {
-    color: $color;
-    opacity: $opacity;
-  }
+    ::-webkit-input-placeholder {
+        color: $color;
+        opacity: $opacity;
+    }
 
-  ::-moz-placeholder {
-    color: $color;
-    opacity: $opacity;
-  }
+    ::-moz-placeholder {
+        color: $color;
+        opacity: $opacity;
+    }
 
-  :-moz-placeholder {
-    color: $color;
-    opacity: $opacity;
-  }
+    :-moz-placeholder {
+        color: $color;
+        opacity: $opacity;
+    }
 
-  :-ms-input-placeholder {
-    color: $color;
-    opacity: $opacity;
-  }
+    :-ms-input-placeholder {
+        color: $color;
+        opacity: $opacity;
+    }
 }

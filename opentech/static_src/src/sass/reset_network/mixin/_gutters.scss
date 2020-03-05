@@ -1,185 +1,204 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  GUTTERS TOOLS
 //  N.B: Only mixins here NEVER anything that outputs CSS directly
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // MIXINS
 
 // GUTTERS
 
 @mixin gutters() {
-  padding: #{$gutter-sm}px;
+    padding: #{$gutter-sm}px;
 
-  @include media-min-md {
-    padding: #{$gutter}px;
-  }
+    @include media-min-md {
+        padding: #{$gutter}px;
+    }
 }
 
 @mixin gutters-menu() {
-  padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter-sm}px;
+    padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter-sm}px;
 
-  @include media-min-md {
-    padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter}px;
-  }
+    @include media-min-md {
+        padding: #{$gutter-xxl}px 0 #{$gutter-xxl}px #{$gutter}px;
+    }
 }
 
 @mixin gutters-xl() {
-  padding: #{$gutter-sm}px;
+    padding: #{$gutter-sm}px;
 
-  @include media-min-sm {
-    padding: #{$gutter-lg}px;
-  }
+    @include media-min-sm {
+        padding: #{$gutter-lg}px;
+    }
 
-  @include media-min-md {
-    padding: #{$gutter-xxl}px #{$gutter-xl}px #{$gutter-max}px;
-  }
+    @include media-min-md {
+        padding: #{$gutter-xxl}px #{$gutter-xl}px #{$gutter-max}px;
+    }
 }
 
 @mixin gutters-sm() {
-  padding: #{$gutter-sm}px;
-
-  @include media-min-md {
     padding: #{$gutter-sm}px;
-  }
+
+    @include media-min-md {
+        padding: #{$gutter-sm}px;
+    }
 }
 
 @mixin gutters-xs() {
-  padding: #{$gutter-xs}px;
+    padding: #{$gutter-xs}px;
 }
 
 @mixin gutters-banner() {
-  padding: #{$gutter-xl}px #{$gutter-sm}px #{$gutter-sm}px;
-
-  @include media-min-sm {
     padding: #{$gutter-xl}px #{$gutter-sm}px #{$gutter-sm}px;
-  }
 
-  @include media-min-md {
-    padding: #{$gutter-xl}px #{$gutter}px #{$gutter}px;
-  }
+    @include media-min-sm {
+        padding: #{$gutter-xl}px #{$gutter-sm}px #{$gutter-sm}px;
+    }
+
+    @include media-min-md {
+        padding: #{$gutter-xl}px #{$gutter}px #{$gutter}px;
+    }
 }
 
 @mixin gutters-hero-carousel() {
-  @include media-min-sm {
-    padding: #{$gutter-lg}px #{$gutter-sm}px 0;
-  }
+    @include media-min-sm {
+        padding: #{$gutter-lg}px #{$gutter-sm}px 0;
+    }
 
-  @include media-min-md {
-    padding: #{$gutter-xl}px #{$gutter}px 0;
-  }
+    @include media-min-md {
+        padding: #{$gutter-xl}px #{$gutter}px 0;
+    }
 }
 
 @mixin gutters-paragraph() {
-  padding: #{$gutter}px #{$gutter-sm}px;
+    padding: #{$gutter}px #{$gutter-sm}px;
 
-  @include media-min-sm {
-    padding: #{$gutter-lg}px #{$gutter-sm}px;
-  }
+    @include media-min-sm {
+        padding: #{$gutter-lg}px #{$gutter-sm}px;
+    }
 
-  @include media-min-md {
-    padding: #{$gutter-xxl}px #{$gutter}px #{$gutter-max}px;
-  }
+    @include media-min-md {
+        padding: #{$gutter-xxl}px #{$gutter}px #{$gutter-max}px;
+    }
 }
 
 @mixin gutters-horizontal() {
-  padding: 0 #{$gutter-sm}px;
+    padding: 0 #{$gutter-sm}px;
 
-  @include media-min-md {
-    padding: 0 #{$gutter}px;
-  }
+    @include media-min-md {
+        padding: 0 #{$gutter}px;
+    }
 }
 
 @mixin gutters-horizontal-xl() {
-  padding: 0 #{$gutter-sm}px;
+    padding: 0 #{$gutter-sm}px;
 
-  @include media-min-sm {
-    padding: 0 #{$gutter-lg}px;
-  }
+    @include media-min-sm {
+        padding: 0 #{$gutter-lg}px;
+    }
 
-  @include media-min-md {
-    padding: 0 #{$gutter-xl}px;
-  }
+    @include media-min-md {
+        padding: 0 #{$gutter-xl}px;
+    }
+}
+
+@mixin gutters-headings-vertical() {
+    margin: #{$gutter}px 0 #{$gutter/2}px;
+
+    @include media-min-md {
+        margin: #{$gutter}px 0 #{$gutter/2}px;
+    }
 }
 
 @mixin gutters-vertical() {
-  margin: #{$gutter-sm}px 0;
+    margin: #{$gutter-sm}px 0;
 
-  @include media-min-md {
-    margin: #{$gutter}px 0;
-  }
+    @include media-min-md {
+        margin: #{$gutter}px 0;
+    }
 }
 
 @mixin gutter-top() {
-  margin: #{$gutter-sm}px 0 0;
+    margin: #{$gutter-sm}px 0 0;
 
-  @include media-min-sm {
-    margin: #{$gutter}px 0 0;
-  }
+    @include media-min-sm {
+        margin: #{$gutter}px 0 0;
+    }
 }
 
 @mixin pad-gutter-top-sm() {
-  padding: #{$gutter-sm}px 0 0;
-
-  @include media-min-sm {
     padding: #{$gutter-sm}px 0 0;
-  }
+
+    @include media-min-sm {
+        padding: #{$gutter-sm}px 0 0;
+    }
 }
 
 @mixin pad-gutter-top() {
-  padding: #{$gutter-sm}px 0 0;
+    padding: #{$gutter-sm}px 0 0;
 
-  @include media-min-sm {
-    padding: 45px 0 0;
-  }
+    @include media-min-sm {
+        padding: 45px 0 0;
+    }
+}
+
+@mixin margin-gutter-top() {
+    margin: #{$gutter-sm}px 0 0;
+
+    @include media-min-sm {
+        margin: 45px 0 0;
+    }
 }
 
 @mixin gutter-bottom() {
-  margin: 0 0 #{$gutter-sm}px;
+    margin: 0 0 #{$gutter-sm}px;
 
-  @include media-min-md {
-    margin: 0 0 #{$gutter}px;
-  }
+    @include media-min-md {
+        margin: 0 0 #{$gutter}px;
+    }
 }
 
 @mixin gutter-bottom-xl() {
-  margin: 0 0 #{$gutter}px;
+    margin: 0 0 #{$gutter}px;
 
-  @include media-min-md {
-    margin: 0 0 #{$gutter-xl}px;
-  }
+    @include media-min-md {
+        margin: 0 0 #{$gutter-xl}px;
+    }
 }
 
 @mixin gutter-bottom-sm() {
-  margin: 0 0 #{$gutter-sm}px;
-
-  @include media-min-md {
     margin: 0 0 #{$gutter-sm}px;
-  }
+
+    @include media-min-md {
+        margin: 0 0 #{$gutter-sm}px;
+    }
 }
 
 @mixin gutter-top-sm() {
-  margin: #{$gutter-sm}px 0 0;
-
-  @include media-min-md {
     margin: #{$gutter-sm}px 0 0;
-  }
+
+    @include media-min-md {
+        margin: #{$gutter-sm}px 0 0;
+    }
 }
 
 // Remove ALL the gutters
 @mixin no-gutters() {
-  padding: 0;
-
-  @include media-min-xs {
     padding: 0;
-  }
 
-  @include media-min-sm {
-    padding: 0;
-  }
+    @include media-min-xs {
+        padding: 0;
+    }
 
-  @include media-min-md {
-    padding: 0;
-  }
+    @include media-min-sm {
+        padding: 0;
+    }
+
+    @include media-min-md {
+        padding: 0;
+    }
 }
