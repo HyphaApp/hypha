@@ -1,8 +1,11 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  LABEL COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -16,40 +19,40 @@ $label-disabled: color(seed-grey) !default;
 // ELEMENTS
 
 .label {
-  @include animate(color);
-  @include font-size-md();
-  position: relative;
-  font-weight: $font-weight-regular;
-  color: $label;
-
-  &::after {
+    @include animate(color);
     @include font-size-md();
-    content: '*';
-    color: $label-required;
+    position: relative;
     font-weight: $font-weight-regular;
-    margin-left: 5px;
-    display: none;
-  }
+    color: $label;
 
-  .is-error & {
-    color: $label-error;
-  }
-
-  .is-success & {
-    color: $label-success;
-  }
-
-  .is-warning & {
-    color: $label-warning;
-  }
-
-  .is-disabled & {
-    color: $label-disabled;
-  }
-
-  .is-required & {
     &::after {
-      display: inline-block;
+        @include font-size-md();
+        content: '*';
+        color: $label-required;
+        font-weight: $font-weight-regular;
+        margin-left: 5px;
+        display: none;
     }
-  }
+
+    .is-error & {
+        color: $label-error;
+    }
+
+    .is-success & {
+        color: $label-success;
+    }
+
+    .is-warning & {
+        color: $label-warning;
+    }
+
+    .is-disabled & {
+        color: $label-disabled;
+    }
+
+    .is-required & {
+        &::after {
+            display: inline-block;
+        }
+    }
 }

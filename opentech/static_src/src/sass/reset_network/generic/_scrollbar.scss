@@ -1,8 +1,11 @@
-//============================================================================//
+//------------------------------------------------------------------//
 //
 //  GLOBAL GENERIC ANGULAR SCROLLBAR
 //
-//============================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
@@ -11,17 +14,19 @@ $scrollbar-track: color(seed-grey, -45) !default;
 
 // ELEMENTS
 
+// sass-lint:disable no-vendor-prefixes
 .is-not-touch {
-  ::-webkit-scrollbar {
-    height: 10px;
-    width: 10px;
-  }
+    ::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
 
-  ::-webkit-scrollbar-track {
-    background-color: $scrollbar-track;
-  }
+    ::-webkit-scrollbar-track {
+        background-color: $scrollbar-track;
+    }
 
-  ::-webkit-scrollbar-thumb {
-    background-color: $scrollbar-thumb;
-  }
+    ::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-thumb;
+    }
 }
+// sass-lint:enable no-vendor-prefixes

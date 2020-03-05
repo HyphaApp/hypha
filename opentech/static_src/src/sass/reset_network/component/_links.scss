@@ -1,21 +1,30 @@
-//================================================================================================//
+//------------------------------------------------------------------//
 //
 //  LINKS COMPONENTS
 //
-//================================================================================================//
+//  Mixins have already been decared in a parent file
+//  sass-lint:disable mixins-before-declarations
+//
+//------------------------------------------------------------------//
 
 // VARS
 
 // ELEMENTS
 
 .links {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 .links__item {
-  position: relative;
-  border-bottom: 1px solid color(seed-black);
-  margin-bottom: 20px;
+    position: relative;
+    border-width: 0 0 1px;
+    border-style: solid;
+    border-color: color(seed-black);
+    margin-bottom: 20px;
+
+    .links--external & {
+        margin-bottom: 0;
+    }
 }
