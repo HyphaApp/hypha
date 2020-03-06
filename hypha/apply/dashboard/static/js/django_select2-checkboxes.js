@@ -1,4 +1,3 @@
-/* global jQuery */
 (function($) {
   $.fn.select2.amd.require(
     [
@@ -10,7 +9,7 @@
 
       $(function () {
         $('.django-select2-checkboxes').each(function (i, element) {
-          var $element = $(element)
+          var $element = $(element);
 
           $element.select2({
             placeholder: $element.data('placeholder'),
@@ -19,13 +18,13 @@
 
               if (!data.selected.length) {
                 return filterType
-              } else if (data.selected.length == data.all.length ) {
+              } else if (data.selected.length == data.all.length) {
                 return 'All ' + filterType + ' selected';
               }
               return data.selected.length + ' of ' + data.all.length + ' ' + filterType + ' selected';
             },
             selectionAdapter: SelectionAdapter,
-            resultsAdapter: ResultsAdapter
+            returnesultsAdapter: ResultsAdapter
           });
 
         });
