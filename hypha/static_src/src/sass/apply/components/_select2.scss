@@ -71,17 +71,17 @@ $dropdown-height: 45px;
         padding: 0;
 
         &[aria-selected='true'] {
-            .wrap {
+
                 &::before {
                     background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
                     background-size: 12px;
                     border: 1px solid $color--dark-blue;
                     content: '';
                 }
-            }
+            
         }
 
-        .wrap {
+
             display: flex;
             align-items: center;
             padding: 6px;
@@ -94,6 +94,6 @@ $dropdown-height: 45px;
                 border: 1px solid $color--mid-grey;
                 content: '';
             }
-        }
+    
     }
 }

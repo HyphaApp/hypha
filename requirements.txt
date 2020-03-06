@@ -25,7 +25,7 @@ django-tables2==1.21.2
 django-tinymce4-lite==1.7.5
 django-two-factor-auth==1.9.1
 django-webpack-loader==0.6.0
-django_select2==7.1.1
+django_select2==7.2.0
 djangorestframework==3.9.2
 djangorestframework-api-key==1.4.1
 django==2.2.11

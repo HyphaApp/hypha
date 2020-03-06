@@ -1,23 +1,35 @@
-(function ($) {
-    var init = function ($element) {
-        options = {
-            placeholder: $element.data('placeholder'),
-            templateSelection: function(selected, total) {
-                let filterType = this.placeholder;
-                if ( !selected.length ) {
-                    return filterType;
-                } else if ( selected.length===total ) {
-                    return 'All ' + filterType + ' selected';
-                }
-                return selected.length + ' of ' + total + ' ' + filterType + ' selected';
-            }
-        };
-        $element.select2MultiCheckboxes(options);
-    };
-    $(function () {
+/* global jQuery */
+(function($) {
+  $.fn.select2.amd.require(
+    [
+      'select2/multi-checkboxes/dropdown',
+      'select2/multi-checkboxes/selection',
+      'select2/multi-checkboxes/results'
+    ],
+    function(DropdownAdapter, SelectionAdapter, ResultsAdapter) {
+
+      $(function () {
         $('.django-select2-checkboxes').each(function (i, element) {
-            var $element = $(element);
-            init($element);
+          var $element = $(element)
+
+          $element.select2({
+            placeholder: $element.data('placeholder'),
+            templateSelection: function(data) {
+              let filterType = $element.data('placeholder');
+
+              if (!data.selected.length) {
+                return filterType
+              } else if (data.selected.length == data.all.length ) {
+                return 'All ' + filterType + ' selected';
+              }
+              return data.selected.length + ' of ' + data.all.length + ' ' + filterType + ' selected';
+            },
+            selectionAdapter: SelectionAdapter,
+            resultsAdapter: ResultsAdapter
+          });
+
         });
-    });
+      });
+    }
+  );
 }(this.jQuery));
