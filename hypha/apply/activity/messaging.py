@@ -430,6 +430,7 @@ class SlackAdapter(AdapterBase):
         self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
         self.comments_room = settings.SLACK_DESTINATION_ROOM_COMMENTS
+        self.comments_type = settings.SLACK_TYPE_COMMENTS
 
     def slack_links(self, links, sources):
         return ', '.join(
@@ -603,11 +604,17 @@ class SlackAdapter(AdapterBase):
             target_rooms.extend(extra_rooms)
 
         try:
-            if self.comments_room and kwargs['comment']:
-                target_rooms.extend([self.comments_room])
+            comment = kwargs['comment']
         except KeyError:
-            # Not a comment.
+            # Not a comment, no extra rooms.
             pass
+        else:
+            if self.comments_room:
+                if any(self.comments_type):
+                    if comment.visibility in self.comments_type:
+                        target_rooms.extend([self.comments_room])
+                else:
+                    target_rooms.extend([self.comments_room])
 
         # Make sure each channel name starts with a "#".
         target_rooms = [
