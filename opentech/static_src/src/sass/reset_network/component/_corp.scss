@@ -35,19 +35,13 @@
     flex: 0 0 auto;
     position: relative;
 
-    @include media-max-sm {
-        &:nth-child(2n+2)::after {
-            display: none;
-        }
-    }
-
     @include media-min-sm {
         flex: 0 0 auto;
     }
 
     &::after {
         content: '';
-        display: inline-block;
+        display: none;
         position: absolute;
         top: 50%;
         right: 0;
@@ -66,8 +60,8 @@
             background-color: color(text-lightest);
         }
 
-        @include media-max-xs {
-            display: none;
+        @include media-min-xs {
+            display: block;
         }
     }
 

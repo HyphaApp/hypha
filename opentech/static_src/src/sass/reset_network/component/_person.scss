@@ -175,7 +175,6 @@
 
     @include media-min-sm {
         @include font-size-lg();
-        @include gutter-bottom-sm();
     }
 }
 
@@ -193,6 +192,10 @@
     flex: 1 1 auto;
     line-height: 1.4;
     padding-bottom: #{$gutter-sm}px;
+
+    @include media-min-sm {
+        @include pad-gutter-top-sm();
+    }
 }
 
 .person__social {
