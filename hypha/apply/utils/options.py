@@ -19,6 +19,7 @@ MCE_ATTRIBUTES = {
         ]},
     ],
     'relative_urls': False,
+    'browser_spellcheck': True,
 }
 MCE_ATTRIBUTES_SHORT = {**MCE_ATTRIBUTES, **{'height': 180}}
 
