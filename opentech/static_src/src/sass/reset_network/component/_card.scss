@@ -197,8 +197,10 @@ a.card {
 // CARD-LINK
 
 a.card-link {
+    @include animate(opacity);
     width: 100%;
     display: block;
+    opacity: 1;
 
     &,
     &:link,
@@ -209,6 +211,7 @@ a.card-link {
 
     &:hover {
         outline: 0;
+        opacity: .5;
 
         &[accesskey] {
             outline: 1px dotted $anchor-access-border;
@@ -217,11 +220,13 @@ a.card-link {
 
     &:focus {
         outline: 2px solid $anchor-focus-border;
+        opacity: .5;
     }
 
     .focus-disabled &:focus,
     &:active {
         outline: none;
+        opacity: .25;
     }
 }
 

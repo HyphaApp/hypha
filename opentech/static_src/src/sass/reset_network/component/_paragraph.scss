@@ -43,43 +43,23 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 
     &.theme-lightest {
         +.para.theme-lightest {
-            padding-top: 0;
+            @include media-max-md {
+                padding-top: 0;
+            }
         }
     }
 
-    &.theme-light {
-        +.para.theme-light {
-            padding-top: 0;
-        }
-    }
-
-    &.theme-grey {
-        +.para.theme-grey {
-            padding-top: 0;
+    &.theme-darkest {
+        +.para.theme-darkest {
+            @include media-max-md {
+                padding-top: 0;
+            }
         }
     }
 
     &.theme-dark {
         +.para.theme-dark {
             padding-top: 0;
-        }
-    }
-
-    &.theme-darkest {
-        +.para.theme-darkest {
-            padding-top: 0;
-        }
-    }
-
-    &:last-of-type {
-        padding-bottom: #{$gutter}px;
-
-        @include media-min-sm {
-            padding-bottom: #{$gutter-sm}px;
-        }
-
-        @include media-min-md {
-            padding-bottom: #{$gutter}px;
         }
     }
 
@@ -92,24 +72,25 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
             padding-bottom: #{$gutter-lg * 3}px;
         }
     }
+
+    &:last-of-type {
+        padding-bottom: #{$gutter-sm}px;
+
+        @include media-min-sm {
+            padding-bottom: #{$gutter-sm}px;
+        }
+
+        @include media-min-md {
+            padding-bottom: #{$gutter}px;
+        }
+    }
 }
 
 .para--overflow-hidden {
     overflow: hidden;
 }
 
-.para--cards {
-    padding-top: #{$gutter}px;
-
-    @include media-min-sm {
-        padding-top: #{$gutter-lg}px;
-    }
-
-    @include media-min-md {
-        padding-top: #{$gutter-xl}px;
-    }
-}
-
+.para--login,
 .para--head {
     overflow: hidden;
     padding-bottom: #{$gutter-max}px;
@@ -132,6 +113,18 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
 }
 
+.para--login:first-child {
+    padding-top: #{$gutter-xl}px;
+
+    @include media-min-sm {
+        padding-top: #{$gutter-xxl}px;
+    }
+
+    @include media-min-sm {
+        padding-top: #{$gutter-xxl}px;
+    }
+}
+
 .para--back {
     padding-top: #{$gutter-sm}px;
     padding-bottom: 0;
@@ -147,6 +140,8 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
 }
 
+.para--assets,
+.para--external,
 .para--article {
     padding-bottom: #{$gutter-sm}px;
     padding-top: 0;
@@ -162,8 +157,6 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
 }
 
-.para--assets,
-.para--external,
 .para--region,
 .para--title,
 .para--pillar {
@@ -201,7 +194,15 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 }
 
 .para--intro {
-    padding-bottom: #{($gutter-xl * 2) + $gutter-xs}px;
+    padding-bottom: 210px;
+
+    @include media-min-sm {
+        padding-bottom: #{$gutter}px;
+    }
+
+    @include media-min-md {
+        padding-bottom: 60px;
+    }
 }
 
 .para--content-left {}
@@ -300,8 +301,7 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     .para--head &,
     .para--assets &,
     .para--external &,
-    .para--article &,
-    .para--cards & {
+    .para--article & {
         @include media-min-sm {
             padding: 0 0 0 #{$para-sidebar-offset};
         }
@@ -316,6 +316,29 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 
         @include media-min-xl {
             padding: 0 #{$sidebar-offset}px;
+        }
+    }
+
+    .para--cards & {
+        justify-content: flex-start;
+
+        @include media-min-sm {
+            padding: 0 0 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-md {
+            justify-content: flex-end;
+            padding: 0 0 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-lg {
+            justify-content: flex-end;
+            padding: 0 #{$para-sidebar-offset / 2} 0 #{$para-sidebar-offset};
+        }
+
+        @include media-min-xl {
+            justify-content: flex-end;
+            padding: 0 #{$sidebar-offset / 2}px 0 #{$para-sidebar-offset};
         }
     }
 }
@@ -560,6 +583,10 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
             margin-right: #{$gutter}px;
         }
     }
+
+    .para--head & {
+        @include gutter-bottom();
+    }
 }
 
 .para__body {
@@ -747,11 +774,11 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
         margin-top: -#{$gutter-lg * 3.5}px;
 
         @include media-min-sm {
-            margin-top: -#{$gutter-lg * 2}px;
+            margin-top: -120px;
         }
 
         @include media-min-md {
-            margin-top: -#{$gutter-lg * 5}px;
+            margin-top: -160px;
         }
     }
 }
@@ -770,19 +797,9 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     &,
     &:link,
     &:visited {
+        @include theme-switch(color, seed-black, seed-white);
         opacity: .5;
         text-decoration: none;
-
-        .theme-light &,
-        .theme-lightest & {
-            color: color(seed-white);
-        }
-
-        .theme-grey &,
-        .theme-dark &,
-        .theme-darkest & {
-            color: color(seed-black);
-        }
     }
 
     &:hover,
