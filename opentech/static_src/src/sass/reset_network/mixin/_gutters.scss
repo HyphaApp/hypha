@@ -78,11 +78,11 @@
     padding: #{$gutter}px #{$gutter-sm}px;
 
     @include media-min-sm {
-        padding: #{$gutter-lg}px #{$gutter-sm}px;
+        padding: #{$gutter}px #{$gutter-sm}px;
     }
 
     @include media-min-md {
-        padding: #{$gutter-xxl}px #{$gutter}px #{$gutter-max}px;
+        padding: 60px #{$gutter}px;
     }
 }
 

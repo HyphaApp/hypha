@@ -3,13 +3,7 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 
-{% block body_class %}
-  {% if page.section_5_image or page.section_5_heading or page.section_5_text or page.section_5_link or page.section_5_link_text or page.section_6_image or page.section_6_heading or page.section_6_text %}
-  base-darkest
-  {% else %}
-  base-dark
-  {% endif %}
-{% endblock %}
+{% block body_class %}base-dark{% endblock %}
 
 {% block content %}
 
@@ -113,7 +107,7 @@
 
 {# section 4 #}
 {% if page.section_4_image or page.section_4_heading or page.section_4_text %}
-<section class="para para--content-left para--aside-lg para--padding-offset-xl para--col-sm theme-dark" data-section-theme="dark">
+<section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
@@ -136,7 +130,7 @@
 
 {# section 5 #}
 {% if page.section_5_image or page.section_5_heading or page.section_5_text or page.section_5_link and page.section_5_link_text %}
-<section class="para para--content-right para--aside-lg para--col-sm para--aside-offset-xl theme-darkest" data-section-theme="dark">
+<section class="para para--content-right para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">
@@ -167,7 +161,7 @@
 
 {# section 6 #}
 {% if page.section_6_image or page.section_6_heading or page.section_6_text %}
-<section class="para para--content-left para--aside-lg para--col-sm theme-darkest" data-section-theme="dark">
+<section class="para para--content-left para--aside-lg para--col-sm theme-dark" data-section-theme="dark">
   <div class="para__wrap contain reveal">
     <div class="para__aside">
       <div class="surface surface--1-1">

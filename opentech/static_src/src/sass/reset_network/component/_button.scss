@@ -207,14 +207,24 @@ button.button--sm {
 
     .button:focus & {
         @include theme-switch(color, seed-black, seed-black);
-    }
-
-    .button:focus &,
-    .button:active & {
 
         .focus-disabled .theme-lightest &,
         .focus-disabled .theme-light & {
             color: color(seed-white);
+        }
+
+        .focus-disabled .theme-grey &,
+        .focus-disabled .theme-dark &,
+        .focus-disabled .theme-darkest & {
+            color: color(seed-black);
+        }
+    }
+
+    .button:active & {
+
+        .focus-disabled .theme-lightest &,
+        .focus-disabled .theme-light & {
+            color: color(seed-black);
         }
 
         .focus-disabled .theme-grey &,
