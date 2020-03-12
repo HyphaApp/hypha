@@ -9,6 +9,10 @@ register = template.Library()
 def resilientfilesizeformat(value):
 
     try:
-        filesizeformat(value.asset.file.size)
+        size = filesizeformat(value.asset.file.size)
+        if size:
+            return size
+        else:
+            return 'Download'
     except Exception:
         return 'Download'
