@@ -1,5 +1,6 @@
 from django.db import models
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
+from wagtail.core.fields import RichTextField
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
@@ -15,8 +16,8 @@ class ResetNetworkPerson(models.Model):
         return self.name
 
     name = models.CharField(max_length=255, blank=False)
-    role = models.CharField(max_length=255, blank=False)
-    about = models.TextField(null=True, blank=True)
+    role = models.CharField(max_length=255, null=True, blank=True)
+    about = RichTextField(null=True, blank=True, features=['link'])
     image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     linkedin = models.URLField(null=True, blank=True)
     twitter = models.URLField(null=True, blank=True)

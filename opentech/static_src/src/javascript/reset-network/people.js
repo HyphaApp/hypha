@@ -17,7 +17,12 @@
 
         ACCORDION: {
 
+            windowWidth: null,
+
             init: function () {
+
+                PEOPLE.ACCORDION.windowWidth = window.innerWidth;
+
                 $('.js-person .person__title').on('click', function () {
                     var $this = $(this);
                     var $person = $this.closest('.js-person');
@@ -33,7 +38,10 @@
                 var resizeTimeout = null;
                 window.addEventListener('resize', function () {
                     clearTimeout(resizeTimeout);
-                    resizeTimeout = setTimeout(PEOPLE.ACCORDION.closeAll, 500);
+                    if (window.innerWidth !== PEOPLE.ACCORDION.windowWidth) {
+                        PEOPLE.ACCORDION.windowWidth = window.innerWidth;
+                        resizeTimeout = setTimeout(PEOPLE.ACCORDION.closeAll, 500);
+                    }
                 });
             },
 

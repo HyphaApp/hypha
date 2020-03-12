@@ -6,7 +6,12 @@
 
     var CAROUSEL = {
 
+        $document: null,
+
         init: function () {
+
+            CAROUSEL.$document = $(document);
+
             CAROUSEL.HERO.init();
             CAROUSEL.RESOURCES.init();
         },
@@ -56,7 +61,6 @@
                     CAROUSEL.HERO.$carousel.addClass('is-collapsed');
                 }
 
-                var $document = $(document);
                 var $firstCarouselItem = CAROUSEL.HERO.$imgs.first();
                 var firstImgSrc = $firstCarouselItem.children('.hero-carousel__image').attr('src');
                 var positionTimeout = null;
@@ -86,7 +90,7 @@
                 });
 
                 // Wait for cookie notice dismissal before permitting animations
-                $document.bind('cookie-notice-hidden', dfdCookieNotice.resolve);
+                CAROUSEL.$document.bind('cookie-notice-hidden', dfdCookieNotice.resolve);
 
                 // Commence hero animations
                 setTimeout(dfdMinTimeout.resolve, 500);
@@ -94,17 +98,19 @@
                     CAROUSEL.HERO.collapsed = true;
                     CAROUSEL.HERO.animate();
 
-                    $document.on('scroll', function () {
-                        clearInterval(CAROUSEL.HERO.animateInterval);
-                        $document.off('scroll');
-                        setTimeout(function () {
-                            $document.trigger('artifacts-animate');
-                        }, 250); // enough time to allow for completion of an in-progress carousel image change
+                    // trigger the artifacts collapse on scroll or after 3 seconds
+                    var autoAnimte = setTimeout(function () {
+                        CAROUSEL.HERO.triggerArtifacts();
+                    }, 3000);
+                    CAROUSEL.$document.on('scroll', function () {
+                        CAROUSEL.$document.off('scroll');
+                        clearTimeout(autoAnimte);
+                        CAROUSEL.HERO.triggerArtifacts();
                     });
                 });
 
                 // Collapse the carousel when the logo moves to the corners
-                $document.bind('artifacts-cornered', function () {
+                CAROUSEL.$document.bind('artifacts-cornered', function () {
                     CAROUSEL.HERO.animate();
                     CAROUSEL.HERO.$carousel.addClass('is-collapsed');
                 });
@@ -134,10 +140,17 @@
                 CAROUSEL.HERO.$carousel.addClass('is-displayed');
             },
 
-            changeImg() {
+            changeImg: function () {
                 CAROUSEL.HERO.animateIndex = CAROUSEL.HERO.animateIndex + 1 >= CAROUSEL.HERO.$imgs.length ? 0 : CAROUSEL.HERO.animateIndex + 1;
                 CAROUSEL.HERO.$imgs.removeClass('is-displayed');
                 $(CAROUSEL.HERO.$imgs[CAROUSEL.HERO.animateIndex]).addClass('is-displayed');
+            },
+
+            triggerArtifacts: function () {
+                clearInterval(CAROUSEL.HERO.animateInterval);
+                setTimeout(function () {
+                    CAROUSEL.$document.trigger('artifacts-animate');
+                }, 250); // enough time to allow for completion of an in-progress carousel image change
             },
 
             animateInterval: null,
