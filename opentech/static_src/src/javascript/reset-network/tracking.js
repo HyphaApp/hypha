@@ -84,6 +84,12 @@
             if (window.location.protocol === 'https:') {
                 cookie += ';secure';
             }
+            if (window.location.hostname.substring(0, 6) === 'apply.') {
+                cookie += ';domain=' + window.location.hostname.substring(6, window.location.hostname.length);
+            }
+            else {
+                cookie += ';domain=' + window.location.hostname;
+            }
             document.cookie = cookie;
         },
 

@@ -185,11 +185,17 @@
 
         NAV: {
             $links: null,
+            timeout: null,
 
             init: function () {
                 ANIMATIONS.NAV.$links = $('#stage-nav .main-nav-link');
                 ANIMATIONS.$doc.bind('on-scroll', ANIMATIONS.NAV.setTheme);
-                ANIMATIONS.NAV.setTheme();
+                window.addEventListener('resize', function() {
+                    clearTimeout(ANIMATIONS.NAV.timeout);
+                    ANIMATIONS.NAV.timeout = setTimeout(function () {
+                        ANIMATIONS.NAV.setTheme();
+                    }, 500);
+                });
             },
 
             // Adjust theming of nav links according to scroll position
@@ -285,10 +291,15 @@
 
                 // On home page reveal GIFs when animations are complete
                 if ($('#hero-carousel').length) {
-                    ANIMATIONS.$doc.bind('artifacts-cornered', function () {
+                    // on mobile, reveal immediately. on desktop wait for the artifacts
+                    if (window.innerWidth <= 768) {
                         setTimeout(ANIMATIONS.GIFS.onScroll, 750);
-                    });
-
+                    }
+                    else {
+                        ANIMATIONS.$doc.bind('artifacts-cornered', function () {
+                            setTimeout(ANIMATIONS.GIFS.onScroll, 750);
+                        });
+                    }
                 // Not home page reveal GIFs on cookie notice dismissal
                 }
                 else {
