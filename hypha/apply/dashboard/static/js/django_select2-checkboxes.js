@@ -11,6 +11,7 @@
           var $element = $(element);
             $element.select2({
               placeholder: $element.data('placeholder'),
+              closeOnSelect: false,
               templateSelection: function(data) {
                 let filterType = $element.data('placeholder');
 
