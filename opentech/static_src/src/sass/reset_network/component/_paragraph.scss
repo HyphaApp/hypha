@@ -338,7 +338,7 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 
         @include media-min-xl {
             justify-content: flex-end;
-            padding: 0 #{$sidebar-offset / 2}px 0 #{$para-sidebar-offset};
+            padding: 0 #{$sidebar-offset / 2}px 0 0;
         }
     }
 }
