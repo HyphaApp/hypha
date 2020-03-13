@@ -84,11 +84,12 @@
             if (window.location.protocol === 'https:') {
                 cookie += ';secure';
             }
-            if (window.location.hostname.substring(0, 6) === 'apply.') {
-                cookie += ';domain=' + window.location.hostname.substring(6, window.location.hostname.length);
-            }
-            else {
-                cookie += ';domain=' + window.location.hostname;
+            // try and set the cookie at the top level domain
+            // will only work with a 1 part tld
+            var domainParts = window.location.hostname.split('.').reverse();
+            if (domainParts.length >= 2) {
+                var domain = domainParts[1] + '.' + domainParts[0];
+                cookie += ';domain=' + domain;
             }
             document.cookie = cookie;
         },

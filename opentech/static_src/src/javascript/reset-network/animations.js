@@ -190,12 +190,13 @@
             init: function () {
                 ANIMATIONS.NAV.$links = $('#stage-nav .main-nav-link');
                 ANIMATIONS.$doc.bind('on-scroll', ANIMATIONS.NAV.setTheme);
-                window.addEventListener('resize', function() {
+                window.addEventListener('resize', function () {
                     clearTimeout(ANIMATIONS.NAV.timeout);
                     ANIMATIONS.NAV.timeout = setTimeout(function () {
                         ANIMATIONS.NAV.setTheme();
                     }, 500);
                 });
+                ANIMATIONS.NAV.setTheme();
             },
 
             // Adjust theming of nav links according to scroll position
