@@ -11,7 +11,7 @@ from django_select2.forms import Select2Widget
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole
+from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole, Reminder
 from .utils import render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
@@ -408,3 +408,14 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.fields['meta_terms'].queryset = MetaTerm.get_root_descendants().exclude(depth=2)
+
+
+class CreateReminderForm(forms.ModelForm):
+    def __init__(self, user=None, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+
+    class Meta:
+        model = Reminder
+        fields = ['time']

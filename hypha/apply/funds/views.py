@@ -53,6 +53,7 @@ from .forms import (
     BatchProgressSubmissionForm,
     BatchUpdateReviewersForm,
     BatchUpdateSubmissionLeadForm,
+    CreateReminderForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
     UpdateMetaTermsForm,
@@ -64,6 +65,7 @@ from .models import (
     ApplicationRevision,
     ApplicationSubmission,
     LabBase,
+    Reminder,
     RoundBase,
     RoundsAndLabs,
 )
@@ -580,12 +582,36 @@ class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
     context_name = 'meta_terms_form'
 
 
+@method_decorator(staff_required, name='dispatch')
+class CreateReminderView(DelegatedViewMixin, CreateView):
+    context_name = 'reminder_form'
+    form_class = CreateReminderForm
+    model = Reminder
+
+    # def form_valid(self, form):
+    #     response = super().form_valid(form)
+
+    #     messenger(
+    #         MESSAGES.CREATED_PROJECT,
+    #         request=self.request,
+    #         user=self.request.user,
+    #         source=self.object,
+    #         related=self.object.submission,
+    #     )
+
+    #     return response
+
+    # def get_success_url(self):
+    #     return self.object.get_absolute_url()
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
         ScreeningSubmissionView,
+        CreateReminderView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,

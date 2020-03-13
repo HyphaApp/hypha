@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -15,7 +16,7 @@ class Reminder(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
-    time = models.DateTimeField(verbose_name=_(' time'))
+    time = models.DateTimeField()
     action = models.CharField(
         choices=REMINDER_TYPES.items(),
         default='review',

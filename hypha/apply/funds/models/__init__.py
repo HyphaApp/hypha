@@ -5,6 +5,7 @@ from .forms import ApplicationForm
 from .reviewer_role import ReviewerRole
 from .screening import ScreeningStatus
 from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
+from .reminders import Reminder
 
 __all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole']
 
