@@ -68,6 +68,7 @@ rounds_urls = ([
     path('<int:pk>/', SubmissionsByRound.as_view(), name="detail"),
 ], 'rounds')
 
+
 urlpatterns = [
     path('submissions/', include(submission_urls)),
     path('rounds/', include(rounds_urls)),
