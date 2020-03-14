@@ -588,21 +588,18 @@ class CreateReminderView(DelegatedViewMixin, CreateView):
     form_class = CreateReminderForm
     model = Reminder
 
-    # def form_valid(self, form):
-    #     response = super().form_valid(form)
+    def form_valid(self, form):
+        response = super().form_valid(form)
 
-    #     messenger(
-    #         MESSAGES.CREATED_PROJECT,
-    #         request=self.request,
-    #         user=self.request.user,
-    #         source=self.object,
-    #         related=self.object.submission,
-    #     )
+        messenger(
+            MESSAGES.CREATED_REMINDER,
+            request=self.request,
+            user=self.request.user,
+            source=self.object.submission,
+            related=self.object,
+        )
 
-    #     return response
-
-    # def get_success_url(self):
-    #     return self.object.get_absolute_url()
+        return response
 
 
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):

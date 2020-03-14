@@ -68,6 +68,7 @@ neat_related = {
     MESSAGES.SKIPPED_REPORT: 'report',
     MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
     MESSAGES.REPORT_NOTIFY: 'report',
+    MESSAGES.CREATED_REMINDER: 'reminder',
 }
 
 
@@ -838,6 +839,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.CREATED_REMINDER: 'Reminder created',
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):

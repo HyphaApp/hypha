@@ -411,10 +411,24 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
 
 
 class CreateReminderForm(forms.ModelForm):
-    def __init__(self, user=None, *args, **kwargs):
-        self.user = user
-        super().__init__(*args, **kwargs)
+    submission = forms.ModelChoiceField(
+        queryset=ApplicationSubmission.objects.filter(),
+        widget=forms.HiddenInput(),
+    )
+    time = forms.DateTimeField(input_formats=['%Y-%m-%dT%H:%M'])
 
+    def __init__(self, instance=None, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+        if instance:
+            self.fields['submission'].initial = instance.id
+
+    def save(self, *args, **kwargs):
+        return Reminder.objects.create(
+            time=self.cleaned_data['time'],
+            submission=self.cleaned_data['submission'],
+            user=self.user)
 
     class Meta:
         model = Reminder
