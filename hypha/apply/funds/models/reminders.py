@@ -23,3 +23,9 @@ class Reminder(models.Model):
         max_length=15,
     )
     sent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Remind to {self.action} at {self.time}'
+
+    class Meta:
+        ordering = ['-time']

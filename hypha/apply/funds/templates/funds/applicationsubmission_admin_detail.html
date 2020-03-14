@@ -60,6 +60,10 @@
     {% include 'determinations/includes/determination_block.html' with submission=object %}
 {% endblock %}
 
+{% block reminders %}
+    {% include 'funds/includes/reminders_block.html' with submission=object %}
+{% endblock %}
+
 {% block extra_js %}
     {{ reviewer_form.media.js }}
     {{ comment_form.media.js }}

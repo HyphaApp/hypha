@@ -583,7 +583,7 @@ class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class CreateReminderView(DelegatedViewMixin, CreateView):
+class ReminderCreateView(DelegatedViewMixin, CreateView):
     context_name = 'reminder_form'
     form_class = CreateReminderForm
     model = Reminder
@@ -592,7 +592,7 @@ class CreateReminderView(DelegatedViewMixin, CreateView):
         response = super().form_valid(form)
 
         messenger(
-            MESSAGES.CREATED_REMINDER,
+            MESSAGES.CREATE_REMINDER,
             request=self.request,
             user=self.request.user,
             source=self.object.submission,
@@ -602,13 +602,34 @@ class CreateReminderView(DelegatedViewMixin, CreateView):
         return response
 
 
+@method_decorator(permission_required('funds.delete_reminder', raise_exception=True), name='dispatch')
+class ReminderDeleteView(DeleteView):
+    model = Reminder
+
+    def get_success_url(self):
+        submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return reverse_lazy('funds:submissions:detail', args=(submission.id,))
+
+    def delete(self, request, *args, **kwargs):
+        reminder = self.get_object()
+        messenger(
+            MESSAGES.DELETE_REMINDER,
+            user=request.user,
+            request=request,
+            source=reminder.submission,
+            related=reminder,
+        )
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
         ScreeningSubmissionView,
-        CreateReminderView,
+        ReminderCreateView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,
