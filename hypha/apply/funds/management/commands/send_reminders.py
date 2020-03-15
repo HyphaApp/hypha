@@ -6,8 +6,8 @@ from django.urls import set_urlconf
 from django.utils import timezone
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.home.models import ApplyHomePage
 from hypha.apply.funds.models import Reminder
+from hypha.apply.home.models import ApplyHomePage
 
 
 class Command(BaseCommand):

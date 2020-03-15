@@ -11,7 +11,7 @@ from django_select2.forms import Select2Widget
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from .models import ApplicationSubmission, AssignedReviewers, ReviewerRole, Reminder
+from .models import ApplicationSubmission, AssignedReviewers, Reminder, ReviewerRole
 from .utils import render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
