@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class Reminder(models.Model):
@@ -25,7 +26,15 @@ class Reminder(models.Model):
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Remind to {self.action} at {self.time}'
+        return f'Remind to {self.action} at {self.time_with_format}'
 
     class Meta:
         ordering = ['-time']
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.time
+
+    @property
+    def time_with_format(self):
+        return self.time.strftime('%d %b %Y %I:%M %p')

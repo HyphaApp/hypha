@@ -2,12 +2,14 @@
     <h5>Reminders</h5>
     <ul>
     	{% for reminder in object.reminders.all %}
-    		<li>{{reminder.time}} - {{reminder.get_action_display}}
+    		<li {% if reminder.is_expired %}style="color:grey;"{% endif %}>{{reminder.get_action_display}} <br>
+                {{reminder.time_with_format}} 
 	            <a class="link" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
 	                Delete
 	                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
 	            </a>
     		</li>
+            <br>
     	{% endfor %}
     </ul>
 </div>
