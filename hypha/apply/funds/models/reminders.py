@@ -48,4 +48,4 @@ class Reminder(models.Model):
 
     @property
     def time_with_format(self):
-        return self.time.strftime('%d %b %Y %I:%M %p')
+        return self.time.strftime('%Y-%m-%d  %I:%M %p')
