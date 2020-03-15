@@ -1,14 +1,21 @@
 <div class="sidebar__inner">
     <h5>Reminders</h5>
+    {% regroup object.reminders.all by get_action_display as action_list %}
     <ul>
-    	{% for reminder in object.reminders.all %}
-    		<li {% if reminder.is_expired %}style="color:grey;"{% endif %}>{{reminder.get_action_display}} <br>
-                {{reminder.time_with_format}} 
-	            <a class="link" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
-	                Delete
-	                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
-	            </a>
-    		</li>
+        {% for action in action_list %}
+            <li><strong>{{action.grouper}}</strong>
+                <ul>
+                    {% for reminder in action.list %}
+                    <li {% if reminder.is_expired %}style="color:grey;"{% endif %}>
+                        {{reminder.time_with_format}}
+                        <a class="link" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
+                            Delete
+                            <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
             <br>
     	{% endfor %}
     </ul>
