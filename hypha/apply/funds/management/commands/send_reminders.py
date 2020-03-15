@@ -26,7 +26,6 @@ class Command(BaseCommand):
         request.session = {}
         request._messages = FallbackStorage(request)
 
-
         for reminder in Reminder.objects.filter(sent=False, time__lte=timezone.now()):
             messenger(
                 MESSAGES.SEND_REMINDER,
