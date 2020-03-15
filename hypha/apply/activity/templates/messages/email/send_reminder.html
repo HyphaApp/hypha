@@ -1,0 +1,10 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+
+A review is due for {{ source.title }}.
+
+More information can be found on the submission page:
+{{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+
+{% endblock %}

@@ -70,6 +70,7 @@ neat_related = {
     MESSAGES.REPORT_NOTIFY: 'report',
     MESSAGES.CREATE_REMINDER: 'reminder',
     MESSAGES.DELETE_REMINDER: 'reminder',
+    MESSAGES.SEND_REMINDER: 'reminder',
 }
 
 
@@ -672,6 +673,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
+        MESSAGES.SEND_REMINDER: 'messages/email/send_reminder.html',
     }
 
     def get_subject(self, message_type, source):
