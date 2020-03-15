@@ -8,6 +8,12 @@ class Reminder(models.Model):
     REMINDER_TYPES = {
         REVIEW: 'Remind to Review',
     }
+    SLACK = 'slack'
+    EMAIL = 'email'
+    MEDIUM_TYPES = {
+        SLACK: 'Slack',
+        EMAIL: 'Email',
+    }
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
         on_delete=models.CASCADE,
@@ -21,6 +27,11 @@ class Reminder(models.Model):
     action = models.CharField(
         choices=REMINDER_TYPES.items(),
         default='review',
+        max_length=15,
+    )
+    medium = models.CharField(
+        choices=MEDIUM_TYPES.items(),
+        default='email',
         max_length=15,
     )
     sent = models.BooleanField(default=False)
