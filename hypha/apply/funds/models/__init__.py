@@ -7,7 +7,7 @@ from .screening import ScreeningStatus
 from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
 from .reminders import Reminder
 
-__all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole']
+__all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole', 'Reminder']
 
 
 class FundType(ApplicationBase):
