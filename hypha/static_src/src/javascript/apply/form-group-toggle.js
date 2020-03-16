@@ -7,8 +7,8 @@
         var $field_group = $('.field-group-' + i);
         if ($field_group.length) {
             var classes = 'field-group-wrapper field-group-wrapper-' + i;
-            $field_group.each(function () {
-                if ($(this).data('hidden') && classes.indexOf('js-hidden') == -1) {
+            $field_group.each(function () { // eslint-disable-line no-loop-func
+                if ($(this).data('hidden') && classes.indexOf('js-hidden') === -1) {
                     classes += ' js-hidden';
                 }
             });
