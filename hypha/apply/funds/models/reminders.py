@@ -10,15 +10,12 @@ class Reminder(models.Model):
     REMINDER_TYPES = {
         REVIEW: 'Remind to Review',
     }
-    SLACK = 'slack'
     EMAIL = 'email'
     MEDIUM_TYPES = {
-        SLACK: 'Slack',
         EMAIL: 'Email',
     }
     ACTIONS = {
-        f'{REVIEW}-{EMAIL}': MESSAGES.REVIEW_EMAIL_REMINDER,
-        f'{REVIEW}-{SLACK}': MESSAGES.REVIEW_SLACK_REMINDER
+        f'{REVIEW}-{EMAIL}': MESSAGES.REVIEW_REMINDER,
     }
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
