@@ -6,15 +6,15 @@ from hypha.apply.activity.messaging import MESSAGES
 
 
 class Reminder(models.Model):
-    REVIEW = 'review'
-    REMINDER_TYPES = {
-        REVIEW: 'Remind to Review',
+    REVIEW = 'reviewers_review'
+    ACTIONS = {
+        REVIEW: 'Remind reviewers to Review',
     }
     EMAIL = 'email'
     MEDIUM_TYPES = {
         EMAIL: 'Email',
     }
-    ACTIONS = {
+    ACTION_MESSAGE = {
         f'{REVIEW}-{EMAIL}': MESSAGES.REVIEW_REMINDER,
     }
     submission = models.ForeignKey(
@@ -28,7 +28,7 @@ class Reminder(models.Model):
     )
     time = models.DateTimeField()
     action = models.CharField(
-        choices=REMINDER_TYPES.items(),
+        choices=ACTIONS.items(),
         default='review',
         max_length=15,
     )
