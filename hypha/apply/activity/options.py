@@ -48,7 +48,7 @@ class MESSAGES(Enum):
     REPORT_NOTIFY = 'Report Notify'
     CREATE_REMINDER = 'CREATE_REMINDER'
     DELETE_REMINDER = 'DELETE_REMINDER'
-    SEND_REMINDER = 'SEND_REMINDER'
+    REVIEW_REMINDER = 'REVIEW_REMINDER'
 
     @classmethod
     def choices(cls):

@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         for reminder in Reminder.objects.filter(sent=False, time__lte=timezone.now()):
             messenger(
-                MESSAGES.SEND_REMINDER,
+                MESSAGES.REVIEW_REMINDER,
                 request=request,
                 user=None,
                 source=reminder.submission,

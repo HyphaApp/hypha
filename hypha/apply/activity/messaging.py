@@ -70,7 +70,7 @@ neat_related = {
     MESSAGES.REPORT_NOTIFY: 'report',
     MESSAGES.CREATE_REMINDER: 'reminder',
     MESSAGES.DELETE_REMINDER: 'reminder',
-    MESSAGES.SEND_REMINDER: 'reminder',
+    MESSAGES.REVIEW_REMINDER: 'reminder',
 }
 
 
@@ -425,7 +425,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
-        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.'
+        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
+        MESSAGES.REVIEW_REMINDER: 'Review reminder has been sent for <{link}|{source.title}>',
     }
 
     def __init__(self):
@@ -673,7 +674,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
-        MESSAGES.SEND_REMINDER: 'messages/email/send_reminder.html',
+        MESSAGES.REVIEW_REMINDER: 'messages/email/review_reminder.html',
     }
 
     def get_subject(self, message_type, source):
