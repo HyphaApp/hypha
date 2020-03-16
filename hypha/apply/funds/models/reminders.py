@@ -29,8 +29,8 @@ class Reminder(models.Model):
     time = models.DateTimeField()
     action = models.CharField(
         choices=ACTIONS.items(),
-        default='review',
-        max_length=15,
+        default=REVIEW,
+        max_length=50,
     )
     medium = models.CharField(
         choices=MEDIUM_TYPES.items(),
@@ -40,7 +40,7 @@ class Reminder(models.Model):
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Remind to {self.action} at {self.time_with_format}'
+        return f'{self.ACTIONS[self.action]} at {self.time_with_format}'
 
     class Meta:
         ordering = ['-time']
