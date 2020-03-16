@@ -70,7 +70,8 @@ neat_related = {
     MESSAGES.REPORT_NOTIFY: 'report',
     MESSAGES.CREATE_REMINDER: 'reminder',
     MESSAGES.DELETE_REMINDER: 'reminder',
-    MESSAGES.REVIEW_REMINDER: 'reminder',
+    MESSAGES.REVIEW_EMAIL_REMINDER: 'reminder',
+    MESSAGES.REVIEW_SLACK_REMINDER: 'reminder',
 }
 
 
@@ -426,7 +427,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
         MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
-        MESSAGES.REVIEW_REMINDER: 'Review reminder has been sent for <{link}|{source.title}>',
+        MESSAGES.REVIEW_SLACK_REMINDER: 'Review reminder has been sent for <{link}|{source.title}>',
     }
 
     def __init__(self):
@@ -674,13 +675,15 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
-        MESSAGES.REVIEW_REMINDER: 'messages/email/review_reminder.html',
+        MESSAGES.REVIEW_EMAIL_REMINDER: 'messages/email/review_email_reminder.html',
     }
 
     def get_subject(self, message_type, source):
         if source:
             if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {source.title}'.format(source=source)
+            elif message_type in {MESSAGES.REVIEW_EMAIL_REMINDER}:
+                subject = 'Reminder: Application ready to review: {source.title}'.format(source=source)
             else:
                 try:
                     subject = source.page.specific.subject or 'Your application to {org_long_name}: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
@@ -768,6 +771,9 @@ class EmailAdapter(AdapterBase):
             # Don't tell the user if they did these activities
             if user.is_applicant:
                 return []
+
+        if message_type in {MESSAGES.REVIEW_EMAIL_REMINDER}:
+            return self.reviewers(source)
 
         return [source.user.email]
 

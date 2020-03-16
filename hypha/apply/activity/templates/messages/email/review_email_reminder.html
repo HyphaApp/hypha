@@ -1,0 +1,9 @@
+{% extends "messages/email/base.html" %}
+{% block salutation %}Dear Reviewer,{% endblock %}
+
+{% block content %}
+A new proposal is awaiting your review.
+
+Title: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}

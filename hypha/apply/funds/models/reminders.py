@@ -17,7 +17,8 @@ class Reminder(models.Model):
         EMAIL: 'Email',
     }
     ACTIONS = {
-        REVIEW: MESSAGES.REVIEW_REMINDER
+        f'{REVIEW}-{EMAIL}': MESSAGES.REVIEW_EMAIL_REMINDER,
+        f'{REVIEW}-{SLACK}': MESSAGES.REVIEW_SLACK_REMINDER
     }
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
@@ -57,4 +58,4 @@ class Reminder(models.Model):
 
     @property
     def action_message(self):
-        return self.ACTIONS[self.action]
+        return self.ACTIONS[f'{self.action}-{self.medium}']
