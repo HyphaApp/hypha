@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from hypha.apply.activity.messaging import MESSAGES
+
 
 class Reminder(models.Model):
     REVIEW = 'review'
@@ -13,6 +15,9 @@ class Reminder(models.Model):
     MEDIUM_TYPES = {
         SLACK: 'Slack',
         EMAIL: 'Email',
+    }
+    ACTIONS = {
+        REVIEW: MESSAGES.REVIEW_REMINDER
     }
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
@@ -49,3 +54,7 @@ class Reminder(models.Model):
     @property
     def time_with_format(self):
         return self.time.strftime('%Y-%m-%d  %I:%M %p')
+
+    @property
+    def action_message(self):
+        return self.ACTIONS[self.action]

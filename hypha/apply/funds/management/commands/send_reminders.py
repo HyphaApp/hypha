@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from django.urls import set_urlconf
 from django.utils import timezone
 
-from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.messaging import messenger
 from hypha.apply.funds.models import Reminder
 from hypha.apply.home.models import ApplyHomePage
 
@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
         for reminder in Reminder.objects.filter(sent=False, time__lte=timezone.now()):
             messenger(
-                MESSAGES.REVIEW_REMINDER,
+                reminder.action_message,
                 request=request,
                 user=None,
                 source=reminder.submission,
