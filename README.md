@@ -17,7 +17,9 @@
 
 ## Maintainers
 
-- [Open Technology Fund](https://www.opentech.fund/)
+- [Sarah Aoun](https://github.com/saoun) @ [Open Technology Fund](https://www.opentech.fund/)
+- [Dan Blah](https://github.com/danblah) @ [Reset](https://www.reset.tech/)
+- [Fredrik Jonsson](https://github.com/frjo) @ [Combonetwork](https://www.combonet.se/)
 
 ## Contributors
 
@@ -25,7 +27,6 @@ Thank you to all the people who have contributed to Hypha!
 
 ***Special thanks to:***
 
-- [Combonet](https://www.combonet.se/)
 - [Torchbox](https://torchbox.com/digital-products/)
 - [Parbhat](https://parbhatpuri.com/)
 
@@ -46,7 +47,7 @@ Issues on Hypha can be funded by anyone and the money will be distributed to con
 * Website: coming soon
 * Docs: coming soon
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
-* Copyright (C) 2019 - Open Technology Fund
+* Copyright (C) 2020 - Open Technology Fund
 
 ### License
 
