@@ -3,77 +3,124 @@
  * - allow to select multi values via normal dropdown control
  *
  * author      : wasikuss
- * repo        : https://github.com/wasikuss/select2-multi-checkboxes
+ * repo        : https://github.com/wasikuss/select2-multi-checkboxes/tree/amd
  * inspired by : https://github.com/select2/select2/issues/411
  * License     : MIT
  */
-(function($) {
-  var S2MultiCheckboxes = function(options, element) {
-    var self = this;
-    self.options = options;
-    self.$element = $(element);
-  var values = self.$element.val();
-    self.$element.removeAttr('multiple');
-    self.select2 = self.$element.select2({
-      allowClear: true,
-      minimumResultsForSearch: options.minimumResultsForSearch,
-      placeholder: options.placeholder,
-      closeOnSelect: false,
-      templateSelection: function() {
-        return self.options.templateSelection(self.$element.val() || [], $('option', self.$element).length);
-      },
-      templateResult: function(result) {
-        if (result.loading !== undefined)
-          return result.text;
-        return $('<div>').text(result.text).addClass(self.options.wrapClass);
-      },
-      matcher: function(params, data) {
-        var original_matcher = $.fn.select2.defaults.defaults.matcher;
-        var result = original_matcher(params, data);
-        if (result && self.options.searchMatchOptGroups && data.children && result.children && data.children.length != result.children.length) {
-          result.children = data.children;
-        }
-        return result;
-      }
-    }).data('select2');
-    self.select2.$results.off("mouseup").on("mouseup", ".select2-results__option[aria-selected]", (function(self) {
-      return function(evt) {
-        var $this = $(this);
 
-        var data = $this.data('data');
-
-        if ($this.attr('aria-selected') === 'true') {
-          self.trigger('unselect', {
-            originalEvent: evt,
-            data: data
-          });
-          return;
-        }
-
-        self.trigger('select', {
-          originalEvent: evt,
-          data: data
-        });
-      }
-    })(self.select2));
-    self.$element.attr('multiple', 'multiple').val(values).trigger('change.select2');
+/* global define jQuery */
+(function(factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else {
+    // Browser globals
+    factory(jQuery);
   }
+}(function(jQuery) {
+  if (jQuery && jQuery.fn && jQuery.fn.select2 && jQuery.fn.select2.amd) {
+    define = jQuery.fn.select2.amd.define;
+  }
+  var define;
 
-  $.fn.extend({
-    select2MultiCheckboxes: function() {
-      var options = $.extend({
-        placeholder: 'Choose elements',
-        templateSelection: function(selected, total) {
-          return selected.length + ' > ' + total + ' total';
-        },
-        wrapClass: 'wrap',
-        minimumResultsForSearch: -1,
-        searchMatchOptGroups: true
-      }, arguments[0]);
-
-      this.each(function() {
-        new S2MultiCheckboxes(options, this);
-      });
-    }
+  /* global define */
+  define('select2/multi-checkboxes/dropdown', [
+    'select2/utils',
+    'select2/dropdown',
+    'select2/dropdown/search',
+    'select2/dropdown/attachBody'
+  ],
+  function(Utils, Dropdown, DropdownSearch, AttachBody) {
+    return Utils.Decorate(
+      Utils.Decorate(
+        Dropdown,
+        DropdownSearch
+      ),
+      AttachBody
+    );
   });
-})(jQuery);
+
+
+  /* global define */
+  define('select2/multi-checkboxes/results', [
+    'jquery',
+    'select2/utils',
+    'select2/results'
+  ],
+  function($, Utils, _Results) {
+    function Results() {
+      Results.__super__.constructor.apply(this, arguments);
+    }
+    Utils.Extend(Results, _Results);
+
+    Results.prototype.highlightFirstItem = function() {
+      this.ensureHighlightVisible();
+    };
+
+    Results.prototype.bind = function(container) {
+      container.on('open', function() {
+        var $options = this.$results.find('.select2-results__option[aria-selected]');
+        var $selected = $options.filter('[aria-selected=true]');
+        var $optionToScrollTo = ($selected.length > 0 ? $selected : $selected).first();
+        $optionToScrollTo.trigger('mouseenter');
+      });
+      Results.__super__.bind.apply(this, arguments);
+    };
+
+    Results.prototype.template = function(result, container) {
+      var template = this.options.get('templateResult');
+      var escapeMarkup = this.options.get('escapeMarkup');
+
+      var content = template(result, container);
+      $(container).addClass('multi-checkboxes_wrap');
+
+      if (content == null) {
+        container.style.display = 'none';
+      } else if (typeof content === 'string') {
+        container.innerHTML = escapeMarkup(content);
+      } else {
+        $(container).append(content);
+      }
+    };
+
+    return Results;
+  });
+
+
+  /* global define */
+  define('select2/multi-checkboxes/selection', [
+    'select2/utils',
+    'select2/selection/multiple',
+    'select2/selection/placeholder',
+    'select2/selection/single',
+    'select2/selection/eventRelay'
+  ],
+  function(Utils, MultipleSelection, Placeholder, SingleSelection, EventRelay) {
+    var adapter = Utils.Decorate(MultipleSelection, Placeholder);
+    adapter = Utils.Decorate(adapter, EventRelay);
+
+    adapter.prototype.render = function() {
+      return SingleSelection.prototype.render.call(this);
+    };
+
+    adapter.prototype.update = function(data) {
+      var $rendered = this.$selection.find('.select2-selection__rendered');
+      var formatted = '';
+
+      if (data.length === 0) {
+        formatted = this.options.get('placeholder') || '';
+      } else {
+        var itemsData = {
+          selected: data || [],
+          all: this.$element.find('option') || []
+        };
+        formatted = this.display(itemsData, $rendered);
+      }
+
+      $rendered.empty().append(formatted);
+      $rendered.prop('title', formatted);
+    };
+
+    return adapter;
+  });
+})
+);
