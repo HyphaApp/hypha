@@ -1,6 +1,6 @@
 import itertools
 import os
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -11,7 +11,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
-from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.models import ApplicationSubmission, Reminder
 from hypha.apply.funds.workflow import Request
 from hypha.apply.review.options import MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
@@ -25,6 +25,7 @@ from .factories import (
     FundTypeFactory,
     InvitedToProposalFactory,
     LabFactory,
+    ReminderFactory,
     RequestForPartnersFactory,
     RoundFactory,
     TodayRoundFactory,
@@ -655,3 +656,21 @@ class TestForTableQueryset(TestCase):
         self.assertEqual(submission.review_count, 1)
         self.assertEqual(submission.review_submitted_count, 1)
         self.assertEqual(submission.review_recommendation, NO)
+
+
+class TestReminderModel(TestCase):
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory()
+
+    def test_can_save_reminder(self):
+        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
+        self.assertEqual(self.submission, reminder.submission)
+        self.assertFalse(reminder.sent)
+
+    def test_check_default_action(self):
+        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
+        self.assertEqual(reminder.action, Reminder.REVIEW)
+
+    def test_reminder_action_message(self):
+        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
+        self.assertEqual(reminder.action_message, Reminder.ACTION_MESSAGE[f'{reminder.action}-{reminder.medium}'])

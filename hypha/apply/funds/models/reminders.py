@@ -34,7 +34,7 @@ class Reminder(models.Model):
     )
     medium = models.CharField(
         choices=MEDIUM_TYPES.items(),
-        default='email',
+        default=EMAIL,
         max_length=15,
     )
     sent = models.BooleanField(default=False)
@@ -55,4 +55,4 @@ class Reminder(models.Model):
 
     @property
     def action_message(self):
-        return self.ACTIONS[f'{self.action}-{self.medium}']
+        return self.ACTION_MESSAGE[f'{self.action}-{self.medium}']

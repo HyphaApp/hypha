@@ -9,6 +9,7 @@ from hypha.apply.funds.models import (
     AssignedReviewers,
     FundType,
     LabType,
+    Reminder,
     RequestForPartners,
     ReviewerRole,
     Round,
@@ -57,6 +58,7 @@ __all__ = [
     'ReviewerRoleFactory',
     'TodayRoundFactory',
     'workflow_for_stages',
+    'ReminderFactory',
 ]
 
 
@@ -351,3 +353,12 @@ class ScreeningStatusFactory(factory.DjangoModelFactory):
         model = ScreeningStatus
 
     title = factory.Iterator(["Bad", "Good"])
+
+
+class ReminderFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Reminder
+
+    submission = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationSubmissionFactory')
+    user = factory.SubFactory(StaffFactory)
+    time = factory.Sequence(lambda n: datetime.datetime.now() + datetime.timedelta(days=7 * n + 1))
