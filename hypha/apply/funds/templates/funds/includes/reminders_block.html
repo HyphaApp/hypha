@@ -6,7 +6,7 @@
             <li><strong>{{action.grouper}}</strong>
                 <ul>
                     {% for reminder in action.list %}
-                    <li {% if reminder.is_expired %}style="color:grey;"{% endif %}>
+                    <li class="{% if reminder.is_expired %}expired-reminder{% endif %}">
                         {{reminder.time_with_format}}
                         <a class="link" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
                             Delete
