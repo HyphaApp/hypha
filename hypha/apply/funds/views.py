@@ -92,7 +92,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
-    table_pagination = {'klass': LazyPaginator}
+    table_pagination = {'paginator_class': LazyPaginator}
 
     excluded_fields = []
 

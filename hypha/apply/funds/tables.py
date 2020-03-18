@@ -87,10 +87,10 @@ class SubmissionsTable(tables.Table):
         return qs, True
 
     # For when we update to Django Tables2 2.x.
-    # def get_column_class_names(self, classes_set, bound_column):
-    #     classes_set = super(SubmissionsTable, self).get_column_class_names(classes_set, bound_column)
-    #     classes_set.add(bound_column.name)
-    #     return classes_set
+    def get_column_class_names(self, classes_set, bound_column):
+        classes_set = super(SubmissionsTable, self).get_column_class_names(classes_set, bound_column)
+        classes_set.add(bound_column.name)
+        return classes_set
 
 
 class ReviewerSubmissionsTable(SubmissionsTable):
