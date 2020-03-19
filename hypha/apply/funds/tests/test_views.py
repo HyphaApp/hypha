@@ -766,5 +766,5 @@ class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
 
     def test_doesnt_has_access(self):
         reminder = ReminderFactory()
-        with self.assertRaises(PermissionDenied):
-            self.get_page(reminder)
+        response = self.get_page(reminder)
+        self.assertEqual(response.status_code, 403)
