@@ -1,5 +1,5 @@
 from django.db import models
-from wagtail.admin.edit_handlers import MultiFieldPanel, FieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
 
