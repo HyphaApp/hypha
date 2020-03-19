@@ -1,14 +1,15 @@
 from django.conf import settings
 from django.contrib import messages
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from hypha.apply.activity.tasks import send_mail
-from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
+
+from hypha.apply.activity.tasks import send_mail
+from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 
 class ResetNetworkOpenCallsPage(ResetNetworkBasePage):
