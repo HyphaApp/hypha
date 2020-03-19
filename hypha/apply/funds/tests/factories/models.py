@@ -2,7 +2,6 @@ import datetime
 
 import factory
 import wagtail_factories
-
 from django.utils import timezone
 
 from hypha.apply.funds.models import (
