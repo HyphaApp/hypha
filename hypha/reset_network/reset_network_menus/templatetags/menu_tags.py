@@ -1,5 +1,9 @@
 from django import template
-from hypha.reset_network.reset_network_menus.models import ResetNetworkMenusMain, ResetNetworkMenusFooter
+
+from hypha.reset_network.reset_network_menus.models import (
+    ResetNetworkMenusFooter,
+    ResetNetworkMenusMain,
+)
 
 register = template.Library()
 

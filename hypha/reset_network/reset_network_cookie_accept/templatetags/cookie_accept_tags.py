@@ -1,5 +1,8 @@
 from django import template
-from hypha.reset_network.reset_network_cookie_accept.models import ResetNetworkCookieAccept
+
+from hypha.reset_network.reset_network_cookie_accept.models import (
+    ResetNetworkCookieAccept,
+)
 
 register = template.Library()
 
