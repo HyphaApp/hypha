@@ -425,7 +425,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
-        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
+        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.'
     }
 
     def __init__(self):
