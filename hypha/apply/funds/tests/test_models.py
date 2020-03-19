@@ -1,6 +1,6 @@
 import itertools
 import os
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -659,18 +659,17 @@ class TestForTableQueryset(TestCase):
 
 
 class TestReminderModel(TestCase):
-    def setUp(self):
-        self.submission = ApplicationSubmissionFactory()
 
     def test_can_save_reminder(self):
-        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
-        self.assertEqual(self.submission, reminder.submission)
+        submission = ApplicationSubmissionFactory()
+        reminder = ReminderFactory(submission=submission)
+        self.assertEqual(submission, reminder.submission)
         self.assertFalse(reminder.sent)
 
     def test_check_default_action(self):
-        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
+        reminder = ReminderFactory()
         self.assertEqual(reminder.action, Reminder.REVIEW)
 
     def test_reminder_action_message(self):
-        reminder = ReminderFactory(submission=self.submission, time=datetime.now())
+        reminder = ReminderFactory()
         self.assertEqual(reminder.action_message, Reminder.ACTION_MESSAGE[f'{reminder.action}-{reminder.medium}'])

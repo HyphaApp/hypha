@@ -3,6 +3,8 @@ import datetime
 import factory
 import wagtail_factories
 
+from django.utils import timezone
+
 from hypha.apply.funds.models import (
     ApplicationRevision,
     ApplicationSubmission,
@@ -361,4 +363,5 @@ class ReminderFactory(factory.DjangoModelFactory):
 
     submission = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationSubmissionFactory')
     user = factory.SubFactory(StaffFactory)
-    time = factory.Sequence(lambda n: datetime.datetime.now() + datetime.timedelta(days=7 * n + 1))
+    time = factory.Sequence(lambda n: timezone.now() + datetime.timedelta(days=7 * n + 1))
+    action = factory.Iterator(["reviewers_review"])
