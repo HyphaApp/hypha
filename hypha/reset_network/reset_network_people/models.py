@@ -1,11 +1,12 @@
 from django.db import models
-from hypha.reset_network.reset_network_person.models import ResetNetworkPerson
-from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
-from wagtail.admin.edit_handlers import MultiFieldPanel, FieldPanel, StreamFieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, StreamFieldPanel
 from wagtail.core import blocks
 from wagtail.core.fields import StreamField
 from wagtail.core.models import Page
 from wagtail.snippets.blocks import SnippetChooserBlock
+
+from hypha.reset_network.reset_network_person.models import ResetNetworkPerson
+from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 
 class ResetNetworkPeoplePage(ResetNetworkBasePage):

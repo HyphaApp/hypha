@@ -110,7 +110,6 @@ INSTALLED_APPS = [
     'hypha.reset_network.reset_network_resources',
     'hypha.reset_network.reset_network_work',
 
-
     'social_django',
 
     'wagtail.contrib.modeladmin',
