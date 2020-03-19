@@ -9,7 +9,6 @@
                     <li class="{% if reminder.is_expired %}expired-reminder{% endif %}">
                         {{reminder.time_with_format}}
                         <a class="link" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
-                            Delete
                             <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
                         </a>
                     </li>
