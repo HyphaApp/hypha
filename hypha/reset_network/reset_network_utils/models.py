@@ -1,5 +1,6 @@
-from hypha.public.utils.models import SocialFields
 from wagtail.core.models import Page
+
+from hypha.public.utils.models import SocialFields
 
 
 class ResetNetworkBasePage(SocialFields, Page):

@@ -1,7 +1,6 @@
 from django import template
 from django.template.defaultfilters import filesizeformat
 
-
 register = template.Library()
 
 

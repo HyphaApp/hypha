@@ -1,8 +1,9 @@
 from django.db import models
-from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
+
+from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 
 class ResetNetworkContactUsPage(ResetNetworkBasePage):

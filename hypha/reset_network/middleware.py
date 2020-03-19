@@ -1,4 +1,5 @@
-from django.http import HttpResponsePermanentRedirect, Http404
+from django.http import Http404, HttpResponsePermanentRedirect
+
 from hypha.apply.home.models import ApplyHomePage
 from hypha.reset_network.reset_network_home.models import ResetNetworkHomePage
 
