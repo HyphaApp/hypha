@@ -1,9 +1,10 @@
 from django.db import models
-from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.core.models import Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
+
+from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 
 # Create your models here.

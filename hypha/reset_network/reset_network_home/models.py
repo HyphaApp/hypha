@@ -1,12 +1,18 @@
+import django.db.models.options as options
 from django.db import models
 from modelcluster.fields import ParentalKey
-from hypha.reset_network.reset_network_open_calls.models import ResetNetworkOpenCallPage
-from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel, PageChooserPanel
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    PageChooserPanel,
+)
 from wagtail.core.models import Orderable, Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
-import django.db.models.options as options
+
+from hypha.reset_network.reset_network_open_calls.models import ResetNetworkOpenCallPage
+from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('description',)
 
