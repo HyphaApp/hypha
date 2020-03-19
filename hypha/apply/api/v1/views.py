@@ -208,7 +208,7 @@ class CommentListCreate(generics.ListCreateAPIView):
             MESSAGES.COMMENT,
             request=self.request,
             user=self.request.user,
-            source=obj.submission,
+            source=obj.source,
             related=obj,
         )
 

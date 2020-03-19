@@ -153,7 +153,7 @@ class Event(models.Model):
     source = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.submission.title])
+        return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.source.title])
 
 
 class MessagesQueryset(models.QuerySet):
