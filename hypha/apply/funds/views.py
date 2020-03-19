@@ -602,7 +602,7 @@ class ReminderCreateView(DelegatedViewMixin, CreateView):
         return response
 
 
-@method_decorator(permission_required('funds.delete_reminder', raise_exception=True), name='dispatch')
+@method_decorator(staff_required, name='dispatch')
 class ReminderDeleteView(DeleteView):
     model = Reminder
 
