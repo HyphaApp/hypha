@@ -29,6 +29,7 @@ class Reminder(models.Model):
     time = models.DateTimeField()
     action = models.CharField(
         choices=ACTIONS.items(),
+        default=REVIEW,
         max_length=50,
     )
     medium = models.CharField(
