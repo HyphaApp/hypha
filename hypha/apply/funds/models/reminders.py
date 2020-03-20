@@ -35,7 +35,10 @@ class Reminder(models.Model):
     sent = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.ACTIONS[self.action]} at {self.time_with_format}'
+        return '{} at {}'.format(
+            self.ACTIONS[self.action],
+            self.time.strftime('%Y-%m-%d  %I:%M %p')
+        )
 
     class Meta:
         ordering = ['-time']
