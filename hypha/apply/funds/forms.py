@@ -432,4 +432,4 @@ class CreateReminderForm(forms.ModelForm):
 
     class Meta:
         model = Reminder
-        fields = ['time', 'action', 'medium']
+        fields = ['time', 'action']

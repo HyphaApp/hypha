@@ -11,8 +11,8 @@ class Reminder(models.Model):
         REVIEW: 'Remind reviewers to Review',
     }
     EMAIL = 'email'
-    MEDIUM_TYPES = {
-        EMAIL: 'Email',
+    MEDIUM = {
+        REVIEW: EMAIL
     }
     ACTION_MESSAGE = {
         f'{REVIEW}-{EMAIL}': MESSAGES.REVIEW_REMINDER,
@@ -32,11 +32,6 @@ class Reminder(models.Model):
         default=REVIEW,
         max_length=50,
     )
-    medium = models.CharField(
-        choices=MEDIUM_TYPES.items(),
-        default=EMAIL,
-        max_length=15,
-    )
     sent = models.BooleanField(default=False)
 
     def __str__(self):
@@ -52,3 +47,8 @@ class Reminder(models.Model):
     @property
     def action_message(self):
         return self.ACTION_MESSAGE[f'{self.action}-{self.medium}']
+
+    @property
+    def medium(self):
+        return self.MEDIUM[self.action]
+    
