@@ -50,9 +50,5 @@ class Reminder(models.Model):
         return timezone.now() > self.time
 
     @property
-    def time_with_format(self):
-        return self.time.strftime('%Y-%m-%d  %I:%M %p')
-
-    @property
     def action_message(self):
         return self.ACTION_MESSAGE[f'{self.action}-{self.medium}']
