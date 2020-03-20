@@ -51,4 +51,3 @@ class Reminder(models.Model):
     @property
     def medium(self):
         return self.MEDIUM[self.action]
-    
