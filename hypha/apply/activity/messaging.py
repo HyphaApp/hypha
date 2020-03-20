@@ -673,7 +673,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
-        MESSAGES.REVIEW_REMINDER: 'messages/email/review_reminder.html',
+        MESSAGES.REVIEW_REMINDER: 'messages/email/ready_to_review.html',
     }
 
     def get_subject(self, message_type, source):
