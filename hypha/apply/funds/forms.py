@@ -415,7 +415,7 @@ class CreateReminderForm(forms.ModelForm):
         queryset=ApplicationSubmission.objects.filter(),
         widget=forms.HiddenInput(),
     )
-    time = forms.DateTimeField(input_formats=['%Y-%m-%dT%H:%M'])
+    time = forms.DateTimeField()
 
     def __init__(self, instance=None, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
