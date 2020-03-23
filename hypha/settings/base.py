@@ -315,13 +315,13 @@ USE_L10N = False
 
 USE_TZ = True
 
-DATE_FORMAT = 'Y-m-d'
+DATE_FORMAT = 'N j, Y'
 
-DATETIME_FORMAT = 'Y-m-d\TH:i:s'
+DATETIME_FORMAT = 'N j, Y, H:i'
 
 SHORT_DATE_FORMAT = 'Y-m-d'
 
-SHORT_DATETIME_FORMAT = 'Y-m-d\TH:i:s'
+SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
