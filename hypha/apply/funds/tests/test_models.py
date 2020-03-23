@@ -247,7 +247,7 @@ class TestFormSubmission(TestCase):
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
         new_user = self.User.objects.get(email=self.email)
-        self.assertEqual(new_user.get_full_name(), self.name)
+        self.assertEqual(new_user.full_name, self.name)
 
         self.assertEqual(ApplicationSubmission.objects.count(), 1)
         self.assertEqual(ApplicationSubmission.objects.first().user, new_user)
