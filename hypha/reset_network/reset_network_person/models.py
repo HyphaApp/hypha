@@ -17,7 +17,7 @@ class ResetNetworkPerson(models.Model):
 
     name = models.CharField(max_length=255, blank=False)
     role = models.CharField(max_length=255, null=True, blank=True)
-    about = RichTextField(null=True, blank=True, features=['link'])
+    about = RichTextField(null=True, blank=True, features=['bold', 'italic', 'link'])
     image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     linkedin = models.URLField(null=True, blank=True)
     twitter = models.URLField(null=True, blank=True)

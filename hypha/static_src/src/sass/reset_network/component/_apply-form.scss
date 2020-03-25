@@ -286,16 +286,6 @@ $input-max-width: 500px !default;
     .form__question {
         display: block;
         @include font-size-md();
-
-        @include media-min-sm {
-            padding-right: 310px;
-        }
-
-        &.form__question--boolean_field {
-            @include media-min-sm {
-                padding-right: 0;
-            }
-        }
     }
 
     .form__help {
@@ -305,13 +295,6 @@ $input-max-width: 500px !default;
 
     .form__help-link {
         @include font-size-md();
-
-        @include media-min-sm {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-        }
 
         a {
             @include animate(opacity, 250ms);
@@ -333,12 +316,6 @@ $input-max-width: 500px !default;
             margin-left: 10px;
             margin-bottom: -3px;
             fill: color(seed-black);
-        }
-    }
-
-    .form__group--checkbox .form__help-link {
-        @include media-min-sm {
-            position: static;
         }
     }
 
