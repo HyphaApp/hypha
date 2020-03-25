@@ -14,10 +14,11 @@
 .people-title {
     width: 100%;
     position: relative;
+    padding: 0 0 40px;
 
     @include media-max-sm {
         margin: 0;
-        padding: 30px 0 60px;
+
 
         &::after {
             content: '';
@@ -32,11 +33,11 @@
     }
 
     @include media-min-sm {
-        padding: 0 0 #{$gutter-lg}px;
+        padding: 0 0 50px;
     }
 
     @include media-min-md {
-        padding: 0 0 #{$gutter-xl}px;
+        padding: 0 0 70px;
     }
 
     h2 {
@@ -49,7 +50,15 @@
     }
 
     .person+& {
-        padding-top: #{$gutter}px;
+        padding: 50px 0 40px;
+
+        @include media-min-sm {
+            padding: 50px 0;
+        }
+
+        @include media-min-md {
+            padding: 70px 0;
+        }
     }
 }
 
@@ -78,10 +87,6 @@
         transition: opacity 500ms;
         width: auto;
         will-change: opacity;
-    }
-
-    @include media-min-sm-max-md {
-        margin: 0 #{$gutter-sm}px #{$gutter-xxl}px 0;
     }
 
     @include media-min-md {
@@ -202,37 +207,22 @@
     padding-bottom: #{$gutter-sm}px;
 }
 
-.person__hover {
-    display: flex;
+.person__image {
     align-items: center;
+    display: flex;
     justify-content: center;
+    padding-bottom: #{$gutter-sm}px;
+    transform: none !important; // sass-lint:disable-line no-important
+
+    @include media-min-sm {
+        padding-bottom: #{$gutter-sm}px;
+        padding-right: 30px;
+    }
 
     img {
         height: auto;
         max-width: 400px;
         width: 100%;
-    }
-
-    @include media-max-sm {
-        padding-bottom: #{$gutter-sm}px;
-        transform: none !important; // sass-lint:disable-line no-important
-    }
-
-    @include media-min-sm {
-        backface-visibility: hidden;
-        left: 0;
-        margin-bottom: 0;
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        top: 0;
-        transition: opacity 500ms;
-        will-change: opacity;
-        z-index: -1;
-
-        img {
-            width: 220px;
-        }
     }
 }
 

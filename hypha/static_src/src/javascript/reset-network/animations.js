@@ -106,9 +106,14 @@
             forced: false,
 
             init: function () {
+
                 ANIMATIONS.ARTIFACTS.$stageHeader = $('#stage-header');
                 ANIMATIONS.ARTIFACTS.$artifacts = $('.artifact');
+
                 ANIMATIONS.ARTIFACTS.setTheme();
+                setTimeout(function () {
+                    ANIMATIONS.ARTIFACTS.setTheme();
+                }, 750);
 
                 // Trigger the artifacts (logo) animations
                 ANIMATIONS.$doc.bind('artifacts-animate', ANIMATIONS.ARTIFACTS.animate);
@@ -188,15 +193,22 @@
             timeout: null,
 
             init: function () {
+
                 ANIMATIONS.NAV.$links = $('#stage-nav .main-nav-link');
+
                 ANIMATIONS.$doc.bind('on-scroll', ANIMATIONS.NAV.setTheme);
+
                 window.addEventListener('resize', function () {
                     clearTimeout(ANIMATIONS.NAV.timeout);
                     ANIMATIONS.NAV.timeout = setTimeout(function () {
                         ANIMATIONS.NAV.setTheme();
                     }, 500);
                 });
+
                 ANIMATIONS.NAV.setTheme();
+                setTimeout(function () {
+                    ANIMATIONS.NAV.setTheme();
+                }, 750);
             },
 
             // Adjust theming of nav links according to scroll position
