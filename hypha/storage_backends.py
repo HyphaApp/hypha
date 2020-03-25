@@ -4,6 +4,21 @@ from django.conf import settings
 from django.utils.encoding import filepath_to_uri
 from storages.backends.s3boto3 import S3Boto3Storage
 
+"""
+This app defines the storage classes that are used to store the private and
+public media in the application. When the app moves to an installable app,
+users will be able to implement their own storage backends with different
+providers e.g. Azure
+
+Most private files are served through the webapp to allow users to share links
+to the file and the recipient is then authenticated through the app rather than
+with the original file url with auth string.
+
+Please set the following settings in order to configure this:
+DEFAULT_FILE_STORAGE
+PRIVATE_FILE_STORAGE
+"""
+
 
 class PublicMediaStorage(S3Boto3Storage):
     if hasattr(settings, 'AWS_PUBLIC_BUCKET_NAME'):
