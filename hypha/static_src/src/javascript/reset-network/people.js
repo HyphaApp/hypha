@@ -8,7 +8,6 @@
 
         init: function () {
             PEOPLE.ACCORDION.init();
-            PEOPLE.HOVER.init();
         },
 
         // *********************************************************************
@@ -69,76 +68,6 @@
             }
         },
 
-        // *********************************************************************
-        // ***************************** HOVER *********************************
-        // *********************************************************************
-
-        // On hover of people images have the person's avatar follow the cursor
-        HOVER: {
-
-            $people: null,
-            $targets: null,
-            $currImg: null,
-            offsetX: null,
-            offsetY: null,
-
-            init: function () {
-
-                // Don't permit cursor follow on touch devices
-                if ('ontouchstart' in document.documentElement) {
-                    return;
-                }
-
-                PEOPLE.HOVER.$people = $('.js-person');
-                PEOPLE.HOVER.$targets = $('.js-person-target');
-
-                PEOPLE.HOVER.$targets.mouseenter(function (e) {
-                    PEOPLE.HOVER.bind($(this), e.clientX, e.clientY);
-                });
-
-                PEOPLE.HOVER.$targets.mouseleave(PEOPLE.HOVER.unBind);
-            },
-
-            bind: function ($target, x, y) {
-                PEOPLE.HOVER.reset();
-
-                PEOPLE.HOVER.$people.addClass('is-person-hovered');
-                $target.closest('.js-person').addClass('is-hovered');
-
-                PEOPLE.HOVER.onMove($target, x, y);
-                $target.on('mousemove', function (e) {
-                    PEOPLE.HOVER.onMove($target, e.clientX, e.clientY);
-                });
-            },
-
-            unBind: function () {
-                PEOPLE.HOVER.reset();
-            },
-
-            onMove: function ($target, x, y) {
-                requestAnimationFrame(function () {
-                    var $currImg = PEOPLE.HOVER.currImg || $target.find('.js-img');
-                    var offsetX = PEOPLE.HOVER.offsetX || $target.offset().left;
-                    var offsetY = PEOPLE.HOVER.offsetY || $target.offset().top - window.scrollY;
-                    var imgX = x - offsetX;
-                    var imgY = y - offsetY;
-
-                    $currImg.css({
-                        transform: 'translate(' + imgX + 'px, calc(-100% + ' + imgY + 'px))'
-                    });
-                });
-            },
-
-            reset: function () {
-                PEOPLE.HOVER.$people.removeClass('is-hovered is-person-hovered');
-                PEOPLE.HOVER.$targets.off('mousemove');
-
-                PEOPLE.HOVER.$currImg = null;
-                PEOPLE.HOVER.offsetX = null;
-                PEOPLE.HOVER.offsetY = null;
-                PEOPLE.HOVER.requestFrameID = null;
-            }
-        }
 
     };
 
