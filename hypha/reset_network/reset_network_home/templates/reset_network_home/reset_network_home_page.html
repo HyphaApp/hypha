@@ -83,6 +83,8 @@
 </section>
 
 {# only show the section if there are open calls #}
+{# note - this will show unpublished calls #}
+{% with open_calls=page.reset_network_home_page_open_calls.all %}
 {% if open_calls and open_calls|length %}
 <section class="para para--primary para--content-right para--links theme-lightest" data-section-theme="light">
   <div class="para__wrap contain reveal">
@@ -107,16 +109,18 @@
       <div class="para__body">
         <ul class="links">
           {% for open_call in open_calls %}
+          {% if open_call and open_call.open_call_link_page and open_call.open_call_link_page.live %}
           <li class="links__item">
-            <a href="{% pageurl open_call %}" class="card-link">
+            <a href="{% pageurl open_call.open_call_link_page %}" class="card-link">
               <span class="card-link__drop">
-                <span class="card-link__label">{{ open_call.card_heading }}</span>
+                <span class="card-link__label">{{ open_call.open_call_link_page.specific.card_heading }}</span>
                 <svg class="card-link__icon icon icon--arrow">
                     <use xlink:href="#arrow"></use>
                 </svg>
               </span>
             </a>
           </li>
+          {% endif %}
           {% endfor %}
         </ul>
       </div>
@@ -124,6 +128,7 @@
   </div>
 </section>
 {% endif %}
+{% endwith %}
 
 {# only show the section if there are featured items #}
 {% with featured_items=page.reset_network_home_page_featured.all %}

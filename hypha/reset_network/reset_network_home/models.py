@@ -11,7 +11,6 @@ from wagtail.core.models import Orderable, Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
-from hypha.reset_network.reset_network_open_calls.models import ResetNetworkOpenCallPage
 from hypha.reset_network.reset_network_utils.models import ResetNetworkBasePage
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('description',)
@@ -138,11 +137,3 @@ class ResetNetworkHomePage(ResetNetworkBasePage):
             InlinePanel('reset_network_home_page_featured', label='Featured Card', heading='Featured'),
         ], heading='Content - Section 3 (Resources)'),
     ]
-
-    def get_context(self, request, *args, **kwargs):
-
-        open_calls = ResetNetworkOpenCallPage.objects.live().public()
-
-        context = super().get_context(request, *args, **kwargs)
-        context['open_calls'] = open_calls
-        return context
