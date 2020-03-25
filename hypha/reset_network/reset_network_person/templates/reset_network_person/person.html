@@ -18,25 +18,24 @@
 
   <div class="person__tray">
     <div class="person__info-wrap">
-
-      <div class="js-person-target">
-        <div class="person__title">
-          <div class="person__name">
-            {{ person.name }}
-          </div>
-          {% if person.role %}
-          <div class="person__role">
-            {{ person.role }}
-          </div>
-          {% endif %}
-        </div>
-        <div class="person__hover js-img">
+        {% if person.image %}
+        <div class="person__image">
           {% image person.image fill-400x400-c100 %}
         </div>
-        <div class="person__info">
-          {{ person.about|richtext }}
+        {% endif %}
+        <div class="person__title">
+            <div class="person__name">
+            {{ person.name }}
+            </div>
+            {% if person.role %}
+            <div class="person__role">
+            {{ person.role }}
+            </div>
+            {% endif %}
         </div>
-      </div>
+        <div class="person__info">
+            {{ person.about|richtext }}
+        </div>
 
       {% if person.linkedin or person.twitter %}
         <div class="person__social">
