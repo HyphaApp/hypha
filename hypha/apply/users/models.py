@@ -115,6 +115,12 @@ class User(AbstractUser):
     def get_short_name(self):
         return self.email
 
+    def get_full_name_with_group(self):
+        is_apply_staff = f' ({STAFF_GROUP_NAME})' if self.is_apply_staff else ''
+        is_reviewer = f' ({REVIEWER_GROUP_NAME})' if self.is_reviewer else ''
+        is_applicant = f' ({APPLICANT_GROUP_NAME})' if self.is_applicant else ''
+        return f'{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}'
+
     @cached_property
     def roles(self):
         return list(self.groups.values_list('name', flat=True))
