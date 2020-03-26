@@ -36,8 +36,12 @@
 
     // Allow users to copy all questions to the clipboard.
     if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
-        var $button = $('<button/>').text('Copy questions to clipboard').addClass('link link--button js-clipboard-button');
-        $('.application-form').append($button);
+        var $button = $('<button/>')
+            .text('Copy questions to clipboard')
+            .addClass('link link--button js-clipboard-button')
+            .css({'display': 'block', 'margin-left': 'auto'})
+            .attr('title', 'Copies all the questions to the clipboard in plain text.');
+        $('.application-form').before($button);
 
         $('.js-clipboard-button').on('click', function (e) {
             e.preventDefault();
