@@ -5,3 +5,10 @@
 You can find more information about what we’d like to see in your Proposal here: {{ ORG_GUIDE_URL }}
 
 The system will allow you to save a draft of your Proposal as you work on it. When you feel it is ready for our review, please click the “Submit” button and we’ll know to take a look at it. We’ll reply to you with feedback on your Proposal as quickly as possible.{% endblock %}
+
+{% block more_info %}
+Here is the link to start creating your proposal: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+If you have any questions, please submit them here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+
+If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}
+{% endblock %}
