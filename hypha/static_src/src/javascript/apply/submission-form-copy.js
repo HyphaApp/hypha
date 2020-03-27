@@ -38,7 +38,7 @@
     if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
         var $button = $('<button/>')
             .text('Copy questions to clipboard')
-            .addClass('link link--button js-clipboard-button')
+            .addClass('link link--button link--button--narrow js-clipboard-button')
             .css({'display': 'block', 'margin-left': 'auto'})
             .attr('title', 'Copies all the questions to the clipboard in plain text.');
         $('.application-form').before($button);
