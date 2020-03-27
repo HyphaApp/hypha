@@ -26,7 +26,7 @@
         <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
     {% else%}
         {% if page.get_parent.specific.guide_link %}
-            <a href="{{ page.get_parent.specific.guide_link }}" class="link link--fixed-apply">
+            <a href="{{ page.get_parent.specific.guide_link }}" class="link link--fixed-apply" target="_blank">
                 {% trans "Application guide" %}
             </a>
         {% endif %}
