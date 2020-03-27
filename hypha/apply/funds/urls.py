@@ -3,6 +3,7 @@ from django.urls import include, path
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
+    ReminderDeleteView,
     RevisionCompareView,
     RevisionListView,
     RoundListView,
@@ -25,6 +26,10 @@ revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
     path('compare/<int:to>/<int:from>/', RevisionCompareView.as_view(), name='compare'),
 ], 'revisions')
+
+reminders_urls = ([
+    path('<int:pk>/delete/', ReminderDeleteView.as_view(), name="delete"),
+], 'reminders')
 
 
 app_name = 'funds'
@@ -51,6 +56,7 @@ submission_urls = ([
     path('<int:submission_pk>/', include([
         path('', include('hypha.apply.review.urls', namespace="reviews")),
         path('revisions/', include(revision_urls, namespace="revisions")),
+        path('reminders/', include(reminders_urls, namespace="reminders")),
     ])),
     path('', include('hypha.apply.determinations.urls', namespace="determinations")),
     path('', include('hypha.apply.flags.urls', namespace="flags")),

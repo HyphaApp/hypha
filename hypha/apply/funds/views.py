@@ -53,6 +53,7 @@ from .forms import (
     BatchProgressSubmissionForm,
     BatchUpdateReviewersForm,
     BatchUpdateSubmissionLeadForm,
+    CreateReminderForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
     UpdateMetaTermsForm,
@@ -64,6 +65,7 @@ from .models import (
     ApplicationRevision,
     ApplicationSubmission,
     LabBase,
+    Reminder,
     RoundBase,
     RoundsAndLabs,
 )
@@ -580,12 +582,54 @@ class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
     context_name = 'meta_terms_form'
 
 
+@method_decorator(staff_required, name='dispatch')
+class ReminderCreateView(DelegatedViewMixin, CreateView):
+    context_name = 'reminder_form'
+    form_class = CreateReminderForm
+    model = Reminder
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.CREATE_REMINDER,
+            request=self.request,
+            user=self.request.user,
+            source=self.object.submission,
+            related=self.object,
+        )
+
+        return response
+
+
+@method_decorator(staff_required, name='dispatch')
+class ReminderDeleteView(DeleteView):
+    model = Reminder
+
+    def get_success_url(self):
+        submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return reverse_lazy('funds:submissions:detail', args=(submission.id,))
+
+    def delete(self, request, *args, **kwargs):
+        reminder = self.get_object()
+        messenger(
+            MESSAGES.DELETE_REMINDER,
+            user=request.user,
+            request=request,
+            source=reminder.submission,
+            related=reminder,
+        )
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+
 class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
         ProgressSubmissionView,
         ScreeningSubmissionView,
+        ReminderCreateView,
         CommentFormView,
         UpdateLeadView,
         UpdateReviewersView,

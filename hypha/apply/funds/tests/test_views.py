@@ -17,6 +17,7 @@ from hypha.apply.funds.tests.factories import (
     AssignedWithRoleReviewersFactory,
     InvitedToProposalFactory,
     LabSubmissionFactory,
+    ReminderFactory,
     ReviewerRoleFactory,
     ScreeningStatusFactory,
     SealedRoundFactory,
@@ -735,3 +736,35 @@ class TestAnonSubmissionFileView(BaseSubmissionFileViewTestCase):
         self.assertEqual(len(response.redirect_chain), 2)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse('users_public:login'), path)
+
+
+class BaseProjectDeleteTestCase(BaseViewTestCase):
+    url_name = 'funds:submissions:reminders:{}'
+    base_view_name = 'delete'
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id, 'submission_pk': instance.submission.id}
+
+
+class TestStaffReminderDeleteView(BaseProjectDeleteTestCase):
+    user_factory = StaffFactory
+
+    def test_has_access(self):
+        reminder = ReminderFactory()
+        response = self.get_page(reminder)
+        self.assertEqual(response.status_code, 200)
+
+    def test_confirm_message(self):
+        reminder = ReminderFactory()
+        response = self.get_page(reminder)
+        self.assertContains(response, 'Are you sure you want to delete')
+        self.assertEqual(response.status_code, 200)
+
+
+class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
+    user_factory = ApplicantFactory
+
+    def test_doesnt_has_access(self):
+        reminder = ReminderFactory()
+        response = self.get_page(reminder)
+        self.assertEqual(response.status_code, 403)

@@ -2,6 +2,7 @@ import datetime
 
 import factory
 import wagtail_factories
+from django.utils import timezone
 
 from hypha.apply.funds.models import (
     ApplicationRevision,
@@ -9,6 +10,7 @@ from hypha.apply.funds.models import (
     AssignedReviewers,
     FundType,
     LabType,
+    Reminder,
     RequestForPartners,
     ReviewerRole,
     Round,
@@ -57,6 +59,7 @@ __all__ = [
     'ReviewerRoleFactory',
     'TodayRoundFactory',
     'workflow_for_stages',
+    'ReminderFactory',
 ]
 
 
@@ -351,3 +354,13 @@ class ScreeningStatusFactory(factory.DjangoModelFactory):
         model = ScreeningStatus
 
     title = factory.Iterator(["Bad", "Good"])
+
+
+class ReminderFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Reminder
+
+    submission = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationSubmissionFactory')
+    user = factory.SubFactory(StaffFactory)
+    time = factory.Sequence(lambda n: timezone.now() + datetime.timedelta(days=7 * n + 1))
+    action = factory.Iterator(["reviewers_review"])

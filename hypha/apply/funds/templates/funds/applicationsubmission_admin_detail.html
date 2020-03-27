@@ -26,6 +26,7 @@
         {% include "funds/includes/create_project_form.html" %}
     {% endif %}
     {% include "funds/includes/update_meta_terms_form.html" %}
+    {% include "funds/includes/create_reminder_form.html" %}
 {% endblock %}
 
 {% block flags %}
@@ -57,6 +58,10 @@
 
 {% block determination %}
     {% include 'determinations/includes/determination_block.html' with submission=object %}
+{% endblock %}
+
+{% block reminders %}
+    {% include 'funds/includes/reminders_block.html' with submission=object %}
 {% endblock %}
 
 {% block extra_js %}

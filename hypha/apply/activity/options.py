@@ -46,6 +46,9 @@ class MESSAGES(Enum):
     SKIPPED_REPORT = 'Skipped Report'
     REPORT_FREQUENCY_CHANGED = 'Report Frequency Changed'
     REPORT_NOTIFY = 'Report Notify'
+    CREATE_REMINDER = 'Reminder Created'
+    DELETE_REMINDER = 'Reminder Deleted'
+    REVIEW_REMINDER = 'Reminde to Review'
 
     @classmethod
     def choices(cls):
