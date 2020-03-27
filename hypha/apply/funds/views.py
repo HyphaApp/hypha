@@ -22,6 +22,7 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
+from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
 from wagtail.core.models import Page
 
@@ -69,7 +70,6 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .paginators import LazyPaginator
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
@@ -92,7 +92,8 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
-    table_pagination = {'klass': LazyPaginator}
+    paginator_class = LazyPaginator
+    table_pagination = {'per_page': 25}
 
     excluded_fields = []
 
