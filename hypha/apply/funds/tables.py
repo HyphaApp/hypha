@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_tables2.utils import A
 from wagtail.core.models import Page
 
+from hypha.apply.categories.models import MetaTerm
 from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from hypha.apply.funds.workflow import STATUSES, get_review_active_statuses
 from hypha.apply.users.groups import STAFF_GROUP_NAME
@@ -185,6 +186,11 @@ def get_screening_statuses(request):
         id__in=ApplicationSubmission.objects.all().values('screening_status__id').distinct('screening_status__id'))
 
 
+def get_meta_terms(request):
+    return MetaTerm.objects.filter(
+        id__in=ApplicationSubmission.objects.all().values('meta_terms__id').distinct('meta_terms__id'))
+
+
 class Select2CheckboxWidgetMixin(filters.Filter):
     def __init__(self, *args, **kwargs):
         label = kwargs.get('label')
@@ -232,6 +238,7 @@ class SubmissionFilter(filters.FilterSet):
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
+    meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
 
     class Meta:
         model = ApplicationSubmission
