@@ -70,6 +70,10 @@ class HomePage(BasePage):
     strapline_link = models.ForeignKey('wagtailcore.Page', related_name='+', on_delete=models.PROTECT)
     strapline_link_text = models.CharField(max_length=255)
 
+    news_title = models.CharField(blank=True, max_length=255)
+    news_link = models.ForeignKey('wagtailcore.Page', blank=True, null=True, related_name='+', on_delete=models.PROTECT)
+    news_link_text = models.CharField(blank=True, max_length=255)
+
     our_work_title = models.CharField(max_length=255)
     our_work = StreamField([
         ('work', OurWorkBlock()),
@@ -100,6 +104,11 @@ class HomePage(BasePage):
             PageChooserPanel('strapline_link'),
             FieldPanel('strapline_link_text'),
         ], heading='Introduction'),
+        MultiFieldPanel([
+            FieldPanel('news_title'),
+            PageChooserPanel('news_link'),
+            FieldPanel('news_link_text'),
+        ], heading='News'),
         MultiFieldPanel([
             FieldPanel('our_work_title'),
             StreamFieldPanel('our_work'),

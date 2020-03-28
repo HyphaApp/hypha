@@ -81,6 +81,19 @@
 {% endblock %}
 
 {% block content %}
+    {% if page.news_title and page.news_link and page.news_link_text %}
+    <div class="wrapper wrapper--inner-space-large">
+        <h2 class="heading heading--center heading--focus-areas">{{ page.news_title }}</h2>
+        <div class="wrapper wrapper--center">
+            <h5 class="heading heading--contains-link">
+                <a class="link link--arrow-pixels-blue" href="{% pageurl page.news_link %}">
+                    {{ page.news_link_text }}
+                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                </a>
+            </h5>
+        </div>
+    </div>
+    {% endif %}
     <div class="wrapper wrapper--inner-space-large">
         <h2 class="heading heading--center heading--focus-areas">{{ page.our_work_title }}</h2>
         <div class="grid grid--focus-areas">
