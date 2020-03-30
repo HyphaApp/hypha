@@ -671,6 +671,10 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
     }
 }
 
+.para__body-long {
+    padding-top:  #{$gutter}px;
+}
+
 .para__aside {
     position: relative;
     overflow: hidden;
