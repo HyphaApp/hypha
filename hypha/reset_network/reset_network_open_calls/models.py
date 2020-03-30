@@ -20,7 +20,8 @@ class ResetNetworkOpenCallsPage(ResetNetworkBasePage):
     subpage_types = ['reset_network_open_calls.ResetNetworkOpenCallPage']
 
     content_heading = models.CharField(verbose_name='Heading', max_length=255, blank=False)
-    content_text = models.TextField(verbose_name='Text', blank=True)
+    content_text = models.TextField(verbose_name='Intro', blank=True)
+    content_long_text = RichTextField(verbose_name='Text', blank=True)
 
     no_open_calls_heading = models.CharField(verbose_name='Heading', max_length=255, blank=False)
     no_open_calls_text = models.TextField(verbose_name='Text', blank=True)
@@ -30,6 +31,7 @@ class ResetNetworkOpenCallsPage(ResetNetworkBasePage):
         MultiFieldPanel([
             FieldPanel('content_heading'),
             FieldPanel('content_text'),
+            FieldPanel('content_long_text'),
         ], heading='Content'),
         MultiFieldPanel([
             FieldPanel('no_open_calls_heading'),
