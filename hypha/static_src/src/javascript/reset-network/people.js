@@ -66,7 +66,7 @@
                     PEOPLE.ACCORDION.close($($people[i]));
                 }
             }
-        },
+        }
 
 
     };
