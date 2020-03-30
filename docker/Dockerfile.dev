@@ -1,29 +1,26 @@
-# pull official base image
-FROM python:3.7.4-alpine
+FROM circleci/python:3.7-buster-node
 
-# set work directory
-WORKDIR /usr/src/hypha
+# Set work directory
+WORKDIR /usr/local/hypha
 
-# install system dependencies
-RUN apk update \
-    && apk add --virtual build-deps gcc python3-dev musl-dev \
-    && apk add jpeg-dev zlib-dev build-base linux-headers \
-    && apk add postgresql-dev
+# Set environment variables
+ENV API_BASE_URL http://apply.hypha.test:8090/api
+ENV DATABASE_URL postgres://hypha:hypha@db:5432/hypha
+ENV DJANGO_SETTINGS_MODULE hypha.settings.dev
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# npm & Gulp
-RUN apk add --update nodejs-npm
-RUN npm install -g gulp-cli
+# Set owner on /usr/local.
+RUN sudo chown -R circleci:circleci /usr/local
 
-# for testing
-RUN apk add bash procps
+# Install node dependencies.
+COPY package.json package-lock.json /usr/local/hypha/
+RUN npm install  --quiet --global gulp-cli
+RUN npm install  --quiet
 
-# copy requirements.txt
-COPY requirements.txt /usr/src/hypha/
+# Install python dependencies.
+COPY requirements.txt requirements-dev.txt /usr/local/hypha/
+RUN pip3 install --quiet -r requirements-dev.txt
 
-# install python dependencies
-RUN pip install -r requirements.txt
-
-RUN apk del build-deps
-
-# run entrypoint.sh
-ENTRYPOINT ["/usr/src/hypha/docker/entrypoint.dev.sh"]
+# Run entrypoint.sh
+ENTRYPOINT ["/usr/local/hypha/docker/entrypoint.dev.sh"]

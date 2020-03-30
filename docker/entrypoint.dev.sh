@@ -1,24 +1,13 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "postgres" ]
-then
-    echo "Waiting for postgres..."
-
-    while ! nc -z $SQL_HOST $SQL_PORT; do
-      sleep 0.1
-    done
-
-    echo "PostgreSQL started"
-fi
-
-npm install
+#npm install --quiet
 gulp deploy
-python manage.py createcachetable
-python manage.py collectstatic --noinput --verbosity=0
-python manage.py migrate
-python manage.py createsuperuser --email=dev@hypha.test --no-input
-python manage.py wagtailsiteupdate hypha.test apply.hypha.test 80
-python manage.py runserver 0.0.0.0:8080
-# gunicorn opentech.wsgi:application --reload --daemon --workers 3 --bind 0.0.0.0::8080 --env DJANGO_SETTINGS_MODULE=opentech.settings.dev
+
+#pip3 install --quiet -r requirements-dev.txt
+python3 manage.py createcachetable
+python3 manage.py collectstatic --noinput --verbosity=0
+python3 manage.py migrate
+python3 manage.py wagtailsiteupdate hypha.test apply.hypha.test 8090
+gunicorn hypha.wsgi:application --env DJANGO_SETTINGS_MODULE=hypha.settings.dev --reload  --bind 0.0.0.0:9001
 
 exec "$@"

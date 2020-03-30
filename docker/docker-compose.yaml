@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  web:
+    container_name: nginx
+    image: nginx:stable
+    working_dir: /usr/local/hypha
+    ports:
+      - 8090:8090
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ..:/usr/local/hypha/
+    restart: unless-stopped
+    depends_on:
+      - py
+  py:
+    container_name: django
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    ports:
+      - 9001:9001
+    volumes:
+      - ..:/usr/local/hypha/
+    depends_on:
+      - db
+  db:
+    container_name: postgres
+    image: postgres:12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hypha
+      - POSTGRES_PASSWORD=hypha
+      - POSTGRES_DB=hypha
+
+volumes:
+  postgres_data:
