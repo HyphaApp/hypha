@@ -4,16 +4,16 @@
 
 
 ## Submission management software for open calls
+Features
+- Manage the collection and review of applications or submissions openly and efficiently.
+- Customize all aspects of the process, forms, workflows, review options, and more.
+- Automate workflows and integrate with other services (Slack, Mailgun, etc).
+- Regularly audited software with many privacy and security features.
+- View our [Roadmap](https://github.com/OpenTechFund/hypha/wiki/Roadmap) for upcoming features and enhancements.
 
-* Manage the collection and review of applications or submissions openly and efficiently.
-* Customize all aspects of the process, forms, workflows, review options, and more.
-* Automate workflows and integrate with other services (Slack, Mailgun, etc).
-* Regularly audited software with many privacy and security features.
-* View our [Roadmap](https://github.com/OpenTechFund/hypha/wiki/Roadmap) for upcoming features and enhancements.
-
-* Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
-
-* Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).*
+Technology
+- Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
+- Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).*
 
 ## Maintainers
 
