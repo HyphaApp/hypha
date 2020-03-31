@@ -49,7 +49,7 @@ Thank you for your generosity <3
 
 Hypha is an open source project made possible thanks to the support of our amazing backers. If you use Hypha please consider supporting it those contributing code to it. Becoming a backer who provides general funds or sponsors specific issues are ways to do so.
 
-[!(https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
+[![Back with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
 
 [![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
 
