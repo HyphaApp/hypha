@@ -1,10 +1,10 @@
 ## Security
 
-We take security very seriously at the Open Technology Fund. We welcome any peer review of our 100% open source code to ensure the information submitted through this platform or other who rely upon it is not compromised or that hacked.
+We take security very seriously. We welcome any peer review of our 100% open source code to ensure the information submitted through this platform or other who rely upon it is not compromised or that hacked.
 
 ### Where should I report security issues?
 
-In order to give the community time to respond and upgrade we strongly urge you report all security issues privately. Please use our [vulnerability disclosure program](https://hackerone.com/open_technology_fund) or particpate in our [bug bounty program](https://hackerone.com/otf) at [HackerOne](https://hackerone.com) to provide details and repro steps and we will respond ASAP. If you prefer not to use Hacker One, email us directly at `team@opentech.fund` with details and repro steps. Security issues *always* take precedence over bug fixes and feature work. We can and do mark releases as "urgent" if they contain serious security fixes.
+In order to give the community time to respond and upgrade we strongly urge you report all security issues privately. Please email disclosure@opentech.fund and/or disclosure@reset.tech with details and reproduction steps. Security issues *always* take precedence over bug fixes and feature work. We can and do mark releases as "urgent" if they contain serious security fixes.
 
 For a list of recent security commits, check [our GitHub commits prefixed with SECURITY](https://github.com/opentechfund/hypha/search?utf8=%E2%9C%93&q=SECURITY&type=Commits).
 
