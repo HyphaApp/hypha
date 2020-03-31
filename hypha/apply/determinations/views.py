@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
@@ -26,6 +26,7 @@ from .forms import (
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
     ProposalDeterminationForm,
+    UpdateDeterminationForm,
 )
 from .models import (
     NEEDS_MORE_INFO,
@@ -429,3 +430,25 @@ class DeterminationDetailView(ViewDispatcher):
     partner_view = PartnerDeterminationDetailView
     community_view = CommunityDeterminationDetailView
     applicant_view = ApplicantDeterminationDetailView
+
+
+@method_decorator(staff_required, name='dispatch')
+class DeterminationUpdateView(UpdateView):
+    model = Determination
+    form_class = UpdateDeterminationForm
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        determination_messages = DeterminationMessageSettings.for_site(self.request.site)
+
+        return super().get_context_data(
+            submission=self.submission,
+            message_templates=determination_messages.get_for_stage(self.submission.stage.name),
+            **kwargs
+        )

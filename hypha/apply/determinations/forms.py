@@ -403,3 +403,11 @@ class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDet
         self.fields['outcome'].widget = forms.HiddenInput()
 
         self.fields = self.apply_form_settings('proposal', self.fields)
+
+
+class UpdateDeterminationForm(forms.ModelForm):
+    message = RichTextField(label='Determination message')
+
+    class Meta:
+        model = Determination
+        fields = ['outcome', 'message']

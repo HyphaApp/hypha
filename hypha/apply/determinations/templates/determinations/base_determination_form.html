@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load static bleach_tags %}
-{% block title %}Create a determination{% endblock %}
+{% block title %}{% if object %}Update a Determination {% if object.is_draft %}draft{% endif %}{% else %}Create a Determination{% endif %}{% endblock %}
 {% block content %}
 
 {% block header %}
