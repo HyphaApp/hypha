@@ -11,9 +11,9 @@
 * Regularly audited software with many privacy and security features.
 * View our [Roadmap](https://github.com/OpenTechFund/hypha/wiki/Roadmap) for upcoming features and enhancements.
 
-*Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
+* Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)*
 
-*Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).*
+* Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).*
 
 ## Maintainers
 
@@ -47,7 +47,7 @@ Thank you for your generosity <3
 
 ## Support Hypha
 
-Hypha is an open source project made possible thanks to the support of our amazing backers. If you use Hypha please consider supporting it those contributing code to it. Becoming a backer who provides general funds or sponsors specific issues are ways to do so.
+Hypha is an open source project made possible thanks to funds from backers. If you rely on Hypha, please consider becoming a backer to help those contributing code. Hypha can be funded by anyone and the money will be distributed directly to contributors. You can provide general funds via [Open Collective](https://opencollective.com/hypha) or sponsor specific issues via [Issuehunt](https://issuehunt.io/r/OpenTechFund/hypha). Thanks in advance <3
 
 [![Back with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
 
@@ -56,7 +56,7 @@ Hypha is an open source project made possible thanks to the support of our amazi
 ## More information
 
 * Website: coming soon
-* Docs: coming soon
+* Docs: https://github.com/OpenTechFund/hypha/wiki
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
 * Copyright (C) 2020 - Open Technology Fund
 
