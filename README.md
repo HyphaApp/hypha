@@ -51,7 +51,7 @@ Hypha is an open source project made possible thanks to the support of our amazi
 
 [![Back with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
 
-[![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
+[![issuehunt-to-marktext](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@1x.png?raw=true)](https://issuehunt.io/r/OpenTechFund/hypha)
 
 ## More information
 
