@@ -474,6 +474,15 @@ class ApplicationSubmission(
             return 'invited_to_proposal'
         return INITIAL_STATE
 
+    @transition(
+        status, source='*',
+        target='determination', permission=make_permission_check({UserPermissions.STAFF}),)
+    def ready_for_determination_stage(self, **kwargs):
+        """
+        Revert back final stage to determination stage
+        """
+        return True
+
     @property
     def stage(self):
         return self.phase.stage
@@ -745,7 +754,7 @@ def log_status_update(sender, **kwargs):
     old_phase = instance.workflow[kwargs['source']]
 
     by = kwargs['method_kwargs']['by']
-    request = kwargs['method_kwargs']['request']
+    request = kwargs['method_kwargs'].get('request', False)
     notify = kwargs['method_kwargs'].get('notify', True)
 
     if request and notify:
