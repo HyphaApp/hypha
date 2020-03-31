@@ -3,7 +3,7 @@
 [![<OpenTechFund>](https://circleci.com/gh/OpenTechFund/hypha.svg?style=shield)](https://circleci.com/gh/OpenTechFund/hypha)
 
 
-## Submission management software
+## Submission management software for open calls
 
 * Manage the collection and review of applications or submissions openly and efficiently.
 * Customize all aspects of the process, forms, workflows, review options, and more.
@@ -21,26 +21,37 @@
 - [Dan Blah](https://github.com/danblah) @ [Reset](https://www.reset.tech/)
 - [Fredrik Jonsson](https://github.com/frjo) @ [Combonetwork](https://www.combonet.se/)
 
-## Contributors
-
-Thank you to all the people who have contributed to Hypha!
-
-***Special thanks to:***
-
-- [Torchbox](https://torchbox.com/digital-products/)
-- [Parbhat](https://parbhatpuri.com/)
-
 ## Community
 
-More here soon!
+### Contributors
+Thank you to all the people who have contributed code to Hypha <3
+
+- [Torchbox](https://www.torchbox.com/)
+- [Parbhat](https://parbhatpuri.com/)
+- [Maxwell Pearl](https://maxwellpearl.com/)
+- [Throneless Technology](https://throneless.tech/)
+- [Psycle](https://psycle.com/)
+
+### Implementers
+Thank you brave folks who chose to use Hypha <3
+
+- [Open Technology Fund](https://www.opentech.fund)
+- [Reset](https://www.reset.tech)
+- [Digital Freedom Fund](https://digitalfreedomfund.org/)
+
+### Backers
+Thank you for your generosity <3
+
+- [Open Technology Fund](https://www.opentech.fund)
+- [Reset](https://www.reset.tech)
 
 ## Support Hypha
 
-Hypha is an open source project made possible thanks to the support by our amazing backers.
+Hypha is an open source project made possible thanks to the support of our amazing backers. If you use Hypha please consider supporting it those contributing code to it. Becoming a backer who provides general funds or sponsors specific issues are ways to do so.
 
-Issues on Hypha can be funded by anyone and the money will be distributed to contributors and maintainers. If you use Hypha please consider becoming a backer:
+[!(https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
 
-[![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/opentech.fund)
+[![Let's fund issues in this repository](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
 
 ## More information
 
