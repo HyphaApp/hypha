@@ -39,19 +39,21 @@ Thank you brave folks who chose to use Hypha <3
 - [Reset](https://www.reset.tech)
 - [Digital Freedom Fund](https://digitalfreedomfund.org/)
 
-### Backers
+### Sponsors
 Thank you for your generosity <3
 
 - [Open Technology Fund](https://www.opentech.fund)
 - [Reset](https://www.reset.tech)
 
-## Support Hypha
+## Sponsor Hypha
 
-Hypha is an open source project made possible thanks to funds from backers. If you rely on Hypha, please consider becoming a backer to help those contributing code. Hypha can be funded by anyone and the money will be distributed directly to contributors. You can provide general funds via [Open Collective](https://opencollective.com/hypha) or sponsor specific issues via [Issuehunt](https://issuehunt.io/r/OpenTechFund/hypha). Thanks in advance <3
+Hypha is an open source project made possible thanks to the support of sponsors. If you rely on Hypha, please consider becoming a sponsor to help those contributing code. Hypha can be supported by anyone and the money will be distributed directly to contributors. You can provide general support via [Open Collective](https://opencollective.com/hypha) or [Liberapay](https://liberapay.com/hypha). You can sponsor specific issues via [Issuehunt](https://issuehunt.io/r/OpenTechFund/hypha). Thanks in advance <3
 
-[![Back with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
+[![Sponsor with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/hypha)
 
-[![Find and fund issues](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
+[![Sponsor with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
+
+[![Find and sponsor issues](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
 
 ## More information
 
