@@ -6,8 +6,8 @@ from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.utils.fields import RichTextField
 
 from .models import (
-    NEEDS_MORE_INFO,
     DETERMINATION_CHOICES,
+    NEEDS_MORE_INFO,
     TRANSITION_DETERMINATION,
     Determination,
     DeterminationFormSettings,

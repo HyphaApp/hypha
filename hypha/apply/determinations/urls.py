@@ -3,8 +3,8 @@ from django.urls import path
 from .views import (
     BatchDeterminationCreateView,
     DeterminationCreateOrUpdateView,
-    DeterminationUpdateView,
     DeterminationDetailView,
+    DeterminationUpdateView,
 )
 
 app_name = 'determinations'
