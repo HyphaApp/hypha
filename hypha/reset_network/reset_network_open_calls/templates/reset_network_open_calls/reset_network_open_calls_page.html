@@ -18,9 +18,11 @@
       <div class="para__body">
         {{ page.content_text|linebreaks }}
       </div>
+      {% if page.content_long_text %}
       <div class="para__body-long rte">
         {{ page.content_long_text|richtext }}
       </div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -69,6 +71,18 @@
 
   </div>
 </div>
+
+{% if page.content_bottom_text %}
+<section class="para para--lead theme-lightest reveal" data-theme="lightest" data-section-theme="light">
+  <div class="para__wrap contain">
+    <div class="para__content">
+      <div class="para__body-bottom rte">
+        {{ page.content_bottom_text|richtext }}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {% else %}
 
