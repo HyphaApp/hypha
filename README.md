@@ -37,7 +37,6 @@ Thank you brave folks who chose to use Hypha <3
 
 - [Open Technology Fund](https://www.opentech.fund)
 - [Reset](https://www.reset.tech)
-- [Digital Freedom Fund](https://digitalfreedomfund.org/)
 
 ### Sponsors
 Thank you for your generosity <3
