@@ -480,7 +480,12 @@ class DeterminationUpdateView(UpdateView):
                 proposal_form=proposal_form,
             )
 
-            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
+            try:
+                project = Project.objects.get(submission=self.submission)
+            except Project.DoesNotExist:
+                project = None
+
+            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE and not project:
                 project = Project.create_from_submission(self.submission)
                 if project:
                     messenger(
