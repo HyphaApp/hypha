@@ -22,6 +22,8 @@
         const editBlockWrapper = $(this).closest(feedContent).find(editBlock);
         const commentWrapper = $(this).closest(feedContent).find(comment);
         const commentContents = $(commentWrapper).attr('data-comment');
+        const visibilityOptions = $(commentWrapper).attr('data-visibility-options').split(', ');
+        const commentVisibility = $(commentWrapper).attr('data-visibility');
 
         // hide the edit link and original comment
         $(this).parent().hide();
@@ -32,6 +34,20 @@
                 <div id="wmd-button-bar-edit-comment" class="wmd-button-bar"></div>
                 <textarea id="wmd-input-edit-comment" class="wmd-input" rows="10">${commentContents}</textarea>
                 <div id="wmd-preview-edit-comment" class="wmd-preview"></div>
+                <br>
+                <div>Visible to:</div>
+        `;
+
+        let radioButtonsDiv = '<div id="edit-comment-visibility"></div>';
+        let radioButtons = '';
+
+        $.each(visibilityOptions, function (idx, value) {
+            radioButtons += `
+            <input type="radio" name='radio-visibility' value=${value} id='visible-to-${value}' />
+            <label for="visible-to-${value}">${value}</label><br>`;
+        });
+
+        const buttons = `
                 <div class="wrapper--outer-space-medium">
                     <button class="button button--primary js-submit-edit" type="submit">Update</button>
                     <button class="button button--white js-cancel-edit">Cancel</button>
@@ -40,7 +56,11 @@
         `;
 
         // add the comment to the editor
-        $(editBlockWrapper).append(markup);
+        const markupEditor = $(markup).append(radioButtonsDiv).append(buttons);
+
+        $(editBlockWrapper).append(markupEditor);
+        $('#edit-comment-visibility').html(radioButtons);
+        $(`#visible-to-${commentVisibility}`).prop('checked', true);
 
         // run the editor
         initEditor();
@@ -60,6 +80,7 @@
     $(document).on('click', submitEditButton, function () {
         const commentContainer = $(this).closest(editBlock).siblings(comment);
         const editedComment = $(this).closest(pageDown).find('.wmd-preview').html();
+        const editedVisibility = $('input[name="radio-visibility"]:checked').val();
         const commentMD = $(this).closest(editBlock).find('textarea').val();
         const editUrl = $(commentContainer).attr('data-edit-url');
 
