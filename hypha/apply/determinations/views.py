@@ -452,3 +452,51 @@ class DeterminationUpdateView(UpdateView):
             message_templates=determination_messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
+
+    def form_valid(self, form):
+        super().form_valid(form)
+
+        with transaction.atomic():
+            self.submission.ready_for_determination_stage(
+                by=self.request.user,
+                request=self.request)
+
+            messenger(
+                MESSAGES.DETERMINATION_OUTCOME,
+                request=self.request,
+                user=self.object.author,
+                submission=self.object.submission,
+                related=self.object,
+            )
+            proposal_form = form.cleaned_data.get('proposal_form')
+
+            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
+
+            self.submission.perform_transition(
+                transition,
+                self.request.user,
+                request=self.request,
+                notify=False,
+                proposal_form=proposal_form,
+            )
+
+            if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
+                project = Project.create_from_submission(self.submission)
+                if project:
+                    messenger(
+                        MESSAGES.CREATED_PROJECT,
+                        request=self.request,
+                        user=self.request.user,
+                        source=project,
+                        related=project.submission,
+                    )
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            source=self.object.submission,
+            related=self.object,
+        )
+
+        return HttpResponseRedirect(self.submission.get_absolute_url())
