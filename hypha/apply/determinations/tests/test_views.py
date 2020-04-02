@@ -448,3 +448,40 @@ class UserDeterminationFormTestCase(BaseViewTestCase):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         response = self.get_page(submission, 'form')
         self.assertEqual(response.status_code, 403)
+
+
+class EditDeterminationFormTestCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'detail'
+
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.id, 'pk': instance.determinations.first().id}
+
+    def test_can_edit_accepted_determination(self):
+        submission = ApplicationSubmissionFactory(status='accepted')
+        determination = DeterminationFactory(submission=submission, accepted=True)
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': REJECTED,
+            'message': 'You are rejected.',
+        }, 'update')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        self.assertEqual(submission_original.status, 'rejected')
+
+    def test_can_edit_rejected_determination(self):
+        submission = ApplicationSubmissionFactory(status='rejected')
+        determination = DeterminationFactory(submission=submission, rejected=True)
+
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': ACCEPTED,
+            'message': 'You are accepted.',
+        }, 'update')
+
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        self.assertEqual(submission_original.status, 'accepted')

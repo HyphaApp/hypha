@@ -457,6 +457,7 @@ class DeterminationUpdateView(UpdateView):
         super().form_valid(form)
 
         with transaction.atomic():
+            # Change stage to ready for determination
             self.submission.ready_for_determination_stage(
                 by=self.request.user,
                 request=self.request)
@@ -485,6 +486,7 @@ class DeterminationUpdateView(UpdateView):
             except Project.DoesNotExist:
                 project = None
 
+            # Create a project if accepted
             if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE and not project:
                 project = Project.create_from_submission(self.submission)
                 if project:
@@ -495,6 +497,7 @@ class DeterminationUpdateView(UpdateView):
                         source=project,
                         related=project.submission,
                     )
+
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
