@@ -125,7 +125,6 @@ class ResetNetworkResourcePage(ResetNetworkBasePage):
             FieldPanel('content_heading'),
             ImageChooserPanel('content_image'),
             StreamFieldPanel('content_text'),
-            FieldPanel('category'),
             FieldPanel('categories'),
         ], heading='Content'),
         MultiFieldPanel([
@@ -140,5 +139,6 @@ class ResetNetworkResourcePage(ResetNetworkBasePage):
             FieldPanel('card_heading'),
             FieldPanel('card_text'),
             ImageChooserPanel('card_image'),
+            FieldPanel('category'),
         ], heading='Card Details'),
     ]
