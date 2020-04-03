@@ -30,6 +30,7 @@ from .forms import (
 )
 from .models import (
     NEEDS_MORE_INFO,
+    REJECTED,
     TRANSITION_DETERMINATION,
     Determination,
     DeterminationMessageSettings,
@@ -498,6 +499,8 @@ class DeterminationUpdateView(UpdateView):
                         related=project.submission,
                     )
 
+            if form.cleaned_data.get('outcome') == REJECTED and project:
+                project.delete()
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
