@@ -459,25 +459,25 @@ class EditDeterminationFormTestCase(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id, 'pk': instance.determinations.first().id}
 
-    # def test_can_edit_accepted_determination(self):
-    #     submission = ApplicationSubmissionFactory(status='accepted')
-    #     determination = DeterminationFactory(submission=submission, accepted=True)
-    #     project = ProjectFactory(submission=submission)
+    def test_can_edit_accepted_determination(self):
+        submission = ApplicationSubmissionFactory(status='accepted')
+        DeterminationFactory(submission=submission, accepted=True)
+        ProjectFactory(submission=submission)
 
-    #     self.post_page(submission, {
-    #         'data': 'value',
-    #         'outcome': REJECTED,
-    #         'message': 'You are rejected.',
-    #     }, 'update')
+        self.post_page(submission, {
+            'data': 'value',
+            'outcome': REJECTED,
+            'message': 'You are rejected.',
+        }, 'update')
 
-    #     # Cant use refresh from DB with FSM
-    #     submission_original = self.refresh(submission)
-    #     self.assertEqual(submission_original.status, 'rejected')
-    #     self.assertFalse(hasattr(submission_original, 'project'))
+        # Cant use refresh from DB with FSM
+        submission_original = self.refresh(submission)
+        self.assertEqual(submission_original.status, 'rejected')
+        self.assertFalse(hasattr(submission_original, 'project'))
 
     def test_can_edit_rejected_determination(self):
         submission = ApplicationSubmissionFactory(status='rejected')
-        determination = DeterminationFactory(submission=submission, rejected=True)
+        DeterminationFactory(submission=submission, rejected=True)
 
         self.post_page(submission, {
             'data': 'value',
