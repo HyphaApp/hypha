@@ -108,6 +108,7 @@ class ResetNetworkResourcePage(ResetNetworkBasePage):
         ('embed', EmbedBlock())
     ])
 
+    category = models.CharField(verbose_name='Tag', max_length=255, null=True, blank=True)
     categories = ClusterTaggableManager(through=ResetNetworkResourcePageCategory, blank=True)
 
     content_assets_heading = models.CharField(verbose_name='Heading', max_length=255, blank=False)
@@ -124,6 +125,7 @@ class ResetNetworkResourcePage(ResetNetworkBasePage):
             FieldPanel('content_heading'),
             ImageChooserPanel('content_image'),
             StreamFieldPanel('content_text'),
+            FieldPanel('category'),
             FieldPanel('categories'),
         ], heading='Content'),
         MultiFieldPanel([
