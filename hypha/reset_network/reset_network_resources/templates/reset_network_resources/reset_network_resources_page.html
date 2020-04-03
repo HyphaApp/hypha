@@ -68,7 +68,9 @@
               <ul class="resources__carousel-copy-list js-resources-copy">
                 {% for resource in resources %}
                   <li class="resources__carousel-copy-item" data-resources-copy="{{forloop.counter0}}">
-                    <p class="resources__carousel-copy-small">[ Article ]</p>
+                    {% if resource.category %}
+                    <p class="resources__carousel-copy-small">[ {{ resource.category }} ]</p>
+                    {% endif %}
                     <h2 class="resources__carousel-copy-title">{{ resource.card_heading }}</h2>
                     <p class="resources__carousel-copy-text">{{ resource.card_text }}</p>
                     <a href="{% pageurl resource %}" class="button button--sm" data-button="">
