@@ -12,7 +12,7 @@
     <div class="para__content">
 
       <div class="resource-head">
-        <div class="resource-head__type">[Article]</div>
+        <div class="resource-head__type">{% if page.category %}[{{ page.category }}]{% endif %}</div>
         <h1 class="resource-head__title">{{ page.content_heading }}</h1>
 
         <div class="resource-head__image">
