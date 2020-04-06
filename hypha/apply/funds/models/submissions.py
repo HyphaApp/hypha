@@ -47,14 +47,14 @@ from ..workflow import (
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
+    Concept,
+    Proposal,
+    RequestCom,
+    RequestExt,
     UserPermissions,
     active_statuses,
     get_review_active_statuses,
     review_statuses,
-    RequestExt,
-    RequestCom,
-    Proposal,
-    Concept,
 )
 from .mixins import AccessFormData
 from .utils import (
