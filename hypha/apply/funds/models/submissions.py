@@ -51,6 +51,10 @@ from ..workflow import (
     active_statuses,
     get_review_active_statuses,
     review_statuses,
+    RequestExt,
+    RequestCom,
+    Proposal,
+    Concept,
 )
 from .mixins import AccessFormData
 from .utils import (
@@ -476,12 +480,28 @@ class ApplicationSubmission(
 
     @transition(
         status, source='*',
-        target='determination', permission=make_permission_check({UserPermissions.STAFF}),)
-    def ready_for_determination_stage(self, **kwargs):
+        target=RETURN_VALUE(
+            'determination',
+            'ext_determination',
+            'proposal_determination',
+            'concept_determination',
+            'com_determination',
+        ),
+        permission=make_permission_check({UserPermissions.STAFF}),)
+    def revert_to_determination(self, **kwargs):
         """
-        Revert back final stage to determination stage
+        Revert back to determination
         """
-        return True
+        if self.stage == RequestExt:
+            return 'ext_determination'
+        elif self.stage == RequestCom:
+            return 'com_determination'
+        elif self.stage == Concept:
+            return 'concept_determination'
+        elif self.stage == Proposal:
+            return 'proposal_determination'
+
+        return 'determination'
 
     @property
     def stage(self):

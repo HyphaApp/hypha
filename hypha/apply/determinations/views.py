@@ -458,8 +458,7 @@ class DeterminationUpdateView(UpdateView):
         super().form_valid(form)
 
         with transaction.atomic():
-            # Change stage to ready for determination
-            self.submission.ready_for_determination_stage(
+            self.submission.revert_to_determination(
                 by=self.request.user,
                 request=self.request)
 
