@@ -24,7 +24,7 @@
 
             $carousel: null,
             $imgs: null,
-            speedImgChange: 700,
+            speedImgChange: 2000,
             collapsed: false,
 
             utils: {
@@ -158,7 +158,6 @@
             animate: function () {
                 clearInterval(CAROUSEL.HERO.animateInterval);
                 CAROUSEL.HERO.animateInterval = setInterval(CAROUSEL.HERO.changeImg, CAROUSEL.HERO.speedImgChange);
-                CAROUSEL.HERO.changeImg();
             }
         },
 
