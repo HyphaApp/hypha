@@ -24,7 +24,7 @@
 
             $carousel: null,
             $imgs: null,
-            speedImgChange: 2000,
+            speedImgChange: 1500,
             collapsed: false,
 
             utils: {
