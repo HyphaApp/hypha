@@ -207,6 +207,31 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertTrue(hasattr(submission, 'project'))
         self.assertEquals(submission.project.id, project.id)
 
+    def test_correct_primary_action_displayed(self):
+        SCREEN_APPLICATION = '<a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">Screen application</a>'
+        UPDATE_STATUS = '<a data-fancybox data-src="#update-status" class="button button--primary button--full-width is-not-disabled" href="#">Update status</a>'
+
+        def assert_primary_action(content, expected_action):
+            actions_to_take_title = '<h5>Actions to take</h5>'
+            actions_block_start = content.find(actions_to_take_title)
+            actions_block = content[actions_block_start + len(actions_to_take_title):]
+            actions_block = actions_block.strip('\\n')
+            first_button = actions_block[:actions_block.find('\\n')]
+            self.assertHTMLEqual(first_button, expected_action)
+
+        # Phase: received / in_discussion - not screened
+        # Screen application should be displayed
+        response = self.get_page(self.submission)
+        assert_primary_action(str(response.content), SCREEN_APPLICATION)
+
+        # Phase: received / in_discussion - screened
+        # Update status should be displayed
+        screening_outcome = ScreeningStatusFactory()
+        self.submission.screening_status = screening_outcome
+        self.submission.save()
+        response = self.get_page(self.submission)
+        assert_primary_action(str(response.content), UPDATE_STATUS)
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory

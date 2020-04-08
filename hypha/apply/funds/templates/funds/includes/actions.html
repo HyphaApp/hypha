@@ -12,7 +12,9 @@
 {% endif %}
 {% endif %}
 
-<a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width {% if screening_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Screen application</a>
+{% if not object.screening_status %}
+    <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">Screen application</a>
+{% endif %}
 
 <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Update status</a>
 
