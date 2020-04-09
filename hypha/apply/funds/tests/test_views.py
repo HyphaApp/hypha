@@ -251,6 +251,20 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
+    def test_screen_application_primary_action_is_displayed(self):
+        # Submission not screened
+        response = self.get_page(self.submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
+        self.assertEqual(len(buttons), 1)
+
+    def test_screen_application_primary_action_is_not_displayed(self):
+        # Submission screened
+        self.submission.screening_status = ScreeningStatusFactory()
+        self.submission.save()
+        response = self.get_page(self.submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
+        self.assertEqual(len(buttons), 0)
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
