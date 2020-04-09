@@ -366,4 +366,12 @@
         top:  2px;
         right:  2px;
     }
+
+    // Two-factor
+    &-info,
+    &-link {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+        line-height: 1.15;
+    }
 }

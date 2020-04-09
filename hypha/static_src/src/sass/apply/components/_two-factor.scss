@@ -1,0 +1,29 @@
+.two-factor {
+    position: relative;
+
+    &__back {
+        position: absolute;
+        top:  .5rem;
+    }
+
+    h1,
+    h2 {
+        @extend %h3;
+        font-weight: 700;
+    }
+}
+
+
+
+// 2FA token field.
+// sass-lint:disable no-vendor-prefixes, no-ids, id-name-format
+#id_generator-token {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+// sass-lint:enddisable
