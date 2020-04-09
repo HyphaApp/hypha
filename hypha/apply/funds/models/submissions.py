@@ -47,10 +47,6 @@ from ..workflow import (
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
-    Concept,
-    Proposal,
-    RequestCom,
-    RequestExt,
     UserPermissions,
     active_statuses,
     get_review_active_statuses,
@@ -478,31 +474,6 @@ class ApplicationSubmission(
             return 'invited_to_proposal'
         return INITIAL_STATE
 
-    @transition(
-        status, source='*',
-        target=RETURN_VALUE(
-            'determination',
-            'ext_determination',
-            'proposal_determination',
-            'concept_determination',
-            'com_determination',
-        ),
-        permission=make_permission_check({UserPermissions.STAFF}),)
-    def revert_to_determination(self, **kwargs):
-        """
-        Revert back to determination
-        """
-        if self.stage == RequestExt:
-            return 'ext_determination'
-        elif self.stage == RequestCom:
-            return 'com_determination'
-        elif self.stage == Concept:
-            return 'concept_determination'
-        elif self.stage == Proposal:
-            return 'proposal_determination'
-
-        return 'determination'
-
     @property
     def stage(self):
         return self.phase.stage
@@ -774,7 +745,7 @@ def log_status_update(sender, **kwargs):
     old_phase = instance.workflow[kwargs['source']]
 
     by = kwargs['method_kwargs']['by']
-    request = kwargs['method_kwargs'].get('request', False)
+    request = kwargs['method_kwargs']['request']
     notify = kwargs['method_kwargs'].get('notify', True)
 
     if request and notify:

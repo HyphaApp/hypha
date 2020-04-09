@@ -458,9 +458,6 @@ class DeterminationEditView(UpdateView):
         super().form_valid(form)
 
         with transaction.atomic():
-            self.submission.revert_to_determination(
-                by=self.request.user,
-                request=self.request)
 
             messenger(
                 MESSAGES.DETERMINATION_OUTCOME,
