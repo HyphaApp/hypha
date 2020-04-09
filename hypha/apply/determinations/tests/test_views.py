@@ -468,7 +468,7 @@ class EditDeterminationFormTestCase(BaseViewTestCase):
             'data': 'value',
             'outcome': REJECTED,
             'message': 'You are rejected.',
-        }, 'update')
+        }, 'edit')
 
         # Cant use refresh from DB with FSM
         submission_original = self.refresh(submission)
@@ -483,7 +483,7 @@ class EditDeterminationFormTestCase(BaseViewTestCase):
             'data': 'value',
             'outcome': ACCEPTED,
             'message': 'You are accepted.',
-        }, 'update')
+        }, 'edit')
 
         # Cant use refresh from DB with FSM
         submission_original = self.refresh(submission)

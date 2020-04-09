@@ -434,7 +434,7 @@ class DeterminationDetailView(ViewDispatcher):
 
 
 @method_decorator(staff_required, name='dispatch')
-class DeterminationUpdateView(UpdateView):
+class DeterminationEditView(UpdateView):
     model = Determination
     form_class = UpdateDeterminationForm
 
