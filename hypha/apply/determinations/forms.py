@@ -406,7 +406,7 @@ class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDet
         self.fields = self.apply_form_settings('proposal', self.fields)
 
 
-class UpdateDeterminationForm(forms.ModelForm):
+class DeterminationEditForm(forms.ModelForm):
     message = RichTextField(label='Determination message')
 
     class Meta:
@@ -414,7 +414,7 @@ class UpdateDeterminationForm(forms.ModelForm):
         fields = ['outcome', 'message']
 
     def __init__(self, *args, initial, **kwargs):
-        super(UpdateDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
+        super(DeterminationEditForm, self).__init__(*args, initial=initial, **kwargs)
         self.fields['outcome'].choices = self.outcome_choices(self.fields['outcome'].choices)
 
     def outcome_choices(self, choices):

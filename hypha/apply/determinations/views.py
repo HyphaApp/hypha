@@ -26,7 +26,7 @@ from .forms import (
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
     ProposalDeterminationForm,
-    UpdateDeterminationForm,
+    DeterminationEditForm,
 )
 from .models import (
     NEEDS_MORE_INFO,
@@ -436,7 +436,7 @@ class DeterminationDetailView(ViewDispatcher):
 @method_decorator(staff_required, name='dispatch')
 class DeterminationEditView(UpdateView):
     model = Determination
-    form_class = UpdateDeterminationForm
+    form_class = DeterminationEditForm
 
     def get_object(self, queryset=None):
         return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
