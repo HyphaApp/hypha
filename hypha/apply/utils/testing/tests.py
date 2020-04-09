@@ -39,7 +39,7 @@ class BaseViewTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        if not self.user_factory:
+        if not cls.user_factory:
             cls.user = AnonymousUser()
         else:
             cls.user = cls.user_factory()
