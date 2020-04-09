@@ -18,13 +18,31 @@ def make_request(user=AnonymousUser(), data={}, method='get', site=None):
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class BaseViewTestCase(TestCase):
-    url_name = ''  # resolvable url, you should use "path:to:view:{}" and {} with be replaced with base_view_name
+    """
+    Provides a basic framework for working with views. It works on the
+    assumption that view paths are similarly named e.g. my_view:detail and
+    my_view:edit.
+
+    Configure using:
+
+    url_name:str = resolvable url path with one set of "{}", e.g.
+    "path:to:view:{}"
+
+    base_view_name:str = will replace the "{}" in url_name
+
+    user_factory:() => User = Callable which will return a User object. If no
+    user_factory is defined an anonymous user will be user
+    """
+    url_name = ''
     base_view_name = ''
     user_factory = None
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = cls.user_factory()
+        if not self.user_factory:
+            cls.user = AnonymousUser()
+        else:
+            cls.user = cls.user_factory()
         super().setUpTestData()
 
     def setUp(self):
