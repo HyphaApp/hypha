@@ -6,7 +6,7 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% else %}<a class="button" href="{% url 'apply:submissions:determinations:update' submission_pk=determination.submission.id pk=determination.id %}">Edit</a>{% endif %}
+        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% endif %}
         </h2>
         <h5>For <a href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a></h5>
     </div>
@@ -14,9 +14,21 @@
 
 <div class="grid">
     <div>
-        <h5>Determination: {{ determination.get_outcome_display }}</h5>
+        <div>
+        <h5 class="determination-outcome">Determination: {{ determination.get_outcome_display }}</h5>
+       
+        {% if request.user.is_staff %}
+
+            <a class="link is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
+                Edit
+            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+            </a>
+ 
+        {% endif %}
+        </div>
         {{ determination.message|bleach }}
     </div>
+
 </div>
 
 <div class="rich-text rich-text--answers">
