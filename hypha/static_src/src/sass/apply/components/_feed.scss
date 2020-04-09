@@ -117,6 +117,10 @@
 
         &--right {
             margin-left: auto;
+
+            span {
+                font-weight: $weight--normal;
+            }
         }
 
         &--progress {

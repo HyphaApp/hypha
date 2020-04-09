@@ -37,6 +37,7 @@
                 <div id="wmd-preview-edit-comment" class="wmd-preview"></div>
                 <br>
                 <div>Visible to:</div>
+            </div>
         `;
 
         const radioButtonsDiv = '<div id="edit-comment-visibility"></div>';
@@ -53,7 +54,6 @@
                     <button class="button button--primary js-submit-edit" type="submit">Update</button>
                     <button class="button button--white js-cancel-edit">Cancel</button>
                 </div>
-            </div>
         `;
 
         // add the comment to the editor
@@ -144,7 +144,14 @@
     };
 
     const updateVisibility = (el, visibility) => {
-        $(el).closest(feedContent).find(commentVisibility).html(`${visibility}`);
+        if (visibility !== 'all') {
+            $(el).closest(feedContent).find(commentVisibility).parent().attr('hidden', false);
+            $(el).closest(feedContent).find(commentVisibility).text(visibility);
+        }
+        else {
+            $(el).closest(feedContent).find(commentVisibility).parent().attr('hidden', true);
+            $(el).closest(feedContent).find(commentVisibility).html(`${visibility}`);
+        }
     };
 
     const updateLastEdited = (el, date) => {
