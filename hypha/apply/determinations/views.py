@@ -25,8 +25,8 @@ from .forms import (
     BatchConceptDeterminationForm,
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
-    ProposalDeterminationForm,
     DeterminationEditForm,
+    ProposalDeterminationForm,
 )
 from .models import (
     NEEDS_MORE_INFO,
