@@ -1,6 +1,11 @@
 .reviews-list {
+    position: relative;
     margin-top: 40px;
     table-layout: auto;
+
+    &__body {
+        overflow-x: scroll;
+    }
 
     &__th {
         &:hover {
@@ -44,5 +49,11 @@
             width: 160px;
             background-color: $color--light-mid-grey;
         }
+    }
+
+    &__th--author {
+        position: sticky;
+        top: 0;
+        background-color: $color--white;
     }
 }

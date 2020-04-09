@@ -3,6 +3,8 @@
 
 {% block title %}Reviews{% endblock %}
 
+{% block body_class %}light-grey-bg reviews-list__body{% endblock %}
+
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner admin-bar__inner--with-button">
@@ -24,7 +26,7 @@
             <th class="reviews-list__th">{{ answers.question }}</th>
             {% for answer in answers.answers %}
                 {% if forloop.parentloop.first %}
-                    <td class="reviews-list__td reviews-list__td--author">{{ answer|safe }}</td>
+                    <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
                 {% elif answers.question == "Opinions"%}
                     <td class="reviews-list__td">{{ answer }}</td>
                 {% else %}

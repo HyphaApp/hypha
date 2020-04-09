@@ -270,10 +270,6 @@
         }
     }
 
-    &--reviews-table {
-        overflow-x: scroll;
-    }
-
     &--table-actions {
         @include media-query(tablet-portrait) {
             display: flex;
