@@ -30,7 +30,6 @@ from .forms import (
 )
 from .models import (
     NEEDS_MORE_INFO,
-    REJECTED,
     TRANSITION_DETERMINATION,
     Determination,
     DeterminationMessageSettings,
