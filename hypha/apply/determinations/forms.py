@@ -410,4 +410,4 @@ class DeterminationEditForm(forms.ModelForm):
 
     class Meta:
         model = Determination
-        fields = ['message']
+        fields = ['message', 'send_notice']

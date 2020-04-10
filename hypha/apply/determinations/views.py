@@ -453,3 +453,16 @@ class DeterminationEditView(UpdateView):
             message_templates=determination_messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
+
+    def form_valid(self, form):
+        super().form_valid(form)
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            source=self.object.submission,
+            related=self.object,
+        )
+
+        return HttpResponseRedirect(self.submission.get_absolute_url())
