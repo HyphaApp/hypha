@@ -7,7 +7,6 @@ from hypha.apply.utils.fields import RichTextField
 
 from .models import (
     DETERMINATION_CHOICES,
-    NEEDS_MORE_INFO,
     TRANSITION_DETERMINATION,
     Determination,
     DeterminationFormSettings,
@@ -411,11 +410,4 @@ class DeterminationEditForm(forms.ModelForm):
 
     class Meta:
         model = Determination
-        fields = ['outcome', 'message']
-
-    def __init__(self, *args, initial, **kwargs):
-        super(DeterminationEditForm, self).__init__(*args, initial=initial, **kwargs)
-        self.fields['outcome'].choices = self.outcome_choices(self.fields['outcome'].choices)
-
-    def outcome_choices(self, choices):
-        return [choice for choice in choices if not choice[0] == NEEDS_MORE_INFO]
+        fields = ['message']
