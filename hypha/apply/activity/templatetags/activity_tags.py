@@ -50,13 +50,14 @@ def display_for(activity, user):
 
     return message_data[ALL]
 
+
 @register.filter
 def visibility_options(activity, user):
     if user.is_apply_staff:
-            return 'applicant, team, reviewers, partners, all'
+        return 'applicant, team, reviewers, partners, all'
     if user.is_reviewer:
-            return 'reviewers, all'
+        return 'reviewers, all'
     if user.is_partner:
-            return 'partners, all'
+        return 'partners, all'
 
     return 'applicant, all'
