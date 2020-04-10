@@ -49,7 +49,7 @@ class TestCommentEdit(TestCase):
         comment = CommentFactory(user=user)
         self.client.force_login(user)
 
-        response = self.client.post(
+        self.client.post(
             reverse_lazy('api:v1:comments:edit', kwargs={'pk': comment.pk}),
             secure=True,
             data={
