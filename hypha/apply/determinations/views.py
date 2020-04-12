@@ -25,7 +25,6 @@ from .forms import (
     BatchConceptDeterminationForm,
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
-    DeterminationEditForm,
     ProposalDeterminationForm,
 )
 from .models import (
@@ -54,7 +53,7 @@ def get_form_for_stages(submissions):
     return forms[0]
 
 
-def get_form_for_stage(submission, batch=False):
+def get_form_for_stage(submission, batch=False, edit=False):
     if batch:
         forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
     else:
@@ -435,7 +434,6 @@ class DeterminationDetailView(ViewDispatcher):
 @method_decorator(staff_required, name='dispatch')
 class DeterminationEditView(UpdateView):
     model = Determination
-    form_class = DeterminationEditForm
 
     def get_object(self, queryset=None):
         return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
@@ -452,6 +450,18 @@ class DeterminationEditView(UpdateView):
             message_templates=determination_messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
+
+    def get_form_class(self):
+        return get_form_for_stage(self.submission)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['submission'] = self.submission
+        kwargs['action'] = self.request.GET.get('action')
+        kwargs['site'] = self.request.site
+        kwargs['edit'] = True
+        return kwargs
 
     def form_valid(self, form):
         super().form_valid(form)

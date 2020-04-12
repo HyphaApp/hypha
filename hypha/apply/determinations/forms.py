@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 class BaseDeterminationForm:
-    def __init__(self, *args, user, initial, action, **kwargs):
+    def __init__(self, *args, user, initial, action, edit, **kwargs):
         if 'site' in kwargs:
             site = kwargs.pop('site')
             self.form_settings = DeterminationFormSettings.for_site(site)
@@ -362,6 +362,11 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)
 
+        is_edit = kwargs.get('edit', False)
+        if is_edit:
+            self.fields.pop('outcome')
+            self.draft_button_name = None
+
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
     def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
@@ -386,6 +391,11 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
 
         self.fields = self.apply_form_settings('proposal', self.fields)
 
+        is_edit = kwargs.get('edit', False)
+        if is_edit:
+            self.fields.pop('outcome')
+            self.draft_button_name = None
+
 
 class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
     def __init__(self, *args, submissions, initial={}, **kwargs):
@@ -403,11 +413,3 @@ class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDet
         self.fields['outcome'].widget = forms.HiddenInput()
 
         self.fields = self.apply_form_settings('proposal', self.fields)
-
-
-class DeterminationEditForm(forms.ModelForm):
-    message = RichTextField(label='Determination message')
-
-    class Meta:
-        model = Determination
-        fields = ['message', 'send_notice']
