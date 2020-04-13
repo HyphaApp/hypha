@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 class BaseDeterminationForm:
-    def __init__(self, *args, user, initial, action, edit, **kwargs):
+    def __init__(self, *args, user, initial, action, edit=False, **kwargs):
         if 'site' in kwargs:
             site = kwargs.pop('site')
             self.form_settings = DeterminationFormSettings.for_site(site)
@@ -322,7 +322,7 @@ class BaseProposalDeterminationForm(forms.Form):
 
 
 class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, edit, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit=False, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
 
         if instance:
@@ -368,7 +368,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, edit, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit=False, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
 
         if instance:
