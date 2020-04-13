@@ -322,7 +322,7 @@ class BaseProposalDeterminationForm(forms.Form):
 
 
 class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
 
         if instance:
@@ -330,7 +330,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 if key not in self._meta.fields:
                     initial[key] = value
 
-        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, **kwargs)
+        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, edit=edit, **kwargs)
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
@@ -362,14 +362,13 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)
 
-        is_edit = kwargs.get('edit', False)
-        if is_edit:
+        if edit:
             self.fields.pop('outcome')
             self.draft_button_name = None
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit, initial={}, instance=None, **kwargs):
         initial.update(submission=submission.id)
 
         if instance:
@@ -377,7 +376,7 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
                 if key not in self._meta.fields:
                     initial[key] = value
 
-        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, **kwargs)
+        super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, edit=edit, **kwargs)
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
@@ -391,8 +390,7 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
 
         self.fields = self.apply_form_settings('proposal', self.fields)
 
-        is_edit = kwargs.get('edit', False)
-        if is_edit:
+        if edit:
             self.fields.pop('outcome')
             self.draft_button_name = None
 
