@@ -48,7 +48,7 @@ def get_form_for_stages(submissions):
         for submission in submissions
     ]
     if len(set(forms)) != 1:
-        raise ValueError('Submissions expect different forms - please contact and admin')
+        raise ValueError('Submissions expect different forms - please contact admin')
 
     return forms[0]
 
