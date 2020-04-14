@@ -339,12 +339,15 @@ class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user).flagged_staff().order_by('-submit_time')
 
 
-@method_decorator(staff_required, name='dispatch')
-class SubmissionUserFlaggedView(BaseAdminSubmissionsTable):
+@method_decorator(login_required, name='dispatch')
+class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_user_flagged.html'
 
     def get_queryset(self):
         return self.filterset_class._meta.model.objects.current().for_table(self.request.user).flagged_by(self.request.user).order_by('-submit_time')
+
+    def test_func(self):
+        return self.request.user.is_apply_staff or self.request.user.is_reviewer
 
 
 @method_decorator(staff_required, name='dispatch')

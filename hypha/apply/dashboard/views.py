@@ -45,7 +45,19 @@ class MySubmissionContextMixin:
         )
 
 
-class AdminDashboardView(TemplateView):
+class MyFlaggedMixin:
+    def my_flagged(self, submissions):
+        submissions = submissions.flagged_by(self.request.user).order_by('-submit_time')
+        row_attrs = dict({'data-flag-type': 'user'}, **SummarySubmissionsTable._meta.row_attrs)
+
+        limit = 5
+        return {
+            'table': SummarySubmissionsTable(submissions[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
+            'display_more': submissions.count() > limit,
+        }
+
+
+class AdminDashboardView(MyFlaggedMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -138,18 +150,8 @@ class AdminDashboardView(TemplateView):
             'open': rounds.open()[:limit],
         }
 
-    def my_flagged(self, submissions):
-        submissions = submissions.flagged_by(self.request.user).order_by('-submit_time')
-        row_attrs = dict({'data-flag-type': 'user'}, **SummarySubmissionsTable._meta.row_attrs)
 
-        limit = 5
-        return {
-            'table': SummarySubmissionsTable(submissions[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
-            'display_more': submissions.count() > limit,
-        }
-
-
-class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
+class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
@@ -162,6 +164,17 @@ class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
 
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        context.update({
+            'awaiting_reviews': self.awaiting_reviews(submissions),
+            'my_reviewed': self.my_reviewed(submissions)
+        })
+
+        return context
 
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
@@ -188,33 +201,16 @@ class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
             'url': reverse('funds:submissions:list'),
         }
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        context.update({
-            'awaiting_reviews': self.awaiting_reviews(submissions),
-            'my_reviewed': self.my_reviewed(submissions)
-        })
-
-        return context
-
 
 class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/partner_dashboard.html'
-
-    def get_partner_submissions(self, user, submissions):
-        partner_submissions = submissions.partner_for(user).order_by('-submit_time')
-        partner_submissions_table = SubmissionsTable(partner_submissions, prefix='my-partnered-')
-
-        return partner_submissions, partner_submissions_table
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in which user added as partner
-        partner_submissions, partner_submissions_table = self.get_partner_submissions(self.request.user, submissions)
+        partner_submissions, partner_submissions_table = self.partner_submissions(self.request.user, submissions)
 
         context.update({
             'partner_submissions': partner_submissions_table,
@@ -223,28 +219,25 @@ class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
 
         return context
 
+    def partner_submissions(self, user, submissions):
+        partner_submissions = submissions.partner_for(user).order_by('-submit_time')
+        partner_submissions_table = SubmissionsTable(partner_submissions, prefix='my-partnered-')
+
+        return partner_submissions, partner_submissions_table
+
 
 class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/community_dashboard.html'
-
-    def get_my_community_review(self, user, submissions):
-        my_community_review = submissions.in_community_review(user).order_by('-submit_time')
-        my_community_review_table = ReviewerSubmissionsTable(my_community_review, prefix='my-community-review-')
-
-        return my_community_review, my_community_review_table
-
-    def get_my_reviewed(self, request, submissions):
-        return ReviewerSubmissionsTable(submissions.reviewed_by(request.user).order_by('-submit_time'), prefix='my-reviewed-')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in community review phase
-        my_community_review, my_community_review = self.get_my_community_review(self.request.user, submissions)
+        my_community_review, my_community_review = self.my_community_review(self.request.user, submissions)
 
         # Partner's reviewed submissions
-        my_reviewed = self.get_my_reviewed(self.request, submissions)
+        my_reviewed = self.my_reviewed(self.request, submissions)
 
         context.update({
             'my_community_review': my_community_review,
@@ -253,6 +246,15 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         })
 
         return context
+
+    def my_community_review(self, user, submissions):
+        my_community_review = submissions.in_community_review(user).order_by('-submit_time')
+        my_community_review_table = ReviewerSubmissionsTable(my_community_review, prefix='my-community-review-')
+
+        return my_community_review, my_community_review_table
+
+    def my_reviewed(self, request, submissions):
+        return ReviewerSubmissionsTable(submissions.reviewed_by(request.user).order_by('-submit_time'), prefix='my-reviewed-')
 
 
 class ApplicantDashboardView(MultiTableMixin, TemplateView):
@@ -264,16 +266,16 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
     template_name = 'dashboard/applicant_dashboard.html'
 
     def get_context_data(self, **kwargs):
-        active_submissions = list(self.get_active_submissions(self.request.user))
+        my_active_submissions = list(self.my_active_submissions(self.request.user))
 
         context = super().get_context_data(**kwargs)
-        context['my_active_submissions'] = active_submissions
+        context['my_active_submissions'] = my_active_submissions
         return context
 
-    def get_active_project_data(self, user):
+    def active_project_data(self, user):
         return Project.objects.filter(user=user).active().for_table()
 
-    def get_active_submissions(self, user):
+    def my_active_submissions(self, user):
         active_subs = ApplicationSubmission.objects.filter(
             user=user,
         ) .active().current().select_related('draft_revision')
@@ -281,19 +283,19 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
         for submission in active_subs:
             yield submission.from_draft()
 
-    def get_historical_project_data(self, user):
+    def historical_project_data(self, user):
         return Project.objects.filter(user=user).complete().for_table()
 
-    def get_historical_submission_data(self, user):
+    def historical_submission_data(self, user):
         return ApplicationSubmission.objects.filter(
             user=user,
         ).inactive().current().for_table(user)
 
     def get_tables_data(self):
         return [
-            self.get_active_project_data(self.request.user),
-            self.get_historical_submission_data(self.request.user),
-            self.get_historical_project_data(self.request.user),
+            self.active_project_data(self.request.user),
+            self.historical_submission_data(self.request.user),
+            self.historical_project_data(self.request.user),
         ]
 
 
