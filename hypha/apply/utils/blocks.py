@@ -6,7 +6,7 @@ from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from pagedown.widgets import PagedownWidget
-from wagtail.core.blocks import CharBlock, StaticBlock, StreamBlock, StreamValue
+from wagtail.core.blocks import StaticBlock, StreamBlock, StreamValue
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -33,7 +33,6 @@ def nice_field_name(name):
 
 
 class RichTextFieldBlock(TextFieldBlock):
-    word_count = CharBlock(label=_('Word count'))
     widget = RICH_TEXT_WIDGET
 
     class Meta:
