@@ -66,7 +66,7 @@
         color: $color--black;
 
         &::before {
-            content: 'Close to the limit (1000): ';
+            content: attr(data-before-word-count);
         }
     }
 
@@ -74,7 +74,7 @@
         background-color: $color--tomato;
 
         &::before {
-            content: 'Over the limit (1000): ';
+            content: attr(data-before-word-count);
         }
     }
 }
