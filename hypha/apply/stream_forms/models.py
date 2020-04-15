@@ -3,7 +3,12 @@ from collections import OrderedDict
 
 from wagtail.contrib.forms.models import AbstractForm
 
-from .blocks import FormFieldBlock, GroupToggleBlock, GroupToggleEndBlock, TextFieldBlock
+from .blocks import (
+    FormFieldBlock,
+    GroupToggleBlock,
+    GroupToggleEndBlock,
+    TextFieldBlock,
+)
 from .forms import BlockFieldWrapper, PageStreamBaseForm
 
 
