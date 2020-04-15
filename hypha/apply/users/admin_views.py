@@ -69,6 +69,8 @@ def index(request):
 
         if ordering == 'username':
             users = users.order_by(User.USERNAME_FIELD)
+        elif ordering == 'status':
+            users = users.order_by('is_active')
     else:
         ordering = 'name'
 
