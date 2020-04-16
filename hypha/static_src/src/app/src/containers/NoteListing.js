@@ -14,6 +14,7 @@ import {
     getNotesFetchState,
     getDraftNoteForSubmission,
 } from '@selectors/notes';
+import EditNoteForm from "../containers/EditNoteForm";
 
 
 const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, isLoading, editing, editNote }) => {
@@ -49,17 +50,38 @@ const NoteListing = ({ loadNotes, submissionID, notes, isErrored, errorMessage, 
             : null
         )
 
-        return <NoteListingItem
-            author={note.user}
-            timestamp={date}
-            key={`note-${note.id}`}
-            message={note.message}
-            submissionID={submissionID}
-            disabled={!!editing}
-            editable={note.editable}
-            edited={edited}
-            handleEditNote={() => editNote(note.id, note.message, submissionID)}
-        />;
+        return editing ? (
+          editing.id === note.id ? (
+            <EditNoteForm submissionID={submissionID} />
+          ) : (
+            <NoteListingItem
+              author={note.user}
+              timestamp={date}
+              key={`note-${note.id}`}
+              message={note.message}
+              submissionID={submissionID}
+              disabled={!!editing}
+              editable={note.editable}
+              edited={edited}
+              handleEditNote={() =>
+                editNote(note.id, note.message, submissionID)
+              }
+            />
+          )
+        ) : (
+            <NoteListingItem
+                author={note.user}
+                timestamp={date}
+                key={`note-${note.id}`}
+                message={note.message}
+                submissionID={submissionID}
+                disabled={!!editing}
+                editable={note.editable}
+                edited={edited}
+                handleEditNote={() => editNote(note.id, note.message, submissionID)}
+            />
+        );
+         
     }
 
     return (
