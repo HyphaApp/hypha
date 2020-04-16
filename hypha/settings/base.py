@@ -362,6 +362,9 @@ AUTH_USER_MODEL = 'users.User'
 WAGTAIL_USER_EDIT_FORM = 'hypha.apply.users.forms.CustomUserEditForm'
 WAGTAIL_USER_CREATION_FORM = 'hypha.apply.users.forms.CustomUserCreationForm'
 WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
+WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
+WAGTAILUSERS_PASSWORD_ENABLED = False
+WAGTAILUSERS_PASSWORD_REQUIRED = False
 
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
