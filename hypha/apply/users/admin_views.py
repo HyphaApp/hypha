@@ -59,16 +59,15 @@ def index(request):
         form = SearchForm(placeholder=_("Search users"))
 
     if not is_searching:
-        users = User.objects.all()
-
-    if 'last_name' in model_fields and 'first_name' in model_fields:
-        users = users.order_by('last_name', 'first_name')
+        users = User.objects.all().order_by('-is_active', 'full_name')
 
     if 'ordering' in request.GET:
         ordering = request.GET['ordering']
 
         if ordering == 'username':
             users = users.order_by(User.USERNAME_FIELD)
+        elif ordering == 'status':
+            users = users.order_by('is_active')
     else:
         ordering = 'name'
 

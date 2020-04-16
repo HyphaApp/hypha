@@ -19,7 +19,14 @@
                 {% endif %}
             </th>
             <th class="level">{% trans "Role" %}</th>
-            <th class="status">{% trans "Status" %}</th>
+            <th class="status">
+                {% trans "Status" %}
+                {% if ordering == "status" %}
+                    <a href="{% url 'wagtailusers_users:index' %}" class="icon icon-arrow-down-after teal"></a>
+                {% else %}
+                    <a href="{% url 'wagtailusers_users:index' %}?ordering=status" class="icon icon-arrow-down-after"></a>
+                {% endif %}
+            </th>
         </tr>
     </thead>
     <tbody>
