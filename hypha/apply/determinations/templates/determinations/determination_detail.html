@@ -14,24 +14,21 @@
 
 <div class="grid">
     <div>
-        <div>
         <h5 class="determination-outcome">Determination: {{ determination.get_outcome_display }}</h5>
-       
-        {% if request.user.is_staff %}
-
-            <a class="link is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
+    </div>
+    {% if request.user.is_staff %}
+        <div>
+            <a class="link link--edit-determination is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
                 Edit
             <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
- 
-        {% endif %}
         </div>
-        {{ determination.message|bleach }}
-    </div>
-
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">
+    <h4>Determination message</h4>
+    {{ determination.message|bleach }}
     {% for group in determination.detailed_data.values %}
         <h4>{{ group.title }}</h4>
         {% for question, answer in group.questions %}
