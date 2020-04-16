@@ -15,7 +15,6 @@ import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import ReviewInformation from '@containers/ReviewInformation'
 import ScreeningOutcome from '@containers/ScreeningOutcome'
 import AddNoteForm from '@containers/AddNoteForm'
-import EditNoteForm from '@containers/EditNoteForm'
 import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
 import Tabber, {Tab} from '@components/Tabber'
@@ -69,10 +68,7 @@ const DisplayPanel = props => {
         </Tab>,
         <Tab button="Notes" key="note">
             <NoteListing submissionID={submissionID} />
-            {isEditing ? (
-                    <EditNoteForm submissionID={submissionID}/>
-
-                ) : (
+            {isEditing ? null : (
                     <AddNoteForm submissionID={submissionID} />
             )}
         </Tab>
