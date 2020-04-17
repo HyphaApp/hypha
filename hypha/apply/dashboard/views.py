@@ -133,7 +133,8 @@ class AdminDashboardView(BaseDashboardView):
         return {**current_context, **extra_context}
 
 
-class ReviewerDashboardView(TemplateView):
+class ReviewerDashboardView(BaseDashboardView):
+    template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
         # redirect to submissions list when we use the filter to search for something
@@ -142,83 +143,66 @@ class ReviewerDashboardView(TemplateView):
             for key, value in request.GET.items():
                 query_str += key + '=' + value + '&'
             return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
+ 
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
 
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        # Reviewer's current to-review submissions
-        my_review_qs, my_review, display_more = self.get_my_reviews(request.user, qs)
-
-        # Reviewer's reviewed submissions and filters for 'Previous reviews' block
-        filterset, my_reviewed_qs, my_reviewed, display_more_reviewed = self.get_my_reviewed(request, qs)
-
-        # Filter for all active statuses.
-        active_statuses_filter = ''.join(f'&status={status}' for status in review_filter_for_user(request.user))
-
-        # Applications by reviewer
-        my_submissions, my_inactive_submissions = self.get_my_submissions(request, qs)
-
-        context = {
-            'my_review': my_review,
-            'in_review_count': my_review_qs.count(),
-            'display_more': display_more,
-            'my_reviewed': my_reviewed,
-            'display_more_reviewed': display_more_reviewed,
-            'filter': filterset,
-            'active_statuses_filter': active_statuses_filter,
-            'my_submissions': my_submissions,
-            'my_inactive_submissions': my_inactive_submissions,
-        }
-
-        return render(request, 'dashboard/reviewer_dashboard.html', context)
-
-    def get_my_reviews(self, user, qs):
-        limit = 5
-        my_review_qs = qs.in_review_for(user).order_by('-submit_time')
-        my_review_table = ReviewerSubmissionsTable(my_review_qs[:limit], prefix='my-review-')
-        display_more = (my_review_qs.count() > limit)
-
-        return my_review_qs, my_review_table, display_more
-
-    def get_my_reviewed(self, request, qs):
-        # Replicating django_filters.views.FilterView
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-
-        kwargs = {
-            'data': request.GET or None,
-            'request': request,
-            'queryset': my_reviewed_qs,
-        }
-        filterset = SubmissionReviewerFilterAndSearch(**kwargs)
-        my_reviewed_qs = filterset.qs
+    def awaiting_reviews(self, submissions):
+        submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
+        count = submissions.count()
 
         limit = 5
-        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs[:limit], prefix='my-reviewed-')
-        display_more_reviewed = (my_reviewed_qs.count() > limit)
+        return {
+            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
+            'count': count,
+            'display_more': count > limit,
+            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-'),
+        }
 
-        return filterset, my_reviewed_qs, my_reviewed_table, display_more_reviewed
+    def my_reviewed(self, submissions):
+        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
+        submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
 
-    def get_my_submissions(self, request, qs):
-        my_submissions = qs.filter(
-            user=request.user
+        filterset = SubmissionFilterAndSearch(
+            data=self.request.GET or None, request=self.request, queryset=submissions)
+
+        limit = 5
+        return {
+            'filterset': filterset,
+            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-reviewed-'),
+            'display_more': submissions.count() > limit,
+            'url': reverse('funds:submissions:list'),
+        }
+
+    def get_my_submissions(self, submissions):
+        my_submissions = submissions.filter(
+            user=self.request.user
         ).active().current().select_related('draft_revision')
         my_submissions = [
             submission.from_draft() for submission in my_submissions
         ]
 
-        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions = submissions.filter(user=self.request.user).inactive().current()
         my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions_qs, prefix='my-submissions-'
+            my_inactive_submissions, prefix='my-submissions-'
         )
         return my_submissions, my_inactive_submissions_table
 
     def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs)
-        search_term = self.request.GET.get('query')
-        kwargs.update(
-            search_term=search_term,
-        )
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        return super().get_context_data(**kwargs)
+        # Applications by reviewer
+        my_submissions, my_inactive_submissions = self.my_submissions(self.submissions)
+
+        extra_context = {
+            'awaiting_reviews': self.awaiting_reviews(submissions),
+            'my_reviewed': self.my_reviewed(submissions),
+            'my_submissions': my_submissions,
+            'my_inactive_submissions': my_inactive_submissions,
+        }
+
+        current_context = super().get_context_data(**kwargs)
+        return {**current_context, **extra_context}
 
 
 class PartnerDashboardView(TemplateView):
