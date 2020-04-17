@@ -23,27 +23,24 @@ from hypha.apply.projects.tables import (
 from hypha.apply.utils.views import ViewDispatcher
 
 
-class AdminDashboardView(TemplateView):
+class BaseDashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
-    def get_context_data(self, **kwargs):
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+    def awaiting_reviews(self, submissions):
+        submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
+        count = submissions.count()
 
-        extra_context = {
-            'active_payment_requests': self.get_my_active_payment_requests(self.request.user),
-            'awaiting_reviews': self.get_my_awaiting_reviews(self.request.user, submissions),
-            'my_reviewed': self.get_my_reviewed(self.request, submissions),
-            'projects': self.get_my_projects(self.request),
-            'projects_to_approve': self.get_my_projects_to_approve(self.request.user),
-            'rounds': self.get_rounds(self.request.user),
-            'my_flagged': self.get_my_flagged(self.request, submissions),
+        limit = 5
+        return {
+            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
+            'count': count,
+            'display_more': count > limit,
+            'table': SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-'),
         }
-        current_context = super().get_context_data(**kwargs)
-        return {**current_context, **extra_context}
 
-    def get_my_active_payment_requests(self, user):
+    def active_payment_requests(self):
         payment_requests = PaymentRequest.objects.filter(
-            project__lead=user,
+            project__lead=self.request.user,
         ).in_progress()
 
         return {
@@ -51,10 +48,11 @@ class AdminDashboardView(TemplateView):
             'table': PaymentRequestsDashboardTable(payment_requests),
         }
 
-    def get_my_projects(self, request):
-        projects = Project.objects.filter(lead=request.user).for_table()
+    def projects(self):
+        projects = Project.objects.filter(lead=self.request.user).for_table()
 
-        filterset = ProjectListFilter(data=request.GET or None, request=request, queryset=projects)
+        filterset = ProjectListFilter(
+            data=self.request.GET or None, request=self.request, queryset=projects)
 
         limit = 10
 
@@ -66,8 +64,8 @@ class AdminDashboardView(TemplateView):
             'url': reverse('apply:projects:all'),
         }
 
-    def get_my_projects_to_approve(self, user):
-        if not user.is_approver:
+    def projects_to_approve(self):
+        if not self.request.user.is_approver:
             return {
                 'count': None,
                 'table': None,
@@ -80,53 +78,59 @@ class AdminDashboardView(TemplateView):
             'table': ProjectsDashboardTable(data=to_approve),
         }
 
-    def get_my_awaiting_reviews(self, user, qs):
-        """Staff reviewer's current to-review submissions."""
-        qs = qs.in_review_for(user).order_by('-submit_time')
-        count = qs.count()
-
-        limit = 5
-        return {
-            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(user)),
-            'count': count,
-            'display_more': count > limit,
-            'table': SummarySubmissionsTableWithRole(qs[:limit], prefix='my-review-'),
-        }
-
-    def get_my_reviewed(self, request, qs):
+    def my_reviewed(self, submissions):
         """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
-        qs = qs.reviewed_by(request.user).order_by('-submit_time')
+        submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
 
-        filterset = SubmissionFilterAndSearch(data=request.GET or None, request=request, queryset=qs)
+        filterset = SubmissionFilterAndSearch(
+            data=self.request.GET or None, request=self.request, queryset=submissions)
 
         limit = 5
         return {
             'filterset': filterset,
-            'table': SummarySubmissionsTable(qs[:limit], prefix='my-reviewed-'),
-            'display_more': qs.count() > limit,
+            'table': SummarySubmissionsTable(submissions[:limit], prefix='my-reviewed-'),
+            'display_more': submissions.count() > limit,
             'url': reverse('funds:submissions:list'),
         }
 
-    def get_rounds(self, user):
+    def rounds(self):
         limit = 6
-        qs = (RoundsAndLabs.objects.with_progress()
+        rounds = (RoundsAndLabs.objects.with_progress()
                                    .active()
                                    .order_by('-end_date')
-                                   .by_lead(user))
+                                   .by_lead(self.request.user))
         return {
-            'closed': qs.closed()[:limit],
-            'open': qs.open()[:limit],
+            'closed': rounds.closed()[:limit],
+            'open': rounds.open()[:limit],
         }
 
-    def get_my_flagged(self, request, qs):
-        qs = qs.flagged_by(request.user).order_by('-submit_time')
+    def my_flagged(self, submissions):
+        submissions = submissions.flagged_by(self.request.user).order_by('-submit_time')
         row_attrs = dict({'data-flag-type': 'user'}, **SummarySubmissionsTable._meta.row_attrs)
 
         limit = 5
         return {
-            'table': SummarySubmissionsTable(qs[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
-            'display_more': qs.count() > limit,
+            'table': SummarySubmissionsTable(submissions[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
+            'display_more': submissions.count() > limit,
         }
+
+
+class AdminDashboardView(BaseDashboardView):
+
+    def get_context_data(self, **kwargs):
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        extra_context = {
+            'active_payment_requests': self.active_payment_requests(),
+            'awaiting_reviews': self.awaiting_reviews(submissions),
+            'my_reviewed': self.my_reviewed(submissions),
+            'projects': self.projects(),
+            'projects_to_approve': self.projects_to_approve(),
+            'rounds': self.rounds(),
+            'my_flagged': self.my_flagged(submissions),
+        }
+        current_context = super().get_context_data(**kwargs)
+        return {**current_context, **extra_context}
 
 
 class ReviewerDashboardView(TemplateView):
