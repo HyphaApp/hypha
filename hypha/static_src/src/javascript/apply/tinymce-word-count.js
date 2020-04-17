@@ -11,9 +11,9 @@
     const observer = new MutationObserver(function (mutations) {
         mutations.forEach((mutation) => {
             const mutation_selector = '#' + mutation.target.id;
-            const word_count = mutation.target.innerText.match(/\d+/)[0];
+            const word_count = parseInt(mutation.target.innerText.match(/\d+/)[0], 10);
             const word_count_node = document.querySelector(mutation_selector);
-            const word_limit = $(mutation_selector).parents().eq(5).attr('data-word-limit');
+            const word_limit = parseInt($(mutation_selector).parents().eq(5).attr('data-word-limit'), 10);
             const percent_to_get = 20;
             const word_limit_to_show_warning = word_limit - (percent_to_get / 100) * word_limit;
 
