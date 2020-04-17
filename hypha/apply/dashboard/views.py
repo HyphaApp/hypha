@@ -26,6 +26,9 @@ from hypha.apply.utils.views import ViewDispatcher
 class BaseDashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
+    def get_submission_table(self, submissions, limit):
+        return SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-')
+
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
         count = submissions.count()
@@ -35,7 +38,7 @@ class BaseDashboardView(TemplateView):
             'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
             'count': count,
             'display_more': count > limit,
-            'table': SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-'),
+            'table': self.get_submission_table(submissions, limit),
         }
 
     def active_payment_requests(self):
@@ -88,7 +91,7 @@ class BaseDashboardView(TemplateView):
         limit = 5
         return {
             'filterset': filterset,
-            'table': SummarySubmissionsTable(submissions[:limit], prefix='my-reviewed-'),
+            'table': self.get_submission_table(submissions, limit),
             'display_more': submissions.count() > limit,
             'url': reverse('funds:submissions:list'),
         }
@@ -163,32 +166,9 @@ class ReviewerDashboardView(BaseDashboardView, MySubmission):
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
-    def awaiting_reviews(self, submissions):
-        submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
-        count = submissions.count()
 
-        limit = 5
-        return {
-            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
-            'count': count,
-            'display_more': count > limit,
-            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-'),
-        }
-
-    def my_reviewed(self, submissions):
-        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
-        submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
-
-        filterset = SubmissionFilterAndSearch(
-            data=self.request.GET or None, request=self.request, queryset=submissions)
-
-        limit = 5
-        return {
-            'filterset': filterset,
-            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-reviewed-'),
-            'display_more': submissions.count() > limit,
-            'url': reverse('funds:submissions:list'),
-        }
+    def get_submission_table(self, submissions, limit):
+        return ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-')
 
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
