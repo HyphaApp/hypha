@@ -18,17 +18,17 @@
             const word_limit_to_show_warning = word_limit - (percent_to_get / 100) * word_limit;
 
             if (word_count <= word_limit_to_show_warning) {
-                word_count_node.removeAttribute('data-before-word-count');
+                word_count_node.setAttribute('data-after-word-count', ' out of ' + word_limit);
                 word_count_node.classList.remove('word-count-warning');
                 word_count_node.classList.remove('word-count-warning-2');
             }
             else if (word_count > word_limit_to_show_warning && word_count <= word_limit) {
-                word_count_node.setAttribute('data-before-word-count', 'Close to the limit (' + word_limit + '): ');
+                word_count_node.setAttribute('data-after-word-count', ' out of ' + word_limit + ' (Close to the limit)');
                 word_count_node.classList.remove('word-count-warning-2');
                 word_count_node.classList.add('word-count-warning');
             }
             else if (word_count > word_limit) {
-                word_count_node.setAttribute('data-before-word-count', 'Over the limit (' + word_limit + '): ');
+                word_count_node.setAttribute('data-after-word-count', ' out of ' + word_limit + ' (Over the limit)');
                 word_count_node.classList.add('word-count-warning-2');
             }
         });
