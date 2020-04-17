@@ -81,16 +81,17 @@ class BaseDashboardView(TemplateView):
             'table': ProjectsDashboardTable(data=to_approve),
         }
 
+    def get_filterset(self, submissions):
+        return SubmissionFilterAndSearch(
+            data=self.request.GET or None, request=self.request, queryset=submissions)
+
     def my_reviewed(self, submissions):
         """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
         submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
 
-        filterset = SubmissionFilterAndSearch(
-            data=self.request.GET or None, request=self.request, queryset=submissions)
-
         limit = 5
         return {
-            'filterset': filterset,
+            'filterset': self.get_filterset(submissions),
             'table': self.get_submission_table(submissions, limit),
             'display_more': submissions.count() > limit,
             'url': reverse('funds:submissions:list'),
@@ -98,10 +99,8 @@ class BaseDashboardView(TemplateView):
 
     def rounds(self):
         limit = 6
-        rounds = (RoundsAndLabs.objects.with_progress()
-                                   .active()
-                                   .order_by('-end_date')
-                                   .by_lead(self.request.user))
+        rounds = RoundsAndLabs.objects.with_progress().active().order_by('-end_date').by_lead(
+            self.request.user)
         return {
             'closed': rounds.closed()[:limit],
             'open': rounds.open()[:limit],
@@ -134,6 +133,7 @@ class MySubmission:
         )
         return my_submissions, my_inactive_submissions_table
 
+
 class AdminDashboardView(BaseDashboardView):
 
     def get_context_data(self, **kwargs):
@@ -162,13 +162,16 @@ class ReviewerDashboardView(BaseDashboardView, MySubmission):
             for key, value in request.GET.items():
                 query_str += key + '=' + value + '&'
             return HttpResponseRedirect(reverse_lazy('funds:submissions:list') + query_str)
- 
+
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
-
     def get_submission_table(self, submissions, limit):
         return ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-')
+
+    def get_filterset(self, submissions):
+        return SubmissionReviewerFilterAndSearch(
+            data=self.request.GET or None, request=self.request, queryset=submissions)
 
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
@@ -226,10 +229,7 @@ class CommunityDashboardView(TemplateView, MySubmission):
         return my_community_review, my_community_review_table
 
     def get_my_reviewed(self, request, submissions):
-        my_reviewed = submissions.reviewed_by(request.user).order_by('-submit_time')
-        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed, prefix='my-reviewed-')
-
-        return my_reviewed, my_reviewed_table
+        return ReviewerSubmissionsTable(submissions.reviewed_by(request.user).order_by('-submit_time'), prefix='my-reviewed-')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -239,7 +239,7 @@ class CommunityDashboardView(TemplateView, MySubmission):
         my_community_review, my_community_review = self.get_my_community_review(self.request.user, submissions)
 
         # Partner's reviewed submissions
-        my_reviewed, my_reviewed_table = self.get_my_reviewed(self.request, submissions)
+        my_reviewed = self.get_my_reviewed(self.request, submissions)
 
         # Applications by partner
         my_submissions, my_inactive_submissions = self.my_submissions(submissions)
@@ -247,7 +247,7 @@ class CommunityDashboardView(TemplateView, MySubmission):
         context.update({
             'my_community_review': my_community_review,
             'my_community_review_count': my_community_review.count(),
-            'my_reviewed': my_reviewed_table,
+            'my_reviewed': my_reviewed,
             'my_submissions': my_submissions,
             'my_inactive_submissions': my_inactive_submissions,
         })
