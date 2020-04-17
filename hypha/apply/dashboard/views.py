@@ -190,25 +190,25 @@ class ReviewerDashboardView(BaseDashboardView, MySubmission):
 class PartnerDashboardView(TemplateView, MySubmission):
     template_name = 'dashboard/partner_dashboard.html'
 
-    def get_partner_submissions(self, user, qs):
-        partner_submissions_qs = qs.partner_for(user).order_by('-submit_time')
-        partner_submissions_table = SubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
+    def get_partner_submissions(self, user, submissions):
+        partner_submissions = submissions.partner_for(user).order_by('-submit_time')
+        partner_submissions_table = SubmissionsTable(partner_submissions, prefix='my-partnered-')
 
-        return partner_submissions_qs, partner_submissions_table
+        return partner_submissions, partner_submissions_table
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in which user added as partner
-        partner_submissions_qs, partner_submissions = self.get_partner_submissions(self.request.user, qs)
+        partner_submissions, partner_submissions_table = self.get_partner_submissions(self.request.user, submissions)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions = self.my_submissions(qs)
+        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
 
         context.update({
-            'partner_submissions': partner_submissions,
-            'partner_submissions_count': partner_submissions_qs.count(),
+            'partner_submissions': partner_submissions_table,
+            'partner_submissions_count': partner_submissions.count(),
             'my_submissions': my_submissions,
             'my_inactive_submissions': my_inactive_submissions,
         })
@@ -219,35 +219,35 @@ class PartnerDashboardView(TemplateView, MySubmission):
 class CommunityDashboardView(TemplateView, MySubmission):
     template_name = 'dashboard/community_dashboard.html'
 
-    def get_my_community_review(self, user, qs):
-        my_community_review_qs = qs.in_community_review(user).order_by('-submit_time')
-        my_community_review_table = ReviewerSubmissionsTable(my_community_review_qs, prefix='my-community-review-')
+    def get_my_community_review(self, user, submissions):
+        my_community_review = submissions.in_community_review(user).order_by('-submit_time')
+        my_community_review_table = ReviewerSubmissionsTable(my_community_review, prefix='my-community-review-')
 
-        return my_community_review_qs, my_community_review_table
+        return my_community_review, my_community_review_table
 
-    def get_my_reviewed(self, request, qs):
-        my_reviewed_qs = qs.reviewed_by(request.user).order_by('-submit_time')
-        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed_qs, prefix='my-reviewed-')
+    def get_my_reviewed(self, request, submissions):
+        my_reviewed = submissions.reviewed_by(request.user).order_by('-submit_time')
+        my_reviewed_table = ReviewerSubmissionsTable(my_reviewed, prefix='my-reviewed-')
 
-        return my_reviewed_qs, my_reviewed_table
+        return my_reviewed, my_reviewed_table
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        qs = ApplicationSubmission.objects.all().for_table(self.request.user)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Submissions in community review phase
-        my_community_review_qs, my_community_review = self.get_my_community_review(self.request.user, qs)
+        my_community_review, my_community_review = self.get_my_community_review(self.request.user, submissions)
 
         # Partner's reviewed submissions
-        my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
+        my_reviewed, my_reviewed_table = self.get_my_reviewed(self.request, submissions)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions = self.my_submissions(qs)
+        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
 
         context.update({
             'my_community_review': my_community_review,
-            'my_community_review_count': my_community_review_qs.count(),
-            'my_reviewed': my_reviewed,
+            'my_community_review_count': my_community_review.count(),
+            'my_reviewed': my_reviewed_table,
             'my_submissions': my_submissions,
             'my_inactive_submissions': my_inactive_submissions,
         })
