@@ -56,6 +56,7 @@
     &.mce-wordcount {
         padding-left: 10px;
         padding-right: 10px;
+
         &::after {
             content: attr(data-after-word-count);
         }
