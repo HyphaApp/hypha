@@ -9,7 +9,6 @@
     };
 
     function word_count(el) {
-        console.log('Hej');
         const mutation_selector = '#' + el.id;
         const word_count = parseInt(el.innerText.match(/\d+/)[0], 10);
         const word_count_node = document.querySelector(mutation_selector);
