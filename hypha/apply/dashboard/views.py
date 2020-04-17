@@ -115,6 +115,22 @@ class BaseDashboardView(TemplateView):
         }
 
 
+class MySubmission:
+
+    def my_submissions(self, submissions):
+        my_submissions = submissions.filter(
+            user=self.request.user
+        ).active().current().select_related('draft_revision')
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+
+        my_inactive_submissions = submissions.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
+
 class AdminDashboardView(BaseDashboardView):
 
     def get_context_data(self, **kwargs):
@@ -133,7 +149,7 @@ class AdminDashboardView(BaseDashboardView):
         return {**current_context, **extra_context}
 
 
-class ReviewerDashboardView(BaseDashboardView):
+class ReviewerDashboardView(BaseDashboardView, MySubmission):
     template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
@@ -174,25 +190,11 @@ class ReviewerDashboardView(BaseDashboardView):
             'url': reverse('funds:submissions:list'),
         }
 
-    def get_my_submissions(self, submissions):
-        my_submissions = submissions.filter(
-            user=self.request.user
-        ).active().current().select_related('draft_revision')
-        my_submissions = [
-            submission.from_draft() for submission in my_submissions
-        ]
-
-        my_inactive_submissions = submissions.filter(user=self.request.user).inactive().current()
-        my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions, prefix='my-submissions-'
-        )
-        return my_submissions, my_inactive_submissions_table
-
     def get_context_data(self, **kwargs):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Applications by reviewer
-        my_submissions, my_inactive_submissions = self.my_submissions(self.submissions)
+        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
 
         extra_context = {
             'awaiting_reviews': self.awaiting_reviews(submissions),
@@ -205,7 +207,7 @@ class ReviewerDashboardView(BaseDashboardView):
         return {**current_context, **extra_context}
 
 
-class PartnerDashboardView(TemplateView):
+class PartnerDashboardView(TemplateView, MySubmission):
     template_name = 'dashboard/partner_dashboard.html'
 
     def get_partner_submissions(self, user, qs):
@@ -213,20 +215,6 @@ class PartnerDashboardView(TemplateView):
         partner_submissions_table = SubmissionsTable(partner_submissions_qs, prefix='my-partnered-')
 
         return partner_submissions_qs, partner_submissions_table
-
-    def get_my_submissions(self, request, qs):
-        my_submissions = qs.filter(
-            user=request.user
-        ).active().current().select_related('draft_revision')
-        my_submissions = [
-            submission.from_draft() for submission in my_submissions
-        ]
-
-        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
-        my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions_qs, prefix='my-submissions-'
-        )
-        return my_submissions, my_inactive_submissions_table
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -236,7 +224,7 @@ class PartnerDashboardView(TemplateView):
         partner_submissions_qs, partner_submissions = self.get_partner_submissions(self.request.user, qs)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
+        my_submissions, my_inactive_submissions = self.my_submissions(qs)
 
         context.update({
             'partner_submissions': partner_submissions,
@@ -248,7 +236,7 @@ class PartnerDashboardView(TemplateView):
         return context
 
 
-class CommunityDashboardView(TemplateView):
+class CommunityDashboardView(TemplateView, MySubmission):
     template_name = 'dashboard/community_dashboard.html'
 
     def get_my_community_review(self, user, qs):
@@ -263,20 +251,6 @@ class CommunityDashboardView(TemplateView):
 
         return my_reviewed_qs, my_reviewed_table
 
-    def get_my_submissions(self, request, qs):
-        my_submissions = qs.filter(
-            user=request.user
-        ).active().current().select_related('draft_revision')
-        my_submissions = [
-            submission.from_draft() for submission in my_submissions
-        ]
-
-        my_inactive_submissions_qs = qs.filter(user=self.request.user).inactive().current()
-        my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions_qs, prefix='my-submissions-'
-        )
-        return my_submissions, my_inactive_submissions_table
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         qs = ApplicationSubmission.objects.all().for_table(self.request.user)
@@ -288,7 +262,7 @@ class CommunityDashboardView(TemplateView):
         my_reviewed_qs, my_reviewed = self.get_my_reviewed(self.request, qs)
 
         # Applications by partner
-        my_submissions, my_inactive_submissions = self.get_my_submissions(self.request, qs)
+        my_submissions, my_inactive_submissions = self.my_submissions(qs)
 
         context.update({
             'my_community_review': my_community_review,
