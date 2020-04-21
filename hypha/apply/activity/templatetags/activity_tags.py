@@ -53,11 +53,5 @@ def display_for(activity, user):
 
 @register.filter
 def visibility_options(activity, user):
-    if user.is_apply_staff:
-        return 'applicant, team, reviewers, partners, all'
-    if user.is_reviewer:
-        return 'reviewers, all'
-    if user.is_partner:
-        return 'partners, all'
-
-    return 'applicant, all'
+    choices = activity.visibility_choices_for(user)
+    return json.dumps(choices)

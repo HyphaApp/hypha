@@ -23,7 +23,7 @@
         const editBlockWrapper = $(this).closest(feedContent).find(editBlock);
         const commentWrapper = $(this).closest(feedContent).find(comment);
         const commentContents = $(commentWrapper).attr('data-comment');
-        const visibilityOptions = $(commentWrapper).attr('data-visibility-options').split(', ');
+        const visibilityOptions = $.parseJSON($(commentWrapper).attr('data-visibility-options'));
         const currentVisibility = $(commentWrapper).attr('data-visibility');
 
         // hide the edit link and original comment
@@ -41,12 +41,16 @@
         `;
 
         const radioButtonsDiv = '<div id="edit-comment-visibility"></div>';
+        let key = '';
+        let label = '';
         let radioButtons = '';
 
         $.each(visibilityOptions, function (idx, value) {
+            key = value[0];
+            label = value[1];
             radioButtons += `
-            <input type="radio" name='radio-visibility' value=${value} id='visible-to-${value}' />
-            <label for="visible-to-${value}">${value}</label><br>`;
+            <input type="radio" name='radio-visibility' value=${key} id='visible-to-${key}' />
+            <label for="visible-to-${key}">${label}</label><br>`;
         });
 
         const buttons = `
