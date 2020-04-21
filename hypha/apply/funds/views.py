@@ -516,7 +516,9 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             removed=removed,
         )
 
-        if added:
+        # Check if two internal reviewers have been selected.
+        internal_reviewers_count = form.instance.assigned.with_roles().count()
+        if internal_reviewers_count > 1:
             # Automatic workflow actions.
             action = None
             if self.object.status == INITIAL_STATE:
