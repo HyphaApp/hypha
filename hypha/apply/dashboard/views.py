@@ -64,9 +64,6 @@ class AdminDashboardView(TemplateView):
         
         return context
 
-    def get_submission_table(self, submissions, limit):
-        return SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-')
-
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
         count = submissions.count()
@@ -76,7 +73,7 @@ class AdminDashboardView(TemplateView):
             'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
             'count': count,
             'display_more': count > limit,
-            'table': self.get_submission_table(submissions, limit),
+            'table': SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-'),
         }
 
     def active_payment_requests(self):
@@ -119,18 +116,15 @@ class AdminDashboardView(TemplateView):
             'table': ProjectsDashboardTable(data=to_approve),
         }
 
-    def get_filterset(self, submissions):
-        return SubmissionFilterAndSearch(
-            data=self.request.GET or None, request=self.request, queryset=submissions)
-
     def my_reviewed(self, submissions):
         """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
         submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
 
         limit = 5
         return {
-            'filterset': self.get_filterset(submissions),
-            'table': self.get_submission_table(submissions, limit),
+            'filterset': SubmissionFilterAndSearch(
+                data=self.request.GET or None, request=self.request, queryset=submissions),
+            'table': SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-'),
             'display_more': submissions.count() > limit,
             'url': reverse('funds:submissions:list'),
         }
@@ -178,7 +172,7 @@ class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
             'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
             'count': count,
             'display_more': count > limit,
-            'table': self.get_submission_table(submissions, limit),
+            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-'),
         }
 
     def my_reviewed(self, submissions):
@@ -187,23 +181,17 @@ class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
 
         limit = 5
         return {
-            'filterset': self.get_filterset(submissions),
-            'table': self.get_submission_table(submissions, limit),
+            'filterset': SubmissionReviewerFilterAndSearch(
+                data=self.request.GET or None, request=self.request, queryset=submissions),
+            'table': ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-'),
             'display_more': submissions.count() > limit,
             'url': reverse('funds:submissions:list'),
         }
 
-    def get_submission_table(self, submissions, limit):
-        return ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-')
-
-    def get_filterset(self, submissions):
-        return SubmissionReviewerFilterAndSearch(
-            data=self.request.GET or None, request=self.request, queryset=submissions)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        submissions = self.submissions()
-        print(context)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+
         context.update({
             'awaiting_reviews': self.awaiting_reviews(submissions),
             'my_reviewed': self.my_reviewed(submissions)
