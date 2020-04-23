@@ -23,7 +23,24 @@ from hypha.apply.projects.tables import (
 from hypha.apply.utils.views import ViewDispatcher
 
 
-class BaseDashboardView(TemplateView):
+class MySubmission:
+
+    def my_submissions(self, submissions):
+        my_submissions = submissions.filter(
+            user=self.request.user
+        ).active().current().select_related('draft_revision')
+        my_submissions = [
+            submission.from_draft() for submission in my_submissions
+        ]
+
+        my_inactive_submissions = submissions.filter(user=self.request.user).inactive().current()
+        my_inactive_submissions_table = ReviewerSubmissionsTable(
+            my_inactive_submissions, prefix='my-submissions-'
+        )
+        return my_submissions, my_inactive_submissions_table
+
+
+class AdminDashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_submission_table(self, submissions, limit):
@@ -115,27 +132,6 @@ class BaseDashboardView(TemplateView):
             'table': SummarySubmissionsTable(submissions[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': submissions.count() > limit,
         }
-
-
-class MySubmission:
-
-    def my_submissions(self, submissions):
-        my_submissions = submissions.filter(
-            user=self.request.user
-        ).active().current().select_related('draft_revision')
-        my_submissions = [
-            submission.from_draft() for submission in my_submissions
-        ]
-
-        my_inactive_submissions = submissions.filter(user=self.request.user).inactive().current()
-        my_inactive_submissions_table = ReviewerSubmissionsTable(
-            my_inactive_submissions, prefix='my-submissions-'
-        )
-        return my_submissions, my_inactive_submissions_table
-
-
-class AdminDashboardView(BaseDashboardView):
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
@@ -153,7 +149,7 @@ class AdminDashboardView(BaseDashboardView):
         return context
 
 
-class ReviewerDashboardView(BaseDashboardView, MySubmission):
+class ReviewerDashboardView(TemplateView, MySubmission):
     template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
@@ -166,6 +162,30 @@ class ReviewerDashboardView(BaseDashboardView, MySubmission):
 
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
+
+    def awaiting_reviews(self, submissions):
+        submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
+        count = submissions.count()
+
+        limit = 5
+        return {
+            'active_statuses_filter': ''.join(f'&status={status}' for status in review_filter_for_user(self.request.user)),
+            'count': count,
+            'display_more': count > limit,
+            'table': self.get_submission_table(submissions, limit),
+        }
+
+    def my_reviewed(self, submissions):
+        """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
+        submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
+
+        limit = 5
+        return {
+            'filterset': self.get_filterset(submissions),
+            'table': self.get_submission_table(submissions, limit),
+            'display_more': submissions.count() > limit,
+            'url': reverse('funds:submissions:list'),
+        }
 
     def get_submission_table(self, submissions, limit):
         return ReviewerSubmissionsTable(submissions[:limit], prefix='my-review-')
