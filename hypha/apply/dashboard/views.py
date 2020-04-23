@@ -137,9 +137,10 @@ class MySubmission:
 class AdminDashboardView(BaseDashboardView):
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
-        extra_context = {
+        context.update({
             'active_payment_requests': self.active_payment_requests(),
             'awaiting_reviews': self.awaiting_reviews(submissions),
             'my_reviewed': self.my_reviewed(submissions),
@@ -147,9 +148,9 @@ class AdminDashboardView(BaseDashboardView):
             'projects_to_approve': self.projects_to_approve(),
             'rounds': self.rounds(),
             'my_flagged': self.my_flagged(submissions),
-        }
-        current_context = super().get_context_data(**kwargs)
-        return {**current_context, **extra_context}
+        })
+        
+        return context
 
 
 class ReviewerDashboardView(BaseDashboardView, MySubmission):
@@ -174,20 +175,20 @@ class ReviewerDashboardView(BaseDashboardView, MySubmission):
             data=self.request.GET or None, request=self.request, queryset=submissions)
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         # Applications by reviewer
         my_submissions, my_inactive_submissions = self.my_submissions(submissions)
 
-        extra_context = {
+        context.update({
             'awaiting_reviews': self.awaiting_reviews(submissions),
             'my_reviewed': self.my_reviewed(submissions),
             'my_submissions': my_submissions,
             'my_inactive_submissions': my_inactive_submissions,
-        }
+        })
 
-        current_context = super().get_context_data(**kwargs)
-        return {**current_context, **extra_context}
+        return context
 
 
 class PartnerDashboardView(TemplateView, MySubmission):
