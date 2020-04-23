@@ -43,6 +43,22 @@ class MySubmission:
 class AdminDashboardView(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+
+        context.update({
+            'active_payment_requests': self.active_payment_requests(),
+            'awaiting_reviews': self.awaiting_reviews(submissions),
+            'my_reviewed': self.my_reviewed(submissions),
+            'projects': self.projects(),
+            'projects_to_approve': self.projects_to_approve(),
+            'rounds': self.rounds(),
+            'my_flagged': self.my_flagged(submissions),
+        })
+        
+        return context
+
     def get_submission_table(self, submissions, limit):
         return SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-')
 
@@ -132,21 +148,6 @@ class AdminDashboardView(TemplateView):
             'table': SummarySubmissionsTable(submissions[:limit], prefix='my-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': submissions.count() > limit,
         }
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        context.update({
-            'active_payment_requests': self.active_payment_requests(),
-            'awaiting_reviews': self.awaiting_reviews(submissions),
-            'my_reviewed': self.my_reviewed(submissions),
-            'projects': self.projects(),
-            'projects_to_approve': self.projects_to_approve(),
-            'rounds': self.rounds(),
-            'my_flagged': self.my_flagged(submissions),
-        })
-        
-        return context
 
 
 class ReviewerDashboardView(TemplateView, MySubmission):
