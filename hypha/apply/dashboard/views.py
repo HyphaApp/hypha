@@ -61,7 +61,7 @@ class AdminDashboardView(TemplateView):
             'rounds': self.rounds(),
             'my_flagged': self.my_flagged(submissions),
         })
-        
+
         return context
 
     def awaiting_reviews(self, submissions):
@@ -218,7 +218,8 @@ class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
 
         context.update({
             'partner_submissions': partner_submissions_table,
-            'partner_submissions_count': partner_submissions.count(),        })
+            'partner_submissions_count': partner_submissions.count(),
+        })
 
         return context
 
