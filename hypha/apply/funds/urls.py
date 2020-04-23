@@ -15,6 +15,7 @@ from .views import (
     SubmissionListView,
     SubmissionOverviewView,
     SubmissionPrivateMediaView,
+    SubmissionResultView,
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
@@ -37,6 +38,7 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([
         path('', SubmissionUserFlaggedView.as_view(), name="flagged"),
         path('staff/', SubmissionStaffFlaggedView.as_view(), name="staff_flagged"),
