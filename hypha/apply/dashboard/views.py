@@ -23,9 +23,9 @@ from hypha.apply.projects.tables import (
 from hypha.apply.utils.views import ViewDispatcher
 
 
-class MySubmission:
-
-    def my_submissions(self, submissions):
+class MySubmissionContextMixin:
+    def get_context_data(self, **kwargs):
+        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
         my_submissions = submissions.filter(
             user=self.request.user
         ).active().current().select_related('draft_revision')
@@ -37,7 +37,12 @@ class MySubmission:
         my_inactive_submissions_table = ReviewerSubmissionsTable(
             my_inactive_submissions, prefix='my-submissions-'
         )
-        return my_submissions, my_inactive_submissions_table
+
+        return super().get_context_data(
+            my_submissions=my_submissions,
+            my_inactive_submissions=my_inactive_submissions_table,
+            **kwargs,
+        )
 
 
 class AdminDashboardView(TemplateView):
@@ -150,7 +155,7 @@ class AdminDashboardView(TemplateView):
         }
 
 
-class ReviewerDashboardView(TemplateView, MySubmission):
+class ReviewerDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
@@ -197,22 +202,17 @@ class ReviewerDashboardView(TemplateView, MySubmission):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
-
-        # Applications by reviewer
-        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
-
+        submissions = self.submissions()
+        print(context)
         context.update({
             'awaiting_reviews': self.awaiting_reviews(submissions),
-            'my_reviewed': self.my_reviewed(submissions),
-            'my_submissions': my_submissions,
-            'my_inactive_submissions': my_inactive_submissions,
+            'my_reviewed': self.my_reviewed(submissions)
         })
 
         return context
 
 
-class PartnerDashboardView(TemplateView, MySubmission):
+class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/partner_dashboard.html'
 
     def get_partner_submissions(self, user, submissions):
@@ -228,20 +228,14 @@ class PartnerDashboardView(TemplateView, MySubmission):
         # Submissions in which user added as partner
         partner_submissions, partner_submissions_table = self.get_partner_submissions(self.request.user, submissions)
 
-        # Applications by partner
-        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
-
         context.update({
             'partner_submissions': partner_submissions_table,
-            'partner_submissions_count': partner_submissions.count(),
-            'my_submissions': my_submissions,
-            'my_inactive_submissions': my_inactive_submissions,
-        })
+            'partner_submissions_count': partner_submissions.count(),        })
 
         return context
 
 
-class CommunityDashboardView(TemplateView, MySubmission):
+class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/community_dashboard.html'
 
     def get_my_community_review(self, user, submissions):
@@ -263,15 +257,10 @@ class CommunityDashboardView(TemplateView, MySubmission):
         # Partner's reviewed submissions
         my_reviewed = self.get_my_reviewed(self.request, submissions)
 
-        # Applications by partner
-        my_submissions, my_inactive_submissions = self.my_submissions(submissions)
-
         context.update({
             'my_community_review': my_community_review,
             'my_community_review_count': my_community_review.count(),
-            'my_reviewed': my_reviewed,
-            'my_submissions': my_submissions,
-            'my_inactive_submissions': my_inactive_submissions,
+            'my_reviewed': my_reviewed
         })
 
         return context
