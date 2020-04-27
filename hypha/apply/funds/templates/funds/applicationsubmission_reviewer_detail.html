@@ -1,6 +1,10 @@
 {% extends "funds/applicationsubmission_detail.html" %}
 {% load static workflow_tags review_tags determination_tags %}
 
+{% block flags %}
+    {% include 'flags/flags.html' with submission=object user=request.user %}
+{% endblock %}
+
 {% block reviews %}
     <div class="sidebar__inner">
         <h5>Reviews &amp; assignees</h5>

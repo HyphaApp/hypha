@@ -1,16 +1,17 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.apply.users.decorators import staff_required
 
 from .models import Flag
 
 
-@method_decorator(staff_required, name='dispatch')
-class FlagSubmissionCreateView(View):
+@method_decorator(login_required, name='dispatch')
+class FlagSubmissionCreateView(UserPassesTestMixin, View):
     model = Flag
 
     def post(self, request, type, submission_pk):
@@ -26,3 +27,6 @@ class FlagSubmissionCreateView(View):
             flag.delete()
 
         return JsonResponse({"result": created})
+
+    def test_func(self):
+        return self.request.user.is_apply_staff or self.request.user.is_reviewer
