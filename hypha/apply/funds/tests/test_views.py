@@ -328,6 +328,74 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         assert_create_review_not_displayed(submission, 'Add a review')
         assert_create_review_not_displayed(submission, 'Complete draft review')
 
+    def test_can_see_assign_reviewers_primary_action(self):
+        def assert_assign_reviewers_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+            self.assertEqual(len(buttons), 1)
+
+        submission = ApplicationSubmissionFactory(status='internal_review')
+        reviewer_role_a = ReviewerRoleFactory()
+        reviewer_role_b = ReviewerRoleFactory()
+
+        # Phase: internal_review - no reviewers assigned
+        # Assign reviewers should be displayed
+        assert_assign_reviewers_displayed(submission)
+
+        # Phase: internal_review - not all reviewer types assigned
+        # Assign reviewers should be displayed
+        AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role_a)
+        assert_assign_reviewers_displayed(submission)
+
+        # Phase: external_review - no reviewers assigned
+        # Assign reviewers should be displayed
+        submission = ApplicationSubmissionFactory(with_external_review=True, status='ext_external_review')
+        assert_assign_reviewers_displayed(submission)
+
+        # Phase: external_review - all reviewers types assigned
+        # Assign reviewers should still be displayed
+        AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role_a)
+        AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role_b)
+        assert_assign_reviewers_displayed(submission)
+
+    def test_cant_see_assign_reviewers_primary_action(self):
+        def assert_assign_reviewers_not_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory()
+        reviewer_role = ReviewerRoleFactory()
+
+        # Phase: received / in_discussion
+        # Assign reviewers should not be displayed
+        assert_assign_reviewers_not_displayed(submission)
+
+        # Phase: internal_review - all reviewer types assigned
+        # Assign reviewers should not be displayed
+        AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role)
+        assert_assign_reviewers_not_displayed(submission)
+
+    def test_can_see_assign_reviewers_secondary_action(self):
+        def assert_assign_reviewers_secondary_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+            self.assertEqual(len(buttons), 1)
+
+        submission = ApplicationSubmissionFactory()
+        reviewer_role = ReviewerRoleFactory()
+
+        # Phase: received / in_discussion
+        assert_assign_reviewers_secondary_displayed(submission)
+
+        # Phase: internal_review - no reviewers assigned
+        submission.perform_transition('internal_review', self.user)
+        assert_assign_reviewers_secondary_displayed(submission)
+
+        # Phase: internal_review - all reviewer types assigned
+        AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role)
+        assert_assign_reviewers_secondary_displayed(submission)
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
@@ -463,6 +531,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.applicant = ApplicantFactory()
+        cls.reviewer_role = ReviewerRoleFactory()
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):
@@ -539,6 +608,18 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=False)
         assert_create_review_not_displayed(submission, 'Add a review')
         assert_create_review_not_displayed(submission, 'Complete draft review')
+
+    def test_cant_see_assign_reviewers_primary_action(self):
+        submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
+        response = self.get_page(submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+        self.assertEqual(len(buttons), 0)
+
+    def test_cant_see_assign_reviewers_secondary_action(self):
+        submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
+        response = self.get_page(submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        self.assertEqual(len(buttons), 0)
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
@@ -676,6 +757,20 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         staff_user = StaffFactory()
         submission.perform_transition('internal_review', staff_user)
         assert_create_review_not_displayed(submission)
+
+    def test_cant_see_assign_reviewers_primary_action(self):
+        submission = ApplicationSubmissionFactory(status='internal_review', user=self.user)
+        ReviewerRoleFactory()
+        response = self.get_page(submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+        self.assertEqual(len(buttons), 0)
+
+    def test_cant_see_assign_reviewers_secondary_action(self):
+        submission = ApplicationSubmissionFactory(status='internal_review', user=self.user)
+        ReviewerRoleFactory()
+        response = self.get_page(submission)
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        self.assertEqual(len(buttons), 0)
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
