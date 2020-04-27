@@ -134,9 +134,11 @@
         $actionOptions.filter(':enabled:first').prop('selected', true);
         if (actions.length === 0) {
             $batchProgress.attr('disabled', 'disabled');
+            $batchProgress.attr('data-tooltip', "Status changes can't be applied to submissions with this combination of statuses");
         }
         else {
             $batchProgress.removeAttr('disabled');
+            $batchProgress.removeAttr('data-tooltip');
         }
     }
 
