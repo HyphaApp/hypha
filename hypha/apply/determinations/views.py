@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
@@ -53,7 +53,7 @@ def get_form_for_stages(submissions):
     return forms[0]
 
 
-def get_form_for_stage(submission, batch=False):
+def get_form_for_stage(submission, batch=False, edit=False):
     if batch:
         forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
     else:
@@ -429,3 +429,49 @@ class DeterminationDetailView(ViewDispatcher):
     partner_view = PartnerDeterminationDetailView
     community_view = CommunityDeterminationDetailView
     applicant_view = ApplicantDeterminationDetailView
+
+
+@method_decorator(staff_required, name='dispatch')
+class DeterminationEditView(UpdateView):
+    model = Determination
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        determination_messages = DeterminationMessageSettings.for_site(self.request.site)
+
+        return super().get_context_data(
+            submission=self.submission,
+            message_templates=determination_messages.get_for_stage(self.submission.stage.name),
+            **kwargs
+        )
+
+    def get_form_class(self):
+        return get_form_for_stage(self.submission)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['submission'] = self.submission
+        kwargs['action'] = self.request.GET.get('action')
+        kwargs['site'] = self.request.site
+        kwargs['edit'] = True
+        return kwargs
+
+    def form_valid(self, form):
+        super().form_valid(form)
+
+        messenger(
+            MESSAGES.DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.object.author,
+            source=self.object.submission,
+            related=self.object,
+        )
+
+        return HttpResponseRedirect(self.submission.get_absolute_url())

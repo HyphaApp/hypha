@@ -6,19 +6,29 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% endif %}</h2>
+        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% endif %}
+        </h2>
         <h5>For <a href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a></h5>
     </div>
 </div>
 
 <div class="grid">
     <div>
-        <h5>Determination: {{ determination.get_outcome_display }}</h5>
-        {{ determination.message|bleach }}
+        <h5 class="determination-outcome">Determination: {{ determination.get_outcome_display }}</h5>
     </div>
+    {% if request.user.is_staff %}
+        <div>
+            <a class="link link--edit-determination is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
+                Edit
+            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+            </a>
+        </div>
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">
+    <h4>Determination message</h4>
+    {{ determination.message|bleach }}
     {% for group in determination.detailed_data.values %}
         <h4>{{ group.title }}</h4>
         {% for question, answer in group.questions %}

@@ -3,7 +3,7 @@
 {% block header %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% if object %}Update Determination draft{% else %}Add Determination{% endif %}</h2>
+        <h2 class="heading heading--no-margin">{% if object %}Edit Determination {% if object.is_draft %}draft{% endif %}{% else %}Create Determination{% endif %}</h2>
         <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>

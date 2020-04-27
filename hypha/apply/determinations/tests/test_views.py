@@ -448,3 +448,24 @@ class UserDeterminationFormTestCase(BaseViewTestCase):
         submission = ApplicationSubmissionFactory(status='in_discussion')
         response = self.get_page(submission, 'form')
         self.assertEqual(response.status_code, 403)
+
+
+class EditDeterminationFormTestCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:determinations:{}'
+    base_view_name = 'detail'
+
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.id, 'pk': instance.determinations.first().id}
+
+    def test_can_edit_determination(self):
+        submission = ApplicationSubmissionFactory(status='rejected')
+        determination = DeterminationFactory(submission=submission)
+
+        self.post_page(submission, {
+            'data': 'value',
+            'message': 'You are accepted.',
+        }, 'edit')
+
+        determination_original = self.refresh(determination)
+        self.assertEqual(determination_original.message, 'You are accepted.')
