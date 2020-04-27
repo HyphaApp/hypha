@@ -18,6 +18,7 @@ from wagtail.core.blocks import (
     ChoiceBlock,
     DateBlock,
     DateTimeBlock,
+    IntegerBlock,
     ListBlock,
     RichTextBlock,
     StaticBlock,
@@ -144,6 +145,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
 class TextFieldBlock(OptionalFormFieldBlock):
     default_value = TextBlock(required=False, label=_('Default value'))
+    word_limit = IntegerBlock(default=1000, label=_('Word limit'))
 
     widget = forms.Textarea(attrs={'rows': 5})
 

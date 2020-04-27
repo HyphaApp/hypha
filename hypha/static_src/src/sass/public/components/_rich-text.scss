@@ -56,6 +56,10 @@
     &.mce-wordcount {
         padding-left: 10px;
         padding-right: 10px;
+
+        &::after {
+            content: attr(data-after-word-count);
+        }
     }
 
     &.word-count-warning,
@@ -64,17 +68,9 @@
         font-weight: bold;
         text-shadow: none;
         color: $color--black;
-
-        &::before {
-            content: 'Close to the limit (1000): ';
-        }
     }
 
     &.word-count-warning-2 {
         background-color: $color--tomato;
-
-        &::before {
-            content: 'Over the limit (1000): ';
-        }
     }
 }

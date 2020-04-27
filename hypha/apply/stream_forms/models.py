@@ -3,7 +3,12 @@ from collections import OrderedDict
 
 from wagtail.contrib.forms.models import AbstractForm
 
-from .blocks import FormFieldBlock, GroupToggleBlock, GroupToggleEndBlock
+from .blocks import (
+    FormFieldBlock,
+    GroupToggleBlock,
+    GroupToggleEndBlock,
+    TextFieldBlock,
+)
 from .forms import BlockFieldWrapper, PageStreamBaseForm
 
 
@@ -55,6 +60,8 @@ class BaseStreamForm:
                     field_from_block.grouper_for = group_counter + 1
                     group_counter += 1
                     is_in_group = True
+                if isinstance(block, TextFieldBlock):
+                    field_from_block.word_limit = struct_value.get('word_limit')
                 form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):
                 # Group toogle end block is used only to group fields and not used in actual form.
