@@ -10,6 +10,15 @@
                 <h1 class="gamma heading heading--no-margin heading--bold">Submissions</h1>
                 <h5>Track and explore recent submissions</h5>
             </div>
+            {% if request.user.is_apply_staff %}
+            <div class="tabs js-tabs">
+                <div class="tabs__container">
+                    <a class="tab__item tab__item--right js-tabs-off" href="{% url 'apply:submissions:result' %}">
+                        Results
+                    </a>
+                </div>
+            </div>
+            {% endif %}
         {% endblock %}
     </div>
 </div>
