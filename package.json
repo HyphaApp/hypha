@@ -78,7 +78,7 @@
         "webpack-watch": "webpack-dev-server --config ./hypha/static_src/src/app/webpack.dev.config.js "
     },
     "engines": {
-        "node": "10.10.x"
+        "node": "12.16.x"
     },
     "private": true
 }

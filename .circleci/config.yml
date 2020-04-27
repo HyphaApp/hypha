@@ -6,22 +6,21 @@ version: 2.1
 executors:
   python:
     docker:
-      - image: circleci/python:3.6.10
+      - image: circleci/python:3.7
   node:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:12
   with-database:
     docker:
-      - image: circleci/python:3.6.10
+      - image: circleci/python:3.7
         environment:
-          DATABASE_URL: postgresql://root@localhost/hypha?sslmode=disable
-          PGHOST: localhost
-          PGUSER: root
+          DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
           DJANGO_SETTINGS_MODULE: hypha.settings.test
           SEND_MESSAGES: false
-      - image: circleci/postgres:10.11
+      - image: circleci/postgres:12
         environment:
-          POSTGRES_USER: root
+          POSTGRES_USER: hypha
+          POSTGRES_PASSWORD: hypha
           POSTGRES_DB: hypha
 
 jobs:
