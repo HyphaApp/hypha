@@ -3,7 +3,7 @@
     {% if request.user|has_draft:submission or request.user|can_review:submission %}
         <a target="_blank" href="{% url 'apply:submissions:reviews:form' submission_pk=submission.id %}" class="button button--primary {{ class }}">
             {% if request.user|has_draft:submission %}
-                Update draft
+                {{ draft_text|default:"Update draft" }}
             {% elif request.user|can_review:submission %}
                 Create review
             {% endif %}

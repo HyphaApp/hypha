@@ -265,6 +265,69 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
         self.assertEqual(len(buttons), 0)
 
+    def test_can_see_create_review_primary_action(self):
+        def assert_create_review_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 1)
+
+        submission = ApplicationSubmissionFactory(with_external_review=True, status='ext_internal_review')
+
+        # Phase: internal_review, no review
+        # "Add a review" should be displayed
+        assert_create_review_displayed(submission, 'Add a review')
+
+        # Phase: internal_review, draft review created
+        # "Complete draft review" should be displayed
+        review = ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=True)
+        assert_create_review_displayed(submission, 'Complete draft review')
+        review.delete()
+
+        # Phase: external_review, no review
+        # "Add a review" should be displayed
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        assert_create_review_displayed(submission, 'Add a review')
+
+        # Phase: external_review, draft review created
+        # "Complete draft review" should be displayed
+        ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=True)
+        assert_create_review_displayed(submission, 'Complete draft review')
+
+    def test_cant_see_create_review_primary_action(self):
+        def assert_create_review_not_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory(with_external_review=True)
+
+        # Phase: received / in_discussion
+        # "Add a review" should not be displayed
+        # "Complete draft review" should not be displayed
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
+        # Phase: internal_review, review completed
+        # "Add a review" should not be displayed
+        # "Update draft review" should not be displayed
+        submission.perform_transition('ext_internal_review', self.user)
+        ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=False)
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
+        # Phase: external_review, review completed
+        # "Add a review" should not be displayed
+        # "Update draft review" should not be displayed
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
@@ -424,6 +487,59 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
+    def test_can_see_create_review_primary_action(self):
+        def assert_create_review_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 1)
+
+        submission = ApplicationSubmissionFactory(with_external_review=True, status='ext_external_review', user=self.applicant, reviewers=[self.user])
+
+        # Phase: external_review, no review
+        # "Add a review" should be displayed
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        assert_create_review_displayed(submission, 'Add a review')
+
+        # Phase: external_review, draft review created
+        # "Complete draft review" should be displayed
+        ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=True)
+        assert_create_review_displayed(submission, 'Complete draft review')
+
+    def test_cant_see_create_review_primary_action(self):
+        def assert_create_review_not_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
+
+        # Phase: received / in_discussion
+        # "Add a review" should not be displayed
+        # "Complete draft review" should not be displayed
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
+        # Phase: internal_review, only viewable by staff users
+        # "Add a review" should not be displayed
+        # "Update draft review" should not be displayed
+        submission.perform_transition('ext_internal_review', self.user)
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
+        # Phase: external_review, review completed
+        # "Add a review" should not be displayed
+        # "Update draft review" should not be displayed
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=False)
+        assert_create_review_not_displayed(submission, 'Add a review')
+        assert_create_review_not_displayed(submission, 'Complete draft review')
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory
@@ -540,6 +656,26 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         DeterminationFactory(submission=submission, accepted=True, submitted=False)
         assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
+    def test_cant_see_create_review_primary_action(self):
+        def assert_create_review_not_displayed(submission):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*Add a review\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory(user=self.user)
+
+        # Phase: received / in_discussion
+        # "Add a review" should not be displayed
+        assert_create_review_not_displayed(submission)
+
+        # Phase: internal_review
+        # "Add a review" should not be displayed
+        staff_user = StaffFactory()
+        submission.perform_transition('internal_review', staff_user)
+        assert_create_review_not_displayed(submission)
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):
