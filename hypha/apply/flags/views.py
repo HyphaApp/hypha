@@ -18,6 +18,10 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
         if not request.is_ajax():
             return HttpResponseNotAllowed()
 
+        # Only staff can create staff flags.
+        if type == self.model.STAFF and not self.request.user.is_apply_staff:
+            return HttpResponseNotAllowed()
+
         submission_type = ContentType.objects.get_for_model(ApplicationSubmission)
         # Trying to get a flag from the table, or create a new one
         flag, created = self.model.objects.get_or_create(user=request.user, target_object_id=submission_pk, target_content_type=submission_type, type=type)

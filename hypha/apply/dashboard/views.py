@@ -171,7 +171,8 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
         context.update({
             'awaiting_reviews': self.awaiting_reviews(submissions),
-            'my_reviewed': self.my_reviewed(submissions)
+            'my_reviewed': self.my_reviewed(submissions),
+            'my_flagged': self.my_flagged(submissions),
         })
 
         return context
