@@ -373,8 +373,6 @@ class ApplicationSubmission(
         AbstractFormSubmission,
         metaclass=ApplicationSubmissionMetaclass,
 ):
-    field_template = 'funds/includes/submission_field.html'
-
     form_data = JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
