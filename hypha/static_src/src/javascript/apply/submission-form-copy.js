@@ -24,6 +24,7 @@
 
                 var help_text = $(this).find('.form__help').html();
                 var $help_link = $(this).find('.form__help-link');
+                var word_limit = $(this).attr('data-word-limit');
                 var $input_list = $(this).find('.form__item > ul > li');
                 var input_text = $(this).find('input').val();
                 var rich_text = $(this).find('.tinymce4-editor').val();
@@ -34,6 +35,10 @@
                 }
                 if ($help_link.length !== 0) {
                     question_text = question_text + '\n\n' + strip($help_link.html()) + ' <' + $help_link.find('a').attr('href') + '>';
+                }
+
+                if (word_limit) {
+                    question_text = question_text + '\n\nLimit this field to ' + word_limit + ' words.';
                 }
 
                 // Get the user input if any.
