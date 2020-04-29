@@ -48,7 +48,7 @@
                     $input_list.each(function () {
                         input_item = strip($(this).html());
                         if ($(this).find('input').is(':checked')) {
-                            input_item = input_item + '*';
+                            input_item = input_item + ' (selected)';
                         }
                         input_list.push(input_item);
                     });
