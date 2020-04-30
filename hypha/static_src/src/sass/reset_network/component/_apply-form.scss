@@ -828,3 +828,26 @@ $input-max-width: 500px !default;
     }
 
 }
+
+.mce-widget {
+    &.mce-wordcount {
+        padding-left: 10px;
+        padding-right: 10px;
+
+        &::after {
+            content: attr(data-after-word-count);
+        }
+    }
+
+    &.word-count-warning,
+    &.word-count-warning-2 {
+        background-color: color(seed-rust);
+        font-weight: bold;
+        text-shadow: none;
+        color: color(seed-black);
+    }
+
+    &.word-count-warning-2 {
+        background-color: color(seed-red);
+    }
+}
