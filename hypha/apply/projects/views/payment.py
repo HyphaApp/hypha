@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -117,7 +118,7 @@ class CreatePaymentRequestView(CreateView):
     def post(self, request, *args, **kwargs):
         if self.project.is_closed:
             messages.error(request, "Payment Requests can't be added to a closed Project")
-            return redirect(project)
+            return redirect(self.project)
 
         return super().post(request, *args, **kwargs)
 

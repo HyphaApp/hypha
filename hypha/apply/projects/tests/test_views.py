@@ -889,12 +889,12 @@ class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
 
         self.client.force_login(StaffFactory())
 
-        response = self.client.post(project.get_absolute_url(), {
+        response = self.post_page(project, {
             'form-submitted-request_payment_form': '',
             'file': invoice,
-        }, follow=True, secure=True)
+        })
 
-        expected_url = RequestFactory().get('/', secure=True).build_absolute_uri(project.get_absolute_url())
+        expected_url = self.url(project, 'detail')
         self.assertRedirects(response, expected_url)
 
         project.refresh_from_db()

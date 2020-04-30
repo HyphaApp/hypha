@@ -15,17 +15,13 @@ from ..models import (
     UNDER_REVIEW,
 )
 from ..templatetags.contract_tools import user_can_upload_contract
-from ..templatetags.payment_request_tools import (
-    can_change_status,
-    can_delete,
-    can_edit
-)
+from ..templatetags.payment_request_tools import can_change_status, can_delete, can_edit
 from ..templatetags.project_tools import user_can_close
 from .factories import (
     ContractFactory,
     PaymentRequestFactory,
     ProjectFactory,
-    UserFactory
+    UserFactory,
 )
 
 
