@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
@@ -178,9 +179,14 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs.pop('user')
         instance = kwargs['instance'].report_config
+        current_report = instance.current_due_report()
+        if current_report:
+            first_date = current_report.end_date
+        else:
+            first_date = timezone.now().date
         kwargs['instance'] = instance
         kwargs['initial'] = {
-            'start': instance.current_due_report().end_date,
+            'start': first_date,
         }
         return kwargs
 

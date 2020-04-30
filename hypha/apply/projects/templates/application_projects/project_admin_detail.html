@@ -41,7 +41,7 @@
     {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value='Request Changes'%}
 </div>
 
-{% if object.is_closed %}
+{% if object.is_closing %}
 <div class="modal" id="move-to-in-progress">
     <h4 class="modal__header-bar">Move to In Progress</h4>
     {% include 'funds/includes/delegated_form_base.html' with form=in_progress_form value='Update' %}

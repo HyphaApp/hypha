@@ -162,6 +162,13 @@ class MoveToInProgressView(DelegatedViewMixin, UpdateView):
     form_class = InProgressForm
     model = Project
 
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object.is_closing:
+            return redirect(self.object)
+
+        return super().dispatch(*args, **kwargs)
+
     def form_valid(self, form):
         response = super().form_valid(form)
 

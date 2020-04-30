@@ -572,6 +572,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return self.status == IN_PROGRESS
 
     @property
+    def is_closing(self):
+        return self.status == CLOSING
+
+    @property
     def is_closed(self):
         return self.status == COMPLETE
 

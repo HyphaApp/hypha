@@ -32,6 +32,7 @@ from ..models import (
 )
 from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
+    ApprovedProjectFactory,
     ContractFactory,
     DocumentCategoryFactory,
     PacketFileFactory,
@@ -1673,7 +1674,7 @@ class TestMoveToInProgressView(BaseViewTestCase):
         return {'pk': instance.pk}
 
     def test_happy_path(self):
-        project = ProjectFactory()
+        project = ApprovedProjectFactory(status=CLOSING)
 
         response = self.post_page(project, {
             'form-submitted-in_progress_form': '',
@@ -1683,3 +1684,15 @@ class TestMoveToInProgressView(BaseViewTestCase):
 
         project.refresh_from_db()
         self.assertEqual(project.status, IN_PROGRESS)
+
+    def test_cant_move_from_non_closing(self):
+        project = ApprovedProjectFactory()
+
+        response = self.post_page(project, {
+            'form-submitted-in_progress_form': '',
+            'id': project.id,
+        })
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertEqual(project.status, COMMITTED)
