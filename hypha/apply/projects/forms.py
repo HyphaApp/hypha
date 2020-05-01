@@ -234,14 +234,16 @@ class PaymentRequestBaseForm(forms.ModelForm):
 
 
 class CreatePaymentRequestForm(PaymentRequestBaseForm):
-    receipts = MultiFileField()
+    receipts = MultiFileField(required=False)
 
     def save(self, commit=True):
         request = super().save(commit=commit)
 
+        receipts = self.cleaned_data['receipts'] or []
+
         PaymentReceipt.objects.bulk_create(
             PaymentReceipt(payment_request=request, file=receipt)
-            for receipt in self.cleaned_data['receipts']
+            for receipt in receipts
         )
 
         return request
