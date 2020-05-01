@@ -3,8 +3,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
