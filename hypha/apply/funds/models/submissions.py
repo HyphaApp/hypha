@@ -735,6 +735,12 @@ class ApplicationSubmission(
     def in_external_review_phase(self):
         return self.status in PHASES_MAPPING['external-review']['statuses']
 
+    @property
+    def is_finished(self):
+        accepted = self.status in PHASES_MAPPING['accepted']['statuses']
+        dismissed = self.status in PHASES_MAPPING['dismissed']['statuses']
+        return accepted or dismissed
+
     # Methods for accessing data on the submission
 
     def get_data(self):

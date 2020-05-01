@@ -396,6 +396,40 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         AssignedReviewersFactory(submission=submission, reviewer=ReviewerFactory(), role=reviewer_role)
         assert_assign_reviewers_secondary_displayed(submission)
 
+    def test_can_see_view_determination_primary_action(self):
+        def assert_view_determination_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 1)
+
+        # Phase: accepted
+        submission = ApplicationSubmissionFactory(status='accepted')
+        DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+        # Phase: rejected
+        submission = ApplicationSubmissionFactory(status='rejected')
+        DeterminationFactory(submission=submission, author=self.user, rejected=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+    def test_cant_see_view_determination_primary_action(self):
+        def assert_view_determination_not_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 0)
+
+        # Phase: received / in_discussion
+        submission = ApplicationSubmissionFactory()
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, no determination
+        submission.perform_transition('determination', self.user)
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, draft determination
+        DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
+        assert_view_determination_not_displayed(submission)
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
@@ -621,6 +655,40 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
         self.assertEqual(len(buttons), 0)
 
+    def test_can_see_view_determination_primary_action(self):
+        def assert_view_determination_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 1)
+
+        # Phase: accepted
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant, reviewers=[self.user])
+        DeterminationFactory(submission=submission, accepted=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+        # Phase: rejected
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant, reviewers=[self.user])
+        DeterminationFactory(submission=submission, rejected=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+    def test_cant_see_view_determination_primary_action(self):
+        def assert_view_determination_not_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 0)
+
+        # Phase: received / in_discussion
+        submission = ApplicationSubmissionFactory(user=self.applicant, reviewers=[self.user])
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, no determination
+        submission.perform_transition('determination', self.user)
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, draft determination
+        DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
+        assert_view_determination_not_displayed(submission)
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory
@@ -771,6 +839,40 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
         self.assertEqual(len(buttons), 0)
+
+    def test_can_see_view_determination_primary_action(self):
+        def assert_view_determination_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 1)
+
+        # Phase: accepted
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.user)
+        DeterminationFactory(submission=submission, accepted=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+        # Phase: rejected
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.user)
+        DeterminationFactory(submission=submission, rejected=True, submitted=True)
+        assert_view_determination_displayed(submission)
+
+    def test_cant_see_view_determination_primary_action(self):
+        def assert_view_determination_not_displayed(submission):
+            response = self.get_page(submission)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='View determination')
+            self.assertEqual(len(buttons), 0)
+
+        # Phase: received / in_discussion
+        submission = ApplicationSubmissionFactory(user=self.user)
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, no determination
+        submission.perform_transition('determination', self.user)
+        assert_view_determination_not_displayed(submission)
+
+        # Phase: ready-for-determination, draft determination
+        DeterminationFactory(submission=submission, accepted=True, submitted=False)
+        assert_view_determination_not_displayed(submission)
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):

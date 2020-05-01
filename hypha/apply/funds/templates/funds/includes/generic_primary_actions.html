@@ -7,5 +7,13 @@
         {% if object.in_internal_review_phase or object.in_external_review_phase %}
             {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text="Complete draft review" %}
         {% endif %}
+
+        {% if object.is_finished %}
+            {% with determination=object.determinations.last %}
+            {% if determination %}
+                <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">View determination</a>
+            {% endif %}
+            {% endwith %}
+        {% endif %}
     </div>
 {% endif %}
