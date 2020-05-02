@@ -130,9 +130,18 @@ class ReviewerRoleAdmin(ModelAdmin):
     menu_label = 'Reviewer Roles'
 
 
-class NoDeletePermission(PermissionHelper):
+class DeletePermission(PermissionHelper, ListRelatedMixin):
+
+    related_models = [
+        ('applicationbaseform', 'application'),
+        ('roundbaseform', 'round'),
+        ('labbaseform', 'lab'),
+    ]
+
     def user_can_delete_obj(self, user, obj):
-        return False
+        if str(self.used_by(obj)):
+            return False
+        return True
 
 
 class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
@@ -140,7 +149,7 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     menu_icon = 'form'
     list_display = ('name', 'used_by')
     list_filter = (FormsFundRoundListFilter,)
-    permission_helper_class = NoDeletePermission
+    permission_helper_class = DeletePermission
     button_helper_class = ApplicationFormButtonHelper
 
     related_models = [
