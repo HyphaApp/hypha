@@ -259,14 +259,14 @@ else:
 
 WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 
-# Cloudflare cache
-if 'CLOUDFLARE_API_TOKEN' in env:
+# Cloudflare cache invalidation.
+# See https://docs.wagtail.io/en/v2.8/reference/contrib/frontendcache.html
+if 'CLOUDFLARE_BEARER_TOKEN' in env and 'CLOUDFLARE_API_ZONEID' in env:
     INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
     WAGTAILFRONTENDCACHE = {
         'cloudflare': {
             'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
-            'EMAIL': env['CLOUDFLARE_API_EMAIL'],
-            'TOKEN': env['CLOUDFLARE_API_TOKEN'],
+            'BEARER_TOKEN': env['CLOUDFLARE_BEARER_TOKEN'],
             'ZONEID': env['CLOUDFLARE_API_ZONEID'],
         },
     }
