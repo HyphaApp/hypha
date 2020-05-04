@@ -244,10 +244,10 @@ def custom_wagtail_page_delete(request, page_id):
     try:
         return delete(request, page_id)
     except ProtectedError as e:
-        item = e.protected_objects[0]
+        protected_details = ", ".join([str(obj) for obj in e.protected_objects])
         page = get_object_or_404(Page, id=page_id).specific
         parent_id = page.get_parent().id
         messages.warning(request, _("Page '{0}' can't be deleted because is in use in '{1}'.").format(
-            page.get_admin_display_title(), item.title
+            page.get_admin_display_title(), protected_details
         ))
         return redirect('wagtailadmin_explore', parent_id)
