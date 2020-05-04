@@ -5,7 +5,7 @@
             {% if request.user|has_draft:submission %}
                 {{ draft_text|default:"Update draft" }}
             {% elif request.user|can_review:submission %}
-                Create review
+                Add a review
             {% endif %}
         </a>
     {% endif %}
