@@ -1,6 +1,5 @@
-from django.db.models import ProtectedError
-
 from django.contrib.auth.decorators import login_required
+from django.db.models import ProtectedError
 from django.forms.models import ModelForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
@@ -11,11 +10,10 @@ from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
-
-from wagtail.core.models import Page
 from wagtail.admin import messages
 from wagtail.admin.auth import require_admin_access
 from wagtail.admin.views.pages import delete
+from wagtail.core.models import Page
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
