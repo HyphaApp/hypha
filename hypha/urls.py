@@ -11,6 +11,7 @@ from wagtail.images.views.serve import ServeView
 
 from hypha.apply.users.urls import public_urlpatterns as user_urls
 from hypha.apply.users.views import LoginView
+from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.public import urls as public_urls
 
 urlpatterns = [
@@ -23,6 +24,7 @@ urlpatterns = [
         ),
         name='wagtailadmin_login'
     ),
+    path('admin/pages/<int:page_id>/delete/', custom_wagtail_page_delete),
     path('admin/', include(wagtailadmin_urls)),
 
     path('documents/', include(wagtaildocs_urls)),

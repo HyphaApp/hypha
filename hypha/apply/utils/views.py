@@ -1,13 +1,21 @@
+from django.db.models import ProtectedError
+
 from django.contrib.auth.decorators import login_required
 from django.forms.models import ModelForm
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views import defaults
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
+
+from wagtail.core.models import Page
+from wagtail.admin import messages
+from wagtail.admin.auth import require_admin_access
+from wagtail.admin.views.pages import delete
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):
@@ -222,3 +230,24 @@ class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, Proc
             self.object = None
 
         return super().post(request, *args, **kwargs)
+
+
+@require_admin_access
+def custom_wagtail_page_delete(request, page_id):
+    """
+    Currently, ProtectedError exception is not caught in Wagtail admin.
+    This workaround shows warning to the user if the page model like Fund, Round
+    can not be deleted instead of raising 500.
+    More details at https://github.com/wagtail/wagtail/issues/1602
+    Once the issue is fixed in Wagtail core, we can remove this workaround.
+    """
+    try:
+        return delete(request, page_id)
+    except ProtectedError as e:
+        item = e.protected_objects[0]
+        page = get_object_or_404(Page, id=page_id).specific
+        parent_id = page.get_parent().id
+        messages.warning(request, _("Page '{0}' can't be deleted because is in use in '{1}'.").format(
+            page.get_admin_display_title(), item.title
+        ))
+        return redirect('wagtailadmin_explore', parent_id)
