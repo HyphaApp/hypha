@@ -90,6 +90,33 @@ from .workflow import (
 )
 
 
+class UpdateReviewersMixin:
+    def set_status_after_reviewers_assigned(self, submission):
+        # Check if two internal reviewers have been selected.
+        internal_reviewers_count = submission.assigned.with_roles().count()
+        if internal_reviewers_count > 1:
+            # Automatic workflow actions.
+            action = None
+            if submission.status == INITIAL_STATE:
+                # Automatically transition the application to "Internal review".
+                action = submission.workflow.stepped_phases[1][0].name
+            elif submission.status == 'proposal_discussion':
+                # Automatically transition the proposal to "Internal review".
+                action = 'proposal_internal_review'
+
+            # If action is set run perform_transition().
+            if action:
+                try:
+                    submission.perform_transition(
+                        action,
+                        self.request.user,
+                        request=self.request,
+                        notify=False,
+                    )
+                except (PermissionDenied, KeyError):
+                    pass
+
+
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
@@ -152,7 +179,7 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
+class BatchUpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
@@ -171,6 +198,11 @@ class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
             sources=submissions,
             added=reviewers,
         )
+
+        for submission in submissions:
+            # Update submission status if needed.
+            self.set_status_after_reviewers_assigned(submission)
+
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -496,7 +528,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class UpdateReviewersView(DelegatedViewMixin, UpdateView):
+class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
@@ -521,29 +553,8 @@ class UpdateReviewersView(DelegatedViewMixin, UpdateView):
             removed=removed,
         )
 
-        # Check if two internal reviewers have been selected.
-        internal_reviewers_count = form.instance.assigned.with_roles().count()
-        if internal_reviewers_count > 1:
-            # Automatic workflow actions.
-            action = None
-            if self.object.status == INITIAL_STATE:
-                # Automatically transition the application to "Internal review".
-                action = self.object.workflow.stepped_phases[1][0].name
-            elif self.object.status == 'proposal_discussion':
-                # Automatically transition the proposal to "Internal review".
-                action = 'proposal_internal_review'
-
-            # If action is set run perform_transition().
-            if action:
-                try:
-                    self.object.perform_transition(
-                        action,
-                        self.request.user,
-                        request=self.request,
-                        notify=False,
-                    )
-                except (PermissionDenied, KeyError):
-                    pass
+        # Update submission status if needed.
+        self.set_status_after_reviewers_assigned(form.instance)
 
         return response
 
