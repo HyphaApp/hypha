@@ -126,6 +126,29 @@ class TestCreatePaymentRequestForm(TestCase):
 
         self.assertEqual(payment_request.receipts.count(), 1)
 
+    def test_receipt_not_required(self):
+        data = {
+            'requested_value': '10',
+            'date_from': '2018-08-15',
+            'date_to': '2019-08-15',
+            'comment': 'test comment',
+        }
+
+        invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
+        files = {
+            'invoice': invoice,
+            'receipts': [],
+        }
+
+        form = CreatePaymentRequestForm(data=data, files=files)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+
+        form.instance.by = UserFactory()
+        form.instance.project = ProjectFactory()
+        payment_request = form.save()
+
+        self.assertEqual(payment_request.receipts.count(), 0)
+
     def test_payment_request_dates_are_correct(self):
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
         receipts = SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())
