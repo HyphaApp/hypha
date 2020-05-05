@@ -1,5 +1,7 @@
+import re
 from datetime import timedelta
 
+from bs4 import BeautifulSoup
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
@@ -207,6 +209,48 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertTrue(hasattr(submission, 'project'))
         self.assertEquals(submission.project.id, project.id)
 
+    def test_can_see_add_determination_primary_action(self):
+        def assert_add_determination_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 1)
+
+        submission = ApplicationSubmissionFactory(status='determination')
+
+        # Phase: ready-for-determination, no determination
+        # "Add determination" should be displayed
+        assert_add_determination_displayed(submission, 'Add determination')
+
+        # Phase: ready-for-determination, draft determination
+        # "Complete draft determination" should be displayed
+        DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
+        assert_add_determination_displayed(submission, 'Complete draft determination')
+
+    def test_cant_see_add_determination_primary_action(self):
+        def assert_add_determination_not_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory()
+
+        # Phase: received / in_discussion
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
+        # Phase: accepted
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        submission.perform_transition('accepted', self.user)
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
@@ -335,6 +379,38 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         self.assertCountEqual(submission.reviewers.all(), [reviewer, self.reviewers[1]])
 
 
+class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
+    user_factory = ReviewerFactory
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.applicant = ApplicantFactory()
+
+    def test_cant_see_add_determination_primary_action(self):
+        def assert_add_determination_not_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory(status='determination', user=self.applicant, reviewers=[self.user])
+
+        # Phase: ready-for-determination, no determination
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
+        # Phase: ready-for-determination, draft determination
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        DeterminationFactory(submission=submission, accepted=True, submitted=False)
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
+
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory
 
@@ -427,6 +503,29 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_screening_status_block(self):
         response = self.get_page(self.submission)
         self.assertNotContains(response, 'Screening Status')
+
+    def test_cant_see_add_determination_primary_action(self):
+        def assert_add_determination_not_displayed(submission, button_text):
+            response = self.get_page(submission)
+            # Ignore whitespace (including line breaks) in button text
+            pattern = re.compile(rf'\s*{button_text}\s*')
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            self.assertEqual(len(buttons), 0)
+
+        submission = ApplicationSubmissionFactory(status='determination', user=self.user)
+
+        # Phase: ready-for-determination, no determination
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
+
+        # Phase: ready-for-determination, draft determination
+        # "Add determination" should not be displayed
+        # "Complete draft determination" should not be displayed
+        DeterminationFactory(submission=submission, accepted=True, submitted=False)
+        assert_add_determination_not_displayed(submission, 'Add determination')
+        assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):

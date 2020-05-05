@@ -703,6 +703,10 @@ class ApplicationSubmission(
         return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
 
     @property
+    def ready_for_determination(self):
+        return self.status in PHASES_MAPPING['ready-for-determination']['statuses']
+
+    @property
     def accepted_for_funding(self):
         accepted = self.status in PHASES_MAPPING['accepted']['statuses']
         return self.in_final_stage and accepted
