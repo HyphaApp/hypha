@@ -44,15 +44,22 @@ class TestCommentEdit(TestCase):
         response = self.post_to_edit(10000)
         self.assertEqual(response.status_code, 403, response.json())
 
-    def test_does_nothing_if_same_message(self):
+    def test_does_nothing_if_same_message_and_visibility(self):
         user = UserFactory()
         comment = CommentFactory(user=user)
         self.client.force_login(user)
 
-        self.post_to_edit(comment.pk, comment.message)
+        self.client.post(
+            reverse_lazy('api:v1:comments:edit', kwargs={'pk': comment.pk}),
+            secure=True,
+            data={
+                'message': comment.message,
+                'visibility': comment.visibility,
+            })
+
         self.assertEqual(Activity.objects.count(), 1)
 
-    def test_cant_change_visibility(self):
+    def test_can_change_visibility(self):
         user = UserFactory()
         comment = CommentFactory(user=user, visibility=APPLICANT)
         self.client.force_login(user)
@@ -67,7 +74,7 @@ class TestCommentEdit(TestCase):
         )
 
         self.assertEqual(response.status_code, 200, response.json())
-        self.assertEqual(response.json()['visibility'], APPLICANT)
+        self.assertEqual(response.json()['visibility'], ALL)
 
     def test_out_of_order_does_nothing(self):
         user = UserFactory()

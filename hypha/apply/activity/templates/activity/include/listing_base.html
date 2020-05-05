@@ -22,12 +22,10 @@
                 </p>
             {% endif %}
 
-            {% if activity.private %}
-                <p class="feed__meta-item feed__meta-item--right">
+                <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
                     <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-                    {{ activity.visibility }}
+                    <span class="js-comment-visibility">{{ activity.visibility }}</span>
                 </p>
-            {% endif %}
         </div>
 
         <p class="feed__heading">
@@ -36,7 +34,10 @@
             {% endif %}
 
             {% if editable %}
-                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}" data-edit-url="{% url 'api:v1:comments:edit' pk=activity.pk %}">
+                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}" 
+                data-visibility-options="{{activity|visibility_options:activity.user}}"
+                data-visibility="{{activity.visibility}}"
+                data-edit-url="{% url 'api:v1:comments:edit' pk=activity.pk %}">
                     {{ activity|display_for:request.user|submission_links|markdown|bleach }}
                 </div>
 

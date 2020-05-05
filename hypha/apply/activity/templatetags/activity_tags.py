@@ -49,3 +49,9 @@ def display_for(activity, user):
         return message_data[TEAM]
 
     return message_data[ALL]
+
+
+@register.filter
+def visibility_options(activity, user):
+    choices = activity.visibility_choices_for(user)
+    return json.dumps(choices)

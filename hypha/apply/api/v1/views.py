@@ -239,7 +239,7 @@ class CommentEdit(
         serializer = self.get_serializer(comment_to_edit, data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if serializer.validated_data['message'] != comment_to_update.message:
+        if (serializer.validated_data['message'] != comment_to_update.message) or (serializer.validated_data['visibility'] != comment_to_update.visibility):
             self.perform_create(serializer)
             comment_to_update.current = False
             comment_to_update.save()
