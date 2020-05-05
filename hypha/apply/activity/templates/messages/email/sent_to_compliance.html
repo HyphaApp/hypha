@@ -6,7 +6,8 @@
 A Project is awaiting your review.
 
 Title: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:detail' pk=source.pk %}
+Link: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:simplified' pk=source.pk %}
+Original Submission: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
 
 Please contact {{ source.lead }} - {{ source.lead.email }} if you have any questions.
 {% endblock %}
