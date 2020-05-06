@@ -9,13 +9,13 @@
 {% block mobile_actions %}
     <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
     <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sidebar__inner--mobile">
-        {% include "funds/includes/actions.html"  %}
+        {% include "funds/includes/admin_primary_actions.html"  %}
     </div>
 {% endblock %}
 
 {% block sidebar_top %}
     <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-        {% include "funds/includes/actions.html" %}
+        {% include "funds/includes/admin_primary_actions.html" %}
     </div>
     {% include "funds/includes/screening_form.html" %}
     {% include "funds/includes/progress_form.html" %}

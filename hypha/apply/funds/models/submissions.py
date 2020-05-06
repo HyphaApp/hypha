@@ -722,6 +722,14 @@ class ApplicationSubmission(
 
         return adjusted_index == len(stages)
 
+    @property
+    def in_internal_review_phase(self):
+        return self.status in PHASES_MAPPING['internal-review']['statuses']
+
+    @property
+    def in_external_review_phase(self):
+        return self.status in PHASES_MAPPING['external-review']['statuses']
+
     # Methods for accessing data on the submission
 
     def get_data(self):

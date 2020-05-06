@@ -26,7 +26,7 @@ from hypha.apply.funds.models.forms import (
     RoundBaseForm,
     RoundBaseReviewForm,
 )
-from hypha.apply.funds.workflow import ConceptProposal, Request
+from hypha.apply.funds.workflow import ConceptProposal, Request, RequestExternal
 from hypha.apply.home.factories import ApplyHomePageFactory
 from hypha.apply.stream_forms.testing.factories import FormDataFactory
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
@@ -223,6 +223,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
         rejected = factory.Trait(
             status='rejected'
         )
+        with_external_review = False
 
     form_fields = blocks.CustomFormFieldsFactory
     form_data = factory.SubFactory(
@@ -230,7 +231,6 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
         form_fields=factory.SelfAttribute('..form_fields'),
     )
     page = factory.SelfAttribute('.round.fund')
-    workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
     round = factory.SubFactory(
         RoundFactory,
         workflow_name=factory.SelfAttribute('..workflow_name'),
@@ -240,6 +240,13 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
     lead = factory.SubFactory(StaffFactory)
     live_revision = None
     draft_revision = None
+
+    @factory.lazy_attribute
+    def workflow_name(self):
+        if self.with_external_review:
+            return RequestExternal.admin_name
+        else:
+            return workflow_for_stages(self.workflow_stages)
 
     @factory.post_generation
     def reviewers(self, create, reviewers, **kwargs):

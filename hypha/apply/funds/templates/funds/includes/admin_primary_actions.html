@@ -20,6 +20,10 @@
     {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text="Complete draft determination" %}
 {% endif %}
 
+{% if object.in_internal_review_phase or object.in_external_review_phase %}
+    {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text="Complete draft review" %}
+{% endif %}
+
 <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Update status</a>
 
 
