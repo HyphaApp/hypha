@@ -92,9 +92,8 @@ from .workflow import (
 
 class UpdateReviewersMixin:
     def set_status_after_reviewers_assigned(self, submission):
-        # Check if two internal reviewers have been selected.
-        internal_reviewers_count = submission.assigned.with_roles().count()
-        if internal_reviewers_count > 1:
+        # Check if all internal reviewers have been selected.
+        if submission.has_all_reviewer_roles_assigned:
             # Automatic workflow actions.
             action = None
             if submission.status == INITIAL_STATE:
