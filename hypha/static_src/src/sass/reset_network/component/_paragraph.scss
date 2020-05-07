@@ -672,7 +672,11 @@ $para-sidebar-offset: $sidebar-offset / $global-page-width * 100%;
 }
 
 .para__body-long {
+    @include pad-gutter-top();
+    align-self: center;
+    max-width: #{$content-column-width-max}px;
     padding-top:  #{$gutter}px;
+    position: relative;
 }
 
 .para__aside {
