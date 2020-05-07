@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% firstof page.seo_title page.title %}</title>
+    <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% firstof page.seo_title page.title %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
     <meta name="description" content="{{ page.search_description }}" />
     {% image page.social_image width-320 as social_img %}
     <meta name="twitter:card" content="summary" />
