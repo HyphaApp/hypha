@@ -183,9 +183,9 @@
                 CAROUSEL.RESOURCES.$carousel = $('.js-resources-carousel');
 
                 // If there is only 1 item in the carousel just show 1 slide
-                // If there are 2 items in the carousel dupe them to create a functional carousel
+                // If there are 2 or 3 items in the carousel dupe them to create a functional carousel
                 var itemsLength = CAROUSEL.RESOURCES.$carousel.children('li').length;
-                if (itemsLength < 3) {
+                if (itemsLength < 4) {
                     if (itemsLength === 1) {
                         CAROUSEL.RESOURCES.config.slidesToShow = 1;
                         CAROUSEL.RESOURCES.$carousel.addClass('has-one-item');
@@ -196,6 +196,15 @@
 
                         $('.js-resources-copy li:nth-child(1)').clone().attr('data-resources-copy', 2).appendTo('.js-resources-copy');
                         $('.js-resources-copy li:nth-child(2)').clone().attr('data-resources-copy', 3).appendTo('.js-resources-copy');
+                    }
+                    else if (itemsLength === 3) {
+                        $('.js-resources-carousel li:nth-child(1)').clone().appendTo('.js-resources-carousel');
+                        $('.js-resources-carousel li:nth-child(2)').clone().appendTo('.js-resources-carousel');
+                        $('.js-resources-carousel li:nth-child(3)').clone().appendTo('.js-resources-carousel');
+
+                        $('.js-resources-copy li:nth-child(1)').clone().attr('data-resources-copy', 3).appendTo('.js-resources-copy');
+                        $('.js-resources-copy li:nth-child(2)').clone().attr('data-resources-copy', 4).appendTo('.js-resources-copy');
+                        $('.js-resources-copy li:nth-child(3)').clone().attr('data-resources-copy', 5).appendTo('.js-resources-copy');
                     }
                 }
 
