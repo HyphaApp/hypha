@@ -33,7 +33,7 @@
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
-        <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/main-top.js' %}"></script>
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
@@ -111,6 +111,7 @@
         </main>
 
         <footer class="footer"></footer>
+        <script src="{% static 'js/main.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>
