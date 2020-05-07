@@ -64,19 +64,19 @@
   </div>
 </section>
 
+{% if resource.paginator.num_pages > 1 %}
 <div class="para theme-lightest" data-section-theme="light">
   <div class="para__wrap contain reveal">
-
     {% include "reset_network/includes/pagination.html" with resource=open_calls %}
-
   </div>
 </div>
+{% endif %}
 
 {% if page.content_bottom_text %}
-<section class="para para--lead theme-lightest reveal" data-theme="lightest" data-section-theme="light">
+<section class="para theme-lightest reveal" data-theme="lightest" data-section-theme="light">
   <div class="para__wrap contain">
     <div class="para__content">
-      <div class="para__body-bottom rte">
+      <div class="para__body rte">
         {{ page.content_bottom_text|richtext }}
       </div>
     </div>
