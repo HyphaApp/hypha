@@ -14,8 +14,6 @@
         $('.application-form').find('.form__group, .rich-text').each(function () {
             var question_text = '';
             var label_text = $(this).find('.form__question').html();
-            var input_text = $(this).find('input').val();
-            var rich_text = $(this).find('.tinymce4-editor').val();
             if (label_text) {
                 // Get the label, i.e. question.
                 label_text = strip(label_text);
@@ -23,8 +21,39 @@
                 label_text = label_text.replace(/[ ]+/g, ' ');
                 question_text = '### ' + label_text;
 
+                var help_text = $(this).find('.form__help').html();
+                var $help_link = $(this).find('.form__help-link');
+                var word_limit = $(this).attr('data-word-limit');
+                var $input_list = $(this).find('.form__item > ul > li');
+                var input_text = $(this).find('input').val();
+                var rich_text = $(this).find('.tinymce4-editor').val();
+
+                // Get help text and link if any.
+                if (help_text) {
+                    question_text = question_text + '\n\n' + strip(help_text);
+                }
+                if ($help_link.length !== 0) {
+                    question_text = question_text + '\n\n' + strip($help_link.html()) + ' <' + $help_link.find('a').attr('href') + '>';
+                }
+
+                if (word_limit) {
+                    question_text = question_text + '\n\nLimit this field to ' + word_limit + ' words.';
+                }
+
                 // Get the user input if any.
-                if (input_text) {
+                if ($input_list.length !== 0) {
+                    var input_list = [];
+                    var input_item = '';
+                    $input_list.each(function () {
+                        input_item = strip($(this).html());
+                        if ($(this).find('input').is(':checked')) {
+                            input_item = input_item + ' (selected)';
+                        }
+                        input_list.push(input_item);
+                    });
+                    question_text = question_text + '\n\n' + input_list.join('\n');
+                }
+                else if (input_text) {
                     question_text = question_text + '\n\n' + strip(input_text);
                 }
                 else if (rich_text) {
