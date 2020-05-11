@@ -421,6 +421,7 @@ class LeaderboardTable(tables.Table):
             'most_recent',
         ]
         model = User
+        order_by = ('-total',)
 
     def render_most_recent(self, record):
         review = (Review.objects.filter(author__reviewer=record)
