@@ -65,14 +65,22 @@ class SubmittableStreamForm(AbstractStreamForm):
     def get_submission_class(self):
         return self.submission_class
 
-    def process_form_submission(self, form):
+    def process_form_submission(self, form, draft):
         if not form.user.is_authenticated:
             form.user = None
-        return self.get_submission_class().objects.create(
-            form_data=form.cleaned_data,
-            form_fields=self.get_defined_fields(),
-            **self.get_submit_meta_data(user=form.user),
-        )
+        if draft:
+            return self.get_submission_class().objects.create(
+                form_data=form.cleaned_data,
+                form_fields=self.get_defined_fields(),
+                **self.get_submit_meta_data(user=form.user),
+                status='draft',
+            )
+        else:
+            return self.get_submission_class().objects.create(
+                form_data=form.cleaned_data,
+                form_fields=self.get_defined_fields(),
+                **self.get_submit_meta_data(user=form.user),
+            )
 
     def get_submit_meta_data(self, **kwargs):
         return kwargs

@@ -356,10 +356,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # Overriding serve method to pass submission id to get_form method
             copy_open_submission = request.GET.get('open_call_submission')
             if request.method == 'POST':
+                draft = bool(request.POST.get('draft'))
                 form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
 
                 if form.is_valid():
-                    form_submission = self.process_form_submission(form)
+                    form_submission = self.process_form_submission(form, draft)
                     return self.render_landing_page(request, form_submission, *args, **kwargs)
             else:
                 form = self.get_form(page=self, user=request.user, submission_id=copy_open_submission)
