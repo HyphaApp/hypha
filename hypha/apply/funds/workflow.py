@@ -195,6 +195,20 @@ INITIAL_STATE = 'in_discussion'
 
 SingleStageDefinition = [
     {
+        'draft': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        }
+    },
+    {
         INITIAL_STATE: {
             'transitions': {
                 'more_info': 'Request More Information',
@@ -293,6 +307,20 @@ SingleStageDefinition = [
 ]
 
 SingleStageExternalDefinition = [
+    {
+        'ext_draft': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
@@ -423,6 +451,20 @@ SingleStageExternalDefinition = [
 
 
 SingleStageCommunityDefinition = [
+    {
+        'com_draft': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
@@ -577,6 +619,20 @@ SingleStageCommunityDefinition = [
 
 
 DoubleStageDefinition = [
+    {
+        'concept_draft': {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
