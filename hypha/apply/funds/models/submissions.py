@@ -160,6 +160,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             Sum('value'),
         )
 
+    def exclude_draft(self):
+        # Applications which have the current stage active (have not been progressed)
+        return self.exclude(status='draft')
+
     def with_latest_update(self):
         activities = self.model.activities.rel.model
         latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
