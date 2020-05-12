@@ -409,7 +409,6 @@ class LeaderboardFilter(filters.FilterSet):
 
 class LeaderboardTable(tables.Table):
     full_name = tables.Column(verbose_name="Reviewer")
-    most_recent = tables.Column(orderable=False)
 
     class Meta:
         fields = [
@@ -418,21 +417,6 @@ class LeaderboardTable(tables.Table):
             'ninety_days',
             'this_year',
             'last_year',
-            'most_recent',
         ]
         model = User
         order_by = ('-total',)
-
-    def render_most_recent(self, record):
-        review = (Review.objects.filter(author__reviewer=record)
-                                .order_by('-created_at')
-                                .first())
-
-        if review is None:
-            return None
-
-        return format_html(
-            '<a href="{}">{}</a>',
-            review.revision.submission.get_absolute_url(),
-            review.revision.submission.title,
-        )

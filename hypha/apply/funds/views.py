@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, OuterRef, Q, Subquery
+from django.db.models import Count, F, Q
 from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -1197,13 +1197,11 @@ class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
         ninety_days_ago = timezone.now() - timedelta(days=90)
         this_year = timezone.now().year
         last_year = timezone.now().year - 1
-        # latest_reviews = Review.objects.filter(author__reviewer_id=OuterRef('pk')).order_by('-created_at')
         return super().get_table_data().filter(submissions_reviewer__isnull=False).annotate(
             total=Count('assignedreviewers__review'),
             ninety_days=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__date__gte=ninety_days_ago)),
             this_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=this_year)),
             last_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=last_year)),
-            # most_recent=Subquery(latest_reviews.values('id')[:1])
         )
 
     def test_func(self):
