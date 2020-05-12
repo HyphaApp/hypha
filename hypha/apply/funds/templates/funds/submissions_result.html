@@ -1,10 +1,6 @@
-{% extends "base-apply.html" %}
+{% extends "funds/submissions_overview.html" %}
 {% load static %}
 {% block title %}Submissions results{% endblock %}
-
-{% block extra_css %}
-{{ filter.form.media.css }}
-{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
@@ -12,7 +8,11 @@
         {% block page_header %}
             <div>
                 <h1 class="gamma heading heading--no-margin heading--bold">Submissions results</h1>
+                <h5>Track and explore the results</h5>
             </div>
+        {% endblock %}
+        {% block page_header_tabs %}
+            {{ block.super }}
         {% endblock %}
     </div>
 </div>
@@ -26,10 +26,4 @@
         <div><strong>Total value:</strong> ${{ total_value }}</div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-    {{ filter.form.media.js }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
-    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
 {% endblock %}

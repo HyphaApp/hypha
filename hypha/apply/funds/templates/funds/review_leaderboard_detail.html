@@ -21,8 +21,6 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% block table %}
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term search_placeholder="reviewers" use_search=True filter_action=filter_action use_batch_actions=False heading="All reviewers" %}
-
         {% render_table table %}
     {% endblock %}
 </div>

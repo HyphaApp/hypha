@@ -81,6 +81,7 @@ from .tables import (
     AdminSubmissionsTable,
     LeaderboardFilter,
     LeaderboardTable,
+    LeaderboardDetailTable,
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
@@ -1203,6 +1204,21 @@ class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
             this_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=this_year)),
             last_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=last_year)),
         )
+
+    def test_func(self):
+        return self.request.user.is_apply_staff or self.request.user.is_reviewer
+
+
+@method_decorator(login_required, name='dispatch')
+class ReviewLeaderboardDetail(UserPassesTestMixin, SingleTableMixin, ListView):
+    model = Review
+    table_class = LeaderboardDetailTable
+    paginator_class = LazyPaginator
+    table_pagination = {'per_page': 25}
+    template_name = 'funds/review_leaderboard_detail.html'
+
+    def get_table_data(self):
+        return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
 
     def test_func(self):
         return self.request.user.is_apply_staff or self.request.user.is_reviewer

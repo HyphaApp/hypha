@@ -52,7 +52,11 @@ def render_actions(table, record):
 
 
 def render_title(record):
-    return textwrap.shorten(record.title, width=30, placeholder="...")
+    try:
+        title = record.title
+    except AttributeError:
+        title = record.submission.title
+    return textwrap.shorten(title, width=30, placeholder="...")
 
 
 class SubmissionsTable(tables.Table):
@@ -381,6 +385,8 @@ class LeaderboardFilterForm(forms.ModelForm):
 
 
 class LeaderboardFilter(filters.FilterSet):
+    query = filters.CharFilter(field_name='full_name', lookup_expr="icontains", widget=forms.HiddenInput)
+
     reviewer = Select2ModelMultipleChoiceFilter(
         field_name='pk',
         label='Reviewers',
@@ -408,7 +414,7 @@ class LeaderboardFilter(filters.FilterSet):
 
 
 class LeaderboardTable(tables.Table):
-    full_name = tables.Column(verbose_name="Reviewer")
+    full_name = tables.LinkColumn('funds:submissions:leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer")
 
     class Meta:
         fields = [
@@ -420,3 +426,16 @@ class LeaderboardTable(tables.Table):
         ]
         model = User
         order_by = ('-total',)
+
+
+class LeaderboardDetailTable(tables.Table):
+    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission")
+
+    class Meta:
+        fields = [
+            'title',
+            'recommendation',
+            'created_at',
+        ]
+        model = Review
+        order_by = ('-created_at',)

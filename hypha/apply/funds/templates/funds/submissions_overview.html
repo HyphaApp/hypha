@@ -10,6 +10,8 @@
                 <h1 class="gamma heading heading--no-margin heading--bold">Submissions</h1>
                 <h5>Track and explore recent submissions</h5>
             </div>
+        {% endblock %}
+        {% block page_header_tabs %}
             {% if request.user.is_apply_staff %}
             <div class="tabs">
                 <div class="tabs__container">
