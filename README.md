@@ -27,13 +27,13 @@ Technology
 Thank you to all the people who have contributed code to Hypha <3
 
 - [Torchbox](https://www.torchbox.com/)
-- [Parbhat](https://parbhatpuri.com/)
+- [Remote Inning](https://www.remoteinning.com/)
 - [Maxwell Pearl](https://maxwellpearl.com/)
 - [Throneless Technology](https://throneless.tech/)
 - [Psycle](https://psycle.com/)
 
 ### Implementers
-Thank you brave folks who chose to use Hypha <3
+Thank you brave folks who choose to use Hypha <3
 
 - [Open Technology Fund](https://www.opentech.fund)
 - [Reset](https://www.reset.tech)
