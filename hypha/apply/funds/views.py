@@ -333,7 +333,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
 
     def get_table_data(self):
         limit = 5
-        return super().get_table_data().exclude(status='draft').order_by(F('last_update').desc(nulls_last=True))[:limit]
+        return super().get_table_data().order_by(F('last_update').desc(nulls_last=True))[:limit]
 
     def get_context_data(self, **kwargs):
         limit = 6
