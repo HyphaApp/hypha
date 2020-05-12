@@ -1187,20 +1187,11 @@ class SubmissionResultView(FilterView):
 
 
 @method_decorator(login_required, name='dispatch')
-class ReviewLeaderboard(SingleTableMixin, FilterView):
+class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
     filterset_class = LeaderboardFilter
     table_class = LeaderboardTable
     table_pagination = False
     template_name = 'funds/review_leaderboard.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        is_staff = request.user.is_apply_staff
-        is_reviewer = request.user.is_reviewer
-
-        if not (is_staff or is_reviewer):
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
 
     def get_table_data(self):
         ninety_days_ago = timezone.now() - timedelta(days=90)
@@ -1214,3 +1205,6 @@ class ReviewLeaderboard(SingleTableMixin, FilterView):
             last_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=last_year)),
             # most_recent=Subquery(latest_reviews.values('id')[:1])
         )
+
+    def test_func(self):
+        return self.request.user.is_apply_staff or self.request.user.is_reviewer
