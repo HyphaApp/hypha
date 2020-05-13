@@ -65,7 +65,7 @@ class SubmittableStreamForm(AbstractStreamForm):
     def get_submission_class(self):
         return self.submission_class
 
-    def process_form_submission(self, form, draft):
+    def process_form_submission(self, form, draft=False):
         if not form.user.is_authenticated:
             form.user = None
         if draft:
