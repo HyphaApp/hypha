@@ -442,6 +442,24 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     def open_round(self):
         return self.live
 
+    def serve(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
+            draft = request.POST.get('draft', None)
+            if form.is_valid():
+                form_submission = self.process_form_submission(form, draft=draft)
+                return self.render_landing_page(request, form_submission, *args, **kwargs)
+        else:
+            form = self.get_form(page=self, user=request.user)
+
+        context = self.get_context(request)
+        context['form'] = form
+        return TemplateResponse(
+            request,
+            self.get_template(request),
+            context
+        )
+
 
 class RoundsAndLabsQueryset(PageQuerySet):
     def new(self):
