@@ -188,6 +188,7 @@ def get_screening_statuses(request):
 
 def get_meta_terms(request):
     return MetaTerm.objects.filter(
+        filter_on_dashboard=True,
         id__in=ApplicationSubmission.objects.all().values('meta_terms__id').distinct('meta_terms__id'))
 
 
