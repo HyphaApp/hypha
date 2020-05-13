@@ -414,9 +414,10 @@ class LeaderboardFilter(filters.FilterSet):
 
 
 class LeaderboardTable(tables.Table):
-    full_name = tables.LinkColumn('funds:submissions:leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer")
+    full_name = tables.LinkColumn('funds:submissions:leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer", attrs={'td': {'class': 'title'}})
 
     class Meta:
+        model = User
         fields = [
             'full_name',
             'total',
@@ -424,18 +425,21 @@ class LeaderboardTable(tables.Table):
             'this_year',
             'last_year',
         ]
-        model = User
         order_by = ('-total',)
+        attrs = {'class': 'all-reviews-table'}
+        empty_text = _('No reviews available')
 
 
 class LeaderboardDetailTable(tables.Table):
-    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission")
+    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission", attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
 
     class Meta:
+        model = Review
         fields = [
             'title',
             'recommendation',
             'created_at',
         ]
-        model = Review
         order_by = ('-created_at',)
+        attrs = {'class': 'all-reviews-table'}
+        empty_text = _('No reviews available')

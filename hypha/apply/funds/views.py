@@ -3,6 +3,7 @@ from datetime import timedelta
 from statistics import mean
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -79,9 +80,9 @@ from .models import (
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
+    LeaderboardDetailTable,
     LeaderboardFilter,
     LeaderboardTable,
-    LeaderboardDetailTable,
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
@@ -1190,9 +1191,19 @@ class SubmissionResultView(FilterView):
 @method_decorator(login_required, name='dispatch')
 class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
     filterset_class = LeaderboardFilter
+    filter_action = ''
     table_class = LeaderboardTable
     table_pagination = False
     template_name = 'funds/review_leaderboard.html'
+
+    def get_context_data(self, **kwargs):
+        search_term = self.request.GET.get('query')
+
+        return super().get_context_data(
+            search_term=search_term,
+            filter_action=self.filter_action,
+            **kwargs,
+        )
 
     def get_table_data(self):
         ninety_days_ago = timezone.now() - timedelta(days=90)
@@ -1216,6 +1227,11 @@ class ReviewLeaderboardDetail(UserPassesTestMixin, SingleTableMixin, ListView):
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
     template_name = 'funds/review_leaderboard_detail.html'
+
+    def get_context_data(self, **kwargs):
+        User = get_user_model()
+        obj = User.objects.get(pk=self.kwargs.get('pk'))
+        return super().get_context_data(object=obj, **kwargs)
 
     def get_table_data(self):
         return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
