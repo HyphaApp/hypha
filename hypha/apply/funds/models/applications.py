@@ -19,6 +19,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
