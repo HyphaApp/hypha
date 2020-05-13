@@ -448,7 +448,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
             form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
             draft = request.POST.get('draft', None)
             if form.is_valid():
-                form_submission = self.process_form_submission(form, draft=draft)
+                form_submission = SubmittableStreamForm.process_form_submission(self, form, draft=draft)
                 return self.render_landing_page(request, form_submission, *args, **kwargs)
         else:
             form = self.get_form(page=self, user=request.user)
