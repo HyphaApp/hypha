@@ -58,6 +58,7 @@ def get_fields_for_stage(submission):
         return forms[0].form.form_fields
 
 
+@method_decorator(login_required, name='dispatch')
 class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
     submission_form_class = ReviewModelForm
     model = Review
@@ -396,6 +397,7 @@ class ReviewListView(ListView):
         )
 
 
+@method_decorator(login_required, name='dispatch')
 class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     model = Review
     raise_exception = True
