@@ -1165,11 +1165,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        # For rounds we want all submissions but otherwise only current.
-        if self.request.GET.get('round'):
-            return self.filterset_class._meta.model.objects.all()
-        else:
-            return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
