@@ -161,7 +161,6 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def exclude_draft(self):
-        # Applications which have the current stage active (have not been progressed)
         return self.exclude(status='draft')
 
     def with_latest_update(self):
