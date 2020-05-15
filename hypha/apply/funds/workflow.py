@@ -318,7 +318,7 @@ SingleStageExternalDefinition = [
                 },
             },
             'display': 'Draft',
-            'stage': Request,
+            'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         }
     },
@@ -462,7 +462,7 @@ SingleStageCommunityDefinition = [
                 },
             },
             'display': 'Draft',
-            'stage': Request,
+            'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         }
     },
@@ -630,7 +630,7 @@ DoubleStageDefinition = [
                 },
             },
             'display': 'Draft',
-            'stage': Request,
+            'stage': Concept,
             'permissions': applicant_edit_permissions,
         }
     },
