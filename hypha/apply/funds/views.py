@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import PermissionDenied
-from django.db.models import Avg, Count, F, IntegerField, Q, Sum
+from django.db.models import Avg, Count, F, FloatField, Q, Sum
 from django.db.models.functions import Cast
 from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -1185,7 +1185,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
 
     def get_submission_values(self):
         return self.object_list.annotate(
-            value=Cast(KeyTextTransform('value', 'form_data'), output_field=IntegerField())
+            value=Cast(KeyTextTransform('value', 'form_data'), output_field=FloatField())
         ).aggregate(
             Count('value'),
             Avg('value'),
