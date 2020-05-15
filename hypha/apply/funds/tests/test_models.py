@@ -231,14 +231,14 @@ class TestFormSubmission(TestCase):
     def test_workflow_and_status_assigned(self):
         self.submit_form()
         submission = ApplicationSubmission.objects.first()
-        first_phase = list(self.round_page.workflow.keys())[0]
+        first_phase = list(self.round_page.workflow.keys())[1]
         self.assertEqual(submission.workflow, self.round_page.workflow)
         self.assertEqual(submission.status, first_phase)
 
     def test_workflow_and_status_assigned_lab(self):
         self.submit_form(page=self.lab_page)
         submission = ApplicationSubmission.objects.first()
-        first_phase = list(self.lab_page.workflow.keys())[0]
+        first_phase = list(self.lab_page.workflow.keys())[1]
         self.assertEqual(submission.workflow, self.lab_page.workflow)
         self.assertEqual(submission.status, first_phase)
 
