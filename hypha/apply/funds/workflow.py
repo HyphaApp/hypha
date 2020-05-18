@@ -190,13 +190,13 @@ Concept = Stage('Concept', False)
 
 Proposal = Stage('Proposal', True)
 
-DRAFT = 'draft'
+DRAFT_STATE = 'draft'
 
 INITIAL_STATE = 'in_discussion'
 
 SingleStageDefinition = [
     {
-        DRAFT: {
+        DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
                     'display': 'Submit',
@@ -309,7 +309,7 @@ SingleStageDefinition = [
 
 SingleStageExternalDefinition = [
     {
-        DRAFT: {
+        DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
                     'display': 'Submit',
@@ -453,7 +453,7 @@ SingleStageExternalDefinition = [
 
 SingleStageCommunityDefinition = [
     {
-        DRAFT: {
+        DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
                     'display': 'Submit',
@@ -621,7 +621,7 @@ SingleStageCommunityDefinition = [
 
 DoubleStageDefinition = [
     {
-        DRAFT: {
+        DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
                     'display': 'Submit',
