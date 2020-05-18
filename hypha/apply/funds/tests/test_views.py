@@ -443,6 +443,18 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         with self.assertRaises(Http404):
             SubmissionDetailView.as_view()(request, pk=submission.pk)
 
+    def test_applicant_can_see_application_draft_status(self):
+        factory = RequestFactory()
+        user = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(status='draft', user=user)
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = user
+
+        response = SubmissionDetailView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
+
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
