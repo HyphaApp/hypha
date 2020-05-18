@@ -357,7 +357,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # Overriding serve method to pass submission id to get_form method
             copy_open_submission = request.GET.get('open_call_submission')
             if request.method == 'POST':
-                draft = request.POST.get('draft', None)
+                draft = request.POST.get('draft', False)
                 form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
 
                 if form.is_valid():
@@ -446,7 +446,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     def serve(self, request, *args, **kwargs):
         if request.method == 'POST':
             form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
-            draft = request.POST.get('draft', None)
+            draft = request.POST.get('draft', False)
             if form.is_valid():
                 form_submission = SubmittableStreamForm.process_form_submission(self, form, draft=draft)
                 return self.render_landing_page(request, form_submission, *args, **kwargs)
