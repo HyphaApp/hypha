@@ -20,6 +20,10 @@
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
     <div class="wrapper wrapper--bottom-space">
+        {% include "dashboard/includes/submission_stats.html" %}
+    </div>
+
+    <div class="wrapper wrapper--bottom-space">
         {% include "dashboard/includes/waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
     </div>
 
@@ -29,21 +33,19 @@
     </div>
     {% endif %}
 
-    <div class="wrapper wrapper--bottom-space">
-        {% if my_reviewed.table.data %}
-            <div class="wrapper wrapper--bottom-space">
+    {% if my_reviewed.table.data %}
+        <div class="wrapper wrapper--bottom-space">
 
-                {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading="Your previous reviews" %}
-                {% render_table my_reviewed.table %}
+            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading="Your previous reviews" %}
+            {% render_table my_reviewed.table %}
 
-                {% if my_reviewed.display_more %}
-                    <div class="all-submissions-table__more">
-                        <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">Show all</a>
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-    </div>
+            {% if my_reviewed.display_more %}
+                <div class="all-submissions-table__more">
+                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">Show all</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {% if my_submissions %}
     <div class="wrapper wrapper--bottom-space">

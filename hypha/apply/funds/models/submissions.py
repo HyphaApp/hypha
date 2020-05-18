@@ -5,12 +5,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
+    Avg,
     Case,
     Count,
     F,
+    FloatField,
     IntegerField,
     OuterRef,
     Prefetch,
@@ -20,7 +23,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.expressions import OrderBy, RawSQL
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Cast, Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
@@ -143,6 +146,19 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def current(self):
         # Applications which have the current stage active (have not been progressed)
         return self.exclude(next__isnull=False)
+
+    def current_accepted(self):
+        # Applications which have the current stage active (have not been progressed)
+        return self.filter(status__in=PHASES_MAPPING['accepted']['statuses']).current()
+
+    def value(self):
+        return self.annotate(
+            value=Cast(KeyTextTransform('value', 'form_data'), output_field=FloatField())
+        ).aggregate(
+            Count('value'),
+            Avg('value'),
+            Sum('value'),
+        )
 
     def with_latest_update(self):
         activities = self.model.activities.rel.model
