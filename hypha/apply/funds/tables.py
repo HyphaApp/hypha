@@ -366,12 +366,12 @@ class RoundsFilter(filters.FilterSet):
     round_state = OpenRoundFilter(label='Open')
 
 
-class LeaderboardFilterForm(forms.ModelForm):
+class ReviewerLeaderboardFilterForm(forms.ModelForm):
     """
     Form to "clean" a list of User objects to their PKs.
 
-    The Leaderboard table is a list of User objects, however we also want the
-    ability to filter down to N Users (reviewers).  Django filter is converting
+    The Reviewer Leaderboard table is a list of User objects, however we also want
+    the ability to filter down to N Users (reviewers).  Django filter is converting
     the selected PKs to User objects, however we can't filter a User QuerySet
     with User objects.  So this form converts back to a list of User PKs using
     the clean_reviewer method.
@@ -384,7 +384,7 @@ class LeaderboardFilterForm(forms.ModelForm):
         return [u.id for u in self.cleaned_data['reviewer']]
 
 
-class LeaderboardFilter(filters.FilterSet):
+class ReviewerLeaderboardFilter(filters.FilterSet):
     query = filters.CharFilter(field_name='full_name', lookup_expr="icontains", widget=forms.HiddenInput)
 
     reviewer = Select2ModelMultipleChoiceFilter(
@@ -409,12 +409,12 @@ class LeaderboardFilter(filters.FilterSet):
             'funds',
             'rounds',
         ]
-        form = LeaderboardFilterForm
+        form = ReviewerLeaderboardFilterForm
         model = User
 
 
-class LeaderboardTable(tables.Table):
-    full_name = tables.LinkColumn('funds:submissions:leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer", attrs={'td': {'class': 'title'}})
+class ReviewerLeaderboardTable(tables.Table):
+    full_name = tables.LinkColumn('funds:submissions:reviewer_leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer", attrs={'td': {'class': 'title'}})
 
     class Meta:
         model = User
@@ -430,7 +430,7 @@ class LeaderboardTable(tables.Table):
         empty_text = _('No reviews available')
 
 
-class LeaderboardDetailTable(tables.Table):
+class ReviewerLeaderboardDetailTable(tables.Table):
     title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission", attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
 
     class Meta:

@@ -1235,10 +1235,10 @@ class TestReviewerLeaderboard(TestCase):
         response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
         self.assertEqual(response.status_code, 403)
 
-    def test_reviewer_can_access_leader_board(self):
+    def test_reviewer_cannot_access_leader_board(self):
         self.client.force_login(ReviewerFactory())
         response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 403)
 
     def test_staff_can_access_leaderboard(self):
         self.client.force_login(StaffFactory())

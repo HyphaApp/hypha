@@ -80,9 +80,9 @@ from .models import (
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
     AdminSubmissionsTable,
-    LeaderboardDetailTable,
-    LeaderboardFilter,
-    LeaderboardTable,
+    ReviewerLeaderboardDetailTable,
+    ReviewerLeaderboardFilter,
+    ReviewerLeaderboardTable,
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
@@ -1188,13 +1188,13 @@ class SubmissionResultView(FilterView):
         return {'total': total, 'average': average}
 
 
-@method_decorator(login_required, name='dispatch')
-class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
-    filterset_class = LeaderboardFilter
+@method_decorator(staff_required, name='dispatch')
+class ReviewerLeaderboard(SingleTableMixin, FilterView):
+    filterset_class = ReviewerLeaderboardFilter
     filter_action = ''
-    table_class = LeaderboardTable
+    table_class = ReviewerLeaderboardTable
     table_pagination = False
-    template_name = 'funds/review_leaderboard.html'
+    template_name = 'funds/reviewer_leaderboard.html'
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
@@ -1205,28 +1205,29 @@ class ReviewLeaderboard(UserPassesTestMixin, SingleTableMixin, FilterView):
             **kwargs,
         )
 
+    def get_queryset(self):
+        # Only list reviewers.
+        return self.filterset_class._meta.model.objects.reviewers()
+
     def get_table_data(self):
         ninety_days_ago = timezone.now() - timedelta(days=90)
         this_year = timezone.now().year
         last_year = timezone.now().year - 1
-        return super().get_table_data().filter(submissions_reviewer__isnull=False).annotate(
+        return super().get_table_data().annotate(
             total=Count('assignedreviewers__review'),
             ninety_days=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__date__gte=ninety_days_ago)),
             this_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=this_year)),
             last_year=Count('assignedreviewers__review', filter=Q(assignedreviewers__review__created_at__year=last_year)),
         )
 
-    def test_func(self):
-        return self.request.user.is_apply_staff or self.request.user.is_reviewer
 
-
-@method_decorator(login_required, name='dispatch')
-class ReviewLeaderboardDetail(UserPassesTestMixin, SingleTableMixin, ListView):
+@method_decorator(staff_required, name='dispatch')
+class ReviewerLeaderboardDetail(SingleTableMixin, ListView):
     model = Review
-    table_class = LeaderboardDetailTable
+    table_class = ReviewerLeaderboardDetailTable
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
-    template_name = 'funds/review_leaderboard_detail.html'
+    template_name = 'funds/reviewer_leaderboard_detail.html'
 
     def get_context_data(self, **kwargs):
         User = get_user_model()
@@ -1235,6 +1236,3 @@ class ReviewLeaderboardDetail(UserPassesTestMixin, SingleTableMixin, ListView):
 
     def get_table_data(self):
         return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
-
-    def test_func(self):
-        return self.request.user.is_apply_staff or self.request.user.is_reviewer

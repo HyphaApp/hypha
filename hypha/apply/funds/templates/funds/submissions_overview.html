@@ -15,8 +15,8 @@
             {% if request.user.is_apply_staff %}
             <div class="tabs">
                 <div class="tabs__container">
-                    <a class="tab__item tab__item--right" href="{% url 'apply:submissions:leaderboard' %}">
-                        Leaderboard
+                    <a class="tab__item tab__item--right" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
+                        Reviews
                     </a>
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:result' %}">
                         Results
