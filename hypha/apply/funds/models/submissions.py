@@ -790,13 +790,21 @@ def log_status_update(sender, **kwargs):
     notify = kwargs['method_kwargs'].get('notify', True)
 
     if request and notify:
-        messenger(
-            MESSAGES.TRANSITION,
-            user=by,
-            request=request,
-            source=instance,
-            related=old_phase,
-        )
+        if kwargs['source'] == DRAFT:
+            messenger(
+                MESSAGES.NEW_SUBMISSION,
+                request=request,
+                user=by,
+                source=instance,
+            )
+        else:
+            messenger(
+                MESSAGES.TRANSITION,
+                user=by,
+                request=request,
+                source=instance,
+                related=old_phase,
+            )
 
         if instance.status in review_statuses:
             messenger(

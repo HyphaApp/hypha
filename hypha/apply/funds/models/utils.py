@@ -18,7 +18,7 @@ from hypha.apply.users.groups import (
     STAFF_GROUP_NAME,
 )
 
-from ..workflow import WORKFLOWS
+from ..workflow import DRAFT, WORKFLOWS
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,
@@ -103,12 +103,13 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
         # Hook in to notify about new applications
-        messenger(
-            MESSAGES.NEW_SUBMISSION,
-            request=request,
-            user=form_submission.user,
-            source=form_submission,
-        )
+        if not form_submission.status == DRAFT:
+            messenger(
+                MESSAGES.NEW_SUBMISSION,
+                request=request,
+                user=form_submission.user,
+                source=form_submission,
+            )
         return super().render_landing_page(request, form_submission=None, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
