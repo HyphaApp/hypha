@@ -9,6 +9,7 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils.translation import gettext
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import ApplicationSubmission, Reminder
@@ -215,7 +216,7 @@ class TestFormSubmission(TestCase):
             if isinstance(field.block, FullNameBlock):
                 data[field.id] = self.name if name is None else name
             if draft:
-                data['draft'] = "Save Draft"
+                data['draft'] = gettext("Save Draft")
 
         request = make_request(user, data, method='post', site=self.site)
 
