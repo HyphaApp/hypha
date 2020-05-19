@@ -697,7 +697,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if submission.status == DRAFT_STATE:
+        if submission.status == DRAFT_STATE and not request.user == submission.user:
             raise Http404
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
@@ -723,12 +723,12 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if submission.status == DRAFT_STATE:
-            raise Http404
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -737,8 +737,6 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
     form_views = [CommentFormView]
 
     def get_object(self):
-        if submission.status == DRAFT_STATE:
-            raise Http404
         return super().get_object().from_draft()
 
     def dispatch(self, request, *args, **kwargs):
@@ -751,6 +749,8 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
         if not partner_has_access:
             raise PermissionDenied
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -761,8 +761,6 @@ class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, De
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if submission.status == DRAFT_STATE:
-            raise Http404
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
         if submission.user == request.user:
@@ -770,6 +768,8 @@ class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, De
         # Only allow community reviewers in submission with a community review state.
         if not submission.community_review:
             raise PermissionDenied
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
