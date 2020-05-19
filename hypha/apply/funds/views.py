@@ -73,6 +73,7 @@ from .models import (
     ApplicationSubmission,
     LabBase,
     Reminder,
+    ReviewerRole,
     RoundBase,
     RoundsAndLabs,
 )
@@ -85,6 +86,7 @@ from .tables import (
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
+    StaffAssignmentsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
@@ -93,8 +95,11 @@ from .workflow import (
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
+    active_statuses,
     review_statuses,
 )
+
+User = get_user_model()
 
 
 class SubmissionStatsMixin:
@@ -1224,9 +1229,29 @@ class ReviewerLeaderboardDetail(SingleTableMixin, ListView):
     template_name = 'funds/reviewer_leaderboard_detail.html'
 
     def get_context_data(self, **kwargs):
-        User = get_user_model()
         obj = User.objects.get(pk=self.kwargs.get('pk'))
         return super().get_context_data(object=obj, **kwargs)
 
     def get_table_data(self):
         return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
+
+
+@method_decorator(staff_required, name='dispatch')
+class StaffAssignments(SingleTableMixin, ListView):
+    model = User
+    table_class = StaffAssignmentsTable
+    table_pagination = False
+    template_name = 'funds/staff_assignments.html'
+
+    def get_queryset(self):
+        # Only list staff.
+        return self.model.objects.staff()
+
+    def get_table_data(self):
+        reviewer_roles = ReviewerRole.objects.all().order_by('order')
+        reviewer_role_id_1 = reviewer_roles.first().id
+        reviewer_role_id_2 = reviewer_roles.last().id
+        return super().get_table_data().annotate(
+            role1=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_1)),
+            role2=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_2)),
+        )

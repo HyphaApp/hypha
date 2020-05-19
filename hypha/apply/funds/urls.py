@@ -9,6 +9,7 @@ from .views import (
     RevisionCompareView,
     RevisionListView,
     RoundListView,
+    StaffAssignments,
     SubmissionDeleteView,
     SubmissionDetailPDFView,
     SubmissionDetailSimplifiedView,
@@ -48,6 +49,9 @@ submission_urls = ([
     path('reviews/', include([
         path('', ReviewerLeaderboard.as_view(), name="reviewer_leaderboard"),
         path('<int:pk>/', ReviewerLeaderboardDetail.as_view(), name="reviewer_leaderboard_detail"),
+    ])),
+    path('assignments/', include([
+        path('staff/', StaffAssignments.as_view(), name="staff_assignments"),
     ])),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
