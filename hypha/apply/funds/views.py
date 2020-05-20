@@ -940,7 +940,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 user=self.request.user,
                 source=self.object,
             )
-        elif revision:
+        elif revision and not self.object.status == DRAFT_STATE:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
@@ -959,7 +959,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 transition.target,
                 self.request.user,
                 request=self.request,
-                notify=not (revision or submitting_proposal),  # Use the other notification
+                notify=not (revision or submitting_proposal) or self.object.status == DRAFT_STATE,  # Use the other notification
             )
 
         return HttpResponseRedirect(self.get_success_url())
