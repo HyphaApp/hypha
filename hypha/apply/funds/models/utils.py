@@ -110,7 +110,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
                 user=form_submission.user,
                 source=form_submission,
             )
-        return super().render_landing_page(request, form_submission=None, *args, **kwargs)
+        return super().render_landing_page(request, form_submission, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
