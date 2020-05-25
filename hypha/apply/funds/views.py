@@ -1,6 +1,7 @@
 from copy import copy
 from datetime import timedelta
 
+import django_tables2 as tables
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
@@ -1249,9 +1250,18 @@ class StaffAssignments(SingleTableMixin, ListView):
 
     def get_table_data(self):
         reviewer_roles = ReviewerRole.objects.all().order_by('order')
-        reviewer_role_id_1 = reviewer_roles.first().id
-        reviewer_role_id_2 = reviewer_roles.last().id
+        reviewer_role_id_0 = reviewer_roles.first().id
+        reviewer_role_id_1 = reviewer_roles.last().id
         return super().get_table_data().annotate(
+            role0=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_0)),
             role1=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_1)),
-            role2=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_2)),
         )
+
+    def get_table_kwargs(self):
+        reviewer_roles = ReviewerRole.objects.all().order_by('order')
+        extra_columns = []
+        for i, role in enumerate(reviewer_roles):
+            extra_columns.append((f'role{i}', tables.Column(verbose_name=role)))
+        return {
+            'extra_columns': extra_columns,
+        }

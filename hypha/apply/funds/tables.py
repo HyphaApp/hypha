@@ -19,7 +19,7 @@ from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
-from .models import ApplicationSubmission, Round, ReviewerRole, ScreeningStatus
+from .models import ApplicationSubmission, Round, ScreeningStatus
 from .workflow import STATUSES, get_review_active_statuses
 from .widgets import Select2MultiCheckboxesWidget
 
@@ -447,9 +447,6 @@ class ReviewerLeaderboardDetailTable(tables.Table):
 
 class StaffAssignmentsTable(tables.Table):
     full_name = tables.LinkColumn('funds:submissions:list', orderable=True, verbose_name="Staff", attrs={'td': {'class': 'title'}})
-    reviewer_roles = ReviewerRole.objects.all().order_by('order')
-    role1 = tables.Column(verbose_name=reviewer_roles.first())
-    role2 = tables.Column(verbose_name=reviewer_roles.last())
 
     class Meta:
         model = User
