@@ -661,8 +661,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
-        MESSAGES.BATCH_READY_FOR_REVIEW: 'messages/email/batch_ready_to_review.html',
-        MESSAGES.READY_FOR_REVIEW: 'messages/email/ready_to_review.html',
+        MESSAGES.BATCH_READY_FOR_REVIEW: 'handle_batch_ready_for_review',
+        MESSAGES.READY_FOR_REVIEW: 'handle_ready_for_review',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
@@ -743,6 +743,24 @@ class EmailAdapter(AdapterBase):
                 'messages/email/determination.html',
                 source=submission,
                 determination=determination,
+                **kwargs
+            )
+
+    def handle_ready_for_review(self, request, source, **kwargs):
+        if settings.SEND_READY_FOR_REVIEW:
+            return self.render_message(
+                'messages/email/ready_to_review.html',
+                source=source,
+                request=request,
+                **kwargs
+            )
+
+    def handle_batch_ready_for_review(self, request, sources, **kwargs):
+        if settings.SEND_READY_FOR_REVIEW:
+            return self.render_message(
+                'messages/email/batch_ready_to_review.html',
+                sources=sources,
+                request=request,
                 **kwargs
             )
 

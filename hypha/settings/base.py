@@ -524,6 +524,9 @@ if not SEND_MESSAGES:
     from django.contrib.messages import constants as message_constants
     MESSAGE_LEVEL = message_constants.DEBUG
 
+
+SEND_READY_FOR_REVIEW = env.get('SEND_READY_FOR_REVIEW', 'true').lower() == 'true'
+
 SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
 SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
 SLACK_DESTINATION_ROOM_COMMENTS = env.get('SLACK_DESTINATION_ROOM_COMMENTS', None)
