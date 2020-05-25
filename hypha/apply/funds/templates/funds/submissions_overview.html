@@ -10,9 +10,14 @@
                 <h1 class="gamma heading heading--no-margin heading--bold">Submissions</h1>
                 <h5>Track and explore recent submissions</h5>
             </div>
+        {% endblock %}
+        {% block page_header_tabs %}
             {% if request.user.is_apply_staff %}
             <div class="tabs">
                 <div class="tabs__container">
+                    <a class="tab__item tab__item--right" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
+                        Reviews
+                    </a>
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:result' %}">
                         Results
                     </a>

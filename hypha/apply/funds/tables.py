@@ -16,11 +16,14 @@ from wagtail.core.models import Page
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from hypha.apply.funds.workflow import STATUSES, get_review_active_statuses
+from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .widgets import Select2MultiCheckboxesWidget
+
+User = get_user_model()
 
 
 def review_filter_for_user(user):
@@ -49,7 +52,11 @@ def render_actions(table, record):
 
 
 def render_title(record):
-    return textwrap.shorten(record.title, width=30, placeholder="...")
+    try:
+        title = record.title
+    except AttributeError:
+        title = record.submission.title
+    return textwrap.shorten(title, width=30, placeholder="...")
 
 
 class SubmissionsTable(tables.Table):
@@ -171,13 +178,11 @@ def get_used_funds(request):
 
 
 def get_round_leads(request):
-    User = get_user_model()
     return User.objects.filter(submission_lead__isnull=False).distinct()
 
 
 def get_reviewers(request):
     """ All assigned reviewers, staff or admin """
-    User = get_user_model()
     return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
 
 
@@ -359,3 +364,82 @@ class RoundsFilter(filters.FilterSet):
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     active = ActiveRoundFilter(label='Active')
     round_state = OpenRoundFilter(label='Open')
+
+
+class ReviewerLeaderboardFilterForm(forms.ModelForm):
+    """
+    Form to "clean" a list of User objects to their PKs.
+
+    The Reviewer Leaderboard table is a list of User objects, however we also want
+    the ability to filter down to N Users (reviewers).  Django filter is converting
+    the selected PKs to User objects, however we can't filter a User QuerySet
+    with User objects.  So this form converts back to a list of User PKs using
+    the clean_reviewer method.
+    """
+    class Meta:
+        fields = ["id"]
+        model = User
+
+    def clean_reviewer(self):
+        return [u.id for u in self.cleaned_data['reviewer']]
+
+
+class ReviewerLeaderboardFilter(filters.FilterSet):
+    query = filters.CharFilter(field_name='full_name', lookup_expr="icontains", widget=forms.HiddenInput)
+
+    reviewer = Select2ModelMultipleChoiceFilter(
+        field_name='pk',
+        label='Reviewers',
+        queryset=get_reviewers,
+    )
+    funds = Select2ModelMultipleChoiceFilter(
+        field_name='submission__page',
+        label='Funds',
+        queryset=get_used_funds,
+    )
+    rounds = Select2ModelMultipleChoiceFilter(
+        field_name='submission__round',
+        label='Rounds',
+        queryset=get_used_rounds,
+    )
+
+    class Meta:
+        fields = [
+            'reviewer',
+            'funds',
+            'rounds',
+        ]
+        form = ReviewerLeaderboardFilterForm
+        model = User
+
+
+class ReviewerLeaderboardTable(tables.Table):
+    full_name = tables.LinkColumn('funds:submissions:reviewer_leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer", attrs={'td': {'class': 'title'}})
+
+    class Meta:
+        model = User
+        fields = [
+            'full_name',
+            'total',
+            'ninety_days',
+            'this_year',
+            'last_year',
+        ]
+        order_by = ('-total',)
+        attrs = {'class': 'all-reviews-table'}
+        empty_text = _('No reviews available')
+
+
+class ReviewerLeaderboardDetailTable(tables.Table):
+    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission", attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
+
+    class Meta:
+        model = Review
+        fields = [
+            'title',
+            'recommendation',
+            'created_at',
+        ]
+        order_by = ('-created_at',)
+        attrs = {'class': 'all-reviews-table'}
+        empty_text = _('No reviews available')

@@ -4,6 +4,8 @@ from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     ReminderDeleteView,
+    ReviewerLeaderboard,
+    ReviewerLeaderboardDetail,
     RevisionCompareView,
     RevisionListView,
     RoundListView,
@@ -42,6 +44,10 @@ submission_urls = ([
     path('flagged/', include([
         path('', SubmissionUserFlaggedView.as_view(), name="flagged"),
         path('staff/', SubmissionStaffFlaggedView.as_view(), name="staff_flagged"),
+    ])),
+    path('reviews/', include([
+        path('', ReviewerLeaderboard.as_view(), name="reviewer_leaderboard"),
+        path('<int:pk>/', ReviewerLeaderboardDetail.as_view(), name="reviewer_leaderboard_detail"),
     ])),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),

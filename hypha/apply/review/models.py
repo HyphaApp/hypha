@@ -101,6 +101,9 @@ class ReviewQuerySet(models.QuerySet):
     def by_partners(self):
         return self.submitted()._by_group(PARTNER_GROUP_NAME)
 
+    def by_user(self, user):
+        return self.submitted().filter(author__reviewer=user).order_by('-created_at')
+
     def staff_score(self):
         return self.by_staff().score()
 

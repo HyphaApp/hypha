@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -30,6 +30,8 @@ from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
+    CommunityReviewerFactory,
+    PartnerFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
@@ -1214,3 +1216,31 @@ class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
         reminder = ReminderFactory()
         response = self.get_page(reminder)
         self.assertEqual(response.status_code, 403)
+
+
+@override_settings(ROOT_URLCONF='hypha.apply.urls')
+class TestReviewerLeaderboard(TestCase):
+    def test_applicant_cannot_access_reviewer_leaderboard(self):
+        self.client.force_login(ApplicantFactory())
+        response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_community_reviewer_cannot_access_reviewer_leaderboard(self):
+        self.client.force_login(CommunityReviewerFactory())
+        response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_partner_cannot_access_reviewer_leaderboard(self):
+        self.client.force_login(PartnerFactory())
+        response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_reviewer_cannot_access_leader_board(self):
+        self.client.force_login(ReviewerFactory())
+        response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_access_leaderboard(self):
+        self.client.force_login(StaffFactory())
+        response = self.client.get('/apply/submissions/reviews/', follow=True, secure=True)
+        self.assertEqual(response.status_code, 200)
