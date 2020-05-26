@@ -96,7 +96,6 @@ from .workflow import (
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
-    active_statuses,
     review_statuses,
 )
 
