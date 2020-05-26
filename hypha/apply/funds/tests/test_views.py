@@ -812,7 +812,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         def assert_create_review_not_displayed(submission):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
-            pattern = re.compile(rf'\s*Add a review\s*')
+            pattern = re.compile(r'\s*Add a review\s*')
             buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
             self.assertEqual(len(buttons), 0)
 
