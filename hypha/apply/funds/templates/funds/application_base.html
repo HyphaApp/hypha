@@ -21,6 +21,12 @@
 {% endif %}
 
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+    {% if page.end_date %}
+        <p class="listing__deadline">
+            <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+            <span>Next deadline: {{ page.end_date }}</span>
+        </p>
+    {% endif %}
     {% if not page.open_round and not page.start_date and not request.is_preview %}
         {# the page has no open rounds and we arent on a round page #}
         <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
