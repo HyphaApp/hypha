@@ -1,7 +1,6 @@
 -r requirements.txt
 
 django-debug-toolbar==2.2
-django-extensions==2.2.9
 factory_boy==2.12
 flake8==3.8.2
 isort==4.3.21
