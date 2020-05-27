@@ -14,7 +14,6 @@ django-filter==2.2.0
 django-fsm==2.7.0
 django-heroku==0.3.1
 django-hijack==2.1.10
-django-otp==0.7.5 # Temporarily pin to an older version, later breaks django-two-factor-auth.
 django-pagedown==2.0.3
 django-pwned-passwords==4.1.0
 django-redis==4.11.0
@@ -22,7 +21,7 @@ django-referrer-policy==1.0
 django-storages==1.9.1
 django-tables2==2.2.1
 django-tinymce4-lite==1.8.0
-django-two-factor-auth==1.9.1
+django-two-factor-auth==1.11.0
 django-webpack-loader==0.7.0
 django_select2==7.2.2
 djangorestframework==3.9.2
