@@ -31,6 +31,7 @@ gunicorn==20.0.4
 mailchimp3==3.0.14
 mistune==0.8.4
 more-itertools==8.3.0
+phonenumberslite==8.12.4
 Pillow==6.2.2
 psycopg2==2.8.5
 reportlab==3.5.34
