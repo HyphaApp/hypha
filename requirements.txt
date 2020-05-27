@@ -33,7 +33,7 @@ mailchimp3==3.0.14
 mistune==0.8.4
 more-itertools==8.3.0
 Pillow==6.2.2
-psycopg2==2.7.3.1
+psycopg2==2.8.5
 reportlab==3.5.34
 social_auth_app_django==3.1.0
 tomd==0.1.3
