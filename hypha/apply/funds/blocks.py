@@ -1,7 +1,7 @@
 import json
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.core import blocks
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField

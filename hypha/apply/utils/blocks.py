@@ -4,7 +4,7 @@ import bleach
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.core.blocks import StaticBlock, StreamBlock, StreamValue
 

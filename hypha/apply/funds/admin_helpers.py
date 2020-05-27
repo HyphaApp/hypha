@@ -4,7 +4,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.modeladmin.forms import ParentChooserForm
 from wagtail.contrib.modeladmin.helpers import (
     ButtonHelper,

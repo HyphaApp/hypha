@@ -1,7 +1,7 @@
 from django.contrib.admin.utils import unquote
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages import get_valid_next_url_from_request

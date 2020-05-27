@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.functional import SimpleLazyObject, cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2MultipleWidget
 from wagtail.core.blocks import BooleanBlock, CharBlock, ChooserBlock, TextBlock
 from wagtail.core.utils import resolve_model_string

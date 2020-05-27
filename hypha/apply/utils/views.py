@@ -4,7 +4,7 @@ from django.forms.models import ModelForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views import defaults
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
