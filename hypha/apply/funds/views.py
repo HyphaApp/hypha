@@ -137,7 +137,7 @@ class UpdateReviewersMixin:
             action = None
             if submission.status == INITIAL_STATE:
                 # Automatically transition the application to "Internal review".
-                action = submission.workflow.stepped_phases[1][0].name
+                action = submission.workflow.stepped_phases[2][0].name
             elif submission.status == 'proposal_discussion':
                 # Automatically transition the proposal to "Internal review".
                 action = 'proposal_internal_review'

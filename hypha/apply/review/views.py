@@ -187,13 +187,13 @@ def review_workflow_actions(request, submission):
     action = None
     if submission.status == INITIAL_STATE:
         # Automatically transition the application to "Internal review".
-        action = submission_stepped_phases[1][0].name
+        action = submission_stepped_phases[2][0].name
     elif submission.status == 'proposal_discussion':
         # Automatically transition the proposal to "Internal review".
         action = 'proposal_internal_review'
-    elif submission.status == submission_stepped_phases[1][0].name and submission.reviews.count() > 1:
+    elif submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() > 1:
         # Automatically transition the application to "Ready for discussion".
-        action = submission_stepped_phases[2][0].name
+        action = submission_stepped_phases[3][0].name
     elif submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() > 1:
         # Automatically transition the application to "Ready for discussion".
         action = 'ext_post_external_review_discussion'
