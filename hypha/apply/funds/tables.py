@@ -6,6 +6,7 @@ import django_tables2 as tables
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -57,6 +58,10 @@ def render_title(record):
     except AttributeError:
         title = record.submission.title
     return textwrap.shorten(title, width=30, placeholder="...")
+
+
+def render_reviewer_link(record):
+    return f"{reverse('funds:submissions:list')}?reviewers={record.id}"
 
 
 class SubmissionsTable(tables.Table):
@@ -446,7 +451,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
 
 
 class StaffAssignmentsTable(tables.Table):
-    full_name = tables.LinkColumn('funds:submissions:list', orderable=True, verbose_name="Staff", attrs={'td': {'class': 'title'}})
+    full_name = tables.Column(linkify=render_reviewer_link, orderable=True, verbose_name="Staff", attrs={'td': {'class': 'title'}})
 
     class Meta:
         model = User
