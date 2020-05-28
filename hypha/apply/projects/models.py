@@ -32,7 +32,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import StreamField

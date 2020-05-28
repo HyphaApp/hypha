@@ -7,7 +7,7 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from addressfield.fields import AddressField
 from hypha.apply.funds.models import ApplicationSubmission

@@ -3,7 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.core.fields import StreamField
 

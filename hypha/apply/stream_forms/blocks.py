@@ -9,7 +9,7 @@ from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_bleach.templatetags.bleach_tags import bleach_value
 from unidecode import unidecode
 from wagtail.core.blocks import (

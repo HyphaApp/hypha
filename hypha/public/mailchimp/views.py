@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import RedirectView
 from django.views.generic.edit import FormMixin

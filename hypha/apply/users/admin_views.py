@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
 from wagtail.admin.auth import any_permission_required
 from wagtail.admin.forms.search import SearchForm

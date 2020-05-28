@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,

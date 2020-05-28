@@ -9,7 +9,7 @@ from django.db.models import F, Q
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
 from wagtail.core.models import Page
 
