@@ -72,6 +72,7 @@ from .forms import (
 from .models import (
     ApplicationRevision,
     ApplicationSubmission,
+    AssignedReviewers,
     LabBase,
     Reminder,
     ReviewerRole,
@@ -96,6 +97,7 @@ from .workflow import (
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
+    active_statuses,
     review_statuses,
 )
 
@@ -1236,6 +1238,12 @@ class ReviewerLeaderboardDetail(SingleTableMixin, ListView):
         return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
 
 
+class RoleColumn(tables.Column):
+    def render(self, value, record):
+        return AssignedReviewers.objects.filter(reviewer=record, role=self.verbose_name,
+            submission__status__in=active_statuses).count()
+
+
 @method_decorator(staff_required, name='dispatch')
 class StaffAssignments(SingleTableMixin, ListView):
     model = User
@@ -1247,20 +1255,20 @@ class StaffAssignments(SingleTableMixin, ListView):
         # Only list staff.
         return self.model.objects.staff()
 
-    # def get_table_data(self):
-    #     reviewer_roles = ReviewerRole.objects.all().order_by('order')
-    #     reviewer_role_id_0 = reviewer_roles.first().id
-    #     reviewer_role_id_1 = reviewer_roles.last().id
-    #     return super().get_table_data().annotate(
-    #         role0=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_0)),
-    #         role1=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_1)),
-    #     )
+    def get_table_data(self):
+        reviewer_roles = ReviewerRole.objects.all().order_by('order')
+        reviewer_role_id_0 = reviewer_roles.first().id
+        reviewer_role_id_1 = reviewer_roles.last().id
+        return super().get_table_data().annotate(
+            role0=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_0)),
+            role1=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_1)),
+        )
 
     def get_table_kwargs(self):
         reviewer_roles = ReviewerRole.objects.all().order_by('order')
         extra_columns = []
         for i, role in enumerate(reviewer_roles):
-            extra_columns.append((f'role{i}', tables.Column(verbose_name=role)))
+            extra_columns.append((f'role{i}', RoleColumn(verbose_name=role)))
         return {
             'extra_columns': extra_columns,
         }
