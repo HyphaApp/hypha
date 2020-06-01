@@ -1240,8 +1240,9 @@ class ReviewerLeaderboardDetail(SingleTableMixin, ListView):
 
 class RoleColumn(tables.Column):
     def render(self, value, record):
-        return AssignedReviewers.objects.filter(reviewer=record, role=self.verbose_name,
-            submission__status__in=active_statuses).count()
+        return AssignedReviewers.objects.filter(
+            reviewer=record, role=self.verbose_name, submission__status__in=active_statuses
+        ).count()
 
 
 @method_decorator(staff_required, name='dispatch')
