@@ -1257,13 +1257,14 @@ class StaffAssignments(SingleTableMixin, ListView):
         return self.model.objects.staff()
 
     def get_table_data(self):
+        table_data = super().get_table_data()
         reviewer_roles = ReviewerRole.objects.all().order_by('order')
-        reviewer_role_id_0 = reviewer_roles.first().id
-        reviewer_role_id_1 = reviewer_roles.last().id
-        return super().get_table_data().annotate(
-            role0=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_0)),
-            role1=Count('assignedreviewers', filter=Q(assignedreviewers__role_id=reviewer_role_id_1)),
-        )
+        for data in table_data:
+            for i, role in enumerate(reviewer_roles):
+                # Only setting column name with dummy value 0.
+                # Actual value will be set in RoleColumn render method.
+                setattr(data, f'role{i}', 0)
+        return table_data
 
     def get_table_kwargs(self):
         reviewer_roles = ReviewerRole.objects.all().order_by('order')
