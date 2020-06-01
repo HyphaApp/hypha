@@ -1,10 +1,11 @@
 {% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags %}<!doctype html>
+{% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{% block title_prefix %}{% if request.site.site_name %}{{ request.site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
+        <title>{% block title_prefix %}{% if current_site.site_name %}{{ current_site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
         {% block feedlinks %}{% endblock %}
 
@@ -31,12 +32,12 @@
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:site" content="@{{ settings.utils.SocialMediaSettings.twitter_handle }}" />
         <meta name="twitter:title" content="{{ page.title }}" />
-        <meta name="twitter:description" content="{{ page|social_text:request.site }}">
+        <meta name="twitter:description" content="{{ page|social_text:current_site }}">
         {% if page.social_image  %}
         {% image page.social_image width-320 as social_img %}
-        <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ request.site.root_url }}{% endif %}{{ social_img.url }}">
+        <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
         {% else %}
-        <meta name="twitter:image" content="{{ request.site.root_url }}{% static 'images/otf_social.jpg' %}">
+        <meta name="twitter:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}">
         {% endif %}
 
         <!--facebook opengraph tags-->
@@ -45,11 +46,11 @@
         <meta property="og:url" content="{{ page.url }}" />
         <meta property="og:title" content="{{ page.title }}" />
         {% if page.social_image %}
-        <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ request.site.root_url }}{% endif %}{{ social_img.url }}" />
+        <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}" />
         {% else %}
-        <meta property="og:image" content="{{ request.site.root_url }}{% static 'images/otf_social.jpg' %}" />
+        <meta property="og:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}" />
         {% endif %}
-        <meta property="og:description" content="{{ page|social_text:request.site }}" />
+        <meta property="og:description" content="{{ page|social_text:current_site }}" />
         <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
 
         <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
@@ -110,7 +111,7 @@
                     </div>
 
                     <section class="header__menus header__menus--desktop">
-                        {% cache 3600 navigation__primary request.site %}
+                        {% cache 3600 navigation__primary current_site %}
                             {% primarynav %}
                         {% endcache %}
 
@@ -139,7 +140,7 @@
                                 </button>
                             </div>
                         </div>
-                        {% cache 3600 navigation__primary request.site %}
+                        {% cache 3600 navigation__primary current_site %}
                             {% primarynav %}
                         {% endcache %}
                     </section>

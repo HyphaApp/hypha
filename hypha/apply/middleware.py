@@ -1,3 +1,5 @@
+from wagtail.core.models import Site
+
 from .home.models import ApplyHomePage
 
 
@@ -7,7 +9,8 @@ def apply_url_conf_middleware(get_response):
     # in functionality. Login and Logout are included with the global package
     # of urls
     def middleware(request):
-        homepage = request.site.root_page.specific
+        site = Site.find_for_request(request)
+        homepage = site.root_page.specific
         if isinstance(homepage, ApplyHomePage):
             request.urlconf = 'hypha.apply.urls'
 

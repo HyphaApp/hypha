@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DetailView, UpdateView
+from wagtail.core.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
@@ -95,7 +96,7 @@ class BatchDeterminationCreateView(CreateView):
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
         kwargs['action'] = self.get_action()
-        kwargs['site'] = self.request.site
+        kwargs['site'] = Site.find_for_request(self.request)
         kwargs.pop('instance')
         return kwargs
 
@@ -224,7 +225,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         return HttpResponseRedirect(self.determination.get_absolute_url())
 
     def get_context_data(self, **kwargs):
-        determination_messages = DeterminationMessageSettings.for_site(self.request.site)
+        site = Site.find_for_request(self.request)
+        determination_messages = DeterminationMessageSettings.for_site(site)
 
         return super().get_context_data(
             submission=self.submission,
@@ -240,7 +242,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
         kwargs['action'] = self.request.GET.get('action')
-        kwargs['site'] = self.request.site
+        kwargs['site'] = Site.find_for_request(self.request)
         return kwargs
 
     def get_success_url(self):
@@ -443,7 +445,8 @@ class DeterminationEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        determination_messages = DeterminationMessageSettings.for_site(self.request.site)
+        site = Site.find_for_request(self.request)
+        determination_messages = DeterminationMessageSettings.for_site(site)
 
         return super().get_context_data(
             submission=self.submission,
@@ -459,7 +462,7 @@ class DeterminationEditView(UpdateView):
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
         kwargs['action'] = self.request.GET.get('action')
-        kwargs['site'] = self.request.site
+        kwargs['site'] = Site.find_for_request(self.request)
         kwargs['edit'] = True
         return kwargs
 

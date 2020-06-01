@@ -26,7 +26,7 @@
             </div>
 
             <section class="header__menus header__menus--desktop">
-                {% cache 3600 navigation__primary request.site %}
+                {% cache 3600 navigation__primary wagtail_site %}
                     {% primarynav %}
                 {% endcache %}
 
@@ -50,7 +50,7 @@
                         </button>
                     </div>
                 </div>
-                {% cache 3600 navigation__primary request.site %}
+                {% cache 3600 navigation__primary wagtail_site %}
                     {% primarynav %}
                 {% endcache %}
             </section>
