@@ -81,7 +81,7 @@
             .attr('title', 'Copies all the questions and user input to the clipboard in plain text.');
         var $application_form = $('.application-form');
         $button.clone().css({'display': 'block', 'margin-left': 'auto'}).insertBefore($application_form);
-        $button.insertAfter($application_form.find('.link--button-secondary').last());
+        $button.css({'margin-left': '20px'}).insertAfter($application_form.find('button').last());
 
         $('.js-clipboard-button').on('click', function (e) {
             e.preventDefault();
