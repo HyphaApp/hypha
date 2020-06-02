@@ -6,10 +6,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import PermissionDenied
-from django.db.models import Avg, Count, F, FloatField, Q, Sum
-from django.db.models.functions import Cast
+from django.db.models import Count, F, Q
 from django.http import FileResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -1169,7 +1167,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
-        submission_values = self.get_submission_values()
+        submission_values = self.object_list.value()
         count_values = submission_values.get('value__count')
         total_value = intcomma(submission_values.get('value__sum'))
         average_value = intcomma(round(submission_values.get('value__avg')))
@@ -1181,15 +1179,6 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
             total_value=total_value,
             average_value=average_value,
             **kwargs,
-        )
-
-    def get_submission_values(self):
-        return self.object_list.annotate(
-            value=Cast(KeyTextTransform('value', 'form_data'), output_field=FloatField())
-        ).aggregate(
-            Count('value'),
-            Avg('value'),
-            Sum('value'),
         )
 
 
