@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with open('export_submissions.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-            writer.writerow(['Submission ID', 'Submission title', 'Submission author', 'Submission e-mail', 'Submission value', 'Submission duration', 'Submission stage', 'Submission phase', 'Submission screening', 'Submission date', 'Submission region', 'Submission country', 'Submission focus', 'Round/Lab/Fellowship'])
+            writer.writerow(['Submission ID', 'Submission title', 'Submission author', 'Submission e-mail', 'Submission value', 'Submission duration', 'Submission reapplied', 'Submission stage', 'Submission phase', 'Submission screening', 'Submission date', 'Submission region', 'Submission country', 'Submission focus', 'Round/Lab/Fellowship'])
             for submission in ApplicationSubmission.objects.all():
                 submission_region = ''
                 submission_country = ''
@@ -31,6 +31,8 @@ class Command(BaseCommand):
                                 submission_country = answer
                             elif name == 'Focus':
                                 submission_focus = answer
+                            elif 'or received funding' in name:
+                                submission_reapplied = answer
 
                 if submission.round:
                     submission_type = submission.round
@@ -42,4 +44,4 @@ class Command(BaseCommand):
                 except KeyError:
                     submission_value = 0
 
-                writer.writerow([submission.id, submission.title, submission.full_name, submission.email, submission_value, submission.duration, submission.stage, submission.phase, submission.screening_status, submission.submit_time.strftime('%Y-%m-%d'), submission_region, submission_country, submission_focus, submission_type])
+                writer.writerow([submission.id, submission.title, submission.full_name, submission.email, submission_value, submission.duration, submission_reapplied, submission.stage, submission.phase, submission.screening_status, submission.submit_time.strftime('%Y-%m-%d'), submission_region, submission_country, submission_focus, submission_type])
