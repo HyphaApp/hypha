@@ -420,12 +420,12 @@ class ReviewerLeaderboardTable(tables.Table):
         model = User
         fields = [
             'full_name',
-            'total',
             'ninety_days',
             'this_year',
             'last_year',
+            'total',
         ]
-        order_by = ('-total',)
+        order_by = ('-ninety_days',)
         attrs = {'class': 'all-reviews-table'}
         empty_text = _('No reviews available')
 
