@@ -68,6 +68,8 @@
     </form>
 </div>
 
-{% include "funds/includes/batch_update_lead_form.html" %}
-{% include "funds/includes/batch_update_reviewer_form.html" %}
-{% include "funds/includes/batch_progress_form.html" %}
+{% if use_batch_actions %}
+    {% include "funds/includes/batch_update_lead_form.html" %}
+    {% include "funds/includes/batch_update_reviewer_form.html" %}
+    {% include "funds/includes/batch_progress_form.html" %}
+{% endif %}

@@ -98,6 +98,37 @@ from .workflow import (
 )
 
 
+class SubmissionStatsMixin:
+    def get_context_data(self, **kwargs):
+        submissions = ApplicationSubmission.objects.all()
+        submission_undetermined_count = submissions.undetermined().count()
+        review_my_count = submissions.reviewed_by(self.request.user).count()
+
+        submission_value = submissions.current().value()
+        submission_sum = intcomma(submission_value.get('value__sum'))
+        submission_count = submission_value.get('value__count')
+
+        submission_accepted_value = submissions.current_accepted().value()
+        submission_accepted_sum = intcomma(submission_accepted_value.get('value__sum'))
+        submission_accepted_count = submission_accepted_value.get('value__count')
+
+        reviews = Review.objects.all()
+        review_count = reviews.count()
+        review_my_score = reviews.by_user(self.request.user).score()
+
+        return super().get_context_data(
+            submission_undetermined_count=submission_undetermined_count,
+            review_my_count=review_my_count,
+            submission_sum=submission_sum,
+            submission_count=submission_count,
+            submission_accepted_count=submission_accepted_count,
+            submission_accepted_sum=submission_accepted_sum,
+            review_count=review_count,
+            review_my_score=review_my_score,
+            **kwargs,
+        )
+
+
 class UpdateReviewersMixin:
     def set_status_after_reviewers_assigned(self, submission):
         # Check if all internal reviewers have been selected.
@@ -1113,7 +1144,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
 
 @method_decorator(cache_page(60), name='dispatch')
 @method_decorator(staff_required, name='dispatch')
-class SubmissionResultView(FilterView):
+class SubmissionResultView(SubmissionStatsMixin, FilterView):
     template_name = 'funds/submissions_result.html'
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''

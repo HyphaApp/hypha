@@ -1,0 +1,23 @@
+<div class="stat-block">
+    <div class="stat-block__item">
+        <h5>Amounts</h5>
+        <table>
+            <tr><th>Applied</th><th>Accepted</th></tr>
+            <tr><td>${{ submission_sum|default:"0" }}</td><td>${{ submission_accepted_sum|default:"0" }}</td></tr>
+        </table>
+    </div>
+    <div class="stat-block__item">
+        <h5>Submissions</h5>
+        <table>
+            <tr><th>Applied</th><th>Accepted</th><th>Pending</th></tr>
+            <tr><td>{{ submission_count|default:"0" }}</td><td>{{ submission_accepted_count|default:"0" }}</td><td>{{ submission_undetermined_count|default:"0" }}</td></tr>
+        </table>
+    </div>
+    <div class="stat-block__item">
+        <h5>Reviews</h5>
+        <table>
+            <tr><th>All</th><th>You</th><th>Your avg. score</th></tr>
+            <tr><td>{{ review_count|default:"0" }}</td><td>{{ review_my_count|default:"0" }}</td><td>{{ review_my_score|floatformat:"0"|default:"0" }}</td></tr>
+        </table>
+    </div>
+</div>
