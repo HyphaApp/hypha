@@ -1,6 +1,5 @@
 from copy import copy
 from datetime import timedelta
-from statistics import mean
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -1164,59 +1163,23 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        # For rounds we want all submissions but otherwise only current.
-        if self.request.GET.get('round'):
-            return self.filterset_class._meta.model.objects.all()
-        else:
-            return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
-        total_value = '____'
-        average_value = '____'
-        if self.request.GET:
-            submission_values = self.get_submission_values()
-            total_value = intcomma(submission_values.get('total'))
-            average_value = intcomma(submission_values.get('average'))
+        submission_values = self.object_list.value()
+        count_values = submission_values.get('value__count')
+        total_value = intcomma(submission_values.get('value__sum'))
+        average_value = intcomma(round(submission_values.get('value__avg')))
 
         return super().get_context_data(
             search_term=search_term,
             filter_action=self.filter_action,
+            count_values=count_values,
             total_value=total_value,
             average_value=average_value,
             **kwargs,
         )
-
-    def get_submission_values(self):
-        import re
-        values = []
-        total = 0
-        average = 0
-        for submission in self.object_list:
-            try:
-                value = submission.data('value')
-            except KeyError:
-                value = 0
-            else:
-                value = str(value)
-                value = re.sub(r'[.,]\d{2}$', '', value)
-                value = value.replace('USD', '')
-                value = value.replace('$', '')
-                value = value.replace('-', '')
-                value = value.replace(',', '')
-                value = value.replace('.', '')
-                try:
-                    value = int(value)
-                except (TypeError, ValueError):
-                    value = 0
-            finally:
-                values.append(value)
-
-        if values:
-            total = sum(values)
-            average = round(mean(values))
-
-        return {'total': total, 'average': average}
 
 
 @method_decorator(staff_required, name='dispatch')
