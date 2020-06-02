@@ -1,4 +1,3 @@
-from django.contrib.humanize.templatetags.humanize import intcomma
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -21,39 +20,7 @@ from hypha.apply.projects.tables import (
     PaymentRequestsDashboardTable,
     ProjectsDashboardTable,
 )
-from hypha.apply.review.models import Review
 from hypha.apply.utils.views import ViewDispatcher
-
-
-class SubmissionStatsMixin:
-    def get_context_data(self, **kwargs):
-        submissions = ApplicationSubmission.objects.all()
-        submission_undetermined_count = submissions.undetermined().count()
-        review_my_count = submissions.reviewed_by(self.request.user).count()
-
-        submission_value = submissions.current().value()
-        submission_sum = intcomma(submission_value.get('value__sum'))
-        submission_count = submission_value.get('value__count')
-
-        submission_accepted_value = submissions.current_accepted().value()
-        submission_accepted_sum = intcomma(submission_accepted_value.get('value__sum'))
-        submission_accepted_count = submission_accepted_value.get('value__count')
-
-        reviews = Review.objects.all()
-        review_count = reviews.count()
-        review_my_score = reviews.by_user(self.request.user).score()
-
-        return super().get_context_data(
-            submission_undetermined_count=submission_undetermined_count,
-            review_my_count=review_my_count,
-            submission_sum=submission_sum,
-            submission_count=submission_count,
-            submission_accepted_count=submission_accepted_count,
-            submission_accepted_sum=submission_accepted_sum,
-            review_count=review_count,
-            review_my_score=review_my_score,
-            **kwargs,
-        )
 
 
 class MySubmissionContextMixin:
@@ -90,7 +57,7 @@ class MyFlaggedMixin:
         }
 
 
-class AdminDashboardView(SubmissionStatsMixin, MyFlaggedMixin, TemplateView):
+class AdminDashboardView(MyFlaggedMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -184,7 +151,7 @@ class AdminDashboardView(SubmissionStatsMixin, MyFlaggedMixin, TemplateView):
         }
 
 
-class ReviewerDashboardView(SubmissionStatsMixin, MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
+class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/reviewer_dashboard.html'
 
     def get(self, request, *args, **kwargs):
