@@ -1,5 +1,4 @@
 from django.http import Http404, HttpResponsePermanentRedirect
-
 from wagtail.core.models import Site
 
 from hypha.apply.home.models import ApplyHomePage
