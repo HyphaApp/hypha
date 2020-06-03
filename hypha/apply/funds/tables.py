@@ -6,6 +6,7 @@ import django_tables2 as tables
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -14,14 +15,14 @@ from django_tables2.utils import A
 from wagtail.core.models import Page
 
 from hypha.apply.categories.models import MetaTerm
-from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
-from hypha.apply.funds.workflow import STATUSES, get_review_active_statuses
 from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
+from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import Select2MultiCheckboxesWidget
+from .workflow import STATUSES, get_review_active_statuses
 
 User = get_user_model()
 
@@ -57,6 +58,10 @@ def render_title(record):
     except AttributeError:
         title = record.submission.title
     return textwrap.shorten(title, width=30, placeholder="...")
+
+
+def render_reviewer_link(record):
+    return f"{reverse('funds:submissions:list')}?reviewers={record.id}"
 
 
 class SubmissionsTable(tables.Table):
@@ -443,3 +448,15 @@ class ReviewerLeaderboardDetailTable(tables.Table):
         order_by = ('-created_at',)
         attrs = {'class': 'all-reviews-table'}
         empty_text = _('No reviews available')
+
+
+class StaffAssignmentsTable(tables.Table):
+    full_name = tables.Column(linkify=render_reviewer_link, orderable=True, verbose_name="Staff", attrs={'td': {'class': 'title'}})
+
+    class Meta:
+        model = User
+        fields = [
+            'full_name',
+        ]
+        attrs = {'class': 'all-reviews-table'}
+        empty_text = _('No staff available')

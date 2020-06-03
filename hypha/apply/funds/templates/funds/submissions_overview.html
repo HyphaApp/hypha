@@ -15,6 +15,9 @@
             {% if request.user.is_apply_staff %}
             <div class="tabs">
                 <div class="tabs__container">
+                    <a class="tab__item tab__item--right" href="{% url 'apply:submissions:staff_assignments' %}">
+                        Staff assignments
+                    </a>
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
                         Reviews
                     </a>

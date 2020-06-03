@@ -1,6 +1,7 @@
 from copy import copy
 from datetime import timedelta
 
+import django_tables2 as tables
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
@@ -71,8 +72,10 @@ from .forms import (
 from .models import (
     ApplicationRevision,
     ApplicationSubmission,
+    AssignedReviewers,
     LabBase,
     Reminder,
+    ReviewerRole,
     RoundBase,
     RoundsAndLabs,
 )
@@ -85,6 +88,7 @@ from .tables import (
     ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
+    StaffAssignmentsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
@@ -93,8 +97,11 @@ from .workflow import (
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
+    active_statuses,
     review_statuses,
 )
+
+User = get_user_model()
 
 
 class SubmissionStatsMixin:
@@ -1224,9 +1231,46 @@ class ReviewerLeaderboardDetail(SingleTableMixin, ListView):
     template_name = 'funds/reviewer_leaderboard_detail.html'
 
     def get_context_data(self, **kwargs):
-        User = get_user_model()
         obj = User.objects.get(pk=self.kwargs.get('pk'))
         return super().get_context_data(object=obj, **kwargs)
 
     def get_table_data(self):
         return super().get_table_data().filter(author__reviewer_id=self.kwargs.get('pk')).select_related('submission')
+
+
+class RoleColumn(tables.Column):
+    def render(self, value, record):
+        return AssignedReviewers.objects.filter(
+            reviewer=record, role=self.verbose_name, submission__status__in=active_statuses
+        ).count()
+
+
+@method_decorator(staff_required, name='dispatch')
+class StaffAssignments(SingleTableMixin, ListView):
+    model = User
+    table_class = StaffAssignmentsTable
+    table_pagination = False
+    template_name = 'funds/staff_assignments.html'
+
+    def get_queryset(self):
+        # Only list staff.
+        return self.model.objects.staff()
+
+    def get_table_data(self):
+        table_data = super().get_table_data()
+        reviewer_roles = ReviewerRole.objects.all().order_by('order')
+        for data in table_data:
+            for i, role in enumerate(reviewer_roles):
+                # Only setting column name with dummy value 0.
+                # Actual value will be set in RoleColumn render method.
+                setattr(data, f'role{i}', 0)
+        return table_data
+
+    def get_table_kwargs(self):
+        reviewer_roles = ReviewerRole.objects.all().order_by('order')
+        extra_columns = []
+        for i, role in enumerate(reviewer_roles):
+            extra_columns.append((f'role{i}', RoleColumn(verbose_name=role)))
+        return {
+            'extra_columns': extra_columns,
+        }
