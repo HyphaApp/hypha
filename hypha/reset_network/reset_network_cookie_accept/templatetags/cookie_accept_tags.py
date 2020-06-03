@@ -1,5 +1,4 @@
 from django import template
-
 from wagtail.core.models import Site
 
 from hypha.reset_network.reset_network_cookie_accept.models import (
