@@ -27,7 +27,7 @@ django-webpack-loader==0.7.0
 django_select2==7.2.2
 djangorestframework==3.9.2
 djangorestframework-api-key==1.4.1
-django==2.2.11
+django==2.2.13
 gunicorn==20.0.4
 mailchimp3==3.0.14
 mistune==0.8.4
