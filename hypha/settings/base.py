@@ -162,7 +162,6 @@ MIDDLEWARE = [
 
     'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
-    'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
     'hypha.apply.middleware.apply_url_conf_middleware',

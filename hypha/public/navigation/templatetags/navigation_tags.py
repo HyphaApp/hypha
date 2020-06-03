@@ -1,4 +1,5 @@
 from django import template
+from wagtail.core.models import Site
 
 from hypha.public.navigation.models import NavigationSettings
 
@@ -9,8 +10,9 @@ register = template.Library()
 @register.inclusion_tag('navigation/primarynav.html', takes_context=True)
 def primarynav(context):
     request = context['request']
-    site = context.get('PUBLIC_SITE', request.site)
-    apply_site = context.get('APPLY_SITE', request.site)
+    site_from_request = Site.find_for_request(request)
+    site = context.get('PUBLIC_SITE', site_from_request)
+    apply_site = context.get('APPLY_SITE', site_from_request)
     return {
         'primarynav': NavigationSettings.for_site(site).primary_navigation,
         'request': request,
