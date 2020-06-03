@@ -1,5 +1,7 @@
 from django.http import Http404, HttpResponsePermanentRedirect
 
+from wagtail.core.models import Site
+
 from hypha.apply.home.models import ApplyHomePage
 from hypha.reset_network.reset_network_home.models import ResetNetworkHomePage
 
@@ -11,7 +13,8 @@ def redirect_apply_homepage_middleware(get_response):
         try:
             current_url = '{scheme}://{host}{path}'.format(scheme=request.scheme, host=request.get_host(),
                                                            path=request.path)
-            current_root_page = request.site.root_page.specific
+            site = Site.find_for_request(request)
+            current_root_page = site.root_page.specific
             if isinstance(current_root_page, ApplyHomePage) and current_url == current_root_page.get_full_url():
                 return HttpResponsePermanentRedirect(ResetNetworkHomePage.objects.first().get_url())
         except Exception as e:
