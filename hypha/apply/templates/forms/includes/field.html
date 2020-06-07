@@ -11,6 +11,7 @@
                 <span class="form__required">*</span>
             {% endif %}
         </label>
+    {% elif field.field.only_input %}
     {% else %}
         <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
             <span>{{ field.label }}</span>
@@ -21,11 +22,17 @@
     {% endif %}
 
     {% if field.help_text %}
+        {% if field.field.only_input %}
+        {% else %}
         <p class="form__help">{{ field.help_text|safe }}</p>
+        {% endif %}
     {% endif %}
 
     {% if field.field.help_link %}
+        {% if field.field.only_input %}
+        {% else %}
         <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">See help guide for more information.<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
+        {% endif %}
     {% endif %}
 
     <div class="form__item">
