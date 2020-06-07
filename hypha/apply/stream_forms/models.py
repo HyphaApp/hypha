@@ -1,4 +1,5 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
+import copy
 from collections import OrderedDict
 
 from wagtail.contrib.forms.models import AbstractForm
@@ -9,6 +10,7 @@ from .blocks import (
     FormFieldBlock,
     GroupToggleBlock,
     GroupToggleEndBlock,
+    MultiInputCharFieldBlock,
     TextFieldBlock,
 )
 from .forms import BlockFieldWrapper, PageStreamBaseForm
@@ -65,7 +67,18 @@ class BaseStreamForm:
                     is_in_group = True
                 if isinstance(block, TextFieldBlock):
                     field_from_block.word_limit = struct_value.get('word_limit')
-                form_fields[struct_child.id] = field_from_block
+                if isinstance(block, MultiInputCharFieldBlock):
+                    inputs = struct_value.get('number_of_inputs')
+                    for i in range(inputs):
+                        form_fields[struct_child.id + '_' + str(i)] = field_from_block
+                        if i != 0:
+                            field_from_block.only_input = True
+                            field_from_block.required = False
+                            field_from_block.initial = None
+                        else:
+                            field_from_block = copy.copy(field_from_block)
+                else:
+                    form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):
                 # Group toogle end block is used only to group fields and not used in actual form.
                 # Todo: Use streamblock to create nested form field blocks, a more elegant method to group form fields.

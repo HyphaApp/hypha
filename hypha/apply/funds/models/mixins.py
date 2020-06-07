@@ -7,6 +7,7 @@ from hypha.apply.stream_forms.blocks import (
     GroupToggleBlock,
     ImageFieldBlock,
     MultiFileFieldBlock,
+    MultiInputCharFieldBlock,
     UploadableMediaBlock,
 )
 from hypha.apply.utils.blocks import SingleIncludeMixin
@@ -215,18 +216,33 @@ class AccessFormData:
 
     def serialize(self, field_id):
         field = self.field(field_id)
-        data = self.data(field_id)
+        if isinstance(field.block, MultiInputCharFieldBlock):
+            data = self.get_multi_inputs_answer(field)
+        else:
+            data = self.data(field_id)
         return field.render(context={
             'serialize': True,
             'data': data,
         })
+
+    def get_multi_inputs_answer(self, field):
+        number_of_inputs = field.value.get('number_of_inputs')
+        answers = [
+            self.data(field.id + '_' + str(i))
+            for i in range(number_of_inputs)
+        ]
+        data = ', '.join(filter(None, answers))
+        return data
 
     def render_answer(self, field_id, include_question=False):
         try:
             field = self.field(field_id)
         except UnusedFieldException:
             return '-'
-        data = self.data(field_id)
+        if isinstance(field.block, MultiInputCharFieldBlock):
+            data = self.get_multi_inputs_answer(field)
+        else:
+            data = self.data(field_id)
         # Some migrated content have empty address.
         if not data:
             return '-'
