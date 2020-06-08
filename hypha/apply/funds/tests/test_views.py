@@ -40,7 +40,7 @@ from hypha.apply.utils.testing import make_request
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import ApplicationRevision, ApplicationSubmission
-from ..views import SubmissionDetailSimplifiedView
+from ..views import SubmissionDetailSimplifiedView, SubmissionDetailView
 from .factories import CustomFormFieldsFactory
 
 
@@ -431,6 +431,29 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         # Phase: ready-for-determination, draft determination
         DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
         assert_view_determination_not_displayed(submission)
+
+    def test_cant_see_application_draft_status(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory(status='draft')
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = StaffFactory()
+
+        with self.assertRaises(Http404):
+            SubmissionDetailView.as_view()(request, pk=submission.pk)
+
+    def test_applicant_can_see_application_draft_status(self):
+        factory = RequestFactory()
+        user = ApplicantFactory()
+        submission = ApplicationSubmissionFactory(status='draft', user=user)
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f'/submission/{submission.pk}')
+        request.user = user
+
+        response = SubmissionDetailView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):

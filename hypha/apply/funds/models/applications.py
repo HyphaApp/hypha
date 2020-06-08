@@ -19,6 +19,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -356,10 +357,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # Overriding serve method to pass submission id to get_form method
             copy_open_submission = request.GET.get('open_call_submission')
             if request.method == 'POST':
+                draft = request.POST.get('draft', False)
                 form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
 
                 if form.is_valid():
-                    form_submission = self.process_form_submission(form)
+                    form_submission = self.process_form_submission(form, draft=draft)
                     return self.render_landing_page(request, form_submission, *args, **kwargs)
             else:
                 form = self.get_form(page=self, user=request.user, submission_id=copy_open_submission)
@@ -440,6 +442,24 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     def open_round(self):
         return self.live
+
+    def serve(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
+            draft = request.POST.get('draft', False)
+            if form.is_valid():
+                form_submission = SubmittableStreamForm.process_form_submission(self, form, draft=draft)
+                return self.render_landing_page(request, form_submission, *args, **kwargs)
+        else:
+            form = self.get_form(page=self, user=request.user)
+
+        context = self.get_context(request)
+        context['form'] = form
+        return TemplateResponse(
+            request,
+            self.get_template(request),
+            context
+        )
 
 
 class RoundsAndLabsQueryset(PageQuerySet):

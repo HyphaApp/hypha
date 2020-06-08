@@ -18,7 +18,7 @@ from hypha.apply.users.groups import (
     STAFF_GROUP_NAME,
 )
 
-from ..workflow import WORKFLOWS
+from ..workflow import DRAFT_STATE, WORKFLOWS
 
 REVIEW_GROUPS = [
     STAFF_GROUP_NAME,
@@ -65,14 +65,22 @@ class SubmittableStreamForm(AbstractStreamForm):
     def get_submission_class(self):
         return self.submission_class
 
-    def process_form_submission(self, form):
+    def process_form_submission(self, form, draft=False):
         if not form.user.is_authenticated:
             form.user = None
-        return self.get_submission_class().objects.create(
-            form_data=form.cleaned_data,
-            form_fields=self.get_defined_fields(),
-            **self.get_submit_meta_data(user=form.user),
-        )
+        if draft:
+            return self.get_submission_class().objects.create(
+                form_data=form.cleaned_data,
+                form_fields=self.get_defined_fields(),
+                **self.get_submit_meta_data(user=form.user),
+                status=DRAFT_STATE,
+            )
+        else:
+            return self.get_submission_class().objects.create(
+                form_data=form.cleaned_data,
+                form_fields=self.get_defined_fields(),
+                **self.get_submit_meta_data(user=form.user),
+            )
 
     def get_submit_meta_data(self, **kwargs):
         return kwargs
@@ -95,13 +103,14 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
         # Hook in to notify about new applications
-        messenger(
-            MESSAGES.NEW_SUBMISSION,
-            request=request,
-            user=form_submission.user,
-            source=form_submission,
-        )
-        return super().render_landing_page(request, form_submission=None, *args, **kwargs)
+        if not form_submission.status == DRAFT_STATE:
+            messenger(
+                MESSAGES.NEW_SUBMISSION,
+                request=request,
+                user=form_submission.user,
+                source=form_submission,
+            )
+        return super().render_landing_page(request, form_submission, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),

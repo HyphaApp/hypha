@@ -45,6 +45,7 @@ from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflow import (
     COMMUNITY_REVIEW_PHASES,
     DETERMINATION_RESPONSE_PHASES,
+    DRAFT_STATE,
     INITIAL_STATE,
     PHASES,
     PHASES_MAPPING,
@@ -159,6 +160,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             Avg('value'),
             Sum('value'),
         )
+
+    def exclude_draft(self):
+        return self.exclude(status=DRAFT_STATE)
 
     def with_latest_update(self):
         activities = self.model.activities.rel.model
@@ -786,13 +790,21 @@ def log_status_update(sender, **kwargs):
     notify = kwargs['method_kwargs'].get('notify', True)
 
     if request and notify:
-        messenger(
-            MESSAGES.TRANSITION,
-            user=by,
-            request=request,
-            source=instance,
-            related=old_phase,
-        )
+        if kwargs['source'] == DRAFT_STATE:
+            messenger(
+                MESSAGES.NEW_SUBMISSION,
+                request=request,
+                user=by,
+                source=instance,
+            )
+        else:
+            messenger(
+                MESSAGES.TRANSITION,
+                user=by,
+                request=request,
+                source=instance,
+                related=old_phase,
+            )
 
         if instance.status in review_statuses:
             messenger(

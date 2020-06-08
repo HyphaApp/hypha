@@ -94,6 +94,7 @@ from .tables import (
     SummarySubmissionsTable,
 )
 from .workflow import (
+    DRAFT_STATE,
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
@@ -143,7 +144,7 @@ class UpdateReviewersMixin:
             action = None
             if submission.status == INITIAL_STATE:
                 # Automatically transition the application to "Internal review".
-                action = submission.workflow.stepped_phases[1][0].name
+                action = submission.workflow.stepped_phases[2][0].name
             elif submission.status == 'proposal_discussion':
                 # Automatically transition the proposal to "Internal review".
                 action = 'proposal_internal_review'
@@ -186,7 +187,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current().for_table(self.request.user)
+        return self.filterset_class._meta.model.objects.exclude_draft().current().for_table(self.request.user)
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
@@ -703,6 +704,8 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        if submission.status == DRAFT_STATE and not request.user == submission.user:
+            raise Http404
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
@@ -731,6 +734,8 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
         # Reviewers may sometimes be applicants as well.
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -751,6 +756,8 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         partner_has_access = submission.partners.filter(pk=request.user.pk).exists()
         if not partner_has_access:
             raise PermissionDenied
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -768,6 +775,8 @@ class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, De
         # Only allow community reviewers in submission with a community review state.
         if not submission.community_review:
             raise PermissionDenied
+        if submission.status == DRAFT_STATE:
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -938,7 +947,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 user=self.request.user,
                 source=self.object,
             )
-        elif revision:
+        elif revision and not self.object.status == DRAFT_STATE:
             messenger(
                 MESSAGES.APPLICANT_EDIT,
                 request=self.request,
@@ -957,7 +966,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 transition.target,
                 self.request.user,
                 request=self.request,
-                notify=not (revision or submitting_proposal),  # Use the other notification
+                notify=not (revision or submitting_proposal) or self.object.status == DRAFT_STATE,  # Use the other notification
             )
 
         return HttpResponseRedirect(self.get_success_url())

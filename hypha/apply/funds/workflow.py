@@ -190,10 +190,25 @@ Concept = Stage('Concept', False)
 
 Proposal = Stage('Proposal', True)
 
+DRAFT_STATE = 'draft'
 
 INITIAL_STATE = 'in_discussion'
 
 SingleStageDefinition = [
+    {
+        DRAFT_STATE: {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Request,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
@@ -293,6 +308,20 @@ SingleStageDefinition = [
 ]
 
 SingleStageExternalDefinition = [
+    {
+        DRAFT_STATE: {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': RequestExt,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
@@ -423,6 +452,20 @@ SingleStageExternalDefinition = [
 
 
 SingleStageCommunityDefinition = [
+    {
+        DRAFT_STATE: {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': RequestCom,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {
@@ -577,6 +620,20 @@ SingleStageCommunityDefinition = [
 
 
 DoubleStageDefinition = [
+    {
+        DRAFT_STATE: {
+            'transitions': {
+                INITIAL_STATE: {
+                    'display': 'Submit',
+                    'permissions': {UserPermissions.APPLICANT},
+                    'method': 'create_revision',
+                },
+            },
+            'display': 'Draft',
+            'stage': Concept,
+            'permissions': applicant_edit_permissions,
+        }
+    },
     {
         INITIAL_STATE: {
             'transitions': {

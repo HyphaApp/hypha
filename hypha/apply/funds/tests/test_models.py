@@ -202,7 +202,7 @@ class TestFormSubmission(TestCase):
         self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
 
-    def submit_form(self, page=None, email=None, name=None, user=AnonymousUser(), ignore_errors=False):
+    def submit_form(self, page=None, email=None, name=None, draft=None, user=AnonymousUser(), ignore_errors=False):
         page = page or self.round_page
 
         fields = page.forms.first().fields
@@ -214,6 +214,8 @@ class TestFormSubmission(TestCase):
                 data[field.id] = self.email if email is None else email
             if isinstance(field.block, FullNameBlock):
                 data[field.id] = self.name if name is None else name
+            if draft:
+                data['draft'] = 'Save Draft'
 
         request = make_request(user, data, method='post', site=self.site)
 
@@ -228,17 +230,31 @@ class TestFormSubmission(TestCase):
             self.assertNotContains(response, 'errors')
         return response
 
+    def test_workflow_and_draft(self):
+        self.submit_form(draft=True)
+        submission = ApplicationSubmission.objects.first()
+        first_phase = list(self.round_page.workflow.keys())[0]
+        self.assertEqual(submission.workflow, self.round_page.workflow)
+        self.assertEqual(submission.status, first_phase)
+
+    def test_workflow_and_draft_lab(self):
+        self.submit_form(page=self.lab_page, draft=True)
+        submission = ApplicationSubmission.objects.first()
+        first_phase = list(self.lab_page.workflow.keys())[0]
+        self.assertEqual(submission.workflow, self.lab_page.workflow)
+        self.assertEqual(submission.status, first_phase)
+
     def test_workflow_and_status_assigned(self):
         self.submit_form()
         submission = ApplicationSubmission.objects.first()
-        first_phase = list(self.round_page.workflow.keys())[0]
+        first_phase = list(self.round_page.workflow.keys())[1]
         self.assertEqual(submission.workflow, self.round_page.workflow)
         self.assertEqual(submission.status, first_phase)
 
     def test_workflow_and_status_assigned_lab(self):
         self.submit_form(page=self.lab_page)
         submission = ApplicationSubmission.objects.first()
-        first_phase = list(self.lab_page.workflow.keys())[0]
+        first_phase = list(self.lab_page.workflow.keys())[1]
         self.assertEqual(submission.workflow, self.lab_page.workflow)
         self.assertEqual(submission.status, first_phase)
 

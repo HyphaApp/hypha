@@ -2,9 +2,17 @@
 {% block header_modifier %}header--light-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small">
-    <h3>Thank you for your submission to the {{ ORG_LONG_NAME }}.</h3>
+	{% if form_submission.status == 'draft' %}
+		<h3>Your application is saved as a draft.</h3>
+	{% else %}
+    	<h3>Thank you for your submission to the {{ ORG_LONG_NAME }}.</h3>
+	{% endif %}
     <div class="rich-text">
-        <p>An e-mail with more information has been sent to the address you entered.</p>
+    	{% if form_submission.status == 'draft' %}
+    		<p>Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you.</p>
+    	{% else %}
+        	<p>An e-mail with more information has been sent to the address you entered.</p>
+        {% endif %}
         <p>If you do not receive an e-mail within 15 minutes please check your
 spam folder and contact {{ ORG_EMAIL|urlize }} for further assistance.</p>
         {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
