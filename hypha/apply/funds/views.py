@@ -887,7 +887,8 @@ class BaseSubmissionEditView(UpdateView):
         return super().get_context_data(buttons=self.buttons(), **kwargs)
 
     def get_form_class(self):
-        return self.object.get_form_class()
+        draft = self.request.POST.get('save', False)
+        return self.object.get_form_class(draft)
 
 
 @method_decorator(staff_required, name='dispatch')

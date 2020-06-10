@@ -342,14 +342,14 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         return form_parameters
 
     def get_form(self, *args, **kwargs):
-        form_class = self.get_form_class()
+        draft = kwargs.pop('draft', False)
+        form_class = self.get_form_class(draft)
         submission_id = kwargs.pop('submission_id', None)
         if submission_id:
             form_params = self.get_form_parameters(submission_id=submission_id)
         else:
             form_params = self.get_form_parameters()
         form_params.update(kwargs)
-
         return form_class(*args, **form_params)
 
     def serve(self, request, *args, **kwargs):
@@ -358,7 +358,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             copy_open_submission = request.GET.get('open_call_submission')
             if request.method == 'POST':
                 draft = request.POST.get('draft', False)
-                form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
+                form = self.get_form(request.POST, request.FILES, page=self, user=request.user, draft=draft)
 
                 if form.is_valid():
                     form_submission = self.process_form_submission(form, draft=draft)

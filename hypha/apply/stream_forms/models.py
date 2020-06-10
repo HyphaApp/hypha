@@ -3,6 +3,8 @@ from collections import OrderedDict
 
 from wagtail.contrib.forms.models import AbstractForm
 
+from hypha.apply.funds.blocks import ApplicationMustIncludeFieldBlock
+
 from .blocks import (
     FormFieldBlock,
     GroupToggleBlock,
@@ -42,7 +44,7 @@ class BaseStreamForm:
     def get_defined_fields(self):
         return self.form_fields
 
-    def get_form_fields(self):
+    def get_form_fields(self, draft=False):
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
@@ -50,9 +52,10 @@ class BaseStreamForm:
         for struct_child in field_blocks:
             block = struct_child.block
             struct_value = struct_child.value
-
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
+                if draft and not issubclass(block.__class__, ApplicationMustIncludeFieldBlock):
+                    field_from_block.required = False
                 field_from_block.help_link = struct_value.get('help_link')
                 field_from_block.group_number = group_counter if is_in_group else 1
                 if isinstance(block, GroupToggleBlock) and not is_in_group:
@@ -74,8 +77,8 @@ class BaseStreamForm:
 
         return form_fields
 
-    def get_form_class(self):
-        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields())
+    def get_form_class(self, draft=False):
+        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft))
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):
