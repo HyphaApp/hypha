@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from wagtail.contrib.forms.models import AbstractForm
 
-from hypha.apply.funds.blocks import EmailBlock, FullNameBlock, TitleBlock
+from hypha.apply.funds.blocks import ApplicationMustIncludeFieldBlock
 
 from .blocks import (
     FormFieldBlock,
@@ -54,7 +54,7 @@ class BaseStreamForm:
             struct_value = struct_child.value
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
-                if draft and not isinstance(block, (EmailBlock, FullNameBlock, TitleBlock)):
+                if draft and not issubclass(block.__class__, ApplicationMustIncludeFieldBlock):
                     field_from_block.required = False
                 field_from_block.help_link = struct_value.get('help_link')
                 field_from_block.group_number = group_counter if is_in_group else 1
