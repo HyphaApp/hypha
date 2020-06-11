@@ -82,7 +82,7 @@
                                     {% if request.user.is_apply_staff %}
                                         <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                                             {% csrf_token %}
-                                            <input type="submit" value="Unskip" class="btn data-block__action-link"></input>
+                                            <button type="submit" class="btn data-block__action-link">Unskip</button>
                                         </form>
                                     {% endif %}
                                 {% endif %}

@@ -30,13 +30,13 @@
     </button>
     {% endif %}
 
-    <input
+    <button
         class="button button--{% if invert %}white{% elif value == 'Delete' %}warning{% else %}primary{% endif %} button--top-space"
         id="{{ form.name }}-submit"
         name="{{ form_prefix }}{{ form.name }}"
         type="submit"
-        form="{{ form.name }}"
-        value="{{ value }}"
-    >
+        form="{{ form.name }}">
+        {{ value }}
+    </button>
 
 </form>

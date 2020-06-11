@@ -45,9 +45,9 @@
         {% endfor %}
         {% block form_buttons %}
             {% if form.draft_button_name %}
-                <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" formnovalidate/>
+                <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>Save Draft</button>
             {% endif %}
-            <input class="button button--submit button--top-space button--primary" type="submit" value="Send/Save" name="submit" />
+            <button class="button button--submit button--top-space button--primary" type="submit" name="submit">Send/Save</button>
         {% endblock %}
     </form>
     {% for type, message in message_templates.items %}
