@@ -76,6 +76,8 @@ class BaseStreamForm:
                             field_from_block.required = False
                             field_from_block.initial = None
                         else:
+                            field_from_block.show_add_button = True
+                            field_from_block.number_of_inputs = inputs
                             field_from_block = copy.copy(field_from_block)
                 else:
                     form_fields[struct_child.id] = field_from_block

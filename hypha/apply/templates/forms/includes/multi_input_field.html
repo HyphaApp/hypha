@@ -1,0 +1,26 @@
+<div class="form__item">
+    {% if field.initial %}
+        <div class="multi-input-field-show">
+            {{ field }}
+        </div>
+    {% else %}
+        <div class="multi-input-field-hidden">
+            {{ field }}
+        </div>
+    {% endif %}
+</div>
+
+{% block extra_css %}
+
+<style>
+    .multi-input-field-hidden {
+        display: none;
+    }
+    .multi-input-field-show {
+        display: block;
+        position: relative;
+        padding-bottom: 22px;
+    }
+</style>
+
+{% endblock %}

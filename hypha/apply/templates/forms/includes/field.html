@@ -1,4 +1,4 @@
-{% load util_tags %}
+{% load util_tags static %}
 
 {% with widget_type=field|widget_type field_type=field|field_type %}
 
@@ -39,8 +39,12 @@
         {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             <div class="{{ widget_type }}">
         {% endif %}
-
+            
         {{ field }}
+
+        {% if field.field.show_add_button %}
+            <button class="multi-input-add-btn" type="button">Add new item</button>
+        {% endif %}
 
         {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
         {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
