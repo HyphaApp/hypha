@@ -65,6 +65,34 @@ class LabBaseForm(AbstractRelatedForm):
     lab = ParentalKey('LabBase', related_name='forms')
 
 
+class AbstractRelatedDeterminationForm(Orderable):
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    form = models.ForeignKey(
+        'determinations.DeterminationForm', on_delete=models.PROTECT
+    )
+
+    panels = [
+        FilteredFieldPanel('form', filter_query={
+            'roundbasedeterminationform__isnull': True,
+        })
+    ]
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+    def __eq__(self, other):
+        try:
+            return self.fields == other.fields and self.sort_order == other.sort_order
+        except AttributeError:
+            return False
+
+    def __str__(self):
+        return self.form.name
+
+
 class AbstractRelatedReviewForm(Orderable):
     class Meta(Orderable.Meta):
         abstract = True
@@ -101,3 +129,15 @@ class RoundBaseReviewForm(AbstractRelatedReviewForm):
 
 class LabBaseReviewForm(AbstractRelatedReviewForm):
     lab = ParentalKey('LabBase', related_name='review_forms')
+
+
+class ApplicationBaseDeterminationForm(AbstractRelatedDeterminationForm):
+    application = ParentalKey('ApplicationBase', related_name='determination_forms')
+
+
+class RoundBaseDeterminationForm(AbstractRelatedDeterminationForm):
+    round = ParentalKey('RoundBase', related_name='determination_forms')
+
+
+class LabBaseDeterminationForm(AbstractRelatedDeterminationForm):
+    lab = ParentalKey('LabBase', related_name='determination_forms')

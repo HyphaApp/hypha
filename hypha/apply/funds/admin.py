@@ -8,6 +8,7 @@ from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
 from hypha.apply.review.admin import ReviewFormAdmin
 from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.apply.determinations.admin import DeterminationFormAdmin
 
 from .admin_helpers import (
     ApplicationFormButtonHelper,
@@ -70,6 +71,22 @@ class RoundAdmin(BaseRoundAdmin):
                 yield f'<a href="{url}">{review}</a>'
 
         urls = list(build_urls(obj.review_forms.all()))
+
+        if not urls:
+            return
+
+        return mark_safe('<br />'.join(urls))
+
+    def determination_forms(self, obj):
+        def build_urls(determinations):
+            for determination in determinations:
+                url = reverse(
+                    'determination_determinationform_modeladmin_edit',
+                    args=[determination.form.id]
+                )
+                yield f'<a href="{url}">{determination}</a>'
+
+        urls = list(build_urls(obj.determination_forms.all()))
 
         if not urls:
             return
@@ -185,6 +202,7 @@ class ApplyAdminGroup(ModelAdminGroup):
         RFPAdmin,
         ApplicationFormAdmin,
         ReviewFormAdmin,
+        DeterminationFormAdmin,
         CategoryAdmin,
         ScreeningStatusAdmin,
         ReviewerRoleAdmin,

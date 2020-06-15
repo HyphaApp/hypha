@@ -9,32 +9,24 @@ from wagtail.admin.edit_handlers import (
     MultiFieldPanel,
     ObjectList,
     TabbedInterface,
+    StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import RichTextField
+from wagtail.core.fields import RichTextField, StreamField
 
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.models.mixins import AccessFormData
 
-REJECTED = 0
-NEEDS_MORE_INFO = 1
-ACCEPTED = 2
-
-DETERMINATION_CHOICES = (
-    (REJECTED, _('Dismissed')),
-    (NEEDS_MORE_INFO, _('More information requested')),
-    (ACCEPTED, _('Approved')),
+from .blocks import (
+    DeterminationBlock,
+    DeterminationMessageBlock,
+    DeterminationCustomFormFieldsBlock,
+    SendNoticeBlock,
 )
-
-DETERMINATION_TO_OUTCOME = {
-    'rejected': REJECTED,
-    'accepted': ACCEPTED,
-    'more_info': NEEDS_MORE_INFO,
-}
-
-TRANSITION_DETERMINATION = {
-    name: DETERMINATION_TO_OUTCOME[type]
-    for name, type in DETERMINATION_OUTCOMES.items()
-}
+from .options import (
+    DETERMINATION_CHOICES,
+    ACCEPTED,
+    REJECTED,
+)
 
 
 class DeterminationQuerySet(models.QuerySet):
@@ -49,7 +41,52 @@ class DeterminationQuerySet(models.QuerySet):
         return self.submitted().filter(outcome__in=[ACCEPTED, REJECTED])
 
 
-class Determination(models.Model):
+class DeterminationFormFieldsMixin(models.Model):
+    class Meta:
+        abstract = True
+
+    form_fields = StreamField(DeterminationCustomFormFieldsBlock(), default=[])
+
+    @property
+    def determination_field(self):
+        return self._get_field_type(DeterminationBlock)
+
+    @property
+    def message_field(self):
+        return self._get_field_type(DeterminationMessageBlock)
+
+    @property
+    def send_notice_field(self):
+        return self._get_field_type(SendNoticeBlock)
+
+    def _get_field_type(self, block_type, many=False):
+        fields = list()
+        for field in self.form_fields:
+            try:
+                if isinstance(field.block, block_type):
+                    if many:
+                        fields.append(field)
+                    else:
+                        return field
+            except AttributeError:
+                pass
+        if many:
+            return fields
+
+
+class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
+    name = models.CharField(max_length=255)
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+
+class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
         on_delete=models.CASCADE,
@@ -96,8 +133,28 @@ class Determination(models.Model):
 
     @property
     def detailed_data(self):
-        from .views import get_form_for_stage
-        return get_form_for_stage(self.submission).get_detailed_response(self.data)
+        # from .views import get_form_for_stage
+        # import ipdb; ipdb.set_trace()
+        # return get_form_for_stage(self.submission).get_detailed_response(self.data)
+        return self.get_detailed_response()
+
+    def get_detailed_response(self):
+        titles = {1: 'Feedback'}
+        data = {}
+        model_fields = [
+            'Determination', 'Determination message', 'Send message to applicant'
+        ]
+        for group, title in titles.items():
+            data.setdefault(group, {'title': title, 'questions': list()})
+
+        for field_id, value in self.raw_data.items():
+            label = self.field(field_id).value.get('field_label')
+            if label in model_fields:
+                continue
+            data[1]['questions'].append(
+                (label, str(value))
+            )
+        return data
 
 
 @register_setting

@@ -4,16 +4,22 @@ from django.core.exceptions import NON_FIELD_ERRORS
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.utils.fields import RichTextField
-
-from .models import (
+from hypha.apply.stream_forms.forms import StreamBaseForm
+from .options import (
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
+)
+from .models import (
     Determination,
     DeterminationFormSettings,
 )
 from .utils import determination_actions
 
 User = get_user_model()
+
+
+class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
+    pass
 
 
 class BaseDeterminationForm:
@@ -61,7 +67,6 @@ class BaseDeterminationForm:
         data = {}
         for group, title in cls.titles.items():
             data.setdefault(group, {'title': title, 'questions': list()})
-
         for name, field in cls.base_fields.items():
             try:
                 value = saved_data[name]
@@ -72,6 +77,102 @@ class BaseDeterminationForm:
                 data[field.group]['questions'].append((field.label, str(value)))
 
         return data
+
+
+class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
+    draft_button_name = "save draft"
+
+    class Meta:
+        model = Determination
+        fields = ['outcome', 'message', 'submission', 'author', 'data', 'send_notice']
+
+        widgets = {
+            'outcome': forms.HiddenInput(),
+            'message': forms.HiddenInput(),
+            'submission': forms.HiddenInput(),
+            'author': forms.HiddenInput(),
+            'send_notice': forms.HiddenInput(),
+            'data': forms.HiddenInput(),
+        }
+
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': "You have already created a determination for this submission",
+            }
+        }
+
+    def __init__(self, *args, submission, user=None, edit=False, initial={}, instance=None, **kwargs):
+        initial.update(submission=submission.id)
+        initial.update(author=user.id)
+        if instance:
+            for key, value in instance.data.items():
+                if key not in self._meta.fields:
+                    initial[key] = value
+
+        super().__init__(*args, initial=initial, instance=instance, **kwargs)
+
+        for field in self._meta.widgets:
+            self.fields[field].disabled = True
+
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+
+        if self.draft_button_name in self.data:
+            for field in self.fields.values():
+                field.required = False
+
+        if edit:
+            self.fields.pop('outcome')
+            self.draft_button_name = None
+
+    def clean_outcome(self):
+        # Enforce outcome as an int
+        return int(self.cleaned_data['outcome'])
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['data'] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        self.instance.send_notice = (
+            self.cleaned_data[self.instance.send_notice_field.id]
+            if self.instance.send_notice_field else False
+        )
+        self.instance.message = self.cleaned_data[self.instance.message_field.id]
+        self.instance.outcome = self.cleaned_data[self.instance.determination_field.id]
+        self.instance.is_draft = self.draft_button_name in self.data
+        # Old review forms do not have the requred visability field.
+        # This will set visibility to PRIVATE by default.
+        self.instance.data = self.cleaned_data['data']
+
+        if not self.instance.is_draft:
+            # Capture the revision against which the user was reviewing
+            self.instance.revision = self.instance.submission.live_revision
+        return super().save(commit)
+
+    def outcome_choices_for_phase(self, submission, user):
+        """
+        Outcome choices correspond to Phase transitions.
+        We need to filter out non-matching choices.
+        i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
+        """
+        available_choices = set()
+        choices = dict(self.fields['outcome'].choices)
+
+        for transition_name in determination_actions(user, submission):
+            try:
+                determination_type = TRANSITION_DETERMINATION[transition_name]
+            except KeyError:
+                pass
+            else:
+                available_choices.add((determination_type, choices[determination_type]))
+
+        return available_choices
 
 
 class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
@@ -361,7 +462,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 )
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)
-
+        
         if edit:
             self.fields.pop('outcome')
             self.draft_button_name = None

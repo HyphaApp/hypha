@@ -1,6 +1,9 @@
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 
-from .models import DETERMINATION_TO_OUTCOME, TRANSITION_DETERMINATION
+from .options import (
+    DETERMINATION_TO_OUTCOME,
+    TRANSITION_DETERMINATION,
+)
 
 OUTCOME_TO_DETERMINATION = {
     v: k

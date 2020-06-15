@@ -42,7 +42,6 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
                     initial[key] = value
 
         super().__init__(*args, initial=initial, instance=instance, **kwargs)
-
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 

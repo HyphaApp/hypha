@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.core.files import File
 from django.utils.safestring import mark_safe
 
@@ -36,6 +37,9 @@ class AccessFormData:
     def raw_data(self):
         # Returns the data mapped by field id instead of the data stored using the must include
         # values
+        determination_class = apps.get_model('determinations.Determination')
+        if issubclass(self.__class__, determination_class):
+            self.form_data = self.data
         data = self.form_data.copy()
         for field_name, field_id in self.named_blocks.items():
             if field_id not in data:
