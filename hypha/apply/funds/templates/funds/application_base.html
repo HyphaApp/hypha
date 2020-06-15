@@ -42,7 +42,7 @@
 
             {% for field in form %}
                 {% if field.field %}
-                    {% if field.field.only_input %}
+                    {% if field.field.multi_input_field %}
                         {% include "forms/includes/multi_input_field.html" %}
                     {% else %}
                         {% include "forms/includes/field.html" with is_application=True %}
@@ -75,5 +75,5 @@
     {% if not show_all_group_fields %}
     <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
     {% endif %}
-    <script src="{% static 'js/apply/multi-input-add-button.js' %}"></script>
+    <script src="{% static 'js/apply/multi-input-fields.js' %}"></script>
 {% endblock %}

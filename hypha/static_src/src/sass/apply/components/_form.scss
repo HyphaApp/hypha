@@ -549,6 +549,10 @@
         max-width: 410px;
     }
 
+    .multi-input-field-hidden {
+        display: none;
+    }
+
     &__info-box {
         background-color: $color--light-blue-90;
         padding: 1rem;
