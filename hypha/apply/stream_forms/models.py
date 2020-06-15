@@ -72,8 +72,11 @@ class BaseStreamForm:
                     for index in range(number_of_inputs):
                         form_fields[struct_child.id + '_' + str(index)] = field_from_block
                         field_from_block.multi_input_id = struct_child.id
-                        if index == number_of_inputs - 1:
+                        field_from_block.add_button_text = struct_value.get('add_button_text')
+                        if index == number_of_inputs - 1:  # Add button after last input field
                             field_from_block.multi_input_add_button = True
+                            # Index for field until which fields will be visible to applicant.
+                            # Initially only the first field with id UUID_0 will be visible.
                             field_from_block.visibility_index = 0
                             field_from_block.max_index = index
                         if index != 0:

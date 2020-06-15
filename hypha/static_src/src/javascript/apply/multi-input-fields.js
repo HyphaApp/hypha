@@ -2,6 +2,11 @@
 
     'use strict';
 
+    // Visibility Index is set to 0 initially in the backend. But in case of edit application forms
+    // with multiple values already set, we need to update it. The visibility index helps
+    // to get the next field from the list of hidden inputs to be shown to an applicant on clicking the add button.
+    // For example, a total of 5 multiple inputs, 3 values are already set by applicant while creating a submission.
+    // On edit form, the visibility index should be updates so when the user clicks add, the 4th input should be displayed.
     $('.multi-input-add-btn').each(function () {
         var multiFieldId = $(this).data('multi-field-id');
         const multiMaxIndex = $(this).data('multi-max-index');
@@ -11,7 +16,7 @@
         if (multiVisibilityIndex >= 0) {
             $(this).data('multi-visibility-index', multiVisibilityIndex);
         }
-        else if (multiVisibilityIndex == -1) {
+        else if (multiVisibilityIndex === -1) {
             $(this).data('multi-visibility-index', multiMaxIndex);
         }
     });
