@@ -1,26 +1,7 @@
-<div class="form__item">
-    {% if field.initial %}
-        <div class="multi-input-field-show">
-            {{ field }}
-        </div>
-    {% else %}
-        <div class="multi-input-field-hidden">
-            {{ field }}
-        </div>
-    {% endif %}
+<div class="form__item {% if not field.initial %}multi-input-field-hidden{% endif %}" data-multi-field-for="{{ field.field.multi_input_id }}">
+    {{ field }}
 </div>
 
-{% block extra_css %}
-
-<style>
-    .multi-input-field-hidden {
-        display: none;
-    }
-    .multi-input-field-show {
-        display: block;
-        position: relative;
-        padding-bottom: 22px;
-    }
-</style>
-
-{% endblock %}
+{% if field.field.multi_input_add_button %}
+    <button class="link link--button link--button--narrow multi-input-add-btn" type="button" data-multi-field-id="{{ field.field.multi_input_id }}" data-multi-visibility-index="{{ field.field.visibility_index }}" data-multi-max-index="{{ field.field.max_index }}">Add new item</button>
+{% endif %}

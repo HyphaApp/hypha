@@ -68,17 +68,19 @@ class BaseStreamForm:
                 if isinstance(block, TextFieldBlock):
                     field_from_block.word_limit = struct_value.get('word_limit')
                 if isinstance(block, MultiInputCharFieldBlock):
-                    inputs = struct_value.get('number_of_inputs')
-                    for i in range(inputs):
-                        form_fields[struct_child.id + '_' + str(i)] = field_from_block
-                        if i != 0:
-                            field_from_block.only_input = True
+                    number_of_inputs = struct_value.get('number_of_inputs')
+                    for index in range(number_of_inputs):
+                        form_fields[struct_child.id + '_' + str(index)] = field_from_block
+                        field_from_block.multi_input_id = struct_child.id
+                        if index == number_of_inputs - 1:
+                            field_from_block.multi_input_add_button = True
+                            field_from_block.visibility_index = 0
+                            field_from_block.max_index = index
+                        if index != 0:
+                            field_from_block.multi_input_field = True
                             field_from_block.required = False
                             field_from_block.initial = None
-                        else:
-                            field_from_block.show_add_button = True
-                            field_from_block.number_of_inputs = inputs
-                            field_from_block = copy.copy(field_from_block)
+                        field_from_block = copy.copy(field_from_block)
                 else:
                     form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):

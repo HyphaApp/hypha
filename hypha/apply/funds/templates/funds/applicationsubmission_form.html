@@ -18,7 +18,7 @@
 
             {% for field in form %}
                 {% if field.field %}
-                    {% if field.field.only_input %}
+                    {% if field.field.multi_input_field %}
                         {% include "forms/includes/multi_input_field.html" %}
                     {% else %}
                         {% include "forms/includes/field.html" %}
@@ -39,5 +39,5 @@
 {% block extra_js %}
     <script src="{% static 'js/apply/list-input-files.js' %}"></script>
     <script src="{% static 'js/apply/tinymce-word-count.js' %}"></script>
-    <script src="{% static 'js/apply/multi-input-add-button.js' %}"></script>
+    <script src="{% static 'js/apply/multi-input-fields.js' %}"></script>
 {% endblock %}

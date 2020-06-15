@@ -1,4 +1,4 @@
-{% load util_tags static %}
+{% load util_tags %}
 
 {% with widget_type=field|widget_type field_type=field|field_type %}
 
@@ -11,7 +11,6 @@
                 <span class="form__required">*</span>
             {% endif %}
         </label>
-    {% elif field.field.only_input %}
     {% else %}
         <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
             <span>{{ field.label }}</span>
@@ -22,10 +21,7 @@
     {% endif %}
 
     {% if field.help_text %}
-        {% if field.field.only_input %}
-        {% else %}
         <p class="form__help">{{ field.help_text|safe }}</p>
-        {% endif %}
     {% endif %}
 
     {% if field.field.help_link %}
@@ -39,12 +35,8 @@
         {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             <div class="{{ widget_type }}">
         {% endif %}
-            
-        {{ field }}
 
-        {% if field.field.show_add_button %}
-            <button class="multi-input-add-btn" type="button">Add new item</button>
-        {% endif %}
+        {{ field }}
 
         {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
         {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
