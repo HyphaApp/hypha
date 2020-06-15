@@ -145,6 +145,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
 class MultiInputCharFieldBlock(CharFieldBlock):
     number_of_inputs = IntegerBlock(default=2, label=_('Max number of inputs'))
+    add_button_text = CharBlock(required=False, default=_('Add new item'))
 
     class Meta:
         label = _('Text field (single line) (multiple inputs)')
