@@ -244,14 +244,6 @@ class SystemMessagesSettings(BaseSetting):
         help_text='Mobil site logo (if not set default will be used)',
     )
 
-    salesforce_integration = models.BooleanField(
-        "Activate Salesforce Integration",
-        null=False,
-        blank=False,
-        default=False,
-        help_text='Activate Salesforce Integration?'
-    )
-
     footer_content = models.TextField(
         "Footer content",
         default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
@@ -269,7 +261,6 @@ class SystemMessagesSettings(BaseSetting):
     )
 
     panels = [
-        FieldPanel('salesforce_integration'),
         MultiFieldPanel([
             FieldPanel('site_logo_default'),
             FieldPanel('site_logo_mobile'),
