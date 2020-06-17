@@ -145,3 +145,11 @@ DEBUG_TOOLBAR_CONFIG = {
 WEBPACK_LOADER['DEFAULT'].update({
     'STATS_FILE': os.path.join(BASE_DIR, './hypha/static_compiled/app/webpack-stats.json'),
 })
+
+# Salesforce Integration
+if 'SALESFORCE_INTEGRATION' in env and env['SALESFORCE_INTEGRATION']:
+    try:
+        from .salesforce import *
+    except ImportError:
+        pass
+    DATABASES.update(SALESFORCE_DB)

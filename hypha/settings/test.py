@@ -17,3 +17,11 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
+
+# Salesforce Integration
+if 'SALESFORCE_INTEGRATION' in env and env['SALESFORCE_INTEGRATION']:
+    try:
+        from .salesforce import *
+    except ImportError:
+        pass
+    DATABASES.update(SALESFORCE_DB)
