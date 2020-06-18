@@ -39,11 +39,3 @@ if 'SENTRY_DSN' in env:
 if 'ON_HEROKU' in env:
     import django_heroku
     django_heroku.settings(locals())
-
-# Salesforce Integration
-if 'SALESFORCE_INTEGRATION' in env and env['SALESFORCE_INTEGRATION']:
-    try:
-        from .salesforce import *
-    except ImportError:
-        pass
-    DATABASES.update(SALESFORCE_DB)
