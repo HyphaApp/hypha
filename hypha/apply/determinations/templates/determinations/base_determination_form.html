@@ -52,6 +52,7 @@
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
+            <h1>message</h1>
             {{ message|bleach }}
         </div>
     {% endfor %}

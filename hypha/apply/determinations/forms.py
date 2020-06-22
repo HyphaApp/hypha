@@ -114,7 +114,9 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
-        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+        # FIXME need to find this field on runtime
+        # self.fields['48692ee2-a81f-4610-b8a8-943b293579b9'].choices = self.outcome_choices_for_phase(submission, user)
+        # self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
@@ -123,10 +125,6 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         if edit:
             self.fields.pop('outcome')
             self.draft_button_name = None
-
-    def clean_outcome(self):
-        # Enforce outcome as an int
-        return int(self.cleaned_data['outcome'])
 
     def clean(self):
         cleaned_data = super().clean()
@@ -144,7 +142,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
             if self.instance.send_notice_field else False
         )
         self.instance.message = self.cleaned_data[self.instance.message_field.id]
-        self.instance.outcome = self.cleaned_data[self.instance.determination_field.id]
+        self.instance.outcome = int(self.cleaned_data[self.instance.determination_field.id])
         self.instance.is_draft = self.draft_button_name in self.data
         # Old review forms do not have the requred visability field.
         # This will set visibility to PRIVATE by default.
@@ -462,7 +460,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                 )
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)
-        
+
         if edit:
             self.fields.pop('outcome')
             self.draft_button_name = None

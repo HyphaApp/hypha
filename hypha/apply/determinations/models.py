@@ -21,6 +21,7 @@ from .blocks import (
     DeterminationMessageBlock,
     DeterminationCustomFormFieldsBlock,
     SendNoticeBlock,
+    DeterminationMustIncludeFieldBlock
 )
 from .options import (
     DETERMINATION_CHOICES,
@@ -133,27 +134,23 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     @property
     def detailed_data(self):
-        # from .views import get_form_for_stage
-        # import ipdb; ipdb.set_trace()
-        # return get_form_for_stage(self.submission).get_detailed_response(self.data)
         return self.get_detailed_response()
 
     def get_detailed_response(self):
-        titles = {1: 'Feedback'}
         data = {}
-        model_fields = [
-            'Determination', 'Determination message', 'Send message to applicant'
-        ]
-        for group, title in titles.items():
-            data.setdefault(group, {'title': title, 'questions': list()})
-
-        for field_id, value in self.raw_data.items():
-            label = self.field(field_id).value.get('field_label')
-            if label in model_fields:
+        group = 0
+        for field in self.form_fields:
+            if issubclass(field.block.__class__, DeterminationMustIncludeFieldBlock):
                 continue
-            data[1]['questions'].append(
-                (label, str(value))
-            )
+            try:
+                value = self.data[field.id]
+            except KeyError:
+                group = group + 1
+                data.setdefault(group, {'title': field.value.source, 'questions': list()})
+            else:
+                data[group]['questions'].append(
+                    (field.value.get('field_label'), value)
+                )
         return data
 
 

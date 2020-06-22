@@ -30,7 +30,7 @@
     <h4>Determination message</h4>
     {{ determination.message|bleach }}
     {% for group in determination.detailed_data.values %}
-        <h4>{{ group.title }}</h4>
+        <h4>{{ group.title|bleach }}</h4>
         {% for question, answer in group.questions %}
             <h5>{{ question }}</h5>
             {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}

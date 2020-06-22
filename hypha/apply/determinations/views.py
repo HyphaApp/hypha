@@ -32,6 +32,7 @@ from .forms import (
 )
 from .models import (
     Determination,
+    DeterminationMessageSettings
 )
 from .utils import (
     can_create_determination,
@@ -112,13 +113,12 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return HttpResponseRedirect(self.determination.get_absolute_url())
 
     def get_context_data(self, **kwargs):
-        # site = Site.find_for_request(self.request)
-        # determination_messages = DeterminationMessageSettings.for_site(site)
+        site = Site.find_for_request(self.request)
+        determination_messages = DeterminationMessageSettings.for_site(site)
 
         return super().get_context_data(
             submission=self.submission,
-            # message_templates=determination_messages.get_for_stage(self.submission.stage.name)
-            message_templates={'accepted': '', 'rejected': '', 'more_info': ''},
+            message_templates=determination_messages.get_for_stage(self.submission.stage.name),
             **kwargs
         )
 
@@ -140,6 +140,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         form.instance.form_fields = self.get_defined_fields()
 
         super().form_valid(form)
+        import ipdb; ipdb.set_trace()
         if self.object.is_draft:
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
@@ -153,7 +154,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
             proposal_form = form.cleaned_data.get('proposal_form')
 
-            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
+            transition = transition_from_outcome(self.object.outcome, self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
@@ -164,7 +165,6 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     source=self.submission,
                     related_object=self.object,
                 )
-
             self.submission.perform_transition(
                 transition,
                 self.request.user,
@@ -456,10 +456,15 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
     raise_exception = True
 
     def get_context_data(self, **kwargs):
+        site = Site.find_for_request(self.request)
+        determination_messages = DeterminationMessageSettings.for_site(site)
+
         determination = self.get_object()
         return super().get_context_data(
             submission=determination.submission,
-            message_templates={'accepted': '', 'rejected': '', 'more_info': ''},
+            message_templates=determination_messages.get_for_stage(
+                determination.submission.stage.name
+            ),
             **kwargs
         )
 
