@@ -203,34 +203,12 @@ WSGI_APPLICATION = 'hypha.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
 
-if 'SALESFORCE_INTEGRATION' in env and env['SALESFORCE_INTEGRATION']:
-    DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            default=f"postgres:///{APP_NAME}"
-        ),
-        'salesforce': {
-            'ENGINE': 'salesforce.backend',
-            'CONSUMER_KEY': env['CONSUMER_KEY'],
-            'CONSUMER_SECRET': env['CONSUMER_SECRET'],
-            'USER': env['SALESFORCE_USER'],
-            'PASSWORD': env['SALESFORCE_PASSWORD'],
-            'HOST': env['SALESFORCE_LOGIN_URL']
-        }
-    }
-
-    SALESFORCE_QUERY_TIMEOUT = (30, 30)  # (connect timeout, data timeout)
-
-    DATABASE_ROUTERS = [
-        "salesforce.router.ModelRouter"
-    ]
-else:
-    DATABASES = {
-        'default': dj_database_url.config(
-            conn_max_age=600,
-            default=f"postgres:///{APP_NAME}"
-        )
-    }
+DATABASES = {
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        default=f"postgres:///{APP_NAME}"
+    )
+}
 
 
 # Cache
@@ -696,3 +674,25 @@ if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
 PROJECTS_AUTO_CREATE = False
 if env.get('PROJECTS_AUTO_CREATE', 'false').lower().strip() == 'true':
     PROJECTS_AUTO_CREATE = True
+
+
+# Salesforce integration
+
+if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
+    DATABASES = {
+        **DATABASES,
+        'salesforce': {
+            'ENGINE': 'salesforce.backend',
+            'CONSUMER_KEY': env.get('SALESFORCE_CONSUMER_KEY', ''),
+            'CONSUMER_SECRET': env.get('SALESFORCE_CONSUMER_SECRET', ''),
+            'USER': env.get('SALESFORCE_USER', ''),
+            'PASSWORD': env.get('SALESFORCE_PASSWORD', ''),
+            'HOST': env.get('SALESFORCE_LOGIN_URL', '')
+        }
+    }
+
+    SALESFORCE_QUERY_TIMEOUT = (30, 30)  # (connect timeout, data timeout)
+
+    DATABASE_ROUTERS = [
+        "salesforce.router.ModelRouter"
+    ]
