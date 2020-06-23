@@ -12,7 +12,7 @@
 node_modules/
 /npm-debug.log
 /.idea/
-sf.env
+salesforce.env
 
 # Distribution / packaging
 .Python

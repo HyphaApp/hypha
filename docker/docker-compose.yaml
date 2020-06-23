@@ -19,7 +19,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile.dev
     env_file: 
-      - sf.env
+      - salesforce.env
     ports:
       - 9001:9001
     volumes:
