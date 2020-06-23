@@ -139,6 +139,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     def get_detailed_response(self):
         data = {}
         group = 0
+        data.setdefault(group, {'title': None, 'questions': list()})
         for field in self.form_fields:
             if issubclass(field.block.__class__, DeterminationMustIncludeFieldBlock):
                 continue

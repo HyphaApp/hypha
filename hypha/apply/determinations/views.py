@@ -26,8 +26,6 @@ from hypha.apply.stream_forms.models import BaseStreamForm
 from .forms import (
     BatchConceptDeterminationForm,
     BatchProposalDeterminationForm,
-    ConceptDeterminationForm,
-    ProposalDeterminationForm,
     DeterminationModelForm,
 )
 from .models import (
@@ -61,8 +59,6 @@ def get_form_for_stages(submissions):
 def get_form_for_stage(submission, batch=False, edit=False):
     if batch:
         forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
-    else:
-        forms = [ConceptDeterminationForm, ProposalDeterminationForm]
     index = submission.workflow.stages.index(submission.stage)
     return forms[index]
 
@@ -129,8 +125,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
-        # kwargs['action'] = self.request.GET.get('action')
-        # kwargs['site'] = Site.find_for_request(self.request)
+        kwargs['action'] = self.request.GET.get('action')
         return kwargs
 
     def get_success_url(self):
@@ -140,7 +135,6 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         form.instance.form_fields = self.get_defined_fields()
 
         super().form_valid(form)
-        import ipdb; ipdb.set_trace()
         if self.object.is_draft:
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
@@ -153,8 +147,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 related=self.object,
             )
             proposal_form = form.cleaned_data.get('proposal_form')
-
-            transition = transition_from_outcome(self.object.outcome, self.submission)
+            transition = transition_from_outcome(int(self.object.outcome), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
@@ -478,6 +471,7 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
         kwargs['user'] = self.request.user
         kwargs['submission'] = determiantion.submission
         kwargs['edit'] = True
+        kwargs['action'] = self.request.GET.get('action')
         if self.object:
             kwargs['initial'] = self.object.data
         return kwargs

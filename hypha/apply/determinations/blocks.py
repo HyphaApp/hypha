@@ -1,28 +1,14 @@
-import json
-
 from django import forms
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.core.blocks import RichTextBlock
 
-from hypha.apply.review.options import (
-    NA,
-    PRIVATE,
-    RATE_CHOICE_NA,
-    RATE_CHOICES_DICT,
-    RECOMMENDATION_CHOICES,
-    VISIBILILTY_HELP_TEXT,
-    VISIBILITY,
-)
 from .options import (
     DETERMINATION_CHOICES,
-    TRANSITION_DETERMINATION,
 )
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
     CheckboxFieldBlock,
     DropdownFieldBlock,
-    OptionalFormFieldBlock,
     TextFieldBlock
 )
 from hypha.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
@@ -36,7 +22,7 @@ class DeterminationMustIncludeFieldBlock(MustIncludeFieldBlock):
 class DeterminationBlock(DeterminationMustIncludeFieldBlock):
     name = 'determination'
     description = 'Overall determination'
-    field_class = forms.ChoiceField
+    field_class = forms.TypedChoiceField
 
     class Meta:
         icon = 'pick'
@@ -50,7 +36,6 @@ class DeterminationBlock(DeterminationMustIncludeFieldBlock):
         data = int(context['data'])
         choices = dict(DETERMINATION_CHOICES)
         context['data'] = choices[data]
-
         return super().render(value, context)
 
 
