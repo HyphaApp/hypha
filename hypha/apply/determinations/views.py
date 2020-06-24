@@ -63,6 +63,17 @@ def get_form_for_stage(submission, batch=False, edit=False):
     return forms[index]
 
 
+def get_fields_for_stages(submissions):
+    forms_fields = [
+        get_fields_for_stage(submission)
+        for submission in submissions
+    ]
+    # import ipdb; ipdb.set_trace()
+    # if len(set(forms)) != 1:
+    #     raise ValueError('Submissions expect different forms - please contact admin')
+    return forms_fields[0]
+
+
 def get_fields_for_stage(submission):
     forms = submission.get_from_parent('determination_forms').all()
     index = submission.workflow.stages.index(submission.stage)
@@ -213,7 +224,9 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class BatchDeterminationCreateView(CreateView):
+class BatchDeterminationCreateView(BaseStreamForm, CreateView):
+    submission_form_class = DeterminationModelForm
+    model = Determination
     template_name = 'determinations/batch_determination_form.html'
 
     def dispatch(self, *args, **kwargs):
@@ -244,13 +257,14 @@ class BatchDeterminationCreateView(CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
+        kwargs['submission'] = None
         kwargs['action'] = self.get_action()
-        kwargs['site'] = Site.find_for_request(self.request)
+        # kwargs['site'] = Site.find_for_request(self.request)
         kwargs.pop('instance')
         return kwargs
 
-    def get_form_class(self):
-        return get_form_for_stages(self.get_submissions())
+    def get_defined_fields(self):
+        return get_fields_for_stages(self.get_submissions())
 
     def get_context_data(self, **kwargs):
         outcome = TRANSITION_DETERMINATION[self.get_action()]

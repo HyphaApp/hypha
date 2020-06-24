@@ -46,7 +46,8 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         }
 
     def __init__(self, *args, submission, action, user=None, edit=False, initial={}, instance=None, **kwargs):
-        initial.update(submission=submission.id)
+        if submission:
+            initial.update(submission=submission.id)
         initial.update(author=user.id)
         if instance:
             for key, value in instance.data.items():
@@ -376,7 +377,7 @@ class BaseProposalDeterminationForm(forms.Form):
     rationale.group = 4
 
 
-class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
+class BaseBatchDeterminationForm(DeterminationModelForm, forms.Form):
     submissions = forms.ModelMultipleChoiceField(
         queryset=ApplicationSubmission.objects.all(),
         widget=forms.ModelMultipleChoiceField.hidden_widget,
@@ -419,11 +420,11 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
 class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
     def __init__(self, *args, submissions, initial={}, **kwargs):
         initial.update(submissions=submissions.values_list('id', flat=True))
-        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
+        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, submission=None, **kwargs)
         self.fields['outcome'].widget = forms.HiddenInput()
 
         self.fields = self.apply_form_settings('concept', self.fields)
- 
+
 
 class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDeterminationForm):
     def __init__(self, *args, submissions, initial={}, **kwargs):
