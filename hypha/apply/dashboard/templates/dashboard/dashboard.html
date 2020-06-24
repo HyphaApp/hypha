@@ -28,24 +28,32 @@
             <a href="#submissions-awaiting-review" class="stat-block__item">
                 <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
                 <p class="stat-block__text">Submissions waiting for your review</p>
-                <div class="stat-block__view">View</div>
+                {% if awaiting_reviews.count %}
+                    <div class="stat-block__view">View</div>
+                {% endif %}
             </a>
             <a href="#active-projects" class="stat-block__item">
                 <p class="stat-block__number">{{ projects.count }}</p>
                 <p class="stat-block__text">Live projects under your management</p>
-                <div class="stat-block__view">View</div>
+                {% if projects.count %}
+                    <div class="stat-block__view">View</div>
+                {% endif %}
             </a>
             {% if not projects_to_approve.count is None%}
             <a href="#projects-awaiting-approval" class="stat-block__item">
                 <p class="stat-block__number">{{ projects_to_approve.count }}</p>
                 <p class="stat-block__text">Projects awaiting approval</p>
-                <div class="stat-block__view">View</div>
+                {% if projects_to_approve.count %}
+                    <div class="stat-block__view">View</div>
+                {% endif %}
             </a>
             {% endif %}
             <a href="#active-payment-requests" class="stat-block__item">
                 <p class="stat-block__number">{{ active_payment_requests.count }}</p>
                 <p class="stat-block__text">Requests for payment requiring your attention</p>
-                <div class="stat-block__view">View</div>
+                {% if active_payment_requests.count %}
+                    <div class="stat-block__view">View</div>
+                {% endif %}
             </a>
         </div>
     </div>
