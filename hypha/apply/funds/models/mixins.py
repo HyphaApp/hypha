@@ -214,10 +214,19 @@ class AccessFormData:
             if field_id not in self.named_blocks
         ]
 
+    def get_serialize_multi_inputs_answer(self, field):
+        number_of_inputs = field.value.get('number_of_inputs')
+        answers = [
+            self.data(field.id + '_' + str(i))
+            for i in range(number_of_inputs)
+        ]
+        data = ', '.join(filter(None, answers))
+        return data
+
     def serialize(self, field_id):
         field = self.field(field_id)
         if isinstance(field.block, MultiInputCharFieldBlock):
-            data = self.get_multi_inputs_answer(field)
+            data = self.get_serialize_multi_inputs_answer(field)
         else:
             data = self.data(field_id)
         return field.render(context={
