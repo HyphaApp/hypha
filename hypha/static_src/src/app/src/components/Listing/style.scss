@@ -3,11 +3,6 @@
     flex-grow: 3;
     transition: opacity $transition;
 
-    @include target-ie11 {
-        max-width: 390px;
-        width: 100%;
-    }
-
     &.is-blank {
         padding: 20px;
         text-align: center;
@@ -57,10 +52,6 @@
         }
 
         &.is-active {
-            @include target-edge {
-                margin-left: 8px;
-            }
-
             border-right: 2px solid $color--white;
             transition: border $transition;
         }
