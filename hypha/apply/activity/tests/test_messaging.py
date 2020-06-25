@@ -380,7 +380,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_ROOM=target_room,
     )
     @responses.activate
-    def test_round_slack_channel(self):
+    def test_fund_custom_slack_channel(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
         submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy')
         adapter = SlackAdapter()
@@ -390,7 +390,27 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertDictEqual(
             json.loads(responses.calls[0].request.body),
             {
-                'room': [self.target_room, '#dummy'],
+                'room': ['#dummy'],
+                'message': message,
+            }
+        )
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+    )
+    @responses.activate
+    def test_fund_multiple_custom_slack_channel(self):
+        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy1, dummy2')
+        adapter = SlackAdapter()
+        message = 'my message'
+        adapter.send_message(message, '', source=submission)
+        self.assertEqual(len(responses.calls), 1)
+        self.assertDictEqual(
+            json.loads(responses.calls[0].request.body),
+            {
+                'room': ['#dummy1', '#dummy2'],
                 'message': message,
             }
         )
