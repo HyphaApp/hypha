@@ -25,10 +25,7 @@
     {% endif %}
 
     {% if field.field.help_link %}
-        {% if field.field.only_input %}
-        {% else %}
         <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">See help guide for more information.<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
-        {% endif %}
     {% endif %}
 
     <div class="form__item">
