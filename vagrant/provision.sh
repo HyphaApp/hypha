@@ -9,10 +9,10 @@ VIRTUALENV_DIR=/home/vagrant/.virtualenvs/$PROJECT_NAME
 PYTHON=$VIRTUALENV_DIR/bin/python
 PIP=$VIRTUALENV_DIR/bin/pip
 
-# Upgrade to postgres 10
+# Upgrade postgres
 apt-get update -y
 apt-get remove -y --purge postgresql-*
-apt-get install -y postgresql-10 postgresql-client-10 postgresql-contrib-10
+apt-get install -y postgresql-12 postgresql-client-12 postgresql-contrib-12
 su - postgres -c "createuser -s vagrant"
 
 # Create database
@@ -46,6 +46,7 @@ chmod a+x $PROJECT_DIR/manage.py
 cat << EOF >> /home/vagrant/.bashrc
 export PYTHONPATH=$PROJECT_DIR
 export DJANGO_SETTINGS_MODULE=$MODULE_NAME.settings.dev
+export PGDATABASE=$MODULE_NAME
 
 alias dj="django-admin.py"
 alias djrun="dj runserver 0.0.0.0:8000"
