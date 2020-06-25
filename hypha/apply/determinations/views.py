@@ -38,11 +38,15 @@ from .utils import (
     has_final_determination,
     outcome_from_actions,
     transition_from_outcome,
+    determination_actions
 )
 from .options import (
     NEEDS_MORE_INFO,
     TRANSITION_DETERMINATION,
+    DETERMINATION_CHOICES
 )
+
+from .blocks import DeterminationBlock
 
 
 def get_form_for_stages(submissions):
@@ -81,6 +85,25 @@ def get_fields_for_stage(submission):
         return forms[index].form.form_fields
     except IndexError:
         return forms[0].form.form_fields
+
+
+def outcome_choices_for_phase(submission, user):
+    """
+    Outcome choices correspond to Phase transitions.
+    We need to filter out non-matching choices.
+    i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
+    """
+    available_choices = set()
+    choices = dict(DETERMINATION_CHOICES)
+    for transition_name in determination_actions(user, submission):
+        try:
+            determination_type = TRANSITION_DETERMINATION[transition_name]
+        except KeyError:
+            pass
+        else:
+            available_choices.add((determination_type, choices[determination_type]))
+
+    return available_choices
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -138,6 +161,17 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         kwargs['submission'] = self.submission
         kwargs['action'] = self.request.GET.get('action')
         return kwargs
+
+    def get_form_class(self):
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                outcome_choices = outcome_choices_for_phase(
+                    self.submission, self.request.user
+                )
+                form_fields[field_block.id].choices = outcome_choices
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
     def get_success_url(self):
         return self.submission.get_absolute_url()
@@ -489,6 +523,14 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
         if self.object:
             kwargs['initial'] = self.object.data
         return kwargs
+
+    def get_form_class(self):
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                form_fields.pop(field_block.id)
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
     def form_valid(self, form):
         super().form_valid(form)

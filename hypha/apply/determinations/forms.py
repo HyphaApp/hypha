@@ -58,16 +58,13 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
-        # TODO need to find this field on runtime
-        # self.fields['8ab49696-f8ee-4810-bb60-551c000127c9'].choices = self.outcome_choices_for_phase(submission, user)
-        # self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
+        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False
 
         if edit:
-            # TODO also need to pop the stream field for outcome
             self.fields.pop('outcome')
             self.draft_button_name = None
 
