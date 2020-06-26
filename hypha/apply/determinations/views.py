@@ -521,7 +521,7 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
         kwargs['edit'] = True
         kwargs['action'] = self.request.GET.get('action')
         if self.object:
-            kwargs['initial'] = self.object.data
+            kwargs['initial'] = self.object.form_data
         return kwargs
 
     def get_form_class(self):

@@ -1,6 +1,7 @@
 import bleach
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -100,7 +101,8 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
-    data = JSONField(blank=True)
+    data = JSONField(blank=True, default=dict)
+    form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
@@ -130,7 +132,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         return f'Determination for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.data)}>'
+        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
 
     @property
     def detailed_data(self):
@@ -144,7 +146,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
             if issubclass(field.block.__class__, DeterminationMustIncludeFieldBlock):
                 continue
             try:
-                value = self.data[field.id]
+                value = self.form_data[field.id]
             except KeyError:
                 group = group + 1
                 data.setdefault(group, {'title': field.value.source, 'questions': list()})

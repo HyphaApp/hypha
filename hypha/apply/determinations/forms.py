@@ -28,7 +28,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
 
     class Meta:
         model = Determination
-        fields = ['outcome', 'message', 'submission', 'author', 'data', 'send_notice']
+        fields = ['outcome', 'message', 'submission', 'author', 'send_notice']
 
         widgets = {
             'outcome': forms.HiddenInput(),
@@ -36,7 +36,6 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
             'submission': forms.HiddenInput(),
             'author': forms.HiddenInput(),
             'send_notice': forms.HiddenInput(),
-            'data': forms.HiddenInput(),
         }
 
         error_messages = {
@@ -46,19 +45,16 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         }
 
     def __init__(self, *args, submission, action, user=None, edit=False, initial={}, instance=None, **kwargs):
-        if submission:
-            initial.update(submission=submission.id)
+        initial.update(submission=submission.id)
         initial.update(author=user.id)
         if instance:
-            for key, value in instance.data.items():
+            for key, value in instance.form_data.items():
                 if key not in self._meta.fields:
                     initial[key] = value
         super().__init__(*args, initial=initial, instance=instance, **kwargs)
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
-
-        self.fields['outcome'].choices = self.outcome_choices_for_phase(submission, user)
 
         if self.draft_button_name in self.data:
             for field in self.fields.values():
@@ -70,7 +66,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
 
     def clean(self):
         cleaned_data = super().clean()
-        cleaned_data['data'] = {
+        cleaned_data['form_data'] = {
             key: value
             for key, value in cleaned_data.items()
             if key not in self._meta.fields
@@ -86,7 +82,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         self.instance.message = self.cleaned_data[self.instance.message_field.id]
         self.instance.outcome = int(self.cleaned_data[self.instance.determination_field.id])
         self.instance.is_draft = self.draft_button_name in self.data
-        self.instance.data = self.cleaned_data['data']
+        self.instance.form_data = self.cleaned_data['form_data']
         return super().save(commit)
 
     def outcome_choices_for_phase(self, submission, user):
