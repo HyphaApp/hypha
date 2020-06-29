@@ -24,8 +24,7 @@ from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 from hypha.apply.stream_forms.models import BaseStreamForm
 
 from .forms import (
-    BatchConceptDeterminationForm,
-    BatchProposalDeterminationForm,
+    BatchDeterminationForm,
     DeterminationModelForm,
 )
 from .models import (
@@ -49,32 +48,13 @@ from .options import (
 from .blocks import DeterminationBlock
 
 
-def get_form_for_stages(submissions):
-    forms = [
-        get_form_for_stage(submission, batch=True)
-        for submission in submissions
-    ]
-    if len(set(forms)) != 1:
-        raise ValueError('Submissions expect different forms - please contact admin')
-
-    return forms[0]
-
-
-def get_form_for_stage(submission, batch=False, edit=False):
-    if batch:
-        forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
-    index = submission.workflow.stages.index(submission.stage)
-    return forms[index]
-
-
 def get_fields_for_stages(submissions):
     forms_fields = [
         get_fields_for_stage(submission)
         for submission in submissions
     ]
-    # import ipdb; ipdb.set_trace()
-    # if len(set(forms)) != 1:
-    #     raise ValueError('Submissions expect different forms - please contact admin')
+    if not all(i == forms_fields[0] for i in forms_fields):
+        raise ValueError('Submissions expect different forms - please contact admin')
     return forms_fields[0]
 
 
@@ -259,8 +239,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
 @method_decorator(staff_required, name='dispatch')
 class BatchDeterminationCreateView(BaseStreamForm, CreateView):
-    submission_form_class = DeterminationModelForm
-    model = Determination
+    submission_form_class = BatchDeterminationForm
     template_name = 'determinations/batch_determination_form.html'
 
     def dispatch(self, *args, **kwargs):
@@ -291,11 +270,17 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
-        kwargs['submission'] = None
         kwargs['action'] = self.get_action()
-        # kwargs['site'] = Site.find_for_request(self.request)
         kwargs.pop('instance')
         return kwargs
+
+    def get_form_class(self):
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                form_fields.pop(field_block.id)
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
     def get_defined_fields(self):
         return get_fields_for_stages(self.get_submissions())
@@ -318,7 +303,6 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
             determination.submission.id: determination
             for determination in form.instances
         }
-
         messenger(
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
@@ -336,6 +320,9 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                     'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
                 )
             else:
+                determination.form_fields = self.get_defined_fields()
+                determination.message = form.cleaned_data[determination.message_field.id]
+                determination.save()
                 transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
 
                 if determination.outcome == NEEDS_MORE_INFO:

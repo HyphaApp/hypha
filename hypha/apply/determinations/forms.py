@@ -370,7 +370,11 @@ class BaseProposalDeterminationForm(forms.Form):
     rationale.group = 4
 
 
-class BaseBatchDeterminationForm(DeterminationModelForm, forms.Form):
+class FormMixedMetaClass(type(StreamBaseForm), type(forms.Form)):
+    pass
+
+
+class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMetaClass):
     submissions = forms.ModelMultipleChoiceField(
         queryset=ApplicationSubmission.objects.all(),
         widget=forms.ModelMultipleChoiceField.hidden_widget,
@@ -380,6 +384,24 @@ class BaseBatchDeterminationForm(DeterminationModelForm, forms.Form):
         widget=forms.ModelChoiceField.hidden_widget,
         required=True,
     )
+    outcome = forms.ChoiceField(
+        choices=DETERMINATION_CHOICES,
+        label='Determination',
+        help_text='Do you recommend requesting a proposal based on this concept note?',
+        widget=forms.HiddenInput()
+    )
+
+    def __init__(self, *args, user, submissions, action, initial={}, edit=False, **kwargs):
+        initial.update(submissions=submissions.values_list('id', flat=True))
+        try:
+            initial.update(outcome=TRANSITION_DETERMINATION[action])
+        except KeyError:
+            pass
+        initial.update(author=user.id)
+        super().__init__(*args, initial=initial, **kwargs)
+        self.fields['submissions'].disabled = True
+        self.fields['author'].disabled = True
+        self.fields['outcome'].disabled = True
 
     def data_fields(self):
         return [
@@ -387,11 +409,24 @@ class BaseBatchDeterminationForm(DeterminationModelForm, forms.Form):
             if field not in ['submissions', 'outcome', 'author', 'send_notice']
         ]
 
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['form_data'] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key in self.data_fields()
+        }
+        return cleaned_data
+
+    def clean_outcome(self):
+        # Enforce outcome as an int
+        return int(self.cleaned_data['outcome'])
+
     def _post_clean(self):
         submissions = self.cleaned_data['submissions'].undetermined()
         data = {
             field: self.cleaned_data[field]
-            for field in ['author', 'data', 'outcome']
+            for field in ['author', 'form_data', 'outcome']
         }
 
         self.instances = [
@@ -408,21 +443,3 @@ class BaseBatchDeterminationForm(DeterminationModelForm, forms.Form):
         determinations = Determination.objects.bulk_create(self.instances)
         self.instances = determinations
         return determinations
-
-
-class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
-    def __init__(self, *args, submissions, initial={}, **kwargs):
-        initial.update(submissions=submissions.values_list('id', flat=True))
-        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, submission=None, **kwargs)
-        self.fields['outcome'].widget = forms.HiddenInput()
-
-        self.fields = self.apply_form_settings('concept', self.fields)
-
-
-class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDeterminationForm):
-    def __init__(self, *args, submissions, initial={}, **kwargs):
-        initial.update(submissions=submissions.values_list('id', flat=True))
-        super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
-        self.fields['outcome'].widget = forms.HiddenInput()
-
-        self.fields = self.apply_form_settings('proposal', self.fields)
