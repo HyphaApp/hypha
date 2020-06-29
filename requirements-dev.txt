@@ -2,7 +2,7 @@
 
 django-debug-toolbar==2.2
 factory_boy==2.12
-flake8==3.8.2
+flake8==3.8.3
 isort==4.3.21
 responses==0.10.14
 stellar==0.4.5
