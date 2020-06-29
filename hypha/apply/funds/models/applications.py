@@ -79,7 +79,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
-    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
+    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
