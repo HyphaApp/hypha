@@ -431,12 +431,15 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         if hasattr(submission, 'project'):
             return submission.project
 
+        # See if there is a form field named "legal name", if not use user name.
+        legal_name = submission.get_answer_from_label('legal name') or submission.user.full_name
+
         return Project.objects.create(
             submission=submission,
             title=submission.title,
             user=submission.user,
             contact_email=submission.user.email,
-            contact_legal_name=submission.user.full_name,
+            contact_legal_name=legal_name,
             contact_address=submission.form_data.get('address', ''),
             value=submission.form_data.get('value', 0),
         )
