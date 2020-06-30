@@ -101,7 +101,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
-    data = JSONField(blank=True, default=dict)
+    data = JSONField(blank=True, null=True)
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
@@ -136,6 +136,9 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     @property
     def detailed_data(self):
+        if not self.submission.is_determination_form_attached:
+            from .views import get_form_for_stage
+            return get_form_for_stage(self.submission).get_detailed_response(self.data)
         return self.get_detailed_response()
 
     def get_detailed_response(self):

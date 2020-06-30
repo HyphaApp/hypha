@@ -26,6 +26,10 @@ from hypha.apply.stream_forms.models import BaseStreamForm
 from .forms import (
     BatchDeterminationForm,
     DeterminationModelForm,
+    BatchConceptDeterminationForm,
+    BatchProposalDeterminationForm,
+    ConceptDeterminationForm,
+    ProposalDeterminationForm,
 )
 from .models import (
     Determination,
@@ -46,6 +50,26 @@ from .options import (
 )
 
 from .blocks import DeterminationBlock
+
+
+def get_form_for_stages(submissions):
+    forms = [
+        get_form_for_stage(submission, batch=True)
+        for submission in submissions
+    ]
+    if len(set(forms)) != 1:
+        raise ValueError('Submissions expect different forms - please contact admin')
+
+    return forms[0]
+
+
+def get_form_for_stage(submission, batch=False, edit=False):
+    if batch:
+        forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
+    else:
+        forms = [ConceptDeterminationForm, ProposalDeterminationForm]
+    index = submission.workflow.stages.index(submission.stage)
+    return forms[index]
 
 
 def get_fields_for_stages(submissions):
@@ -140,9 +164,12 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         kwargs['user'] = self.request.user
         kwargs['submission'] = self.submission
         kwargs['action'] = self.request.GET.get('action')
+        kwargs['site'] = Site.find_for_request(self.request)
         return kwargs
 
     def get_form_class(self):
+        if not self.submission.is_determination_form_attached:
+            return get_form_for_stage(self.submission)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
@@ -157,7 +184,8 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        form.instance.form_fields = self.get_defined_fields()
+        if self.submission.is_determination_form_attached:
+            form.instance.form_fields = self.get_defined_fields()
 
         super().form_valid(form)
         if self.object.is_draft:
@@ -271,10 +299,14 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         kwargs['user'] = self.request.user
         kwargs['submissions'] = self.get_submissions()
         kwargs['action'] = self.get_action()
+        kwargs['site'] = Site.find_for_request(self.request)
         kwargs.pop('instance')
         return kwargs
 
     def get_form_class(self):
+        submissions = self.get_submissions()
+        if not submissions[0].is_determination_form_attached:
+            return get_form_for_stages(submissions)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
@@ -320,9 +352,10 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                     'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
                 )
             else:
-                determination.form_fields = self.get_defined_fields()
-                determination.message = form.cleaned_data[determination.message_field.id]
-                determination.save()
+                if submission.is_determination_form_attached:
+                    determination.form_fields = self.get_defined_fields()
+                    determination.message = form.cleaned_data[determination.message_field.id]
+                    determination.save()
                 transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
 
                 if determination.outcome == NEEDS_MORE_INFO:
@@ -507,11 +540,15 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
         kwargs['submission'] = determiantion.submission
         kwargs['edit'] = True
         kwargs['action'] = self.request.GET.get('action')
+        kwargs['site'] = Site.find_for_request(self.request)
         if self.object:
             kwargs['initial'] = self.object.form_data
         return kwargs
 
     def get_form_class(self):
+        determination = self.get_object()
+        if not determination.submission.is_determination_form_attached:
+            return get_form_for_stage(determination.submission)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
