@@ -111,6 +111,147 @@ def outcome_choices_for_phase(submission, user):
 
 
 @method_decorator(staff_required, name='dispatch')
+class BatchDeterminationCreateView(BaseStreamForm, CreateView):
+    submission_form_class = BatchDeterminationForm
+    template_name = 'determinations/batch_determination_form.html'
+
+    def dispatch(self, *args, **kwargs):
+        self._submissions = None
+        if not self.get_action() or not self.get_submissions():
+            messages.warning(self.request, 'Improperly configured request, please try again.')
+            return HttpResponseRedirect(self.get_success_url())
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_action(self):
+        return self.request.GET.get('action', '')
+
+    def get_submissions(self):
+        if not self._submissions:
+            try:
+                submission_ids = self.request.GET.get('submissions').split(',')
+            except AttributeError:
+                return None
+            try:
+                ids = [int(pk) for pk in submission_ids]
+            except ValueError:
+                return None
+            self._submissions = ApplicationSubmission.objects.filter(id__in=ids)
+        return self._submissions
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['submissions'] = self.get_submissions()
+        kwargs['action'] = self.get_action()
+        kwargs['site'] = Site.find_for_request(self.request)
+        kwargs.pop('instance')
+        return kwargs
+
+    def get_form_class(self):
+        submissions = self.get_submissions()
+        if not submissions[0].is_determination_form_attached:
+            return get_form_for_stages(submissions)
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                form_fields.pop(field_block.id)
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
+
+    def get_defined_fields(self):
+        return get_fields_for_stages(self.get_submissions())
+
+    def get_context_data(self, **kwargs):
+        outcome = TRANSITION_DETERMINATION[self.get_action()]
+        submission = self.get_submissions()[0]
+        transition = transition_from_outcome(outcome, submission)
+        action_name = submission.workflow[transition].display_name
+        return super().get_context_data(
+            action_name=action_name,
+            submissions=self.get_submissions(),
+            **kwargs,
+        )
+
+    def form_valid(self, form):
+        submissions = self.get_submissions()
+        response = super().form_valid(form)
+        determinations = {
+            determination.submission.id: determination
+            for determination in form.instances
+        }
+        messenger(
+            MESSAGES.BATCH_DETERMINATION_OUTCOME,
+            request=self.request,
+            user=self.request.user,
+            sources=submissions.filter(id__in=list(determinations)),
+            related=determinations,
+        )
+
+        for submission in submissions:
+            try:
+                determination = determinations[submission.id]
+            except KeyError:
+                messages.warning(
+                    self.request,
+                    'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
+                )
+            else:
+                if submission.is_determination_form_attached:
+                    determination.form_fields = self.get_defined_fields()
+                    determination.message = form.cleaned_data[determination.message_field.id]
+                    determination.save()
+                transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
+
+                if determination.outcome == NEEDS_MORE_INFO:
+                    # We keep a record of the message sent to the user in the comment
+                    Activity.comments.create(
+                        message=determination.stripped_message,
+                        timestamp=timezone.now(),
+                        user=self.request.user,
+                        source=submission,
+                        related_object=determination,
+                    )
+
+                submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
+        return response
+
+    @classmethod
+    def should_redirect(cls, request, submissions, actions):
+        excluded = []
+        for submission in submissions:
+            if has_final_determination(submission):
+                excluded.append(submission)
+
+        non_determine_states = set(actions) - set(DETERMINATION_OUTCOMES.keys())
+        if not any(non_determine_states):
+            if excluded:
+                messages.warning(
+                    request,
+                    _('A determination already exists for the following submissions and they have been excluded: {submissions}').format(
+                        submissions=', '.join([submission.title for submission in excluded]),
+                    )
+                )
+
+            submissions = submissions.exclude(id__in=[submission.id for submission in excluded])
+            action = outcome_from_actions(actions)
+            return HttpResponseRedirect(
+                reverse_lazy('apply:submissions:determinations:batch') +
+                "?action=" + action +
+                "&submissions=" + ','.join([str(submission.id) for submission in submissions]) +
+                "&next=" + parse.quote_plus(request.get_full_path()),
+            )
+        elif set(actions) != non_determine_states:
+            raise ValueError('Inconsistent states provided - please talk to an admin')
+
+    def get_success_url(self):
+        try:
+            return self.request.GET['next']
+        except KeyError:
+            return reverse_lazy('apply:submissions:list')
+
+
+@method_decorator(staff_required, name='dispatch')
 class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     submission_form_class = DeterminationModelForm
     model = Determination
@@ -263,147 +404,6 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 'apply:submissions:determinations:form',
                 args=(submission.id,)) + "?action=" + action
             )
-
-
-@method_decorator(staff_required, name='dispatch')
-class BatchDeterminationCreateView(BaseStreamForm, CreateView):
-    submission_form_class = BatchDeterminationForm
-    template_name = 'determinations/batch_determination_form.html'
-
-    def dispatch(self, *args, **kwargs):
-        self._submissions = None
-        if not self.get_action() or not self.get_submissions():
-            messages.warning(self.request, 'Improperly configured request, please try again.')
-            return HttpResponseRedirect(self.get_success_url())
-
-        return super().dispatch(*args, **kwargs)
-
-    def get_action(self):
-        return self.request.GET.get('action', '')
-
-    def get_submissions(self):
-        if not self._submissions:
-            try:
-                submission_ids = self.request.GET.get('submissions').split(',')
-            except AttributeError:
-                return None
-            try:
-                ids = [int(pk) for pk in submission_ids]
-            except ValueError:
-                return None
-            self._submissions = ApplicationSubmission.objects.filter(id__in=ids)
-        return self._submissions
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        kwargs['submissions'] = self.get_submissions()
-        kwargs['action'] = self.get_action()
-        kwargs['site'] = Site.find_for_request(self.request)
-        kwargs.pop('instance')
-        return kwargs
-
-    def get_form_class(self):
-        submissions = self.get_submissions()
-        if not submissions[0].is_determination_form_attached:
-            return get_form_for_stages(submissions)
-        form_fields = self.get_form_fields()
-        field_blocks = self.get_defined_fields()
-        for field_block in field_blocks:
-            if isinstance(field_block.block, DeterminationBlock):
-                form_fields.pop(field_block.id)
-        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
-
-    def get_defined_fields(self):
-        return get_fields_for_stages(self.get_submissions())
-
-    def get_context_data(self, **kwargs):
-        outcome = TRANSITION_DETERMINATION[self.get_action()]
-        submission = self.get_submissions()[0]
-        transition = transition_from_outcome(outcome, submission)
-        action_name = submission.workflow[transition].display_name
-        return super().get_context_data(
-            action_name=action_name,
-            submissions=self.get_submissions(),
-            **kwargs,
-        )
-
-    def form_valid(self, form):
-        submissions = self.get_submissions()
-        response = super().form_valid(form)
-        determinations = {
-            determination.submission.id: determination
-            for determination in form.instances
-        }
-        messenger(
-            MESSAGES.BATCH_DETERMINATION_OUTCOME,
-            request=self.request,
-            user=self.request.user,
-            sources=submissions.filter(id__in=list(determinations)),
-            related=determinations,
-        )
-
-        for submission in submissions:
-            try:
-                determination = determinations[submission.id]
-            except KeyError:
-                messages.warning(
-                    self.request,
-                    'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
-                )
-            else:
-                if submission.is_determination_form_attached:
-                    determination.form_fields = self.get_defined_fields()
-                    determination.message = form.cleaned_data[determination.message_field.id]
-                    determination.save()
-                transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
-
-                if determination.outcome == NEEDS_MORE_INFO:
-                    # We keep a record of the message sent to the user in the comment
-                    Activity.comments.create(
-                        message=determination.stripped_message,
-                        timestamp=timezone.now(),
-                        user=self.request.user,
-                        source=submission,
-                        related_object=determination,
-                    )
-
-                submission.perform_transition(transition, self.request.user, request=self.request, notify=False)
-        return response
-
-    @classmethod
-    def should_redirect(cls, request, submissions, actions):
-        excluded = []
-        for submission in submissions:
-            if has_final_determination(submission):
-                excluded.append(submission)
-
-        non_determine_states = set(actions) - set(DETERMINATION_OUTCOMES.keys())
-        if not any(non_determine_states):
-            if excluded:
-                messages.warning(
-                    request,
-                    _('A determination already exists for the following submissions and they have been excluded: {submissions}').format(
-                        submissions=', '.join([submission.title for submission in excluded]),
-                    )
-                )
-
-            submissions = submissions.exclude(id__in=[submission.id for submission in excluded])
-            action = outcome_from_actions(actions)
-            return HttpResponseRedirect(
-                reverse_lazy('apply:submissions:determinations:batch') +
-                "?action=" + action +
-                "&submissions=" + ','.join([str(submission.id) for submission in submissions]) +
-                "&next=" + parse.quote_plus(request.get_full_path()),
-            )
-        elif set(actions) != non_determine_states:
-            raise ValueError('Inconsistent states provided - please talk to an admin')
-
-    def get_success_url(self):
-        try:
-            return self.request.GET['next']
-        except KeyError:
-            return reverse_lazy('apply:submissions:list')
 
 
 @method_decorator(staff_required, name='dispatch')
