@@ -54,6 +54,7 @@ class DeterminationMessageBlock(DeterminationMustIncludeFieldBlock):
 
 
 class SendNoticeBlock(CheckboxFieldBlock):
+
     class Meta:
         label = _('Send Notice')
 

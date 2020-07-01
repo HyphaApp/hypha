@@ -483,25 +483,6 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         self.instance.form_data = self.cleaned_data['form_data']
         return super().save(commit)
 
-    def outcome_choices_for_phase(self, submission, user):
-        """
-        Outcome choices correspond to Phase transitions.
-        We need to filter out non-matching choices.
-        i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
-        """
-        available_choices = set()
-        choices = dict(self.fields['outcome'].choices)
-
-        for transition_name in determination_actions(user, submission):
-            try:
-                determination_type = TRANSITION_DETERMINATION[transition_name]
-            except KeyError:
-                pass
-            else:
-                available_choices.add((determination_type, choices[determination_type]))
-
-        return available_choices
-
 
 class FormMixedMetaClass(type(StreamBaseForm), type(forms.Form)):
     pass
