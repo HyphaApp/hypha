@@ -142,7 +142,9 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         group = 0
         data.setdefault(group, {'title': None, 'questions': list()})
         for field in self.form_fields:
-            if issubclass(field.block.__class__, DeterminationMustIncludeFieldBlock):
+            if issubclass(
+                field.block.__class__, DeterminationMustIncludeFieldBlock
+            ) or isinstance(field.block, SendNoticeBlock):
                 continue
             try:
                 value = self.form_data[field.id]

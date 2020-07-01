@@ -140,8 +140,21 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         kwargs.pop('instance')
         return kwargs
 
+    def check_all_submissions_are_of_same_type(self, submissions):
+        return len(set(
+            [
+                submission.is_determination_form_attached
+                for submission in submissions
+            ]
+        )) == 1
+
     def get_form_class(self):
         submissions = self.get_submissions()
+        if not self.check_all_submissions_are_of_same_type(submissions):
+            raise ValueError(
+                "All selected submissions excpects determination forms attached"
+                " - please contact admin"
+            )
         if not submissions[0].is_determination_form_attached:
             return get_form_for_stages(submissions)
         form_fields = self.get_form_fields()
