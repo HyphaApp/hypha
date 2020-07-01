@@ -9,8 +9,8 @@ from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
     ObjectList,
-    TabbedInterface,
     StreamFieldPanel,
+    TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField, StreamField
@@ -19,16 +19,12 @@ from hypha.apply.funds.models.mixins import AccessFormData
 
 from .blocks import (
     DeterminationBlock,
-    DeterminationMessageBlock,
     DeterminationCustomFormFieldsBlock,
+    DeterminationMessageBlock,
+    DeterminationMustIncludeFieldBlock,
     SendNoticeBlock,
-    DeterminationMustIncludeFieldBlock
 )
-from .options import (
-    DETERMINATION_CHOICES,
-    ACCEPTED,
-    REJECTED,
-)
+from .options import ACCEPTED, DETERMINATION_CHOICES, REJECTED
 
 
 class DeterminationQuerySet(models.QuerySet):

@@ -19,37 +19,29 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 from hypha.apply.projects.models import Project
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
-from hypha.apply.stream_forms.models import BaseStreamForm
 
+from .blocks import DeterminationBlock
 from .forms import (
-    BatchDeterminationForm,
-    DeterminationModelForm,
     BatchConceptDeterminationForm,
+    BatchDeterminationForm,
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
+    DeterminationModelForm,
     ProposalDeterminationForm,
 )
-from .models import (
-    Determination,
-    DeterminationMessageSettings
-)
+from .models import Determination, DeterminationMessageSettings
+from .options import DETERMINATION_CHOICES, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
 from .utils import (
     can_create_determination,
     can_edit_determination,
+    determination_actions,
     has_final_determination,
     outcome_from_actions,
     transition_from_outcome,
-    determination_actions
 )
-from .options import (
-    NEEDS_MORE_INFO,
-    TRANSITION_DETERMINATION,
-    DETERMINATION_CHOICES
-)
-
-from .blocks import DeterminationBlock
 
 
 def get_form_for_stages(submissions):

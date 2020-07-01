@@ -2,7 +2,8 @@ import factory
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 
-from ..options import ACCEPTED, NEEDS_MORE_INFO, REJECTED, Determination
+from ..models import Determination
+from ..options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from ..views import get_form_for_stage
 
 

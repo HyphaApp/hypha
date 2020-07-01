@@ -5,10 +5,10 @@ from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
+from hypha.apply.determinations.admin import DeterminationFormAdmin
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
 from hypha.apply.review.admin import ReviewFormAdmin
 from hypha.apply.utils.admin import ListRelatedMixin
-from hypha.apply.determinations.admin import DeterminationFormAdmin
 
 from .admin_helpers import (
     ApplicationFormButtonHelper,

@@ -3,8 +3,8 @@ from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
 from hypha.apply.determinations.models import DeterminationForm
-from hypha.apply.utils.admin import ListRelatedMixin
 from hypha.apply.review.admin_helpers import ButtonsWithClone
+from hypha.apply.utils.admin import ListRelatedMixin
 
 
 class CloneView(CreateView, InstanceSpecificView):

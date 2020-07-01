@@ -2,18 +2,12 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from hypha.apply.utils.fields import RichTextField
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.forms import StreamBaseForm
+from hypha.apply.utils.fields import RichTextField
 
-from .options import (
-    DETERMINATION_CHOICES,
-    TRANSITION_DETERMINATION,
-)
-from .models import (
-    Determination,
-    DeterminationFormSettings
-)
+from .models import Determination, DeterminationFormSettings
+from .options import DETERMINATION_CHOICES, TRANSITION_DETERMINATION
 from .utils import determination_actions
 
 User = get_user_model()

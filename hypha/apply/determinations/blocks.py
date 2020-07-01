@@ -2,17 +2,16 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from wagtail.core.blocks import RichTextBlock
 
-from .options import (
-    DETERMINATION_CHOICES,
-)
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
     CheckboxFieldBlock,
     DropdownFieldBlock,
-    TextFieldBlock
+    TextFieldBlock,
 )
 from hypha.apply.utils.blocks import CustomFormFieldsBlock, MustIncludeFieldBlock
 from hypha.apply.utils.options import RICH_TEXT_WIDGET
+
+from .options import DETERMINATION_CHOICES
 
 
 class DeterminationMustIncludeFieldBlock(MustIncludeFieldBlock):
