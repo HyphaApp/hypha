@@ -11,7 +11,7 @@ import wagtail.core.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0074_add_word_limit_to_text_blocks'),
+        ('funds', '0075_auto_20200629_1707'),
     ]
 
     operations = [
