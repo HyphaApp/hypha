@@ -449,6 +449,8 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         super().__init__(*args, initial=initial, instance=instance, **kwargs)
 
         for field in self._meta.widgets:
+            # Need to disable the model form fields as these fields would be
+            # rendered via streamfield form.
             self.fields[field].disabled = True
 
         if self.draft_button_name in self.data:
@@ -477,6 +479,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         self.instance.message = self.cleaned_data[self.instance.message_field.id]
         try:
             self.instance.outcome = int(self.cleaned_data[self.instance.determination_field.id])
+            # Need to catch KeyError as outcome field would not exist in case of edit.
         except KeyError:
             pass
         self.instance.is_draft = self.draft_button_name in self.data

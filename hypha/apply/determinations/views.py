@@ -141,6 +141,14 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         return kwargs
 
     def check_all_submissions_are_of_same_type(self, submissions):
+        """
+        Checks if all the submission as the new determination form attached to it.
+
+        Or all should be using the old determination forms.
+
+        We can not create batch determination with submissions using two different
+        type of forms.
+        """
         return len(set(
             [
                 submission.is_determination_form_attached
@@ -156,11 +164,15 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                 " - please contact admin"
             )
         if not submissions[0].is_determination_form_attached:
+            # If all the submission has same type of forms but they are not the
+            # new streamfield forms then use the old determination forms.
             return get_form_for_stages(submissions)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
             if isinstance(field_block.block, DeterminationBlock):
+                # Outcome is already set in case of batch determinations so we do
+                # not need to render this field.
                 form_fields.pop(field_block.id)
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
@@ -315,6 +327,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
     def get_form_class(self):
         if not self.submission.is_determination_form_attached:
+            # If new determination forms are not attached use the old ones.
             return get_form_for_stage(self.submission)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
@@ -323,6 +336,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 outcome_choices = outcome_choices_for_phase(
                     self.submission, self.request.user
                 )
+                # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
@@ -552,12 +566,14 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
 
     def get_form_class(self):
         determination = self.get_object()
-        if not determination.submission.is_determination_form_attached:
+        if not determination.use_new_determination_form:
             return get_form_for_stage(determination.submission)
         form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
             if isinstance(field_block.block, DeterminationBlock):
+                # Outcome can not be edited after being set once, so we do not
+                # need to render this field.
                 form_fields.pop(field_block.id)
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 

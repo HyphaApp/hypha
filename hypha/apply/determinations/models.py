@@ -97,7 +97,11 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
+
+    # Stores old determination forms data
     data = JSONField(blank=True, null=True)
+
+    # Stores data submitted via streamfield determination forms
     form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
@@ -131,8 +135,22 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         return f'<{self.__class__.__name__}: {str(self.form_data)}>'
 
     @property
+    def use_new_determination_form(self):
+        """
+        Checks if a submission has the new streamfield determination form
+        attached to it and along with that it also verify that if self.data is None.
+
+        self.data would be set as None for the determination which are created using
+        streamfield determination forms.
+
+        But old lab forms can be edited to add new determination forms
+        so we need to use old determination forms for already submitted determination.
+        """
+        return self.submission.is_determination_form_attached and self.data is None
+
+    @property
     def detailed_data(self):
-        if not self.submission.is_determination_form_attached:
+        if not self.use_new_determination_form:
             from .views import get_form_for_stage
             return get_form_for_stage(self.submission).get_detailed_response(self.data)
         return self.get_detailed_response()
