@@ -474,7 +474,7 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
     def save(self, commit=True):
         self.instance.send_notice = (
             self.cleaned_data[self.instance.send_notice_field.id]
-            if self.instance.send_notice_field else False
+            if self.instance.send_notice_field else True
         )
         self.instance.message = self.cleaned_data[self.instance.message_field.id]
         try:
