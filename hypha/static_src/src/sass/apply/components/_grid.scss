@@ -15,14 +15,6 @@
         }
     }
 
-    &--two {
-        > * {
-            // fix for IE11 not rendering calc flex-basis correctly
-            flex-basis: auto;
-            width: calc(50% - 20px);
-        }
-    }
-
     &--narrow {
         text-align: center;
 

@@ -7,7 +7,6 @@
     "license": "GPL-2.0",
     "browserslist": [
         "> 3%",
-        "ie 11",
         "Firefox ESR",
         "last 2 versions"
     ],
