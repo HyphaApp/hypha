@@ -10,7 +10,7 @@
         <h5>Submissions</h5>
         <table>
             <tr><th>Applied</th><th>Accepted</th><th>Pending</th></tr>
-            <tr><td>{{ submission_count|default:"0" }}</td><td>{{ submission_accepted_count|default:"0" }}</td><td>{{ submission_undetermined_count|default:"0" }}</td></tr>
+            <tr><td>{{ object_list.count }}</td><td>{{ submission_accepted_count|default:"0" }}</td><td>{{ submission_undetermined_count|default:"0" }}</td></tr>
         </table>
     </div>
     <div class="stat-block__item">
