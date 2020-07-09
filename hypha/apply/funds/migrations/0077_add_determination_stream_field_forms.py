@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('determinations', '0010_add_determination_stream_field_forms'),
-        ('funds', '0075_auto_20200629_1707'),
+        ('funds', '0076_multi_input_char_block'),
     ]
 
     operations = [
