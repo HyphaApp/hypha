@@ -296,3 +296,16 @@ class AccessFormData:
 
     def output_first_group_text_answers(self):
         return mark_safe(''.join(self.render_first_group_text_answers()))
+
+    def get_answer_from_label(self, label):
+        for field_id in self.question_text_field_ids:
+            if field_id not in self.named_blocks:
+                question_field = self.serialize(field_id)
+                if label.lower() in question_field['question'].lower():
+                    if isinstance(question_field['answer'], str):
+                        answer = question_field['answer']
+                    else:
+                        answer = ','.join(question_field['answer'])
+                    if answer and not answer == 'N':
+                        return answer
+        return None
