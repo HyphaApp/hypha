@@ -669,13 +669,21 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         assert_create_review_not_displayed(submission, 'Complete draft review')
 
     def test_cant_see_assign_reviewers_primary_action(self):
-        submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
+        # Submission needs to be moved to "AC review" state or higher for reviewer to access
+        submission.perform_transition('ext_internal_review', self.user)
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
         response = self.get_page(submission)
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_cant_see_assign_reviewers_secondary_action(self):
-        submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
+        # Submission needs to be moved to "AC review" state or higher for reviewer to access
+        submission.perform_transition('ext_internal_review', self.user)
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
         response = self.get_page(submission)
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
         self.assertEqual(len(buttons), 0)
@@ -686,21 +694,41 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
             self.assertEqual(len(buttons), 1)
 
+        def assert_test_permission_denied(submission):
+            # Should raise permission denied as reviewers won't have access to
+            # submission which are not in "AC review" state or higher.
+            response = self.get_page(submission)
+            self.assertEqual(response.status_code, 403)
+
         # Phase: accepted
-        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant, reviewers=[self.user])
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
+        # Submission needs to be moved to "AC review" state or higher for reviewer to access
+        submission.perform_transition('ext_internal_review', self.user)
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        submission.perform_transition('ext_post_external_review_discussion', self.user)
+        submission.perform_transition('ext_accepted', self.user)
         DeterminationFactory(submission=submission, accepted=True, submitted=True)
         assert_view_determination_displayed(submission)
 
         # Phase: rejected
-        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant, reviewers=[self.user])
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
+        # Submission needs to be moved to "AC review" state or higher for reviewer to access
+        submission.perform_transition('ext_internal_review', self.user)
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        submission.perform_transition('ext_post_external_review_discussion', self.user)
+        submission.perform_transition('ext_rejected', self.user)
         DeterminationFactory(submission=submission, rejected=True, submitted=True)
-        assert_view_determination_displayed(submission)
+        # Submission is not visible to reviewer when dismissed
+        assert_test_permission_denied(submission)
 
     def test_cant_see_view_determination_primary_action(self):
         def assert_view_determination_not_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='View determination')
-            self.assertEqual(len(buttons), 0)
+            # Should raise permission denied as reviewers won't have access to
+            # submission which are not in "AC review" state or higher.
+            self.assertEqual(response.status_code, 403)
 
         # Phase: received / in_discussion
         submission = ApplicationSubmissionFactory(user=self.applicant, reviewers=[self.user])

@@ -1013,7 +1013,7 @@ def get_review_statuses(user=None):
     return reviews
 
 
-def get_ac_review_or_higher_statuses_and_not_dismissed():
+def get_ac_review_or_higher_and_not_dismissed_statuses():
     """
     Returns a set of all the statuses for all workflow which are for AC Review
     or higher than that. But exclude the status which is Dismissed.
@@ -1036,7 +1036,7 @@ def get_ac_review_or_higher_statuses_and_not_dismissed():
     return ac_review_or_higher_statuses
 
 
-ac_review_or_higher_and_not_dismissed_statuses = get_ac_review_or_higher_statuses_and_not_dismissed()
+ac_review_or_higher_and_not_dismissed_statuses = get_ac_review_or_higher_and_not_dismissed_statuses()
 review_statuses = get_review_statuses()
 
 DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
