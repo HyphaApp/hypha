@@ -98,6 +98,7 @@ from .workflow import (
     INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
+    ac_review_or_higher_and_not_dismissed_statuses,
     active_statuses,
     review_statuses,
 )
@@ -738,8 +739,14 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
         # Reviewers may sometimes be applicants as well.
         if submission.user == request.user:
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
+
         if submission.status == DRAFT_STATE:
             raise Http404
+
+        # Reviewers should not be able to view a submission which is not in "AC review"
+        # state or higher and dismissed
+        if submission.status not in ac_review_or_higher_and_not_dismissed_statuses:
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
