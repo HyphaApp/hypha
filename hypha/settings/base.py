@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_api_key',
     'wagtailcache',
+    'django_file_form',
 
     'hijack',
     'compat',
@@ -697,3 +698,11 @@ if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
     DATABASE_ROUTERS = [
         "salesforce.router.ModelRouter"
     ]
+
+
+# django-file-form settings
+
+FILE_FORM_MUST_LOGIN = True
+FILE_FORM_UPLOAD_DIR = 'temp_uploads'
+# Ensure FILE_FORM_UPLOAD_DIR exists:
+os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)

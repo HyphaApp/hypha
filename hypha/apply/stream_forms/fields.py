@@ -1,6 +1,9 @@
 from django.conf import settings
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.validators import FileExtensionValidator
 from django.forms import CheckboxInput, ClearableFileInput, FileField
+from django_file_form.forms import MultipleUploadedFileField
+from django_file_form.widgets import UploadMultipleWidget
 
 
 class MultiFileInput(ClearableFileInput):
@@ -57,10 +60,25 @@ class MultiFileInput(ClearableFileInput):
         }
 
 
-class MultiFileField(FileField):
-    widget = MultiFileInput
+class CustomUploadMultipleWidget(UploadMultipleWidget):
+    class Media:
+        js = [
+            static('file_form/file_form.js'),
+            static('js/apply/file-uploads.js'),
+        ]
+        css = {
+            'screen': [static('file_form/file_form.css')],
+        }
+
+
+class MultiFileField(MultipleUploadedFileField):
+    widget = CustomUploadMultipleWidget
 
     def clean(self, value, initial):
+        # TODO: Re-enable validation here, and check if we still need any overrides
+        # from MultiFileInput to be present in CustomUploadMultipleWidget too.
+        return super().clean(value, initial)
+
         files = value['files']
         cleared = value['cleared']
         if not files and not cleared:

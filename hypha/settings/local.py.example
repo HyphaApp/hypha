@@ -1,6 +1,7 @@
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # doesn't work with django-file-form
     },
     "wagtailcache": {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
