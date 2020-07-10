@@ -597,14 +597,18 @@ class SlackAdapter(AdapterBase):
         return f'<{user.slack}>'
 
     def slack_channels(self, source, **kwargs):
+        # Set the default room as a start.
         target_rooms = [self.target_room]
         try:
-            extra_rooms = source.get_from_parent('slack_channel').split(',')
+            fund_slack_channel = source.get_from_parent('slack_channel').split(',')
         except AttributeError:
-            # Not a submission object, no extra rooms.
+            # Not a submission object.
             pass
         else:
-            target_rooms.extend(extra_rooms)
+            # If there are custom rooms, set them in place of the default room
+            custom_rooms = [channel for channel in fund_slack_channel if channel]
+            if len(custom_rooms) > 0:
+                target_rooms = custom_rooms
 
         try:
             comment = kwargs['comment']
@@ -621,7 +625,7 @@ class SlackAdapter(AdapterBase):
 
         # Make sure each channel name starts with a "#".
         target_rooms = [
-            room if room.startswith('#') else '#' + room
+            room.strip() if room.startswith('#') else '#' + room.strip()
             for room in target_rooms
             if room
         ]

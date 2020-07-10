@@ -16,8 +16,4 @@
     @include media-query(desktop) {
         grid-template-columns: 390px 1fr;
     }
-
-    @include target-ie11 {
-        display: flex;
-    }
 }

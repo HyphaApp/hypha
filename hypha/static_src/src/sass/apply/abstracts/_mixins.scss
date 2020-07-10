@@ -171,20 +171,6 @@
     border-right: 2px solid $color--light-mid-grey;
 }
 
-// ie11-specific css
-@mixin target-ie11 {
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-        @content;
-    }
-}
-
-// ms-edge specific css
-@mixin target-edge {
-    @supports (-ms-ime-align: auto) {
-        @content;
-    }
-}
-
 @mixin table-ordering-styles {
     thead {
         th {

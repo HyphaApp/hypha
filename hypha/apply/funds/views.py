@@ -115,9 +115,10 @@ class SubmissionStatsMixin:
         submission_sum = intcomma(submission_value.get('value__sum'))
         submission_count = submission_value.get('value__count')
 
-        submission_accepted_value = submissions.current_accepted().value()
+        submission_accepted = submissions.current_accepted()
+        submission_accepted_value = submission_accepted.value()
         submission_accepted_sum = intcomma(submission_accepted_value.get('value__sum'))
-        submission_accepted_count = submission_accepted_value.get('value__count')
+        submission_accepted_count = submission_accepted.count()
 
         reviews = Review.objects.all()
         review_count = reviews.count()

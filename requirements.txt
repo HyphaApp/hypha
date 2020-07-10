@@ -1,13 +1,13 @@
 # Monitor dependencies
-scout-apm==2.14.2
-sentry-sdk==0.14.4
+scout-apm==2.14.3
+sentry-sdk==0.15.1
 
 # Production dependencies
 boto3==1.13.16
-celery==4.4.2
+celery==4.4.6
 dj-database-url==0.5.0
 django-anymail==7.1.0
-django-basic-auth-ip-whitelist==0.3.3
+django-basic-auth-ip-whitelist==0.3.4
 django-bleach==0.6.1
 django-countries==6.1.2
 django-extensions==2.2.9
@@ -17,7 +17,7 @@ django-heroku==0.3.1
 django-hijack==2.1.10
 django-pagedown==2.0.3
 django-pwned-passwords==4.1.0
-django-redis==4.11.0
+django-redis==4.12.1
 django-referrer-policy==1.0
 django-storages==1.9.1
 django-tables2==2.2.1
@@ -31,8 +31,8 @@ django==2.2.13
 gunicorn==20.0.4
 mailchimp3==3.0.14
 mistune==0.8.4
-more-itertools==8.3.0
-phonenumberslite==8.12.4
+more-itertools==8.4.0
+phonenumberslite==8.12.6
 Pillow==6.2.2
 psycopg2==2.8.5
 reportlab==3.5.34

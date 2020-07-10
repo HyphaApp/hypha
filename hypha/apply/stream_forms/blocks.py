@@ -143,6 +143,14 @@ class CharFieldBlock(OptionalFormFieldBlock):
         return bleach.clean(data or '', tags=[], strip=True)
 
 
+class MultiInputCharFieldBlock(CharFieldBlock):
+    number_of_inputs = IntegerBlock(default=2, label=_('Max number of inputs'))
+    add_button_text = CharBlock(required=False, default=_('Add new item'))
+
+    class Meta:
+        label = _('Text field (single line) (multiple inputs)')
+
+
 class TextFieldBlock(OptionalFormFieldBlock):
     default_value = TextBlock(required=False, label=_('Default value'))
     word_limit = IntegerBlock(default=1000, label=_('Word limit'))
@@ -440,6 +448,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 class FormFieldsBlock(StreamBlock):
     text_markup = RichTextBlock(group=_('Custom'), label=_('Section text/header'))
     char = CharFieldBlock(group=_('Fields'))
+    multi_inputs_char = MultiInputCharFieldBlock(group=_('Fields'))
     text = TextFieldBlock(group=_('Fields'))
     number = NumberFieldBlock(group=_('Fields'))
     checkbox = CheckboxFieldBlock(group=_('Fields'))

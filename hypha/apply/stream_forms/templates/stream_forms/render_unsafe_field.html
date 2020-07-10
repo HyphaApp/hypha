@@ -2,7 +2,13 @@
 {% load bleach_tags %}
 {% block data_display %}
     {% if data %}
-        <p>{{ data|bleach }}</p>
+        {% if value.format == 'url' %}
+            <a class="link" href="{{ data|bleach }}" target="_blank" rel="noopener noreferrer">{{ data|bleach }}</a>
+        {% elif value.format == 'email' %}
+            <a class="u-email" href="mailto:{{ data|bleach }}">{{ data|bleach }}</a>
+        {% else %}
+            <p>{{ data|bleach }}</p>
+        {% endif %}
     {% else %}
         {{ block.super }}
     {% endif %}

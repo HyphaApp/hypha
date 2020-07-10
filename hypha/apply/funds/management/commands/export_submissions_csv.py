@@ -16,6 +16,7 @@ class Command(BaseCommand):
                 submission_region = ''
                 submission_country = ''
                 submission_focus = ''
+                submission_reapplied = ''
                 for field_id in submission.question_text_field_ids:
                     if field_id not in submission.named_blocks:
                         question_field = submission.serialize(field_id)
