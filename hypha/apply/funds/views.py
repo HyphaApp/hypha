@@ -328,8 +328,11 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
     filterset_class = SubmissionReviewerFilterAndSearch
 
     def get_queryset(self):
-        # Reviewers can only see submissions they have reviewed
-        return super().get_queryset().reviewed_by(self.request.user)
+        # Reviewers can only see submissions they have reviewed and which are in AC review
+        # state but not dismissed.
+        return super().get_queryset().in_ac_review_state_or_higher_and_not_dismissed(
+            self.request.user
+        )
 
 
 @method_decorator(staff_required, name='dispatch')

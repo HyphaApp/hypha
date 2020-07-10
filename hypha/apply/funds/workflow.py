@@ -1013,6 +1013,30 @@ def get_review_statuses(user=None):
     return reviews
 
 
+def get_ac_review_or_higher_statuses_and_not_dismissed():
+    """
+    Returns a set of all the statuses for all workflow which are for AC Review
+    or higher than that. But exclude the status which is Dismissed.
+    """
+    ac_review_or_higher_statuses = set()
+
+    for workflow in WORKFLOWS.values():
+        step = None
+        for phase in workflow.values():
+            if phase.display_name == 'Dismissed':
+                continue
+            if phase.display_name == 'Advisory Council Review':
+                # Update the step for this workflow as AC review state
+                step = phase.step
+
+            # Phase should have step higher or equal than AC review state
+            # for this workflow
+            if step and phase.step >= step:
+                ac_review_or_higher_statuses.add(phase.name)
+    return ac_review_or_higher_statuses
+
+
+ac_review_or_higher_and_not_dismissed_statuses = get_ac_review_or_higher_statuses_and_not_dismissed()
 review_statuses = get_review_statuses()
 
 DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)

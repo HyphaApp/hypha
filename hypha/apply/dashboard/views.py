@@ -191,7 +191,12 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
     def my_reviewed(self, submissions):
         """Staff reviewer's reviewed submissions for 'Previous reviews' block"""
-        submissions = submissions.reviewed_by(self.request.user).order_by('-submit_time')
+
+        # Submissions which has been reviewed and in AC review state or higher but
+        # not dismissed.
+        submissions = submissions.in_ac_review_state_or_higher_and_not_dismissed(
+            self.request.user
+        ).order_by('-submit_time')
 
         limit = 5
         return {

@@ -52,6 +52,7 @@ from ..workflow import (
     STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
     UserPermissions,
+    ac_review_or_higher_and_not_dismissed_statuses,
     active_statuses,
     get_review_active_statuses,
     review_statuses,
@@ -123,6 +124,16 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
             qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author__reviewer=user)
+        return qs.distinct()
+
+    def in_ac_review_state_or_higher_and_not_dismissed(self, user):
+        """
+        Returns a queryset of submissions which are reviewed and in AC review state or
+        higher but not dismissed.
+        """
+        qs = self.reviewed_by(user).filter(
+            Q(status__in=ac_review_or_higher_and_not_dismissed_statuses)
+        )
         return qs.distinct()
 
     def reviewed_by(self, user):
