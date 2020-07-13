@@ -1,6 +1,12 @@
-(function ($) {
+jQuery(function ($) {
 
     'use strict';
+
+    // django-file-form
+    // TODO: trigger for all forms and check what we else need from this file
+    window.initUploadFields(document.getElementsByTagName('form')[0]);
+    $('label[for=id_files]').hide();
+    $('input[type=hidden]').closest('.form__group').hide();
 
     $('.form__group--file').each(function () {
         var $file_field = $(this);
@@ -54,4 +60,4 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-})(jQuery);
+});

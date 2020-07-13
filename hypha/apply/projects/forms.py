@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django_file_form.forms import FileFormMixin
 
 from addressfield.fields import AddressField
 from hypha.apply.funds.models import ApplicationSubmission
@@ -380,7 +381,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
                                                   .distinct())
 
 
-class ReportEditForm(forms.ModelForm):
+class ReportEditForm(FileFormMixin, forms.ModelForm):
     public_content = RichTextField(
         help_text="This section of the report will be shared with the broader community."
     )
