@@ -19,24 +19,25 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
 from hypha.apply.projects.models import Project
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 
+from .blocks import DeterminationBlock
 from .forms import (
     BatchConceptDeterminationForm,
+    BatchDeterminationForm,
     BatchProposalDeterminationForm,
     ConceptDeterminationForm,
+    DeterminationModelForm,
     ProposalDeterminationForm,
 )
-from .models import (
-    NEEDS_MORE_INFO,
-    TRANSITION_DETERMINATION,
-    Determination,
-    DeterminationMessageSettings,
-)
+from .models import Determination, DeterminationMessageSettings
+from .options import DETERMINATION_CHOICES, NEEDS_MORE_INFO, TRANSITION_DETERMINATION
 from .utils import (
     can_create_determination,
     can_edit_determination,
+    determination_actions,
     has_final_determination,
     outcome_from_actions,
     transition_from_outcome,
@@ -63,8 +64,47 @@ def get_form_for_stage(submission, batch=False, edit=False):
     return forms[index]
 
 
+def get_fields_for_stages(submissions):
+    forms_fields = [
+        get_fields_for_stage(submission)
+        for submission in submissions
+    ]
+    if not all(i == forms_fields[0] for i in forms_fields):
+        raise ValueError('Submissions expect different forms - please contact admin')
+    return forms_fields[0]
+
+
+def get_fields_for_stage(submission):
+    forms = submission.get_from_parent('determination_forms').all()
+    index = submission.workflow.stages.index(submission.stage)
+    try:
+        return forms[index].form.form_fields
+    except IndexError:
+        return forms[0].form.form_fields
+
+
+def outcome_choices_for_phase(submission, user):
+    """
+    Outcome choices correspond to Phase transitions.
+    We need to filter out non-matching choices.
+    i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
+    """
+    available_choices = set()
+    choices = dict(DETERMINATION_CHOICES)
+    for transition_name in determination_actions(user, submission):
+        try:
+            determination_type = TRANSITION_DETERMINATION[transition_name]
+        except KeyError:
+            pass
+        else:
+            available_choices.add((determination_type, choices[determination_type]))
+
+    return available_choices
+
+
 @method_decorator(staff_required, name='dispatch')
-class BatchDeterminationCreateView(CreateView):
+class BatchDeterminationCreateView(BaseStreamForm, CreateView):
+    submission_form_class = BatchDeterminationForm
     template_name = 'determinations/batch_determination_form.html'
 
     def dispatch(self, *args, **kwargs):
@@ -100,8 +140,44 @@ class BatchDeterminationCreateView(CreateView):
         kwargs.pop('instance')
         return kwargs
 
+    def check_all_submissions_are_of_same_type(self, submissions):
+        """
+        Checks if all the submission as the new determination form attached to it.
+
+        Or all should be using the old determination forms.
+
+        We can not create batch determination with submissions using two different
+        type of forms.
+        """
+        return len(set(
+            [
+                submission.is_determination_form_attached
+                for submission in submissions
+            ]
+        )) == 1
+
     def get_form_class(self):
-        return get_form_for_stages(self.get_submissions())
+        submissions = self.get_submissions()
+        if not self.check_all_submissions_are_of_same_type(submissions):
+            raise ValueError(
+                "All selected submissions excpects determination forms attached"
+                " - please contact admin"
+            )
+        if not submissions[0].is_determination_form_attached:
+            # If all the submission has same type of forms but they are not the
+            # new streamfield forms then use the old determination forms.
+            return get_form_for_stages(submissions)
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                # Outcome is already set in case of batch determinations so we do
+                # not need to render this field.
+                form_fields.pop(field_block.id)
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
+
+    def get_defined_fields(self):
+        return get_fields_for_stages(self.get_submissions())
 
     def get_context_data(self, **kwargs):
         outcome = TRANSITION_DETERMINATION[self.get_action()]
@@ -121,7 +197,6 @@ class BatchDeterminationCreateView(CreateView):
             determination.submission.id: determination
             for determination in form.instances
         }
-
         messenger(
             MESSAGES.BATCH_DETERMINATION_OUTCOME,
             request=self.request,
@@ -139,6 +214,10 @@ class BatchDeterminationCreateView(CreateView):
                     'Unable to determine submission "{title}" as already determined'.format(title=submission.title),
                 )
             else:
+                if submission.is_determination_form_attached:
+                    determination.form_fields = self.get_defined_fields()
+                    determination.message = form.cleaned_data[determination.message_field.id]
+                    determination.save()
                 transition = transition_from_outcome(form.cleaned_data.get('outcome'), submission)
 
                 if determination.outcome == NEEDS_MORE_INFO:
@@ -190,7 +269,8 @@ class BatchDeterminationCreateView(CreateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class DeterminationCreateOrUpdateView(CreateOrUpdateView):
+class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
+    submission_form_class = DeterminationModelForm
     model = Determination
     template_name = 'determinations/determination_form.html'
 
@@ -234,8 +314,8 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
             **kwargs
         )
 
-    def get_form_class(self):
-        return get_form_for_stage(self.submission)
+    def get_defined_fields(self):
+        return get_fields_for_stage(self.submission)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -245,12 +325,29 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
         kwargs['site'] = Site.find_for_request(self.request)
         return kwargs
 
+    def get_form_class(self):
+        if not self.submission.is_determination_form_attached:
+            # If new determination forms are not attached use the old ones.
+            return get_form_for_stage(self.submission)
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                outcome_choices = outcome_choices_for_phase(
+                    self.submission, self.request.user
+                )
+                # Outcome field choices need to be set according to the phase.
+                form_fields[field_block.id].choices = outcome_choices
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
+
     def get_success_url(self):
         return self.submission.get_absolute_url()
 
     def form_valid(self, form):
-        super().form_valid(form)
+        if self.submission.is_determination_form_attached:
+            form.instance.form_fields = self.get_defined_fields()
 
+        super().form_valid(form)
         if self.object.is_draft:
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
@@ -263,8 +360,7 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                 related=self.object,
             )
             proposal_form = form.cleaned_data.get('proposal_form')
-
-            transition = transition_from_outcome(form.cleaned_data.get('outcome'), self.submission)
+            transition = transition_from_outcome(int(self.object.outcome), self.submission)
 
             if self.object.outcome == NEEDS_MORE_INFO:
                 # We keep a record of the message sent to the user in the comment
@@ -275,7 +371,6 @@ class DeterminationCreateOrUpdateView(CreateOrUpdateView):
                     source=self.submission,
                     related_object=self.object,
                 )
-
             self.submission.perform_transition(
                 transition,
                 self.request.user,
@@ -434,41 +529,57 @@ class DeterminationDetailView(ViewDispatcher):
 
 
 @method_decorator(staff_required, name='dispatch')
-class DeterminationEditView(UpdateView):
+class DeterminationEditView(BaseStreamForm, UpdateView):
+    submission_form_class = DeterminationModelForm
     model = Determination
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
-
-    def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        return super().dispatch(request, *args, **kwargs)
+    template_name = 'determinations/determination_form.html'
+    raise_exception = True
 
     def get_context_data(self, **kwargs):
         site = Site.find_for_request(self.request)
         determination_messages = DeterminationMessageSettings.for_site(site)
 
+        determination = self.get_object()
         return super().get_context_data(
-            submission=self.submission,
-            message_templates=determination_messages.get_for_stage(self.submission.stage.name),
+            submission=determination.submission,
+            message_templates=determination_messages.get_for_stage(
+                determination.submission.stage.name
+            ),
             **kwargs
         )
 
-    def get_form_class(self):
-        return get_form_for_stage(self.submission)
+    def get_defined_fields(self):
+        determination = self.get_object()
+        return get_fields_for_stage(determination.submission)
 
     def get_form_kwargs(self):
+        determiantion = self.get_object()
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['submission'] = self.submission
+        kwargs['submission'] = determiantion.submission
+        kwargs['edit'] = True
         kwargs['action'] = self.request.GET.get('action')
         kwargs['site'] = Site.find_for_request(self.request)
-        kwargs['edit'] = True
+        if self.object:
+            kwargs['initial'] = self.object.form_data
         return kwargs
+
+    def get_form_class(self):
+        determination = self.get_object()
+        if not determination.use_new_determination_form:
+            return get_form_for_stage(determination.submission)
+        form_fields = self.get_form_fields()
+        field_blocks = self.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, DeterminationBlock):
+                # Outcome can not be edited after being set once, so we do not
+                # need to render this field.
+                form_fields.pop(field_block.id)
+        return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
     def form_valid(self, form):
         super().form_valid(form)
-
+        determination = self.get_object()
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
             request=self.request,
@@ -477,4 +588,4 @@ class DeterminationEditView(UpdateView):
             related=self.object,
         )
 
-        return HttpResponseRedirect(self.submission.get_absolute_url())
+        return HttpResponseRedirect(determination.submission.get_absolute_url())

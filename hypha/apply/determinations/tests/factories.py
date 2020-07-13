@@ -1,8 +1,18 @@
+import random
+
 import factory
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.stream_forms.testing.factories import (
+    CharFieldBlockFactory,
+    FormFieldBlockFactory,
+    StreamFieldUUIDFactory,
+)
+from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
-from ..models import ACCEPTED, NEEDS_MORE_INFO, REJECTED, Determination
+from ..blocks import DeterminationBlock, DeterminationMessageBlock, SendNoticeBlock
+from ..models import Determination, DeterminationForm
+from ..options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from ..views import get_form_for_stage
 
 
@@ -44,3 +54,39 @@ class DeterminationFactory(factory.DjangoModelFactory):
     }, dict_factory=DeterminationDataFactory)
 
     is_draft = True
+
+
+class DeterminationBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = DeterminationBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return random.choices([ACCEPTED, NEEDS_MORE_INFO, REJECTED])
+
+
+class DeterminationMessageBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = DeterminationMessageBlock
+
+
+class SendNoticeBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = SendNoticeBlock
+
+
+DeterminationFormFieldsFactory = StreamFieldUUIDFactory({
+    'char': CharFieldBlockFactory,
+    'text': RichTextFieldBlockFactory,
+    'send_notice': SendNoticeBlockFactory,
+    'determination': DeterminationBlockFactory,
+    'message': DeterminationMessageBlockFactory,
+})
+
+
+class DeterminationFormFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = DeterminationForm
+
+    name = factory.Faker('word')
+    form_fields = DeterminationFormFieldsFactory

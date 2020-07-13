@@ -1,6 +1,7 @@
 import bleach
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -8,33 +9,22 @@ from wagtail.admin.edit_handlers import (
     FieldPanel,
     MultiFieldPanel,
     ObjectList,
+    StreamFieldPanel,
     TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import RichTextField
+from wagtail.core.fields import RichTextField, StreamField
 
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.models.mixins import AccessFormData
 
-REJECTED = 0
-NEEDS_MORE_INFO = 1
-ACCEPTED = 2
-
-DETERMINATION_CHOICES = (
-    (REJECTED, _('Dismissed')),
-    (NEEDS_MORE_INFO, _('More information requested')),
-    (ACCEPTED, _('Approved')),
+from .blocks import (
+    DeterminationBlock,
+    DeterminationCustomFormFieldsBlock,
+    DeterminationMessageBlock,
+    DeterminationMustIncludeFieldBlock,
+    SendNoticeBlock,
 )
-
-DETERMINATION_TO_OUTCOME = {
-    'rejected': REJECTED,
-    'accepted': ACCEPTED,
-    'more_info': NEEDS_MORE_INFO,
-}
-
-TRANSITION_DETERMINATION = {
-    name: DETERMINATION_TO_OUTCOME[type]
-    for name, type in DETERMINATION_OUTCOMES.items()
-}
+from .options import ACCEPTED, DETERMINATION_CHOICES, REJECTED
 
 
 class DeterminationQuerySet(models.QuerySet):
@@ -49,7 +39,52 @@ class DeterminationQuerySet(models.QuerySet):
         return self.submitted().filter(outcome__in=[ACCEPTED, REJECTED])
 
 
-class Determination(models.Model):
+class DeterminationFormFieldsMixin(models.Model):
+    class Meta:
+        abstract = True
+
+    form_fields = StreamField(DeterminationCustomFormFieldsBlock(), default=[])
+
+    @property
+    def determination_field(self):
+        return self._get_field_type(DeterminationBlock)
+
+    @property
+    def message_field(self):
+        return self._get_field_type(DeterminationMessageBlock)
+
+    @property
+    def send_notice_field(self):
+        return self._get_field_type(SendNoticeBlock)
+
+    def _get_field_type(self, block_type, many=False):
+        fields = list()
+        for field in self.form_fields:
+            try:
+                if isinstance(field.block, block_type):
+                    if many:
+                        fields.append(field)
+                    else:
+                        return field
+            except AttributeError:
+                pass
+        if many:
+            return fields
+
+
+class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
+    name = models.CharField(max_length=255)
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name
+
+
+class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     submission = models.ForeignKey(
         'funds.ApplicationSubmission',
         on_delete=models.CASCADE,
@@ -62,7 +97,12 @@ class Determination(models.Model):
 
     outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
-    data = JSONField(blank=True)
+
+    # Stores old determination forms data
+    data = JSONField(blank=True, null=True)
+
+    # Stores data submitted via streamfield determination forms
+    form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
@@ -92,12 +132,48 @@ class Determination(models.Model):
         return f'Determination for {self.submission.title} by {self.author!s}'
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.data)}>'
+        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+
+    @property
+    def use_new_determination_form(self):
+        """
+        Checks if a submission has the new streamfield determination form
+        attached to it and along with that it also verify that if self.data is None.
+
+        self.data would be set as None for the determination which are created using
+        streamfield determination forms.
+
+        But old lab forms can be edited to add new determination forms
+        so we need to use old determination forms for already submitted determination.
+        """
+        return self.submission.is_determination_form_attached and self.data is None
 
     @property
     def detailed_data(self):
-        from .views import get_form_for_stage
-        return get_form_for_stage(self.submission).get_detailed_response(self.data)
+        if not self.use_new_determination_form:
+            from .views import get_form_for_stage
+            return get_form_for_stage(self.submission).get_detailed_response(self.data)
+        return self.get_detailed_response()
+
+    def get_detailed_response(self):
+        data = {}
+        group = 0
+        data.setdefault(group, {'title': None, 'questions': list()})
+        for field in self.form_fields:
+            if issubclass(
+                field.block.__class__, DeterminationMustIncludeFieldBlock
+            ) or isinstance(field.block, SendNoticeBlock):
+                continue
+            try:
+                value = self.form_data[field.id]
+            except KeyError:
+                group = group + 1
+                data.setdefault(group, {'title': field.value.source, 'questions': list()})
+            else:
+                data[group]['questions'].append(
+                    (field.value.get('field_label'), value)
+                )
+        return data
 
 
 @register_setting

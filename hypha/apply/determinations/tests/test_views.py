@@ -6,7 +6,7 @@ from django.test import RequestFactory, override_settings
 from django.urls import reverse_lazy
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.determinations.models import ACCEPTED, NEEDS_MORE_INFO, REJECTED
+from hypha.apply.determinations.options import ACCEPTED, NEEDS_MORE_INFO, REJECTED
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory

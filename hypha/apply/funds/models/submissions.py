@@ -536,6 +536,19 @@ class ApplicationSubmission(
             # We are a lab submission
             return getattr(self.page.specific, attribute)
 
+    @property
+    def is_determination_form_attached(self):
+        """
+        We use old django determination forms but now as we are moving
+        to streamfield determination forms which can be created and attached
+        to funds in admin.
+
+        This method checks if there are new determination forms attached to the
+        submission or we would still use the old determination forms for backward
+        compatibility.
+        """
+        return self.get_from_parent('determination_forms').count() > 0
+
     def progress_application(self, **kwargs):
         target = None
         for phase in STAGE_CHANGE_ACTIONS:
