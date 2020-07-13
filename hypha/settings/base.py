@@ -679,6 +679,7 @@ FILE_FORM_MUST_LOGIN = True
 FILE_FORM_UPLOAD_DIR = 'temp_uploads'
 # ensure FILE_FORM_UPLOAD_DIR exists:
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
+
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if 'AWS_STORAGE_BUCKET_NAME' in env:
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
