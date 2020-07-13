@@ -3,6 +3,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from two_factor.views import LoginView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
@@ -10,7 +11,6 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
 from hypha.apply.users.urls import public_urlpatterns as user_urls
-from hypha.apply.users.views import LoginView
 from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.public import urls as public_urls
 
