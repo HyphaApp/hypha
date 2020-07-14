@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.forms import DeclarativeFieldsMetaclass
+from django_file_form.forms import FileFormMixin
 from wagtail.contrib.forms.forms import BaseForm
 
 
@@ -15,7 +16,7 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
         return new_class
 
 
-class StreamBaseForm(forms.Form, metaclass=MixedFieldMetaclass):
+class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
     def swap_fields_for_display(func):
         def wrapped(self, *args, **kwargs):
             # Replaces the form fields with the display fields
@@ -33,6 +34,15 @@ class StreamBaseForm(forms.Form, metaclass=MixedFieldMetaclass):
     @swap_fields_for_display
     def _html_output(self, *args, **kwargs):
         return super()._html_output(*args, **kwargs)
+
+    def hidden_fields(self):
+        # No hidden fields are returned by default because of MixedFieldMetaclass
+        return [self[f] for f in self.fields.keys() if self[f].is_hidden]
+
+    def add_placeholder_inputs(self, *args, **kwargs):
+        # Disable method used by django-file-form because it fails
+        # and we don't use the placeholder files feature.
+        pass
 
 
 class PageStreamBaseForm(BaseForm, StreamBaseForm):
