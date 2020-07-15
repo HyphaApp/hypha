@@ -234,7 +234,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
         return cleaned_data
 
 
-class CreatePaymentRequestForm(PaymentRequestBaseForm):
+class CreatePaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
     receipts = MultiFileField(required=False)
 
     def save(self, commit=True):
@@ -250,7 +250,7 @@ class CreatePaymentRequestForm(PaymentRequestBaseForm):
         return request
 
 
-class EditPaymentRequestForm(PaymentRequestBaseForm):
+class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
     receipt_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
