@@ -260,6 +260,17 @@ else:
         }
     }
 
+# Use a more permanent cache for django-file-form.
+# It uses it to store metadata about files while they are being uploaded.
+# This might reduce the likelihood of any interruptions on heroku.
+# NB It doesn't matter what the `KEY_PREFIX` is,
+# `clear_cache` will clear all caches with the same `LOCATION`.
+CACHES['django_file_form'] = {
+    'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+    'LOCATION': 'database_cache',
+    'KEY_PREFIX': 'django_file_form',
+}
+
 WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 
 # Cloudflare cache invalidation.
@@ -702,11 +713,11 @@ if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
 
 # django-file-form settings
 
+FILE_FORM_CACHE = 'django_file_form'
 FILE_FORM_MUST_LOGIN = True
 FILE_FORM_UPLOAD_DIR = 'temp_uploads'
 # Ensure FILE_FORM_UPLOAD_DIR exists:
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
-
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
 if 'AWS_STORAGE_BUCKET_NAME' in env:
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE

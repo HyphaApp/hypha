@@ -1,11 +1,15 @@
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # doesn't work with django-file-form
-    },
-    "wagtailcache": {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
+    },
+    'wagtailcache': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+    'django_file_form': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'database_cache',
+        'KEY_PREFIX': 'django_file_form',
+    },
 }
 
 # ALLOWED_HOSTS = ['apply.hypha.test', 'hypha.test', '127.0.0.1']
