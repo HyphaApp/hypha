@@ -125,3 +125,6 @@ class StreamFieldFile(File):
         file = getattr(self, '_file', None)
         if file is not None:
             file.close()
+
+    # Attribute used by django-file-form
+    is_placeholder = False

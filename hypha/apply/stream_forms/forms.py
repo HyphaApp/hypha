@@ -39,11 +39,6 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
         # No hidden fields are returned by default because of MixedFieldMetaclass
         return [self[f] for f in self.fields.keys() if self[f].is_hidden]
 
-    def add_placeholder_inputs(self, *args, **kwargs):
-        # Disable method used by django-file-form because it fails
-        # and we don't use the placeholder files feature.
-        pass
-
 
 class PageStreamBaseForm(BaseForm, StreamBaseForm):
     # Adds page and user reference to the form class
