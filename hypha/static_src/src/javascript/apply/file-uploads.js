@@ -17,19 +17,21 @@ jQuery(function ($) {
         // Hide wrapper elements for hidden inputs added by django-file-form
         $('input[type=hidden]').closest('.form__group').hide();
 
-        var allowedExtensions = form.querySelector('[name=files]').accept.split(', ');
+        // For each file field in the form don't allow dropping files with an invalid file extension.
+        $('[type=file][multiple]', form).get().forEach(function (fileField) {
+            var allowedExtensions = fileField.accept.split(', ');
 
-        // TODO: this currently raises an exception when trying to remove an invalid file.
-        // Remove files from the list that have an invalid file extension.
-        $('.dff-files').on('drop', function (e) {
-            var items = e.originalEvent.dataTransfer.items;
-            var files = e.originalEvent.dataTransfer.files;
-            for (var i = 0; i < files.length; i++) {
-                var extension = '.' + files[i].name.split('.').slice(-1)[0];
-                if (!allowedExtensions.includes(extension)) {
-                    items.remove(i);
+            // TODO: this currently raises an exception when trying to remove an invalid file.
+            $(fileField).next('.dff-files').on('drop', function (e) {
+                var items = e.originalEvent.dataTransfer.items;
+                var files = e.originalEvent.dataTransfer.files;
+                for (var i = 0; i < files.length; i++) {
+                    var extension = '.' + files[i].name.split('.').slice(-1)[0];
+                    if (!allowedExtensions.includes(extension)) {
+                        items.remove(i);
+                    }
                 }
-            }
+            });
         });
     }
 
