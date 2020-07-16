@@ -31,6 +31,8 @@ class MultiFileField(MultipleUploadedFileField):
     def clean(self, value, initial):
         validator = FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
 
+        assert isinstance(value, list)
+
         for file in value:
             FileField(validators=[validator]).clean(file, initial)
 
