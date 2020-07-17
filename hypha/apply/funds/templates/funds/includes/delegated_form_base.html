@@ -31,7 +31,7 @@
     {% endif %}
 
     <input
-        class="button button--{% if invert %}white{% else %}primary{% endif %} button--top-space"
+        class="button button--{% if invert %}white{% elif value == 'Delete' %}warning{% else %}primary{% endif %} button--top-space"
         id="{{ form.name }}-submit"
         name="{{ form_prefix }}{{ form.name }}"
         type="submit"

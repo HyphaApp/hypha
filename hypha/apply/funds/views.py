@@ -58,6 +58,7 @@ from hypha.apply.utils.views import (
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
+    BatchDeleteSubmissionForm,
     BatchProgressSubmissionForm,
     BatchUpdateReviewersForm,
     BatchUpdateSubmissionLeadForm,
@@ -257,6 +258,28 @@ class BatchUpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, FormVie
 
 
 @method_decorator(staff_required, name='dispatch')
+class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
+    form_class = BatchDeleteSubmissionForm
+    context_name = 'batch_delete_submission_form'
+
+    def form_valid(self, form):
+        submissions = form.cleaned_data['submissions']
+        form.save()
+
+        messenger(
+            MESSAGES.BATCH_DELETE_SUBMISSION,
+            request=self.request,
+            user=self.request.user,
+            sources=submissions,
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
+
+
+@method_decorator(staff_required, name='dispatch')
 class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
     form_class = BatchProgressSubmissionForm
     context_name = 'batch_progress_form'
@@ -397,6 +420,7 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
+        BatchDeleteSubmissionView,
     ]
 
 
@@ -435,6 +459,7 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
+        BatchDeleteSubmissionView,
     ]
 
     excluded_fields = ('round', 'lead', 'fund')
@@ -467,6 +492,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
+        BatchDeleteSubmissionView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

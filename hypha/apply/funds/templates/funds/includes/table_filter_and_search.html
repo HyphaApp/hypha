@@ -30,6 +30,11 @@
                         <svg><use xlink:href="#add-person"></use></svg>
                         Reviewers
                     </button>
+
+                    <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
+                        <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
+                        Delete
+                    </button>
                 </div>
             {% endif %}
         </div>
@@ -72,4 +77,5 @@
     {% include "funds/includes/batch_update_lead_form.html" %}
     {% include "funds/includes/batch_update_reviewer_form.html" %}
     {% include "funds/includes/batch_progress_form.html" %}
+    {% include "funds/includes/batch_delete_submission_form.html" %}
 {% endif %}
