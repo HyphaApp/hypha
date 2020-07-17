@@ -264,14 +264,13 @@ class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        form.save()
-
         messenger(
             MESSAGES.BATCH_DELETE_SUBMISSION,
             request=self.request,
             user=self.request.user,
             sources=submissions,
         )
+        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):

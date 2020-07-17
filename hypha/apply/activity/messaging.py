@@ -303,12 +303,11 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_batch_delete_submission(self, sources, **kwargs):
+        submissions = sources
         submissions_text = ', '.join(
-            [source.title for source in sources]
+            [submission.title for submission in submissions]
         )
-        return 'Successfully deleted submissions: {submissions_text}'.format(
-            submissions_text
-        )
+        return f'Successfully deleted submissions: {submissions_text}'
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
@@ -573,10 +572,7 @@ class SlackAdapter(AdapterBase):
     def handle_batch_delete_submission(self, sources, links, user, **kwargs):
         submissions = sources
         submissions_text = ', '.join([submission.title for submission in submissions])
-        return '{user} has deleted submissions: {submissions_text}'.format(
-            user,
-            submissions_text
-        )
+        return f'{user} has deleted submissions: {submissions_text}'
 
     def notify_reviewers(self, source, link, **kwargs):
         submission = source

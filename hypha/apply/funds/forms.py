@@ -149,6 +149,7 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
 
         return None
 
+
 class BatchDeleteSubmissionForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
