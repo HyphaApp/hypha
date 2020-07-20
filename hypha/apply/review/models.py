@@ -20,6 +20,7 @@ from .blocks import (
     RecommendationCommentsBlock,
     ReviewCustomFormFieldsBlock,
     ScoreFieldBlock,
+    ScoreFieldWithoutTextBlock,
     VisibilityBlock,
 )
 from .options import (
@@ -45,6 +46,10 @@ class ReviewFormFieldsMixin(models.Model):
     @property
     def score_fields(self):
         return self._get_field_type(ScoreFieldBlock, many=True)
+
+    @property
+    def score_fields_without_text(self):
+        return self._get_field_type(ScoreFieldWithoutTextBlock, many=True)
 
     @property
     def recommendation_field(self):

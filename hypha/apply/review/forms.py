@@ -89,6 +89,15 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
                 score = 0
             scores.append(score)
 
+        # Check if there are score_fields_without_text and also
+        # append scores from them.
+        for field in self.instance.score_fields_without_text:
+            score = int(data.get(field.id))
+            # Include '' answers as 0.
+            if score == '':
+                score = 0
+            scores.append(score)
+
         try:
             return sum(scores) / len(scores)
         except ZeroDivisionError:

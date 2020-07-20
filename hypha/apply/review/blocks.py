@@ -12,6 +12,7 @@ from hypha.apply.review.options import (
     RATE_CHOICE_NA,
     RATE_CHOICES_DICT,
     RECOMMENDATION_CHOICES,
+    SCORE_CHOICES,
     VISIBILILTY_HELP_TEXT,
     VISIBILITY,
 )
@@ -49,6 +50,40 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
             'comment': comment,
             'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
         })
+
+        return super().render(value, context)
+
+
+class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
+    """
+    There are two ways score could be accepted on reviews.
+
+    One is to use ScoreFieldBlock, where you need to put text answer along with
+    giving score on the review.
+
+    Second is to use this block to just select a reasonable score with adding
+    any text as answer.
+
+    This block uses SCORE_CHOICES instead of RATE_CHOICES, only difference is to
+    have empty string('') in place of NA for text value `n/a - choose not to answer`
+    as it helps to render this value as default to the forms and also when this field is
+    required it automatically handles validation on empty string.
+    """
+    name = 'score without text'
+    field_class = forms.ChoiceField
+
+    class Meta:
+        icon = 'order'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['choices'] = SCORE_CHOICES
+        return kwargs
+
+    def render(self, value, context=None):
+        data = int(context['data'])
+        choices = dict(SCORE_CHOICES)
+        context['data'] = choices[data]
 
         return super().render(value, context)
 
@@ -117,6 +152,7 @@ class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
     text = TextFieldBlock(group=_('Fields'))
     text_markup = RichTextBlock(group=_('Fields'), label=_('Paragraph'))
     score = ScoreFieldBlock(group=_('Fields'))
+    score_without_text = ScoreFieldWithoutTextBlock(group=_('Fields'))
     checkbox = CheckboxFieldBlock(group=_('Fields'))
     dropdown = DropdownFieldBlock(group=_('Fields'))
 
