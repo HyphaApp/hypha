@@ -3,8 +3,8 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
-from two_factor.views import LoginView
 from django_file_form import urls as django_file_form_urls
+from two_factor.views import LoginView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
