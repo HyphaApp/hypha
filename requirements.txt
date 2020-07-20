@@ -22,12 +22,12 @@ django-referrer-policy==1.0
 django-storages==1.9.1
 django-tables2==2.2.1
 django-tinymce4-lite==1.8.0
-django-two-factor-auth==1.11.0
+django-two-factor-auth==1.12.1
 django-webpack-loader==0.7.0
 django_select2==7.2.2
 djangorestframework==3.9.2
 djangorestframework-api-key==1.4.1
-django==2.2.13
+django==2.2.14
 gunicorn==20.0.4
 mailchimp3==3.0.14
 mistune==0.8.4
@@ -38,6 +38,6 @@ psycopg2==2.8.5
 reportlab==3.5.34
 social_auth_app_django==3.1.0
 tomd==0.1.3
-wagtail==2.9
+wagtail==2.9.2
 wagtail-cache==1.0.0
 whitenoise==5.1.0
