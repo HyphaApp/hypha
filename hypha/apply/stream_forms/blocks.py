@@ -30,7 +30,7 @@ from wagtail.core.blocks import (
     URLBlock,
 )
 
-from .fields import MultiFileField
+from .fields import MultiFileField, SingleFileField
 
 
 class FormFieldBlock(StructBlock):
@@ -414,20 +414,11 @@ class FileFieldBlock(UploadableMediaBlock):
 
     You must implement this if you want to reuse it.
     """
-    field_class = forms.FileField
-    widget = ClearableFileInput
+    field_class = SingleFileField
 
     class Meta:
         label = _('File field')
         icon = 'download'
-
-    def get_field_kwargs(self, struct_value):
-        kwargs = super().get_field_kwargs(struct_value)
-        kwargs['validators'] = [
-            FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
-        ]
-        kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': settings.FILE_ACCEPT_ATTR_VALUE})
-        return kwargs
 
 
 class MultiFileFieldBlock(UploadableMediaBlock):
