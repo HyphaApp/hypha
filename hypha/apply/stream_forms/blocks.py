@@ -8,6 +8,7 @@ from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
+from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_bleach.templatetags.bleach_tags import bleach_value
@@ -55,7 +56,7 @@ class FormFieldBlock(StructBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = {
             'label': struct_value['field_label'],
-            'help_text': struct_value['help_text'],
+            'help_text': conditional_escape(struct_value['help_text']),
             'required': struct_value.get('required', False)
         }
         if 'default_value' in struct_value:
