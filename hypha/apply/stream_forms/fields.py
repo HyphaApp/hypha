@@ -24,6 +24,8 @@ class FileFieldWidgetMixin:
             ],
         )
 
+
+
 class MultiFileFieldWidget(FileFieldWidgetMixin, UploadMultipleWidget):
     pass
 
@@ -67,12 +69,3 @@ class SingleFileField(UploadedFileField):
         if isinstance(widget, SingleFileFieldWidget) and 'accept' not in widget.attrs:
             attrs.setdefault('accept', settings.FILE_ACCEPT_ATTR_VALUE)
         return attrs
-
-    # def get_field_kwargs(self, struct_value):
-    #     # import ipdb; ipdb.set_trace()
-    #     kwargs = super().get_field_kwargs(struct_value)
-    #     kwargs['validators'] = [
-    #         FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
-    #     ]
-    #     kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': settings.FILE_ACCEPT_ATTR_VALUE})
-    #     return kwargs

@@ -67,7 +67,7 @@ class AccessFormData:
     @classmethod
     def process_file(cls, instance, field, file):
         if isinstance(file, list):
-            return [cls.stream_file(instance, field, f) for f in file]
+            return [cls.stream_file(instance, field, f) for f in file if not getattr(f, 'is_placeholder', False)]
         else:
             return cls.stream_file(instance, field, file)
 
