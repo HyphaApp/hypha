@@ -714,7 +714,6 @@ if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
 # django-file-form settings
 
 FILE_FORM_CACHE = 'django_file_form'
-FILE_FORM_MUST_LOGIN = True
 FILE_FORM_UPLOAD_DIR = 'temp_uploads'
 # Ensure FILE_FORM_UPLOAD_DIR exists:
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)

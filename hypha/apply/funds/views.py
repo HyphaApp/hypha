@@ -894,9 +894,11 @@ class BaseSubmissionEditView(UpdateView):
 
     def get_placeholder_file(self, initial_file):
         if not isinstance(initial_file, list):
-            return PlaceholderUploadedFile(initial_file.filename, size=initial_file.size)
+            return PlaceholderUploadedFile(
+                initial_file.filename, size=initial_file.size, file_id=initial_file.name
+            )
         return [
-            PlaceholderUploadedFile(f.filename, size=f.size)
+            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
             for f in initial_file
         ]
 
@@ -927,7 +929,10 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
                     source=self.object,
                     related=revision,
                 )
-
+        
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -987,6 +992,9 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 notify=not (revision or submitting_proposal) or self.object.status == DRAFT_STATE,  # Use the other notification
             )
 
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
         return HttpResponseRedirect(self.get_success_url())
 
 
