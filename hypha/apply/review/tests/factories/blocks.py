@@ -4,7 +4,7 @@ import random
 import factory
 
 from hypha.apply.review import blocks
-from hypha.apply.review.options import MAYBE, NO, PRIVATE, REVIEWER, SCORE_CHOICES, YES
+from hypha.apply.review.options import MAYBE, NO, PRIVATE, REVIEWER, YES
 from hypha.apply.stream_forms.testing.factories import (
     CharFieldBlockFactory,
     FormFieldBlockFactory,
@@ -44,11 +44,7 @@ class ScoreFieldWithoutTextBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_answer(cls, params=dict()):
-        defaults = {
-            'score': random.choices(SCORE_CHOICES)
-        }
-        defaults.update(params)
-        return defaults
+        return random.randint(1, 5)
 
 
 class ScoreFieldBlockFactory(FormFieldBlockFactory):

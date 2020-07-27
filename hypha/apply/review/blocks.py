@@ -10,9 +10,9 @@ from hypha.apply.review.options import (
     NA,
     PRIVATE,
     RATE_CHOICE_NA,
+    RATE_CHOICES,
     RATE_CHOICES_DICT,
     RECOMMENDATION_CHOICES,
-    SCORE_CHOICES,
     VISIBILILTY_HELP_TEXT,
     VISIBILITY,
 )
@@ -64,9 +64,9 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     Second is to use this block to just select a reasonable score with adding
     any text as answer.
 
-    This block uses SCORE_CHOICES instead of RATE_CHOICES, only difference is to
-    have empty string('') in place of NA for text value `n/a - choose not to answer`
-    as it helps to render this value as default to the forms and also when this field is
+    This block modifies RATE_CHOICES to have empty string('') in place of NA
+    for text value `n/a - choose not to answer` as it helps to render this value
+    as default to the forms and also when this field is
     required it automatically handles validation on empty string.
     """
     name = 'score without text'
@@ -77,15 +77,24 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['choices'] = SCORE_CHOICES
+        kwargs['choices'] = self.get_choices(RATE_CHOICES)
         return kwargs
 
     def render(self, value, context=None):
         data = int(context['data'])
-        choices = dict(SCORE_CHOICES)
+        choices = dict(self.get_choices(RATE_CHOICES))
         context['data'] = choices[data]
 
         return super().render(value, context)
+
+    def get_choices(self, choices):
+        """
+        Replace 'NA' option with an empty string choice.
+        """
+        rate_choices = list(choices)
+        rate_choices.pop(-1)
+        rate_choices.append(('', 'n/a - choose not to answer'))
+        return tuple(rate_choices)
 
 
 class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
