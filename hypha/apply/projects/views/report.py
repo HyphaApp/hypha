@@ -110,6 +110,9 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
                 related=self.object,
             )
 
+        # Required for django-file-form: delete temporary files for the new files
+        # that are uploaded.
+        form.delete_temporary_files()
         return response
 
 
