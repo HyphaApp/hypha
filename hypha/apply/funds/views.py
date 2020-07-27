@@ -885,7 +885,7 @@ class BaseSubmissionEditView(UpdateView):
         instance = kwargs.pop('instance').from_draft()
         initial = instance.raw_data
         for field_id in instance.file_field_ids:
-            initial.pop('placeholder-'+ field_id, False)
+            initial.pop('placeholder-' + field_id, False)
             initial[field_id] = self.get_placeholder_file(
                 instance.raw_data.get(field_id)
             )
@@ -929,7 +929,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
                     source=self.object,
                     related=revision,
                 )
-        
+
         # Required for django-file-form: delete temporary files for the new files
         # uploaded while edit.
         form.delete_temporary_files()

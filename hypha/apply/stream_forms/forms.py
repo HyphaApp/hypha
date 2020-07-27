@@ -36,7 +36,6 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
         return super()._html_output(*args, **kwargs)
 
     def hidden_fields(self):
-        # import ipdb; ipdb.set_trace()
         # No hidden fields are returned by default because of MixedFieldMetaclass
         return [self[f] for f in self.fields.keys() if self[f].is_hidden]
 

@@ -2,8 +2,6 @@
 import bleach
 from dateutil.parser import isoparse, parse
 from django import forms
-from django.conf import settings
-from django.core.validators import FileExtensionValidator
 from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime

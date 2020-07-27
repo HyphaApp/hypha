@@ -364,6 +364,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
                 if form.is_valid():
                     form_submission = self.process_form_submission(form, draft=draft)
+                    # Required for django-file-form: delete temporary files for the new files
+                    # that are uploaded.
                     form.delete_temporary_files()
                     return self.render_landing_page(request, form_submission, *args, **kwargs)
             else:

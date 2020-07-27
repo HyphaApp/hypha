@@ -70,7 +70,6 @@ class AccessFormData:
 
     @classmethod
     def process_file(cls, instance, field, file):
-        # import ipdb; ipdb.set_trace()
         if isinstance(file, list):
             return [cls.stream_file(instance, field, f) for f in file]
         else:
@@ -86,7 +85,7 @@ class AccessFormData:
                     for f in file:
                         f.save()
                 self.form_data[field.id] = file
- 
+
     def extract_files(self):
         files = {}
         for field in self.form_fields:

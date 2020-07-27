@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.validators import FileExtensionValidator
-from django.forms import ClearableFileInput, FileField, Media
+from django.forms import FileField, Media
 from django.utils.functional import cached_property
 from django_file_form.forms import MultipleUploadedFileField, UploadedFileField
 from django_file_form.widgets import UploadMultipleWidget, UploadWidget
@@ -34,18 +34,23 @@ class MultiFileField(MultipleUploadedFileField):
 
     def clean(self, value, initial):
         old_files = [
-            file for file in value if file.is_placeholder
+            file for file in value
+            if hasattr(file, 'is_placeholder') and file.is_placeholder
         ]
-        if not value and len(old_files) == len(initial):
+        new_files = [
+            file for file in value
+            if hasattr(file, 'is_placeholder') and not file.is_placeholder
+        ]
+        if not new_files and initial and len(old_files) == len(initial):
             return initial
 
-        new_files = [
+        files = [
             FileField(validators=[
                 FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
-            ]).clean(file, initial) for file in value if not file.is_placeholder
+            ]).clean(file, initial) for file in value
         ]
 
-        return old_files + new_files
+        return files
 
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
@@ -62,11 +67,12 @@ class SingleFileField(UploadedFileField):
     widget = SingleFileFieldWidget
 
     def clean(self, value, initial):
+        if not value:
+            return []
+
         validator = FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
-
-        FileField(validators=[validator]).clean(value, initial)
-
-        return super().clean(value, initial)
+        file = FileField(validators=[validator]).clean(value, initial)
+        return file
 
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
