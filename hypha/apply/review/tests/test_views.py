@@ -131,23 +131,38 @@ class TestReviewScore(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
 
-    def submit_review_scores(self, *scores):
+    def submit_review_scores(self, scores=(), scores_without_text=()):
         if scores:
-            form = ReviewFormFactory(form_fields__multiple__score=len(scores))
+            form = ReviewFormFactory(
+                form_fields__multiple__score=len(scores),
+                form_fields__multiple__score_without_text=len(scores_without_text)
+            )
         else:
-            form = ReviewFormFactory(form_fields__exclude__score=True)
+            form = ReviewFormFactory(
+                form_fields__exclude__score=True,
+                form_fields__exclude__score_without_text=True
+            )
         review_form = self.submission.round.review_forms.first()
         review_form.form = form
         review_form.save()
-
-        data = ReviewFormFieldsFactory.form_response(form.form_fields, {
+        score_fields = {
             field.id: {'score': score}
             for field, score in zip(form.score_fields, scores)
-        })
+        }
+        score_fields_without_text = {
+            field.id: score
+            for field, score in zip(form.score_fields_without_text, scores_without_text)
+        }
+        score_fields.update(score_fields_without_text)
+        data = ReviewFormFieldsFactory.form_response(
+            form.form_fields,
+            score_fields
+        )
 
         # Make a new person for every review
         self.client.force_login(self.user_factory())
         response = self.post_page(self.submission, data, 'form')
+        # import ipdb; ipdb.set_trace()
         self.assertIn(
             'funds/applicationsubmission_admin_detail.html',
             response.template_name,
@@ -157,11 +172,11 @@ class TestReviewScore(BaseViewTestCase):
         return self.submission.reviews.first()
 
     def test_score_calculated(self):
-        review = self.submit_review_scores(5)
+        review = self.submit_review_scores((5,), (5,))
         self.assertEqual(review.score, 5)
 
     def test_average_score_calculated(self):
-        review = self.submit_review_scores(1, 5)
+        review = self.submit_review_scores((1, 5), (1, 5))
         self.assertEqual(review.score, (1 + 5) / 2)
 
     def test_no_score_is_NA(self):
@@ -169,16 +184,16 @@ class TestReviewScore(BaseViewTestCase):
         self.assertEqual(review.score, NA)
 
     def test_na_included_in_review_average(self):
-        review = self.submit_review_scores(NA, 5)
+        review = self.submit_review_scores((NA, 5))
         self.assertEqual(review.score, 2.5)
 
     def test_na_included_reviews_average(self):
-        self.submit_review_scores(NA)
+        self.submit_review_scores((NA,))
         self.assertIsNotNone(Review.objects.score())
 
     def test_na_included_multiple_reviews_average(self):
-        self.submit_review_scores(NA)
-        self.submit_review_scores(5)
+        self.submit_review_scores((NA,))
+        self.submit_review_scores((5,))
 
         self.assertEqual(Review.objects.count(), 2)
         self.assertEqual(Review.objects.score(), 2.5)
