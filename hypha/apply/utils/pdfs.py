@@ -77,8 +77,6 @@ def prepare_fonts():
 
 DARK_GREY = Color(0.0154, 0.0154, 0, 0.7451)
 
-PAGE_WIDTH, PAGE_HEIGHT = pagesizes.legal
-
 # default value from https://github.com/MrBitBucket/reportlab-mirror/blob/58fb7bd37ee956cea45477c8b5aef723f1cb82e5/src/reportlab/platypus/frames.py#L70
 FRAME_PADDING = 6
 
@@ -97,13 +95,14 @@ class ReportDocTemplate(BaseDocTemplate):
         super().build(flowables)
 
 
-def make_pdf(title, sections):
+def make_pdf(title, sections, pagesize):
     prepare_fonts()
     buffer = io.BytesIO()
+    page_width, page_height = getattr(pagesizes, pagesize)
 
     doc = ReportDocTemplate(
         buffer,
-        pagesize=(PAGE_WIDTH, PAGE_HEIGHT),
+        pagesize=getattr(pagesizes, pagesize),
         title=title,
     )
 
@@ -126,6 +125,8 @@ def make_pdf(title, sections):
             current_section['title'],
             title,
             current_section['meta'],
+            page_width,
+            page_height,
         )
         canvas.restoreState()
         story.insert(0, title_spacer)
@@ -133,7 +134,14 @@ def make_pdf(title, sections):
     def main_page(canvas, doc):
         nonlocal current_section
         canvas.saveState()
-        spacer = draw_header(canvas, doc, current_section['title'], title)
+        spacer = draw_header(
+            canvas,
+            doc,
+            current_section['title'],
+            title,
+            page_width,
+            page_height,
+        )
         story.insert(0, spacer)
         canvas.restoreState()
 
@@ -147,13 +155,13 @@ def split_text(canvas, text, width):
     return simpleSplit(text, canvas._fontname, canvas._fontsize, width)
 
 
-def draw_header(canvas, doc, page_title, title):
+def draw_header(canvas, doc, page_title, title, page_width, page_height):
     title_size = 10
 
     # Set canvas font to correctly calculate the splitting
     canvas.setFont("MontserratBold", title_size)
 
-    text_width = PAGE_WIDTH - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
+    text_width = page_width - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
     split_title = split_text(canvas, title, text_width)
 
     # only count title - assume 1 line of title in header
@@ -166,15 +174,15 @@ def draw_header(canvas, doc, page_title, title):
     canvas.setFillColor(DARK_GREY)
     canvas.rect(
         0,
-        PAGE_HEIGHT - total_height,
-        PAGE_WIDTH,
+        page_height - total_height,
+        page_width,
         total_height,
         stroke=False,
         fill=True,
     )
 
     pos = (
-        (PAGE_HEIGHT - doc.topMargin) +  # bottom of top margin
+        (page_height - doc.topMargin) +  # bottom of top margin
         title_size / 2 +  # spacing below page title
         1.5 * 1 * title_size  # text
     )
@@ -201,12 +209,12 @@ def draw_header(canvas, doc, page_title, title):
     return Spacer(1, total_height - doc.topMargin)
 
 
-def draw_title_block(canvas, doc, page_title, title, meta):
+def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_height):
     page_title_size = 20
     title_size = 30
     meta_size = 10
 
-    text_width = PAGE_WIDTH - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
+    text_width = page_width - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
 
     # Set canvas font to correctly calculate the splitting
     canvas.setFont("MontserratBold", title_size)
@@ -228,8 +236,8 @@ def draw_title_block(canvas, doc, page_title, title, meta):
     canvas.setFillColor(DARK_GREY)
     canvas.rect(
         0,
-        PAGE_HEIGHT - total_height,
-        PAGE_WIDTH,
+        page_height - total_height,
+        page_width,
         total_height,
         stroke=False,
         fill=True,
@@ -237,7 +245,7 @@ def draw_title_block(canvas, doc, page_title, title, meta):
 
     canvas.setFont("MontserratBold", page_title_size)
     canvas.setFillColor(white)
-    pos = PAGE_HEIGHT - doc.topMargin
+    pos = page_height - doc.topMargin
     pos -= page_title_size
     canvas.drawString(
         doc.leftMargin + FRAME_PADDING,

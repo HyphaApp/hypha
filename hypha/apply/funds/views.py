@@ -47,6 +47,7 @@ from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.users.decorators import staff_required
+from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
@@ -1134,6 +1135,7 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        pdf_page_settings = PDFPageSettings.for_request(request)
         content = draw_submission_content(
             self.object.output_text_answers()
         )
@@ -1150,7 +1152,8 @@ class SubmissionDetailPDFView(SingleObjectMixin, View):
                         f"Lead: { self.object.lead }",
                     ],
                 },
-            ]
+            ],
+            pagesize=pdf_page_settings.download_page_size,
         )
         return FileResponse(
             pdf,
