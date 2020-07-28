@@ -17,18 +17,29 @@ jQuery(function ($) {
         // Hide wrapper elements for hidden inputs added by django-file-form
         $('input[type=hidden]').closest('.form__group').hide();
 
-        // For each file field in the form don't allow dropping files with an invalid file extension.
-        $('[type=file][multiple]', form).get().forEach(function (fileField) {
+        // For each file field in the form show warning when dropping files with an invalid file extension.
+        $('[type=file]', form).get().forEach(function (fileField) {
             var allowedExtensions = fileField.accept.split(', ');
 
-            // TODO: this currently raises an exception when trying to remove an invalid file.
             $(fileField).next('.dff-files').on('drop', function (e) {
                 var items = e.originalEvent.dataTransfer.items;
                 var files = e.originalEvent.dataTransfer.files;
-                for (var i = 0; i < files.length; i++) {
+                for (var i = 0; i < items.length; i++) {
                     var extension = '.' + files[i].name.split('.').slice(-1)[0];
                     if (!allowedExtensions.includes(extension)) {
-                        items.remove(i);
+                        let warning = e.currentTarget.querySelector('.invalid-file-warning');
+                        // Only add the warning when it's not present.
+                        if (warning == null) {
+                            var span = document.createElement('span');
+                            span.setAttribute('class', 'invalid-file-warning');
+                            var text = document.createTextNode(
+                                'Warning: Invalid files were detected, please delete before submitting.'
+                            );
+                            span.appendChild(text);
+                            span.style.color = 'red';
+                            e.currentTarget.appendChild(span);
+                            break;
+                        }
                     }
                 }
             });
