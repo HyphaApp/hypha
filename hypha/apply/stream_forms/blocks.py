@@ -2,6 +2,7 @@
 import bleach
 from dateutil.parser import isoparse, parse
 from django import forms
+from django.conf import settings
 from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
@@ -418,6 +419,11 @@ class FileFieldBlock(UploadableMediaBlock):
         label = _('File field')
         icon = 'download'
 
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
+        return kwargs
+
 
 class MultiFileFieldBlock(UploadableMediaBlock):
     field_class = MultiFileField
@@ -425,6 +431,11 @@ class MultiFileFieldBlock(UploadableMediaBlock):
     class Meta:
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
+        return kwargs
 
     def prepare_data(self, value, data, serialize):
         if serialize:
