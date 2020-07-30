@@ -68,6 +68,9 @@ class SubmissionsFilter(filters.FilterSet):
 
 
 class SubmissionList(generics.ListAPIView):
+    """
+    List all the submissions.
+    """
     queryset = ApplicationSubmission.objects.current().with_latest_update()
     serializer_class = SubmissionListSerializer
     permission_classes = (
@@ -79,6 +82,9 @@ class SubmissionList(generics.ListAPIView):
 
 
 class SubmissionDetail(generics.RetrieveAPIView):
+    """
+    Get details about a submission by it's id.
+    """
     queryset = ApplicationSubmission.objects.all().prefetch_related(
         Prefetch('reviews', Review.objects.submitted()),
     )
@@ -89,6 +95,11 @@ class SubmissionDetail(generics.RetrieveAPIView):
 
 
 class SubmissionAction(generics.RetrieveAPIView):
+    """
+    List all the actions that can be taken on a submission.
+
+    E.g. All the states this submission can be transistion to.
+    """
     queryset = ApplicationSubmission.objects.all()
     serializer_class = SubmissionActionSerializer
     permission_classes = (
@@ -96,6 +107,16 @@ class SubmissionAction(generics.RetrieveAPIView):
     )
 
     def post(self, request, *args, **kwargs):
+        """
+        Transistion a submission from one state to other.
+
+        E.g. To transition a submission from `Screening` to `Internal Review`
+        following post data can be used:
+
+        ```
+        {"action": "internal_review"}
+        ```
+        """
         action = request.data.get('action')
         if not action:
             raise ValidationError('Action must be provided.')
@@ -126,6 +147,9 @@ class SubmissionAction(generics.RetrieveAPIView):
 
 
 class RoundLabDetail(generics.RetrieveAPIView):
+    """
+    Get detail about a round or a lab.
+    """
     queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabDetailSerializer
     permission_classes = (
@@ -137,6 +161,9 @@ class RoundLabDetail(generics.RetrieveAPIView):
 
 
 class RoundLabList(generics.ListAPIView):
+    """
+    List all the rounds and labs current user has access to.
+    """
     queryset = RoundsAndLabs.objects.specific()
     serializer_class = RoundLabSerializer
     permission_classes = (
@@ -169,6 +196,9 @@ class AllCommentFilter(CommentFilter):
 
 
 class CommentList(generics.ListAPIView):
+    """
+    List all the comments for a user.
+    """
     queryset = Activity.comments.all()
     serializer_class = CommentSerializer
     permission_classes = (
@@ -183,6 +213,9 @@ class CommentList(generics.ListAPIView):
 
 
 class CommentListCreate(generics.ListCreateAPIView):
+    """
+    List all the comments on a submission.
+    """
     queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentCreateSerializer
     permission_classes = (
@@ -198,6 +231,9 @@ class CommentListCreate(generics.ListCreateAPIView):
         ).visible_to(self.request.user)
 
     def perform_create(self, serializer):
+        """
+        Add a comment on a submission.
+        """
         obj = serializer.save(
             timestamp=timezone.now(),
             type=COMMENT,
@@ -218,6 +254,9 @@ class CommentEdit(
         mixins.CreateModelMixin,
         generics.GenericAPIView,
 ):
+    """
+    Edit a comment.
+    """
     queryset = Activity.comments.all().select_related('user')
     serializer_class = CommentEditSerializer
     permission_classes = (
