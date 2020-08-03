@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db import transaction
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 from django.utils import timezone
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, viewsets
@@ -8,18 +8,14 @@ from rest_framework.exceptions import NotFound, PermissionDenied, ValidationErro
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework_api_key.permissions import HasAPIKey
-from wagtail.core.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import (
     ApplicationSubmission,
-    FundType,
-    LabType,
     RoundsAndLabs,
 )
-from hypha.apply.funds.workflow import PHASES
 from hypha.apply.review.models import Review
 
 from .pagination import StandardResultsSetPagination
@@ -35,38 +31,10 @@ from .serializers import (
     SubmissionListSerializer,
 )
 from .mixin import SubmissionNextedMixin
-
-
-class RoundLabFilter(filters.ModelChoiceFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-
-        return qs.filter(Q(round=value) | Q(page=value))
-
-
-class SubmissionsFilter(filters.FilterSet):
-    round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
-    status = filters.MultipleChoiceFilter(choices=PHASES)
-    active = filters.BooleanFilter(method='filter_active', label='Active')
-    submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label='Submit date')
-    fund = filters.ModelMultipleChoiceFilter(
-        field_name='page', label='fund',
-        queryset=Page.objects.type(FundType) | Page.objects.type(LabType)
-    )
-
-    class Meta:
-        model = ApplicationSubmission
-        fields = ('status', 'round', 'active', 'submit_date', 'fund', )
-
-    def filter_active(self, qs, name, value):
-        if value is None:
-            return qs
-
-        if value:
-            return qs.active()
-        else:
-            return qs.inactive()
+from .filters import (
+    SubmissionsFilter,
+    CommentFilter,
+)
 
 
 class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -168,29 +136,6 @@ class RoundViewSet(
         if self.action == 'list':
             return RoundLabSerializer
         return RoundLabDetailSerializer
-
-
-class NewerThanFilter(filters.ModelChoiceFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-
-        return qs.newer(value)
-
-
-class CommentFilter(filters.FilterSet):
-    since = filters.DateTimeFilter(field_name="timestamp", lookup_expr='gte')
-    before = filters.DateTimeFilter(field_name="timestamp", lookup_expr='lte')
-    newer = NewerThanFilter(queryset=Activity.comments.all())
-
-    class Meta:
-        model = Activity
-        fields = ['visibility', 'since', 'before', 'newer']
-
-
-class AllCommentFilter(CommentFilter):
-    class Meta(CommentFilter.Meta):
-        fields = CommentFilter.Meta.fields + ['source_object_id']
 
 
 class SubmissionCommentViewSet(
