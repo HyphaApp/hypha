@@ -29,6 +29,7 @@ from django_tables2 import SingleTableMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.users.decorators import approver_required, staff_required
+from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import (
     draw_project_content,
     draw_submission_content,
@@ -531,6 +532,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
+        pdf_page_settings = PDFPageSettings.for_request(request)
         response = ProjectDetailSimplifiedView.as_view()(
             request=self.request,
             pk=self.object.pk,
@@ -563,6 +565,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
                     ],
                 },
             ],
+            pagesize=pdf_page_settings.download_page_size,
         )
         return FileResponse(
             pdf,
