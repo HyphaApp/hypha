@@ -110,7 +110,7 @@ class TimestampField(serializers.Field):
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='api:v1:submissions:detail')
+    url = serializers.HyperlinkedIdentityField(view_name='api:v1:submissions-detail')
     round = serializers.SerializerMethodField()
     last_update = TimestampField()
 
@@ -199,14 +199,14 @@ class RoundLabSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments:edit')
+    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments-edit')
     editable = serializers.SerializerMethodField()
     timestamp = TimestampField(read_only=True)
     edited = TimestampField(read_only=True)
 
     class Meta:
         model = Activity
-        fields = ('id', 'timestamp', 'user', 'source', 'message', 'visibility', 'edited', 'edit_url', 'editable')
+        fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url', 'editable')
 
     def get_message(self, obj):
         return bleach_value(markdown(obj.message))
@@ -217,7 +217,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments:edit')
+    edit_url = serializers.HyperlinkedIdentityField(view_name='api:v1:comments-edit')
     editable = serializers.SerializerMethodField()
     timestamp = TimestampField(read_only=True)
     edited = TimestampField(read_only=True)
