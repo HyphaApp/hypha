@@ -81,13 +81,20 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def calculate_score(self, data):
         scores = list()
-
         for field in self.instance.score_fields:
             score = data.get(field.id)[1]
             # Include NA answers as 0.
             if score == NA:
                 score = 0
             scores.append(score)
+        # Check if there are score_fields_without_text and also
+        # append scores from them.
+        for field in self.instance.score_fields_without_text:
+            score = data.get(field.id)
+            # Include '' answers as 0.
+            if score == '':
+                score = 0
+            scores.append(int(score))
 
         try:
             return sum(scores) / len(scores)

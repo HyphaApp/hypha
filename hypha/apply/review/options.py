@@ -9,6 +9,7 @@ RATE_CHOICES = (
     (5, '5. Excellent'),
     (NA, 'n/a - choose not to answer'),
 )
+
 RATE_CHOICES_DICT = dict(RATE_CHOICES)
 RATE_CHOICE_NA = RATE_CHOICES_DICT[NA]
 

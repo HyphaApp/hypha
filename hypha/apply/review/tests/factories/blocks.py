@@ -38,6 +38,15 @@ class VisibilityBlockFactory(FormFieldBlockFactory):
         return random.choices([PRIVATE, REVIEWER])
 
 
+class ScoreFieldWithoutTextBlockFactory(FormFieldBlockFactory):
+    class Meta:
+        model = blocks.ScoreFieldWithoutTextBlock
+
+    @classmethod
+    def make_answer(cls, params=dict()):
+        return random.randint(1, 5)
+
+
 class ScoreFieldBlockFactory(FormFieldBlockFactory):
     class Meta:
         model = blocks.ScoreFieldBlock
@@ -60,6 +69,7 @@ ReviewFormFieldsFactory = StreamFieldUUIDFactory({
     'char': CharFieldBlockFactory,
     'text': RichTextFieldBlockFactory,
     'score': ScoreFieldBlockFactory,
+    'score_without_text': ScoreFieldWithoutTextBlockFactory,
     'recommendation': RecommendationBlockFactory,
     'comments': RecommendationCommentsBlockFactory,
     'visibility': VisibilityBlockFactory,
