@@ -1,11 +1,11 @@
 from rest_framework_nested import routers
 
 from .views import (
-    SubmissionViewSet,
-    SubmissionActionViewSet,
-    SubmissionCommentViewSet,
     CommentViewSet,
     RoundViewSet,
+    SubmissionActionViewSet,
+    SubmissionCommentViewSet,
+    SubmissionViewSet,
 )
 
 app_name = 'v1'

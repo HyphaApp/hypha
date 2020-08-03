@@ -1,9 +1,8 @@
 from django.db.models import Q
-
 from django_filters import rest_framework as filters
-
 from wagtail.core.models import Page
 
+from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import (
     ApplicationSubmission,
     FundType,
@@ -11,7 +10,6 @@ from hypha.apply.funds.models import (
     RoundsAndLabs,
 )
 from hypha.apply.funds.workflow import PHASES
-from hypha.apply.activity.models import Activity
 
 
 class RoundLabFilter(filters.ModelChoiceFilter):
