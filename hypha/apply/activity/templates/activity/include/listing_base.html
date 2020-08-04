@@ -37,7 +37,7 @@
                 <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}" 
                 data-visibility-options="{{activity|visibility_options:activity.user}}"
                 data-visibility="{{activity.visibility}}"
-                data-edit-url="{% url 'api:v1:comments:edit' pk=activity.pk %}">
+                data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}">
                     {{ activity|display_for:request.user|submission_links|markdown|bleach }}
                 </div>
 

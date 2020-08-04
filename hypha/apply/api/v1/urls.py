@@ -1,31 +1,23 @@
-from django.urls import include, path
+from rest_framework_nested import routers
 
 from .views import (
-    CommentEdit,
-    CommentList,
-    CommentListCreate,
-    RoundLabDetail,
-    RoundLabList,
-    SubmissionAction,
-    SubmissionDetail,
-    SubmissionList,
+    CommentViewSet,
+    RoundViewSet,
+    SubmissionActionViewSet,
+    SubmissionCommentViewSet,
+    SubmissionViewSet,
 )
 
 app_name = 'v1'
 
-urlpatterns = [
-    path('submissions/', include(([
-        path('', SubmissionList.as_view(), name='list'),
-        path('<int:pk>/', SubmissionDetail.as_view(), name='detail'),
-        path('<int:pk>/actions/', SubmissionAction.as_view(), name='actions'),
-        path('<int:pk>/comments/', CommentListCreate.as_view(), name='comments'),
-    ], 'submissions'))),
-    path('rounds/', include(([
-        path('', RoundLabList.as_view(), name='list'),
-        path('<int:pk>/', RoundLabDetail.as_view(), name='detail'),
-    ], 'rounds'))),
-    path('comments/', include(([
-        path('', CommentList.as_view(), name='list'),
-        path('<int:pk>/edit/', CommentEdit.as_view(), name='edit'),
-    ], 'comments')))
-]
+
+router = routers.SimpleRouter()
+router.register(r'submissions', SubmissionViewSet, basename='submissions')
+router.register(r'comments', CommentViewSet, basename='comments')
+router.register(r'rounds', RoundViewSet, basename='rounds')
+
+submission_router = routers.NestedSimpleRouter(router, r'submissions', lookup='submission')
+submission_router.register(r'actions', SubmissionActionViewSet, basename='submission-actions')
+submission_router.register(r'comments', SubmissionCommentViewSet, basename='submission-comments')
+
+urlpatterns = router.urls + submission_router.urls
