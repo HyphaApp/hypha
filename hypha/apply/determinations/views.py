@@ -315,6 +315,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         )
 
     def get_defined_fields(self):
+        import ipdb; ipdb.set_trace()
         return get_fields_for_stage(self.submission)
 
     def get_form_kwargs(self):
@@ -338,6 +339,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 )
                 # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
+        import ipdb; ipdb.set_trace()
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
     def get_success_url(self):
