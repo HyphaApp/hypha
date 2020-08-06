@@ -11,11 +11,7 @@ django-basic-auth-ip-whitelist==0.3.4
 django-bleach==0.6.1
 django-countries==6.1.2
 django-extensions==2.2.9
-<<<<<<< HEAD
 django-filter==2.3.0
-=======
-django-filter==2.2.0
->>>>>>> Fix edit forms with django-file-form
 django-fsm==2.7.0
 django-heroku==0.3.1
 django-hijack==2.1.10
@@ -51,4 +47,4 @@ whitenoise==5.1.0
 
 # django-file-form==2.2.0
 # Fork that fixes multi file upload widget:
--e git+https://github.com/OpenTechFund/django-file-form.git@uploadmultiplewidget#egg=django_file_form
+-e git+https://github.com/OpenTechFund/django-file-form.git@upload-widget-placeholder-file#egg=django_file_form

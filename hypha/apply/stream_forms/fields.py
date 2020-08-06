@@ -68,8 +68,9 @@ class SingleFileField(UploadedFileField):
 
     def clean(self, value, initial):
         if not value:
-            return []
-
+            return
+        if hasattr(value, 'is_placeholder') and value.is_placeholder and initial:
+            return initial
         validator = FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
         file = FileField(validators=[validator]).clean(value, initial)
         return file
