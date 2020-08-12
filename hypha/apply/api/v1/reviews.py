@@ -14,8 +14,9 @@ import inspect, six
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
-from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs, AssignedReviewers
 from hypha.apply.review.models import Review
+from hypha.apply.review.options import PRIVATE, NA
 
 from .filters import CommentFilter, SubmissionsFilter
 from .mixin import SubmissionNextedMixin
@@ -37,7 +38,44 @@ from hypha.apply.stream_forms.blocks import FormFieldBlock
 IGNORE_ARGS = ['self', 'cls']
 
 
+class MixedFieldMetaclass(serializers.SerializerMetaclass):
+    """Stores all fields passed to the class and not just the field type.
+    This allows the form to be rendered when Field-like blocks are passed
+    in as part of the definition
+    """
+    def __new__(mcs, name, bases, attrs):
+        display = attrs.copy()
+        new_class = super(MixedFieldMetaclass, mcs).__new__(mcs, name, bases, attrs)
+        new_class.display = display
+        return new_class
+
+
+class StreamBaseSerializer(serializers.Serializer, metaclass=MixedFieldMetaclass):
+    def swap_fields_for_display(func):
+        def wrapped(self, *args, **kwargs):
+            # Replaces the form fields with the display fields
+            # should only add new streamblocks and wont affect validation
+            import ipdb; ipdb.set_trace()
+            fields = self.fields.copy()
+            self.fields = self.display
+            yield from func(self, *args, **kwargs)
+            self.fields = fields
+        return wrapped
+
+    @swap_fields_for_display
+    def __iter__(self):
+        import ipdb; ipdb.set_trace()
+        yield from super().__iter__()
+
+
+class PageStreamBaseSerializer(StreamBaseSerializer):
+    # Adds page and user reference to the form class
+    pass
+
+
 class WagtailSerializer:
+    # submission_serializer_class = PageStreamBaseSerializer
+
     def get_serializer_fields(self):
         serializer_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
@@ -51,6 +89,7 @@ class WagtailSerializer:
                     field_from_block,
                     self.get_serializer_field_class(field_class)
                 )
+        # import ipdb; ipdb.set_trace()
         return serializer_fields
 
     def _get_field(self, form_field, serializer_field_class):
@@ -133,7 +172,12 @@ class WagtailSerializer:
         return getattr(serializers, field_class)
 
     def get_serializer_class(self):
+        self.serializer_class.Meta.fields = [*self.get_serializer_fields().keys()]
         return type('WagtailStreamSerializer', (self.serializer_class,), self.get_serializer_fields())
+
+
+class MixedMetaClass(type(StreamBaseSerializer), type(serializers.ModelSerializer)):
+    pass
 
 
 class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializers.SerializerMetaclass):
@@ -141,21 +185,53 @@ class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializ
 
     class Meta:
         model = Review
-        fields = ['recommendation', 'visibility', 'score', 'submission']
+        fields = []
 
-    def validate(self):
-        import ipdb; ipdb.set_trace()
-        validated_data = super().validate()
+    def validate(self, data):
+        validated_data = super().validate(data)
         validated_data['form_data'] = {
             key: value
             for key, value in validated_data.items()
-            if key not in self._meta.fields
         }
         return validated_data
 
-    def save(self):
-        import ipdb; ipdb.set_trace()
-        pass
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+        instance.score = self.calculate_score(instance, self.validated_data)
+        instance.recommendation = int(self.validated_data[instance.recommendation_field.id])
+        try:
+            instance.visibility = self.validated_data[instance.visibility_field.id]
+        except AttributeError:
+            instance.visibility = PRIVATE
+
+        if not instance.is_draft:
+            # Capture the revision against which the user was reviewing
+            instance.revision = instance.submission.live_revision
+
+        instance.save()
+        return instance
+
+    def calculate_score(self, instance, data):
+        scores = list()
+        for field in instance.score_fields:
+            score = data.get(field.id)[1]
+            # Include NA answers as 0.
+            if score == NA:
+                score = 0
+            scores.append(score)
+        # Check if there are score_fields_without_text and also
+        # append scores from them.
+        for field in instance.score_fields_without_text:
+            score = data.get(field.id)
+            # Include '' answers as 0.
+            if score == '':
+                score = 0
+            scores.append(int(score))
+
+        try:
+            return sum(scores) / len(scores)
+        except ZeroDivisionError:
+            return NA
 
 
 class FieldSerializer(serializers.Serializer):
@@ -192,8 +268,22 @@ class SubmissionReviewViewSet(
         return get_review_form_fields_for_stage(submission)
 
     def create(self, request, *args, **kwargs):
-        ser = self.get_serializer(data={'0069dea9-b6f3-46b5-9fdd-587a801fe803': 5})
+        submission = self.get_submission_object()
+        ser = self.get_serializer(data={
+            '0069dea9-b6f3-46b5-9fdd-587a801fe803': 1,
+            'justtopost': 'justpostsomething'
+        })
         ser.is_valid(raise_exception=True)
+        ar, _ = AssignedReviewers.objects.get_or_create_for_user(
+            submission=submission,
+            reviewer=request.user,
+        )
+        instance = ser.Meta.model.objects.create(
+            form_fields=self.get_defined_fields(),
+            submission=submission, author=ar
+        )
+        instance.save()
+        ser.update(instance, ser.validated_data)
         return Response({})
 
     @action(detail=False, methods=['get'])

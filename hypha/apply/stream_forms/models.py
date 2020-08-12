@@ -44,11 +44,9 @@ class BaseStreamForm:
         return data
 
     def get_defined_fields(self):
-        # import ipdb; ipdb.set_trace()
         return self.form_fields
 
     def get_form_fields(self, draft=False):
-        # import ipdb; ipdb.set_trace()
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
@@ -100,7 +98,6 @@ class BaseStreamForm:
         return form_fields
 
     def get_form_class(self, draft=False):
-        import ipdb; ipdb.set_trace()
         return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft))
 
 
