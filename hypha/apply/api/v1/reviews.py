@@ -4,8 +4,9 @@ from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
 from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
-from rest_framework import mixins, permissions, viewsets, serializers
+from rest_framework import mixins, permissions, viewsets, serializers, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -15,11 +16,12 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs, AssignedReviewers
-from hypha.apply.review.models import Review
-from hypha.apply.review.options import PRIVATE, NA
+from hypha.apply.review.models import Review, ReviewOpinion
+from hypha.apply.review.options import PRIVATE, NA, OPINION_CHOICES
+from hypha.apply.funds.workflow import INITIAL_STATE
 
 from .filters import CommentFilter, SubmissionsFilter
-from .mixin import SubmissionNextedMixin
+from .mixin import SubmissionNestedMixin, ReviewNestedMixin
 from .pagination import StandardResultsSetPagination
 from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
@@ -89,10 +91,10 @@ class WagtailSerializer:
                     field_from_block,
                     self.get_serializer_field_class(field_class)
                 )
-        # import ipdb; ipdb.set_trace()
         return serializer_fields
 
     def _get_field(self, form_field, serializer_field_class):
+        import ipdb; ipdb.set_trace()
         kwargs = self._get_field_kwargs(form_field, serializer_field_class)
 
         field = serializer_field_class(**kwargs)
@@ -172,6 +174,7 @@ class WagtailSerializer:
         return getattr(serializers, field_class)
 
     def get_serializer_class(self):
+        import ipdb; ipdb.set_trace()
         self.serializer_class.Meta.fields = [*self.get_serializer_fields().keys()]
         return type('WagtailStreamSerializer', (self.serializer_class,), self.get_serializer_fields())
 
@@ -180,12 +183,44 @@ class MixedMetaClass(type(StreamBaseSerializer), type(serializers.ModelSerialize
     pass
 
 
+class OpinionSerializer(serializers.ModelSerializer):
+    author_id = serializers.ReadOnlyField(source='author.id')
+    opinion = serializers.ReadOnlyField(source='get_opinion_display')
+
+    class Meta:
+        model = ReviewOpinion
+        fields = ('author_id', 'opinion')
+
+
+class SubmissionReviewSerializer2(serializers.ModelSerializer):
+    author_id = serializers.ReadOnlyField(source='author.id')
+    # url = serializers.ReadOnlyField(source='get_absolute_url')
+    opinions = OpinionSerializer(read_only=True, many=True)
+    recommendation = serializers.SerializerMethodField()
+    score = serializers.ReadOnlyField(source='get_score_display')
+
+    class Meta:
+        model = Review
+        fields = ['id', 'score', 'author_id', 'opinions', 'recommendation', 'form_data']
+
+    def get_recommendation(self, obj):
+        return {
+            'value': obj.recommendation,
+            'display': obj.get_recommendation_display(),
+        }
+
+
 class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializers.SerializerMetaclass):
-    justtopost = serializers.CharField()
 
     class Meta:
         model = Review
         fields = []
+
+    def get_recommendation(self, obj):
+        return {
+            'value': obj.recommendation,
+            'display': obj.get_recommendation_display(),
+        }
 
     def validate(self, data):
         validated_data = super().validate(data)
@@ -252,9 +287,51 @@ class FieldSerializer(serializers.Serializer):
         return kwargs
 
 
+def review_workflow_actions(request, submission):
+    submission_stepped_phases = submission.workflow.stepped_phases
+    action = None
+    if submission.status == INITIAL_STATE:
+        # Automatically transition the application to "Internal review".
+        action = submission_stepped_phases[2][0].name
+    elif submission.status == 'proposal_discussion':
+        # Automatically transition the proposal to "Internal review".
+        action = 'proposal_internal_review'
+    elif submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = submission_stepped_phases[3][0].name
+    elif submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = 'ext_post_external_review_discussion'
+    elif submission.status == 'com_external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the application to "Ready for discussion".
+        action = 'com_post_external_review_discussion'
+    elif submission.status == 'external_review' and submission.reviews.by_reviewers().count() > 1:
+        # Automatically transition the proposal to "Ready for discussion".
+        action = 'post_external_review_discussion'
+
+    # If action is set run perform_transition().
+    if action:
+        try:
+            submission.perform_transition(
+                action,
+                request.user,
+                request=request,
+                notify=False,
+            )
+        except (PermissionDenied, KeyError):
+            pass
+
+
+# class ReviewOpinionSerializer(serializers.Serializer):
+#     author = serializers.ReviewOpinion
+#     class Meta:
+#         model = ReviewOpinion
+#         fields = ('author', 'opinion',)
+
+
 class SubmissionReviewViewSet(
     WagtailSerializer,
-    SubmissionNextedMixin,
+    SubmissionNestedMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet
 ):
@@ -266,6 +343,14 @@ class SubmissionReviewViewSet(
     def get_defined_fields(self):
         submission = self.get_submission_object()
         return get_review_form_fields_for_stage(submission)
+
+    def get_object(self):
+        return get_object_or_404(Review, id=self.kwargs['pk'])
+
+    def get_queryset(self):
+        submission = self.get_submission_object()
+        self.queryset = self.model.objects.filter(submission=submission, is_draft=False)
+        return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
         submission = self.get_submission_object()
@@ -284,7 +369,60 @@ class SubmissionReviewViewSet(
         )
         instance.save()
         ser.update(instance, ser.validated_data)
-        return Response({})
+        if not instance.is_draft:
+            messenger(
+                MESSAGES.NEW_REVIEW,
+                request=self.request,
+                user=self.request.user,
+                source=submission,
+                related=instance,
+            )
+            # Automatic workflow actions.
+            review_workflow_actions(self.request, submission)
+
+        return Response(ser.data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Get details of a review on a submission"""
+        review = self.get_object()
+        ser = SubmissionReviewSerializer2(review)
+        return Response(ser.data)
+
+    def update(self, request, *args, **kwargs):
+        review = self.get_object()
+        ser = self.get_serializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        ser.update(review, ser.validated_data)
+
+        messenger(
+            MESSAGES.EDIT_REVIEW,
+            user=self.request.user,
+            request=self.request,
+            source=review.submission,
+            related=review,
+        )
+        # Automatic workflow actions.
+        review_workflow_actions(self.request, review.submission)
+
+        return Response(ser.data)
+
+    def list(self, request, *args, **kwargs):
+        """List all the reviews on a submission"""
+        pass
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a review on a submission"""
+
+        review = self.get_object()
+        messenger(
+            MESSAGES.DELETE_REVIEW,
+            user=request.user,
+            request=request,
+            source=review.submission,
+            related=review,
+        )
+        review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'])
     def fields(self, request, *args, **kwargs):
@@ -292,3 +430,48 @@ class SubmissionReviewViewSet(
         fields = get_review_form_fields_for_stage(submission)
         ser = FieldSerializer(fields, many=True)
         return Response(ser.data)
+
+
+class ReviewOpinionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewOpinion
+        fields = ('author', 'opinion',)
+
+    def validate(self):
+        validated_data = super().validate()
+        import ipdb; ipdb.set_trace()
+        return validated_data
+
+
+class ReviewOptionSerializer(serializers.Serializer):
+    options = serializers.DictField()
+
+
+class ReviewOpinionViewSet(
+    SubmissionNestedMixin,
+    ReviewNestedMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    permission_classes = (
+        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+    )
+    serializer_class = ReviewOpinionSerializer
+
+    def get_queryset(self):
+        review = self.get_review_object()
+        return review.opinions.all()
+
+    def create(self, request, *args, **kwargs):
+        pass
+
+    # def list(self, request, *args, **kwargs):
+    #     pass
+
+    # def update(self, request, *args, **kwargs):
+    #     instance=review.opinions.filter(author__reviewer=self.request.user).first()
+    #     pass
+
+    @action(detail=False, methods=['get'])
+    def options(self, request, *args, **kwargs):
+        return Response(dict(OPINION_CHOICES))
