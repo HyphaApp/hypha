@@ -446,8 +446,24 @@ class MultiFileFieldBlock(UploadableMediaBlock):
         return [super().no_response()]
 
 
+class HeadingBlock(StructBlock):
+    HEADER_SIZE = [
+        ('h2', 'H2'),
+        ('h3', 'H3'),
+        ('h4', 'H4')
+    ]
+
+    heading_text = CharBlock(classname="title", required=True)
+    size = ChoiceBlock(choices=HEADER_SIZE, required=False)
+
+    class Meta:
+        icon = "title"
+        template = "stream_forms/heading_field.html"
+
+
 class FormFieldsBlock(StreamBlock):
-    text_markup = RichTextBlock(group=_('Custom'), label=_('Section text/header'))
+    text_markup = RichTextBlock(group=_('Custom'), label=_('Section text'))
+    header_markup = HeadingBlock(group=_('Custom'), label=_('Section header'))
     char = CharFieldBlock(group=_('Fields'))
     multi_inputs_char = MultiInputCharFieldBlock(group=_('Fields'))
     text = TextFieldBlock(group=_('Fields'))
