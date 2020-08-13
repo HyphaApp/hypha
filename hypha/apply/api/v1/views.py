@@ -16,7 +16,7 @@ from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review
 
 from .filters import CommentFilter, SubmissionsFilter
-from .mixin import SubmissionNextedMixin
+from .mixin import SubmissionNestedMixin
 from .pagination import StandardResultsSetPagination
 from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
@@ -53,7 +53,7 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SubmissionActionViewSet(
-    SubmissionNextedMixin,
+    SubmissionNestedMixin,
     viewsets.GenericViewSet
 ):
     serializer_class = SubmissionActionSerializer
@@ -133,7 +133,7 @@ class RoundViewSet(
 
 
 class SubmissionCommentViewSet(
-    SubmissionNextedMixin,
+    SubmissionNestedMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet

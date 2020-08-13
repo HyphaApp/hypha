@@ -222,6 +222,7 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
     raise_exception = True
 
     def get_context_data(self, **kwargs):
+        import ipdb; ipdb.set_trace()
         review = self.get_object()
         if review.author.reviewer != self.request.user:
             consensus_form = ReviewOpinionForm(
@@ -297,6 +298,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         return False
 
     def form_valid(self, form):
+        import ipdb; ipdb.set_trace
         self.review = self.get_object()
         author, _ = AssignedReviewers.objects.get_or_create_for_user(
             submission=self.review.submission,
