@@ -22,6 +22,7 @@ class ResetNetworkPeoplePage(ResetNetworkBasePage):
     section_1 = StreamField(
         [
             ('sub_heading', blocks.CharBlock(icon='tag')),
+            ('sub_text', blocks.TextBlock()),
             ('persons', blocks.ListBlock(
                 blocks.StructBlock([
                     ('person', SnippetChooserBlock(ResetNetworkPerson)),
