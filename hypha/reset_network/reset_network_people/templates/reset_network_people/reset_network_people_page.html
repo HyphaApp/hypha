@@ -29,6 +29,11 @@
             <h2>{{ block.value }}</h2>
           </div>
         {% endif %}
+        {% if block.block_type == 'sub_text' %}
+          <div class="people-text">
+            <p>{{ block.value }}</p>
+          </div>
+        {% endif %}
         {% if block.block_type == 'persons' %}
           {% include "reset_network_person/person.html" with person=block %}
         {% endif %}

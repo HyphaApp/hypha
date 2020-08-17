@@ -14,6 +14,57 @@
 .people-title {
     width: 100%;
     position: relative;
+    padding: 0 0 10px;
+
+    @include media-max-sm {
+        margin: 0;
+
+
+        &::after {
+            content: '';
+            display: block;
+            height: 1px;
+            width: calc(100% + #{$gutter-sm * 2}px);
+            background-color: color(seed-grey);
+            position: absolute;
+            left: -#{$gutter-sm}px;
+            bottom: 0;
+        }
+    }
+
+    @include media-min-sm {
+        padding: 0 0 15px;
+    }
+
+    @include media-min-md {
+        padding: 0 0 20px;
+    }
+
+    h2 {
+        @include font-size-xl();
+        font-family: $font-family-secondary;
+
+        @include media-min-sm() {
+            @include font-size-xxl();
+        }
+    }
+
+    .person+& {
+        padding: 50px 0 10px;
+
+        @include media-min-sm {
+            padding: 50px 0 15px;
+        }
+
+        @include media-min-md {
+            padding: 70px 0 20px;
+        }
+    }
+}
+
+.people-text {
+    width: 100%;
+    position: relative;
     padding: 0 0 40px;
 
     @include media-max-sm {
@@ -38,27 +89,6 @@
 
     @include media-min-md {
         padding: 0 0 70px;
-    }
-
-    h2 {
-        @include font-size-xl();
-        font-family: $font-family-secondary;
-
-        @include media-min-sm() {
-            @include font-size-xxl();
-        }
-    }
-
-    .person+& {
-        padding: 50px 0 40px;
-
-        @include media-min-sm {
-            padding: 50px 0;
-        }
-
-        @include media-min-md {
-            padding: 70px 0;
-        }
     }
 }
 
