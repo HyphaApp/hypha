@@ -7,7 +7,7 @@ from .views import (
     SubmissionCommentViewSet,
     SubmissionViewSet,
 )
-from .reviews import SubmissionReviewViewSet, ReviewOpinionViewSet
+from reviews.views import SubmissionReviewViewSet, ReviewOpinionViewSet
 
 app_name = 'v1'
 
