@@ -244,12 +244,18 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
+    PAGE_CHOICES = (
+        (25, '25'),
+        (50, '50'),
+        (100, '100'),
+    )
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening')
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
+    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items per page'), label='Per page', method='per_page_handler')
 
     class Meta:
         model = ApplicationSubmission
@@ -265,6 +271,10 @@ class SubmissionFilter(filters.FilterSet):
             for field, filter in self.filters.items()
             if field not in exclude
         }
+
+    def per_page_handler(self, queryset, name, value):
+        # Pagination is already implemented in view. We only need to add per_page query parameter.
+        return queryset
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
