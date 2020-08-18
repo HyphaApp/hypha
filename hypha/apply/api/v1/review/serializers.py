@@ -2,9 +2,10 @@ from rest_framework import serializers
 
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import PRIVATE, NA
+from ..utils import get_field_kwargs
 
 
-class OpinionSerializer(serializers.ModelSerializer):
+class ReviewOpinionReadSerializer(serializers.ModelSerializer):
     author_id = serializers.ReadOnlyField(source='author.id')
     opinion = serializers.ReadOnlyField(source='get_opinion_display')
 
@@ -13,9 +14,15 @@ class OpinionSerializer(serializers.ModelSerializer):
         fields = ('author_id', 'opinion')
 
 
+class ReviewOpinionWriteSerializer(serializers.Serializer):
+    class Meta:
+        model = ReviewOpinion
+        fields = ('opinion', )
+
+
 class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
     author_id = serializers.ReadOnlyField(source='author.id')
-    opinions = OpinionSerializer(read_only=True, many=True)
+    opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
     recommendation = serializers.SerializerMethodField()
     score = serializers.ReadOnlyField(source='get_score_display')
     questions = serializers.SerializerMethodField()
@@ -108,13 +115,10 @@ class FieldSerializer(serializers.Serializer):
     kwargs = serializers.SerializerMethodField()
 
     def get_id(self, obj):
-        return obj.id
+        return obj[0]
 
     def get_type(self, obj):
-        return obj.block.field_class.__name__
+        return obj[1].__class__.__name__
 
     def get_kwargs(self, obj):
-        struct_value = obj.value
-        kwargs = obj.block.get_field_kwargs(struct_value)
-        kwargs.pop('widget', False)
-        return kwargs
+        return get_field_kwargs(obj[1])

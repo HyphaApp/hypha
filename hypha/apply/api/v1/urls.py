@@ -7,7 +7,9 @@ from .views import (
     SubmissionCommentViewSet,
     SubmissionViewSet,
 )
-from reviews.views import SubmissionReviewViewSet, ReviewOpinionViewSet
+from hypha.apply.api.v1.review.views import (
+    SubmissionReviewViewSet
+)
 
 app_name = 'v1'
 
@@ -23,6 +25,6 @@ submission_router.register(r'comments', SubmissionCommentViewSet, basename='subm
 submission_router.register(r'reviews', SubmissionReviewViewSet, basename='reviews')
 
 review_router = routers.NestedSimpleRouter(submission_router, r'reviews', lookup='review')
-review_router.register(r'opinions', ReviewOpinionViewSet, basename='opinions')
+# review_router.register(r'opinions', ReviewOpinionViewSet, basename='opinions')
 
 urlpatterns = router.urls + submission_router.urls + review_router.urls

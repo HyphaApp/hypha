@@ -10,13 +10,15 @@ from rest_framework.decorators import action
 from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.review.models import Review
+from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.funds.models import AssignedReviewers
+from hypha.apply.stream_forms.models import BaseStreamForm
 
 from .serializers import (
     SubmissionReviewSerializer,
     SubmissionReviewDetailSerializer,
-    FieldSerializer
+    FieldSerializer,
+    ReviewOpinionWriteSerializer
 )
 from .utils import get_review_form_fields_for_stage, review_workflow_actions
 
@@ -26,6 +28,7 @@ from ..permissions import IsApplyStaffUser
 
 
 class SubmissionReviewViewSet(
+    BaseStreamForm,
     WagtailSerializer,
     SubmissionNestedMixin,
     mixins.CreateModelMixin,
@@ -48,6 +51,14 @@ class SubmissionReviewViewSet(
         self.queryset = self.model.objects.filter(submission=submission, is_draft=False)
         return super().get_queryset()
 
+    def get_reviewer(self):
+        submission = self.get_submission_object()
+        ar, _ = AssignedReviewers.objects.get_or_create_for_user(
+            submission=submission,
+            reviewer=self.request.user,
+        )
+        return ar
+
     def create(self, request, *args, **kwargs):
         submission = self.get_submission_object()
         ser = self.get_serializer(data={
@@ -57,13 +68,9 @@ class SubmissionReviewViewSet(
             '08a7f1d4-7527-4c22-8891-7bf3544768c2': 'rich text field'
         })
         ser.is_valid(raise_exception=True)
-        ar, _ = AssignedReviewers.objects.get_or_create_for_user(
-            submission=submission,
-            reviewer=request.user,
-        )
         instance = ser.Meta.model.objects.create(
             form_fields=self.get_defined_fields(),
-            submission=submission, author=ar
+            submission=submission, author=self.get_reviewer()
         )
         instance.save()
         ser.update(instance, ser.validated_data)
@@ -124,52 +131,28 @@ class SubmissionReviewViewSet(
 
     @action(detail=False, methods=['get'])
     def fields(self, request, *args, **kwargs):
-        submission = self.get_submission_object()
-        fields = get_review_form_fields_for_stage(submission)
-        ser = FieldSerializer(fields, many=True)
-        return Response(ser.data)
+        fields = self.get_form_fields()
+        fields = FieldSerializer(fields.items(), many=True)
+        return Response(fields.data)
 
-
-# class ReviewOpinionSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ReviewOpinion
-#         fields = ('author', 'opinion',)
-
-#     def validate(self):
-#         validated_data = super().validate()
-#         return validated_data
-
-
-# class ReviewOptionSerializer(serializers.Serializer):
-#     options = serializers.DictField()
-
-
-
-# class ReviewOpinionViewSet(
-#     SubmissionNestedMixin,
-#     ReviewNestedMixin,
-#     mixins.ListModelMixin,
-#     viewsets.GenericViewSet
-# ):
-#     permission_classes = (
-#         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
-#     )
-#     serializer_class = ReviewOpinionSerializer
-
-#     def get_queryset(self):
-#         review = self.get_review_object()
-#         return review.opinions.all()
-
-#     def create(self, request, *args, **kwargs):
-#         pass
-
-#     # def list(self, request, *args, **kwargs):
-#     #     pass
-
-#     # def update(self, request, *args, **kwargs):
-#     #     instance=review.opinions.filter(author__reviewer=self.request.user).first()
-#     #     pass
-
-#     @action(detail=False, methods=['get'])
-#     def options(self, request, *args, **kwargs):
-#         return Response(dict(OPINION_CHOICES))
+    @action(detail=True, methods=['post'])
+    def opinions(self, request, *args, **kwargs):
+        review = self.get_object()
+        ser = ReviewOpinionWriteSerializer(data={'opinion': 1})
+        ser.is_valid(raise_exception=True)
+        opinion = ser.validated_data['opinion']
+        try:
+            review_opinion = ReviewOpinion.objects.get(
+                review=review,
+                author=self.get_reviewer()
+            )
+        except ReviewOpinion.DoesNotExist:
+            ReviewOpinion.objects.create(
+                review=review,
+                author=self.get_reviewer(),
+                opinion=opinion
+            )
+        else:
+            review_opinion.opinion = opinion
+            review_opinion.save()
+        return Response(status=status.HTTP_201_CREATED)

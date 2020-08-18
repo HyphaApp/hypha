@@ -4,27 +4,20 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
-from hypha.apply.stream_forms.blocks import FormFieldBlock
 
 IGNORE_ARGS = ['self', 'cls']
 
 
 class WagtailSerializer:
-    # submission_serializer_class = PageStreamBaseSerializer
 
     def get_serializer_fields(self):
         serializer_fields = OrderedDict()
-        field_blocks = self.get_defined_fields()
-        for struct_child in field_blocks:
-            block = struct_child.block
-            struct_value = struct_child.value
-            if isinstance(block, FormFieldBlock):
-                field_class = block.field_class.__name__
-                field_from_block = block.get_field(struct_value)
-                serializer_fields[struct_child.id] = self._get_field(
-                    field_from_block,
-                    self.get_serializer_field_class(field_class)
-                )
+        form_fields = self.get_form_fields()
+        for field_id, field in form_fields.items():
+            serializer_fields[field_id] = self._get_field(
+                field,
+                self.get_serializer_field_class(field)
+            )
         return serializer_fields
 
     def _get_field(self, form_field, serializer_field_class):
@@ -63,7 +56,6 @@ class WagtailSerializer:
         Find all class arguments (parameters) which can be passed in ``__init__``.
         """
         args = set()
-
         for i in klass.mro():
             if i is object or not hasattr(i, '__init__'):
                 continue
@@ -100,11 +92,9 @@ class WagtailSerializer:
 
         return attrs
 
-    def get_defined_fields(self):
-        return self.form_fields
-
-    def get_serializer_field_class(self, field_class):
-        return getattr(serializers, field_class)
+    def get_serializer_field_class(self, field):
+        class_name = field.__class__.__name__
+        return getattr(serializers, class_name)
 
     def get_serializer_class(self):
         self.serializer_class.Meta.fields = [*self.get_serializer_fields().keys()]
