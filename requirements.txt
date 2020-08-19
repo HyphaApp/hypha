@@ -45,6 +45,7 @@ wagtail==2.9.3
 wagtail-cache==1.0.1
 whitenoise==5.1.0
 
-# django-file-form==2.2.0
+# django-file-form==3.x.x
+# TODO: Switch to offical version when 3.0.0+ is released.
 # Fork that fixes multi file upload widget:
 -e git+https://github.com/OpenTechFund/django-file-form.git@upload-widget-placeholder-file#egg=django_file_form
