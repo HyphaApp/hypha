@@ -4,6 +4,9 @@ from collections import OrderedDict
 
 from rest_framework import serializers
 
+from hypha.apply.stream_forms.forms import BlockFieldWrapper
+from hypha.apply.review.fields import ScoredAnswerField
+
 
 IGNORE_ARGS = ['self', 'cls']
 
@@ -11,9 +14,18 @@ IGNORE_ARGS = ['self', 'cls']
 class WagtailSerializer:
 
     def get_serializer_fields(self):
+        """
+        Get the respective serializer fields for all the form fields.
+        """
         serializer_fields = OrderedDict()
         form_fields = self.get_form_fields()
         for field_id, field in form_fields.items():
+            if isinstance(field, BlockFieldWrapper):
+                continue
+            if isinstance(field, ScoredAnswerField):
+                # TODO need to serialize Django's MultiValueField
+                serializer_fields[field_id] = serializers.ListField()
+                continue
             serializer_fields[field_id] = self._get_field(
                 field,
                 self.get_serializer_field_class(field)
@@ -21,6 +33,10 @@ class WagtailSerializer:
         return serializer_fields
 
     def _get_field(self, form_field, serializer_field_class):
+        """
+        Get the serializer field from the form field with all
+        the kwargs defined.
+        """
         kwargs = self._get_field_kwargs(form_field, serializer_field_class)
 
         field = serializer_field_class(**kwargs)
@@ -93,9 +109,20 @@ class WagtailSerializer:
         return attrs
 
     def get_serializer_field_class(self, field):
+        """
+        Assumes that a serializer field exist with the same name as form field.
+
+        TODO:
+        In case there are form fields not existing in serializer fields, we would
+        have to create mapping b/w form fields and serializer fields to get the
+        respective classes. But for now this works.
+        """
         class_name = field.__class__.__name__
         return getattr(serializers, class_name)
 
     def get_serializer_class(self):
+        # Model serializers needs to have each field declared in the field options
+        # of Meta. This code adds the dynamically generated serializer fields
+        # to the serializer class meta fields.
         self.serializer_class.Meta.fields = [*self.get_serializer_fields().keys()]
         return type('WagtailStreamSerializer', (self.serializer_class,), self.get_serializer_fields())

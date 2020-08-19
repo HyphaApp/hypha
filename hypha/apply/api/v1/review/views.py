@@ -48,8 +48,7 @@ class SubmissionReviewViewSet(
 
     def get_queryset(self):
         submission = self.get_submission_object()
-        self.queryset = self.model.objects.filter(submission=submission, is_draft=False)
-        return super().get_queryset()
+        return Review.objects.filter(submission=submission, is_draft=False)
 
     def get_reviewer(self):
         submission = self.get_submission_object()
@@ -61,11 +60,19 @@ class SubmissionReviewViewSet(
 
     def create(self, request, *args, **kwargs):
         submission = self.get_submission_object()
+        # TODO replace hardcoded data with request.data
         ser = self.get_serializer(data={
             '0069dea9-b6f3-46b5-9fdd-587a801fe803': 1,
             '9399a0e6-548c-4724-a35e-3c54709f0b33': 'comments',
+            '969035db-a16d-424f-b412-e6e5e45273f9': 'private',
             'e5d49655-34ba-4ecc-bc44-36836ee74c17': 'extra comments',
-            '08a7f1d4-7527-4c22-8891-7bf3544768c2': 'rich text field'
+            '08a7f1d4-7527-4c22-8891-7bf3544768c2': 'rich text field',
+            '3dd91ac9-6335-40e9-847c-70de4b9f8c3b': 'text field single line',
+            'f9ad667b-63ec-4bba-94fc-9ac8679670eb': 'text field multi line',
+            '2970b75f-c4c7-4193-89c0-9e2a8879ae4e': False,
+            'd6bd80f7-321d-4fc8-893a-88c1b88c0658': 'choice 1',
+            'b59ce5c5-70f7-4c7f-b921-1fac3b30f82d': 3,
+            '1d58f37c-a6b1-4205-a5b0-1904938b9854': ['ss', 3]
         })
         ser.is_valid(raise_exception=True)
         instance = ser.Meta.model.objects.create(
@@ -112,8 +119,9 @@ class SubmissionReviewViewSet(
         return Response(ser.data)
 
     def list(self, request, *args, **kwargs):
-        """List all the reviews on a submission"""
-        pass
+        queryset = self.get_queryset()
+        ser = SubmissionReviewDetailSerializer(queryset, many=True)
+        return Response(ser.data)
 
     def destroy(self, request, *args, **kwargs):
         """Delete a review on a submission"""

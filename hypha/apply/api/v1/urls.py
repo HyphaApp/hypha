@@ -24,7 +24,4 @@ submission_router.register(r'actions', SubmissionActionViewSet, basename='submis
 submission_router.register(r'comments', SubmissionCommentViewSet, basename='submission-comments')
 submission_router.register(r'reviews', SubmissionReviewViewSet, basename='reviews')
 
-review_router = routers.NestedSimpleRouter(submission_router, r'reviews', lookup='review')
-# review_router.register(r'opinions', ReviewOpinionViewSet, basename='opinions')
-
-urlpatterns = router.urls + submission_router.urls + review_router.urls
+urlpatterns = router.urls + submission_router.urls
