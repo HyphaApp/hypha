@@ -27,6 +27,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
@@ -907,8 +908,24 @@ class BaseSubmissionEditView(UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop('instance').from_draft()
-        kwargs['initial'] = instance.raw_data
+        initial = instance.raw_data
+        for field_id in instance.file_field_ids:
+            initial.pop('placeholder-' + field_id, False)
+            initial[field_id] = self.get_placeholder_file(
+                instance.raw_data.get(field_id)
+            )
+        kwargs['initial'] = initial
         return kwargs
+
+    def get_placeholder_file(self, initial_file):
+        if not isinstance(initial_file, list):
+            return PlaceholderUploadedFile(
+                initial_file.filename, size=initial_file.size, file_id=initial_file.name
+            )
+        return [
+            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
+            for f in initial_file
+        ]
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(buttons=self.buttons(), **kwargs)
@@ -938,6 +955,9 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
                     related=revision,
                 )
 
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -997,6 +1017,9 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 notify=not (revision or submitting_proposal) or self.object.status == DRAFT_STATE,  # Use the other notification
             )
 
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
         return HttpResponseRedirect(self.get_success_url())
 
 

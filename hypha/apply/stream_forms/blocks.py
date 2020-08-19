@@ -3,7 +3,6 @@ import bleach
 from dateutil.parser import isoparse, parse
 from django import forms
 from django.conf import settings
-from django.core.validators import FileExtensionValidator
 from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
@@ -30,7 +29,7 @@ from wagtail.core.blocks import (
     URLBlock,
 )
 
-from .fields import MultiFileField
+from .fields import MultiFileField, SingleFileField
 
 
 class FormFieldBlock(StructBlock):
@@ -414,8 +413,7 @@ class FileFieldBlock(UploadableMediaBlock):
 
     You must implement this if you want to reuse it.
     """
-    field_class = forms.FileField
-    widget = ClearableFileInput
+    field_class = SingleFileField
 
     class Meta:
         label = _('File field')
@@ -423,10 +421,7 @@ class FileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['validators'] = [
-            FileExtensionValidator(allowed_extensions=settings.FILE_ALLOWED_EXTENSIONS)
-        ]
-        kwargs['widget'] = self.get_widget(struct_value)(attrs={'accept': settings.FILE_ACCEPT_ATTR_VALUE})
+        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
         return kwargs
 
 
@@ -436,6 +431,11 @@ class MultiFileFieldBlock(UploadableMediaBlock):
     class Meta:
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
+
+    def get_field_kwargs(self, struct_value):
+        kwargs = super().get_field_kwargs(struct_value)
+        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
+        return kwargs
 
     def prepare_data(self, value, data, serialize):
         if serialize:

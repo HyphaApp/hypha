@@ -57,6 +57,12 @@
                     {% endif %}
                 {% endif %}
             {% endfor %}
+
+            {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+
             <button class="link link--button-secondary" type="submit" disabled>Submit for review</button>
             <button class="link link--button-tertiary" type="submit" name="draft" value="Save Draft" formnovalidate>Save Draft</button>
         </form>

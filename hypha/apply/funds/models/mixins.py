@@ -1,5 +1,6 @@
 from django.core.files import File
 from django.utils.safestring import mark_safe
+from django_file_form.models import PlaceholderUploadedFile
 
 from hypha.apply.stream_forms.blocks import (
     FileFieldBlock,
@@ -56,6 +57,9 @@ class AccessFormData:
             return file
         if isinstance(file, File):
             return cls.stream_file_class(instance, field, file, name=file.name, storage=cls.storage_class())
+
+        if isinstance(file, PlaceholderUploadedFile):
+            return cls.stream_file_class(instance, field, None, name=file.file_id, filename=file.name, storage=cls.storage_class())
 
         # This fixes a backwards compatibility issue with #507
         # Once every application has been re-saved it should be possible to remove it

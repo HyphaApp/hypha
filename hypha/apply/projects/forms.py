@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django_file_form.forms import FileFormMixin
 
 from addressfield.fields import AddressField
 from hypha.apply.funds.models import ApplicationSubmission
@@ -233,7 +234,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
         return cleaned_data
 
 
-class CreatePaymentRequestForm(PaymentRequestBaseForm):
+class CreatePaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
     receipts = MultiFileField(required=False)
 
     def save(self, commit=True):
@@ -249,7 +250,7 @@ class CreatePaymentRequestForm(PaymentRequestBaseForm):
         return request
 
 
-class EditPaymentRequestForm(PaymentRequestBaseForm):
+class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
     receipt_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
@@ -380,7 +381,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
                                                   .distinct())
 
 
-class ReportEditForm(forms.ModelForm):
+class ReportEditForm(FileFormMixin, forms.ModelForm):
     public_content = RichTextField(
         help_text="This section of the report will be shared with the broader community."
     )

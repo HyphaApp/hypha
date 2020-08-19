@@ -111,7 +111,7 @@ class TestCreatePaymentRequestForm(TestCase):
         }
 
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
-        receipts = SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())
+        receipts = [SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())]
         files = {
             'invoice': invoice,
             'receipts': receipts,
@@ -151,7 +151,7 @@ class TestCreatePaymentRequestForm(TestCase):
 
     def test_payment_request_dates_are_correct(self):
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
-        receipts = SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())
+        receipts = [SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())]
         files = {
             'invoice': invoice,
             'receipts': receipts,
