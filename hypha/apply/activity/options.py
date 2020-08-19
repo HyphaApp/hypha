@@ -49,6 +49,7 @@ class MESSAGES(Enum):
     CREATE_REMINDER = 'Reminder Created'
     DELETE_REMINDER = 'Reminder Deleted'
     REVIEW_REMINDER = 'Reminde to Review'
+    BATCH_DELETE_SUBMISSION = 'Delete Batch Submissions'
 
     @classmethod
     def choices(cls):

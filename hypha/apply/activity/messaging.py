@@ -248,6 +248,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: 'Submitted a report',
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
 
     def recipients(self, message_type, **kwargs):
@@ -300,6 +301,13 @@ class ActivityAdapter(AdapterBase):
         return self.messages[MESSAGES.DETERMINATION_OUTCOME].format(
             determination=determination,
         )
+
+    def handle_batch_delete_submission(self, sources, **kwargs):
+        submissions = sources
+        submissions_text = ', '.join(
+            [submission.title for submission in submissions]
+        )
+        return f'Successfully deleted submissions: {submissions_text}'
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
@@ -425,7 +433,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
         MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
         MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
-        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.'
+        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
+        MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
 
     def __init__(self):
@@ -559,6 +568,11 @@ class SlackAdapter(AdapterBase):
                 submissions_links=submissions_links,
             )
         )
+
+    def handle_batch_delete_submission(self, sources, links, user, **kwargs):
+        submissions = sources
+        submissions_text = ', '.join([submission.title for submission in submissions])
+        return f'{user} has deleted submissions: {submissions_text}'
 
     def notify_reviewers(self, source, link, **kwargs):
         submission = source
