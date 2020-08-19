@@ -3,6 +3,10 @@ from collections import OrderedDict
 
 from django import forms
 
+from hypha.apply.stream_forms.forms import BlockFieldWrapper
+from hypha.apply.review.fields import ScoredAnswerField
+
+
 IGNORE_ARGS = ['self', 'cls']
 
 
@@ -32,6 +36,8 @@ def find_class_args(klass):
 
 
 def get_field_kwargs(form_field):
+    if isinstance(form_field, BlockFieldWrapper):
+        return {'text': form_field.block.value.source}
     kwargs = OrderedDict()
     kwargs = {
         'initial': form_field.initial,
@@ -53,4 +59,6 @@ def get_field_kwargs(form_field):
     if isinstance(form_field, forms.IntegerField):
         kwargs['max_value'] = form_field.max_value
         kwargs['min_value'] = form_field.min_value
+    if isinstance(form_field, ScoredAnswerField):
+        kwargs['choices'] = form_field.fields[1].choices
     return kwargs
