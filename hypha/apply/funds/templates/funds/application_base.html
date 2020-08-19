@@ -50,10 +50,10 @@
                 {% else %}
                     {% if field.group_number > 1 %}
                         <div class="field-group-{{ field.group_number }}{% if not show_all_group_fields %} js-hidden{% endif %}">
-                            {{ field }}
+                            {% include_block field.block with block_id=field.block.id %}
                         </div>
                     {% else %}
-                        {{ field }}
+                        {% include_block field.block with block_id=field.block.id %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
