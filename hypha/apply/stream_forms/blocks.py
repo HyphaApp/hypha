@@ -454,7 +454,7 @@ class HeadingBlock(StructBlock):
     ]
 
     heading_text = CharBlock(classname="title", required=True)
-    size = ChoiceBlock(choices=HEADER_SIZE, required=False)
+    size = ChoiceBlock(choices=HEADER_SIZE, default='h2')
 
     class Meta:
         icon = "title"

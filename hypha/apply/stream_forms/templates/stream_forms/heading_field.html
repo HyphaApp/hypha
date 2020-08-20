@@ -1,12 +1,7 @@
-{% with 'h1 h2 h3' as sizelist %}
-    {% if self.size in sizelist.split %}
-    <{{ self.size }} id="{{ block_id }}">{{ self.heading_text }}
-        <a href="#{{ block_id }}">
-            <svg class="icon icon--anchor-link">
-                <use xlink:href="#anchor-link"></use>
-            </svg>
-        </a>
-    </{{ self.size }}>
-
-    {% endif %}
-{% endwith %}
+<{{ value.size }} id="{{ value.heading_text|slugify }}">{{ value.heading_text }}
+    <a href="#{{ value.heading_text|slugify }}">
+        <svg class="icon icon--anchor-link">
+            <use xlink:href="#anchor-link"></use>
+        </svg>
+    </a>
+</{{ value.size }}>
