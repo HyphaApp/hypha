@@ -45,7 +45,6 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
-
         if self.draft_button_name in self.data:
             for field in self.fields.values():
                 field.required = False

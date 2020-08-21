@@ -62,6 +62,7 @@ class SubmissionReviewViewSet(
         submission = self.get_submission_object()
         # TODO replace hardcoded data with request.data
         ser = self.get_serializer(data={
+            'save_draft': True,
             '0069dea9-b6f3-46b5-9fdd-587a801fe803': 1,
             '9399a0e6-548c-4724-a35e-3c54709f0b33': 'comments',
             '969035db-a16d-424f-b412-e6e5e45273f9': 'private',
@@ -102,7 +103,9 @@ class SubmissionReviewViewSet(
 
     def update(self, request, *args, **kwargs):
         review = self.get_object()
-        ser = self.get_serializer(data=request.data)
+        ser = self.get_serializer(data={
+            'save_draft': True,
+        })
         ser.is_valid(raise_exception=True)
         ser.update(review, ser.validated_data)
 
@@ -115,7 +118,7 @@ class SubmissionReviewViewSet(
         )
         # Automatic workflow actions.
         review_workflow_actions(self.request, review.submission)
-
+        ser = SubmissionReviewDetailSerializer(review)
         return Response(ser.data)
 
     def list(self, request, *args, **kwargs):
