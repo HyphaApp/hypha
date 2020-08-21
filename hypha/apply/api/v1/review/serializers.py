@@ -51,6 +51,16 @@ class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializers.SerializerMetaclass):
+    save_as_draft = 'save_draft'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # make the required parameter of the fields as False when saving
+        # as draft.
+        if self.save_as_draft in self.initial_data:
+            for field in self.fields.values():
+                field.required = False
 
     class Meta:
         model = Review
@@ -74,6 +84,8 @@ class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializ
         instance = super().update(instance, validated_data)
         instance.score = self.calculate_score(instance, self.validated_data)
         instance.recommendation = int(self.validated_data[instance.recommendation_field.id])
+        instance.is_draft = self.save_as_draft in self.initial_data
+
         try:
             instance.visibility = self.validated_data[instance.visibility_field.id]
         except AttributeError:
@@ -89,7 +101,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializ
     def calculate_score(self, instance, data):
         scores = list()
         for field in instance.score_fields:
-            score = data.get(field.id)[1]
+            score = data.get(field.id, ['', NA])[1]
             # Include NA answers as 0.
             if score == NA:
                 score = 0
@@ -97,7 +109,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializ
         # Check if there are score_fields_without_text and also
         # append scores from them.
         for field in instance.score_fields_without_text:
-            score = data.get(field.id)
+            score = data.get(field.id, '')
             # Include '' answers as 0.
             if score == '':
                 score = 0
