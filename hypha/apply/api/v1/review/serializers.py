@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
 from hypha.apply.review.models import Review, ReviewOpinion
-from hypha.apply.review.options import PRIVATE, NA
+from hypha.apply.review.options import NA, PRIVATE
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
+
 from ..utils import get_field_kwargs, get_field_widget
+
 # from ..stream_serializers import StreamBaseForm
 
 

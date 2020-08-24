@@ -1,12 +1,11 @@
 import inspect
-import six
 from collections import OrderedDict
 
+import six
 from rest_framework import serializers
 
-from hypha.apply.stream_forms.forms import BlockFieldWrapper
 from hypha.apply.review.fields import ScoredAnswerField
-
+from hypha.apply.stream_forms.forms import BlockFieldWrapper
 
 IGNORE_ARGS = ['self', 'cls']
 

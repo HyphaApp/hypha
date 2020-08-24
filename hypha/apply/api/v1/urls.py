@@ -1,14 +1,13 @@
 from rest_framework_nested import routers
 
+from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
+
 from .views import (
     CommentViewSet,
     RoundViewSet,
     SubmissionActionViewSet,
     SubmissionCommentViewSet,
     SubmissionViewSet,
-)
-from hypha.apply.api.v1.review.views import (
-    SubmissionReviewViewSet
 )
 
 app_name = 'v1'

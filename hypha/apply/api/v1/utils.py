@@ -2,12 +2,10 @@ import inspect
 from collections import OrderedDict
 
 from django import forms
-
 from tinymce.widgets import TinyMCE
 
-from hypha.apply.stream_forms.forms import BlockFieldWrapper
 from hypha.apply.review.fields import ScoredAnswerField
-
+from hypha.apply.stream_forms.forms import BlockFieldWrapper
 
 IGNORE_ARGS = ['self', 'cls']
 
