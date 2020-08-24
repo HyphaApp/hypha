@@ -7,9 +7,10 @@ class HasReviewCreatePermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
+        submission = view.get_submission_object()
         return (
-            self.submission.phase.permissions.can_review(request.user) and
-            self.submission.has_permission_to_review(request.user)
+            submission.phase.permissions.can_review(request.user) and
+            submission.has_permission_to_review(request.user)
         )
 
 
@@ -51,7 +52,7 @@ class HasReviewDeletePermission(permissions.BasePermission):
 class HasReviewOpinionPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         review = obj
-        user = self.request.user
+        user = request.user
         author = review.author.reviewer
         submission = review.submission
 
