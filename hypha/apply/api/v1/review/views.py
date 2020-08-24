@@ -21,7 +21,13 @@ from .serializers import (
     ReviewOpinionWriteSerializer
 )
 from .utils import get_review_form_fields_for_stage, review_workflow_actions
-
+from .permissions import (
+    HasReviewCreatePermission,
+    HasReviewEditPermission,
+    HasReviewDetialPermission,
+    HasReviewOpinionPermission,
+    HasReviewDeletePermission,
+)
 from ..stream_serializers import WagtailSerializer
 from ..mixin import SubmissionNestedMixin
 from ..permissions import IsApplyStaffUser
@@ -36,7 +42,23 @@ class SubmissionReviewViewSet(
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
+    permission_classes_by_action = {
+        'create': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
+        'retrieve': [permissions.IsAuthenticated, HasReviewDetialPermission, ],
+        'update': [permissions.IsAuthenticated, HasReviewEditPermission, ],
+        'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, ],
+        'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, ],
+        'fields': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
+    }
     serializer_class = SubmissionReviewSerializer
+
+    def get_permissions(self):
+        try:
+            # return permission_classes depending on `action`
+            return [permission() for permission in self.permission_classes_by_action[self.action]]
+        except KeyError:
+            # action is not set return default permission_classes
+            return [permission() for permission in self.permission_classes]
 
     def get_defined_fields(self):
         submission = self.get_submission_object()
@@ -48,7 +70,9 @@ class SubmissionReviewViewSet(
         return get_review_form_fields_for_stage(submission)
 
     def get_object(self):
-        return get_object_or_404(Review, id=self.kwargs['pk'])
+        obj = get_object_or_404(Review, id=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get_queryset(self):
         submission = self.get_submission_object()
