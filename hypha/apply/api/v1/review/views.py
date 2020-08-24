@@ -40,6 +40,11 @@ class SubmissionReviewViewSet(
 
     def get_defined_fields(self):
         submission = self.get_submission_object()
+        if self.action in ['retrieve', 'update']:
+            # For detail and edit api form fields used while submitting
+            # review should be used.
+            review = self.get_object()
+            return review.form_fields
         return get_review_form_fields_for_stage(submission)
 
     def get_object(self):
@@ -86,6 +91,7 @@ class SubmissionReviewViewSet(
         review_data = review.form_data
         review_data['id'] = review.id
         review_data['score'] = review.score
+        review_data['opinions'] = review.opinions
         ser = self.get_serializer(review_data)
         return Response(ser.data)
 
@@ -140,7 +146,7 @@ class SubmissionReviewViewSet(
     @action(detail=True, methods=['post'])
     def opinions(self, request, *args, **kwargs):
         review = self.get_object()
-        ser = ReviewOpinionWriteSerializer(data={'opinion': 1})
+        ser = ReviewOpinionWriteSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         opinion = ser.validated_data['opinion']
         try:

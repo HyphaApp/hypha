@@ -16,10 +16,11 @@ class ReviewOpinionReadSerializer(serializers.ModelSerializer):
         fields = ('author_id', 'opinion')
 
 
-class ReviewOpinionWriteSerializer(serializers.Serializer):
+class ReviewOpinionWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewOpinion
         fields = ('opinion', )
+        extra_kwargs = {'opinion': {'write_only': True}}
 
 
 class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
@@ -58,10 +59,13 @@ class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class SubmissionReviewSerializer(serializers.ModelSerializer):
+    save_as_draft = 'save_draft'
+
+    opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
 
     class Meta:
         model = Review
-        fields = ['id', 'score']
+        fields = ['id', 'score', 'opinions']
         extra_kwargs = {'score': {'read_only': True}}
 
     def get_recommendation(self, obj):
