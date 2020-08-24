@@ -3,6 +3,8 @@ from collections import OrderedDict
 
 from django import forms
 
+from tinymce.widgets import TinyMCE
+
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
 from hypha.apply.review.fields import ScoredAnswerField
 
@@ -62,3 +64,15 @@ def get_field_kwargs(form_field):
     if isinstance(form_field, ScoredAnswerField):
         kwargs['choices'] = form_field.fields[1].choices
     return kwargs
+
+
+def get_field_widget(form_field):
+    if isinstance(form_field, BlockFieldWrapper):
+        return {}
+    widget = {
+        'name': form_field.widget.__class__.__name__,
+        'attrs': form_field.widget.attrs
+    }
+    if isinstance(form_field.widget, TinyMCE):
+        widget['mce_attrs'] = form_field.widget.mce_attrs
+    return widget

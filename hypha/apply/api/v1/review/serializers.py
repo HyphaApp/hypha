@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import PRIVATE, NA
-from ..utils import get_field_kwargs
+from hypha.apply.stream_forms.forms import BlockFieldWrapper
+from ..utils import get_field_kwargs, get_field_widget
+# from ..stream_serializers import StreamBaseForm
 
 
 class ReviewOpinionReadSerializer(serializers.ModelSerializer):
@@ -21,6 +23,11 @@ class ReviewOpinionWriteSerializer(serializers.Serializer):
 
 
 class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
+    """
+    TODO
+
+    Remove this serializer if not in used.
+    """
     author_id = serializers.ReadOnlyField(source='author.id')
     opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
     recommendation = serializers.SerializerMethodField()
@@ -50,21 +57,12 @@ class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
         return self.serialize_questions(obj, obj.normal_blocks)
 
 
-class SubmissionReviewSerializer(serializers.ModelSerializer, metaclass=serializers.SerializerMetaclass):
-    save_as_draft = 'save_draft'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # make the required parameter of the fields as False when saving
-        # as draft.
-        if self.save_as_draft in self.initial_data:
-            for field in self.fields.values():
-                field.required = False
+class SubmissionReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = []
+        fields = ['id', 'score']
+        extra_kwargs = {'score': {'read_only': True}}
 
     def get_recommendation(self, obj):
         return {
@@ -125,12 +123,18 @@ class FieldSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField()
     type = serializers.SerializerMethodField()
     kwargs = serializers.SerializerMethodField()
+    widget = serializers.SerializerMethodField()
 
     def get_id(self, obj):
         return obj[0]
 
     def get_type(self, obj):
+        if isinstance(obj[1], BlockFieldWrapper):
+            return 'LoadHTML'
         return obj[1].__class__.__name__
 
     def get_kwargs(self, obj):
         return get_field_kwargs(obj[1])
+
+    def get_widget(self, obj):
+        return get_field_widget(obj[1])

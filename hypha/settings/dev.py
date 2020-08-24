@@ -145,3 +145,6 @@ DEBUG_TOOLBAR_CONFIG = {
 WEBPACK_LOADER['DEFAULT'].update({
     'STATS_FILE': os.path.join(BASE_DIR, './hypha/static_compiled/app/webpack-stats.json'),
 })
+
+# Required for testing the apis from postman
+REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + ('rest_framework.authentication.BasicAuthentication', )
