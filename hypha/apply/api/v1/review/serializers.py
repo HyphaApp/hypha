@@ -1,12 +1,10 @@
 from rest_framework import serializers
 
 from hypha.apply.review.models import Review, ReviewOpinion
-from hypha.apply.review.options import NA, PRIVATE
+from hypha.apply.review.options import NA, NO, PRIVATE
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
 
 from ..utils import get_field_kwargs, get_field_widget
-
-# from ..stream_serializers import StreamBaseForm
 
 
 class ReviewOpinionReadSerializer(serializers.ModelSerializer):
@@ -67,8 +65,11 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'score', 'opinions']
-        extra_kwargs = {'score': {'read_only': True}}
+        fields = ['id', 'score', 'is_draft', 'opinions', ]
+        extra_kwargs = {
+            'score': {'read_only': True},
+            'is_draft': {'required': False}
+        }
 
     def get_recommendation(self, obj):
         return {
@@ -87,7 +88,9 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         instance.score = self.calculate_score(instance, self.validated_data)
-        instance.recommendation = int(self.validated_data[instance.recommendation_field.id])
+        instance.recommendation = int(
+            self.validated_data.get(instance.recommendation_field.id, NO)
+        )
         instance.is_draft = self.save_as_draft in self.initial_data
 
         try:
