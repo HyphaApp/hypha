@@ -1,6 +1,8 @@
+from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
@@ -56,22 +58,26 @@ class SubmissionReviewViewSet(
             return [permission() for permission in self.permission_classes]
 
     def get_defined_fields(self):
-        submission = self.get_submission_object()
         if self.action in ['retrieve', 'update', 'opinions']:
             # For detail and edit api form fields used while submitting
             # review should be used.
             review = self.get_object()
             return review.form_fields
+        submission = self.get_submission_object()
         return get_review_form_fields_for_stage(submission)
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            review = self.get_object()
+            draft = review.is_draft
+        else:
+            draft = self.request.data.get('save_draft', False)
+        return super().get_serializer_class(draft)
 
     def get_object(self):
         obj = get_object_or_404(Review, id=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    def get_queryset(self):
-        submission = self.get_submission_object()
-        return Review.objects.filter(submission=submission, is_draft=False)
 
     def get_reviewer(self):
         submission = self.get_submission_object()
@@ -85,10 +91,12 @@ class SubmissionReviewViewSet(
         submission = self.get_submission_object()
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        instance = ser.Meta.model.objects.create(
-            form_fields=self.get_defined_fields(),
+        instance, create = ser.Meta.model.objects.get_or_create(
             submission=submission, author=self.get_reviewer()
         )
+        if not create and not instance.is_draft:
+            raise ValidationError({'detail': 'You have already posted a review for this submission'})
+        instance.form_fields = self.get_defined_fields()
         instance.save()
         ser.update(instance, ser.validated_data)
         if not instance.is_draft:
@@ -111,6 +119,7 @@ class SubmissionReviewViewSet(
         review_data['id'] = review.id
         review_data['score'] = review.score
         review_data['opinions'] = review.opinions
+        review_data['is_draft'] = review.is_draft
         ser = self.get_serializer(review_data)
         return Response(ser.data)
 
@@ -186,5 +195,6 @@ class SubmissionReviewViewSet(
         review_data['id'] = review.id
         review_data['score'] = review.score
         review_data['opinions'] = review.opinions
+        review_data['is_draft'] = review.is_draft
         ser = self.get_serializer(review_data)
         return Response(ser.data, status=status.HTTP_201_CREATED)
