@@ -59,8 +59,6 @@ class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class SubmissionReviewSerializer(serializers.ModelSerializer):
-    save_as_draft = 'save_draft'
-
     opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
 
     class Meta:
@@ -91,12 +89,10 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         instance.recommendation = int(
             self.validated_data.get(instance.recommendation_field.id, NO)
         )
-        instance.is_draft = self.save_as_draft in self.initial_data
-
-        try:
-            instance.visibility = self.validated_data[instance.visibility_field.id]
-        except AttributeError:
-            instance.visibility = PRIVATE
+        instance.is_draft = self.validated_data.get('is_draft', False)
+        instance.visibility = self.validated_data.get(
+            instance.visibility_field.id, PRIVATE
+        )
 
         if not instance.is_draft:
             # Capture the revision against which the user was reviewing
