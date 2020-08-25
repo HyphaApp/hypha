@@ -1,4 +1,3 @@
-from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
@@ -58,6 +57,11 @@ class SubmissionReviewViewSet(
             return [permission() for permission in self.permission_classes]
 
     def get_defined_fields(self):
+        """
+        Get form fields created for reviewing this submission.
+
+        These form fields will be used to get respective serializer fields.
+        """
         if self.action in ['retrieve', 'update', 'opinions']:
             # For detail and edit api form fields used while submitting
             # review should be used.
@@ -67,19 +71,30 @@ class SubmissionReviewViewSet(
         return get_review_form_fields_for_stage(submission)
 
     def get_serializer_class(self):
+        """
+        Override get_serializer_class to send draft parameter
+        if the request is to save as draft or the review submitted
+        is saved as draft.
+        """
         if self.action == 'retrieve':
             review = self.get_object()
             draft = review.is_draft
         else:
-            draft = self.request.data.get('save_draft', False)
+            draft = self.request.data.get('is_draft', False)
         return super().get_serializer_class(draft)
 
     def get_object(self):
+        """
+        Get the review object by id. If not found raise 404.
+        """
         obj = get_object_or_404(Review, id=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
 
     def get_reviewer(self):
+        """
+        Get the AssignedReviewers for the current user on a submission.
+        """
         submission = self.get_submission_object()
         ar, _ = AssignedReviewers.objects.get_or_create_for_user(
             submission=submission,
@@ -88,6 +103,19 @@ class SubmissionReviewViewSet(
         return ar
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a review on a submission.
+
+        Accept a post data in form of `{field_id: value}`.
+        `field_id` is same id which you get from the `/fields` api.
+        `value` should be submitted with html tags, so that response can
+        be displayed with correct formatting, e.g. in case of rich text field,
+        we need to show the data with same formatting user has submitted.
+
+        Accepts optional parameter `is_draft` when a review is to be saved as draft.
+
+        Raise ValidationError if a review is already submitted by the user.
+        """
         submission = self.get_submission_object()
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -112,18 +140,31 @@ class SubmissionReviewViewSet(
         ser = self.get_serializer(instance)
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, *args, **kwargs):
-        """Get details of a review on a submission"""
+    def get_review_data(self):
+        """
+        Get review data which will be used for review detail api.
+        """
         review = self.get_object()
         review_data = review.form_data
         review_data['id'] = review.id
         review_data['score'] = review.score
         review_data['opinions'] = review.opinions
         review_data['is_draft'] = review.is_draft
-        ser = self.get_serializer(review_data)
+        return review_data
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Get details of a review on a submission
+        """
+        ser = self.get_serializer(
+            self.get_review_data()
+        )
         return Response(ser.data)
 
     def update(self, request, *args, **kwargs):
+        """
+        Update a review submitted on a submission.
+        """
         review = self.get_object()
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -142,16 +183,6 @@ class SubmissionReviewViewSet(
         ser = self.get_serializer(review)
         return Response(ser.data)
 
-    """
-    Commenting out this api as it is not used in frontend for now.
-    We can discuss and implement review list view in frontend later on.
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        ser = SubmissionReviewDetailSerializer(queryset, many=True)
-        return Response(ser.data)
-    """
-
     def destroy(self, request, *args, **kwargs):
         """Delete a review on a submission"""
         review = self.get_object()
@@ -167,12 +198,24 @@ class SubmissionReviewViewSet(
 
     @action(detail=False, methods=['get'])
     def fields(self, request, *args, **kwargs):
+        """
+        List details of all the form fields that were created by admin for adding reviews.
+
+        These field details will be used in frontend to render the review form.
+        """
         fields = self.get_form_fields()
         fields = FieldSerializer(fields.items(), many=True)
         return Response(fields.data)
 
     @action(detail=True, methods=['post'])
     def opinions(self, request, *args, **kwargs):
+        """
+        Used to add opinions on a review.
+
+        Options are 0 and 1. DISAGREE = 0 AGREE = 1
+
+        Response is similar to detail api of the review.
+        """
         review = self.get_object()
         ser = ReviewOpinionWriteSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -191,10 +234,7 @@ class SubmissionReviewViewSet(
         else:
             review_opinion.opinion = opinion
             review_opinion.save()
-        review_data = review.form_data
-        review_data['id'] = review.id
-        review_data['score'] = review.score
-        review_data['opinions'] = review.opinions
-        review_data['is_draft'] = review.is_draft
-        ser = self.get_serializer(review_data)
+        ser = self.get_serializer(
+            self.get_review_data()
+        )
         return Response(ser.data, status=status.HTTP_201_CREATED)

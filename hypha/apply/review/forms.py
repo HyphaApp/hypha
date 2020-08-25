@@ -60,7 +60,6 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         return cleaned_data
 
     def save(self, commit=True):
-        import ipdb; ipdb.set_trace()
         self.instance.score = self.calculate_score(self.cleaned_data)
         self.instance.recommendation = int(self.cleaned_data[self.instance.recommendation_field.id])
         self.instance.is_draft = self.draft_button_name in self.data

@@ -3,9 +3,8 @@ from rest_framework import permissions
 
 class HasReviewCreatePermission(permissions.BasePermission):
     """
-    Custom permission to only allow organisation Staff or higher
+    Custom permission that user should have for creating review.
     """
-
     def has_permission(self, request, view):
         submission = view.get_submission_object()
         return (
@@ -16,14 +15,16 @@ class HasReviewCreatePermission(permissions.BasePermission):
 
 class HasReviewEditPermission(permissions.BasePermission):
     """
-    Custom permission to only allow organisation Staff or higher
+    Custom permission that user should have for editing review.
     """
-
     def has_object_permission(self, request, view, obj):
         return request.user.has_perm('review.change_review') or request.user == obj.author.reviewer
 
 
 class HasReviewDetialPermission(permissions.BasePermission):
+    """
+    Custom permission that user should have for viewing review.
+    """
     def has_object_permission(self, request, view, obj):
         user = request.user
         author = obj.author.reviewer
@@ -45,11 +46,17 @@ class HasReviewDetialPermission(permissions.BasePermission):
 
 
 class HasReviewDeletePermission(permissions.BasePermission):
+    """
+    Custom permission that user should have for deleting review.
+    """
     def has_object_permission(self, request, view, obj):
         return request.user.has_perm('review.delete_review') or request.user == obj.author
 
 
 class HasReviewOpinionPermission(permissions.BasePermission):
+    """
+    Custom permission that user should have for posting opinion on a review.
+    """
     def has_object_permission(self, request, view, obj):
         review = obj
         user = request.user
