@@ -7,6 +7,8 @@ from rest_framework import serializers
 from hypha.apply.review.fields import ScoredAnswerField
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
 
+from .review.fields import ScoredAnswerListField
+
 IGNORE_ARGS = ['self', 'cls']
 
 
@@ -20,10 +22,6 @@ class WagtailSerializer:
         form_fields = self.get_form_fields()
         for field_id, field in form_fields.items():
             if isinstance(field, BlockFieldWrapper):
-                continue
-            if isinstance(field, ScoredAnswerField):
-                # TODO need to serialize Django's MultiValueField
-                serializer_fields[field_id] = serializers.ListField(required=False)
                 continue
             serializer_fields[field_id] = self._get_field(
                 field,
@@ -122,6 +120,8 @@ class WagtailSerializer:
         have to create mapping b/w form fields and serializer fields to get the
         respective classes. But for now this works.
         """
+        if isinstance(field, ScoredAnswerField):
+            return ScoredAnswerListField
         class_name = field.__class__.__name__
         return getattr(serializers, class_name)
 
