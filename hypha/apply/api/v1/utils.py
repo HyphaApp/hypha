@@ -4,7 +4,7 @@ from collections import OrderedDict
 from django import forms
 from tinymce.widgets import TinyMCE
 
-from hypha.apply.review.fields import ScoredAnswerField
+from hypha.apply.review.fields import ScoredAnswerField, ScoredAnswerWidget
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
 
 IGNORE_ARGS = ['self', 'cls']
@@ -60,7 +60,19 @@ def get_field_kwargs(form_field):
         kwargs['max_value'] = form_field.max_value
         kwargs['min_value'] = form_field.min_value
     if isinstance(form_field, ScoredAnswerField):
-        kwargs['choices'] = form_field.fields[1].choices
+        fields = [
+            {
+                'type': form_field.fields[0].__class__.__name__,
+                'max_length': form_field.fields[0].max_length,
+                'min_length': form_field.fields[0].min_length,
+                'empty_value': form_field.fields[0].empty_value
+            },
+            {
+                'type': form_field.fields[1].__class__.__name__,
+                'choices': form_field.fields[1].choices,
+            },
+        ]
+        kwargs['fields'] = fields
     return kwargs
 
 
@@ -73,4 +85,18 @@ def get_field_widget(form_field):
     }
     if isinstance(form_field.widget, TinyMCE):
         widget['mce_attrs'] = form_field.widget.mce_attrs
+    if isinstance(form_field.widget, ScoredAnswerWidget):
+        field_widgets = form_field.widget.widgets
+        widgets = [
+            {
+                'name': field_widgets[0].__class__.__name__,
+                'attrs': field_widgets[0].attrs,
+                'mce_attrs': field_widgets[0].mce_attrs
+            },
+            {
+                'name': field_widgets[1].__class__.__name__,
+                'attrs': field_widgets[1].attrs,
+            }
+        ]
+        widget['widgets'] = widgets
     return widget
