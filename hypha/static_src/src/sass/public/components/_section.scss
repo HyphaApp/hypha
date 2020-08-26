@@ -34,3 +34,17 @@
         }
     }
 }
+
+.section-head {
+    a {
+        display: none;
+        line-height: 30px;
+        vertical-align: middle;
+    }
+
+    &:hover {
+        a {
+            display: inline;
+        }
+    }
+}

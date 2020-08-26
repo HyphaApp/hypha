@@ -159,4 +159,12 @@
             display: block;
         }
     }
+
+    &--anchor-link {
+        background-size: contain;
+        margin-left: 7px;
+        margin-top: 15px;
+        fill: $color--tomato;
+    }
+
 }

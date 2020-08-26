@@ -1,0 +1,29 @@
+<div class="rich-text section-head">
+{% if self.size == 'h2' %}
+        <h2 id="{{ value.heading_text|slugify }}">{{ value.heading_text }}
+            <a href="#{{ value.heading_text|slugify }}">
+                <svg class="icon icon--anchor-link">
+                    <use xlink:href="#anchor-link"></use>
+                </svg>
+            </a>
+        </h2>
+
+    {% elif self.size == 'h3' %}
+        <h3 id="{{ value.heading_text|slugify }}">{{ value.heading_text }}
+            <a href="#{{ value.heading_text|slugify }}">
+                <svg class="icon icon--anchor-link">
+                    <use xlink:href="#anchor-link"></use>
+                </svg>
+            </a>
+        </h3>
+
+    {% elif self.size == 'h4' %}
+        <h4 id="{{ value.heading_text|slugify }}">{{ value.heading_text }}
+            <a href="#{{ value.heading_text|slugify }}">
+                <svg class="icon icon--anchor-link">
+                    <use xlink:href="#anchor-link"></use>
+                </svg>
+            </a>
+        </h4>
+{% endif %}
+</div>
