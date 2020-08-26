@@ -376,7 +376,7 @@ SingleStageExternalDefinition = [
         'ext_post_review_discussion': {
             'transitions': {
                 'ext_post_review_more_info': 'Request More Information',
-                'ext_external_review': 'Open AC review',
+                'ext_external_review': 'Open External Review',
                 'ext_determination': 'Ready For Determination',
                 'ext_internal_review': 'Open Internal Review (back)',
                 'ext_rejected': 'Dismiss',
@@ -404,7 +404,7 @@ SingleStageExternalDefinition = [
                 'ext_post_external_review_discussion': 'Close Review',
                 'ext_post_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Advisory Council Review',
+            'display': 'External Review',
             'stage': RequestExt,
             'permissions': reviewer_review_permissions,
         },
@@ -414,7 +414,7 @@ SingleStageExternalDefinition = [
             'transitions': {
                 'ext_post_external_review_more_info': 'Request More Information',
                 'ext_determination': 'Ready For Determination',
-                'ext_external_review': 'Open AC review (back)',
+                'ext_external_review': 'Open External Review (back)',
                 'ext_almost': 'Accept but additional info required',
                 'ext_accepted': 'Accept',
                 'ext_rejected': 'Dismiss',
@@ -555,7 +555,7 @@ SingleStageCommunityDefinition = [
         'com_post_review_discussion': {
             'transitions': {
                 'com_post_review_more_info': 'Request More Information',
-                'com_external_review': 'Open AC review',
+                'com_external_review': 'Open External Review',
                 'com_determination': 'Ready For Determination',
                 'com_internal_review': 'Open Internal Review (back)',
                 'com_rejected': 'Dismiss',
@@ -583,7 +583,7 @@ SingleStageCommunityDefinition = [
                 'com_post_external_review_discussion': 'Close Review',
                 'com_post_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Advisory Council Review',
+            'display': 'External Review',
             'stage': RequestCom,
             'permissions': reviewer_review_permissions,
         },
@@ -593,7 +593,7 @@ SingleStageCommunityDefinition = [
             'transitions': {
                 'com_post_external_review_more_info': 'Request More Information',
                 'com_determination': 'Ready For Determination',
-                'com_external_review': 'Open AC review (back)',
+                'com_external_review': 'Open External Review (back)',
                 'com_almost': 'Accept but additional info required',
                 'com_accepted': 'Accept',
                 'com_rejected': 'Dismiss',
@@ -775,7 +775,7 @@ DoubleStageDefinition = [
         'draft_proposal': {
             'transitions': {
                 'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
-                'external_review': 'Open AC review',
+                'external_review': 'Open External Review',
                 'proposal_determination': 'Ready For Final Determination',
                 'proposal_rejected': 'Dismiss',
             },
@@ -789,7 +789,7 @@ DoubleStageDefinition = [
             'transitions': {
                 'proposal_more_info': 'Request More Information',
                 'proposal_internal_review': 'Open Review',
-                'external_review': 'Open AC review',
+                'external_review': 'Open External Review',
                 'proposal_determination': 'Ready For Final Determination',
                 'proposal_rejected': 'Dismiss',
             },
@@ -804,7 +804,7 @@ DoubleStageDefinition = [
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'external_review': 'Open AC review',
+                'external_review': 'Open External Review',
                 'proposal_determination': 'Ready For Final Determination',
                 'proposal_rejected': 'Dismiss',
             },
@@ -829,7 +829,7 @@ DoubleStageDefinition = [
         'post_proposal_review_discussion': {
             'transitions': {
                 'post_proposal_review_more_info': 'Request More Information',
-                'external_review': 'Open AC review',
+                'external_review': 'Open External Review',
                 'proposal_determination': 'Ready For Final Determination',
                 'proposal_internal_review': 'Open Internal Review (back)',
                 'proposal_rejected': 'Dismiss',
@@ -845,7 +845,7 @@ DoubleStageDefinition = [
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'external_review': 'Open AC review',
+                'external_review': 'Open External Review',
             },
             'display': 'More information required',
             'stage': Proposal,
@@ -858,7 +858,7 @@ DoubleStageDefinition = [
                 'post_external_review_discussion': 'Close Review',
                 'post_proposal_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Advisory Council Review',
+            'display': 'External Review',
             'stage': Proposal,
             'permissions': reviewer_review_permissions,
         },
@@ -868,7 +868,7 @@ DoubleStageDefinition = [
             'transitions': {
                 'post_external_review_more_info': 'Request More Information',
                 'proposal_determination': 'Ready For Final Determination',
-                'external_review': 'Open AC review (back)',
+                'external_review': 'Open External Review (back)',
                 'proposal_almost': 'Accept but additional info required',
                 'proposal_accepted': 'Accept',
                 'proposal_rejected': 'Dismiss',
@@ -1090,7 +1090,7 @@ PHASES_MAPPING = {
         'statuses': ['draft_proposal'],
     },
     'external-review': {
-        'name': 'AC Review',
+        'name': 'External Review',
         'statuses': phases_matching('external_review'),
     },
     'ready-for-determination': {
