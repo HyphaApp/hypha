@@ -36,7 +36,7 @@
                 <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                     {% csrf_token %}
                     <div class="modal__buttons">
-                        <input type="submit" value="Continue" class="button button--primary button--submit"></input>
+                        <button type="submit" class="button button--primary button--submit">Continue</button>
                         <button data-fancybox-close class="button button--submit button--white">Cancel</button>
                     </div>
                 </form>

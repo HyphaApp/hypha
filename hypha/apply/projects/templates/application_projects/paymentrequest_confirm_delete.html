@@ -28,7 +28,7 @@
         <div class="card card--solid">
             <form method="post">{% csrf_token %}
                 <p>Are you sure you want to delete this payment request for {{ object.project.title }}?</p>
-                <input class="button button--primary" type="submit" value="Confirm">
+                <button class="button button--primary" type="submit">Confirm</button>
             </form>
 
         </div>

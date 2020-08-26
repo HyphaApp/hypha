@@ -36,9 +36,9 @@
         {% endif %}
     {% endfor %}
     {% if not object.id or object.is_draft %}
-        <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" />
+        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">Save Draft</button>
     {% endif %}
-    <input class="button button--submit button--top-space button--primary" type="submit" value="Submit" name="submit" />
+    <button class="button button--submit button--top-space button--primary" type="submit" name="submit">Submit</button>
 </form>
 </div>
 {% endblock %}
