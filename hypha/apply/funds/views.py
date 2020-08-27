@@ -79,6 +79,7 @@ from .models import (
     LabBase,
     Reminder,
     ReviewerRole,
+    ReviewerSettings,
     RoundBase,
     RoundsAndLabs,
 )
@@ -352,7 +353,16 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
     filterset_class = SubmissionReviewerFilterAndSearch
 
     def get_queryset(self):
-        # Reviewers can only see submissions they have reviewed
+        '''
+        If use_settings variable is set for ReviewerSettings use settings
+        parameters to filter submissions or return only reviewed_by as it
+        was by default.
+        '''
+        reviewer_settings = ReviewerSettings.for_request(self.request)
+        if reviewer_settings.use_settings:
+            return super().get_queryset().for_reviewer_settings(
+                self.request.user, reviewer_settings
+            ).order_by('-submit_time')
         return super().get_queryset().reviewed_by(self.request.user)
 
 

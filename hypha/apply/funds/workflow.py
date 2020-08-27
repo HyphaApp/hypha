@@ -1013,6 +1013,28 @@ def get_review_statuses(user=None):
     return reviews
 
 
+def get_ext_or_higher_statuses():
+    """
+    Returns a set of all the statuses for all workflow which are
+    External Review or higher than that.
+    """
+    ext_review_or_higher_statuses = set()
+
+    for workflow in WORKFLOWS.values():
+        step = None
+        for phase in workflow.values():
+            if phase.display_name == 'External Review':
+                # Update the step for this workflow as External review state
+                step = phase.step
+
+            # Phase should have step higher or equal than External
+            # review state for this workflow
+            if step and phase.step >= step:
+                ext_review_or_higher_statuses.add(phase.name)
+    return ext_review_or_higher_statuses
+
+
+ext_or_higher_statuses = get_ext_or_higher_statuses()
 review_statuses = get_review_statuses()
 
 DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
