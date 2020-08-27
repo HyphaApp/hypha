@@ -6,7 +6,10 @@ class HasReviewCreatePermission(permissions.BasePermission):
     Custom permission that user should have for creating review.
     """
     def has_permission(self, request, view):
-        submission = view.get_submission_object()
+        try:
+            submission = view.get_submission_object()
+        except KeyError:
+            return True
         return (
             submission.phase.permissions.can_review(request.user) and
             submission.has_permission_to_review(request.user)

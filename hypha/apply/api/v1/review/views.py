@@ -83,11 +83,16 @@ class SubmissionReviewViewSet(
             draft = self.request.data.get('is_draft', False)
         return super().get_serializer_class(draft)
 
+    def get_queryset(self):
+        submission = self.get_submission_object()
+        return Review.objects.filter(submission=submission, is_draft=False)
+
     def get_object(self):
         """
         Get the review object by id. If not found raise 404.
         """
-        obj = get_object_or_404(Review, id=self.kwargs['pk'])
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, id=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
 
