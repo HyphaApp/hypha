@@ -45,10 +45,10 @@ def compare(answer_a, answer_b, should_bleach=True):
 
     from_display = ''.join(from_diff)
     to_display = ''.join(to_diff)
-    from_display = re.sub('([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', from_display)
-    to_display = re.sub('([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', to_display)
-    from_display = re.sub('(\.\n)', r'\1<br><br>', from_display)
-    to_display = re.sub('(\.\n)', r'\1<br><br>', to_display)
+    from_display = re.sub(r'([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', from_display)
+    to_display = re.sub(r'([●○]|[0-9]{1,2}[\)\.])', r'<br>\1', to_display)
+    from_display = re.sub('(\\.\n)', r'\1<br><br>', from_display)
+    to_display = re.sub('(\\.\n)', r'\1<br><br>', to_display)
     from_display = mark_safe(from_display)
     to_display = mark_safe(to_display)
 

@@ -21,7 +21,7 @@ def search(request):
     # Search
     if search_query:
         # Allow only word characters and spaces in search query.
-        words = re.findall('\w+', search_query.strip())
+        words = re.findall(r'\w+', search_query.strip())
         search_query = ' '.join(words)
 
         public_site = site.root_page
