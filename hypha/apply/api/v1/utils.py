@@ -78,9 +78,9 @@ def get_field_kwargs(form_field):
 
 def get_field_widget(form_field):
     if isinstance(form_field, BlockFieldWrapper):
-        return {}
+        return {'type': 'LoadHTML', 'attrs': {}}
     widget = {
-        'name': form_field.widget.__class__.__name__,
+        'type': form_field.widget.__class__.__name__,
         'attrs': form_field.widget.attrs
     }
     if isinstance(form_field.widget, TinyMCE):
@@ -89,12 +89,12 @@ def get_field_widget(form_field):
         field_widgets = form_field.widget.widgets
         widgets = [
             {
-                'name': field_widgets[0].__class__.__name__,
+                'type': field_widgets[0].__class__.__name__,
                 'attrs': field_widgets[0].attrs,
                 'mce_attrs': field_widgets[0].mce_attrs
             },
             {
-                'name': field_widgets[1].__class__.__name__,
+                'type': field_widgets[1].__class__.__name__,
                 'attrs': field_widgets[1].attrs,
             }
         ]
