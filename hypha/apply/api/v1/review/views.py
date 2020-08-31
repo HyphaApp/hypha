@@ -142,14 +142,15 @@ class SubmissionReviewViewSet(
             )
             # Automatic workflow actions.
             review_workflow_actions(self.request, submission)
-        ser = self.get_serializer(instance)
+        ser = self.get_serializer(
+            self.get_review_data(instance)
+        )
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
-    def get_review_data(self):
+    def get_review_data(self, review):
         """
         Get review data which will be used for review detail api.
         """
-        review = self.get_object()
         review_data = review.form_data
         review_data['id'] = review.id
         review_data['score'] = review.score
@@ -161,8 +162,9 @@ class SubmissionReviewViewSet(
         """
         Get details of a review on a submission
         """
+        review = self.get_object()
         ser = self.get_serializer(
-            self.get_review_data()
+            self.get_review_data(review)
         )
         return Response(ser.data)
 
@@ -185,7 +187,9 @@ class SubmissionReviewViewSet(
         # Automatic workflow actions.
         review_workflow_actions(self.request, review.submission)
         ser = SubmissionReviewDetailSerializer(review)
-        ser = self.get_serializer(review)
+        ser = self.get_serializer(
+            self.get_review_data(review)
+        )
         return Response(ser.data)
 
     def destroy(self, request, *args, **kwargs):
@@ -240,6 +244,6 @@ class SubmissionReviewViewSet(
             review_opinion.opinion = opinion
             review_opinion.save()
         ser = self.get_serializer(
-            self.get_review_data()
+            self.get_review_data(review)
         )
         return Response(ser.data, status=status.HTTP_201_CREATED)
