@@ -41,7 +41,9 @@
             <!-- <h1>{{ widget_type }}</h1> -->
             <output class="form__file-list"></output>
         {% endif %}
-        <label for="{{ field.id_for_label }}"></label>
+        {% if widget_type == 'checkbox_input' %}
+            <label for="{{ field.id_for_label }}"></label>
+        {% endif %}
         {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             </div>
         {% endif %}
