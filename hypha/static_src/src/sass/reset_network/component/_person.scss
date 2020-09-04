@@ -231,6 +231,10 @@
     @include media-min-sm {
         @include pad-gutter-top-sm();
     }
+
+    .button {
+        margin-top: #{$gutter-sm}px;
+    }
 }
 
 .person__social {

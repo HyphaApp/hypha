@@ -18,25 +18,32 @@
 
   <div class="person__tray">
     <div class="person__info-wrap">
-        {% if person.image %}
+      {% if person.image %}
         <div class="person__image">
           {% image person.image fill-400x400-c100 %}
         </div>
-        {% endif %}
-        <div class="person__title">
-            <div class="person__name">
-            {{ person.name }}
-            </div>
-            {% if person.role %}
-            <div class="person__role">
-            {{ person.role }}
-            </div>
-            {% endif %}
+      {% endif %}
+      <div class="person__title">
+        <div class="person__name">
+          {{ person.name }}
         </div>
+      </div>
+      {% if person.about|striptags|length > 700 %}
+        <div class="person__info person__info--short">
+          {{ person.about|richtext|truncatechars_html:600 }}
+          <a href="#" class="button button--sm js-person-button" data-button="">
+            <span class="button__drop"></span>
+            <span class="button__label">Show more</span>
+          </a>
+        </div>
+        <div class="person__info person__info--long" hidden>
+          {{ person.about|richtext }}
+        </div>
+      {% else %}
         <div class="person__info">
-            {{ person.about|richtext }}
+          {{ person.about|richtext }}
         </div>
-
+      {% endif %}
       {% if person.linkedin or person.twitter %}
         <div class="person__social">
           <ul class="socials">
