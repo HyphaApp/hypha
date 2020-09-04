@@ -57,3 +57,13 @@ $icon-xl: 55 !default;
     height: #{$icon-xl}px;
     width: #{$icon-xl}px;
 }
+
+.icon--anchor-link {
+    width: 20px;
+    height: 20px;
+    transition: fill .25s ease-out;
+    background-size: contain;
+    margin-left: 7px;
+    margin-top: 15px;
+    fill: color(seed-red);
+}

@@ -26,7 +26,13 @@
       {% for block in page.section_1 %}
         {% if block.block_type == 'sub_heading' %}
           <div class="people-title">
-            <h2>{{ block.value }}</h2>
+            <h2 id="{{ block.value|slugify }}">{{ block.value }}
+              <a href="#{{ block.value|slugify }}">
+                <svg class="icon--anchor-link">
+                  <use xlink:href="#anchor-link"></use>
+                </svg>
+             </a>
+            </h2>
           </div>
         {% endif %}
         {% if block.block_type == 'sub_text' %}
