@@ -47,6 +47,17 @@
         @include media-min-sm() {
             @include font-size-xxl();
         }
+
+        a {
+            display: none;
+        }
+
+        &:hover {
+            a {
+                display: inline;
+            }
+        }
+
     }
 
     .person+& {
