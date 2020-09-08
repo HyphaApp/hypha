@@ -31,7 +31,7 @@
       {% if person.about|striptags|length > 700 %}
         <div class="person__info person__info--short">
           {{ person.about|richtext|truncatechars_html:600 }}
-          <a href="#" class="button button--sm js-person-button" data-button="">
+          <a href="#" class="button button--sm js-person-button">
             <span class="button__drop"></span>
             <span class="button__label">Show more</span>
           </a>
