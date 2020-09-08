@@ -8,6 +8,7 @@
 
         init: function () {
             PEOPLE.ACCORDION.init();
+            PEOPLE.LONGTEXT.init();
         },
 
         // *********************************************************************
@@ -65,6 +66,25 @@
                 for (var i = 0; i < $people.length; i++) {
                     PEOPLE.ACCORDION.close($($people[i]));
                 }
+            }
+        },
+
+
+        // *********************************************************************
+        // **************************** LONGTEXT ******************************
+        // *********************************************************************
+
+        LONGTEXT: {
+
+            init: function () {
+
+                $('.js-person-button').on('click', function (e) {
+                    e.preventDefault();
+                    var $person = $(this).closest('.js-person');
+                    $person.find('.person__info--short').prop('hidden', true);
+                    $person.find('.person__info--long').prop('hidden', false);
+                });
+
             }
         }
 
