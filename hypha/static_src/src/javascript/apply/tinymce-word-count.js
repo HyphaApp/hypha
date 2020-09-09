@@ -9,8 +9,14 @@
     };
 
     function word_count(el) {
+        let word_count;
+        try {
+            word_count = parseInt(el.innerText.match(/\d+/)[0], 10);
+        }
+        catch (e) {
+            word_count = 0;
+        }
         const mutation_selector = '#' + el.id;
-        const word_count = parseInt(el.innerText.match(/\d+/)[0], 10);
         const word_count_node = document.querySelector(mutation_selector);
         const word_limit = parseInt($(mutation_selector).parents().eq(5).attr('data-word-limit'), 10);
         const percent_to_get = 20;
