@@ -36,27 +36,20 @@ class WagtailSerializer:
         the kwargs defined.
         """
         kwargs = self._get_field_kwargs(form_field, serializer_field_class)
-
-        if draft:
-            # Set required false for fields if it's a draft.
-            kwargs['required'] = False
-            kwargs['allow_null'] = True
-
-        field = serializer_field_class(**kwargs)
-
+        field_kwargs = kwargs.copy()
         for kwarg, value in kwargs.items():
             # set corresponding DRF attributes which don't have alternative
             # in Django form fields
             if kwarg == 'required':
-                field.allow_blank = not value
-                field.allow_null = not value
+                field_kwargs['allow_blank'] = not value
+                field_kwargs['allow_null'] = not value
 
-            # ChoiceField natively uses choice_strings_to_values
-            # in the to_internal_value flow
-            elif kwarg == 'choices':
-                field.choice_strings_to_values = {
-                    six.text_type(key): key for key in OrderedDict(value).keys()
-                }
+        if draft:
+            # Set required false for fields if it's a draft.
+            field_kwargs['required'] = False
+            field_kwargs['allow_null'] = True
+
+        field = serializer_field_class(**field_kwargs)
 
         return field
 
