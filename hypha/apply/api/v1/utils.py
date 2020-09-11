@@ -48,6 +48,8 @@ def get_field_kwargs(form_field):
         'help_link': form_field.help_link
     }
     if isinstance(form_field, forms.CharField):
+        if hasattr(form_field, 'word_limit'):
+            kwargs['word_limit'] = form_field.word_limit
         kwargs['max_length'] = form_field.max_length
         kwargs['min_length'] = form_field.min_length
         kwargs['empty_value'] = form_field.empty_value
