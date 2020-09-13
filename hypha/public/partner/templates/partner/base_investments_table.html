@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    {% block table %}
+        {% render_table table %}
+    {% endblock %}
+{% endblock %}
