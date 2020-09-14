@@ -11,7 +11,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.public.utils.models import BasePage, FundingMixin
+from hypha.public.utils.models import BasePage
 
 
 class PartnerIndexPage(BasePage):
@@ -32,7 +32,7 @@ class PartnerIndexPage(BasePage):
         return redirect('investments')
 
 
-class PartnerPage(FundingMixin, BasePage):
+class PartnerPage(BasePage):
     STATUS = [
         ('active', 'Active'),
         ('inactive', 'Inactive')
