@@ -45,6 +45,15 @@
         {% if page.photo %}
             {% image page.photo fill-210x235 class="image image--headshot-desktop" %}
         {% endif %}
+
+        {% if page.social_media_profile.all %}
+            <h5>Follow {{ page.first_name }}</h5>
+            {% for item in page.social_media_profile.all %}
+                <a aria-label="Social media link" href="{{ item.profile_url }}">
+                    <svg class="icon icon--social-share icon--{{item.service}}-share"><use xlink:href="#{{item.service}}"></use></svg>
+                </a>
+            {% endfor %}
+        {% endif %}
     </div>
 </section>
 {% endblock %}
