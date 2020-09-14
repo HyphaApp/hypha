@@ -11,7 +11,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.public.utils.models import BasePage
+from hypha.public.utils.models import BasePage, FundingMixin
 
 
 class PartnerIndexPage(BasePage):
@@ -29,12 +29,10 @@ class PartnerIndexPage(BasePage):
     ]
 
     def serve(self, request, *args, **kwargs):
-        # import ipdb; ipdb.set_trace()
         return redirect('investments')
-        # return super().serve(request, *args, **kwargs)
 
 
-class PartnerPage(BasePage):
+class PartnerPage(FundingMixin, BasePage):
     STATUS = [
         ('active', 'Active'),
         ('inactive', 'Inactive')
@@ -72,6 +70,13 @@ class PartnerPage(BasePage):
 
     def __str__(self):
         return self.name
+
+    def get_context(self, request):
+        context = super(PartnerPage, self).get_context(request)
+        context['total_investments'] = sum(
+            investment.amount_committed for investment in self.investments.all()
+        )
+        return context
 
     def get_absolute_url(self):
         return self.url
@@ -112,7 +117,7 @@ class Investment(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
