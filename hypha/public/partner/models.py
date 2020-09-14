@@ -1,19 +1,17 @@
 import datetime
 
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.shortcuts import redirect
-
 from pagedown.widgets import PagedownWidget
-
-from wagtail.core.models import Page
-from wagtail.core.fields import RichTextField
 from wagtail.admin.edit_handlers import FieldPanel
-from wagtail.search import index
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.search import index
 
-from hypha.public.utils.models import BasePage
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.public.utils.models import BasePage
 
 
 class PartnerIndexPage(BasePage):

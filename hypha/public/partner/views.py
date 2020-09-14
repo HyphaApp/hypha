@@ -1,11 +1,7 @@
-import django_tables2 as tables
-from django_tables2.views import SingleTableMixin
-from django_filters.views import FilterView
-from django.views.generic import ListView
 from django_tables2 import SingleTableView
 
-from .tables import InvestmentTable
 from .models import Investment
+from .tables import InvestmentTable
 
 
 class InvestmentTableView(SingleTableView):

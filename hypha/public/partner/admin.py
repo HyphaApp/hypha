@@ -1,7 +1,5 @@
-from wagtail.contrib.modeladmin.options import (
-    ModelAdmin,
-    modeladmin_register,
-)
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+
 from .models import Investment
 
 
