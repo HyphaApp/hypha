@@ -1,17 +1,8 @@
 {% extends "partner/base_investments_table.html" %}
 {% block title %}Investments{% endblock %}
 {% block body_class %}light-grey-bg{% endblock %}
+{% block page_title %}Partners{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Investments</h1>
-            </div>
-        {% endblock %}
-    </div>
-</div>
-
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% block table %}
         {{ block.super }}
