@@ -48,8 +48,12 @@ class WagtailSerializer:
             # Set required false for fields if it's a draft.
             field_kwargs['required'] = False
             field_kwargs['allow_null'] = True
-
-        field = serializer_field_class(**field_kwargs)
+        try:
+            field = serializer_field_class(**field_kwargs)
+        except TypeError:
+            # ScoredAnswerField doesn't have allow_blank attribute
+            field_kwargs.pop('allow_blank')
+            return serializer_field_class(**field_kwargs)
 
         return field
 

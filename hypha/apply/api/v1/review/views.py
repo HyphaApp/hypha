@@ -45,6 +45,7 @@ class SubmissionReviewViewSet(
         'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, ],
         'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, ],
         'fields': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
+        'draft': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
     }
     serializer_class = SubmissionReviewSerializer
 
@@ -79,6 +80,8 @@ class SubmissionReviewViewSet(
         if self.action == 'retrieve':
             review = self.get_object()
             draft = review.is_draft
+        elif self.action == 'draft':
+            draft = True
         else:
             draft = self.request.data.get('is_draft', False)
         return super().get_serializer_class(draft)
@@ -204,6 +207,25 @@ class SubmissionReviewViewSet(
         )
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['get'])
+    def draft(self, request, *args, **kwargs):
+        """
+        Returns the draft review submitted on a submission by current user.
+        """
+        submission = self.get_submission_object()
+        try:
+            review = Review.objects.get(
+                submission=submission, author__reviewer=self.request.user
+            )
+        except Review.DoesNotExist:
+            return Response({})
+        if not review.is_draft:
+            return Response({})
+        ser = self.get_serializer(
+            self.get_review_data(review)
+        )
+        return Response(ser.data)
 
     @action(detail=False, methods=['get'])
     def fields(self, request, *args, **kwargs):
