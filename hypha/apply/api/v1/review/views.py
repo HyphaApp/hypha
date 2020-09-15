@@ -63,7 +63,7 @@ class SubmissionReviewViewSet(
 
         These form fields will be used to get respective serializer fields.
         """
-        if self.action in ['retrieve', 'update', 'opinions']:
+        if self.action in ['retrieve', 'update', 'opinions', 'draft']:
             # For detail and edit api form fields used while submitting
             # review should be used.
             review = self.get_object()
