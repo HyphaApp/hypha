@@ -63,10 +63,13 @@ class SubmissionReviewViewSet(
 
         These form fields will be used to get respective serializer fields.
         """
-        if self.action in ['retrieve', 'update', 'opinions', 'draft']:
+        if self.action in ['retrieve', 'update', 'opinions']:
             # For detail and edit api form fields used while submitting
             # review should be used.
             review = self.get_object()
+            return review.form_fields
+        if self.action == 'draft':
+            review = self.get_review_by_reviewer()
             return review.form_fields
         submission = self.get_submission_object()
         return get_review_form_fields_for_stage(submission)
@@ -208,16 +211,20 @@ class SubmissionReviewViewSet(
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get_review_by_reviewer(self):
+        submission = self.get_submission_object()
+        review = Review.objects.get(
+            submission=submission, author__reviewer=self.request.user
+        )
+        return review
+
     @action(detail=False, methods=['get'])
     def draft(self, request, *args, **kwargs):
         """
         Returns the draft review submitted on a submission by current user.
         """
-        submission = self.get_submission_object()
         try:
-            review = Review.objects.get(
-                submission=submission, author__reviewer=self.request.user
-            )
+            review = self.get_review_by_reviewer()
         except Review.DoesNotExist:
             return Response({})
         if not review.is_draft:
