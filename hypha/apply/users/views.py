@@ -13,12 +13,22 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 from hijack.views import login_with_id
+from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
+from two_factor.views import LoginView as TwoFactorLoginView
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
-from .forms import BecomeUserForm, ProfileForm
+from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm
 
 User = get_user_model()
+
+
+class LoginView(TwoFactorLoginView):
+    form_list = (
+        ('auth', CustomAuthenticationForm),
+        ('token', AuthenticationTokenForm),
+        ('backup', BackupTokenForm),
+    )
 
 
 @method_decorator(login_required, name='dispatch')

@@ -4,6 +4,9 @@ from django.db import models
 from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
+from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.core.fields import RichTextField
 
 from .groups import (
     APPLICANT_GROUP_NAME,
@@ -154,3 +157,28 @@ class User(AbstractUser):
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.full_name} ({self.email})>'
+
+
+@register_setting
+class UserSettings(BaseSetting):
+    class Meta:
+        verbose_name = 'user settings'
+
+    consent_show = models.BooleanField(
+        "Show consent checkbox in login form",
+        default=False,
+    )
+
+    consent_text = models.CharField(
+        max_length=255,
+    )
+
+    consent_help = RichTextField()
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('consent_show'),
+            FieldPanel('consent_text'),
+            FieldPanel('consent_help'),
+        ], 'consent checkbox'),
+    ]

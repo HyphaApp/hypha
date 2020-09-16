@@ -31,7 +31,9 @@
       {{ wizard.management_form }}
 
       {% if wizard.steps.current == 'auth' %}
-        {{ form.as_p }}
+        {% for field in form %}
+            {% include "forms/includes/field.html" %}
+        {% endfor %}
         <p><a class="link link--small" href="{% url 'users:password_reset' %}">Forgot your password?</a></p>
         <button class="link link--button-secondary" type="submit">Login</button>
       {% else %}

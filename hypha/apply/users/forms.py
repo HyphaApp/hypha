@@ -1,10 +1,27 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
+from wagtail.core.models import Site
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
+from .models import UserSettings
+
 User = get_user_model()
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.site = Site.find_for_request(self.request)
+        self.user_settings = UserSettings.for_site(site=self.site)
+        if self.user_settings.consent_show:
+            self.fields['consent'] = forms.BooleanField(
+                label=self.user_settings.consent_text,
+                help_text=self.user_settings.consent_help,
+                required=True,
+            )
 
 
 class CustomUserAdminFormBase():

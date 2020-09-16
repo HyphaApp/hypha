@@ -1,10 +1,10 @@
 from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
-from two_factor.views import LoginView
 
-from hypha.apply.users.views import (
+from .views import (
     AccountView,
     ActivationView,
+    LoginView,
     become,
     create_password,
     oauth,
