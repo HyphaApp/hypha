@@ -1,4 +1,4 @@
-{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags %}<!doctype html>
+{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -43,6 +43,8 @@
         {% include "includes/sprites.html" %}
 
         {% wagtailuserbar %}
+
+        {% cookie_banner %}
 
         {% include 'includes/messages.html' %}
         <header class="header">
@@ -113,6 +115,7 @@
 
         <footer class="footer"></footer>
         <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/cookieconsent.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>
