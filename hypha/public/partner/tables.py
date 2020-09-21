@@ -29,8 +29,6 @@ class InvestmentTable(tables.Table):
             extra_columns.append(
                 (field_name, tables.Column(orderable=False,))
             )
-        extra_columns.append(('primary_impact_area', tables.Column(orderable=False,)))
-        extra_columns.append(('geographic_focus', tables.Column(orderable=False,)))
         super().__init__(data, extra_columns=extra_columns, *args, **kwargs)
 
     def render_amount_committed(self, value):
