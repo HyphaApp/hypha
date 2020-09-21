@@ -1,5 +1,5 @@
-from wagtail.contrib.modeladmin.views import CreateView, EditView
 from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.contrib.modeladmin.views import CreateView, EditView
 
 from .models import InvestmentCategorySettings
 

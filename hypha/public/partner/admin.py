@@ -1,7 +1,7 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
-from .models import Investment
 from .admin_view import CreateInvestmentView, EditInvestmentView
+from .models import Investment
 
 
 class InvestmentAdmin(ModelAdmin):

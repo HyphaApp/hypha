@@ -6,12 +6,12 @@ from django.db import models
 from django.shortcuts import redirect
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
-from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.admin.forms import WagtailAdminModelForm
 
 from hypha.apply.categories.models import Category, Option
 from hypha.apply.funds.models import ApplicationSubmission

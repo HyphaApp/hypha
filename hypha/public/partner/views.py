@@ -1,7 +1,7 @@
 from django_tables2 import SingleTableView
 
-from .tables import InvestmentTable
 from .models import Investment
+from .tables import InvestmentTable
 
 
 class InvestmentTableView(SingleTableView):
