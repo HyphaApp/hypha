@@ -1,7 +1,6 @@
 import inspect
 from collections import OrderedDict
 
-import six
 from rest_framework import serializers
 
 from hypha.apply.review.fields import ScoredAnswerField
