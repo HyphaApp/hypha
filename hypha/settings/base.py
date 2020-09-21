@@ -66,6 +66,7 @@ if 'SERVER_EMAIL' in env:
 INSTALLED_APPS = [
     'scout_apm.django',
 
+    'hypha.cookieconsent',
     'hypha.images',
 
     'hypha.apply.activity',
@@ -132,7 +133,6 @@ INSTALLED_APPS = [
     'rest_framework_api_key',
     'wagtailcache',
     'django_file_form',
-    'cookieconsent',
 
     'hijack',
     'compat',
@@ -193,7 +193,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'hypha.apply.projects.context_processors.projects_enabled',
-                'cookieconsent.context_processors.cookies_accepted',
+                'hypha.cookieconsent.context_processors.cookies_accepted',
             ],
         },
     },
