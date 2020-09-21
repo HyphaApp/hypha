@@ -10,5 +10,5 @@ urlpatterns = [
     path('news/feed/', news_feeds.NewsFeed(), name='news_feed'),
     path('news/<int:news_type>/feed/', news_feeds.NewsTypeFeed(), name='news_type_feed'),
     path('newsletter/', include(newsletter_urls)),
-    path('investments/', partner_views.InvestmentTableView.as_view(), name='investments')
+    path('about/portfolio/', partner_views.InvestmentTableView.as_view(), name='investments')
 ]

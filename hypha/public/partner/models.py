@@ -12,6 +12,7 @@ from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.public.utils.models import BasePage
+from .admin_forms import InvestmentAdminForm
 
 
 class PartnerIndexPage(BasePage):
@@ -44,7 +45,6 @@ class PartnerPage(BasePage):
     parent_page_types = ['partner.PartnerIndexPage']
     subpage_types = []
 
-    name = models.CharField(max_length=100)
     status = models.CharField(
         choices=STATUS, default='current_partner', max_length=20
     )
@@ -60,7 +60,6 @@ class PartnerPage(BasePage):
     )
 
     content_panels = Page.content_panels + [
-        FieldPanel('name'),
         FieldPanel('status'),
         FieldPanel('public'),
         FieldPanel('description'),
@@ -69,7 +68,7 @@ class PartnerPage(BasePage):
     ]
 
     def __str__(self):
-        return self.name
+        return self.title
 
     def get_context(self, request):
         context = super(PartnerPage, self).get_context(request)
@@ -91,7 +90,6 @@ def max_value_current_year(value):
 
 
 class Investment(models.Model):
-
     partner = models.ForeignKey(
         PartnerPage,
         on_delete=models.CASCADE,
@@ -118,6 +116,8 @@ class Investment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    base_form_class = InvestmentAdminForm
 
     def __str__(self):
         return self.name

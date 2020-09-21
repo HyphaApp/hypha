@@ -5,13 +5,10 @@
 {% block content %}
 <section class="wrapper wrapper--small wrapper--inner-space-large wrapper--sidebar">
     <div class="wrapper--sidebar--inner">
-        <h4 class="heading">{{ page.name }}</h4>
 
         {{ page.description|richtext }}
 
         <p class="list list--contact"><span>Status: </span>{{ page.get_status_display }}</p>
-
-        <p class="list list--contact"><span>Public: </span>{{ page.public|yesno:"Yes,No" }}</p>
 
         {% if page.web_url %}
             <p class="list list--contact"><span>Website:</span> <a href="{{ page.web_url }}">{{ page.web_url }}</a></p>
