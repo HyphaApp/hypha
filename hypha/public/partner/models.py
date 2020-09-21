@@ -1,5 +1,6 @@
 import datetime
 
+from django import forms
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import redirect
@@ -9,10 +10,12 @@ from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
+from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.admin.forms import WagtailAdminModelForm
 
+from hypha.apply.categories.models import Category, Option
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.public.utils.models import BasePage
-from .admin_forms import InvestmentAdminForm
 
 
 class PartnerIndexPage(BasePage):
@@ -89,6 +92,76 @@ def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
 
 
+@register_setting
+class InvestmentCategorySettings(BaseSetting):
+    class Meta:
+        verbose_name = 'Investment Category Settings'
+
+    categories = models.ManyToManyField(
+        Category,
+        help_text='Select the categories that should be used in investments.'
+    )
+
+    panels = [
+        FieldPanel('categories'),
+    ]
+
+
+class InvestmentCategory(models.Model):
+    investment = models.ForeignKey(
+        'Investment', on_delete=models.CASCADE,
+        related_name='categories'
+    )
+    name = models.CharField(max_length=255, null=True, blank=True)
+    value = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.investment}: {self.name}: {self.value}"
+
+
+class InvestmentAdminForm(WagtailAdminModelForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        ics = InvestmentCategorySettings.for_request(self.request)
+        self.categories = ics.categories.all()
+        for category in self.categories:
+            field_name = category.name.lower().replace(' ', '_')
+            self.fields[field_name] = forms.ModelChoiceField(
+                required=False,
+                queryset=category.options.all(),
+            )
+            if self.instance.name:
+                try:
+                    ic = InvestmentCategory.objects.get(
+                        investment=self.instance,
+                        name=category.name
+                    )
+                except InvestmentCategory.DoesNotExist:
+                    pass
+                else:
+                    self.initial[field_name] = Option.objects.get(
+                        value=ic.value
+                    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+
+    def save(self, commit=True):
+        investment = super().save(commit)
+        for category in self.categories:
+            field_name = category.name.lower().replace(' ', '_')
+            value = self.cleaned_data[field_name].value
+            ic, _ = InvestmentCategory.objects.get_or_create(
+                investment=investment,
+                name=category.name
+            )
+            ic.value = value
+            ic.save()
+        return investment
+
+
 class Investment(models.Model):
     partner = models.ForeignKey(
         PartnerPage,
@@ -118,6 +191,12 @@ class Investment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     base_form_class = InvestmentAdminForm
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for category in self.categories.all():
+            field_name = category.name.lower().replace(' ', '_')
+            setattr(self, field_name, category.value)
 
     def __str__(self):
         return self.name

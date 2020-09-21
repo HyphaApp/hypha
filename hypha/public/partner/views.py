@@ -1,7 +1,7 @@
 from django_tables2 import SingleTableView
 
-from .models import Investment
 from .tables import InvestmentTable
+from .models import Investment
 
 
 class InvestmentTableView(SingleTableView):
@@ -9,3 +9,8 @@ class InvestmentTableView(SingleTableView):
     table_class = InvestmentTable
     table_pagination = {'per_page': 25}
     template_name = 'partner/investments.html'
+
+    def get_table_kwargs(self):
+        kwargs = super(InvestmentTableView, self).get_table_kwargs()
+        kwargs['request'] = self.request
+        return kwargs

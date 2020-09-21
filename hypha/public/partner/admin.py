@@ -1,12 +1,13 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
 from .models import Investment
-from .admin_view import CreateInvestmentView
+from .admin_view import CreateInvestmentView, EditInvestmentView
 
 
 class InvestmentAdmin(ModelAdmin):
     model = Investment
     create_view_class = CreateInvestmentView
+    edit_view_class = EditInvestmentView
     form_fields_exclude = ('application', )
     menu_label = 'Investments'
     menu_icon = 'placeholder'
