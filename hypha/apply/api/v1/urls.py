@@ -1,9 +1,11 @@
+from django.urls import path
 from rest_framework_nested import routers
 
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
 
 from .views import (
     CommentViewSet,
+    CurrentUser,
     RoundViewSet,
     SubmissionActionViewSet,
     SubmissionCommentViewSet,
@@ -23,4 +25,8 @@ submission_router.register(r'actions', SubmissionActionViewSet, basename='submis
 submission_router.register(r'comments', SubmissionCommentViewSet, basename='submission-comments')
 submission_router.register(r'reviews', SubmissionReviewViewSet, basename='reviews')
 
-urlpatterns = router.urls + submission_router.urls
+urlpatterns = [
+    path('user/', CurrentUser.as_view(), name='user'),
+]
+
+urlpatterns = router.urls + submission_router.urls + urlpatterns

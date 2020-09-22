@@ -233,3 +233,8 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 class CommentEditSerializer(CommentCreateSerializer):
     class Meta(CommentCreateSerializer.Meta):
         read_only_fields = ('timestamp', 'edited',)
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    email = serializers.CharField(read_only=True)
