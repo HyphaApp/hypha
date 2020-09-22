@@ -1,7 +1,70 @@
 import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
+import django_filters as filters
+from django import forms
+from django.db.models import Q
+from hypha.apply.funds.tables import Select2MultipleChoiceFilter
+from .models import Investment, InvestmentCategorySettings, PartnerPage
 
-from .models import Investment, InvestmentCategorySettings
+
+def get_year_choices():
+    years = Investment.objects.order_by('-year').values_list('year', flat=True).distinct()
+    return [(year, str(year)) for year in years]
+
+
+class InvestmentFilter(filters.FilterSet):
+    PAGE_CHOICES = (
+        (25, '25'),
+        (50, '50'),
+        (100, '100'),
+    )
+
+    AMOUNT_COMMITTED_CHOICES = (
+        ('0_250k', '$0 > $250k'),
+        ('250k_1m', '$250k > $1m'),
+        ('1m+', '$1m+'),
+    )
+
+    YEAR_CHOICES = get_year_choices()
+
+    year = Select2MultipleChoiceFilter(choices=YEAR_CHOICES, label='Years')
+    amount_committed = Select2MultipleChoiceFilter(
+        choices=AMOUNT_COMMITTED_CHOICES,
+        label='Amount Committed(US$)',
+        method='filter_amount_committed'
+    )
+    partner__status = Select2MultipleChoiceFilter(
+        choices=PartnerPage.STATUS, label='Status'
+    )
+    per_page = filters.ChoiceFilter(
+        choices=PAGE_CHOICES,
+        empty_label=_('Items per page'),
+        label='Per page',
+        method='per_page_handler'
+    )
+
+    class Meta:
+        model = Investment
+        fields = ('year', 'amount_committed')
+
+    def filter_amount_committed(self, queryset, name, value):
+        query = Q()
+        for v in value:
+            if v == '0_250k':
+                query |= Q(amount_committed__gte=0, amount_committed__lt=250000)
+            if v == '250k_1m':
+                query |= Q(amount_committed__gte=250000, amount_committed__lt=1000000)
+            if v == '1m+':
+                query |= Q(amount_committed__gte=1000000)
+        return queryset.filter(query)
+
+    def per_page_handler(self, queryset, name, value):
+        # Pagination is already implemented in view. We only need to add per_page query parameter.
+        return queryset
+
+
+class InvestmentFilterAndSearch(InvestmentFilter):
+    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
 
 
 class InvestmentTable(tables.Table):

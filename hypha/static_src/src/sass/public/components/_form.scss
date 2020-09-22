@@ -32,6 +32,17 @@
         }
     }
 
+    &--search-desktop {
+        position: relative;
+        max-width: 300px;
+        margin-top: $mobile-gutter;
+
+        @include media-query(tablet-landscape) {
+            max-width: 280px;
+            margin: 0 0 0 30px;
+        }
+    }
+
     &__group {
         position: relative;
         margin: 1rem 0;
@@ -150,6 +161,124 @@
         border-radius: 5px;
     }
 
+    &__filters {
+        #{$filter-dropdown} {
+            border: 0;
+            border-top: 1px solid $color--mid-grey;
+
+            &.is-active {
+                font-weight: $weight--normal;
+                background-color: transparentize($color--primary, .9);
+                border-color: $color--mid-grey;
+            }
+
+            @include media-query(tablet-landscape) {
+                border: 1px solid $color--mid-grey;
+            }
+        }
+
+        @include media-query(tablet-landscape) {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 0 30px;
+            opacity: 0;
+            transition: opacity $transition;
+
+            .filters-open & {
+                opacity: 1;
+                transition-delay: $base-delay * 10;
+            }
+
+            .filters--dates & {
+                align-items: flex-end;
+                margin: 10px 0 30px;
+                padding: 0;
+            }
+        }
+
+        label {
+            display: none;
+
+            .filters--dates & {
+                display: block;
+            }
+        }
+
+        // so the form can be output in any tag
+        > * {
+            @include media-query(tablet-landscape) {
+                flex-basis: 225px;
+
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        &--mobile {
+            flex-direction: column;
+            padding: 0;
+
+            // so the form can be output in any tag
+            > * {
+                flex-basis: auto;
+                margin: 0;
+            }
+        }
+
+        > li {
+            padding: 0 1rem;
+
+            @include media-query(tablet-landscape) {
+                padding: 0;
+            }
+
+            // re-order from/to date inputs and text
+            .filters--dates & {
+                margin: 0 auto 1rem;
+                max-width: 320px;
+
+                @include media-query(mob-landscape) {
+                    display: flex;
+                    max-width: 600px;
+
+                    @supports (display: grid) {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        grid-gap: 5px;
+                    }
+                }
+
+                @include media-query(tablet-landscape) {
+                    margin: 0 1rem 0 0;
+                    max-width: initial;
+                }
+
+                label {
+                    @supports (display: grid) {
+                        grid-column: 1;
+                        grid-row: 1;
+                    }
+                }
+
+                input {
+                    &:first-of-type {
+                        @supports (display: grid) {
+                            grid-column: 1;
+                        }
+                    }
+                }
+
+                span {
+                    @supports (display: grid) {
+                        grid-column: 2;
+                        grid-row: 1;
+                    }
+                }
+            }
+        }
+    }
+
     &__required {
         color: $color--purple;
     }
@@ -175,6 +304,18 @@
         max-width: 385px;
         background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
         background-size: 8px;
+
+        .form--scoreable & {
+            margin-top: 20px;
+        }
+
+        .form__filters & {
+            max-width: 100%;
+
+            select {
+                height: $dropdown-height;
+            }
+        }
 
         select[multiple='multiple'] {
             display: block;
