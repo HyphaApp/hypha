@@ -47,6 +47,7 @@ class WagtailSerializer:
             # Set required false for fields if it's a draft.
             field_kwargs['required'] = False
             field_kwargs['allow_null'] = True
+            field_kwargs['allow_blank'] = True
         try:
             field = serializer_field_class(**field_kwargs)
         except TypeError:
