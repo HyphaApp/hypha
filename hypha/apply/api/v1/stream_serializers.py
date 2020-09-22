@@ -126,6 +126,6 @@ class WagtailSerializer:
         # Model serializers needs to have each field declared in the field options
         # of Meta. This code adds the dynamically generated serializer fields
         # to the serializer class meta fields.
-        model_fields = self.serializer_class.Meta.fields
+        model_fields = [field for field in self.serializer_class.Meta.fields if hasattr(self.serializer_class.Meta.model, field)]
         self.serializer_class.Meta.fields = model_fields + [*self.get_serializer_fields(draft).keys()]
         return type('WagtailStreamSerializer', (self.serializer_class,), self.get_serializer_fields(draft))
