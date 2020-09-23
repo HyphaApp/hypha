@@ -3,11 +3,11 @@ from django.utils.translation import gettext_lazy as _
 from .applications import ApplicationBase, LabBase, RoundBase, RoundsAndLabs  # NOQA
 from .forms import ApplicationForm
 from .reminders import Reminder
-from .reviewer_role import ReviewerRole
+from .reviewer_role import ReviewerRole, ReviewerSettings
 from .screening import ScreeningStatus
 from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
 
-__all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole', 'Reminder']
+__all__ = ['ApplicationSubmission', 'AssignedReviewers', 'ApplicationRevision', 'ApplicationForm', 'ScreeningStatus', 'ReviewerRole', 'Reminder', 'ReviewerSettings']
 
 
 class FundType(ApplicationBase):
