@@ -20,7 +20,7 @@
 
         @supports(display: grid) {
             display: grid;
-            grid-template-columns: 50% 25% 25%;
+            grid-template-columns: 45% 15% 15% 25%;
             grid-gap: 5px;
         }
 

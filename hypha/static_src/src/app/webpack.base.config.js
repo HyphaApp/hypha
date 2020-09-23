@@ -76,6 +76,7 @@ module.exports = (webpackEnv) => {
             modules: ['node_modules', './src'],
             extensions: ['.js', '.jsx'],
             alias: {
+                '@common': path.resolve(__dirname, 'src/common'),
                 '@components': path.resolve(__dirname, 'src/components'),
                 '@containers': path.resolve(__dirname, 'src/containers'),
                 '@redux': path.resolve(__dirname, 'src/redux'),

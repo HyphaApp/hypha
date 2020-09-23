@@ -14,6 +14,12 @@ export function fetchSubmission(id) {
     };
 }
 
+export function fetchReviewDraft(id) {
+    return {
+        path: `/v1/submissions/${id}/reviews/draft/`,
+    };
+}
+
 export function fetchSubmissionsByStatuses(statuses) {
     const params = new URLSearchParams
     params.append('page_size', 1000)

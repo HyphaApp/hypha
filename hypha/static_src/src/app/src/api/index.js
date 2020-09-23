@@ -2,7 +2,8 @@ import {
     executeSubmissionAction,
     fetchSubmission,
     fetchSubmissionsByRound,
-    fetchSubmissionsByStatuses
+    fetchSubmissionsByStatuses,
+    fetchReviewDraft
 } from '@api/submissions';
 import { fetchRound, fetchRounds } from '@api/rounds';
 import { createNoteForSubmission, fetchNotesForSubmission, fetchNewNotesForSubmission, editNoteForSubmission } from '@api/notes';
@@ -13,6 +14,7 @@ export default {
     fetchSubmissionsByRound,
     fetchSubmissionsByStatuses,
     fetchSubmission,
+    fetchReviewDraft,
 
     fetchRound,
     fetchRounds,

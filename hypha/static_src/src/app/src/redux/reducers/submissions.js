@@ -10,6 +10,11 @@ import {
     UPDATE_BY_STATUSES,
     START_EXECUTING_SUBMISSION_ACTION,
     FAIL_EXECUTING_SUBMISSION_ACTION,
+    TOGGLE_REVIEW_FORM,
+    SET_CURRENT_REVIEW,
+    CLEAR_CURRENT_REVIEW,
+    FETCH_REVIEW_DRAFT,
+    CLEAR_REVIEW_DRAFT
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -30,6 +35,7 @@ function submission(state={comments: []}, action) {
                 isErrored: true,
             };
         case UPDATE_SUBMISSION:
+        
             return {
                 ...state,
                 ...action.data,
@@ -100,6 +106,7 @@ function submissionsByID(state = {}, action) {
             };
         case UPDATE_BY_STATUSES:
         case UPDATE_SUBMISSIONS_BY_ROUND:
+        // debugger
             return {
                 ...state,
                 ...action.data.results.reduce((newItems, newSubmission) => {
@@ -130,10 +137,45 @@ function currentSubmission(state = null, action) {
     }
 }
 
+function toggleReviewForm(state= false, action){
+    switch(action.type){
+        case TOGGLE_REVIEW_FORM:
+            return action.status
+        default:
+            return state
+    }
+}
+
+function currentReview(state = null, action) {
+    switch(action.type) {
+        case SET_CURRENT_REVIEW:
+            return action.reviewId;
+        case CLEAR_CURRENT_REVIEW:
+            return null;
+        default:
+            return state;
+    }
+}
+
+function isReviewDraftExist(state = false, action) {
+    switch(action.type) {
+        case FETCH_REVIEW_DRAFT:
+            return action.data.isDraft ? true : false;
+        case CLEAR_REVIEW_DRAFT:
+            return false;
+        default:
+            return state;
+    }
+}
+
+
 
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
+    showReviewForm : toggleReviewForm,
+    currentReview: currentReview,
+    isReviewDraftExist: isReviewDraftExist
 });
 
 export default submissions;
