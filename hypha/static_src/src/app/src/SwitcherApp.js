@@ -9,6 +9,7 @@ import {
     loadSubmissionFromURL,
     setCurrentSubmissionParam,
 } from '@actions/submissions';
+import GeneralInfoContainer from '@containers/GeneralInfo'
 
 
 class SwitcherApp extends React.Component {
@@ -79,6 +80,7 @@ class SwitcherApp extends React.Component {
         }
         return (
             <>
+                <GeneralInfoContainer />
                 <MessagesContainer />
                 <Switcher selector={this.props.switcherSelector} open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
 

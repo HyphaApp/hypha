@@ -12,6 +12,12 @@ const getSubmissions = state => state.submissions.byID;
 
 const getCurrentSubmissionID = state => state.submissions.current;
 
+const getReviewButtonStatus = state => state.submissions.showReviewForm;
+
+const getCurrentReview = state => state.submissions.currentReview;
+
+const getReviewDraftStatus = state => state.submissions.isReviewDraftExist;
+
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -52,6 +58,9 @@ export {
     getCurrentRoundSubmissions,
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getReviewButtonStatus,
+    getCurrentReview,
+    getReviewDraftStatus,
     getSubmissionsByRoundError,
     getSubmissionsByRoundLoadingState,
     getSubmissionLoadingState,

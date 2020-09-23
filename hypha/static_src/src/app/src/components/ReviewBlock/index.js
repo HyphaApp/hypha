@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
 import './styles.scss';
 
 export const Opinion = ({ author, icon, opinion }) => (
@@ -19,10 +18,10 @@ Opinion.propTypes = {
     opinion: PropTypes.string,
 }
 
-export const AssignedToReview = ({ author, icon }) => {
+export const AssignedToReview = ({ author, icon, userName }) => {
     return (
-        <li className="reviews-sidebar__item">
-            <div className="reviews-sidebar__name">{author}<img src={icon} /></div>
+        <li className={`reviews-sidebar__item ${author !== userName && 'no-response'}`}>
+            <div className="reviews-sidebar__name ">{author}<img src={icon} /></div>
             <div>-</div>
             <div>-</div>
         </li>
@@ -32,21 +31,30 @@ export const AssignedToReview = ({ author, icon }) => {
 AssignedToReview.propTypes = {
     icon: PropTypes.string,
     author: PropTypes.string,
+    userName: PropTypes.string,
 }
 
-export const Review = ({ url, author, icon, score, recommendation, children }) => {
+export const Review = ({ url, id, author, icon, score, recommendation, toggleReviewForm, setCurrentReview, userName, submissionID, deleteReview, selectFieldsInfo, children }) => {
     const hasOpinions = children.length > 0;
-
     return (
         <>
             <li className="reviews-sidebar__item">
-                <a target="_blank" rel="noopener noreferrer" href={url}>
-                    <div className="reviews-sidebar__name">
+                <div className="reviews-sidebar__name">
                         {author}<img src={icon} />
-                    </div>
-                </a>
-                <div>{recommendation.display}</div>
-                <div>{parseFloat(score).toFixed(1)}</div>
+                </div>
+
+                {recommendation && <div>{recommendation.display}</div>}
+                {!isNaN(parseFloat(score)) && <div>{parseFloat(score).toFixed(1)}</div>}
+                
+                <div>
+                  <a onClick={() => { setCurrentReview(id); toggleReviewForm(true) }} title="Edit" >
+                    <svg className="icon icon--pen"><use href="#pen"></use></svg>
+                  </a> 
+                  {/* <a onClick={() => { setCurrentReview(id);  toggleReviewForm(true);  deleteReview(id, submissionID)}} title="Delete">
+                   <svg className="icon icon--delete"><use  href="#delete"></use></svg>
+                  </a> */}
+                </div> 
+
             </li>
 
             {hasOpinions &&
@@ -67,6 +75,13 @@ Review.propTypes = {
     }).isRequired,
     url: PropTypes.string.isRequired,
     children: PropTypes.node,
+    id: PropTypes.number,
+    toggleReviewForm: PropTypes.func,
+    setCurrentReview: PropTypes.func,
+    submissionID: PropTypes.number,
+    deleteReview: PropTypes.func,
+    selectFieldsInfo: PropTypes.func,
+    userName: PropTypes.string
 }
 
 const ReviewBlock = ({ children, recommendation, score }) => {
@@ -96,6 +111,7 @@ const ReviewBlock = ({ children, recommendation, score }) => {
                     {!isNaN(parseFloat(score)) &&
                         <div>{parseFloat(score).toFixed(1)}</div>
                     }
+                    <div>Actions</div>
                 </li>
             }
             {children}

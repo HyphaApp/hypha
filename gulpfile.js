@@ -94,6 +94,7 @@ gulp.task('clean:css', function clean () {
 // Clean JavaScript files.
 gulp.task('clean:js', function clean () {
   return del([
+      options.theme.dest + 'app/*.*',
       options.theme.js_dest + '**/*.js',
       options.theme.js_dest + '**/*.map'
     ], {force: true});
