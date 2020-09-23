@@ -63,6 +63,15 @@
         @include button--narrow;
     }
 
+    &--cookieconsent {
+        @include button(transparent, $color--white);
+
+        &:focus,
+        &:hover {
+            color: $color--dark-blue;
+        }
+    }
+
     // cannot conform to BEM here in order to be able to override google button styles
     &--google-translate {
         width: 160px;
