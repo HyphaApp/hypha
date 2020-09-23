@@ -293,4 +293,10 @@
             flex: 1;
         }
     }
+
+    &--cookieconsent {
+        padding: 20px;
+        border-bottom: 1px solid $color--light-blue;
+    }
+
 }

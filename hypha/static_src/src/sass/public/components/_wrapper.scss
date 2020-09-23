@@ -252,4 +252,10 @@
     &--page-box {
         background-color: $color--light-grey;
     }
+
+    &--cookieconsent {
+        padding: 20px;
+        border-bottom: 1px solid $color--light-blue;
+    }
+
 }
