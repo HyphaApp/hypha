@@ -44,8 +44,6 @@
 
         {% wagtailuserbar %}
 
-        {% cookie_banner %}
-
         {% include 'includes/messages.html' %}
         <header class="header">
 
@@ -114,6 +112,9 @@
         </main>
 
         <footer class="footer"></footer>
+
+        {% cookie_banner %}
+
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/cookieconsent.js' %}"></script>
         {% block extra_js %}{% endblock %}
