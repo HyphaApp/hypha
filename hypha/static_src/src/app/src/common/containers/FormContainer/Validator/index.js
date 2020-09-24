@@ -9,7 +9,6 @@ export default class Validator {
         this.errors = {}
         this.updateComparators()
     }
-
     updateComparators() {
         for (const field_name in this.constraints) {
             if (this.constraints[field_name] && this.constraints[field_name].equality) {
@@ -20,6 +19,17 @@ export default class Validator {
     }
 
     validate() {
+        validate.validators.scoredAnswerValidator = function(value) {
+        let tmp = document.createElement("DIV");
+        tmp.innerHTML = value[0];
+        if((tmp.textContent.length) == 0){
+            return "- comment field can't be blank"
+        }
+        if(value[1] == 99){
+            return "- score field can't be blank"
+        }
+        return
+        };
         this.errors = validate(this.values, this.constraints);
         return this.errors;
     }

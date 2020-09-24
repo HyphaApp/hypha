@@ -30,6 +30,15 @@ export const initializer = (fields, initialValues = false) => {
 
     // Add default values for dropdown
   for (const field of fields) {
+    if(field.type === "ScoredAnswerField"){
+      formState = formState.merge(
+        {
+          values: {
+            [field.kwargs.label]: [field.kwargs.initial[0], field.kwargs.fields[1].choices[0][0]]
+          }
+        }
+      )
+    }
     if (field.type === "ChoiceField" && !formState.values[field.kwargs.label]) {
       formState = formState.merge(
         {
@@ -73,7 +82,7 @@ const getConstraints = field => {
   }
 
   if(field.type === "ScoredAnswerField"){
-    constraints["type"] = "array"
+    constraints = {"scoredAnswerValidator" : true}
   }
   return constraints
 } 
