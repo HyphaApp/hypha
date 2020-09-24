@@ -1,9 +1,11 @@
-import django_tables2 as tables
-from django.utils.translation import gettext_lazy as _
 import django_filters as filters
+import django_tables2 as tables
 from django import forms
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
+
 from hypha.apply.funds.tables import Select2MultipleChoiceFilter
+
 from .models import Investment, InvestmentCategorySettings, PartnerPage
 
 
@@ -64,7 +66,7 @@ class InvestmentFilter(filters.FilterSet):
 
 
 class InvestmentFilterAndSearch(InvestmentFilter):
-    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+    query = filters.CharFilter(field_name='partner__title', lookup_expr='icontains', widget=forms.HiddenInput)
 
 
 class InvestmentTable(tables.Table):

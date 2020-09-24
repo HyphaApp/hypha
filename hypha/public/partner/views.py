@@ -1,8 +1,9 @@
 from django_filters.views import FilterView
-from .models import Investment
-from .tables import InvestmentTable, InvestmentFilterAndSearch, InvestmentFilter
-from django_tables2.views import SingleTableMixin
 from django_tables2.paginators import LazyPaginator
+from django_tables2.views import SingleTableMixin
+
+from .models import Investment
+from .tables import InvestmentFilterAndSearch, InvestmentTable
 
 
 class InvestmentTableView(SingleTableMixin, FilterView):
