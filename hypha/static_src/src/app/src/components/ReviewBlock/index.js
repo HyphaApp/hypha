@@ -80,7 +80,7 @@ Review.propTypes = {
     setCurrentReview: PropTypes.func,
     submissionID: PropTypes.number,
     deleteReview: PropTypes.func,
-    selectFieldsInfo: PropTypes.func,
+    selectFieldsInfo: PropTypes.object,
     userName: PropTypes.string
 }
 

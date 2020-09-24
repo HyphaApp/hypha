@@ -39,7 +39,7 @@ CheckBox.propTypes = {
   required: PropTypes.bool,
   onChange: PropTypes.func,
   value: PropTypes.node,
-  helperProps: PropTypes.node
+  helperProps: PropTypes.object
 }
 
 CheckBox.displayName = 'CheckBox';

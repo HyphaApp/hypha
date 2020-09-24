@@ -72,7 +72,7 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
                 const review = data.reviews.find(review => review.authorId === reviewer.id);
 
                 if (!review ) {
-                    return <AssignedToReview key={reviewer.id + '-no-review'} author={reviewer.name} userName={selectGeneralInfo.user.email}/>
+                    return <AssignedToReview key={reviewer.id + '-no-review'} author={reviewer.name} userName={selectGeneralInfo && selectGeneralInfo.user ? selectGeneralInfo.user.email : ""}/>
                 }
 
                 return <Review
