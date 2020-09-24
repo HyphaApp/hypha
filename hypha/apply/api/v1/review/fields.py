@@ -12,6 +12,15 @@ class ScoredAnswerListField(serializers.ListField):
         serializers.ChoiceField(choices=RATE_CHOICES)
     ]
 
+    def __init__(self, *args, **kwargs):
+        draft = kwargs.pop('draft', False)
+        super().__init__(*args, **kwargs)
+        if draft:
+            self.childs = [
+                serializers.CharField(required=False, allow_null=True, allow_blank=True),
+                serializers.ChoiceField(choices=RATE_CHOICES)
+            ]
+
     def run_child_validation(self, data):
         result = []
         errors = OrderedDict()

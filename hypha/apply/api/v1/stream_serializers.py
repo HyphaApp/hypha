@@ -53,6 +53,9 @@ class WagtailSerializer:
         except TypeError:
             # ScoredAnswerField doesn't have allow_blank attribute
             field_kwargs.pop('allow_blank')
+            if serializer_field_class.__name__ == 'ScoredAnswerListField':
+                field_kwargs['draft'] = True
+                return serializer_field_class(**field_kwargs)
             return serializer_field_class(**field_kwargs)
 
         return field
