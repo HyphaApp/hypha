@@ -146,7 +146,7 @@ class FormField extends React.Component {
     }
         
     render() {
-        return <div  > 
+        return <div className="formFieldcontainer" > 
             {this.renderField()}
             <div className="error">
                 {this.props.error}
