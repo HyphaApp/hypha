@@ -53,7 +53,7 @@ ScoredAnswerWidget.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   required: PropTypes.bool,
-  helperProps: PropTypes.node,
+  helperProps: PropTypes.object,
   widget: PropTypes.array,
   kwargs:  PropTypes.object
 }

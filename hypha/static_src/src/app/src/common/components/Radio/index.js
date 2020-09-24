@@ -38,7 +38,7 @@ DropDown.propTypes = {
   required: PropTypes.bool,
   onChange: PropTypes.func,
   value: PropTypes.node,
-  helperProps: PropTypes.node,
+  helperProps: PropTypes.object,
   choices: PropTypes.array,
 }
 

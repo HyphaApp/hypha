@@ -28,7 +28,7 @@ Textarea.propTypes={
   name: PropTypes.string,
   label: PropTypes.string,
   required: PropTypes.bool,
-  helperProps: PropTypes.node,
+  helperProps: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.node,
   widget: PropTypes.object
