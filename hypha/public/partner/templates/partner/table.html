@@ -10,6 +10,21 @@
         {% endfor %}
     </tr>
 
+    {% with investment=row.record %}
+        <tr class="all-investments-table__child" data-parent-id="{{ investment.id }}">
+            <td colspan="{{ table.columns|length }}">
+                <table class="investment-meta">
+                    <tr class="investment-meta__row">
+                        <th><h6 class="heading heading--normal heading--no-margin">Investment Description</h6></th>
+                    </tr>
+                    <tr class="investment-meta__row investment-meta__row--black">
+                        <td>{{ investment.description }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    {% endwith %}
+
 {% endblock %}
 
 {% block table.tbody.empty_text %}

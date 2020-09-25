@@ -69,9 +69,14 @@ class InvestmentFilterAndSearch(InvestmentFilter):
     query = filters.CharFilter(field_name='partner__title', lookup_expr='icontains', widget=forms.HiddenInput)
 
 
+def make_row_class(record):
+    css_class = 'all-investments-table__parent'
+    return css_class
+
+
 class InvestmentTable(tables.Table):
     """Table for listing investments."""
-    partner = tables.Column(verbose_name='Partner', linkify=True)
+    partner = tables.Column(verbose_name='Partner', linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
     year = tables.Column(verbose_name='Year')
     status = tables.Column(accessor='partner__status', verbose_name='Status')
     amount_committed = tables.Column(verbose_name='Amount committed (US$)')
@@ -81,6 +86,10 @@ class InvestmentTable(tables.Table):
         order_by = ('-updated_at',)
         fields = ('partner', 'year', 'status', 'amount_committed')
         template_name = 'partner/table.html'
+        row_attrs = {
+            'class': make_row_class,
+            'data-record-id': lambda record: record.id,
+        }
         attrs = {'class': 'all-investments-table'}
         empty_text = _('No investments available')
 
