@@ -3,62 +3,72 @@ import {
   put,
   takeLatest,
 } from 'redux-saga/effects';
-// import { getNAV, mergeSeries } from 'utils/chart';
-// import * as Actions from './actions';
 import * as ActionTypes from './constants';
-import axios from 'axios';
 import * as Actions from './actions';
 import { toggleReviewFormAction, clearCurrentReviewAction } from '../../redux/actions/submissions'
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+import { apiFetch } from '@api/utils'
 
 function* initialFetch(action) {
   
   try {
     yield put(Actions.showLoadingAction())
-    let response = yield call(axios.get, `/api/v1/submissions/${action.id}/reviews/fields/`);
-    
+    let response = yield call(apiFetch, {path : `/v1/submissions/${action.id}/reviews/fields/`});
+    let data = yield response.json()
     yield put(
-      Actions.getReviewFieldsSuccessAction(response.data),
+      Actions.getReviewFieldsSuccessAction(data),
     );
-   let url = `/api/v1/submissions/${action.id}/reviews/draft/`
+   let url = `/v1/submissions/${action.id}/reviews/draft/`
 
     if(action.reviewId !== null){
-       url = `/api/v1/submissions/${action.id}/reviews/${action.reviewId}`
+       url = `/v1/submissions/${action.id}/reviews/${action.reviewId}`
        }
 
-       response = yield call(axios.get, url)
-       if(response.data)
+       response = yield call(apiFetch, {path : url})
+       data = yield response.json()
+       if(data)
        {
-       yield put(Actions.toggleSaveDraftAction(response.data.is_draft))
+       yield put(Actions.toggleSaveDraftAction(data.is_draft))
      }
-       yield put(Actions.getReviewValuesSuccessAction(response.data))
+       yield put(Actions.getReviewValuesSuccessAction(data))
         yield put(Actions.hideLoadingAction())
 
   } catch (e) {
     yield put(Actions.hideLoadingAction())
-    console.log(e);
   }
 }
 
 function* submitReview(action){
-  const url = `/api/v1/submissions/${action.id}/reviews/`
+  const url = `/v1/submissions/${action.id}/reviews/`
   try{
     yield put(Actions.showLoadingAction())
-    yield call(axios.post, url, action.reviewData)
+    yield call(
+      apiFetch, 
+      {
+        path : url,
+        method : "POST",
+        options : {
+            body : JSON.stringify(action.reviewData),
+        }
+      }
+      )
     yield put(toggleReviewFormAction(false))
     yield put(Actions.hideLoadingAction())
   }catch(e){
      yield put(Actions.hideLoadingAction())
-    console.log(e);
   }
 }
 
 function* deleteReview(action){
-  const url = `/api/v1/submissions/${action.id}/reviews/${action.reviewId}`
+  const url = `/v1/submissions/${action.id}/reviews/${action.reviewId}`
   try{
     yield put(Actions.showLoadingAction())
-    yield call(axios.delete, url)
+    yield call(
+      apiFetch, 
+      {
+        path : url,
+        method : "DELETE",
+      }
+      )
     yield put(Actions.clearInitialValues())
     yield put(clearCurrentReviewAction()) 
     yield put(toggleReviewFormAction(false))
@@ -66,23 +76,28 @@ function* deleteReview(action){
 
   }catch(e){
      yield put(Actions.hideLoadingAction())
-    console.log(e);
-
   }
 }
 
 function* updateReview(action){
-  const url = `/api/v1/submissions/${action.id}/reviews/${action.reviewId}/`
+  const url = `/v1/submissions/${action.id}/reviews/${action.reviewId}/`
   try{
     yield put(Actions.showLoadingAction())
-    yield call(axios.put, url, action.reviewData)
+    yield call(
+      apiFetch, 
+      {
+        path : url,
+        method : "PUT",
+        options : {
+            body : JSON.stringify(action.reviewData),
+        }
+      }
+      )
     yield put(toggleReviewFormAction(false))
     yield put(Actions.hideLoadingAction())
 }
   catch(e){
      yield put(Actions.hideLoadingAction())
-    console.log(e);
-
   }
 
 }

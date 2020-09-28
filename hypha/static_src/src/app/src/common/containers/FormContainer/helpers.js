@@ -16,19 +16,7 @@ export const initializer = (fields, initialValues = false) => {
         )
     }
 
-    if (initialValues) {
-      formState = formState.merge({values: {}},{ deep: true });
-      for (const fieldId in initialValues) {
-        const field = fields.find(field => field.id === fieldId);
-        if(field) {
-          formState = formState.merge({ values: {
-            [field.kwargs.label]: initialValues[fieldId]
-          } }, { deep: true });
-        }
-      }
-    }
-
-    // Add default values for dropdown
+      // Add default values for dropdown
   for (const field of fields) {
     if(field.type === "ScoredAnswerField"){
       formState = formState.merge(
@@ -49,7 +37,20 @@ export const initializer = (fields, initialValues = false) => {
         { deep: true }
       )
     }
-  }    
+  }  
+
+  if (initialValues) {
+      formState = formState.merge({values: {}},{ deep: true });
+      for (const fieldId in initialValues) {
+        const field = fields.find(field => field.id === fieldId);
+        if(field) {
+          formState = formState.merge({ values: {
+            [field.kwargs.label]: initialValues[fieldId]
+          } }, { deep: true });
+        }
+      }
+    }
+    
 
     return formState;
 };

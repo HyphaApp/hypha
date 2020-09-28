@@ -38,7 +38,13 @@ class SwitcherApp extends React.Component {
         if (success) {
             this.openDetail()
         }
-    }
+
+        const script = document.createElement("script");
+        script.src = "/static/tinymce/js/tinymce/tinymce.min.js";
+        script.async = true;
+        document.body.appendChild(script);
+  }
+
 
     componentDidUpdate(prevProps) {
         if (prevProps.searchParam !== this.props.searchParam) {

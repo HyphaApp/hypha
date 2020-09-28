@@ -4,24 +4,22 @@ import {
   takeLatest,
 } from 'redux-saga/effects';
 import * as ActionTypes from './constants';
-import axios from 'axios';
 import * as Actions from './actions';
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+import { apiFetch } from '@api/utils'
 
 function* userFetch() {
   
   try {
     yield put(Actions.showLoadingAction())
-    let response = yield call(axios.get, `/api/v1/user/`);
+    let response = yield call(apiFetch, {path : `/v1/user/`});
+    let data = yield response.json()
     yield put(
-      Actions.getUserSuccessAction(response.data),
+      Actions.getUserSuccessAction(data),
     );
     yield put(Actions.hideLoadingAction())
 
   } catch (e) {
     yield put(Actions.hideLoadingAction())
-    console.log(e);
   }
 }
 
