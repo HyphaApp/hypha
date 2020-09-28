@@ -3,6 +3,7 @@ import datetime
 from django import forms
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.http import Http404
 from django.shortcuts import redirect
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import FieldPanel
@@ -96,6 +97,11 @@ class PartnerPage(BasePage):
                 else:
                     category_questions[category.name] = [category.value]
         return category_questions
+
+    def serve(self, request, *args, **kwargs):
+        if not self.public:
+            raise Http404
+        return super(PartnerPage, self).serve(request, *args, **kwargs)
 
 
 def current_year():

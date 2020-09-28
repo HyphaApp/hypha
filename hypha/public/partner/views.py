@@ -1,7 +1,7 @@
 from django_filters.views import FilterView
+from django_tables2.export.views import ExportMixin
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
-from django_tables2.export.views import ExportMixin
 
 from .models import Investment
 from .tables import InvestmentFilterAndSearch, InvestmentTable
@@ -30,3 +30,6 @@ class InvestmentTableView(ExportMixin, SingleTableMixin, FilterView):
             filter_action=self.filter_action,
             **kwargs,
         )
+
+    def get_queryset(self):
+        return Investment.objects.filter(partner__public=True)
