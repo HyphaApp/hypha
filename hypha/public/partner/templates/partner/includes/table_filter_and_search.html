@@ -1,10 +1,10 @@
+{% load querystring from django_tables2 %}
+
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
         {# Left #}
         <div class="actions-bar__inner actions-bar__inner--left">
-            {% if heading %}
-                <h4 class="heading heading--normal heading--no-margin">{{ heading }}</h4>
-            {% endif %}
+            <a class="button button--primary simplified__button" href="{% querystring '_export'='csv' %}">Download CSV</a>
         </div>
 
         {# Right #}
@@ -16,7 +16,7 @@
                 <button class="button button--search" type="submit" aria-label="Search">
                     <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                 </button>
-                <input class="input input--search input--secondary" type="text" placeholder="Search {{ search_placeholder|default:"investments" }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
+                <input class="input input--search input--secondary" type="text" placeholder="Search {{ search_placeholder|default:"by partner" }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
             </form>
             {% endif %}
         </div>

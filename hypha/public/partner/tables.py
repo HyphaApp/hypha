@@ -80,6 +80,7 @@ class InvestmentTable(tables.Table):
     year = tables.Column(verbose_name='Year')
     status = tables.Column(accessor='partner__status', verbose_name='Status')
     amount_committed = tables.Column(verbose_name='Amount committed (US$)')
+    description = tables.Column(visible=False)
 
     class Meta:
         model = Investment

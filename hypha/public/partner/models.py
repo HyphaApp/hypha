@@ -83,6 +83,20 @@ class PartnerPage(BasePage):
     def get_absolute_url(self):
         return self.url
 
+    @property
+    def category_questions(self):
+        category_questions = {}
+        if not self.investments.exists():
+            return
+        for investment in self.investments.all():
+            for category in investment.categories.all():
+                if category.name in category_questions.keys():
+                    if category.value not in category_questions[category.name]:
+                        category_questions[category.name].append(category.value)
+                else:
+                    category_questions[category.name] = [category.value]
+        return category_questions
+
 
 def current_year():
     return datetime.date.today().year

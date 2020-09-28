@@ -1,18 +1,20 @@
 from django_filters.views import FilterView
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
+from django_tables2.export.views import ExportMixin
 
 from .models import Investment
 from .tables import InvestmentFilterAndSearch, InvestmentTable
 
 
-class InvestmentTableView(SingleTableMixin, FilterView):
+class InvestmentTableView(ExportMixin, SingleTableMixin, FilterView):
     model = Investment
     table_class = InvestmentTable
     filterset_class = InvestmentFilterAndSearch
     filter_action = ''
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
+    export_name = 'investments'
     template_name = 'partner/investments.html'
 
     def get_table_kwargs(self):
