@@ -9,9 +9,23 @@ from hypha.apply.funds.tables import Select2MultipleChoiceFilter
 from .models import Investment, InvestmentCategorySettings, PartnerPage
 
 
-def get_year_choices():
-    years = Investment.objects.order_by('-year').values_list('year', flat=True).distinct()
-    return [(year, str(year)) for year in years]
+class YearMultipleChoiceFilter(Select2MultipleChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        years = Investment.objects.order_by('-year').values_list('year', flat=True).distinct()
+        choices = [(year, str(year)) for year in years]
+        super().__init__(
+            *args,
+            field_name='year',
+            choices=choices,
+            label='Years',
+            **kwargs,
+        )
+
+    def has_any(self, first, second):
+        return any(item in second for item in first)
+
+    def get_filter_predicate(self, v):
+        return {f'{ self.field_name }': v}
 
 
 class InvestmentFilter(filters.FilterSet):
@@ -27,9 +41,6 @@ class InvestmentFilter(filters.FilterSet):
         ('1m+', '$1m+'),
     )
 
-    YEAR_CHOICES = get_year_choices()
-
-    year = Select2MultipleChoiceFilter(choices=YEAR_CHOICES, label='Years')
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
         label='Amount Committed(US$)',
@@ -48,6 +59,10 @@ class InvestmentFilter(filters.FilterSet):
     class Meta:
         model = Investment
         fields = ('year', 'amount_committed')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filters['year'] = YearMultipleChoiceFilter()
 
     def filter_amount_committed(self, queryset, name, value):
         query = Q()

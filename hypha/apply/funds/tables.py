@@ -249,7 +249,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
         return any(item in second for item in first)
 
     def get_filter_predicate(self, v):
-        return {f'{ self.field_name }__in': self.status_map[v]}
+        return {f'{ self.field_name }__in': v}
 
 
 class SubmissionFilter(filters.FilterSet):
