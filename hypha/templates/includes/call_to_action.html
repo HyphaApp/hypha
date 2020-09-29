@@ -15,7 +15,7 @@ Example:
 
         <h2>{{ call_to_action.title }}</h2>
 
-        {{ call_to_action.summary|richtext }}
+        <div class="rich-text">{{ call_to_action.summary|richtext }}</div>
 
         {% image call_to_action.image fill-450x300 %}
 
