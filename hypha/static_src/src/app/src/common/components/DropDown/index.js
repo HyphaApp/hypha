@@ -18,9 +18,10 @@ const DropDown = props => {
           name={props.name}
           id={props.name}
           onChange={e => props.onChange(props.name, e.currentTarget.value)}
+          value = { props.value }
         >
           {(props.choices || []).map(choice => {
-            return <option key={choice[0]} value={choice[0]} defaultValue={props.value && props.value == choice[0] }>{choice[1]}</option>
+            return <option key={choice[0]} value={choice[0]} >{choice[1]}</option>
           })}
         </select>
       </div>
