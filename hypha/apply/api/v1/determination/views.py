@@ -111,15 +111,9 @@ class SubmissionDeterminationViewSet(
         )
         return Response(ser.data)
 
-    @action(detail=False, methods=['get'])
-    def fields(self, request, *args, **kwargs):
-        """
-        List details of all the form fields that were created by admin for adding determinations.
-
-        These field details will be used in frontend to render the determination form.
-        """
+    def get_form_fields(self):
+        form_fields = super(SubmissionDeterminationViewSet, self).get_form_fields()
         submission = self.get_submission_object()
-        form_fields = self.get_form_fields()
         field_blocks = self.get_defined_fields()
         for field_block in field_blocks:
             if isinstance(field_block.block, DeterminationBlock):
@@ -128,6 +122,16 @@ class SubmissionDeterminationViewSet(
                 )
                 # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
+        return form_fields
+
+    @action(detail=False, methods=['get'])
+    def fields(self, request, *args, **kwargs):
+        """
+        List details of all the form fields that were created by admin for adding determinations.
+
+        These field details will be used in frontend to render the determination form.
+        """
+        form_fields = self.get_form_fields()
         fields = FieldSerializer(form_fields.items(), many=True)
         return Response(fields.data)
 
