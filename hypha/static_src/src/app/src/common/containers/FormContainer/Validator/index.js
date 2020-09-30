@@ -26,7 +26,7 @@ export default class Validator {
             return "- comment field can't be blank"
         }
         if(value[1] == 99){
-            return "- score field can't be blankkk"
+            return "- score field can't be blank"
         }
         return
         };

@@ -23,8 +23,9 @@ export const initializer = (fields, initialValues = false) => {
         {
           values: {
             [field.kwargs.label]: [field.kwargs.initial[0], field.kwargs.fields[1].choices[0][0]]
-          }
-        }
+          },
+        },
+        { deep: true }
       )
     }
     if (field.type === "ChoiceField" && !formState.values[field.kwargs.label]) {
@@ -51,7 +52,6 @@ export const initializer = (fields, initialValues = false) => {
       }
     }
     
-
     return formState;
 };
 

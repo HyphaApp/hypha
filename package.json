@@ -14,7 +14,6 @@
         "@rooks/use-interval": "^3.0.1",
         "@svgr/webpack": "^4.2.0",
         "@tinymce/tinymce-react": "^3.6.0",
-        "axios": "^0.20.0",
         "connected-react-router": "^6.4.0",
         "core-js": "^3.6.5",
         "del": "^4.1.1",
