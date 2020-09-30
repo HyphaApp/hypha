@@ -82,7 +82,7 @@ const getConstraints = field => {
     }
   }
 
-  if(field.type === "ScoredAnswerField"){
+  if(field.type === "ScoredAnswerField" && field.kwargs.required){
     constraints = {"scoredAnswerValidator" : true}
   }
   return constraints
