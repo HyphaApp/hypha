@@ -1,3 +1,4 @@
+from django import forms
 from django.conf import settings
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -120,8 +121,14 @@ class SubmissionDeterminationViewSet(
                 outcome_choices = outcome_choices_for_phase(
                     submission, self.request.user
                 )
-                # Outcome field choices need to be set according to the phase.
-                form_fields[field_block.id].choices = outcome_choices
+                if self.action == 'update':
+                    # Outcome can not be edited after being set once, so we do not
+                    # need to render this field.
+                    # form_fields.pop(field_block.id)
+                    form_fields[field_block.id].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+                else:
+                    # Outcome field choices need to be set according to the phase.
+                    form_fields[field_block.id].choices = outcome_choices
         return form_fields
 
     @action(detail=False, methods=['get'])

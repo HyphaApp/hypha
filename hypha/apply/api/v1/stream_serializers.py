@@ -110,6 +110,10 @@ class WagtailSerializer:
         if attrs.get('required') and 'default' in attrs:
             del attrs['required']
 
+        # avoid "May not set both `read_only` and `required`"
+        if form_field.widget.attrs.get('readonly', False) == 'readonly':
+            attrs['read_only'] = True
+            del attrs['required']
         return attrs
 
     def get_serializer_field_class(self, field):
