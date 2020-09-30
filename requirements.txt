@@ -11,6 +11,7 @@ django-basic-auth-ip-whitelist==0.3.4
 django-bleach==0.6.1
 django-countries==6.1.3
 django-extensions==3.0.5
+django-file-form==3.1.0
 django-filter==2.3.0
 django-fsm==2.7.0
 django-heroku==0.3.1
@@ -44,8 +45,3 @@ tomd==0.1.3
 wagtail==2.9.3
 wagtail-cache==1.0.1
 whitenoise==5.2.0
-
-# django-file-form==3.x.x
-# TODO: Switch to offical version when 3.0.0+ is released.
-# Fork that fixes multi file upload widget:
--e git+https://github.com/OpenTechFund/django-file-form.git@upload-widget-placeholder-file#egg=django_file_form
