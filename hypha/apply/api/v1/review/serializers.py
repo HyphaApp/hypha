@@ -86,13 +86,18 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
         instance.score = self.calculate_score(instance, self.validated_data)
+        recommendation = self.validated_data.get(instance.recommendation_field.id, NO)
         instance.recommendation = int(
-            self.validated_data.get(instance.recommendation_field.id, NO)
+            recommendation if recommendation is not None else NO
         )
         instance.is_draft = self.validated_data.get('is_draft', False)
-        instance.visibility = self.validated_data.get(
-            instance.visibility_field.id, PRIVATE
-        )
+
+        # Old review forms do not have the requred visability field.
+        # This will set visibility to PRIVATE by default.
+        try:
+            instance.visibility = self.validated_data[instance.visibility_field.id]
+        except AttributeError:
+            instance.visibility = PRIVATE
 
         if not instance.is_draft:
             # Capture the revision against which the user was reviewing
@@ -104,8 +109,9 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
     def calculate_score(self, instance, data):
         scores = list()
         for field in instance.score_fields:
-            score = data.get(field.id, ['', NA])[1]
+            score = data.get(field.id, ['', NA])
             # Include NA answers as 0.
+            score = score[1] if score is not None else NA
             if score == NA:
                 score = 0
             scores.append(score)
@@ -114,7 +120,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         for field in instance.score_fields_without_text:
             score = data.get(field.id, '')
             # Include '' answers as 0.
-            if score == '':
+            if score is None or score == '':
                 score = 0
             scores.append(int(score))
 
