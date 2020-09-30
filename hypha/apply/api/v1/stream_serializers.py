@@ -1,6 +1,7 @@
 import inspect
 from collections import OrderedDict
 
+from django.forms import TypedChoiceField
 from rest_framework import serializers
 
 from hypha.apply.review.fields import ScoredAnswerField
@@ -122,6 +123,8 @@ class WagtailSerializer:
         """
         if isinstance(field, ScoredAnswerField):
             return ScoredAnswerListField
+        if isinstance(field, TypedChoiceField):
+            return getattr(serializers, 'ChoiceField')
         class_name = field.__class__.__name__
         return getattr(serializers, class_name)
 

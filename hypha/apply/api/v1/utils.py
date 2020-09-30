@@ -28,7 +28,6 @@ def get_field_kwargs(form_field):
     if isinstance(form_field, forms.ChoiceField):
         kwargs['choices'] = form_field.choices
     if isinstance(form_field, forms.TypedChoiceField):
-        kwargs['coerce'] = form_field.coerce
         kwargs['empty_value'] = form_field.empty_value
     if isinstance(form_field, forms.IntegerField):
         kwargs['max_value'] = form_field.max_value
