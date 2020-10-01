@@ -119,7 +119,7 @@ class RoundViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = RoundsAndLabs.objects.specific()
+    queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabSerializer
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
@@ -130,6 +130,10 @@ class RoundViewSet(
         if self.action == 'list':
             return RoundLabSerializer
         return RoundLabDetailSerializer
+
+    def get_object(self):
+        obj = super(RoundViewSet, self).get_object()
+        return obj.specific
 
 
 class SubmissionCommentViewSet(
