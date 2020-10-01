@@ -79,7 +79,7 @@ class ResetNetworkResourcesPage(ResetNetworkBasePage):
                 if c not in categories:
                     categories.append(c)
         categories = sorted(categories, key=lambda c: c.name)
-        resources = ResetNetworkResourcePage.objects.live().public().order_by('id').all()
+        resources = ResetNetworkResourcePage.objects.live().public().order_by('-id').all()
         if category:
             resources = resources.filter(categories__name=category)
 
