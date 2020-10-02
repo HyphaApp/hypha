@@ -137,10 +137,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
+    action_buttons = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -167,6 +168,14 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+    def get_action_buttons(self, obj):
+        request = self.context['request']
+        add_review = (
+            obj.phase.permissions.can_review(request.user) and
+            obj.has_permission_to_review(request.user)
+        )
+        return {'add_review': add_review}
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
