@@ -24,7 +24,7 @@ class HasReviewEditPermission(permissions.BasePermission):
         return request.user.has_perm('review.change_review') or request.user == obj.author.reviewer
 
 
-class HasReviewDetialPermission(permissions.BasePermission):
+class HasReviewDetailPermission(permissions.BasePermission):
     """
     Custom permission that user should have for viewing review.
     """

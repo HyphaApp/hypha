@@ -16,7 +16,7 @@ from ..stream_serializers import WagtailSerializer
 from .permissions import (
     HasReviewCreatePermission,
     HasReviewDeletePermission,
-    HasReviewDetialPermission,
+    HasReviewDetailPermission,
     HasReviewEditPermission,
     HasReviewOpinionPermission,
 )
@@ -40,7 +40,7 @@ class SubmissionReviewViewSet(
     )
     permission_classes_by_action = {
         'create': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
-        'retrieve': [permissions.IsAuthenticated, HasReviewDetialPermission, IsApplyStaffUser, ],
+        'retrieve': [permissions.IsAuthenticated, HasReviewDetailPermission, IsApplyStaffUser, ],
         'update': [permissions.IsAuthenticated, HasReviewEditPermission, IsApplyStaffUser, ],
         'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, IsApplyStaffUser, ],
         'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, IsApplyStaffUser, ],
