@@ -127,49 +127,35 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
         </>
     }
 
-    const checkReviewExist = () => {
-        let userHasReview = false
-        const assignee = submission.review.assigned.find(assignee => assignee.name === selectGeneralInfo.user.email)
-        if(assignee){
-            userHasReview= submission.review.reviews.find(review => review.authorId === assignee.id)
-        }
-        return userHasReview
-    }
+    const hasSubmittedReview = submission.review.reviews.some(review => review.userId == selectGeneralInfo.user.id)
+
     return (
         <SidebarBlock title="Reviews &amp; assignees">
             { partner.length === 0 && staff.length === 0 && nonStaff.length === 0 && <h5>No reviews available</h5>}
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
                 { renderNormal(staff) }
-                { staff.length !== 0 && partner.length !== 0 && !checkReviewExist() && !reviewDraftStatus &&<>
-            <button onClick = {() => toggleReviewForm(true)} className="button button--primary button--half-width">Add a Review</button>
-            <hr />
-            </>}
-                { staff.length !== 0 && partner.length !== 0 && !checkReviewExist() && reviewDraftStatus && <>
-         <button onClick = {() => toggleReviewForm(true)} className="button button--primary button--half-width">Update Draft</button>
-            <hr />
-            </>}
+                {staff.length !== 0 && partner.length !== 0 && <hr />}
                 { renderNormal(partner) }
+                {(partner.length !== 0 || staff.length !== 0) && nonStaff.length !== 0 && <hr />}
                 { renderCollapsed(nonStaff) }
+
                 <div className="wrapper wrapper--sidebar-buttons">
+                  {!hasSubmittedReview && !reviewDraftStatus &&<>
+                      <button onClick = {() =>  toggleReviewForm(true)} className="button button--primary button--half-width">Add a Review</button>
+                  </> }
+                  {!hasSubmittedReview && reviewDraftStatus && <>
+                      <button onClick = {() => toggleReviewForm(true)} className="button button--primary button--half-width">Update Draft</button>
+                  </>}
 
-                {  !checkReviewExist() && !reviewDraftStatus &&<>
-                    <button onClick = {() =>  toggleReviewForm(true)} className="button button--primary button--half-width">Add a Review</button>
-                   
-                </> }
-                { (partner.length !== 0 || staff.length !== 0) && nonStaff.length !== 0 && !checkReviewExist() && reviewDraftStatus && <>
-                    <button onClick = {() => toggleReviewForm(true)} className="button button--primary button--half-width">Update Draft</button>
-                   
-                </>}
-
-            {
-                data.reviews.length !== 0 &&  <>
-                    <a href={`/apply/submissions/${submissionID}/reviews/`} target="_blank" rel="noreferrer" className="button button--white button--half-width">View all</a>
-                
-                   <hr />
-                   </>
-            }
-</div>
-
+                  {data.reviews.length !== 0 &&  <>
+                        <a 
+                          href={`/apply/submissions/${submissionID}/reviews/`} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="button button--white button--half-width">View all</a>
+                        <hr />
+                  </>}
+              </div>
             </ReviewBlock>
 
         </SidebarBlock>
