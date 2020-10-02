@@ -173,7 +173,8 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         request = self.context['request']
         add_review = (
             obj.phase.permissions.can_review(request.user) and
-            obj.has_permission_to_review(request.user)
+            obj.can_review(request.user) and not
+            obj.assigned.draft_reviewed().filter(reviewer=request.user).exists()
         )
         return {'add_review': add_review}
 
