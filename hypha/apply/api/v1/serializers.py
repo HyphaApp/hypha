@@ -55,6 +55,7 @@ class OpinionSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField()
     author_id = serializers.ReadOnlyField(source='author.id')
     url = serializers.ReadOnlyField(source='get_absolute_url')
     opinions = OpinionSerializer(read_only=True, many=True)
@@ -63,13 +64,16 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'score', 'author_id', 'url', 'opinions', 'recommendation')
+        fields = ('id', 'score', 'user_id', 'author_id', 'url', 'opinions', 'recommendation')
 
     def get_recommendation(self, obj):
         return {
             'value': obj.recommendation,
             'display': obj.get_recommendation_display(),
         }
+
+    def get_user_id(self, obj):
+        return obj.author.reviewer.id
 
 
 class ReviewSummarySerializer(serializers.Serializer):
