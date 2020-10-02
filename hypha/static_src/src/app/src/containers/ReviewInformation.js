@@ -128,7 +128,7 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
     }
 
     const hasSubmittedReview = submission.review.reviews.some(review => review.userId == selectGeneralInfo.user.id)
-
+    const showAddReview = submission.actionButtons && submission.actionButtons.addReview ? submission.actionButtons.addReview : false
     return (
         <SidebarBlock title="Reviews &amp; assignees">
             { partner.length === 0 && staff.length === 0 && nonStaff.length === 0 && <h5>No reviews available</h5>}
@@ -140,7 +140,7 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
                 { renderCollapsed(nonStaff) }
 
                 <div className="wrapper wrapper--sidebar-buttons">
-                  {!hasSubmittedReview && !reviewDraftStatus &&<>
+                  {!hasSubmittedReview && !reviewDraftStatus && showAddReview && <>
                       <button onClick = {() =>  toggleReviewForm(true)} className="button button--primary button--half-width">Add a Review</button>
                   </> }
                   {!hasSubmittedReview && reviewDraftStatus && <>
