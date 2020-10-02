@@ -39,13 +39,13 @@ class SubmissionReviewViewSet(
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
     permission_classes_by_action = {
-        'create': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
-        'retrieve': [permissions.IsAuthenticated, HasReviewDetialPermission, ],
-        'update': [permissions.IsAuthenticated, HasReviewEditPermission, ],
-        'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, ],
-        'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, ],
-        'fields': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
-        'draft': [permissions.IsAuthenticated, HasReviewCreatePermission, ],
+        'create': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
+        'retrieve': [permissions.IsAuthenticated, HasReviewDetialPermission, IsApplyStaffUser, ],
+        'update': [permissions.IsAuthenticated, HasReviewEditPermission, IsApplyStaffUser, ],
+        'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, IsApplyStaffUser, ],
+        'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, IsApplyStaffUser, ],
+        'fields': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
+        'draft': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
     }
     serializer_class = SubmissionReviewSerializer
 
