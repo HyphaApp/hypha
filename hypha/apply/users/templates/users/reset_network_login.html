@@ -1,5 +1,5 @@
 {% extends 'reset_network/base.html' %}
-{% load i18n two_factor %}
+{% load i18n two_factor util_tags %}
 
 {% block body_class %}base-dark{% endblock %}
 {% block page_title %}Login{% endblock %}
@@ -46,15 +46,30 @@
           {% if wizard.steps.current == 'auth' %}
 
             {% for field in form %}
-              <div class="form-row">
-                <div class="input">
-                  <label class="input__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  <div class="input__wrap textbox">
+              {% with widget_type=field|widget_type %}
+              {% if widget_type == 'checkbox_input' %}
+                <div class="form-row">
+                  <div class="input checkbox">
                     {{ field }}
-                    <div class="textbox__focus"></div>
+                    <span class="checkbox__fake"></span>
+                    <label class="input__label input__label--check checkbox__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                  {% if field.help_text %}
+                      <p class="form__help">{{ field.help_text|safe }}</p>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div class="form-row">
+                  <div class="input">
+                    <label class="input__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <div class="input__wrap textbox">
+                      {{ field }}
+                      <div class="textbox__focus"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              {% endif %}
+              {% endwith %}
             {% endfor %}
 
             <div class="form-row">
