@@ -5,7 +5,7 @@
     if (typeof window.Cookies !== 'undefined') {
         const cookieconsent = document.querySelector('.cookieconsent');
 
-        if (window.Cookies.get('cookieconsent') === undefined) {
+        if (window.Cookies.get('cookieconsent') === undefined && cookieconsent) {
             cookieconsent.classList.add('js-cookieconsent-open');
         }
 
