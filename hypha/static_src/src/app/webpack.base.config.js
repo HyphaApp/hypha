@@ -1,7 +1,7 @@
 const webpack = require('webpack')
 const path = require('path');
 
-var COMMON_ENTRY = ['@babel/polyfill']
+var COMMON_ENTRY = ['core-js/stable', 'regenerator-runtime/runtime']
 
 
 module.exports = (webpackEnv) => {
@@ -30,7 +30,7 @@ module.exports = (webpackEnv) => {
                     loader: 'babel-loader',
                     include: [path.resolve(__dirname, './src')],
                     query: {
-                        presets: ['@babel/preset-react', '@babel/preset-env'],
+                        presets: ['@babel/preset-react', ['@babel/preset-env', {useBuiltIns: "usage", corejs: 3}]],
                         plugins: [
                             'react-hot-loader/babel',
                             '@babel/plugin-proposal-class-properties'

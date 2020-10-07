@@ -11,10 +11,10 @@
         "last 2 versions"
     ],
     "dependencies": {
-        "@babel/polyfill": "^7.4.4",
         "@rooks/use-interval": "^3.0.1",
         "@svgr/webpack": "^4.2.0",
         "connected-react-router": "^6.4.0",
+        "core-js": "^3.6.5",
         "del": "^4.1.1",
         "detect-node": "^2.0.4",
         "gulp": "^4.0.2",
