@@ -4,7 +4,7 @@
 {% block content %}
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
     <h1>{{ page.title }}</h1>
-    {{ page.intro|richtext }}
+    <div class="rich-text">{{ page.intro|richtext }}</div>
     <form class="form wagtail-form" action="#" data-actionpath="{% pageurl page %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.media }}
