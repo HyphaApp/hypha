@@ -33,6 +33,8 @@ class MultiFileField(MultipleUploadedFileField):
     widget = MultiFileFieldWidget
 
     def clean(self, value, initial):
+        if not value:
+            return []
         old_files = [
             file for file in value
             if hasattr(file, 'is_placeholder') and file.is_placeholder
