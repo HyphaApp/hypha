@@ -15,7 +15,7 @@ const TinyMCE = props => {
     <Editor
       initialValue={props.value}
       init={{
-        ...(props.mce_attrs),
+        ...(props.init),
         menubar: false
       }}
       onChange={e => props.onChange(props.name, e.level.content)}
@@ -29,8 +29,8 @@ TinyMCE.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.node,
   helperProps: PropTypes.object,
-  name: PropTypes.string,
-  mce_attrs: PropTypes.node
+  init: PropTypes.object,
+  name: PropTypes.string
 }
 
 TinyMCE.displayName = 'TinyMCE';
