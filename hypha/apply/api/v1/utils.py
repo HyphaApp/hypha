@@ -1,4 +1,3 @@
-import inspect
 from collections import OrderedDict
 
 from django import forms
@@ -6,33 +5,6 @@ from tinymce.widgets import TinyMCE
 
 from hypha.apply.review.fields import ScoredAnswerField, ScoredAnswerWidget
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
-
-IGNORE_ARGS = ['self', 'cls']
-
-
-def find_function_args(func):
-    """
-    Get the list of parameter names which function accepts.
-    """
-    try:
-        spec = inspect.getfullargspec(func) if hasattr(inspect, 'getfullargspec') else inspect.getargspec(func)
-        return [i for i in spec[0] if i not in IGNORE_ARGS]
-    except TypeError:
-        return []
-
-
-def find_class_args(klass):
-    """
-    Find all class arguments (parameters) which can be passed in ``__init__``.
-    """
-    args = set()
-
-    for i in klass.mro():
-        if i is object or not hasattr(i, '__init__'):
-            continue
-        args |= set(find_function_args(i.__init__))
-
-    return list(args)
 
 
 def get_field_kwargs(form_field):
