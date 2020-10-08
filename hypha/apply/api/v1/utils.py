@@ -86,7 +86,13 @@ def get_field_widget(form_field):
         'attrs': form_field.widget.attrs
     }
     if isinstance(form_field.widget, TinyMCE):
-        widget['mce_attrs'] = form_field.widget.mce_attrs
+        mce_attrs = form_field.widget.mce_attrs
+        plugins = mce_attrs.get('plugins')
+        if not isinstance(plugins, list):
+            mce_attrs['plugins'] = [plugins]
+        if 'toolbar1' in mce_attrs:
+            mce_attrs['toolbar'] = mce_attrs.pop('toolbar1')
+        widget['mce_attrs'] = mce_attrs
     if isinstance(form_field.widget, ScoredAnswerWidget):
         field_widgets = form_field.widget.widgets
         widgets = [
