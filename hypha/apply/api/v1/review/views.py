@@ -23,7 +23,6 @@ from .permissions import (
 from .serializers import (
     FieldSerializer,
     ReviewOpinionWriteSerializer,
-    SubmissionReviewDetailSerializer,
     SubmissionReviewSerializer,
 )
 from .utils import get_review_form_fields_for_stage, review_workflow_actions
@@ -192,7 +191,6 @@ class SubmissionReviewViewSet(
         )
         # Automatic workflow actions.
         review_workflow_actions(self.request, review.submission)
-        ser = SubmissionReviewDetailSerializer(review)
         ser = self.get_serializer(
             self.get_review_data(review)
         )

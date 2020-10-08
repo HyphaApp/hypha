@@ -23,41 +23,6 @@ class ReviewOpinionWriteSerializer(serializers.ModelSerializer):
         extra_kwargs = {'opinion': {'write_only': True}}
 
 
-class SubmissionReviewDetailSerializer(serializers.ModelSerializer):
-    """
-    TODO
-
-    Remove this serializer if not in used.
-    """
-    author_id = serializers.ReadOnlyField(source='author.id')
-    opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
-    recommendation = serializers.SerializerMethodField()
-    score = serializers.ReadOnlyField(source='get_score_display')
-    questions = serializers.SerializerMethodField()
-    comments = serializers.CharField(source='get_comments_display')
-
-    class Meta:
-        model = Review
-        fields = [
-            'id', 'score', 'author_id',
-            'opinions', 'recommendation',
-            'questions', 'comments', 'visibility'
-        ]
-
-    def get_recommendation(self, obj):
-        return {
-            'value': obj.recommendation,
-            'display': obj.get_recommendation_display(),
-        }
-
-    def serialize_questions(self, obj, fields):
-        for field_id in fields:
-            yield obj.serialize(field_id)
-
-    def get_questions(self, obj):
-        return self.serialize_questions(obj, obj.normal_blocks)
-
-
 class SubmissionReviewSerializer(serializers.ModelSerializer):
     opinions = ReviewOpinionReadSerializer(read_only=True, many=True)
 
