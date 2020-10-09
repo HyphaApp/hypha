@@ -25,13 +25,10 @@ from ..mixin import SubmissionNestedMixin
 from ..permissions import IsApplyStaffUser
 from ..review.serializers import FieldSerializer
 from ..stream_serializers import WagtailSerializer
-# from .permissions import (
-#     HasReviewCreatePermission,
-#     HasReviewDeletePermission,
-#     HasReviewDetialPermission,
-#     HasReviewEditPermission,
-#     HasReviewOpinionPermission,
-# )
+from .permissions import (
+    HasDeterminationCreatePermission,
+    HasDeterminationDraftPermission,
+)
 from .serializers import SubmissionDeterminationSerializer
 from .utils import get_fields_for_stage, outcome_choices_for_phase
 
@@ -45,7 +42,20 @@ class SubmissionDeterminationViewSet(
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
+    permission_classes_by_action = {
+        'create': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
+        'fields': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
+        'draft': [permissions.IsAuthenticated, HasDeterminationDraftPermission, IsApplyStaffUser, ],
+    }
     serializer_class = SubmissionDeterminationSerializer
+
+    def get_permissions(self):
+        try:
+            # return permission_classes depending on `action`
+            return [permission() for permission in self.permission_classes_by_action[self.action]]
+        except KeyError:
+            # action is not set return default permission_classes
+            return [permission() for permission in self.permission_classes]
 
     def get_defined_fields(self):
         """
