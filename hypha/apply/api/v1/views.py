@@ -7,6 +7,7 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -16,7 +17,7 @@ from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review
 
 from .filters import CommentFilter, SubmissionsFilter
-from .mixin import SubmissionNextedMixin
+from .mixin import SubmissionNestedMixin
 from .pagination import StandardResultsSetPagination
 from .permissions import IsApplyStaffUser, IsAuthor
 from .serializers import (
@@ -28,6 +29,7 @@ from .serializers import (
     SubmissionActionSerializer,
     SubmissionDetailSerializer,
     SubmissionListSerializer,
+    UserSerializer,
 )
 
 
@@ -53,7 +55,7 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SubmissionActionViewSet(
-    SubmissionNextedMixin,
+    SubmissionNestedMixin,
     viewsets.GenericViewSet
 ):
     serializer_class = SubmissionActionSerializer
@@ -137,7 +139,7 @@ class RoundViewSet(
 
 
 class SubmissionCommentViewSet(
-    SubmissionNextedMixin,
+    SubmissionNestedMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     viewsets.GenericViewSet
@@ -225,3 +227,11 @@ class CommentViewSet(
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class CurrentUser(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        ser = UserSerializer(request.user)
+        return Response(ser.data)

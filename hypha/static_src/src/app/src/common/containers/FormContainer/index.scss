@@ -1,0 +1,17 @@
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 5px;
+    dnx-button {
+        margin-right: 25px;
+    }
+}
+
+.fieldsContiner {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: 10px;
+    justify-content: space-between;
+    
+}

@@ -8,6 +8,8 @@ import { clearCurrentSubmission } from '@actions/submissions'
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getReviewButtonStatus,
+    getCurrentReview
 } from '@selectors/submissions'
 import { getDraftNoteForSubmission } from '@selectors/notes';
 
@@ -19,12 +21,15 @@ import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
 import Tabber, {Tab} from '@components/Tabber'
 import SubmissionLink from '@components/SubmissionLink';
+import ReviewFormContainer from '@containers/ReviewForm';
+
 
 import './style.scss'
+// {!showReviewForm ? <CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID}/> }
 
 
 const DisplayPanel = props => {
-    const { submissionID, submission, addMessage} = props
+    const { submissionID, submission, addMessage, showReviewForm, currentReview} = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
 
@@ -78,30 +83,37 @@ const DisplayPanel = props => {
         tabs = [
             <Tab button="Back" key="back" handleClick={ clearSubmission } />,
             <Tab button="Application" key="application">
-                <CurrentSubmissionDisplay />
+                {showReviewForm ? <CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>}  
             </Tab>,
             ...tabs
         ]
     }
-
+ 
     return (
+        showReviewForm ? <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>  :
         <div className="display-panel">
+
             { !isMobile && (
                 <div className="display-panel__column">
                     <div className="display-panel__header display-panel__header--spacer"></div>
                     <div className="display-panel__body display-panel__body--center">
-                        <CurrentSubmissionDisplay />
+                        
+                         <CurrentSubmissionDisplay /> 
                     </div>
                 </div>
             )}
+
             <div className="display-panel__column">
                 <div className="display-panel__body">
+                
                     <Tabber>
                         { tabs }
                     </Tabber>
+             
                 </div>
             </div>
         </div>
+    
 
     )
 }
@@ -114,11 +126,15 @@ DisplayPanel.propTypes = {
     windowSize: PropTypes.objectOf(PropTypes.number),
     addMessage: PropTypes.func,
     draftNote: PropTypes.object,
+    showReviewForm: PropTypes.bool,
+    currentReview: PropTypes.number
 }
 
 const mapStateToProps = (state, ownProps) => ({
     submissionID: getCurrentSubmissionID(state),
     submission: getCurrentSubmission(state),
+    showReviewForm: getReviewButtonStatus(state),
+    currentReview: getCurrentReview(state),
     draftNote: getDraftNoteForSubmission(getCurrentSubmissionID(state))(state),
 })
 

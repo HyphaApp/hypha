@@ -55,6 +55,7 @@ class OpinionSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField()
     author_id = serializers.ReadOnlyField(source='author.id')
     url = serializers.ReadOnlyField(source='get_absolute_url')
     opinions = OpinionSerializer(read_only=True, many=True)
@@ -63,13 +64,16 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ('id', 'score', 'author_id', 'url', 'opinions', 'recommendation')
+        fields = ('id', 'score', 'user_id', 'author_id', 'url', 'opinions', 'recommendation')
 
     def get_recommendation(self, obj):
         return {
             'value': obj.recommendation,
             'display': obj.get_recommendation_display(),
         }
+
+    def get_user_id(self, obj):
+        return obj.author.reviewer.id
 
 
 class ReviewSummarySerializer(serializers.Serializer):
@@ -133,10 +137,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
+    action_buttons = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -163,6 +168,15 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+    def get_action_buttons(self, obj):
+        request = self.context['request']
+        add_review = (
+            obj.phase.permissions.can_review(request.user) and
+            obj.can_review(request.user) and not
+            obj.assigned.draft_reviewed().filter(reviewer=request.user).exists()
+        )
+        return {'add_review': add_review}
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
@@ -233,3 +247,8 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 class CommentEditSerializer(CommentCreateSerializer):
     class Meta(CommentCreateSerializer.Meta):
         read_only_fields = ('timestamp', 'edited',)
+
+
+class UserSerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    email = serializers.CharField(read_only=True)

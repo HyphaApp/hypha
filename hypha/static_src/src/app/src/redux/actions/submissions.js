@@ -62,6 +62,39 @@ export const FAIL_EXECUTING_SUBMISSION_ACTION = 'FAIL_EXECUTING_SUBMISSION_ACTIO
 // Notes
 export const ADD_NOTE_FOR_SUBMISSION = 'ADD_NOTE_FOR_SUBMISSION';
 
+// Review
+export const TOGGLE_REVIEW_FORM = 'TOGGLE_REVIEW_FORM';
+export const SET_CURRENT_REVIEW = 'SET_CURRENT_REVIEW';
+export const CLEAR_CURRENT_REVIEW = 'CLEAR_CURRENT_REVIEW';
+export const FETCH_REVIEW_DRAFT = 'FETCH_REVIEW_DRAFT';
+export const CLEAR_REVIEW_DRAFT = 'CLEAR_REVIEW_DRAFT'
+
+export const fetchReviewDraft = (submissionID) => ({
+    [CALL_API]: {
+        types: [ START_LOADING_SUBMISSION, FETCH_REVIEW_DRAFT, FAIL_LOADING_SUBMISSION],
+        endpoint: api.fetchReviewDraft(submissionID),
+    },
+    submissionID,
+})
+
+export const clearReviewDraftAction = () => ({
+    type: CLEAR_REVIEW_DRAFT,
+});
+
+export const toggleReviewFormAction = (status) =>({
+    type : TOGGLE_REVIEW_FORM,
+    status
+});
+
+export const setCurrentReviewAction = (reviewId) =>({
+    type : SET_CURRENT_REVIEW,
+    reviewId
+});
+
+export const clearCurrentReviewAction = () => ({
+    type: CLEAR_CURRENT_REVIEW,
+});
+
 export const setCurrentSubmissionRound = (id) => (dispatch) => {
     dispatch({
         type: SET_CURRENT_SUBMISSION_ROUND,
@@ -123,6 +156,9 @@ export const setCurrentSubmissionParam = () => (dispatch, getState) => {
 
 
 export const setCurrentSubmission = id => (dispatch, getState) => {
+    dispatch(toggleReviewFormAction(false))
+    dispatch(clearCurrentReviewAction())
+    dispatch(clearReviewDraftAction())
     dispatch(setSubmissionParam(id));
 
     return dispatch({
@@ -206,7 +242,7 @@ export const setCurrentStatuses = (statuses) => (dispatch) => {
     }
 
     dispatch({
-        type: SET_CURRENT_STATUSES,
+        type: SET_CURRENT_STATUSES, 
         statuses,
     });
 
@@ -261,8 +297,8 @@ export const loadCurrentSubmission = (requiredFields=[], { bypassCache = false }
     if (!bypassCache && submission && requiredFields.every(key => submission.hasOwnProperty(key))) {
         return null
     }
-
-    return dispatch(fetchSubmission(submissionID))
+    dispatch(fetchSubmission(submissionID))
+    return dispatch(fetchReviewDraft(submissionID))
 }
 
 
