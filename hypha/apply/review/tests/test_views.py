@@ -437,16 +437,14 @@ class ReviewWorkFlowActionTestCase(BaseViewTestCase):
         )
 
     def test_com_external_review_to_ready_for_discussion(self):
-        submission = ApplicationSubmissionFactory(status='com_external_review', with_external_review=True)
+        submission = ApplicationSubmissionFactory(status='com_external_review', workflow_name='single_com')
         reviewers = ReviewerFactory.create_batch(2)
         AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])
         AssignedReviewersFactory(submission=submission, reviewer=reviewers[1])
         ReviewFactory(submission=submission, author__reviewer=reviewers[0], visibility_private=True)
-
+        form = submission.round.review_forms.first()
         self.client.force_login(reviewers[1])
-        fields = get_fields_for_stage(submission)
-        data = ReviewFormFieldsFactory.form_response(fields)
-
+        data = ReviewFormFieldsFactory.form_response(form.fields)
         self.post_page(submission, data, 'form')
         submission = ApplicationSubmission.objects.get(id=submission.id)
         self.assertEqual(
@@ -470,4 +468,17 @@ class ReviewWorkFlowActionTestCase(BaseViewTestCase):
         self.assertEqual(
             submission.status,
             'post_external_review_discussion'
+        )
+
+    def test_submission_did_not_transition(self):
+        submission = ApplicationSubmissionFactory(status='proposal_internal_review', workflow_stages=2)
+        self.client.force_login(self.user_factory())
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'proposal_internal_review'
         )
