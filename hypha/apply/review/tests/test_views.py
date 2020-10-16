@@ -1,16 +1,18 @@
 from django.urls import reverse
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactory, AssignedReviewersFactory
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.tests.factories.models import (
+    ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
+)
+from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
-from hypha.apply.funds.workflow import INITIAL_STATE
-from hypha.apply.funds.models import ApplicationSubmission
 
 from ..models import Review, ReviewOpinion
 from ..options import AGREE, DISAGREE, NA
 from ..views import get_fields_for_stage
-
 from .factories import (
     ReviewFactory,
     ReviewFormFactory,
