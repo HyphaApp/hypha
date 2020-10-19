@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
+from wagtail.core.blocks.field_block import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import AssignedReviewers
@@ -161,6 +162,9 @@ class SubmissionReviewViewSet(
         review_data['score'] = review.score
         review_data['opinions'] = review.opinions
         review_data['is_draft'] = review.is_draft
+        for field_block in review.form_fields:
+            if isinstance(field_block.block, RichTextBlock):
+                review_data[field_block.id] = field_block.value.source
         return review_data
 
     def retrieve(self, request, *args, **kwargs):

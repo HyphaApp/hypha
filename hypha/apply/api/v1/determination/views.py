@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
+from wagtail.core.blocks.field_block import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
@@ -108,6 +109,8 @@ class SubmissionDeterminationViewSet(
         for field_block in field_blocks:
             if isinstance(field_block.block, DeterminationBlock):
                 determination_data[field_block.id] = determination.outcome
+            if isinstance(field_block.block, RichTextBlock):
+                determination_data[field_block.id] = field_block.value.source
         determination_data['id'] = determination.id
         determination_data['is_draft'] = determination.is_draft
         return determination_data
