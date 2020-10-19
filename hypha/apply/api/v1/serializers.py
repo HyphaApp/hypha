@@ -113,6 +113,22 @@ class TimestampField(serializers.Field):
         return value.timestamp() * 1000
 
 
+class DeterminationSerializer(serializers.ModelSerializer):
+    outcome = serializers.ReadOnlyField(source='get_outcome_display')
+    author_id = serializers.ReadOnlyField(source='author.id')
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+    updated_at = serializers.DateTimeField(read_only=True, source='get_updated_at_display')
+
+    class Meta:
+        model = Review
+        fields = ('id', 'outcome', 'author_id', 'url', 'updated_at')
+
+
+class DeterminationSummarySerializer(serializers.Serializer):
+    determinations = DeterminationSerializer(many=True, read_only=True)
+    count = serializers.ReadOnlyField(source='determinations.count')
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:submissions-detail')
     round = serializers.SerializerMethodField()
@@ -135,13 +151,14 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
+    determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
     action_buttons = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
