@@ -1,12 +1,18 @@
 from django.urls import reverse
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactory
+from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.tests.factories.models import (
+    ApplicationSubmissionFactory,
+    AssignedReviewersFactory,
+)
+from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..models import Review, ReviewOpinion
 from ..options import AGREE, DISAGREE, NA
+from ..views import get_fields_for_stage
 from .factories import (
     ReviewFactory,
     ReviewFormFactory,
@@ -354,3 +360,125 @@ class ReviewDetailVisibilityTestCase(BaseViewTestCase):
         self.client.force_login(self.user_factory())
         response = self.get_page(review)
         self.assertEqual(response.status_code, 200)
+
+
+class ReviewWorkFlowActionTestCase(BaseViewTestCase):
+    user_factory = StaffFactory
+    url_name = 'funds:submissions:reviews:{}'
+    base_view_name = 'review'
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+    def get_kwargs(self, instance):
+        return {'submission_pk': instance.id}
+
+    def test_initial_state_transition_to_internal_review(self):
+        submission = ApplicationSubmissionFactory(status=INITIAL_STATE)
+        submission_stepped_phases = submission.workflow.stepped_phases
+        form = submission.round.review_forms.first()
+
+        data = ReviewFormFieldsFactory.form_response(form.fields)
+
+        self.post_page(submission, data, 'form')
+
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            submission_stepped_phases[2][0].name
+        )
+
+    def test_proposal_discussion_to_proposal_internal_review(self):
+        submission = ApplicationSubmissionFactory(status='proposal_discussion', workflow_stages=2)
+        self.client.force_login(self.user_factory())
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'proposal_internal_review'
+        )
+
+    def test_internal_review_to_ready_for_discussion(self):
+        submission = ApplicationSubmissionFactory(status='internal_review')
+        submission_stepped_phases = submission.workflow.stepped_phases
+        ReviewFactory(submission=submission, author__reviewer=self.user, visibility_private=True)
+
+        self.client.force_login(self.user_factory())
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            submission_stepped_phases[3][0].name
+        )
+
+    def test_ext_external_review_to_ready_for_discussion(self):
+        submission = ApplicationSubmissionFactory(status='ext_external_review', with_external_review=True)
+        reviewers = ReviewerFactory.create_batch(2)
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[1])
+        ReviewFactory(submission=submission, author__reviewer=reviewers[0], visibility_private=True)
+
+        self.client.force_login(reviewers[1])
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'ext_post_external_review_discussion'
+        )
+
+    def test_com_external_review_to_ready_for_discussion(self):
+        submission = ApplicationSubmissionFactory(status='com_external_review', workflow_name='single_com')
+        reviewers = ReviewerFactory.create_batch(2)
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[1])
+        ReviewFactory(submission=submission, author__reviewer=reviewers[0], visibility_private=True)
+        form = submission.round.review_forms.first()
+        self.client.force_login(reviewers[1])
+        data = ReviewFormFieldsFactory.form_response(form.fields)
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'com_post_external_review_discussion'
+        )
+
+    def test_external_review_to_ready_for_discussion(self):
+        submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2)
+        reviewers = ReviewerFactory.create_batch(2)
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])
+        AssignedReviewersFactory(submission=submission, reviewer=reviewers[1])
+        ReviewFactory(submission=submission, author__reviewer=reviewers[0], visibility_private=True)
+
+        self.client.force_login(reviewers[1])
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'post_external_review_discussion'
+        )
+
+    def test_submission_did_not_transition(self):
+        submission = ApplicationSubmissionFactory(status='proposal_internal_review', workflow_stages=2)
+        self.client.force_login(self.user_factory())
+        fields = get_fields_for_stage(submission)
+        data = ReviewFormFieldsFactory.form_response(fields)
+
+        self.post_page(submission, data, 'form')
+        submission = ApplicationSubmission.objects.get(id=submission.id)
+        self.assertEqual(
+            submission.status,
+            'proposal_internal_review'
+        )
