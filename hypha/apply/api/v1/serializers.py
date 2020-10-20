@@ -115,13 +115,13 @@ class TimestampField(serializers.Field):
 
 class DeterminationSerializer(serializers.ModelSerializer):
     outcome = serializers.ReadOnlyField(source='get_outcome_display')
-    author_id = serializers.ReadOnlyField(source='author.id')
+    author = serializers.CharField(read_only=True)
     url = serializers.ReadOnlyField(source='get_absolute_url')
-    updated_at = serializers.DateTimeField(read_only=True, source='get_updated_at_display')
+    updated_at = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Review
-        fields = ('id', 'outcome', 'author_id', 'url', 'updated_at')
+        fields = ('id', 'outcome', 'author', 'url', 'updated_at')
 
 
 class DeterminationSummarySerializer(serializers.Serializer):
