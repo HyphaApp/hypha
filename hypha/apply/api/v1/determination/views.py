@@ -45,7 +45,6 @@ class SubmissionDeterminationViewSet(
     )
     permission_classes_by_action = {
         'create': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
-        'fields': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
         'draft': [permissions.IsAuthenticated, HasDeterminationDraftPermission, IsApplyStaffUser, ],
     }
     serializer_class = SubmissionDeterminationSerializer
