@@ -453,12 +453,10 @@ class ApplicationSubmission(
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
 
-    screening_status = models.ForeignKey(
+    screening_statuses = models.ManyToManyField(
         'funds.ScreeningStatus',
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name='screening status',
-        null=True,
+        related_name='submissions',
+        blank=True
     )
 
     is_draft = False

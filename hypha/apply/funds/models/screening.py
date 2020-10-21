@@ -1,5 +1,4 @@
 from django.db import models
-
 from ..admin_forms import ScreeningStatusAdminForm
 
 

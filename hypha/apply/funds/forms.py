@@ -95,7 +95,7 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('screening_status',)
+        fields = ('screening_statuses',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
