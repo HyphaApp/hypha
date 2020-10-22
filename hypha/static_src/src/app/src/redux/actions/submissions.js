@@ -67,7 +67,41 @@ export const TOGGLE_REVIEW_FORM = 'TOGGLE_REVIEW_FORM';
 export const SET_CURRENT_REVIEW = 'SET_CURRENT_REVIEW';
 export const CLEAR_CURRENT_REVIEW = 'CLEAR_CURRENT_REVIEW';
 export const FETCH_REVIEW_DRAFT = 'FETCH_REVIEW_DRAFT';
-export const CLEAR_REVIEW_DRAFT = 'CLEAR_REVIEW_DRAFT'
+export const CLEAR_REVIEW_DRAFT = 'CLEAR_REVIEW_DRAFT';
+
+// Determination
+export const TOGGLE_DETERMINATION_FORM = 'TOGGLE_DETERMINATION_FORM';
+export const SET_CURRENT_DETERMINATION = 'SET_CURRENT_DETERMINATION';
+export const CLEAR_CURRENT_DETERMINATION = 'CLEAR_CURRENT_DETERMINATION';
+export const FETCH_DETERMINATION_DRAFT = 'FETCH_DETERMINATION_DRAFT';
+export const CLEAR_DETERMINATION_DRAFT = 'CLEAR_DETERMINATION_DRAFT';
+
+
+export const fetchDeterminationDraft = (submissionID) => ({
+    [CALL_API]: {
+        types: [ START_LOADING_SUBMISSION, FETCH_DETERMINATION_DRAFT, FAIL_LOADING_SUBMISSION],
+        endpoint: api.fetchDeterminationDraft(submissionID),
+    },
+    submissionID,
+})
+
+export const clearDeterminationDraftAction = () => ({
+    type: CLEAR_DETERMINATION_DRAFT,
+});
+
+export const toggleDeterminationFormAction = (status) =>({
+    type : TOGGLE_DETERMINATION_FORM,
+    status
+});
+
+export const setCurrentDeterminationAction = (determinationId) =>({
+    type : SET_CURRENT_DETERMINATION,
+    determinationId
+});
+
+export const clearCurrentDeterminationAction = () => ({
+    type: CLEAR_CURRENT_DETERMINATION,
+});
 
 export const fetchReviewDraft = (submissionID) => ({
     [CALL_API]: {
@@ -159,6 +193,9 @@ export const setCurrentSubmission = id => (dispatch, getState) => {
     dispatch(toggleReviewFormAction(false))
     dispatch(clearCurrentReviewAction())
     dispatch(clearReviewDraftAction())
+    dispatch(toggleDeterminationFormAction(false))
+    dispatch(clearCurrentDeterminationAction())
+    dispatch(clearDeterminationDraftAction())
     dispatch(setSubmissionParam(id));
 
     return dispatch({
@@ -298,7 +335,8 @@ export const loadCurrentSubmission = (requiredFields=[], { bypassCache = false }
         return null
     }
     dispatch(fetchSubmission(submissionID))
-    return dispatch(fetchReviewDraft(submissionID))
+    dispatch(fetchReviewDraft(submissionID))
+    return dispatch(fetchDeterminationDraft(submissionID))
 }
 
 

@@ -18,9 +18,9 @@ const MIDDLEWARE = [
     sagaMiddleware
 ];
 
-if (process.env.NODE_ENV === 'development') {
-    MIDDLEWARE.push(logger);
-}
+// if (process.env.NODE_ENV === 'development') {
+//     MIDDLEWARE.push(logger);
+// }
 
 
 export default initialState => {

@@ -20,6 +20,12 @@ export function fetchReviewDraft(id) {
     };
 }
 
+export function fetchDeterminationDraft(id) {
+    return {
+        path: `/v1/submissions/${id}/determinations/draft/`,
+    };
+}
+
 export function fetchSubmissionsByStatuses(statuses) {
     const params = new URLSearchParams
     params.append('page_size', 1000)
