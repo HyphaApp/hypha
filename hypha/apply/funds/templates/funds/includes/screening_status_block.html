@@ -1,6 +1,26 @@
 <div class="sidebar__inner">
+
     <h5>Screening Status</h5>
+    <div style="display: flex;">
+        <div style="margin-right: 2em;">
+            <div>
+                {{ default_yes }}
+            </div>
+            <div>
+                <svg class="icon icon--private-eye" style="margin-right: 2em;"><use xlink:href="#like"></use></svg>
+            </div>
+        </div>
+        <div>
+            <div>
+                {{ default_no }}
+            </div>
+            <div>
+                <svg class="icon icon--private-eye" style="margin-right: 2em;"><use xlink:href="#dislike"></use></svg>
+            </div>
+        </div>
+    </div>
+
     <p>
-        {% if object.screening_statuses.exists %}{{ object.screening_statuses|default:"Awaiting Screen status" }}{% endif %} <a data-fancybox data-src="#screen-application" class="link link--secondary-change" href="#">Change</a>
+        <!-- {% if object.screening_statuses.exists %}{{ object.screening_statuses|default:"Awaiting Screen status" }}{% endif %} <a data-fancybox data-src="#screen-application" class="link link--secondary-change" href="#">Change</a> -->
     </p>
 </div>

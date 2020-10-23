@@ -82,6 +82,7 @@ from .models import (
     ReviewerSettings,
     RoundBase,
     RoundsAndLabs,
+    ScreeningStatus,
 )
 from .permissions import is_user_has_access_to_view_submission
 from .tables import (
@@ -754,10 +755,17 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
         public_page = self.object.get_from_parent('detail')()
-
+        default_yes_screening_status = ScreeningStatus.objects.get(
+            default=True, yes=True
+        )
+        default_no_screening_status = ScreeningStatus.objects.get(
+            default=True, yes=False
+        )
         return super().get_context_data(
             other_submissions=other_submissions,
             public_page=public_page,
+            default_yes_screening_status=default_yes_screening_status,
+            default_no_screening_status=default_no_screening_status,
             **kwargs,
         )
 

@@ -193,7 +193,7 @@ def get_reviewers(request):
 
 def get_screening_statuses(request):
     return ScreeningStatus.objects.filter(
-        id__in=ApplicationSubmission.objects.all().values('screening_status__id').distinct('screening_status__id'))
+        id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
 
 
 def get_meta_terms(request):

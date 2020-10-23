@@ -49,7 +49,7 @@
 {% endblock %}
 
 {% block screening_status %}
-    {% include 'funds/includes/screening_status_block.html' %}
+    {% include 'funds/includes/screening_status_block.html' with default_yes=default_yes_screening_status default_no=default_no_screening_status %}
 {% endblock %}
 
 {% block meta_terms %}
