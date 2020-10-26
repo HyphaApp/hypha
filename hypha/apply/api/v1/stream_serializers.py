@@ -109,6 +109,8 @@ class WagtailSerializer:
             del attrs['required']
 
         if isinstance(form_field, BlockFieldWrapper):
+            attrs['read_only'] = True
+            del attrs['required']
             return attrs
 
         # avoid "May not set both `read_only` and `required`"
