@@ -25,7 +25,8 @@ class SubmissionDeterminationSerializer(serializers.ModelSerializer):
             self.validated_data[instance.send_notice_field.id]
             if instance.send_notice_field else True
         )
-        instance.message = self.validated_data[instance.message_field.id]
+        message = self.validated_data[instance.message_field.id]
+        instance.message = '' if message is None else message
         try:
             instance.outcome = int(self.validated_data[instance.determination_field.id])
             # Need to catch KeyError as outcome field would not exist in case of edit.
