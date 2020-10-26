@@ -9,6 +9,7 @@ from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.determinations.models import Determination
 
 User = get_user_model()
 
@@ -118,10 +119,11 @@ class DeterminationSerializer(serializers.ModelSerializer):
     author = serializers.CharField(read_only=True)
     url = serializers.ReadOnlyField(source='get_absolute_url')
     updated_at = serializers.DateTimeField(read_only=True)
+    is_draft = serializers.BooleanField(read_only=True)
 
     class Meta:
-        model = Review
-        fields = ('id', 'outcome', 'author', 'url', 'updated_at')
+        model = Determination
+        fields = ('id', 'outcome', 'author', 'url', 'updated_at', 'is_draft')
 
 
 class DeterminationSummarySerializer(serializers.Serializer):
