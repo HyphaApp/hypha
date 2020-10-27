@@ -58,27 +58,6 @@ function* submitDetermination(action){
   }
 }
 
-// function* deleteDetermination(action){
-//   const url = `/v1/submissions/${action.id}/determinations/${action.determinationId}`
-//   try{
-//     yield put(Actions.showLoadingAction())
-//     yield call(
-//       apiFetch, 
-//       {
-//         path : url,
-//         method : "DELETE",
-//       }
-//       )
-//     yield put(Actions.clearInitialValues())
-//     yield put(clearCurrentDeterminationAction()) 
-//     yield put(toggleDeterminationFormAction(false))
-//     yield put(Actions.hideLoadingAction())
-
-//   }catch(e){
-//      yield put(Actions.hideLoadingAction())
-//   }
-// }
-
 function* updateDetermination(action){
   const url = `/v1/submissions/${action.id}/determinations/${action.determinationId}/`
   try{
@@ -105,6 +84,5 @@ function* updateDetermination(action){
 export default function* homePageSaga() {
   yield takeLatest(ActionTypes.INITIALIZE, initialFetch);
   yield takeLatest(ActionTypes.SUBMIT_DETERMINATION_DATA, submitDetermination)
-  // yield takeLatest(ActionTypes.DELETE_DETERMINATION_DATA, deleteDetermination)
   yield takeLatest(ActionTypes.UPDATE_DETERMINATION_DATA, updateDetermination)
 }

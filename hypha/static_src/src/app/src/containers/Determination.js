@@ -10,10 +10,6 @@ class DeterminationContainer extends React.PureComponent {
 
     render(){
         const determination = this.props.submission ? this.props.submission.determination : null
-        const drafted = determination && 
-        determination.count ? 
-        determination.determinations[1] ? Math.max(determination.determinations[0].id, determination.determinations[1].id): determination.determinations[0].id 
-        : null
         return <div className="determination-container">
             {determination  ? 
             <SidebarBlock title="Determination">
@@ -24,9 +20,9 @@ class DeterminationContainer extends React.PureComponent {
                    {determination.determinations.map((d, index) => {
                        return (
                            <p key={index}>
-                            {this.props.determinationDraftStatus && d.id == drafted && 
-                            "[Draft]"}{d.outcome}- {d.updatedAt.slice(0,10)} by {d.author}
-                           {(!this.props.determinationDraftStatus || (this.props.determinationDraftStatus && d.id != drafted)) 
+                            {d.isDraft && "[Draft]"}
+                            {d.outcome} - {d.updatedAt.slice(0,10)} by {d.author}
+                           {(!this.props.determinationDraftStatus || (this.props.determinationDraftStatus && !d.isDraft)) 
                             &&
                            <a onClick={() => { this.props.setCurrentDetermination(d.id); this.props.toggleDeterminationForm(true) }} title="Edit" >
                              <svg className="icon icon--pen"><use href="#pen"></use></svg>
@@ -39,7 +35,7 @@ class DeterminationContainer extends React.PureComponent {
                 </>
                 }
                 {this.props.determinationDraftStatus && 
-                <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--half-width">Update Draft</button></div>}
+                <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--half-width">Update draft</button></div>}
                 {!this.props.determinationDraftStatus && 
                 this.props.submission.actions.some(action => action.display.includes("Determination")) && <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--full-width">Add determination</button></div>}
             </SidebarBlock>
