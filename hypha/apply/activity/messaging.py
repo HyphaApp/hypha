@@ -233,7 +233,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED: 'partners_updated',
         MESSAGES.NEW_REVIEW: 'Submitted a review',
         MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
-        MESSAGES.SCREENING: 'Screening status from {old_status} to {source.screening_status}',
+        MESSAGES.SCREENING: 'handle_screening_statuses',
         MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
         MESSAGES.CREATED_PROJECT: 'Created',
         MESSAGES.PROJECT_TRANSITION: 'Progressed from {old_stage} to {source.status_display}',
@@ -393,6 +393,10 @@ class ActivityAdapter(AdapterBase):
             visibility=visibility,
             related_object=related_object,
         )
+
+    def handle_screening_statuses(self, source, old_status, **kwargs):
+        new_status = ', '.join([s.title for s in source.screening_statuses.all()])
+        return f'Screening status from {old_status} to {new_status}'
 
 
 class SlackAdapter(AdapterBase):

@@ -2,10 +2,9 @@
 
     'use strict';
 
-    $('.abcdef').on('click', function (e) {
+    $('.thumb').on('click', function (e) {
         e.preventDefault();
 
-        console.log('Coming here');
         var $current = $(this);
         var id = $current.data('id');
         var yes = $current.data('yes');
@@ -16,11 +15,16 @@
             data: {yes: yes},
             success: function (json) {
                 if (json && $('#screening-options').length === 0) {
-                    var screeningOptions = $('<p><a id="screening-options" data-fancybox="" data-src="#screen-application" class="link link--secondary-change" href="#">Screening Options</a></p>');
-                    $(screeningOptions).insertAfter($current);
+                    var screeningOptions = $('<p>' + json.title + '<a id="screening-options" data-fancybox="" data-src="#screen-application" class="link link--secondary-change" href="#">Screening Options</a></p>');
+                    $('.show-screening-options').append(screeningOptions);
+                    if (yes === true) {
+                        $current.find('.icon').addClass('icon--like-yes');
+                    }
+                    else {
+                        $current.find('.icon').addClass('icon--dislike-no');
+                    }
                 }
             }
         });
     });
-
 })(jQuery);

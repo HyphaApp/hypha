@@ -97,8 +97,6 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         model = ApplicationSubmission
         fields = ('screening_statuses',)
 
-    # screening_statuses = forms.ModelMultipleChoiceField(queryset=ScreeningStatus.objects.filter(yes=True))
-
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
@@ -119,7 +117,6 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         if default_status not in cleaned_data['screening_statuses']:
             self.add_error('screening_statuses', 'Can\'t remove default screening status.')
         return cleaned_data
-        # self.add_error('start_date', 'Please select start date.')
 
 
 class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):

@@ -1,7 +1,7 @@
 {% if screening_form.should_show %}
 <div class="modal" id="screen-application">
     <h4 class="modal__header-bar">Update status</h4>
-    <p>Current status: {% if object.screening_statuses.exists %}{{ object.screening_statuses }}{% endif %}</p>
+    <p>Current statuses: {{ submission.screening_statuses.all|join:', ' }}</p>
     {% include 'funds/includes/delegated_form_base.html' with form=screening_form value='Screen'%}
 </div>
 {% endif %}

@@ -47,7 +47,7 @@ class SubmissionScreeningStatusViewSet(
 
     def get_queryset(self):
         submission = self.get_submission_object()
-        return submission.screening_statuses.objects.all()
+        return submission.screening_statuses.all()
 
     def create(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)
@@ -83,4 +83,5 @@ class SubmissionScreeningStatusViewSet(
             default_status = submission.screening_statuses.get()
             submission.screening_statuses.remove(default_status)
         submission.screening_statuses.add(screening_status)
+        ser = self.get_serializer(submission.screening_statuses.get(default=True))
         return Response(ser.data, status=status.HTTP_201_CREATED)

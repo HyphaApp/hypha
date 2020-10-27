@@ -21,7 +21,6 @@
             url: '/apply/submissions/' + id + '/' + type + '/flag/',
             type: 'POST',
             success: function (json) {
-                console.log(json.result);
                 if (json.result) {
                     $current.addClass('flagged');
                 }

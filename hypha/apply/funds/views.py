@@ -586,7 +586,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=self.object,
-            related=','.join([s.title for s in old.screening_statuses.all()]),
+            related=', '.join([s.title for s in old.screening_statuses.all()]),
         )
         return response
 

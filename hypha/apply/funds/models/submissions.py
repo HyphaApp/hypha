@@ -808,6 +808,18 @@ class ApplicationSubmission(
     def has_default_screening_status_set(self):
         return self.screening_statuses.filter(default=True).exists()
 
+    @property
+    def has_yes_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True, yes=True).exists()
+
+    @property
+    def has_no_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True, yes=False).exists()
+    
+    @property
+    def can_not_edit_default(self):
+        return self.screening_statuses.all().count() > 1
+
 
 @receiver(post_transition, sender=ApplicationSubmission)
 def log_status_update(sender, **kwargs):
