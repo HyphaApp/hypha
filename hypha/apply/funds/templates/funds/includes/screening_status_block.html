@@ -6,21 +6,26 @@
             <div>
                 {{ default_yes }}
             </div>
-            <div>
-                <svg class="icon icon--private-eye" style="margin-right: 2em;"><use xlink:href="#like"></use></svg>
+            <div class="abcdef" data-id="{{ object.id }}" data-yes="true">
+                <svg class="icon icon--private-eye" style="cursor: pointer;"><use xlink:href="#like"></use></svg>
             </div>
         </div>
         <div>
             <div>
                 {{ default_no }}
             </div>
-            <div>
-                <svg class="icon icon--private-eye" style="margin-right: 2em;"><use xlink:href="#dislike"></use></svg>
+            <div class="abcdef" data-id="{{ object.id }}" data-yes="false">
+                <svg class="icon icon--private-eye" style="cursor: pointer;"><use xlink:href="#dislike"></use></svg>
             </div>
         </div>
     </div>
-
-    <p>
-        <!-- {% if object.screening_statuses.exists %}{{ object.screening_statuses|default:"Awaiting Screen status" }}{% endif %} <a data-fancybox data-src="#screen-application" class="link link--secondary-change" href="#">Change</a> -->
-    </p>
+    <hr>
+    <div>
+        {% for status in object.screening_statuses.all %}
+            <p>{{ status.title }}</p>
+        {% endfor %}
+        {% if object.has_default_screening_status_set %}
+            <p><a id="screening-options" data-fancybox="" data-src="#screen-application" class="link link--secondary-change" href="#">Screening Options</a></p>
+        {% endif %}
+    </div>
 </div>

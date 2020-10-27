@@ -578,7 +578,6 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'screening_form'
 
     def form_valid(self, form):
-        import ipdb; ipdb.set_trace()
         old = copy(self.get_object())
         response = super().form_valid(form)
         # Record activity
@@ -587,7 +586,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=self.object,
-            related=str(old.screening_status),
+            related=','.join([s.title for s in old.screening_statuses.all()]),
         )
         return response
 

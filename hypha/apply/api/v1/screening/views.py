@@ -79,5 +79,8 @@ class SubmissionScreeningStatusViewSet(
                 'detail': "Can't set default as more than one screening status is already set."
             })
         screening_status = ScreeningStatus.objects.get(default=True, yes=yes)
+        if submission.has_default_screening_status_set:
+            default_status = submission.screening_statuses.get()
+            submission.screening_statuses.remove(default_status)
         submission.screening_statuses.add(screening_status)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(ser.data, status=status.HTTP_201_CREATED)

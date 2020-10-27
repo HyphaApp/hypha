@@ -11,7 +11,7 @@ from django_select2.forms import Select2Widget
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from .models import ApplicationSubmission, AssignedReviewers, Reminder, ReviewerRole
+from .models import ApplicationSubmission, AssignedReviewers, Reminder, ReviewerRole, ScreeningStatus
 from .utils import render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
@@ -97,12 +97,29 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         model = ApplicationSubmission
         fields = ('screening_statuses',)
 
+    # screening_statuses = forms.ModelMultipleChoiceField(queryset=ScreeningStatus.objects.filter(yes=True))
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        if instance and instance.has_default_screening_status_set:
+            screening_status = instance.screening_statuses.get(default=True)
+            self.fields['screening_statuses'].queryset = ScreeningStatus.objects.filter(
+                yes=screening_status.yes
+            )
         self.should_show = False
         if self.user.is_apply_staff:
             self.should_show = True
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        instance = self.instance
+        default_status = instance.screening_statuses.get(default=True)
+        if default_status not in cleaned_data['screening_statuses']:
+            self.add_error('screening_statuses', 'Can\'t remove default screening status.')
+        return cleaned_data
+        # self.add_error('start_date', 'Please select start date.')
 
 
 class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):

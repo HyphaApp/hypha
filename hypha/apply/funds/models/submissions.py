@@ -804,6 +804,10 @@ class ApplicationSubmission(
     def _get_REQUIRED_value(self, name):
         return self.data(name)
 
+    @property
+    def has_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True).exists()
+
 
 @receiver(post_transition, sender=ApplicationSubmission)
 def log_status_update(sender, **kwargs):
