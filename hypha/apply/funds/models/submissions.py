@@ -1,6 +1,7 @@
 from functools import partialmethod
-
+import json
 from django.conf import settings
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
@@ -823,6 +824,20 @@ class ApplicationSubmission(
     @property
     def joined_screening_statuses(self):
         return ', '.join([s.title for s in self.screening_statuses.all()])
+
+    @property
+    def yes_screening_statuses(self):
+        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        return json.dumps(
+            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=True)}
+        )
+
+    @property
+    def no_screening_statuses(self):
+        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        return json.dumps(
+            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=False)}
+        )
 
 
 @receiver(post_transition, sender=ApplicationSubmission)

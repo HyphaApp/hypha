@@ -24,7 +24,7 @@
         {% if object.has_default_screening_status_set %}
             <p id="screening-options-para">
                 {{ object.screening_statuses.all|join:', ' }}
-                <a id="screening-options" data-fancybox="" data-src="#screen-application" class="link link--secondary-change" href="#">Screening Options</a>
+                <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">Screening Options</a>
             </p>
         {% endif %}
     </div>
