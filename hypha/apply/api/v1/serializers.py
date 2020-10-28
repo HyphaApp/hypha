@@ -13,6 +13,7 @@ from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 
 User = get_user_model()
 
@@ -158,7 +159,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
-    screening = serializers.ReadOnlyField(source='screening_status.title')
+    screening = ScreeningStatusSerializer(source='screening_statuses.all', many=True)
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
 
