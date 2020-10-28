@@ -820,6 +820,10 @@ class ApplicationSubmission(
     def can_not_edit_default(self):
         return self.screening_statuses.all().count() > 1
 
+    @property
+    def joined_screening_statuses(self):
+        return ', '.join([s.title for s in self.screening_statuses.all()])
+
 
 @receiver(post_transition, sender=ApplicationSubmission)
 def log_status_update(sender, **kwargs):
