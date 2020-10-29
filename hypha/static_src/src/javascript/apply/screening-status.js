@@ -31,7 +31,7 @@
         });
     });
 
-    $('.show-screening-options').on('click', '#screening-options-ajax', function(){
+    $('.show-screening-options').on('click', '#screening-options-ajax', function () {
 
         var $screeningOptions = $(this);
         var currentStatus = $screeningOptions.data('yes');
@@ -44,32 +44,34 @@
         $screeningStatuses = $screeningStatuses.empty();
         if (currentStatus === true) {
             $('#current-status').text('Current statuses: ' + defaultYes);
-            $.each(yesStatuses, function(key,value) {
-                if(key === defaultYes) {
+            $.each(yesStatuses, function (key, value) {
+                if (key === defaultYes) {
                     $screeningStatuses.append($('<option></option>')
-                    .attr('value', value)
-                    .attr('selected', 'selected').text(key));
+                        .attr('value', value)
+                        .attr('selected', 'selected').text(key));
                 }
                 else {
                     $screeningStatuses.append($('<option></option>')
-                    .attr('value', value).text(key));   
+                        .attr('value', value).text(key)
+                    );
                 }
-              });
+            });
         }
         else {
             $('#current-status').text('Current statuses: ' + defaultNo);
-            $.each(noStatuses, function(key,value) {
-                if(key === defaultNo) {
-                    $screeningStatuses.append($("<option></option>")
-                    .attr("value", value)
-                    .attr("selected","selected").text(key));
+            $.each(noStatuses, function (key, value) {
+                if (key === defaultNo) {
+                    $screeningStatuses.append($('<option></option>')
+                        .attr('value', value)
+                        .attr('selected', 'selected').text(key));
                 }
                 else {
-                    $screeningStatuses.append($("<option></option>")
-                    .attr("value", value).text(key));   
+                    $screeningStatuses.append($('<option></option>')
+                        .attr('value', value).text(key)
+                    );
                 }
-            }); 
+            });
         }
     });
-    
+
 })(jQuery);

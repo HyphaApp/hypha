@@ -3,7 +3,10 @@ from rest_framework_nested import routers
 
 from hypha.apply.api.v1.determination.views import SubmissionDeterminationViewSet
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
-from hypha.apply.api.v1.screening.views import ScreeningStatusViewSet, SubmissionScreeningStatusViewSet
+from hypha.apply.api.v1.screening.views import (
+    ScreeningStatusViewSet,
+    SubmissionScreeningStatusViewSet,
+)
 
 from .views import (
     CommentViewSet,

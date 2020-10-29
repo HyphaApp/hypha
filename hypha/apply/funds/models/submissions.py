@@ -1,7 +1,8 @@
-from functools import partialmethod
 import json
-from django.conf import settings
+from functools import partialmethod
+
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
@@ -816,7 +817,7 @@ class ApplicationSubmission(
     @property
     def has_no_default_screening_status_set(self):
         return self.screening_statuses.filter(default=True, yes=False).exists()
-    
+
     @property
     def can_not_edit_default(self):
         return self.screening_statuses.all().count() > 1

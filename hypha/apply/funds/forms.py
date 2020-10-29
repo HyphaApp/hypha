@@ -11,7 +11,13 @@ from django_select2.forms import Select2Widget
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from .models import ApplicationSubmission, AssignedReviewers, Reminder, ReviewerRole, ScreeningStatus
+from .models import (
+    ApplicationSubmission,
+    AssignedReviewers,
+    Reminder,
+    ReviewerRole,
+    ScreeningStatus,
+)
 from .utils import render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
@@ -109,7 +115,7 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         self.should_show = False
         if self.user.is_apply_staff:
             self.should_show = True
-        
+
     def clean(self):
         cleaned_data = super().clean()
         instance = self.instance
