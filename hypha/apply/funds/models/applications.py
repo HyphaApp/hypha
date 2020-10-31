@@ -345,7 +345,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def get_form(self, *args, **kwargs):
         draft = kwargs.pop('draft', False)
-        form_class = self.get_form_class(draft)
+        from_class = None
+        try:
+            form_class = self.get_form_class(draft, args[0])
+        except IndexError:
+            form_class = self.get_form_class(draft)
         submission_id = kwargs.pop('submission_id', None)
         if submission_id:
             form_params = self.get_form_parameters(submission_id=submission_id)
