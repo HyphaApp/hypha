@@ -46,11 +46,12 @@ class BaseStreamForm:
     def get_defined_fields(self):
         return self.form_fields
 
-    def get_form_fields(self, draft=False):
+    def get_form_fields(self, draft=False, posted_field_values={}):
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
         is_in_group = False
+        sub_children_required = False
         for struct_child in field_blocks:
             block = struct_child.block
             struct_value = struct_child.value
@@ -65,6 +66,7 @@ class BaseStreamForm:
                     field_from_block.grouper_for = group_counter + 1
                     group_counter += 1
                     is_in_group = True
+                    sub_children_required = posted_field_values.get(struct_child.id) == field_from_block.choices[0][0]
                 if isinstance(block, TextFieldBlock):
                     field_from_block.word_limit = struct_value.get('word_limit')
                 if isinstance(block, MultiInputCharFieldBlock):
@@ -85,6 +87,8 @@ class BaseStreamForm:
                             field_from_block.initial = None
                         field_from_block = copy.copy(field_from_block)
                 else:
+                    if is_in_group:
+                        field_from_block.required = sub_children_required
                     form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):
                 # Group toogle end block is used only to group fields and not used in actual form.
@@ -97,8 +101,8 @@ class BaseStreamForm:
 
         return form_fields
 
-    def get_form_class(self, draft=False):
-        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft))
+    def get_form_class(self, draft=False, posted_field_values={}):
+        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, posted_field_values))
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):
