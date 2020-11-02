@@ -10,8 +10,8 @@ from hypha.apply.utils.options import MCE_ATTRIBUTES_SHORT
 class ScoredAnswerWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
-            TinyMCE(attrs=attrs, mce_attrs=MCE_ATTRIBUTES_SHORT),
             widgets.Select(attrs=attrs, choices=RATE_CHOICES),
+            TinyMCE(attrs=attrs, mce_attrs=MCE_ATTRIBUTES_SHORT),
         )
         super().__init__(_widgets, attrs)
 
@@ -39,14 +39,14 @@ class ScoredAnswerField(forms.MultiValueField):
 
     def __init__(self, *args, **kwargs):
         fields = (
-            forms.CharField(),
             forms.ChoiceField(choices=RATE_CHOICES),
+            forms.CharField(),
         )
 
         super().__init__(fields=fields, *args, **kwargs)
 
     def compress(self, data_list):
         if data_list:
-            return [data_list[0], int(data_list[1])]
+            return [int(data_list[0]), data_list[1]]
         else:
-            return ['', NA]
+            return [NA, '']

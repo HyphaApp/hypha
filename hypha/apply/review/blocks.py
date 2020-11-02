@@ -37,18 +37,18 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['initial'] = ['', NA]
+        kwargs['initial'] = [NA, '']
         return kwargs
 
     def render(self, value, context=None):
         try:
-            comment, score = context['data']
+            score, comment = context['data']
         except ValueError:
             # TODO: Remove json load as data moved away from JSON
-            comment, score = json.loads(context['data'])
+            score, comment = json.loads(context['data'])
         context.update(**{
+            'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA),
             'comment': comment,
-            'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
         })
 
         return super().render(value, context)
