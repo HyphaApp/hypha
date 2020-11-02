@@ -22,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(make_many_screening_statuses),
+        migrations.RunPython(make_many_screening_statuses, migrations.RunPython.noop),
     ]
