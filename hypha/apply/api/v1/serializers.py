@@ -4,12 +4,15 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
+from hypha.apply.determinations.models import Determination
+from hypha.apply.determinations.templatetags.determination_tags import (
+    show_determination_button,
+)
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
-from hypha.apply.determinations.models import Determination
 
 User = get_user_model()
 
@@ -195,7 +198,14 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             obj.can_review(request.user) and not
             obj.assigned.draft_reviewed().filter(reviewer=request.user).exists()
         )
-        return {'add_review': add_review}
+        add_determination = (
+            show_determination_button(request.user, obj) and
+            obj.is_determination_form_attached
+        )
+        return {
+            'add_review': add_review,
+            'add_determination': add_determination
+        }
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):
