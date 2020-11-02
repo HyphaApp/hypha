@@ -92,11 +92,15 @@ class ScreeningStatusAdminForm(WagtailAdminModelForm):
         default = cleaned_data['default']
         yes = cleaned_data['yes']
         ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
-        default_screening = ScreeningStatus.objects.filter(
-            default=True, yes=yes
-        ).first()
         if default:
-            # Can't set two defaults for yes/no.
-            default_screening.default = False
-            default_screening.save()
+            try:
+                default_yes = ScreeningStatus.objects.get(
+                    default=True, yes=yes
+                )
+            except ScreeningStatus.DoesNotExist:
+                pass
+            else:
+                if default_yes.id != self.instance.id:
+                    yes_or_no = 'yes' if yes else 'no'
+                    self.add_error('default', f'Can not set two ScreeningStatus as default {yes_or_no}')
         return cleaned_data
