@@ -31,6 +31,9 @@
         }
         else if (radio_input_value === group_toggle_off_value) {
             $('.field-group-wrapper-' + fields_grouper_for).removeClass('highlighted').addClass('js-hidden');
+	    $('.field-group-wrapper-' + fields_grouper_for + ' input').each(function () { // eslint-disable-line no-loop-func
+		$(this).attr('required', false);
+	    });
         }
     });
 
