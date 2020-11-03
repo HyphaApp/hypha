@@ -37,7 +37,7 @@ class DeterminationContainer extends React.PureComponent {
                 {this.props.determinationDraftStatus && 
                 <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--half-width">Update draft</button></div>}
                 {!this.props.determinationDraftStatus && 
-                this.props.submission.actions.some(action => action.display.includes("Determination")) && <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--full-width">Add determination</button></div>}
+                this.props.submission.actionButtons.addDetermination && <div className="status-actions"><button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--full-width">Add determination</button></div>}
             </SidebarBlock>
            : null
            }
