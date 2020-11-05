@@ -343,6 +343,15 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
         return form_parameters
 
+    def get_form_fields(self, draft=False):
+        form_fields = super(RoundBase, self).get_form_fields(draft)
+        applicationform = self.fund.specific.forms.first()
+        if applicationform.minimize_form:
+            for field in form_fields.values():
+                if not field.required:
+                    field.widget = forms.HiddenInput()
+        return form_fields
+
     def get_form(self, *args, **kwargs):
         draft = kwargs.pop('draft', False)
         form_class = self.get_form_class(draft)

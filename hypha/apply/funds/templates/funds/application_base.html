@@ -40,7 +40,7 @@
             {{ form.media }}
             {% csrf_token %}
 
-            {% for field in form %}
+            {% for field in form.visible_fields %}
                 {% if field.field %}
                     {% if field.field.multi_input_field %}
                         {% include "forms/includes/multi_input_field.html" with is_application=True %}

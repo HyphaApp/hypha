@@ -29,11 +29,16 @@ class AbstractRelatedForm(Orderable):
         (SECOND_STAGE, '2nd Stage'),
     ]
     form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
+    minimize_form = models.BooleanField(
+        default=False,
+        help_text='Minimize application form to only show required fields.'
+    )
     stage = models.PositiveSmallIntegerField(choices=STAGE_CHOICES)
 
     panels = [
         FilteredFieldPanel('form', filter_query={'roundbaseform__isnull': True}),
         FieldPanel('stage'),
+        FieldPanel('minimize_form'),
     ]
 
     @property
