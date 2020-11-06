@@ -348,7 +348,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         applicationform = self.fund.specific.forms.first()
         if applicationform.minimize_form:
             for field in form_fields.values():
-                if not field.required:
+                if hasattr(field, 'required') and not field.required:
                     field.widget = forms.HiddenInput()
         return form_fields
 
