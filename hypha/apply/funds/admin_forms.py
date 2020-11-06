@@ -1,6 +1,7 @@
 from collections import Counter
 
-from wagtail.admin.forms import WagtailAdminPageForm
+from django.apps import apps
+from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
 from .workflow import WORKFLOWS
 
@@ -81,4 +82,25 @@ class RoundBasePageAdminForm(WagtailAdminPageForm):
         if not start_date:
             self.add_error('start_date', 'Please select start date.')
 
+        return cleaned_data
+
+
+class ScreeningStatusAdminForm(WagtailAdminModelForm):
+
+    def clean(self):
+        cleaned_data = super().clean()
+        default = cleaned_data['default']
+        yes = cleaned_data['yes']
+        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        if default:
+            try:
+                default_yes = ScreeningStatus.objects.get(
+                    default=True, yes=yes
+                )
+            except ScreeningStatus.DoesNotExist:
+                pass
+            else:
+                if default_yes.id != self.instance.id:
+                    yes_or_no = 'yes' if yes else 'no'
+                    self.add_error('default', f'Can not set two ScreeningStatus as default {yes_or_no}')
         return cleaned_data

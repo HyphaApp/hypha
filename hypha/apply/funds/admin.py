@@ -113,6 +113,7 @@ class ScreeningStatusPermissionHelper(PermissionHelper):
 class ScreeningStatusAdmin(ModelAdmin):
     model = ScreeningStatus
     menu_icon = 'tag'
+    list_display = ('title', 'yes', 'default')
     permission_helper_class = ScreeningStatusPermissionHelper
 
 
