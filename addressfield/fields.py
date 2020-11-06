@@ -39,6 +39,8 @@ class AddressField(forms.CharField):
     data = VALIDATION_DATA
 
     def clean(self, value, **kwargs):
+        if not value:
+            return
         country = value['country']
         try:
             country_data = self.data[country]
