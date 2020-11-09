@@ -386,6 +386,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                         field_from_block = copy.copy(field_from_block)
                 else:
                     if is_in_group:
+                        field_from_block.required_when_visible = field_from_block.required
                         field_from_block.required = field_from_block.required & sub_children_visible
                         field_from_block.visible = sub_children_visible
                     form_fields[struct_child.id] = field_from_block

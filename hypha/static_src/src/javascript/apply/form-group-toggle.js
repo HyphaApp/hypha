@@ -28,11 +28,18 @@
 
         if (radio_input_value === group_toggle_on_value) {
             $('.field-group-wrapper-' + fields_grouper_for).removeClass('js-hidden').addClass('highlighted');
+	    $('.field-group-' + fields_grouper_for).each(function () { // eslint-disable-line no-loop-func
+		if($(this).data('required') == 'True') {
+		    $(this).children('.form__item').children().attr('required', true);
+		    $(this).children('label').append('<span class="form__required">*</span>');
+		}
+	    });
         }
         else if (radio_input_value === group_toggle_off_value) {
             $('.field-group-wrapper-' + fields_grouper_for).removeClass('highlighted').addClass('js-hidden');
-	    $('.field-group-wrapper-' + fields_grouper_for + ' input').each(function () { // eslint-disable-line no-loop-func
-		$(this).attr('required', false);
+	    $('.field-group-' + fields_grouper_for).each(function () { // eslint-disable-line no-loop-func
+		$(this).children('.form__item').children().attr('required', false);
+		$(this).children('label').children('.form__required').remove();
 	    });
         }
     });
