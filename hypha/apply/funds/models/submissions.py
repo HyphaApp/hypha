@@ -840,6 +840,12 @@ class ApplicationSubmission(
             {status.title: status.id for status in ScreeningStatus.objects.filter(yes=False)}
         )
 
+    @property
+    def supports_default_screening(self):
+        if self.screening_statuses.exists():
+            return self.screening_statuses.filter(default=True).exists()
+        return True
+
 
 @receiver(post_transition, sender=ApplicationSubmission)
 def log_status_update(sender, **kwargs):

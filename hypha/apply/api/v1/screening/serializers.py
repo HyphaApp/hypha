@@ -6,18 +6,18 @@ from hypha.apply.funds.models import ScreeningStatus
 class ScreeningStatusListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScreeningStatus
-        fields = ('title', 'yes', 'default')
+        fields = ('id', 'title', 'yes', 'default')
 
 
 class ScreeningStatusSerializer(serializers.Serializer):
-    title = serializers.CharField()
+    id = serializers.IntegerField()
 
-    def validate_title(self, value):
+    def validate_id(self, value):
         try:
-            ScreeningStatus.objects.get(title=value)
+            ScreeningStatus.objects.get(id=value)
         except ScreeningStatus.DoesNotExist:
             raise exceptions.ValidationError({
-                'detail': 'Title is not valid'
+                'detail': 'Not found'
             })
         return value
 

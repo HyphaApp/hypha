@@ -39,7 +39,7 @@ class SubmissionScreeningStatusViewSet(
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
-    serializer_class = ScreeningStatusSerializer
+    serializer_class = ScreeningStatusListSerializer
 
     def get_queryset(self):
         submission = self.get_submission_object()

@@ -1,24 +1,26 @@
 <div class="sidebar__inner">
 
     <h5>Screening Status</h5>
-    <div class="screening-status-box" style="display: flex;">
-        <div class="screening-status-yes" style="margin-right: 2em;">
-            <div>
-                {{ default_yes }}
+    {% if object.supports_default_screening %}
+        <div class="screening-status-box" style="display: flex;">
+            <div class="screening-status-yes" style="margin-right: 2em;">
+                <div>
+                    {{ default_yes }}
+                </div>
+                <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true">
+                    <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.can_not_edit_default %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
+                </div>
             </div>
-            <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true">
-                <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.can_not_edit_default %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
+            <div class="screening-status-no">
+                <div>
+                    {{ default_no }}
+                </div>
+                <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false">
+                    <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.can_not_edit_default %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
+                </div>
             </div>
         </div>
-        <div class="screening-status-no">
-            <div>
-                {{ default_no }}
-            </div>
-            <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false">
-                <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.can_not_edit_default %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
-            </div>
-        </div>
-    </div>
+    {% endif %}
 
     <div class="show-screening-options">
         {% if object.has_default_screening_status_set %}
@@ -27,6 +29,10 @@
                 <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">Screening Options</a>
             </p>
         {% endif %}
+        {% if not object.supports_default_screening %}
+            <p id="screening-options-para">
+                {{ object.screening_statuses.all|join:', ' }}
+            </p>
+        {% endif %}
     </div>
-
 </div>
