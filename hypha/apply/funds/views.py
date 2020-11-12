@@ -942,7 +942,7 @@ class BaseSubmissionEditView(UpdateView):
 
     def get_form_class(self):
         draft = self.request.POST.get('save', False)
-        return self.object.get_form_class(draft)
+        return self.object.get_form_class(draft, self.request.POST)
 
 
 @method_decorator(staff_required, name='dispatch')
