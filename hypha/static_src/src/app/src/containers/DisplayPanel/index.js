@@ -70,7 +70,8 @@ const DisplayPanel = props => {
 
     let tabs = [
         <Tab button="Status" key="status">
-            <Determination submissionID={submissionID} submission={submission}/>
+           { submission ? submission.isDeterminationFormAttached &&
+            <Determination submissionID={submissionID} submission={submission}/> : null}
             <ScreeningOutcome submissionID={submissionID} />
             <StatusActions submissionID={submissionID} />
             <ReviewInformation submissionID={submissionID} />
