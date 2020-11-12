@@ -160,10 +160,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
     action_buttons = serializers.SerializerMethodField()
+    is_determination_form_attached = serializers.BooleanField(source='*')
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -198,13 +199,12 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             obj.can_review(request.user) and not
             obj.assigned.draft_reviewed().filter(reviewer=request.user).exists()
         )
-        add_determination = (
-            show_determination_button(request.user, obj) and
-            obj.is_determination_form_attached
+        show_determination = (
+            show_determination_button(request.user, obj)
         )
         return {
             'add_review': add_review,
-            'add_determination': add_determination
+            'show_determination_button': show_determination
         }
 
 
