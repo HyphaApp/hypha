@@ -160,7 +160,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
     action_buttons = serializers.SerializerMethodField()
-    is_determination_form_attached = serializers.BooleanField(source='*')
+    is_determination_form_attached = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = ApplicationSubmission
