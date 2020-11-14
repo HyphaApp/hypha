@@ -3,8 +3,6 @@ import copy
 
 from collections import OrderedDict
 
-from django import forms
-
 from wagtail.contrib.forms.models import AbstractForm
 
 from hypha.apply.funds.blocks import ApplicationMustIncludeFieldBlock
@@ -90,7 +88,7 @@ class BaseStreamForm:
                             field_from_block.initial = None
                         field_from_block = copy.copy(field_from_block)
                 else:
-                    if is_in_group and not isinstance(field_from_block, forms.ChoiceField):
+                    if is_in_group and not isinstance(block, GroupToggleBlock):
                         field_from_block.required_when_visible = field_from_block.required
                         field_from_block.required = field_from_block.required & sub_children_visible
                         field_from_block.visible = sub_children_visible
