@@ -28,7 +28,8 @@ class TestReviewerFormQueries(TestCase):
         # Meta categories
         # Assigned Reviewers
         # Roles
-        with self.assertNumQueries(5):
+        # Screening status
+        with self.assertNumQueries(6):
             form = UpdateReviewersForm(user=user, instance=submission)
 
         # 3 x Staff - 1 per Role

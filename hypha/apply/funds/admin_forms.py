@@ -3,8 +3,8 @@ from collections import Counter
 from django.apps import apps
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
-from .workflow import WORKFLOWS
 from .models.submissions import ApplicationSubmission
+from .workflow import WORKFLOWS
 
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):
