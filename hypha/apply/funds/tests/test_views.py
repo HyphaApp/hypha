@@ -26,6 +26,7 @@ from hypha.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
@@ -40,7 +41,7 @@ from hypha.apply.users.tests.factories import (
 from hypha.apply.utils.testing import make_request
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
-from ..models import ApplicationRevision, ApplicationSubmission
+from ..models import ApplicationRevision, ApplicationSubmission, ReviewerSettings
 from ..views import SubmissionDetailSimplifiedView, SubmissionDetailView
 from .factories import CustomFormFieldsFactory
 
@@ -369,7 +370,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         submission = ApplicationSubmissionFactory()
         reviewer_role = ReviewerRoleFactory()
-
         # Phase: received / in_discussion
         # Assign reviewers should not be displayed
         assert_assign_reviewers_not_displayed(submission)
@@ -592,6 +592,10 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         super().setUpTestData()
         cls.applicant = ApplicantFactory()
         cls.reviewer_role = ReviewerRoleFactory()
+        apply_site = ApplySiteFactory()
+        reviewer_settings, _ = ReviewerSettings.objects.get_or_create(site_id=apply_site.id)
+        reviewer_settings.use_settings = True
+        reviewer_settings.save()
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):
@@ -672,6 +676,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_assign_reviewers_primary_action(self):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
         response = self.get_page(submission)
+
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
         self.assertEqual(len(buttons), 0)
 
