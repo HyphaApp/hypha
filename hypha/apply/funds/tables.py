@@ -253,7 +253,7 @@ class SubmissionFilter(filters.FilterSet):
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
-    screening_status = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
+    screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
     per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items per page'), label='Per page', method='per_page_handler')
 
