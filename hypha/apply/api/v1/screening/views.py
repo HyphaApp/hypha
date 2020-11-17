@@ -9,7 +9,6 @@ from rest_framework_api_key.permissions import HasAPIKey
 from hypha.apply.funds.models import ScreeningStatus
 
 from ..mixin import SubmissionNestedMixin
-from ..pagination import StandardResultsSetPagination
 from ..permissions import IsApplyStaffUser
 from .filters import ScreeningStatusFilter
 from .serializers import (
@@ -25,7 +24,7 @@ class ScreeningStatusViewSet(viewsets.ReadOnlyModelViewSet):
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ScreeningStatusFilter
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
     queryset = ScreeningStatus.objects.all()
     serializer_class = ScreeningStatusListSerializer
 
@@ -40,17 +39,18 @@ class SubmissionScreeningStatusViewSet(
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
     serializer_class = ScreeningStatusListSerializer
+    pagination_class = None
 
     def get_queryset(self):
         submission = self.get_submission_object()
         return submission.screening_statuses.all()
 
     def create(self, request, *args, **kwargs):
-        ser = self.get_serializer(data=request.data)
+        ser = ScreeningStatusSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         submission = self.get_submission_object()
         screening_status = get_object_or_404(
-            ScreeningStatus, title=ser.validated_data['title']
+            ScreeningStatus, id=ser.validated_data['id']
         )
         if not submission.screening_statuses.filter(default=True).exists():
             raise ValidationError({'detail': "Can't set screening status without default being set"})
@@ -62,7 +62,8 @@ class SubmissionScreeningStatusViewSet(
         submission.screening_statuses.add(
             screening_status
         )
-        return Response(status=status.HTTP_201_CREATED)
+        ser = self.get_serializer(submission.screening_statuses.all(), many=True)
+        return Response(ser.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def default(self, request, *args, **kwargs):
