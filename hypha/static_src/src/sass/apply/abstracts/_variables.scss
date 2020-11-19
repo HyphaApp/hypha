@@ -8,15 +8,16 @@
 // Default
 $color--white: #fff;
 $color--black: #141414;
-$color--dark-grey: #404041;
 $color--light-grey: #f7f7f7;
 $color--light-mid-grey: #e8e8e8;
 $color--mid-grey: #cfcfcf;
 $color--mid-dark-grey: #919191;
+$color--dark-grey: #404041;
 
 // Brand
 $color--lightest-blue: #24aae1;
 $color--light-blue: #0d7db0;
+$color--light-blue-90: transparentize($color--light-blue, .9);
 $color--lighter-blue: #7ab8d4;
 $color--dark-blue: #0c72a0;
 $color--darkest-blue: #3d6bdb;
@@ -55,7 +56,6 @@ $color--white-25: rgba(255, 255, 255, .25);
 $color--white-20: rgba(255, 255, 255, .2);
 $color--white-10: rgba(255, 255, 255, .1);
 
-$color--light-blue-90: transparentize($color--light-blue, .9);
 
 // Assignment
 $color--default: $color--dark-grey;
