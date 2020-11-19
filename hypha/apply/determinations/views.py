@@ -430,7 +430,7 @@ class AdminDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
+        return get_object_or_404(self.model, submission=self.submission, id=self.kwargs['pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -447,7 +447,7 @@ class ReviewerDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
+        return get_object_or_404(self.model, submission=self.submission, id=self.kwargs['pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
@@ -505,7 +505,7 @@ class ApplicantDeterminationDetailView(DetailView):
     model = Determination
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, id=self.kwargs['pk'])
+        return get_object_or_404(self.model, submission=self.submission, id=self.kwargs['pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])

@@ -7,12 +7,15 @@ from django.shortcuts import render
 from wagtail.core.models import Page, Site
 from wagtail.search.models import Query
 
-from hypha.public.home.models import HomePage
-
 
 def search(request):
     site = Site.find_for_request(request)
-    if site != HomePage.objects.first().get_site():
+    if (
+        not site.is_default_site and
+        'apply' in site.site_name.lower() and
+        'apply' in site.hostname and
+        'apply' in site.root_page.title.lower()
+    ):
         raise Http404
 
     search_query = request.GET.get('query', None)
