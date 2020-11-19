@@ -774,6 +774,18 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
             return ApplicantSubmissionDetailView.as_view()(request, *args, **kwargs)
         if submission.status == DRAFT_STATE:
             raise Http404
+
+        reviewer_settings = ReviewerSettings.for_request(request)
+        if reviewer_settings.use_settings:
+            queryset = ApplicationSubmission.objects.for_reviewer_settings(
+                request.user, reviewer_settings
+            )
+        else:
+            queryset = ApplicationSubmission.objects.reviewed_by(request.user)
+
+        # Reviewer can't view submission which is not listed in ReviewerSubmissionsTable
+        if not queryset.filter(id=submission.id).exists():
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
