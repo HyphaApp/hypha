@@ -985,12 +985,15 @@ class AssignedReviewersQuerySet(models.QuerySet):
     def bulk_create_reviewers(self, reviewers, submission):
         group = Group.objects.get(name=REVIEWER_GROUP_NAME)
         self.bulk_create(
-            self.model(
-                submission=submission,
-                role=None,
-                reviewer=reviewer,
-                type=group,
-            ) for reviewer in reviewers
+            [
+                self.model(
+                    submission=submission,
+                    role=None,
+                    reviewer=reviewer,
+                    type=group,
+                ) for reviewer in reviewers
+            ],
+            ignore_conflicts=True
         )
 
     def update_role(self, role, reviewer, *submissions):
