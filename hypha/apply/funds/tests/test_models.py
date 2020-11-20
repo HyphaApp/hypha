@@ -172,7 +172,8 @@ class TestRoundModelWorkflowAndForms(TestCase):
     def test_forms_are_copied_to_new_rounds(self):
         self.round.save()
         for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
-            self.assertEqual(round_form, fund_form)
+            self.assertEqual(round_form.fields, fund_form.fields)
+            self.assertEqual(round_form.sort_order, fund_form.sort_order)
 
     def test_can_change_round_form_not_fund(self):
         self.round.save()
