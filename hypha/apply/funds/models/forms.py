@@ -45,13 +45,18 @@ class AbstractRelatedForm(Orderable):
 
     def __eq__(self, other):
         try:
-            return self.fields == other.fields and self.sort_order == other.sort_order
+            if self.fields == other.fields and self.sort_order == other.sort_order:
+                # If the objects are saved to db. pk should also be compared
+                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                    return self.pk == other.pk
+                return True
+            return False
         except AttributeError:
             return False
 
     def __hash__(self):
         fields = [field.id for field in self.fields]
-        return hash((tuple(fields), self.sort_order))
+        return hash((tuple(fields), self.sort_order, self.pk))
 
     def __str__(self):
         return self.form.name
@@ -89,13 +94,18 @@ class AbstractRelatedDeterminationForm(Orderable):
 
     def __eq__(self, other):
         try:
-            return self.fields == other.fields and self.sort_order == other.sort_order
+            if self.fields == other.fields and self.sort_order == other.sort_order:
+                # If the objects are saved to db. pk should also be compared
+                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                    return self.pk == other.pk
+                return True
+            return False
         except AttributeError:
             return False
-            
+
     def __hash__(self):
         fields = [field.id for field in self.fields]
-        return hash((tuple(fields), self.sort_order))
+        return hash((tuple(fields), self.sort_order, self.pk))
 
     def __str__(self):
         return self.form.name
@@ -119,13 +129,18 @@ class AbstractRelatedReviewForm(Orderable):
 
     def __eq__(self, other):
         try:
-            return self.fields == other.fields and self.sort_order == other.sort_order
+            if self.fields == other.fields and self.sort_order == other.sort_order:
+                # If the objects are saved to db. pk should also be compared
+                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                    return self.pk == other.pk
+                return True
+            return False
         except AttributeError:
             return False
 
     def __hash__(self):
         fields = [field.id for field in self.fields]
-        return hash((tuple(fields), self.sort_order))
+        return hash((tuple(fields), self.sort_order, self.pk))
 
     def __str__(self):
         return self.form.name
