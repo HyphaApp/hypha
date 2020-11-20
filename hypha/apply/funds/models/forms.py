@@ -49,6 +49,10 @@ class AbstractRelatedForm(Orderable):
         except AttributeError:
             return False
 
+    def __hash__(self):
+        fields = [field.id for field in self.fields]
+        return hash((tuple(fields), self.sort_order))
+
     def __str__(self):
         return self.form.name
 
@@ -88,6 +92,10 @@ class AbstractRelatedDeterminationForm(Orderable):
             return self.fields == other.fields and self.sort_order == other.sort_order
         except AttributeError:
             return False
+            
+    def __hash__(self):
+        fields = [field.id for field in self.fields]
+        return hash((tuple(fields), self.sort_order))
 
     def __str__(self):
         return self.form.name
@@ -114,6 +122,10 @@ class AbstractRelatedReviewForm(Orderable):
             return self.fields == other.fields and self.sort_order == other.sort_order
         except AttributeError:
             return False
+
+    def __hash__(self):
+        fields = [field.id for field in self.fields]
+        return hash((tuple(fields), self.sort_order))
 
     def __str__(self):
         return self.form.name
