@@ -46,6 +46,7 @@ from .utils import (
     admin_url,
 )
 
+
 class ApplicationBaseManager(PageQuerySet):
     def order_by_end_date(self):
         # OutRef path__startswith with find all descendants of the parent
