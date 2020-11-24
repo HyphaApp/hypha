@@ -82,3 +82,14 @@ class SubmissionScreeningStatusViewSet(
         submission.screening_statuses.add(screening_status)
         ser = self.get_serializer(submission.screening_statuses.get(default=True))
         return Response(ser.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        screening_status = self.get_object()
+        if screening_status.default:
+            raise ValidationError({
+                'detail': "Can't delete default screening status."
+            })
+        submission = self.get_submission_object()
+        submission.screening_statuses.remove(screening_status)
+        ser = self.get_serializer(submission.screening_statuses.all(), many=True)
+        return Response(ser.data)
