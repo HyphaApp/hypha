@@ -2,7 +2,6 @@ from copy import copy
 from datetime import timedelta
 
 import django_tables2 as tables
-from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
@@ -958,7 +957,7 @@ class BaseSubmissionEditView(UpdateView):
 
     def get_form_class(self):
         draft = self.request.POST.get('save', False)
-        form_fields = self.object.get_form_fields(draft)
+        form_fields = self.object.get_form_fields(draft, self.object.raw_data)
         field_blocks = self.object.get_defined_fields()
         for field_block in field_blocks:
             if isinstance(field_block.block, GroupToggleBlock):

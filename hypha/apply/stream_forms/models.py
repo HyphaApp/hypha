@@ -46,12 +46,14 @@ class BaseStreamForm:
     def get_defined_fields(self):
         return self.form_fields
 
-    def get_form_fields(self, draft=False, posted_field_values={}):
+    def get_form_fields(self, draft=False, form_data={}):
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
         is_in_group = False
-        sub_children_visible = False
+
+        # If true option 1 is selected
+        grouped_fields_visible = False
         for struct_child in field_blocks:
             block = struct_child.block
             struct_value = struct_child.value
@@ -66,7 +68,7 @@ class BaseStreamForm:
                     field_from_block.grouper_for = group_counter + 1
                     group_counter += 1
                     is_in_group = True
-                    sub_children_visible = posted_field_values.get(struct_child.id) == field_from_block.choices[0][0]
+                    grouped_fields_visible = form_data.get(struct_child.id) == field_from_block.choices[0][0]
                 if isinstance(block, TextFieldBlock):
                     field_from_block.word_limit = struct_value.get('word_limit')
                 if isinstance(block, MultiInputCharFieldBlock):
@@ -89,8 +91,8 @@ class BaseStreamForm:
                 else:
                     if is_in_group and not isinstance(block, GroupToggleBlock):
                         field_from_block.required_when_visible = field_from_block.required
-                        field_from_block.required = field_from_block.required & sub_children_visible
-                        field_from_block.visible = sub_children_visible
+                        field_from_block.required = field_from_block.required & grouped_fields_visible
+                        field_from_block.visible = grouped_fields_visible
                     form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):
                 # Group toogle end block is used only to group fields and not used in actual form.
@@ -103,8 +105,8 @@ class BaseStreamForm:
 
         return form_fields
 
-    def get_form_class(self, draft=False, posted_field_values={}):
-        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, posted_field_values))
+    def get_form_class(self, draft=False, form_data={}):
+        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, form_data))
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):
