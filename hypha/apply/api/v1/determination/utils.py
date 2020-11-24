@@ -1,9 +1,3 @@
-from hypha.apply.determinations.forms import (
-    BatchConceptDeterminationForm,
-    BatchProposalDeterminationForm,
-    ConceptDeterminationForm,
-    ProposalDeterminationForm,
-)
 from hypha.apply.determinations.options import (
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
@@ -18,15 +12,6 @@ def get_fields_for_stage(submission):
         return forms[index].form.form_fields
     except IndexError:
         return forms[0].form.form_fields
-
-
-def get_form_for_stage(submission, batch=False, edit=False):
-    if batch:
-        forms = [BatchConceptDeterminationForm, BatchProposalDeterminationForm]
-    else:
-        forms = [ConceptDeterminationForm, ProposalDeterminationForm]
-    index = submission.workflow.stages.index(submission.stage)
-    return forms[index]
 
 
 def outcome_choices_for_phase(submission, user):

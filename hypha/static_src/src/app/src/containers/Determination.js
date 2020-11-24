@@ -69,7 +69,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     toggleDeterminationForm: (status) => dispatch(toggleDeterminationFormAction(status)),
     setCurrentDetermination: (reviewId) => dispatch(setCurrentDeterminationAction(reviewId)),
-    // deleteReview: (reviewId, submissionID) => dispatch(deleteReviewAction(reviewId, submissionID)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeterminationContainer)

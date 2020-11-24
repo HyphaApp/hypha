@@ -1,5 +1,4 @@
 import React from 'react';
-// import {createStore} from 'redux';
 import injectReducer from '@utils/injectReducer'
 import injectSaga from '@utils/injectSaga'
 import { withRouter } from 'react-router-dom';
@@ -9,7 +8,6 @@ import PropTypes from 'prop-types';
 import * as Actions from './actions';
 import reducer from './reducer';
 import saga from './sagas';
-// import App from "./app"
 import { getCurrentDetermination } from '@selectors/submissions'
 import * as Selectors from './selectors';
 import "./styles.scss";
@@ -57,11 +55,6 @@ class DeterminationFormContainer extends React.PureComponent {
           type: "primary",
           callback: values => this.props.updateDetermination(values,this.props.submissionID, this.props.determinationId)
         })
-      // metaFieldsActions.push({
-      //     text: "Delete",
-      //     type: "warning",
-      //     callback: () => this.props.deleteDetermination(this.props.determinationId, this.props.submissionID)
-      //   })
     }
     else{
       metaFieldsActions.push({
