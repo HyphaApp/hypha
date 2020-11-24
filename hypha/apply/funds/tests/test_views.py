@@ -41,7 +41,12 @@ from hypha.apply.users.tests.factories import (
 from hypha.apply.utils.testing import make_request
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
-from ..models import ApplicationRevision, ApplicationSubmission, ReviewerSettings
+from ..models import (
+    ApplicationRevision,
+    ApplicationSubmission,
+    ReviewerSettings,
+    ScreeningStatus,
+)
 from ..views import SubmissionDetailSimplifiedView, SubmissionDetailView
 from .factories import CustomFormFieldsFactory
 
@@ -188,6 +193,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotContains(response, 'check_one')
 
     def test_can_screen_submission(self):
+        ScreeningStatus.objects.all().delete()
         screening_outcome1 = ScreeningStatusFactory()
         screening_outcome1.yes = True
         screening_outcome1.save()
@@ -195,12 +201,14 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.yes = True
         screening_outcome2.default = True
         screening_outcome2.save()
+        self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome2)
         self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_statuses': [screening_outcome1.id, screening_outcome2.id]})
         submission = self.refresh(self.submission)
         self.assertEqual(submission.screening_statuses.count(), 2)
 
     def test_can_view_submission_screening_block(self):
+        ScreeningStatus.objects.all().delete()
         screening_outcome1 = ScreeningStatusFactory()
         screening_outcome1.yes = True
         screening_outcome1.default = True
@@ -210,6 +218,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.yes = False
         screening_outcome2.default = True
         screening_outcome2.save()
+        self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
         self.assertContains(response, 'Screening Status')
 
@@ -217,6 +226,8 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         """
         If defaults are not set screening status block is not visible
         """
+        ScreeningStatus.objects.all().delete()
+        self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
         self.assertNotContains(response, 'Screening Status')
 
@@ -279,20 +290,20 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
     def test_screen_application_primary_action_is_displayed(self):
+        ScreeningStatus.objects.all().delete()
         # Submission not screened
         screening_outcome = ScreeningStatusFactory()
         screening_outcome.yes = False
         screening_outcome.default = True
         screening_outcome.save()
+        self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome)
         response = self.get_page(self.submission)
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
         self.assertEqual(len(buttons), 1)
+        self.submission.screening_statuses.clear()
 
     def test_screen_application_primary_action_is_not_displayed(self):
-        # Submission screened
-        self.submission.screening_status = ScreeningStatusFactory()
-        self.submission.save()
         response = self.get_page(self.submission)
         buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
         self.assertEqual(len(buttons), 0)
@@ -1137,6 +1148,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         self.refresh(self.submission)
 
     def test_can_screen_submission(self):
+        ScreeningStatus.objects.all().delete()
         screening_outcome1 = ScreeningStatusFactory()
         screening_outcome1.yes = True
         screening_outcome1.save()
@@ -1144,6 +1156,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.yes = True
         screening_outcome2.default = True
         screening_outcome2.save()
+        self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome2)
         self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_statuses': [screening_outcome1.id, screening_outcome2.id]})
         submission = self.refresh(self.submission)
@@ -1155,6 +1168,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         we can still screen it because we are super user
         """
         submission = ApplicationSubmissionFactory(rejected=True)
+        ScreeningStatus.objects.all().delete()
         screening_outcome1 = ScreeningStatusFactory()
         screening_outcome1.yes = True
         screening_outcome1.save()
