@@ -31,7 +31,7 @@ submission_router.register(r'actions', SubmissionActionViewSet, basename='submis
 submission_router.register(r'comments', SubmissionCommentViewSet, basename='submission-comments')
 submission_router.register(r'reviews', SubmissionReviewViewSet, basename='reviews')
 submission_router.register(r'determinations', SubmissionDeterminationViewSet, basename='determinations')
-submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewSet, basename='screening_statuses')
+submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewSet, basename='submission-screening_statuses')
 
 urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
