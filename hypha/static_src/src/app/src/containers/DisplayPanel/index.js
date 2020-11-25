@@ -17,7 +17,7 @@ import { getDraftNoteForSubmission } from '@selectors/notes';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import ReviewInformation from '@containers/ReviewInformation'
-import ScreeningOutcome from '@containers/ScreeningOutcome'
+// import ScreeningOutcome from '@containers/ScreeningOutcome'
 import AddNoteForm from '@containers/AddNoteForm'
 import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
@@ -27,6 +27,7 @@ import ReviewFormContainer from '@containers/ReviewForm';
 import Determination from '../Determination';
 import DeterminationFormContainer from '@containers/DeterminationForm'
 
+import ScreeningStatusContainer from '@containers/ScreeningStatus';
 
 import './style.scss'
 // {!showReviewForm ? <CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID}/> }
@@ -73,7 +74,9 @@ const DisplayPanel = props => {
            { submission ? submission.isDeterminationFormAttached &&
             <Determination submissionID={submissionID} submission={submission}/> : null}
             <ScreeningOutcome submissionID={submissionID} />
+            {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
+            <ScreeningStatusContainer submissionID={submissionID} />
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
