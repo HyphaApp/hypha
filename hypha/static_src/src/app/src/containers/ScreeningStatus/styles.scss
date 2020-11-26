@@ -1,13 +1,34 @@
+.thumbs-up-color{
+    color : #0d7db0
+}
 
+.thumbs-down-color{
+    color:  red
+}
 
-a[disabled], a[disabled]:hover {
-    pointer-events: none;
-    color: #C6C6C6;
-    // cursor: not-allowed;
- }
+.screening-default-options{
+    display: flex;
+    margin-bottom: 1em ;
+    justify-content: space-evenly;
+}
 
- .screening-visible-options{
-     display: flex;
-     max-width: 300px;
-     flex-wrap: wrap;
- }
+.screening-visible-options{
+    display : flex;
+    flex-wrap: wrap;
+}
+
+.screening-status-yes-enabled{
+    cursor : pointer
+}
+
+.screening-status-yes-disabled{
+    cursor : not-allowed
+}
+
+.screening-status-no-enabled{
+    cursor: pointer;
+}
+
+.screening-status-no-disabled{
+    cursor: not-allowed;
+}

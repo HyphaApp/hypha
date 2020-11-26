@@ -1,7 +1,8 @@
 import {
   call,
   put,
-  takeLatest,
+  delay,
+  takeEvery
 } from 'redux-saga/effects';
 import * as ActionTypes from './constants';
 import * as Actions from './actions';
@@ -20,12 +21,7 @@ function* initialize(action) {
     response = yield call(apiFetch, {path : `/v1/submissions/${action.id}/screening_statuses/`})
     data = yield response.json()
     yield put(Actions.setVisibleSelectedAction(data.filter(d => !d.default)))
-    if(data.length > 0){
-      yield put(Actions.setDefaultSelectedAction(data.find(d => d.default)))
-    }
-    else{
-      yield put(Actions.setDefaultSelectedAction({}))
-    }
+    yield put(Actions.setDefaultSelectedAction(data.find(d => d.default) || {}))
     yield put(Actions.hideLoadingAction())
   } catch (e) {
     console.log("error", e)
@@ -57,6 +53,7 @@ function* setDefaultValue(action){
 
 function* setVisibleOption(action){
   try{
+    yield delay(300);
     yield put(Actions.showLoadingAction())
     const screening = yield select(Selectors.selectScreeningInfo)
     if(screening.selectedValues.some((value) => value.id == action.data.id)){
@@ -89,7 +86,7 @@ function* setVisibleOption(action){
 }
 
 export default function* homePageSaga() {
-  yield takeLatest(ActionTypes.INITIALIZE, initialize);
-  yield takeLatest(ActionTypes.SELECT_DEFAULT_VALUE, setDefaultValue)
-  yield takeLatest(ActionTypes.SELECT_VISIBLE_OPTION, setVisibleOption)
+  yield takeEvery(ActionTypes.INITIALIZE, initialize);
+  yield takeEvery(ActionTypes.SELECT_DEFAULT_VALUE, setDefaultValue)
+  yield takeEvery(ActionTypes.SELECT_VISIBLE_OPTION, setVisibleOption)
 }

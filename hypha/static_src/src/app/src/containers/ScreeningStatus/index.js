@@ -12,47 +12,81 @@ import * as Selectors from './selectors';
 import "./styles.scss";
 import { SidebarBlock } from '@components/SidebarBlock'
 import LoadingPanel from '@components/LoadingPanel'
-
+import Chip from '@material-ui/core/Chip';
+import DoneIcon from '@material-ui/icons/Done';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 
 class ScreeningStatusContainer extends React.PureComponent {
 
   componentDidMount(){
-    this.props.initializeAction(this.props.submissionID)
+    if(this.props.submissionID){
+      this.props.initializeAction(this.props.submissionID)
     }
+  }
 
-    componentDidUpdate(prevProps){
-      if(this.props.submissionID != prevProps.submissionID){
-        this.props.initializeAction(this.props.submissionID)
-      }
+  componentDidUpdate(prevProps){
+    if(this.props.submissionID != prevProps.submissionID){
+      this.props.initializeAction(this.props.submissionID)
+    }
+  }
+  updateDefaultValue = (submissionID, defaultOption) => () => {
+    if(!this.props.screeningInfo.selectedValues.length && 
+          this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id) 
+          {
+            this.props.selectDefautValue(submissionID, defaultOption)
+          }
     }
 
   render(){
-    const {screeningStatuses, submissionID, selectDefautValue, defaultOptions, screeningInfo, visibleOptions, selectVisibleOption} = this.props
+    const {
+      screeningStatuses, 
+      submissionID, 
+      defaultOptions, 
+      screeningInfo, 
+      visibleOptions, 
+      selectVisibleOption } = this.props
+
     return !screeningInfo.loading ? screeningStatuses && <SidebarBlock title="Screening Status">
         <div className="screening-status-box" >
-        <div style={{ display : "flex", marginBottom: '1em'}}>
-        <div className="screening-status-yes" style={{ marginRight : '2em'}}>
-            <div>{defaultOptions.yes.title}</div>
-            <a disabled={screeningInfo.selectedValues.length} 
-            onClick={() => selectDefautValue(submissionID, defaultOptions.yes)} 
-            style={{ border : screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id && '1px solid green'}}
-            >Up</a>
-        </div>
-        <div className="screening-status-no">
-            <div>{defaultOptions.no.title}</div>
-            <a disabled={screeningInfo.selectedValues.length} 
-            onClick={() => selectDefautValue(submissionID, defaultOptions.no)} 
-            style={{ border : screeningInfo.defaultSelectedValue.id == defaultOptions.no.id && '1px solid red'}}
-            >Down</a>
-        </div>
-        </div>
-        {visibleOptions && 
-        <div className="screening-visible-options">
-          {visibleOptions.map(option => <a key={option.id}  
-          onClick={() => selectVisibleOption(submissionID, option)} 
-          style={{ margin : '0.4em', border : option.selected && '1px solid black', borderRadius : '4px' }}
-          >{option.title}</a>)}
-        </div>}
+          <div className="screening-default-options">
+            <div 
+              className={screeningInfo.selectedValues.length ||
+                screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? 
+                "screening-status-yes-disabled": "screening-status-yes-enabled"} 
+              onClick={this.updateDefaultValue(submissionID, defaultOptions.yes)} 
+            >
+                <ThumbUpIcon 
+                className = { screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? "thumbs-up-color" : ""}
+                />
+                <div>{defaultOptions.yes.title}</div>
+            </div>
+            <div 
+              className={screeningInfo.selectedValues.length || 
+                screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? 
+                "screening-status-no-disabled" :"screening-status-no-enabled"}  
+              onClick={this.updateDefaultValue(submissionID, defaultOptions.no)} 
+            >
+                <ThumbDownIcon 
+                className = { screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? "thumbs-down-color" : ""}
+                />
+                <div>{defaultOptions.no.title}</div>
+            </div>
+          </div>
+          {visibleOptions && 
+            <div className="screening-visible-options" >
+              {visibleOptions.map(option => 
+                <Chip 
+                style={{ margin : '0.3em'}}
+                label={option.title} 
+                variant={!option.selected ? "outlined" : "default"} 
+                key={option.id}  
+                icon={option.selected && <DoneIcon />}
+                onClick={() => selectVisibleOption(submissionID, option)}>
+                </Chip>)
+              }
+            </div>
+          }
         </div>
     </SidebarBlock> : <LoadingPanel />
   }
@@ -97,7 +131,6 @@ const withConnect = connect(
 
 const withReducer = injectReducer({ key: 'ScreeningStatusContainer', reducer });
 const withSaga = injectSaga({ key: 'ScreeningStatusContainer', saga });
-
 
 
 export default compose(
