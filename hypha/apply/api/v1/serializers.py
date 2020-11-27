@@ -4,6 +4,10 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
+from hypha.apply.determinations.models import Determination
+from hypha.apply.determinations.templatetags.determination_tags import (
+    show_determination_button,
+)
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review, ReviewOpinion
@@ -113,6 +117,23 @@ class TimestampField(serializers.Field):
         return value.timestamp() * 1000
 
 
+class DeterminationSerializer(serializers.ModelSerializer):
+    outcome = serializers.ReadOnlyField(source='get_outcome_display')
+    author = serializers.CharField(read_only=True)
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+    updated_at = serializers.DateTimeField(read_only=True)
+    is_draft = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Determination
+        fields = ('id', 'outcome', 'author', 'url', 'updated_at', 'is_draft')
+
+
+class DeterminationSummarySerializer(serializers.Serializer):
+    determinations = DeterminationSerializer(many=True, read_only=True)
+    count = serializers.ReadOnlyField(source='determinations.count')
+
+
 class SubmissionListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='api:v1:submissions-detail')
     round = serializers.SerializerMethodField()
@@ -135,13 +156,15 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
+    determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
     screening = serializers.ReadOnlyField(source='screening_status.title')
     action_buttons = serializers.SerializerMethodField()
+    is_determination_form_attached = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons')
+        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -176,7 +199,13 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             obj.can_review(request.user) and not
             obj.assigned.draft_reviewed().filter(reviewer=request.user).exists()
         )
-        return {'add_review': add_review}
+        show_determination = (
+            show_determination_button(request.user, obj)
+        )
+        return {
+            'add_review': add_review,
+            'show_determination_button': show_determination
+        }
 
 
 class SubmissionActionSerializer(serializers.ModelSerializer):

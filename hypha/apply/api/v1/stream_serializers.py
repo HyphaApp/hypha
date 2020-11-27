@@ -1,6 +1,7 @@
 import inspect
 from collections import OrderedDict
 
+from django.forms import TypedChoiceField
 from rest_framework import serializers
 
 from hypha.apply.review.fields import ScoredAnswerField
@@ -20,8 +21,6 @@ class WagtailSerializer:
         serializer_fields = OrderedDict()
         form_fields = self.get_form_fields()
         for field_id, field in form_fields.items():
-            if isinstance(field, BlockFieldWrapper):
-                continue
             serializer_fields[field_id] = self._get_field(
                 field,
                 self.get_serializer_field_class(field),
@@ -109,6 +108,14 @@ class WagtailSerializer:
         if attrs.get('required') and 'default' in attrs:
             del attrs['required']
 
+        if isinstance(form_field, BlockFieldWrapper):
+            attrs['read_only'] = True
+            return attrs
+
+        # avoid "May not set both `read_only` and `required`"
+        if form_field.widget.attrs.get('readonly', False) == 'readonly':
+            attrs['read_only'] = True
+            del attrs['required']
         return attrs
 
     def get_serializer_field_class(self, field):
@@ -120,8 +127,12 @@ class WagtailSerializer:
         have to create mapping b/w form fields and serializer fields to get the
         respective classes. But for now this works.
         """
+        if isinstance(field, BlockFieldWrapper):
+            return getattr(serializers, 'CharField')
         if isinstance(field, ScoredAnswerField):
             return ScoredAnswerListField
+        if isinstance(field, TypedChoiceField):
+            return getattr(serializers, 'ChoiceField')
         class_name = field.__class__.__name__
         return getattr(serializers, class_name)
 

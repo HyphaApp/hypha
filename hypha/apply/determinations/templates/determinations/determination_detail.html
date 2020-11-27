@@ -35,7 +35,7 @@
         {% endif %}
         {% for question, answer in group.questions %}
             <h5>{{ question }}</h5>
-            {% if answer %}{{ answer|bleach }}{% else %}-{% endif %}
+            {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}
         {% endfor %}
     {% endfor %}
 </div>

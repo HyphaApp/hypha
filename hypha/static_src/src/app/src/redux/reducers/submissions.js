@@ -14,7 +14,12 @@ import {
     SET_CURRENT_REVIEW,
     CLEAR_CURRENT_REVIEW,
     FETCH_REVIEW_DRAFT,
-    CLEAR_REVIEW_DRAFT
+    CLEAR_REVIEW_DRAFT,
+    TOGGLE_DETERMINATION_FORM,
+    SET_CURRENT_DETERMINATION,
+    CLEAR_CURRENT_DETERMINATION,
+    FETCH_DETERMINATION_DRAFT,
+    CLEAR_DETERMINATION_DRAFT,
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -35,7 +40,6 @@ function submission(state={comments: []}, action) {
                 isErrored: true,
             };
         case UPDATE_SUBMISSION:
-        
             return {
                 ...state,
                 ...action.data,
@@ -168,14 +172,48 @@ function isReviewDraftExist(state = false, action) {
     }
 }
 
+function toggleDeterminationForm(state= false, action){
+    switch(action.type){
+        case TOGGLE_DETERMINATION_FORM:
+            return action.status
+        default:
+            return state
+    }
+}
+
+function currentDetermination(state = null, action) {
+    switch(action.type) {
+        case SET_CURRENT_DETERMINATION:
+            return action.determinationId;
+        case CLEAR_CURRENT_DETERMINATION:
+            return null;
+        default:
+            return state;
+    }
+}
+
+function isDeterminationDraftExist(state = false, action) {
+    switch(action.type) {
+        case FETCH_DETERMINATION_DRAFT:
+            return action.data.isDraft ? true : false;
+        case CLEAR_DETERMINATION_DRAFT:
+            return false;
+        default:
+            return state;
+    }
+}
+
 
 
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
     showReviewForm : toggleReviewForm,
-    currentReview: currentReview,
-    isReviewDraftExist: isReviewDraftExist
+    currentReview,
+    isReviewDraftExist,
+    showDeterminationForm: toggleDeterminationForm,
+    currentDetermination,
+    isDeterminationDraftExist,
 });
 
 export default submissions;

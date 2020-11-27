@@ -28,7 +28,7 @@ export const initializer = (fields, initialValues = false) => {
         { deep: true }
       )
     }
-    if (field.type === "ChoiceField" && !formState.values[field.kwargs.label]) {
+    if ((field.type === "ChoiceField" && !formState.values[field.kwargs.label]) || (field.type === "TypedChoiceField" && field.kwargs.initial === null)) {
       formState = formState.merge(
         {
           values: {

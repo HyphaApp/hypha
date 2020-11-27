@@ -8,6 +8,7 @@ import ScoredAnswerWidget from "@common/components/ScoredAnswerWidget";
 import LoadHTML from "@common/components/LoadHTML";
 import Textarea from "@common/components/Textarea";
 import CheckBox from "@common/components/CheckBox";
+import PageDownWidget from "@common/components/PageDownWidget";
 import PropTypes from 'prop-types';
 
 
@@ -139,6 +140,18 @@ class FormField extends React.Component {
           return <LoadHTML 
             text={kwargs.text}
           />;
+
+        case "PagedownWidget":
+          return <PageDownWidget 
+              label={kwargs.label}
+              name={fieldProps.name}
+              onChange={this.onChange}
+              value={value}
+              id={fieldProps.name}
+              init={widget.mce_attrs}
+              required={kwargs.required}
+              helperProps={this.getHelperprops()}
+          />
       
         default:
           return <div>Unknown field type {this.getType()}</div>

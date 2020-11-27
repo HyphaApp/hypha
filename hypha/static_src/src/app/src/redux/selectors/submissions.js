@@ -18,6 +18,12 @@ const getCurrentReview = state => state.submissions.currentReview;
 
 const getReviewDraftStatus = state => state.submissions.isReviewDraftExist;
 
+const getDeterminationButtonStatus = state => state.submissions.showDeterminationForm;
+
+const getCurrentDetermination = state => state.submissions.currentDetermination;
+
+const getDeterminationDraftStatus = state => state.submissions.isDeterminationDraftExist;
+
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -61,6 +67,9 @@ export {
     getReviewButtonStatus,
     getCurrentReview,
     getReviewDraftStatus,
+    getDeterminationButtonStatus,
+    getCurrentDetermination,
+    getDeterminationDraftStatus,
     getSubmissionsByRoundError,
     getSubmissionsByRoundLoadingState,
     getSubmissionLoadingState,
