@@ -632,9 +632,9 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         cls.applicant = ApplicantFactory()
         cls.reviewer_role = ReviewerRoleFactory()
         apply_site = ApplySiteFactory()
-        reviewer_settings, _ = ReviewerSettings.objects.get_or_create(site_id=apply_site.id)
-        reviewer_settings.use_settings = True
-        reviewer_settings.save()
+        cls.reviewer_settings, _ = ReviewerSettings.objects.get_or_create(site_id=apply_site.id)
+        cls.reviewer_settings.use_settings = True
+        cls.reviewer_settings.save()
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):
@@ -758,6 +758,102 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         # Phase: ready-for-determination, draft determination
         DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
         assert_view_determination_not_displayed(submission)
+
+    def test_can_access_any_submission(self):
+        """
+        Reviewer settings are being used with default values.
+        """
+        submission = ApplicationSubmissionFactory(user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_only_access_reviewed_submission(self):
+        self.reviewer_settings.submission = 'reviewed'
+        self.reviewer_settings.state = 'all'
+        self.reviewer_settings.outcome = 'all'
+        self.reviewer_settings.save()
+        submission = ApplicationSubmissionFactory(user=self.applicant, reviewers=[self.user])
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+        ReviewFactory(submission=submission, author__reviewer=self.user, is_draft=False)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_only_access_external_review_or_higher_submission(self):
+        self.reviewer_settings.submission = 'all'
+        self.reviewer_settings.state = 'ext_state_or_higher'
+        self.reviewer_settings.outcome = 'all'
+        self.reviewer_settings.assigned = False
+        self.reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+        submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant)
+        submission.perform_transition('ext_internal_review', self.user)
+        submission.perform_transition('ext_post_review_discussion', self.user)
+        submission.perform_transition('ext_external_review', self.user)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cant_access_dismissed_submission(self):
+        self.reviewer_settings.submission = 'all'
+        self.reviewer_settings.state = 'all'
+        self.reviewer_settings.outcome = 'all'
+        self.reviewer_settings.assigned = False
+        self.reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+        self.reviewer_settings.outcome = 'all_except_dismissed'
+        self.reviewer_settings.save()
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+    def test_can_only_access_accepted_submission(self):
+        self.reviewer_settings.submission = 'all'
+        self.reviewer_settings.state = 'all'
+        self.reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+        self.reviewer_settings.outcome = 'accepted'
+        self.reviewer_settings.save()
+        submission = ApplicationSubmissionFactory(status='rejected', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_only_access_assigned_submission(self):
+        self.reviewer_settings.submission = 'all'
+        self.reviewer_settings.state = 'all'
+        self.reviewer_settings.outcome = 'all'
+        self.reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
+
+        self.reviewer_settings.assigned = True
+        self.reviewer_settings.save()
+
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant)
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 403)
+
+        submission = ApplicationSubmissionFactory(status='accepted', user=self.applicant, reviewers=[self.user])
+        response = self.get_page(submission)
+        self.assertEqual(response.status_code, 200)
 
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):

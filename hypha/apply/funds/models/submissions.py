@@ -54,7 +54,9 @@ from ..workflow import (
     STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
     UserPermissions,
+    accepted_statuses,
     active_statuses,
+    dismissed_statuses,
     ext_or_higher_statuses,
     get_review_active_statuses,
     review_statuses,
@@ -135,7 +137,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         if reviewer_settings.state == 'ext_state_or_higher':
             qs = qs.filter(status__in=ext_or_higher_statuses)
         if reviewer_settings.outcome == 'accepted':
-            qs = qs.filter(status='accepted')
+            qs = qs.filter(status__in=accepted_statuses)
+        if reviewer_settings.outcome == 'all_except_dismissed':
+            qs = qs.exclude(status__in=dismissed_statuses)
         if reviewer_settings.assigned:
             qs = qs.filter(reviewers=user)
         return qs.distinct()

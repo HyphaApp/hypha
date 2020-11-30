@@ -48,6 +48,7 @@ class ReviewerSettings(BaseSetting):
 
     OUTCOMES = [
         ('all', 'All Outcomes'),
+        ('all_except_dismissed', 'All Outcomes Except Dismissed'),
         ('accepted', 'Only Accepted')
     ]
 
@@ -69,7 +70,7 @@ class ReviewerSettings(BaseSetting):
     outcome = models.CharField(
         choices=OUTCOMES,
         default='all',
-        max_length=10,
+        max_length=20,
         help_text='Submissions outcomes for which reviewers should have access to'
     )
     assigned = models.BooleanField(
