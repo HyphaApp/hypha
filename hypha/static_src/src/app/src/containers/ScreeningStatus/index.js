@@ -47,7 +47,7 @@ class ScreeningStatusContainer extends React.PureComponent {
       selectVisibleOption } = this.props
     
     return !screeningInfo.loading ? screeningStatuses && <SidebarBlock title="Screening Status" >
-        <div className="screening-status-box" style={{ borderBottom: '1px solid #e8e8e8'}}>
+        <div className="screening-status-box" style={{ padding: '1rem'}}>
           <div className="screening-default-options" >
             <div 
               className={screeningInfo.selectedValues.length ||
@@ -59,7 +59,7 @@ class ScreeningStatusContainer extends React.PureComponent {
                   className = { screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? "thumbs-up-color" : ""}
                   style={{ alignSelf: 'center'}}
                 >
-                <path d="m1.75 23h2.5c.965 0 1.75-.785 1.75-1.75v-11.5c0-.965-.785-1.75-1.75-1.75h-2.5c-.965 0-1.75.785-1.75 1.75v11.5c0 .965.785 1.75 1.75 1.75z"></path><path d="m12.781.75c-1 0-1.5.5-1.5 3 0 2.376-2.301 4.288-3.781 5.273v12.388c1.601.741 4.806 1.839 9.781 1.839h1.6c1.95 0 3.61-1.4 3.94-3.32l1.12-6.5c.42-2.45-1.46-4.68-3.94-4.68h-4.72s.75-1.5.75-4c0-3-2.25-4-3.25-4z"></path>
+                  <path d="m1.75 23h2.5c.965 0 1.75-.785 1.75-1.75v-11.5c0-.965-.785-1.75-1.75-1.75h-2.5c-.965 0-1.75.785-1.75 1.75v11.5c0 .965.785 1.75 1.75 1.75z"></path><path d="m12.781.75c-1 0-1.5.5-1.5 3 0 2.376-2.301 4.288-3.781 5.273v12.388c1.601.741 4.806 1.839 9.781 1.839h1.6c1.95 0 3.61-1.4 3.94-3.32l1.12-6.5c.42-2.45-1.46-4.68-3.94-4.68h-4.72s.75-1.5.75-4c0-3-2.25-4-3.25-4z"></path>
                 </SvgIcon>
                 <div>{defaultOptions.yes.title}</div>
             </div>

@@ -8,6 +8,7 @@ export const SidebarBlock = ({ title, children }) => {
         <div className="sidebar-block">
             {title && <h5>{title}</h5>}
             { children }
+            <div className="partition">&nbsp;</div>
         </div>
     )
 }
