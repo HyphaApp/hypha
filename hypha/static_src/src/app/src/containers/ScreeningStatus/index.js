@@ -75,6 +75,7 @@ class ScreeningStatusContainer extends React.PureComponent {
           </div>
           {visibleOptions && 
             <div className="screening-visible-options" >
+              <h6 style={{ fontWeight: '550', width : '100%'}}>Screening reasons</h6>
               {visibleOptions.map(option => 
                 <Chip 
                 style={{ margin : '0.3em'}}
