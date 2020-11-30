@@ -4,11 +4,11 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
+from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,
 )
-from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.review.models import Review, ReviewOpinion

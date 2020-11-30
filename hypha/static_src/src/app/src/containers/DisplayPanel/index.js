@@ -73,7 +73,6 @@ const DisplayPanel = props => {
         <Tab button="Status" key="status">
            { submission ? submission.isDeterminationFormAttached &&
             <Determination submissionID={submissionID} submission={submission}/> : null}
-            <ScreeningOutcome submissionID={submissionID} />
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
             <ScreeningStatusContainer submissionID={submissionID} />
