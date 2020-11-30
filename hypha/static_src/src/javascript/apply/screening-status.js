@@ -15,7 +15,7 @@
             data: {yes: yes},
             success: function (json) {
                 if (json) {
-                    var screeningOptions = $('<p id="screening-options-para">' + json.title + '<a id="screening-options-ajax" data-fancybox="" data-src="#screen-application" data-yes=' + yes + ' class="link link--secondary-change" href="#"> Screening Options</a></p>');
+                    var screeningOptions = $('<p id="screening-options-para">' + '<a id="screening-options-ajax" data-fancybox="" data-src="#screen-application" data-yes=' + yes + ' class="link link--secondary-change" href="#"> Screening Options</a></p>');
                     $('.show-screening-options').find('#screening-options-para').remove();
                     $('.show-screening-options').append(screeningOptions);
                     if (yes === true) {
@@ -32,7 +32,6 @@
     });
 
     $('.show-screening-options').on('click', '#screening-options-ajax', function () {
-
         var $screeningOptions = $(this);
         var currentStatus = $screeningOptions.data('yes');
         var $screenApplication = $('#screen-application');
