@@ -34,7 +34,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            <strong>{{ submission.screening_status|default:"Awaiting Screen status" }}</strong>
+                            <strong>{% if object.screening_statuses.exists %}{{ object.screening_statuses|default:"Awaiting Screen status" }}{% endif %}</strong>
                         </td>
 
                         <td>

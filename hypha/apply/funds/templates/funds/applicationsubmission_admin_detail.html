@@ -17,7 +17,9 @@
     <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
         {% include "funds/includes/admin_primary_actions.html" %}
     </div>
-    {% include "funds/includes/screening_form.html" %}
+    {% if default_screening_statuses.0 != None and default_screening_statuses.1 != None %}
+        {% include "funds/includes/screening_form.html" with submission=object default_yes=default_screening_statuses.0 default_no=default_screening_statuses.1 %}
+    {% endif %}
     {% include "funds/includes/progress_form.html" %}
     {% include "funds/includes/update_lead_form.html" %}
     {% include "funds/includes/update_reviewer_form.html" %}
@@ -49,7 +51,9 @@
 {% endblock %}
 
 {% block screening_status %}
-    {% include 'funds/includes/screening_status_block.html' %}
+    {% if default_screening_statuses.0 != None and default_screening_statuses.1 != None %}
+        {% include 'funds/includes/screening_status_block.html' with default_yes=default_screening_statuses.0 default_no=default_screening_statuses.1 %}
+    {% endif %}
 {% endblock %}
 
 {% block meta_terms %}

@@ -1,5 +1,7 @@
+import json
 from functools import partialmethod
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -254,10 +256,11 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             'round',
             'lead',
             'user',
-            'screening_status',
             'previous__page',
             'previous__round',
             'previous__lead',
+        ).prefetch_related(
+            'screening_statuses'
         )
 
 
@@ -453,12 +456,10 @@ class ApplicationSubmission(
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
 
-    screening_status = models.ForeignKey(
+    screening_statuses = models.ManyToManyField(
         'funds.ScreeningStatus',
-        related_name='+',
-        on_delete=models.SET_NULL,
-        verbose_name='screening status',
-        null=True,
+        related_name='submissions',
+        blank=True
     )
 
     is_draft = False
@@ -804,6 +805,46 @@ class ApplicationSubmission(
 
     def _get_REQUIRED_value(self, name):
         return self.data(name)
+
+    @property
+    def has_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True).exists()
+
+    @property
+    def has_yes_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True, yes=True).exists()
+
+    @property
+    def has_no_default_screening_status_set(self):
+        return self.screening_statuses.filter(default=True, yes=False).exists()
+
+    @property
+    def can_not_edit_default(self):
+        return self.screening_statuses.all().count() > 1
+
+    @property
+    def joined_screening_statuses(self):
+        return ', '.join([s.title for s in self.screening_statuses.all()])
+
+    @property
+    def yes_screening_statuses(self):
+        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        return json.dumps(
+            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=True)}
+        )
+
+    @property
+    def no_screening_statuses(self):
+        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        return json.dumps(
+            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=False)}
+        )
+
+    @property
+    def supports_default_screening(self):
+        if self.screening_statuses.exists():
+            return self.screening_statuses.filter(default=True).exists()
+        return True
 
 
 @receiver(post_transition, sender=ApplicationSubmission)

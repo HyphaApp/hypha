@@ -3,6 +3,7 @@ from collections import Counter
 from django.apps import apps
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
+from .models.submissions import ApplicationSubmission
 from .workflow import WORKFLOWS
 
 
@@ -87,20 +88,25 @@ class RoundBasePageAdminForm(WagtailAdminPageForm):
 
 class ScreeningStatusAdminForm(WagtailAdminModelForm):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        default = cleaned_data['default']
-        yes = cleaned_data['yes']
+    def save(self, commit=True):
+        default = self.cleaned_data['default']
+        yes = self.cleaned_data['yes']
         ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
         if default:
             try:
-                default_yes = ScreeningStatus.objects.get(
-                    default=True, yes=yes
+                default_screening = ScreeningStatus.objects.get(
+                    default=default, yes=yes
                 )
             except ScreeningStatus.DoesNotExist:
                 pass
             else:
-                if default_yes.id != self.instance.id:
-                    yes_or_no = 'yes' if yes else 'no'
-                    self.add_error('default', f'Can not set two ScreeningStatus as default {yes_or_no}')
-        return cleaned_data
+                screening = super().save(commit)
+                if default_screening.id != screening.id:
+                    submissions = ApplicationSubmission.objects.filter(screening_statuses__id=default_screening.id)
+                    for submission in submissions:
+                        submission.screening_statuses.remove(default_screening)
+                        submission.screening_statuses.add(screening)
+                    default_screening.default = False
+                    default_screening.save()
+                return screening
+        return super().save(commit)

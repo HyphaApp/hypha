@@ -4,6 +4,7 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
+from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,
@@ -158,7 +159,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
-    screening = serializers.ReadOnlyField(source='screening_status.title')
+    screening = ScreeningStatusSerializer(source='screening_statuses.all', many=True)
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
 

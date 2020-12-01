@@ -361,6 +361,7 @@ class ScreeningStatusFactory(factory.DjangoModelFactory):
         model = ScreeningStatus
 
     title = factory.Iterator(["Bad", "Good"])
+    yes = factory.Iterator([True, False])
 
 
 class ReminderFactory(factory.DjangoModelFactory):

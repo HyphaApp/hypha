@@ -1,6 +1,48 @@
 <div class="sidebar__inner">
+
     <h5>Screening Status</h5>
-    <p>
-        {{ object.screening_status|default:"Awaiting Screen status" }} <a data-fancybox data-src="#screen-application" class="link link--secondary-change" href="#">Change</a>
-    </p>
+    {% if object.supports_default_screening %}
+        <div class="sidebar__screening-thumbs screening-status-box">
+            <div class="sidebar__screening-status-yes">
+                <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true" style="align-self: center;">
+                    <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.can_not_edit_default %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
+                </div>
+                <div>
+                    {{ default_yes }}
+                </div>
+            </div>
+            <div class="sidebar__screening-status-no">
+                <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false" style="align-self: center;">
+                    <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.can_not_edit_default %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
+                </div>
+                <div>
+                    {{ default_no }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="show-screening-options">
+        {% if object.has_default_screening_status_set %}
+            <p id="screening-options-para">
+                {% if object.screening_statuses.all.count > 1 %}
+                <div class="sidebar__screening-selected-options">
+                    {% for status in object.screening_statuses.all%}
+                            <span class="sidebar__screening-option">{{ status }}</span>
+                    {% endfor%}
+                </div>
+                {% endif %}
+                <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">Screening Options</a>
+            </p>
+        {% endif %}
+        {% if not object.supports_default_screening %}
+            <p id="screening-options-para">
+                <div class="sidebar__screening-selected-options">
+                    {% for status in object.screening_statuses.all%}
+                            <span class="sidebar__screening-option">{{ status }}</span>
+                    {% endfor%}
+                </div>
+            </p>                
+        {% endif %}
+    </div>
 </div>

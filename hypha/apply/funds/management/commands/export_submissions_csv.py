@@ -44,5 +44,4 @@ class Command(BaseCommand):
                     submission_value = submission.value
                 except KeyError:
                     submission_value = 0
-
-                writer.writerow([submission.id, submission.title, submission.full_name, submission.email, submission_value, submission.duration, submission_reapplied, submission.stage, submission.phase, submission.screening_status, submission.submit_time.strftime('%Y-%m-%d'), submission_region, submission_country, submission_focus, submission_type])
+                writer.writerow([submission.id, submission.title, submission.full_name, submission.email, submission_value, submission.duration, submission_reapplied, submission.stage, submission.phase, submission.joined_screening_statuses, submission.submit_time.strftime('%Y-%m-%d'), submission_region, submission_country, submission_focus, submission_type])

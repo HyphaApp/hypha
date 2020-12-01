@@ -97,6 +97,7 @@ from .tables import (
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
 )
+from .utils import get_default_screening_statues
 from .workflow import (
     DRAFT_STATE,
     INITIAL_STATE,
@@ -585,7 +586,7 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=self.object,
-            related=str(old.screening_status),
+            related=', '.join([s.title for s in old.screening_statuses.all()]),
         )
         return response
 
@@ -753,10 +754,11 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
         public_page = self.object.get_from_parent('detail')()
-
+        default_screening_statuses = get_default_screening_statues()
         return super().get_context_data(
             other_submissions=other_submissions,
             public_page=public_page,
+            default_screening_statuses=default_screening_statuses,
             **kwargs,
         )
 

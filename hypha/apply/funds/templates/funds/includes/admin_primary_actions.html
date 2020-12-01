@@ -12,7 +12,7 @@
 {% endif %}
 {% endif %}
 
-{% if not object.screening_status %}
+{% if object.has_default_screening_status_set and not object.can_not_edit_default %}
     <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">Screen application</a>
 {% endif %}
 

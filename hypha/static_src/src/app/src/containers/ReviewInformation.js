@@ -134,9 +134,7 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
             { partner.length === 0 && staff.length === 0 && nonStaff.length === 0 && <h5>No reviews available</h5>}
             <ReviewBlock score={data.score} recommendation={data.recommendation.display}>
                 { renderNormal(staff) }
-                {staff.length !== 0 && partner.length !== 0 && <hr />}
                 { renderNormal(partner) }
-                {(partner.length !== 0 || staff.length !== 0) && nonStaff.length !== 0 && <hr />}
                 { renderCollapsed(nonStaff) }
 
                 <div className="wrapper wrapper--sidebar-buttons">
