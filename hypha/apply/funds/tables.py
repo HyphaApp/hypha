@@ -131,7 +131,7 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 class BaseAdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews<div>Assgn.\tComp.</div>"), orderable=False)
-    screening_status = tables.Column(verbose_name="Screening", accessor='joined_screening_statuses')
+    screening_status = tables.Column(verbose_name="Screening", accessor='screening_statuses')
 
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
@@ -139,6 +139,14 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
 
     def render_lead(self, value):
         return format_html('<span>{}</span>', value)
+
+    def render_screening_status(self, value):
+        try:
+            status = value.get(default=True).title
+        except ScreeningStatus.DoesNotExist:
+            return format_html('<span>{}</span>', 'Awaiting')
+        else:
+            return format_html('<span>{}</span>', status)
 
 
 class AdminSubmissionsTable(BaseAdminSubmissionsTable):
