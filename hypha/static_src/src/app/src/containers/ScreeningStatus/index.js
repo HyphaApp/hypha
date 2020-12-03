@@ -46,7 +46,8 @@ class ScreeningStatusContainer extends React.PureComponent {
       visibleOptions, 
       selectVisibleOption } = this.props
     
-    return !screeningInfo.loading ? screeningStatuses && <SidebarBlock title="Screening Status" >
+    return !screeningInfo.loading ? 
+        screeningStatuses && defaultOptions.yes && defaultOptions.no ? <SidebarBlock title="Screening Status" >
         <div className="screening-status-box" style={{ padding: '1rem'}}>
           <div className="screening-default-options" >
             <div 
@@ -95,7 +96,8 @@ class ScreeningStatusContainer extends React.PureComponent {
           }
           
         </div>
-    </SidebarBlock> : <LoadingPanel />
+      </SidebarBlock> : null
+    : <LoadingPanel />
   }
 }
 
@@ -105,7 +107,7 @@ ScreeningStatusContainer.propTypes = {
   selectDefautValue: PropTypes.func,
   defaultOptions: PropTypes.object,
   screeningInfo: PropTypes.object,
-  visibleOptions: PropTypes.object,
+  visibleOptions: PropTypes.array,
   selectVisibleOption: PropTypes.func,
   submissionID : PropTypes.number,
   screeningStatuses: PropTypes.array

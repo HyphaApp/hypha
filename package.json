@@ -29,6 +29,7 @@
         "gulp-touch-cmd": "0.0.1",
         "gulp-uglify": "^3.0.2",
         "humps": "^2.0.1",
+        "invariant": "^2.2.4",
         "js-cookie": "^2.2.0",
         "lodash.isequal": "^4.5.0",
         "lodash.pick": "^4.4.0",
