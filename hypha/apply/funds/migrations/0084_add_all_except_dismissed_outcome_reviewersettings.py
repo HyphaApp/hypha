@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0080_add_yes_and_default_fields_to_screening_status'),
+        ('funds', '0083_remove_screening_status_field'),
     ]
 
     operations = [
