@@ -1034,8 +1034,26 @@ def get_ext_or_higher_statuses():
     return ext_review_or_higher_statuses
 
 
+def get_accepted_statuses():
+    accepted_statuses = set()
+    for phase_name, phase in PHASES:
+        if phase.display_name == 'Accepted':
+            accepted_statuses.add(phase_name)
+    return accepted_statuses
+
+
+def get_dismissed_statuses():
+    dismissed_statuses = set()
+    for phase_name, phase in PHASES:
+        if phase.display_name == 'Dismissed':
+            dismissed_statuses.add(phase_name)
+    return dismissed_statuses
+
+
 ext_or_higher_statuses = get_ext_or_higher_statuses()
 review_statuses = get_review_statuses()
+accepted_statuses = get_accepted_statuses()
+dismissed_statuses = get_dismissed_statuses()
 
 DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
 DETERMINATION_RESPONSE_PHASES = [
