@@ -702,6 +702,8 @@ class EmailAdapter(AdapterBase):
         if source:
             if is_ready_for_review(message_type):
                 subject = 'Application ready to review: {source.title}'.format(source=source)
+                if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW}:
+                    subject = 'Multiple applications are now ready for your review'
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = 'Reminder: Application ready to review: {source.title}'.format(source=source)
             else:
