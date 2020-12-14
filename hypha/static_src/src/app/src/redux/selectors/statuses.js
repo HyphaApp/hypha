@@ -11,6 +11,13 @@ const getSubmissionsByStatuses = state => state.statuses.byStatuses;
 const getSubmissionIDsForCurrentStatuses = createSelector(
     [ getSubmissionsByStatuses, getCurrentStatuses ],
     (grouped, current) => {
+        if (!current.length){
+            let acc = []
+            for (let status in grouped){
+              acc = acc.concat(grouped[status])   
+            }
+            return acc
+        }
         return current.reduce((acc, status) => acc.concat(grouped[status] || []), [])
     }
 );

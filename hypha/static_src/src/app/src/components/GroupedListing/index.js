@@ -113,7 +113,6 @@ export default class GroupedListing extends React.Component {
 
     render() {
         const { isLoading, isErrored, errorMessage } = this.props;
-
         const passProps = {
             items: this.state.orderedItems,
             renderItem: this.renderItem,

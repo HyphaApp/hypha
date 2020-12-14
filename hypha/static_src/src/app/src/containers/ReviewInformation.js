@@ -162,7 +162,7 @@ const ReviewInformation = ({ submission, submissionID, showReviewForm, toggleRev
 
 ReviewInformation.propTypes = {
     submission: PropTypes.object,
-    submissionID: PropTypes.number.isRequired,
+    submissionID: PropTypes.number,
     showReviewForm: PropTypes.bool,
     reviewDraftStatus: PropTypes.bool,
     toggleReviewForm: PropTypes.func,
