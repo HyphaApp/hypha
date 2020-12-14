@@ -105,7 +105,7 @@ export const clearCurrentDeterminationAction = () => ({
 
 export const fetchReviewDraft = (submissionID) => ({
     [CALL_API]: {
-        types: [ START_LOADING_SUBMISSION, FETCH_REVIEW_DRAFT, FAIL_LOADING_SUBMISSION],
+        types: [ START_LOADING_SUBMISSION, FETCH_REVIEW_DRAFT, CLEAR_REVIEW_DRAFT],
         endpoint: api.fetchReviewDraft(submissionID),
     },
     submissionID,

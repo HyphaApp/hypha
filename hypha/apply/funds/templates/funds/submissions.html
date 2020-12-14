@@ -1,6 +1,8 @@
 {% extends "funds/base_submissions_table.html" %}
-{% block title %}Submissions{% endblock %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
 
+{% block title %}Submissions{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
@@ -8,13 +10,17 @@
             <div>
                 <h1 class="gamma heading heading--no-margin heading--bold">All Submissions</h1>
             </div>
+            <div id="submissions-all-react-app-switcher"></div>
         {% endblock %}
     </div>
 </div>
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% block table %}
-        {{ block.super }}
-    {% endblock %}
+<div id="submissions-all-react-app">
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {{ block.super }}
+        {% endblock %}
+    </div>
 </div>
+{% render_bundle 'allSubmissions' %}
 {% endblock %}

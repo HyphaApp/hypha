@@ -15,7 +15,7 @@ import './StatusActions.scss';
 
 class StatusActions extends React.Component {
     static propTypes = {
-        submissionID: PropTypes.number.isRequired,
+        submissionID: PropTypes.number,
         submission: PropTypes.shape({
             id: PropTypes.number,
             phase: PropTypes.string,

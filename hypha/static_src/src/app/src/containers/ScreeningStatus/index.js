@@ -87,7 +87,7 @@ class ScreeningStatusContainer extends React.PureComponent {
                 label={option.title} 
                 variant={!option.selected ? "outlined" : "default"} 
                 key={option.id}  
-                icon={option.selected && <DoneIcon />}
+                icon={option.selected ? <DoneIcon /> : null}
                 onClick={() => selectVisibleOption(submissionID, option)}>
                 </Chip>)
               }
@@ -105,7 +105,7 @@ ScreeningStatusContainer.propTypes = {
   selectDefautValue: PropTypes.func,
   defaultOptions: PropTypes.object,
   screeningInfo: PropTypes.object,
-  visibleOptions: PropTypes.object,
+  visibleOptions: PropTypes.array,
   selectVisibleOption: PropTypes.func,
   submissionID : PropTypes.number,
   screeningStatuses: PropTypes.array

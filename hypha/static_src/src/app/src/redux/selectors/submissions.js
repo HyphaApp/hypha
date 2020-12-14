@@ -24,6 +24,8 @@ const getCurrentDetermination = state => state.submissions.currentDetermination;
 
 const getDeterminationDraftStatus = state => state.submissions.isDeterminationDraftExist;
 
+const getSubmissionsForListing = state => Object.values(state.submissions.byID)
+
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -61,6 +63,8 @@ const getSubmissionsByRoundError = state => state.rounds.error;
 const getSubmissionsByRoundLoadingState = state => state.submissions.itemsLoading === true;
 
 export {
+    getSubmissions,
+    getSubmissionsForListing,
     getCurrentRoundSubmissions,
     getCurrentSubmission,
     getCurrentSubmissionID,

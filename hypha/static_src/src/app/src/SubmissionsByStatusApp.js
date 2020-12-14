@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
 import { setCurrentStatuses } from '@actions/submissions';
+import { getCurrentStatusesSubmissions } from '@selectors/submissions';
 
 
 class SubmissionsByStatusApp extends React.Component {
@@ -13,6 +14,7 @@ class SubmissionsByStatusApp extends React.Component {
         pageContent: PropTypes.node.isRequired,
         statuses: PropTypes.arrayOf(PropTypes.string),
         setStatuses: PropTypes.func.isRequired,
+        submissions: PropTypes.array
     };
 
     componentDidMount() {
@@ -21,19 +23,24 @@ class SubmissionsByStatusApp extends React.Component {
 
     render() {
         return <SwitcherApp
-                detailComponent={<GroupByRoundDetailView />}
+                detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions}/>}
                 switcherSelector={'submissions-by-status-app-react-switcher'}
                 pageContent={this.props.pageContent} />;
     }
 }
 
+const mapStateToProps = (state, ownProps) => ({
+    submissions: getCurrentStatusesSubmissions(state),
+})
+
 const mapDispatchToProps = dispatch => {
     return {
-        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));},
+        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));
+        },
     }
 };
 
 
 export default hot(module)(
-    connect(null, mapDispatchToProps)(SubmissionsByStatusApp)
+    connect(mapStateToProps, mapDispatchToProps)(SubmissionsByStatusApp)
 );

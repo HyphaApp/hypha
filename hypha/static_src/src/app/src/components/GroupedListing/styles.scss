@@ -2,7 +2,6 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-
     @include media-query(tablet-landscape) {
         height: calc(100vh - var(--header-admin-height));
     }

@@ -16,13 +16,13 @@ import {
 import {
     getCurrentSubmissionID,
     getCurrentStatusesSubmissions,
+    getSubmissionsForListing,
 } from '@selectors/submissions';
 import {
     getCurrentStatuses,
     getByStatusesLoading,
     getByStatusesError,
 } from '@selectors/statuses';
-
 
 const loadData = props => {
     props.loadRounds()
@@ -89,9 +89,9 @@ class ByRoundListing extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
     statuses: getCurrentStatuses(state),
-    submissions: getCurrentStatusesSubmissions(state),
+    submissions: ownProps.groupBy ? getSubmissionsForListing(state) :getCurrentStatusesSubmissions(state),
     isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
         getByStatusesLoading(state) ||
