@@ -23,7 +23,7 @@
             height: '550rem',
             frameborder: 0
         });
-        $('.rich-text').before($dataviz_iframe2);
+        $('.section--share').before($dataviz_iframe2);
     }
 
 })(jQuery);
