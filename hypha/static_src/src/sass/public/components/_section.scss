@@ -7,6 +7,16 @@
         }
     }
 
+    &--list-straight-left {
+        ul {
+            @extend %ul-straight-left;
+        }
+
+        ol {
+            @extend %ol-straight-left;
+        }
+    }
+
     &--share {
         padding: 2rem 0;
         margin: 3rem 0;
