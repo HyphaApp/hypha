@@ -625,6 +625,11 @@ if 'PRIMARY_HOST' in env:
     BASE_URL = 'https://{}'.format(env['PRIMARY_HOST'])
 
 
+# pgcrypto settings
+
+PGCRYPTO_DEFAULT_KEY = env.get('PGCRYPTO_DEFAULT_KEY', SECRET_KEY)
+
+
 # Security configuration
 # https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
 
