@@ -24,6 +24,8 @@ import {
     getByStatusesError,
 } from '@selectors/statuses';
 
+import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors'
+
 const loadData = props => {
     props.loadRounds()
     props.loadSubmissions()
@@ -41,17 +43,18 @@ class ByRoundListing extends React.Component {
         rounds: PropTypes.object,
         isLoading: PropTypes.bool,
         errorMessage: PropTypes.string,
+        filters: PropTypes.array
     };
 
     componentDidMount() {
-        if ( this.props.statuses) {
+        if ( this.props.statuses || this.props.filters) {
             loadData(this.props)
         }
     }
 
     componentDidUpdate(prevProps) {
         const { statuses} = this.props;
-        if (!statuses.every(v => prevProps.statuses.includes(v))) {
+        if (!statuses.every(v => prevProps.statuses.includes(v)) || this.props.filters != prevProps.filters) {
             loadData(this.props)
         }
     }
@@ -91,7 +94,7 @@ class ByRoundListing extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     statuses: getCurrentStatuses(state),
-    submissions: ownProps.groupBy ? getSubmissionsForListing(state) :getCurrentStatusesSubmissions(state),
+    submissions: ownProps.groupBy ? getSubmissionsForListing(state) : getCurrentStatusesSubmissions(state),
     isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
         getByStatusesLoading(state) ||
@@ -99,6 +102,7 @@ const mapStateToProps = (state, ownProps) => ({
     ),
     activeSubmission: getCurrentSubmissionID(state),
     rounds: getRounds(state),
+    filters : SelectSelectedFilters(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({

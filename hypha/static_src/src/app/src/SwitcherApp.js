@@ -10,6 +10,7 @@ import {
     setCurrentSubmissionParam,
 } from '@actions/submissions';
 import GeneralInfoContainer from '@containers/GeneralInfo'
+import SubmissionFiltersContainer from '@containers/SubmissionFilters'
 
 
 class SwitcherApp extends React.Component {
@@ -22,6 +23,8 @@ class SwitcherApp extends React.Component {
         searchParam: PropTypes.string,
         setParams: PropTypes.func.isRequired,
         clearParams: PropTypes.func.isRequired,
+        onFilter: PropTypes.func,
+        doNotRenderFilter: PropTypes.array
     };
 
     state = {
@@ -91,7 +94,7 @@ class SwitcherApp extends React.Component {
                 <Switcher selector={this.props.switcherSelector} open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
 
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
-
+                {this.state.detailOpened && <SubmissionFiltersContainer onFilter={this.props.onFilter} doNotRender={this.props.doNotRenderFilter}/>}
                 {this.state.detailOpened && this.props.detailComponent}
             </>
         )

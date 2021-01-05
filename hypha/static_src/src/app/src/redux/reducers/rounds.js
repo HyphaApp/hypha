@@ -9,6 +9,7 @@ import {
     START_LOADING_ROUND,
     UPDATE_ROUND,
     UPDATE_ROUNDS,
+    CLEAR_ALL_ROUNDS,
     FAIL_LOADING_ROUNDS,
     START_LOADING_ROUNDS,
 } from '@actions/submissions';
@@ -85,6 +86,7 @@ function roundsByID(state = {}, action) {
                 [action.roundID]: round(state[action.roundID], action)
             };
         case UPDATE_ROUNDS:
+            
             return {
                 ...state,
                 ...action.data.results.reduce((acc, value) => {
@@ -95,6 +97,8 @@ function roundsByID(state = {}, action) {
                     return acc;
                 }, {}),
             };
+        case CLEAR_ALL_ROUNDS:
+            return {}
         default:
             return state;
     }

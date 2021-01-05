@@ -21,11 +21,17 @@ class SubmissionsByStatusApp extends React.Component {
         this.props.setStatuses(this.props.statuses);
     }
 
+    onfilter = () => { 
+        this.props.setStatuses(this.props.statuses);
+    }
+
     render() {
         return <SwitcherApp
                 detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions}/>}
                 switcherSelector={'submissions-by-status-app-react-switcher'}
-                pageContent={this.props.pageContent} />;
+                pageContent={this.props.pageContent}
+                doNotRenderFilter={['status']}
+                onFilter={this.onfilter} />;
     }
 }
 
@@ -35,7 +41,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => {
     return {
-        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));
+        setStatuses: (statuses) => {
+          dispatch(setCurrentStatuses(statuses));
         },
     }
 };

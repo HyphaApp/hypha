@@ -20,6 +20,7 @@ import {
     CLEAR_CURRENT_DETERMINATION,
     FETCH_DETERMINATION_DRAFT,
     CLEAR_DETERMINATION_DRAFT,
+    CLEAR_ALL_SUBMISSIONS
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -110,7 +111,6 @@ function submissionsByID(state = {}, action) {
             };
         case UPDATE_BY_STATUSES:
         case UPDATE_SUBMISSIONS_BY_ROUND:
-        // debugger
             return {
                 ...state,
                 ...action.data.results.reduce((newItems, newSubmission) => {
@@ -124,6 +124,8 @@ function submissionsByID(state = {}, action) {
                     return newItems;
                 }, {}),
             };
+        case CLEAR_ALL_SUBMISSIONS:
+            return {}
         default:
             return state;
     }
@@ -136,6 +138,8 @@ function currentSubmission(state = null, action) {
             return action.id;
         case CLEAR_CURRENT_SUBMISSION:
             return null;
+        case CLEAR_ALL_SUBMISSIONS:
+                return null;
         default:
             return state;
     }

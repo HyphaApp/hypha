@@ -8,6 +8,8 @@ import {
     getSubmissionIDsForCurrentStatuses,
 } from '@selectors/statuses';
 
+import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors';
+
 const getSubmissions = state => state.submissions.byID;
 
 const getCurrentSubmissionID = state => state.submissions.current;
@@ -26,6 +28,7 @@ const getDeterminationDraftStatus = state => state.submissions.isDeterminationDr
 
 const getSubmissionsForListing = state => Object.values(state.submissions.byID)
 
+const getSubmissionFilters = state => SelectSelectedFilters(state)
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -38,6 +41,9 @@ const getCurrentRoundSubmissions = createSelector(
 const getCurrentStatusesSubmissions = createSelector(
     [ getSubmissionIDsForCurrentStatuses, getSubmissions],
     (submissionIDs, submissions) => {
+        if(!Object.keys(submissions).length) {
+            return []
+        }
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
@@ -80,4 +86,5 @@ export {
     getSubmissionErrorState,
     getSubmissionOfID,
     getCurrentStatusesSubmissions,
+    getSubmissionFilters
 };

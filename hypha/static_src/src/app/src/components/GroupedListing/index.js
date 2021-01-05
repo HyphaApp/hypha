@@ -42,7 +42,6 @@ export default class GroupedListing extends React.Component {
 
     componentDidMount() {
         this.orderItems();
-
         // get the height of the dropdown container
         this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
@@ -53,9 +52,8 @@ export default class GroupedListing extends React.Component {
             this.orderItems();
         }
 
-        if ( this.props.shouldSelectFirst ){
+        if (this.props.shouldSelectFirst && this.props.items.length ){
             const newItem = this.props.activeItem
-
             // If we dont have an active item, then get one
             if ( !newItem ) {
                 const firstGroup = this.state.orderedItems[0]
@@ -69,8 +67,8 @@ export default class GroupedListing extends React.Component {
 
     getGroupedItems() {
         const { groupBy, items } = this.props;
-
         return items.reduce((tmpItems, v) => {
+            
             const groupByValue = v[groupBy];
             if (!(groupByValue in tmpItems)) {
                 tmpItems[groupByValue] = [];
@@ -79,7 +77,7 @@ export default class GroupedListing extends React.Component {
             return tmpItems;
         }, {});
     }
-
+ 
     orderItems() {
         const groupedItems = this.getGroupedItems();
         const { order = [] } = this.props;
@@ -110,7 +108,7 @@ export default class GroupedListing extends React.Component {
             </ListingGroup>
         );
     }
-
+    
     render() {
         const { isLoading, isErrored, errorMessage } = this.props;
         const passProps = {
@@ -120,12 +118,11 @@ export default class GroupedListing extends React.Component {
             errorMessage,
             isErrored
         };
-
+ 
         // set css custom prop to allow scrolling from dropdown to last item in the list
         if (this.listRef.current) {
             document.documentElement.style.setProperty('--last-listing-item-height', this.listRef.current.lastElementChild.offsetHeight + 'px');
         }
-
         return  (
             <div className="grouped-listing">
                 <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>

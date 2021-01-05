@@ -13,7 +13,8 @@ class AllSubmissionsApp extends React.Component {
     static propTypes = {
         pageContent: PropTypes.node.isRequired,
         setStatuses: PropTypes.func.isRequired,
-        submissions: PropTypes.array
+        submissions: PropTypes.array,
+        doNotRenderFilter: PropTypes.array
     };
 
 
@@ -21,12 +22,18 @@ class AllSubmissionsApp extends React.Component {
         this.props.setStatuses([]);
     }
 
+    onfilter = () => {
+      this.props.setStatuses([])
+    }
+
     render() {
         return (
             <SwitcherApp
-                detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions} groupBy = "all"/>}
+                detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions} groupBy="all"/>}
                 switcherSelector={'submissions-all-react-app-switcher'}
-                pageContent={this.props.pageContent} />
+                doNotRenderFilter={[]}
+                pageContent={this.props.pageContent}
+                onFilter={this.onfilter} />
         )
     }
 }

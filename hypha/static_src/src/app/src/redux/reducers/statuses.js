@@ -6,6 +6,7 @@ import {
     START_LOADING_BY_STATUSES,
     FAIL_LOADING_BY_STATUSES,
     UPDATE_SUBMISSION,
+    CLEAR_ALL_STATUSES
 } from '@actions/submissions';
 
 
@@ -41,6 +42,8 @@ function submissionsByStatuses(state = {}, action) {
                 ...state,
                 [action.data.status]: [...(state[action.data.status] || []), action.data.id],
             };
+        case CLEAR_ALL_STATUSES:
+            return {}
         default:
             return state
     }
