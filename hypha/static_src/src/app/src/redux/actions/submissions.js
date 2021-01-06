@@ -160,7 +160,6 @@ export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
     if (urlParams.has('submission')) {
         const activeId = Number(urlParams.get('submission'));
         const submissionID = getCurrentSubmissionID(getState());
-
         if (activeId !== null  && submissionID !== activeId) {
             dispatch(setCurrentSubmission(activeId));
         }
@@ -188,7 +187,6 @@ const setSubmissionParam = (id) => (dispatch, getState) => {
 
     const shouldSet = !urlID && !!id;
     const shouldUpdate = id !== null  && submissionID !== id && urlID !== id;
-
     if (shouldSet || shouldUpdate) {
         dispatch(push({search: `?submission=${id}`}));
     } else if (id === null) {

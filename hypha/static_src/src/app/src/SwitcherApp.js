@@ -50,9 +50,8 @@ class SwitcherApp extends React.Component {
 
 
     componentDidUpdate(prevProps) {
-        if (prevProps.searchParam !== this.props.searchParam) {
+        if (prevProps.searchParam !== this.props.searchParam && !document.body.classList.contains('app-open')){
             const success = this.props.processParams(this.props.searchParam)
-
             if (!success) {
                 this.closeDetail()
             } else {

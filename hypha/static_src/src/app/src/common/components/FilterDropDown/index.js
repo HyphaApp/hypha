@@ -11,13 +11,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Input from '@material-ui/core/Input';
 
 const styles = {
-  formControl:{
-    minWidth: 200                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ,
-    maxWidth: 200,
+  formControl: {
+    width: '100%',
     marginRight: 10,
-    height: 40
-  },
-};
+    height: 40,
+  }
+}
 
 class FilterDropDown extends React.PureComponent {
 
