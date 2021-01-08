@@ -15,6 +15,7 @@ module.exports = (webpackEnv) => {
         entry: {
             submissionsByRound: COMMON_ENTRY.concat(['./src/submissionsByRoundIndex']),
             submissionsByStatus: COMMON_ENTRY.concat(['./src/submissionsByStatusIndex']),
+            allSubmissions: COMMON_ENTRY.concat(['./src/allSubmissionsIndex'])
         },
 
         output: {

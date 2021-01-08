@@ -14,6 +14,8 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.tables import get_reviewers
+from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 
 from .filters import CommentFilter, SubmissionsFilter
@@ -52,6 +54,52 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
         return ApplicationSubmission.objects.all().prefetch_related(
             Prefetch('reviews', Review.objects.submitted()),
         )
+
+
+class SubmissionFilters(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def filter_unique_options(self, options):
+        unique_items = [dict(item) for item in {tuple(option.items()) for option in options}]
+        return list(filter(lambda x: len(x.get("label")), unique_items))
+
+    def format(self, filterKey, label, options):
+        return {
+            "filterKey": filterKey,
+            "label": label,
+            "options": options
+        }
+
+    def get(self, request, format=None):
+        submissions = ApplicationSubmission.objects.for_table(user=self.request.user)
+        filter_options = [
+            self.format("fund", "Funds", [
+                {"key": submission.page.id, "label": submission.page.title}
+                for submission in submissions.distinct('page')
+            ]),
+            self.format("round", "Rounds", [
+                {"key": submission.round.id, "label": submission.round.title}
+                for submission in submissions.distinct('round').exclude(round__isnull=True)
+            ]),
+            self.format("status", "Statuses", [
+                {'key': list(STATUSES.get(label)), 'label': label}
+                for label in dict(STATUSES)
+            ]),
+            self.format("screening_statuses", "Screenings", self.filter_unique_options([
+                {"key": screening.get("id"), "label": screening.get("title")}
+                for submission in submissions.distinct('screening_statuses')
+                for screening in submission.screening_statuses.values()
+            ])),
+            self.format("lead", "Leads", [
+                {"key": submission.lead.id, "label": submission.lead.full_name}
+                for submission in submissions.distinct('lead')
+            ]),
+            self.format("reviewers", "Reviewers", self.filter_unique_options([
+                {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
+                for reviewer in get_reviewers(request).values()
+            ])),
+        ]
+        return Response(filter_options)
 
 
 class SubmissionActionViewSet(

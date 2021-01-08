@@ -17,6 +17,7 @@ import {
     getCurrentRound,
     getCurrentRoundID,
 } from '@selectors/rounds';
+import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors'
 
 
 const loadData = props => {
@@ -35,6 +36,7 @@ class ByStatusListing extends React.Component {
         setCurrentItem: PropTypes.func,
         activeSubmission: PropTypes.number,
         shouldSelectFirst: PropTypes.bool,
+        filters: PropTypes.array
     };
 
     componentDidMount() {
@@ -47,7 +49,7 @@ class ByStatusListing extends React.Component {
     componentDidUpdate(prevProps) {
         const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
-        if (roundID && prevProps.roundID !== roundID) {
+      if (roundID && prevProps.roundID !== roundID || this.props.filters != prevProps.filters) {
             loadData(this.props)
         }
     }
@@ -90,6 +92,7 @@ const mapStateToProps = state => ({
     round: getCurrentRound(state),
     errorMessage: getSubmissionsByRoundError(state),
     activeSubmission: getCurrentSubmissionID(state),
+    filters: SelectSelectedFilters(state)
 })
 
 const mapDispatchToProps = dispatch => ({

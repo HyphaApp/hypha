@@ -9,7 +9,6 @@ import {
     getRoundsErrored,
 } from '@selectors/rounds'
 import {
-    getCurrentStatusesSubmissions,
     getCurrentSubmissionID,
 } from '@selectors/submissions';
 import {
@@ -18,17 +17,16 @@ import {
 } from '@selectors/statuses';
 
 const GroupByRoundDetailView = props => {
-    const listing = <ByRoundListing submissionStatuses={props.submissionStatuses} />
+    const listing = <ByRoundListing submissionStatuses={props.submissionStatuses} groupBy = {props.groupBy && props.groupBy}/>
     const { isLoading, isErrored, submissions, submissionID, errorMessage } = props
     const isEmpty = submissions.length === 0
-    const activeSubmision = !!submissionID
-
+    const activeSubmission = !!submissionID
     return (
         <DetailView
             isEmpty={isEmpty}
             listing={listing}
             isLoading={isLoading}
-            showSubmision={activeSubmision}
+            showSubmision={activeSubmission}
             isErrored={isErrored}
             errorMessage={errorMessage}
         />
@@ -42,6 +40,7 @@ GroupByRoundDetailView.propTypes = {
     isLoading: PropTypes.bool,
     isErrored: PropTypes.bool,
     errorMessage: PropTypes.string,
+    groupBy: PropTypes.string
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -49,7 +48,6 @@ const mapStateToProps = (state, ownProps) => ({
     isLoading: (
         getByStatusesLoading(state) || getRoundsFetching(state)
     ),
-    submissions: getCurrentStatusesSubmissions(state),
     submissionID: getCurrentSubmissionID(state),
 })
 

@@ -10,7 +10,6 @@ import {
 
 import {
     getCurrentStatuses,
-    getSubmissionIDsForCurrentStatuses,
 } from '@selectors/statuses';
 
 import {
@@ -20,16 +19,12 @@ import {
     getCurrentRoundSubmissionIDs,
 } from '@selectors/rounds';
 
-import {
-    MESSAGE_TYPES,
-    addMessage,
-} from '@actions/messages';
+import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors';
 
 // Round
 export const UPDATE_ROUND = 'UPDATE_ROUND';
 export const START_LOADING_ROUND = 'START_LOADING_ROUND';
 export const FAIL_LOADING_ROUND = 'FAIL_LOADING_ROUND';
-
 
 // Rounds
 export const UPDATE_ROUNDS = 'UPDATE_ROUNDS';
@@ -41,19 +36,23 @@ export const SET_CURRENT_SUBMISSION_ROUND = 'SET_CURRENT_SUBMISSION_ROUND';
 export const UPDATE_SUBMISSIONS_BY_ROUND = 'UPDATE_SUBMISSIONS_BY_ROUND';
 export const START_LOADING_SUBMISSIONS_BY_ROUND = 'START_LOADING_SUBMISSIONS_BY_ROUND';
 export const FAIL_LOADING_SUBMISSIONS_BY_ROUND = 'FAIL_LOADING_SUBMISSIONS_BY_ROUND';
+export const CLEAR_ALL_ROUNDS = 'CLEAR_ALL_ROUNDS'
 
 // Submissions by statuses
 export const SET_CURRENT_STATUSES = "SET_CURRENT_STATUSES_FOR_SUBMISSIONS";
 export const UPDATE_BY_STATUSES = 'UPDATE_SUBMISSIONS_BY_STATUSES';
 export const START_LOADING_BY_STATUSES = 'START_LOADING_SUBMISSIONS_BY_STATUSES';
 export const FAIL_LOADING_BY_STATUSES = 'FAIL_LOADING_SUBMISSIONS_BY_STATUSES';
+export const CLEAR_ALL_STATUSES = 'CLEAR_ALL_STATUSES'
 
 // Submissions
 export const SET_CURRENT_SUBMISSION = 'SET_CURRENT_SUBMISSION';
 export const START_LOADING_SUBMISSION = 'START_LOADING_SUBMISSION';
 export const FAIL_LOADING_SUBMISSION = 'FAIL_LOADING_SUBMISSION';
 export const UPDATE_SUBMISSION = 'UPDATE_SUBMISSION';
+export const UPDATE_SUBMISSION_BY_FILTER = 'UPDATE_SUBMISSION_BY_FILTER';
 export const CLEAR_CURRENT_SUBMISSION = 'CLEAR_CURRENT_SUBMISSION';
+export const CLEAR_ALL_SUBMISSIONS = 'CLEAR_ALL_SUBMISSIONS';
 
 // Execute submission action
 export const START_EXECUTING_SUBMISSION_ACTION = 'START_EXECUTING_SUBMISSION_ACTION';
@@ -89,6 +88,18 @@ export const clearDeterminationDraftAction = () => ({
     type: CLEAR_DETERMINATION_DRAFT,
 });
 
+export const clearAllSubmissionsAction = () => ({
+    type: CLEAR_ALL_SUBMISSIONS,
+});
+
+export const clearAllStatusesAction = () => ({
+    type: CLEAR_ALL_STATUSES,
+});
+
+export const clearAllRoundsAction = () => ({
+    type: CLEAR_ALL_ROUNDS,
+});
+
 export const toggleDeterminationFormAction = (status) =>({
     type : TOGGLE_DETERMINATION_FORM,
     status
@@ -105,7 +116,7 @@ export const clearCurrentDeterminationAction = () => ({
 
 export const fetchReviewDraft = (submissionID) => ({
     [CALL_API]: {
-        types: [ START_LOADING_SUBMISSION, FETCH_REVIEW_DRAFT, FAIL_LOADING_SUBMISSION],
+        types: [ START_LOADING_SUBMISSION, FETCH_REVIEW_DRAFT, CLEAR_REVIEW_DRAFT],
         endpoint: api.fetchReviewDraft(submissionID),
     },
     submissionID,
@@ -135,16 +146,20 @@ export const setCurrentSubmissionRound = (id) => (dispatch) => {
         id,
     });
 
+    dispatch(clearAllStatusesAction())
+    dispatch(clearAllSubmissionsAction())
+    dispatch(clearAllRoundsAction())
+
     return dispatch(loadCurrentRoundSubmissions());
 };
 
 
 export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
+    
     const urlParams = new URLSearchParams(params);
     if (urlParams.has('submission')) {
         const activeId = Number(urlParams.get('submission'));
         const submissionID = getCurrentSubmissionID(getState());
-
         if (activeId !== null  && submissionID !== activeId) {
             dispatch(setCurrentSubmission(activeId));
         }
@@ -172,7 +187,6 @@ const setSubmissionParam = (id) => (dispatch, getState) => {
 
     const shouldSet = !urlID && !!id;
     const shouldUpdate = id !== null  && submissionID !== id && urlID !== id;
-
     if (shouldSet || shouldUpdate) {
         dispatch(push({search: `?submission=${id}`}));
     } else if (id === null) {
@@ -197,7 +211,6 @@ export const setCurrentSubmission = id => (dispatch, getState) => {
     dispatch(clearCurrentDeterminationAction())
     dispatch(clearDeterminationDraftAction())
     dispatch(setSubmissionParam(id));
-
     return dispatch({
         type: SET_CURRENT_SUBMISSION,
         id,
@@ -220,7 +233,7 @@ export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
 export const loadRounds = () => (dispatch, getState) => {
     const state = getState()
     const rounds = getRounds(state)
-
+    
     if ( rounds && Object.keys(rounds).length !== 0 ) {
         return null
     }
@@ -231,20 +244,12 @@ export const loadRounds = () => (dispatch, getState) => {
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentRoundSubmissionIDs(state)
-
-    if ( submissions && submissions.length !== 0 ) {
+    const filters = SelectSelectedFilters(state)
+    if ( submissions && submissions.length !== 0 && !filters ) {
         return null
     }
 
-    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state))).then(() => {
-        const state = getState()
-        const ids = getCurrentRoundSubmissionIDs(state)
-        const currentSubmissionID = getCurrentSubmissionID(state)
-        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
-            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
-            return dispatch(setCurrentSubmission(null))
-        }
-    })
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state), filters))
 }
 
 
@@ -264,16 +269,18 @@ const fetchRounds = () => ({
     },
 })
 
-const fetchSubmissionsByRound = (roundID) => ({
+const fetchSubmissionsByRound = (roundID, filters) => ({
     [CALL_API]: {
         types: [ START_LOADING_SUBMISSIONS_BY_ROUND, UPDATE_SUBMISSIONS_BY_ROUND, FAIL_LOADING_SUBMISSIONS_BY_ROUND],
-        endpoint: api.fetchSubmissionsByRound(roundID),
+        endpoint: api.fetchSubmissionsByRound(roundID, filters),
     },
     roundID,
+    filters
 })
 
 
 export const setCurrentStatuses = (statuses) => (dispatch) => {
+    
     if(!Array.isArray(statuses)) {
         throw new Error("Statuses have to be an array of statuses");
     }
@@ -282,38 +289,34 @@ export const setCurrentStatuses = (statuses) => (dispatch) => {
         type: SET_CURRENT_STATUSES, 
         statuses,
     });
-
+    dispatch(clearAllRoundsAction())
+    dispatch(clearAllStatusesAction())
+    dispatch(clearAllSubmissionsAction())
     return dispatch(loadSubmissionsForCurrentStatus());
 };
 
 
-const fetchSubmissionsByStatuses = (statuses) => {
+const fetchSubmissionsByStatuses = (statuses, filters) => { 
+    
     return {
         [CALL_API]: {
             types: [ START_LOADING_BY_STATUSES, UPDATE_BY_STATUSES, FAIL_LOADING_BY_STATUSES],
-            endpoint: api.fetchSubmissionsByStatuses(statuses),
+            endpoint: api.fetchSubmissionsByStatuses(statuses, filters),
         },
         statuses,
+        filters,
     };
 };
 
 export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
     const state = getState()
     const submissions = getCurrentStatusesSubmissions(state)
-
-    if ( submissions && submissions.length !== 0 ) {
+    const filters = SelectSelectedFilters(state)
+    if ( submissions && submissions.length !== 0 && !filters ) {
         return null
     }
 
-    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state))).then(() => {
-        const state = getState()
-        const ids = getSubmissionIDsForCurrentStatuses(state)
-        const currentSubmissionID = getCurrentSubmissionID(state)
-        if (currentSubmissionID !== null &&  !ids.includes(currentSubmissionID)) {
-            dispatch(addMessage('The selected submission is not available in this view', MESSAGE_TYPES.WARNING))
-            return dispatch(setCurrentSubmission(null))
-        }
-    })
+    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state), filters))
 }
 
 const fetchSubmission = (submissionID) => ({

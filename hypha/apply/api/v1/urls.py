@@ -14,6 +14,7 @@ from .views import (
     RoundViewSet,
     SubmissionActionViewSet,
     SubmissionCommentViewSet,
+    SubmissionFilters,
     SubmissionViewSet,
 )
 
@@ -35,6 +36,7 @@ submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewS
 
 urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
+    path('submissions_filter/', SubmissionFilters.as_view(), name='submissions-filter')
 ]
 
 urlpatterns = router.urls + submission_router.urls + urlpatterns

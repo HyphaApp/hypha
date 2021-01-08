@@ -19,12 +19,18 @@ class SubmissionsByRoundApp extends React.Component {
         this.props.setSubmissionRound(this.props.roundID);
     }
 
+    onfilter = () => {
+        this.props.setSubmissionRound(this.props.roundID);
+    }
+
     render() {
         return (
             <SwitcherApp
                 detailComponent={<GroupByStatusDetailView />}
                 switcherSelector={'submissions-by-round-app-react-switcher'}
-                pageContent={this.props.pageContent} />
+                pageContent={this.props.pageContent}
+                doNotRenderFilter={['round', 'fund', 'lead']}
+                onFilter={this.onfilter} />
         )
     }
 }

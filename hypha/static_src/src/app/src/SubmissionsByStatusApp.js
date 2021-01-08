@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
 import { setCurrentStatuses } from '@actions/submissions';
+import { getCurrentStatusesSubmissions } from '@selectors/submissions';
 
 
 class SubmissionsByStatusApp extends React.Component {
@@ -13,27 +14,40 @@ class SubmissionsByStatusApp extends React.Component {
         pageContent: PropTypes.node.isRequired,
         statuses: PropTypes.arrayOf(PropTypes.string),
         setStatuses: PropTypes.func.isRequired,
+        submissions: PropTypes.array
     };
 
     componentDidMount() {
         this.props.setStatuses(this.props.statuses);
     }
 
+    onfilter = () => { 
+        this.props.setStatuses(this.props.statuses);
+    }
+
     render() {
         return <SwitcherApp
-                detailComponent={<GroupByRoundDetailView />}
+                detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions}/>}
                 switcherSelector={'submissions-by-status-app-react-switcher'}
-                pageContent={this.props.pageContent} />;
+                pageContent={this.props.pageContent}
+                doNotRenderFilter={['status']}
+                onFilter={this.onfilter} />;
     }
 }
 
+const mapStateToProps = (state, ownProps) => ({
+    submissions: getCurrentStatusesSubmissions(state),
+})
+
 const mapDispatchToProps = dispatch => {
     return {
-        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));},
+        setStatuses: (statuses) => {
+          dispatch(setCurrentStatuses(statuses));
+        },
     }
 };
 
 
 export default hot(module)(
-    connect(null, mapDispatchToProps)(SubmissionsByStatusApp)
+    connect(mapStateToProps, mapDispatchToProps)(SubmissionsByStatusApp)
 );
