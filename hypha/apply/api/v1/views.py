@@ -14,7 +14,13 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from hypha.apply.funds.tables import get_reviewers, get_round_leads, get_screening_statuses, get_used_rounds, get_used_funds
+from hypha.apply.funds.tables import (
+    get_reviewers,
+    get_round_leads,
+    get_screening_statuses,
+    get_used_funds,
+    get_used_rounds,
+)
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 

@@ -48,14 +48,14 @@ class SubmissionsFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
-        def filter_active(self, qs, name, value):
-            if value is None:
-                return qs
+    def filter_active(self, qs, name, value):
+        if value is None:
+            return qs
 
-            if value:
-                return qs.active()
-            else:
-                return qs.inactive()
+        if value:
+            return qs.active()
+        else:
+            return qs.inactive()
 
 
 class NewerThanFilter(filters.ModelChoiceFilter):
