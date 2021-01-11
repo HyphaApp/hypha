@@ -14,13 +14,6 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from hypha.apply.funds.tables import (
-    get_reviewers,
-    get_round_leads,
-    get_screening_statuses,
-    get_used_funds,
-    get_used_rounds,
-)
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 
@@ -38,6 +31,13 @@ from .serializers import (
     SubmissionDetailSerializer,
     SubmissionListSerializer,
     UserSerializer,
+)
+from .utils import (
+    get_reviewers,
+    get_round_leads,
+    get_screening_statuses,
+    get_used_funds,
+    get_used_rounds,
 )
 
 
@@ -82,11 +82,11 @@ class SubmissionFilters(APIView):
         filter_options = [
             self.format("fund", "Funds", [
                 {"key": fund.get("id"), "label": fund.get("title")}
-                for fund in get_used_funds(request).values()
+                for fund in get_used_funds().values()
             ]),
             self.format("round", "Rounds", [
                 {"key": round.get("id"), "label": round.get("title")}
-                for round in get_used_rounds(request).values()
+                for round in get_used_rounds().values()
             ]),
             self.format("status", "Statuses", [
                 {'key': list(STATUSES.get(label)), 'label': label}
@@ -94,15 +94,15 @@ class SubmissionFilters(APIView):
             ]),
             self.format("screening_statuses", "Screenings", self.filter_unique_options([
                 {"key": screening.get("id"), "label": screening.get("title")}
-                for screening in get_screening_statuses(request).values()
+                for screening in get_screening_statuses().values()
             ])),
             self.format("lead", "Leads", [
                 {"key": lead.get('id'), "label": lead.get('full_name') or lead.get('email')}
-                for lead in get_round_leads(request).values()
+                for lead in get_round_leads().values()
             ]),
             self.format("reviewers", "Reviewers", self.filter_unique_options([
                 {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
-                for reviewer in get_reviewers(request).values()
+                for reviewer in get_reviewers().values()
             ])),
         ]
         return Response(filter_options)
