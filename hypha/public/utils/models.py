@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -244,6 +245,12 @@ class SystemMessagesSettings(BaseSetting):
         help_text='Mobil site logo (if not set default will be used)',
     )
 
+    site_logo_link = models.URLField(
+        default='',
+        blank=True,
+        help_text='Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".',
+    )
+
     footer_content = models.TextField(
         "Footer content",
         default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
@@ -264,6 +271,7 @@ class SystemMessagesSettings(BaseSetting):
         MultiFieldPanel([
             FieldPanel('site_logo_default'),
             FieldPanel('site_logo_mobile'),
+            FieldPanel('site_logo_link'),
         ], 'Site logo'),
         FieldPanel('footer_content'),
         MultiFieldPanel([
