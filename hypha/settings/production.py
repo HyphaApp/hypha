@@ -18,9 +18,10 @@ except ImportError:
 if 'MAILGUN_API_KEY' in env:
     EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
     ANYMAIL = {
-        "MAILGUN_API_KEY": env['MAILGUN_API_KEY'],
-        "MAILGUN_SENDER_DOMAIN": env.get('EMAIL_HOST', None),
-        "WEBHOOK_SECRET": env.get('ANYMAIL_WEBHOOK_SECRET', None)
+        'MAILGUN_API_KEY': env['MAILGUN_API_KEY'],
+        'MAILGUN_SENDER_DOMAIN': env.get('EMAIL_HOST', None),
+        'MAILGUN_API_URL': env.get('MAILGUN_API_URL', 'https://api.mailgun.net/v3'),
+        'WEBHOOK_SECRET': env.get('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
 # Sentry configuration.
@@ -35,7 +36,7 @@ if 'SENTRY_DSN' in env:
     )
 
 # Heroku configuration.
-# Set ON_HEROKU to true in Config Vars or via cli "heroku config:set ON_HEROKU=true".
+# Set ON_HEROKU to true in Config Vars or via cli 'heroku config:set ON_HEROKU=true'.
 if 'ON_HEROKU' in env:
     import django_heroku
     django_heroku.settings(locals())

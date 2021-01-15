@@ -237,13 +237,13 @@ FEED_CACHE_TIMEOUT = 600
 
 if 'REDIS_URL' in env:
     CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": env['REDIS_URL'],
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': env['REDIS_URL'],
         },
-        "wagtailcache": {
-            "BACKEND": "wagtailcache.compat_backends.django_redis.RedisCache",
-            "LOCATION": env['REDIS_URL'],
+        'wagtailcache': {
+            'BACKEND': 'wagtailcache.compat_backends.django_redis.RedisCache',
+            'LOCATION': env['REDIS_URL'],
             'KEY_PREFIX': 'wagtailcache',
             'TIMEOUT': WAGTAIL_CACHE_TIMEOUT,
         }
@@ -440,9 +440,9 @@ LOGGING = {
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "hypha"
+WAGTAIL_SITE_NAME = 'hypha'
 
-WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
+WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
 WAGTAILADMIN_RICH_TEXT_EDITORS = {
@@ -524,8 +524,8 @@ BLEACH_STRIP_COMMENTS = True
 # File Field settings
 FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
 
-# Accept attribute in input tag of type file needs filename extensions, starting with a period (".") character.
-FILE_ACCEPT_ATTR_VALUE = ", ".join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
+# Accept attribute in input tag of type file needs filename extensions, starting with a period ('.') character.
+FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 # Hijack Settings
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
@@ -709,7 +709,7 @@ if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
     SALESFORCE_QUERY_TIMEOUT = (30, 30)  # (connect timeout, data timeout)
 
     DATABASE_ROUTERS = [
-        "salesforce.router.ModelRouter"
+        'salesforce.router.ModelRouter'
     ]
 
 
