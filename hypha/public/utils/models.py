@@ -268,8 +268,8 @@ class SystemMessagesSettings(BaseSetting):
 
     panels = [
         MultiFieldPanel([
-            FieldPanel('site_logo_default'),
-            FieldPanel('site_logo_mobile'),
+            ImageChooserPanel('site_logo_default'),
+            ImageChooserPanel('site_logo_mobile'),
             FieldPanel('site_logo_link'),
         ], 'Site logo'),
         FieldPanel('footer_content'),
