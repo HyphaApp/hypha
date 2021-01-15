@@ -1,8 +1,8 @@
 from django import template
 
-from wagtail.core.models import Page
 from wagtail.core.utils import camelcase_to_underscore
 
+from hypha.public.home.models import HomePage
 from hypha.public.utils.models import SocialMediaSettings, SystemMessagesSettings
 
 register = template.Library()
@@ -41,6 +41,6 @@ def site_logo_link(site):
     if SystemMessagesSettings.for_site(site).site_logo_link:
         logo_link = SystemMessagesSettings.for_site(site).site_logo_link
     else:
-        home = Page.objects.filter(slug='home').first()
-        logo_link = home.url
+        home = HomePage.objects.first().get_site()
+        logo_link = home.root_url
     return logo_link
