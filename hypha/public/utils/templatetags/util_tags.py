@@ -1,5 +1,4 @@
 from django import template
-from django.urls import reverse
 
 from wagtail.core.models import Page
 from wagtail.core.utils import camelcase_to_underscore
