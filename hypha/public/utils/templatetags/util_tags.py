@@ -1,5 +1,4 @@
 from django import template
-
 from wagtail.core.utils import camelcase_to_underscore
 
 from hypha.public.home.models import HomePage
