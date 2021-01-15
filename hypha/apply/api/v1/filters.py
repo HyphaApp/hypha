@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django_filters import rest_framework as filters
 from wagtail.core.models import Page
@@ -9,9 +8,10 @@ from hypha.apply.funds.models import (
     FundType,
     LabType,
     RoundsAndLabs,
-    ScreeningStatus,
 )
 from hypha.apply.funds.workflow import PHASES
+
+from .utils import get_reviewers, get_round_leads, get_screening_statuses
 
 
 class RoundLabFilter(filters.ModelChoiceFilter):
@@ -33,21 +33,20 @@ class SubmissionsFilter(filters.FilterSet):
     )
     screening_statuses = filters.ModelMultipleChoiceFilter(
         field_name='screening_statuses',
-        queryset=ScreeningStatus.objects.all(),
+        queryset=get_screening_statuses(),
     )
     reviewers = filters.ModelMultipleChoiceFilter(
         field_name='reviewers',
-        queryset=get_user_model().objects.all(),
+        queryset=get_reviewers(),
     )
     lead = filters.ModelMultipleChoiceFilter(
         field_name='lead',
-        queryset=get_user_model().objects.all(),
+        queryset=get_round_leads(),
     )
 
-
-class Meta:
-    model = ApplicationSubmission
-    fields = ('status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
     def filter_active(self, qs, name, value):
         if value is None:

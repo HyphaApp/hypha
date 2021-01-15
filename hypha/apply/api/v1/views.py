@@ -14,7 +14,6 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from hypha.apply.funds.tables import get_reviewers
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 
@@ -32,6 +31,13 @@ from .serializers import (
     SubmissionDetailSerializer,
     SubmissionListSerializer,
     UserSerializer,
+)
+from .utils import (
+    get_reviewers,
+    get_round_leads,
+    get_screening_statuses,
+    get_used_funds,
+    get_used_rounds,
 )
 
 
@@ -57,7 +63,9 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SubmissionFilters(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )
 
     def filter_unique_options(self, options):
         unique_items = [dict(item) for item in {tuple(option.items()) for option in options}]
@@ -71,15 +79,14 @@ class SubmissionFilters(APIView):
         }
 
     def get(self, request, format=None):
-        submissions = ApplicationSubmission.objects.for_table(user=self.request.user)
         filter_options = [
             self.format("fund", "Funds", [
-                {"key": submission.page.id, "label": submission.page.title}
-                for submission in submissions.distinct('page')
+                {"key": fund.get("id"), "label": fund.get("title")}
+                for fund in get_used_funds().values()
             ]),
             self.format("round", "Rounds", [
-                {"key": submission.round.id, "label": submission.round.title}
-                for submission in submissions.distinct('round').exclude(round__isnull=True)
+                {"key": round.get("id"), "label": round.get("title")}
+                for round in get_used_rounds().values()
             ]),
             self.format("status", "Statuses", [
                 {'key': list(STATUSES.get(label)), 'label': label}
@@ -87,16 +94,15 @@ class SubmissionFilters(APIView):
             ]),
             self.format("screening_statuses", "Screenings", self.filter_unique_options([
                 {"key": screening.get("id"), "label": screening.get("title")}
-                for submission in submissions.distinct('screening_statuses')
-                for screening in submission.screening_statuses.values()
+                for screening in get_screening_statuses().values()
             ])),
             self.format("lead", "Leads", [
-                {"key": submission.lead.id, "label": submission.lead.full_name}
-                for submission in submissions.distinct('lead')
+                {"key": lead.get('id'), "label": lead.get('full_name') or lead.get('email')}
+                for lead in get_round_leads().values()
             ]),
             self.format("reviewers", "Reviewers", self.filter_unique_options([
                 {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
-                for reviewer in get_reviewers(request).values()
+                for reviewer in get_reviewers().values()
             ])),
         ]
         return Response(filter_options)

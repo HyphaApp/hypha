@@ -1,10 +1,17 @@
 from collections import OrderedDict
 
 from django import forms
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 from tinymce.widgets import TinyMCE
+from wagtail.core.models import Page
 
+from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from hypha.apply.review.fields import ScoredAnswerField, ScoredAnswerWidget
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
+from hypha.apply.users.groups import STAFF_GROUP_NAME
+
+User = get_user_model()
 
 
 def get_field_kwargs(form_field):
@@ -79,3 +86,26 @@ def get_field_widget(form_field):
         ]
         widget['widgets'] = widgets
     return widget
+
+
+def get_round_leads():
+    return User.objects.filter(submission_lead__isnull=False).distinct()
+
+
+def get_reviewers():
+    """ All assigned reviewers, staff or admin """
+    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
+
+
+def get_screening_statuses():
+    return ScreeningStatus.objects.filter(
+        id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
+
+
+def get_used_rounds():
+    return Round.objects.filter(submissions__isnull=False).distinct()
+
+
+def get_used_funds():
+    # Use page to pick up on both Labs and Funds
+    return Page.objects.filter(applicationsubmission__isnull=False).distinct()
