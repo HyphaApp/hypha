@@ -38,7 +38,7 @@
         <header class="header">
 
             <div class="header__inner wrapper wrapper--large">
-                <a href="{% slugurl 'home' %}" aria-label="Home link">
+                <a href="{% site_logo_link current_site %}" aria-label="Home link">
                     {% if settings.utils.SystemMessagesSettings.site_logo_default %}
                         {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
                         <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
