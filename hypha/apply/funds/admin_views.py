@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
-from wagtail.admin.views.pages import get_valid_next_url_from_request
+from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.contrib.modeladmin.views import CreateView
 from wagtail.core import hooks
 from wagtail.core.models import Page
