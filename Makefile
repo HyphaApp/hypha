@@ -12,12 +12,12 @@ lint: sort style
 
 .PHONY: sort
 sort:
-	@echo "Checking imports with isort" && isort --check-only --diff
+	@echo "Checking imports with isort" && isort --check-only --diff .
 
 .PHONY: sort-fix
 sort-fix:
-	@echo "Fixing imports with isort" && isort --apply
+	@echo "Fixing imports with isort" && isort .
 
 .PHONY: style
 style:
-	@echo "Checking code style with flake8" && flake8
+	@echo "Checking code style with flake8" && flake8 .
