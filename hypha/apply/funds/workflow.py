@@ -5,7 +5,6 @@ from enum import Enum
 from django.conf import settings
 from django.utils.text import slugify
 
-
 """
 This file defines classes which allow you to compose workflows based on the following structure:
 

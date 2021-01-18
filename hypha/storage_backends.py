@@ -4,7 +4,6 @@ from django.conf import settings
 from django.utils.encoding import filepath_to_uri
 from storages.backends.s3boto3 import S3Boto3Storage
 
-
 """
 This app defines the storage classes that are used to store the private and
 public media in the application. When the app moves to an installable app,
