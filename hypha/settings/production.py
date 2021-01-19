@@ -27,8 +27,8 @@ if 'MAILGUN_API_KEY' in env:
 # Sentry configuration.
 if 'SENTRY_DSN' in env:
     import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.celery import CeleryIntegration
+    from sentry_sdk.integrations.django import DjangoIntegration
     sentry_sdk.init(
         dsn=env['SENTRY_DSN'],
         environment=env.get('SENTRY_ENVIRONMENT', None),

@@ -1,11 +1,11 @@
 -r requirements.txt
 
-django-debug-toolbar==2.2
-factory_boy==2.12
-flake8==3.8.3
-isort==4.3.21
+django-debug-toolbar==3.2
+factory_boy==2.12.0
+flake8==3.8.4
+isort==5.7.0
 model-bakery==1.2.1
-responses==0.10.16
+responses==0.12.1
 stellar==0.4.5
-wagtail-factories==2.0.0
+wagtail-factories==2.0.1
 Werkzeug==1.0.1
