@@ -155,7 +155,6 @@ export const setCurrentSubmissionRound = (id) => (dispatch) => {
 
 
 export const loadSubmissionFromURL = (params) => (dispatch, getState) => {
-    
     const urlParams = new URLSearchParams(params);
     if (urlParams.has('submission')) {
         const activeId = Number(urlParams.get('submission'));

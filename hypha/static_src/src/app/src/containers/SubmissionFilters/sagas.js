@@ -7,7 +7,7 @@ import * as ActionTypes from './constants';
 import * as Actions from './actions';
 import { apiFetch } from '@api/utils'
 
-function* initialFetch() {
+export function* initialFetch() {
   
   try {
     yield put(Actions.showLoadingAction())
@@ -16,7 +16,6 @@ function* initialFetch() {
     yield put(Actions.getFiltersSuccessAction(data));
     yield put(Actions.hideLoadingAction())
   } catch (e) {
-    console.log("error", e)
     yield put(Actions.hideLoadingAction())
   }
 }

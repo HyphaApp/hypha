@@ -77,12 +77,23 @@
         "webpack-bundle-tracker": "^0.4.2-beta",
         "webpack-cli": "^3.3.2",
         "webpack-dev-server": "^3.11.0",
-        "webpack-stream": "^5.2.1"
+        "webpack-stream": "^5.2.1",
+        "babel-jest": "^21.2.0",
+        "jest": "^22.4.4",
+        "sinon": "^5.0.7",
+        "enzyme-to-json": "^3.3.4",
+        "enzyme": "^3.3.0",
+        "istanbul-reports": "^3.0.2",
+        "enzyme-adapter-react-16": "^1.1.1",
+        "babel-core": "^7.0.0-bridge.0"
     },
     "scripts": {
-        "test": "gulp deploy",
         "heroku-postbuild": "gulp deploy",
-        "webpack-watch": "webpack-dev-server --config ./hypha/static_src/src/app/webpack.dev.config.js "
+        "webpack-watch": "webpack-dev-server --config ./hypha/static_src/src/app/webpack.dev.config.js ",
+        "test": "NODE_ENV=test jest ",
+        "test:watch": "NODE_ENV=test jest --watch",
+        "test:coverage": "NODE_ENV=test jest --coverage",
+        "updateSnapshot": "NODE_ENV=test jest --updateSnapshot"
     },
     "engines": {
         "node": "12.17.x"

@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test Header compnent render a Header with title and description 1`] = `
+<DropDown
+  choices={
+    Array [
+      Array [
+        "1",
+        "one",
+      ],
+      Array [
+        "2",
+        "two",
+      ],
+    ]
+  }
+  helperProps={Object {}}
+  label="test label"
+  name="test name"
+  required={false}
+  value="1"
+>
+  <div
+    className="form__group "
+  >
+    <label
+      className="form__question form__question--choice_field select"
+      htmlFor="test name"
+      required=""
+    >
+      <span>
+        test label
+      </span>
+    </label>
+    <HelperComponent />
+    <div
+      className="form__item"
+    >
+      <div
+        className="form__select"
+      >
+        <select
+          id="test name"
+          name="test name"
+          onChange={[Function]}
+          value="1"
+        >
+          <option
+            key="1"
+            value="1"
+          >
+            one
+          </option>
+          <option
+            key="2"
+            value="2"
+          >
+            two
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</DropDown>
+`;
