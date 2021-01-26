@@ -59,7 +59,7 @@ var gulp      = require('gulp'),
   $           = require('gulp-load-plugins')(),
   del         = require('del'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
-  sass        = require('gulp-sass'),
+  sass        = require('gulp-dart-sass'),
   cleanCSS    = require('gulp-clean-css'),
   touch       = require('gulp-touch-cmd'),
   webpack     = require('webpack'),
