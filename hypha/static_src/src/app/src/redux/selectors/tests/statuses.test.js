@@ -48,6 +48,21 @@ describe("Test the selector of statuses", () => {
         }
         expect(Selectors.getSubmissionIDsForCurrentStatuses(state)).toEqual([1,2,3,4,5,6])
     });
+
+    it("get submissionIDs for current statuses without current statuses", () => {
+        const state = {
+            statuses : {
+                byStatuses : {
+                    "status1" : [1,2,3],
+                    "status2" : [4,5,6],
+                    "status3" : [7,8,9] 
+                },
+                current : []
+            },
+        }
+        expect(Selectors.getSubmissionIDsForCurrentStatuses(state)).toEqual([1,2,3,4,5,6,7,8,9])
+    });
+
     it("get statuses error", () => {
         const state = {
             statuses : {

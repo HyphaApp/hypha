@@ -21,7 +21,7 @@ export const fetchNotesForSubmission = submissionID => (dispatch, getState) => {
     return dispatch(fetchNotes(submissionID))
 }
 
-const fetchNotes = (submissionID) => ({
+export const fetchNotes = (submissionID) => ({
     [CALL_API]: {
         types: [ START_FETCHING_NOTES, UPDATE_NOTES, FAIL_FETCHING_NOTES],
         endpoint: api.fetchNotesForSubmission(submissionID),
@@ -34,7 +34,7 @@ export const createNoteForSubmission = (submissionID, note) => (dispatch, getSta
     return dispatch(createNote(submissionID, note))
 }
 
-const createNote = (submissionID, note) => ({
+export const createNote = (submissionID, note) => ({
     [CALL_API]: {
         types: [ START_CREATING_NOTE_FOR_SUBMISSION, CREATE_NOTE, FAIL_CREATING_NOTE_FOR_SUBMISSION],
         endpoint: api.createNoteForSubmission(submissionID, note),
@@ -53,7 +53,7 @@ export const fetchNewNotesForSubmission = (submissionID) => (dispatch, getState)
 }
 
 
-const fetchNewerNotes = (submissionID, latestID) => ({
+export const fetchNewerNotes = (submissionID, latestID) => ({
     [CALL_API]: {
         types: [ START_FETCHING_NOTES, UPDATE_NOTES, FAIL_FETCHING_NOTES],
         endpoint: api.fetchNewNotesForSubmission(submissionID, latestID),
@@ -80,7 +80,7 @@ export const writingNote = (submissionID, message) => ({
 
 export const editNoteForSubmission = (note, submissionID) => (dispatch) => dispatch(editNote(note, submissionID))
 
-const editNote = (note, submissionID) => ({
+export const editNote = (note, submissionID) => ({
     [CALL_API]: {
         types: [ START_EDITING_NOTE_FOR_SUBMISSION, UPDATE_NOTE, FAIL_EDITING_NOTE_FOR_SUBMISSION ],
         endpoint: api.editNoteForSubmission(note),

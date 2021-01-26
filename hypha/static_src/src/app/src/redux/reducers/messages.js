@@ -16,7 +16,7 @@ const message = (state, action) => {
     }
 }
 
-const messages = (state = {}, action) => {
+export const messages = (state = {}, action) => {
     switch(action.type) {
         case ADD_MESSAGE:
             return {

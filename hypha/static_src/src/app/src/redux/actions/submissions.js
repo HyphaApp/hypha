@@ -176,8 +176,7 @@ export const clearCurrentSubmissionParam = () => (dispatch, getState) => {
     }
 };
 
-
-const setSubmissionParam = (id) => (dispatch, getState) => {
+export const setSubmissionParam = (id) => (dispatch, getState) => {
     const state = getState();
     const submissionID = getCurrentSubmissionID(state);
 
@@ -216,18 +215,15 @@ export const setCurrentSubmission = id => (dispatch, getState) => {
     })
 };
 
-
 export const loadCurrentRound = (requiredFields=[]) => (dispatch, getState) => {
     const state = getState()
     const round = getCurrentRound(state)
-
     if ( round && requiredFields.every(key => round.hasOwnProperty(key)) ) {
         return null
     }
 
     return dispatch(fetchRound(getCurrentRoundID(state)))
 }
-
 
 export const loadRounds = () => (dispatch, getState) => {
     const state = getState()
@@ -238,7 +234,6 @@ export const loadRounds = () => (dispatch, getState) => {
     }
     return dispatch(fetchRounds())
 }
-
 
 export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
     const state = getState()
@@ -252,7 +247,7 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
 }
 
 
-const fetchRound = (roundID) => ({
+export const fetchRound = (roundID) => ({
     [CALL_API]: {
         types: [ START_LOADING_ROUND, UPDATE_ROUND, FAIL_LOADING_ROUND],
         endpoint: api.fetchRound(roundID),
@@ -261,14 +256,14 @@ const fetchRound = (roundID) => ({
 })
 
 
-const fetchRounds = () => ({
+export const fetchRounds = () => ({
     [CALL_API]: {
         types: [ START_LOADING_ROUNDS, UPDATE_ROUNDS, FAIL_LOADING_ROUNDS],
         endpoint: api.fetchRounds(),
     },
 })
 
-const fetchSubmissionsByRound = (roundID, filters) => ({
+export const fetchSubmissionsByRound = (roundID, filters) => ({
     [CALL_API]: {
         types: [ START_LOADING_SUBMISSIONS_BY_ROUND, UPDATE_SUBMISSIONS_BY_ROUND, FAIL_LOADING_SUBMISSIONS_BY_ROUND],
         endpoint: api.fetchSubmissionsByRound(roundID, filters),
@@ -294,9 +289,7 @@ export const setCurrentStatuses = (statuses) => (dispatch) => {
     return dispatch(loadSubmissionsForCurrentStatus());
 };
 
-
-const fetchSubmissionsByStatuses = (statuses, filters) => { 
-    
+export const fetchSubmissionsByStatuses = (statuses, filters) => { 
     return {
         [CALL_API]: {
             types: [ START_LOADING_BY_STATUSES, UPDATE_BY_STATUSES, FAIL_LOADING_BY_STATUSES],
@@ -318,9 +311,9 @@ export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
     return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state), filters))
 }
 
-const fetchSubmission = (submissionID) => ({
+export const fetchSubmission = (submissionID) => ({
     [CALL_API]: {
-        types: [ START_LOADING_SUBMISSION, UPDATE_SUBMISSION, FAIL_LOADING_SUBMISSION],
+        types: [ START_LOADING_SUBMISSION, UPDATE_SUBMISSION, FAIL_LOADING_SUBMISSION ],
         endpoint: api.fetchSubmission(submissionID),
     },
     submissionID,
