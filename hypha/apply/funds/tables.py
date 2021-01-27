@@ -14,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
 from wagtail.core.models import Page
 
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
@@ -204,6 +205,32 @@ def get_screening_statuses(request):
         id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
 
 
+def get_category_options():
+    """
+    Get all category options to show as filter options in the submission table.
+
+    - Only show options for the Category which has filter_on_dashboard set as True.
+    - And only show options which are used in submissions:
+      - To get this we need to first get all ApplicationSubmission form_data and form_fields.
+      - Then in form_fields we need to check for Category Fields by checking the instance of CategoryQuestionBlock
+      - With the field ids get the correct options selected in form_data
+      - Use the list of correct option to filter options
+
+    return: list of set of suitable category options
+    """
+    submission_data = ApplicationSubmission.objects.values('form_data', 'form_fields')
+    used_category_options = []
+    for item in submission_data:
+        for field in item['form_fields']:
+            if isinstance(field.block, CategoryQuestionBlock):
+                used_category_options.append(item['form_data'].get(field.id, 0))
+    options = Option.objects.filter(
+        category__filter_on_dashboard=True,
+        id__in=used_category_options
+    )
+    return [(option.id, option.value) for option in options]
+
+
 def get_meta_terms(request):
     return MetaTerm.objects.filter(
         filter_on_dashboard=True,
@@ -257,13 +284,20 @@ class SubmissionFilter(filters.FilterSet):
         (50, '50'),
         (100, '100'),
     )
+
+    CATEGORY_OPTION_CHOICES = get_category_options()
+
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
+    category_options = Select2MultipleChoiceFilter(
+        choices=CATEGORY_OPTION_CHOICES, label='Category Options',
+        method='filter_category_options'
+    )
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
-    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items per page'), label='Per page', method='per_page_handler')
+    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items'), label='Items per page', method='per_page_handler')
 
     class Meta:
         model = ApplicationSubmission
@@ -279,6 +313,29 @@ class SubmissionFilter(filters.FilterSet):
             for field, filter in self.filters.items()
             if field not in exclude
         }
+
+    def filter_category_options(self, queryset, name, value):
+        """
+        Filter submissions based on the category options selected.
+
+        In order to do that we need to first get all the category fields used in the submission.
+
+        And then use those category fields to filter submissions with their form_data.
+        """
+        query = Q()
+        category_fields = []
+        submission_form_fields = queryset.all().values('form_fields').distinct()
+        for form_field in submission_form_fields:
+            for field in form_field['form_fields']:
+                if isinstance(field.block, CategoryQuestionBlock):
+                    category_fields.append(field.id)
+        for v in value:
+            for category_field in category_fields:
+                kwargs = {
+                    '{0}__{1}'.format('form_data', category_field): v
+                }
+                query |= Q(**kwargs)
+        return queryset.filter(query)
 
     def per_page_handler(self, queryset, name, value):
         # Pagination is already implemented in view. We only need to add per_page query parameter.

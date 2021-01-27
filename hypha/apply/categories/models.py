@@ -17,6 +17,9 @@ class Option(Orderable):
     value = models.CharField(max_length=255)
     category = ParentalKey('Category', related_name='options')
 
+    def __str__(self):
+        return self.value
+
 
 class Category(ClusterableModel):
     """Used to manage the global select questions used in most of the application form
@@ -25,10 +28,14 @@ class Category(ClusterableModel):
     When used in a form: name -> field label and help_text -> help_text
     """
     name = models.CharField(max_length=255)
+    filter_on_dashboard = models.BooleanField(
+        default=True, help_text='Make available to filter on dashboard'
+    )
     help_text = models.CharField(max_length=255, blank=True)
 
     panels = [
         FieldPanel('name'),
+        FieldPanel('filter_on_dashboard'),
         FieldPanel('help_text'),
         InlinePanel('options', label='Options'),
     ]
