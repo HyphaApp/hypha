@@ -33,7 +33,6 @@ export function submissionsByStatuses(state = {}, action) {
                 }, state)
             };
         case UPDATE_SUBMISSION:
-            debugger
             state = Object.entries(state).reduce(
                 (accumulator, [status, ids]) => {
                     accumulator[status] = ids.filter(id => id !== action.data.id);

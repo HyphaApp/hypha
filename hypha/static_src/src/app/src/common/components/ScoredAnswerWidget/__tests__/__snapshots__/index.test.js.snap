@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test scoredanswerwidget component render a scoredAnswerWidget component 1`] = `
+<ScoredAnswerWidget
+  choices={
+    Array [
+      Array [
+        "1",
+        "one",
+      ],
+      Array [
+        "2",
+        "two",
+      ],
+    ]
+  }
+  helperProps={Object {}}
+  kwargs={
+    Object {
+      "fields": Array [
+        Object {
+          "id": 1,
+        },
+        Object {
+          "choices": Array [
+            1,
+            2,
+          ],
+        },
+      ],
+    }
+  }
+  label="test label"
+  name="test name"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "test name",
+          Array [
+            undefined,
+            undefined,
+          ],
+        ],
+        Array [
+          "test name",
+          Array [
+            undefined,
+            undefined,
+          ],
+        ],
+      ],
+    }
+  }
+  required={false}
+  value={
+    Array [
+      undefined,
+      undefined,
+    ]
+  }
+  widget={
+    Array [
+      "a",
+      "b",
+    ]
+  }
+>
+  <div
+    className="form__group "
+  >
+    <label
+      className="form__question form__question--scored_answer_field scored_answer_widget"
+      htmlFor="test name"
+    >
+      <span>
+        test label
+      </span>
+    </label>
+    <HelperComponent />
+    <div
+      className="form__item"
+    >
+      <TinyMCE
+        id="test name"
+        name="test name"
+        onChange={[Function]}
+        value={3}
+      >
+        <div
+          className="form__group "
+        >
+          <label
+            className="form__question form__question--choice_field select"
+            htmlFor="test name"
+            required=""
+          >
+            <span />
+          </label>
+          <HelperComponent />
+          <Editor
+            cloudChannel="5"
+            id="test name"
+            init={
+              Object {
+                "menubar": false,
+              }
+            }
+            initialValue={3}
+            onEditorChange={[Function]}
+          >
+            <textarea
+              id="test name"
+              style={
+                Object {
+                  "visibility": "hidden",
+                }
+              }
+            />
+          </Editor>
+        </div>
+      </TinyMCE>
+      <div
+        className="form__select"
+      >
+        <DropDown
+          choices={
+            Array [
+              1,
+              2,
+            ]
+          }
+          id="test name"
+          name="test name"
+          onChange={[Function]}
+          value={4}
+        >
+          <div
+            className="form__group "
+          >
+            <label
+              className="form__question form__question--choice_field select"
+              htmlFor="test name"
+              required=""
+            >
+              <span />
+            </label>
+            <HelperComponent />
+            <div
+              className="form__item"
+            >
+              <div
+                className="form__select"
+              >
+                <select
+                  id="test name"
+                  name="test name"
+                  onChange={[Function]}
+                  value={4}
+                >
+                  <option />
+                  <option />
+                </select>
+              </div>
+            </div>
+          </div>
+        </DropDown>
+      </div>
+    </div>
+  </div>
+</ScoredAnswerWidget>
+`;

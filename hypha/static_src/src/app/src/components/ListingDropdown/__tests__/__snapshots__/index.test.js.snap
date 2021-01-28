@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test listing drop down component render a listing drop down component 1`] = `
+<ListingDropdown
+  groups={
+    Array [
+      Object {
+        "items": Array [
+          1,
+          2,
+        ],
+        "key": "round-37",
+        "name": "review api test",
+      },
+    ]
+  }
+  listRef={
+    Object {
+      "current": "ul.listing.listing--applications",
+    }
+  }
+  scrollOffset={75}
+>
+  <form
+    className="form form__select"
+  >
+    <select
+      aria-label="Jump to listing group"
+      onChange={[Function]}
+    >
+      <option
+        key="listing-heading-round-37"
+        value="round-37"
+      >
+        review api test
+      </option>
+    </select>
+  </form>
+</ListingDropdown>
+`;

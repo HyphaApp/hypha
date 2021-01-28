@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test tinymce component render a TinyMCE component 1`] = `
+<TinyMCE
+  helperProps={Object {}}
+  init={
+    Object {
+      "a": 1,
+    }
+  }
+  label="test label"
+  name="test name"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "test name",
+          1,
+        ],
+      ],
+    }
+  }
+  required={false}
+  text="test name"
+  value="1"
+>
+  <div
+    className="form__group "
+  >
+    <label
+      className="form__question form__question--choice_field select"
+      htmlFor="test name"
+      required=""
+    >
+      <span>
+        test label
+      </span>
+    </label>
+    <HelperComponent />
+    <Editor
+      cloudChannel="5"
+      id="test name"
+      init={
+        Object {
+          "a": 1,
+          "menubar": false,
+        }
+      }
+      initialValue="1"
+      onEditorChange={[Function]}
+    >
+      <textarea
+        id="test name"
+        style={
+          Object {
+            "visibility": "hidden",
+          }
+        }
+      />
+    </Editor>
+  </div>
+</TinyMCE>
+`;

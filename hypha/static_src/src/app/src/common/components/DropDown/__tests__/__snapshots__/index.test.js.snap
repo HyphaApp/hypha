@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test Header compnent render a Header with title and description 1`] = `
+exports[`Test DropDown component render a DropDown component 1`] = `
 <DropDown
   choices={
     Array [
