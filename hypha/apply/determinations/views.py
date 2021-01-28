@@ -1,5 +1,6 @@
 from urllib import parse
 
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -338,7 +339,26 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 )
                 # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
+        form_fields = self.add_proposal_form_field(form_fields)
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
+
+    def add_proposal_form_field(self, fields):
+        action = self.request.GET.get('action')
+        stages_num = len(self.submission.workflow.stages)
+        if stages_num > 1 and action == 'invited_to_proposal':
+            second_stage_forms = self.submission.get_from_parent('forms').filter(stage=2)
+            if second_stage_forms.count() > 1:
+                proposal_form_choices = [
+                    (index, form.form.name)
+                    for index, form in enumerate(second_stage_forms)
+                ]
+                fields['proposal_form'] = forms.ChoiceField(
+                    label='Proposal Form',
+                    choices=proposal_form_choices,
+                    help_text='Select the proposal form to use for proposal stage.',
+                )
+                fields.move_to_end('proposal_form', last=False)
+        return fields
 
     def get_success_url(self):
         return self.submission.get_absolute_url()
