@@ -9,8 +9,8 @@ import MessageBar from '@components/MessageBar'
 
 
 describe("Test inline loading component", () => {
-    
-    const subject = mount(<MessageList><MessageBar /></MessageList>
+    const children = [<MessageBar key={1}/>]
+    const subject = mount(<MessageList children={children}></MessageList>
     );
   
     it("Shoud render without issues", () => {

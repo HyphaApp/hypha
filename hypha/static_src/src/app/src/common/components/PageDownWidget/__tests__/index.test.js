@@ -15,7 +15,7 @@ describe("Test pagedownwidget component", () => {
   const required = false;
   const helperProps = {};
   const value = "1";
-  const id = 1
+  const id = "1"
   const init = { "a" : 1}
 
   const subject = mount(<PageDownWidget

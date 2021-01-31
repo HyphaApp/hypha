@@ -15,7 +15,7 @@ describe("Test tinymce component", () => {
   const label = "test label";
   const required = false;
   const helperProps = {};
-  const value = "1";
+  const value = "abc";
   const init = { "a" : 1}
   const onChange = jest.fn();
 

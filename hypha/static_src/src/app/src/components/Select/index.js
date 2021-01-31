@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Option = ({ value, display }) => {
+export const Option = ({ value, display }) => {
     return <option value={value}>{display || value}</option>
 }
 

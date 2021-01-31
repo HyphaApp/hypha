@@ -85,7 +85,7 @@ exports[`Test scoredanswerwidget component render a scoredAnswerWidget component
         id="test name"
         name="test name"
         onChange={[Function]}
-        value={3}
+        value="3"
       >
         <div
           className="form__group "
@@ -106,7 +106,7 @@ exports[`Test scoredanswerwidget component render a scoredAnswerWidget component
                 "menubar": false,
               }
             }
-            initialValue={3}
+            initialValue="3"
             onEditorChange={[Function]}
           >
             <textarea

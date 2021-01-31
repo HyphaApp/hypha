@@ -22,7 +22,7 @@ exports[`Test tinymce component render a TinyMCE component 1`] = `
   }
   required={false}
   text="test name"
-  value="1"
+  value="abc"
 >
   <div
     className="form__group "
@@ -46,7 +46,7 @@ exports[`Test tinymce component render a TinyMCE component 1`] = `
           "menubar": false,
         }
       }
-      initialValue="1"
+      initialValue="abc"
       onEditorChange={[Function]}
     >
       <textarea

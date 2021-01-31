@@ -3,7 +3,7 @@
 exports[`Test pagedownwidget component render a pagedownwidget component 1`] = `
 <PageDownWidget
   helperProps={Object {}}
-  id={1}
+  id="1"
   init={
     Object {
       "a": 1,
@@ -18,7 +18,7 @@ exports[`Test pagedownwidget component render a pagedownwidget component 1`] = `
   <div>
     <TinyMCE
       helperProps={Object {}}
-      id={1}
+      id="1"
       init={
         Object {
           "a": 1,
