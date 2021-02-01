@@ -27,7 +27,7 @@ django-tables2==2.3.4
 django-tinymce4-lite==1.8.0
 django-two-factor-auth==1.13
 django-webpack-loader==0.7.0
-django==2.2.16
+django==2.2.18
 djangorestframework-api-key==2.0.0
 djangorestframework==3.12.2
 drf-nested-routers==0.92.5
