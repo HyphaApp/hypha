@@ -2,6 +2,9 @@ import * as Actions from "../actions";
 import { takeLatest, put, call } from "redux-saga/effects";
 import * as Sagas from "../sagas";
 import { apiFetch } from '@api/utils';
+import homePageSaga from '../sagas';
+import * as ActionTypes from '../constants';
+
 
 describe("Test userFetch  fn in SubmissionFilters module", () => {
 
@@ -47,6 +50,18 @@ describe("Test userFetch  fn in SubmissionFilters module", () => {
     );
 
     expect(generator.next().done).toBeTruthy();
+  });
+
+});
+
+describe("Test takeLatest in General info module", () => {
+
+  const genObject = homePageSaga();
+  
+  it('should wait for every INITIALIZE action and call userFetch', () => {
+    expect(genObject.next().value)
+      .toEqual(takeLatest(ActionTypes.INITIALIZE,
+        Sagas.userFetch));
   });
 
 });

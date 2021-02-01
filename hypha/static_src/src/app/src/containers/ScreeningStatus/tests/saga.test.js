@@ -1,9 +1,12 @@
 import * as Actions from "../actions";
-import { put, call, delay } from "redux-saga/effects";
+import { put, call, delay, takeEvery } from "redux-saga/effects";
 import * as Sagas from "../sagas";
 import { apiFetch } from '@api/utils';
 import {select} from 'redux-saga/effects';
 import * as Selectors from '../selectors';
+import homePageSaga from '../sagas';
+import * as ActionTypes from '../constants';
+
 
 describe("Test setDefaultValue in Screening status module", () => {
 
@@ -43,7 +46,14 @@ describe("Test setDefaultValue in Screening status module", () => {
       expect(generator.next().value).toEqual(put(Actions.hideLoadingAction()))
       expect(generator.next().done).toBeTruthy();
     });
-  
+    
+    it("Should return false for id null", () => {
+      const id = null
+      const data = "data"
+      const action = Actions.selectDefaultValueAction(id, data);
+      const generator = Sagas.setDefaultValue(action);
+      expect(generator.next().done).toBeTruthy();
+    });
   
     it("Should tirgger correct action incase of error", () => {
       const id = 1
@@ -98,6 +108,49 @@ it("Should trigger correct action for SUCCESS status", () => {
     expect(generator.next().done).toBeTruthy();
 });
 
+it("Should trigger correct action for SUCCESS status with default null in setDefaultSelectedAction", () => {
+  const id = 1
+  const action = Actions.initializeAction(id);
+  const generator = Sagas.initialize(action);
+
+  expect(
+  generator.next().value
+  ).toEqual(
+  put(Actions.showLoadingAction())
+  );
+
+  expect(generator.next().value).toEqual(call(
+      apiFetch, 
+      {path : `/v1/screening_statuses/`}
+      )
+  );
+  const data1 = {id : 1}
+  expect(generator.next({ json : () => data1}).value).toEqual(data1);
+  expect(
+  generator.next(data1).value
+  ).toEqual(
+  put(Actions.getScreeningSuccessAction(data1))
+  );
+  expect(generator.next().value)
+  .toEqual(call(
+      apiFetch, 
+      {path : `/v1/submissions/${id}/screening_statuses/`}
+      )
+  );
+  const data2 = [{id: 2, default : false}]
+  expect(generator.next({ json : () => data2}).value).toEqual(data2);
+  expect(generator.next(data2).value).toEqual(put(Actions.setVisibleSelectedAction([{id: 2, default : false}])))
+  expect(generator.next(data2).value).toEqual(put(Actions.setDefaultSelectedAction({})))
+  expect(generator.next().value).toEqual(put(Actions.hideLoadingAction()))
+  expect(generator.next().done).toBeTruthy();
+});
+
+it("Should return false for id null", () => {
+  const id = null
+  const action = Actions.initializeAction(id);
+  const generator = Sagas.initialize(action);
+  expect(generator.next().done).toBeTruthy();
+});
 
 it("Should tirgger correct action incase of error", () => {
     const id = 1
@@ -152,7 +205,14 @@ describe("Test setVisibleOption in Screening status module", () => {
     expect(generator.next().value).toEqual(put(Actions.hideLoadingAction()))
     expect(generator.next().done).toBeTruthy();
   });
+  it("Should return false for id null", () => {
+    const id = null
+    const data = {id : 2, title : "data"}
+    const action = Actions.selectVisibleOptionAction(id, data);
+    const generator = Sagas.setVisibleOption(action);
+    expect(generator.next().done).toBeTruthy();
 
+  })
   it("Should trigger correct action for SUCCESS status2", () => {
     const id = 1
     const data = {id : 2, title : "data"}
@@ -208,6 +268,30 @@ describe("Test setVisibleOption in Screening status module", () => {
       put(Actions.hideLoadingAction())
     );
     expect(generator.next().done).toBeTruthy();
+  });
+
+});
+
+describe("Test takeEvery in Screening status module", () => {
+
+  const genObject = homePageSaga();
+  
+  it('should wait for every INITIALIZE action and call initialize', () => {
+    expect(genObject.next().value)
+      .toEqual(takeEvery(ActionTypes.INITIALIZE,
+        Sagas.initialize));
+  });
+
+  it('should wait for every SELECT_DEFAULT_VALUE action and call setDefaultValue', () => {
+    expect(genObject.next().value)
+      .toEqual(takeEvery(ActionTypes.SELECT_DEFAULT_VALUE,
+        Sagas.setDefaultValue));
+  });
+
+  it('should wait for every SELECT_VISIBLE_OPTION action and call setVisibleOption', () => {
+    expect(genObject.next().value)
+      .toEqual(takeEvery(ActionTypes.SELECT_VISIBLE_OPTION,
+        Sagas.setVisibleOption));
   });
 
 });

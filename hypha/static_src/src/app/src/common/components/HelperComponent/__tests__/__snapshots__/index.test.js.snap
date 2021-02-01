@@ -15,3 +15,37 @@ exports[`Test Helper component render a Helper component 1`] = `
   />
 </HelperComponent>
 `;
+
+exports[`Test Helper component with link render a Helper component with link 1`] = `
+<HelperComponent
+  link="sdfsd"
+  text="test name"
+>
+  <p
+    className="form__help"
+    dangerouslySetInnerHTML={
+      Object {
+        "__html": "test name",
+      }
+    }
+  />
+  <p
+    className="form__help-link"
+  >
+    <a
+      href="sdfsd"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      See help guide for more information.
+      <svg
+        className="form__open-icon"
+      >
+        <use
+          href="#open-in-new-tab"
+        />
+      </svg>
+    </a>
+  </p>
+</HelperComponent>
+`;

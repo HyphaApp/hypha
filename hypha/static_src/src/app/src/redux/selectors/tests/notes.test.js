@@ -37,6 +37,34 @@ describe("Test the selector of notes", () => {
         expect(Selectors.getNoteIDsForSubmissionOfID(1)(state)).toEqual(["comments"])
     });
 
+    it("Get note ids for submission of ID with comments null", () => {
+        const state = { 
+            notes : { 
+                error : { errored : false, message : "error occured"}
+                },
+            submissions : {
+                byID : {
+                    1 : {id : 1, comments : null}
+                }
+            }
+    }
+        expect(Selectors.getNoteIDsForSubmissionOfID(1)(state)).toEqual([])
+    });
+
+    it("Get note ids for submission of ID with submissions null", () => {
+        const state = { 
+            notes : { 
+                error : { errored : false, message : "error occured"}
+                },
+            submissions : {
+                byID : {
+                    1 : null
+                }
+            }
+    }
+        expect(Selectors.getNoteIDsForSubmissionOfID(1)(state)).toEqual([])
+    });
+
     it("Get latest note for submission of ID", () => {
         const state = { 
             notes : { 

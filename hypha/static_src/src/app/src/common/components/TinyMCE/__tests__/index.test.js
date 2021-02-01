@@ -51,3 +51,38 @@ describe("Test tinymce component", () => {
   });
 
 });
+
+describe("Test tinymce component with required", () => {
+  const text = "test name";
+  const name = "test name";
+  const label = "test label";
+  const required = true;
+  const helperProps = {};
+  const value = "abc";
+  const init = { "a" : 1}
+  const onChange = jest.fn();
+
+  const subject = mount(<TinyMCE
+    init = {init}
+    text={text}
+    name={name}
+    label={label}
+    required={required}
+    value={value}
+    helperProps={helperProps}
+    onChange={onChange}
+  />);
+
+  it("Shoud render without issues", () => {
+    expect(subject.length).toBe(1);
+  });
+
+  it("Should have select and span element with passed text", () => {
+    expect(subject.find('.form__required').length).toBe(1);
+  });
+
+  test('render a TinyMCE component with required', () => {
+    expect(subject).toMatchSnapshot();
+  });
+
+});

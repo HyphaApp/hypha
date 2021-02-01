@@ -96,3 +96,42 @@ exports[`Test radio component render a radio component 1`] = `
   </div>
 </Radio>
 `;
+
+exports[`Test radio component with required & empty choices render a radio component with required & empty choices 1`] = `
+<Radio
+  choices={Array []}
+  helperProps={Object {}}
+  label="test label"
+  name="test name"
+  onChange={[MockFunction]}
+  required={true}
+  value="1"
+>
+  <div
+    className="form__group "
+  >
+    <label
+      className="form__question form__question--choice_field radio_select"
+      htmlFor="test name"
+      required=""
+    >
+      <span>
+        test label
+      </span>
+      <span
+        className="form__required"
+      >
+         *
+      </span>
+    </label>
+    <HelperComponent />
+    <div
+      className="form__item"
+    >
+      <ul
+        className="grid grid--no-margin grid--two"
+      />
+    </div>
+  </div>
+</Radio>
+`;

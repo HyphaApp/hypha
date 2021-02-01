@@ -51,3 +51,47 @@ exports[`Test CheckBox component render a CheckBox component 1`] = `
   </div>
 </CheckBox>
 `;
+
+exports[`Test CheckBox component with required render a CheckBox component 1`] = `
+<CheckBox
+  helperProps={Object {}}
+  label="test label"
+  name="test name"
+  onChange={[MockFunction]}
+  required={true}
+  value="1"
+>
+  <div
+    className="form__group  form__group--checkbox form__group--wrap"
+  >
+    <label
+      className="form__question form__question--boolean_field checkbox_input"
+      htmlFor="test name"
+    >
+      <span>
+        test label
+      </span>
+      <span
+        className="form__required"
+      >
+         *
+      </span>
+    </label>
+    <div
+      className="form__item"
+      onClick={[Function]}
+    >
+      <input
+        checked="checked"
+        id="test name"
+        name="test name"
+        onChange={[Function]}
+        type="checkbox"
+      />
+      <label />
+    </div>
+    <hr />
+    <HelperComponent />
+  </div>
+</CheckBox>
+`;

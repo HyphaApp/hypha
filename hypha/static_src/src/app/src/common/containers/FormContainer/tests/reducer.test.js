@@ -1,11 +1,12 @@
 import initialState, {formInitialState} from "../models";
-import Reducer from "../reducer";
+import Reducer, {FormReducer} from "../reducer";
 import * as Actions from "../actions";
 
 describe("test reducer of determination form", () => {
 
   it("test  we get the initial data for undefined value of state", () => {
     expect(Reducer(undefined, {})).toEqual(initialState);
+    expect(FormReducer(undefined, {})).toEqual({"constraints": {}, "errors": {}, "readyToSubmit": false, "values": {}})
   });
 
   it("on initialize form", () => {
@@ -62,7 +63,25 @@ const action = Actions.addValidationErrorAction("form1", "determination", "this 
 expect(Reducer(initialState, action)).toEqual(state);
   });
 
-it("on clear validation error", () => {
+  it("on add validation error without error message", () => {
+    const formsInfo =  {
+          "form1" : {
+            "constraints": {},
+              "errors": {
+              },
+              "readyToSubmit": false,
+                "values": {}
+            }
+          }
+
+const state = {
+  forms : formsInfo
+}
+const action = Actions.addValidationErrorAction("form1", "determination", null);
+expect(Reducer(initialState, action)).toEqual(state);
+  });
+
+  it("on clear validation error", () => {
     const formsInfo =  {
         "form1" : {
             "constraints": {},
@@ -77,8 +96,9 @@ forms : formsInfo
 }
 const action = Actions.clearValidationErrorAction("form1");
 expect(Reducer(initialState, action)).toEqual(state);
-});
-    it("on validate & submit form", () => {
+  });
+
+  it("on validate & submit form", () => {
         const formsInfo =  {
             "form1" : {
                 "constraints": {},
@@ -93,9 +113,9 @@ expect(Reducer(initialState, action)).toEqual(state);
     }
     const action = Actions.validateAndSubmitFormAction("form1");
     expect(Reducer(initialState, action)).toEqual(state);
-    });
+  });
     
-it("on update field value", () => {
+  it("on update field value", () => {
     const formsInfo =  {
         "form1" : {
             "constraints": {},
@@ -112,7 +132,7 @@ it("on update field value", () => {
     }
     const action = Actions.updateFieldValueAction("form1", "message", "<p>message text</p>");
     expect(Reducer(initialState, action)).toEqual(state);
-    });
+  });
 
 });
 

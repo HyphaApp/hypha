@@ -1,8 +1,10 @@
 import * as Actions from "../actions";
-import { takeLatest, put, call } from "redux-saga/effects";
+import { takeEvery, put, call } from "redux-saga/effects";
 import * as Sagas from "../sagas";
 import { apiFetch } from '@api/utils';
 import { toggleReviewFormAction, clearCurrentReviewAction } from '../../../redux/actions/submissions'
+import homePageSaga from '../sagas';
+import * as ActionTypes from '../constants';
 
 describe("Test initialFetch  fn in SubmissionFilters module", () => {
 
@@ -50,4 +52,15 @@ describe("Test initialFetch  fn in SubmissionFilters module", () => {
     expect(generator.next().done).toBeTruthy();
   });
 
+});
+
+describe("Test takeEvery in Submission filters module", () => {
+
+  const genObject = homePageSaga();
+  
+  it('should wait for every INITIALIZE action and call initialFetch', () => {
+    expect(genObject.next().value)
+      .toEqual(takeEvery(ActionTypes.INITIALIZE,
+        Sagas.initialFetch));
+  });
 });

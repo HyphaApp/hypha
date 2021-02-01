@@ -31,3 +31,26 @@ describe("Test Helper component", () => {
   });
 
 });
+
+describe("Test Helper component with link", () => {
+  const text = "test name";
+  const link = "sdfsd";
+
+  const subject = mount(<HelperComponent
+    text={text}
+    link={link}
+  />);
+
+  it("Shoud render without issues", () => {
+    expect(subject.length).toBe(1);
+  });
+
+  it("Should have searched classes", () => {
+    expect(subject.find('.form__help-link').length).toBe(1);
+  });
+
+  test('render a Helper component with link', () => {
+    expect(subject).toMatchSnapshot();
+  });
+
+});

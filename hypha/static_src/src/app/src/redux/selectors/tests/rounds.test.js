@@ -40,6 +40,19 @@ describe("Test the selector of rounds", () => {
         }
         expect(Selectors.getCurrentRound(state)).toEqual({ id: 1, title: 'round1', submissions : { ids:[2,3,4] } })
     });
+    it("select current round submission ids with rounds byId null", () => {
+        const state = {
+            rounds : {
+                byID : {
+                    1 : null
+                },
+                current : 1
+            },
+            loading : true
+        }
+        expect(Selectors.getCurrentRoundSubmissionIDs(state)).toEqual([])
+    });
+
     it("select current round submission ids", () => {
         const state = {
             rounds : {
@@ -52,6 +65,7 @@ describe("Test the selector of rounds", () => {
         }
         expect(Selectors.getCurrentRoundSubmissionIDs(state)).toEqual([2,3,4])
     });
+
     it("select rounds fetching", () => {
         const state = {
             rounds : {

@@ -145,6 +145,17 @@ describe("Test actions", () => {
         expect(results.length).toEqual(5);
       });
 
+      it("Should return an error if statuses is not of type array for set current statuses action type", () => {
+        const statuses = null
+        const results = []
+        try {
+          actions.setCurrentStatuses(statuses)(result => results.push(result));
+        } catch (e) {
+          expect(e).toEqual(new Error("Statuses have to be an array of statuses"));
+        }
+        expect(results.length).toEqual(0);
+      });
+
       it("Should return load submission from url action type", () => {
         const params = "?submission=2"
         const results = []

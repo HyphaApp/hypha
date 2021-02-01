@@ -149,6 +149,25 @@ describe("Test the selector of submissions", () => {
         }
         expect(Selectors.getCurrentStatusesSubmissions(state)).toEqual([{title: 'submission2'}, {title: 'submission3'}])
     });
+
+    it("get current statuses submissions with byID null", () => {
+        const state = {
+            submissions : {
+                byID : {}
+            },
+            loading : true,
+            statuses : { 
+                byStatuses : {
+                    "status1" : [2],
+                    "status2" : [3],
+                    "status3" : [7,8,9] 
+                },
+                current : ["status1", "status2"]
+                }
+        }
+        expect(Selectors.getCurrentStatusesSubmissions(state)).toEqual([])
+    });
+
     it("get submission loading state", () => {
         const state = {
             submissions : {

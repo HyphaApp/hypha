@@ -14,6 +14,18 @@ describe("Test Device configuration Actions", () => {
     const action = actions.initializeAction(id, reviewId);
     expect(action).toEqual(expectedResult);
   });
+
+  it("Should return the intialize action type without passing review id", () => {
+    const id = 1
+    const expectedResult = {
+      type: ActionTypes.INITIALIZE,
+      id ,
+      reviewId : null
+    };
+    const action = actions.initializeAction(id);
+    expect(action).toEqual(expectedResult);
+  });
+
   it("should return the review fields success action type", () => {
     const data = Reducer(undefined, {}).metaStructure
     const expectedResult = {
