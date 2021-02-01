@@ -57,6 +57,17 @@
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
+        {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
+        {# we are only expecting strings, so make sure we escape the values #}
+        <script>
+          var matomo = {
+            'url': '{{ MATOMO_URL }}',
+            'siteid': '{{ MATOMO_SITEID }}'
+          };
+        </script>
+        <script src="{% static 'js/tracking.js' %}"></script>
+        <script defer src="https://{{ MATOMO_URL }}/matomo.js"></script>
+        {% endif %}
     </head>
 
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
