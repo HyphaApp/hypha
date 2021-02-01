@@ -1,7 +1,13 @@
 # Hypha
 
 [![<OpenTechFund>](https://circleci.com/gh/OpenTechFund/hypha.svg?style=shield)](https://circleci.com/gh/OpenTechFund/hypha)
-
+![GitHub top language](https://img.shields.io/github/languages/top/OpenTechFund/hypha)
+![Lines of code](https://img.shields.io/tokei/lines/github/OpenTechFund/hypha)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/OpenTechFund/hypha)
+[![GitHub release](latest by date)](https://img.shields.io/github/v/release/OpenTechFund/hypha)(https://github.com/OpenTechFund/hypha/releases)
+[![GitHub license](https://img.shields.io/github/license/OpenTechFund/hypha)](https://github.com/OpenTechFund/hypha/blob/main/LICENSE)
+[![Gitter chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/HyphaApp/community)
+[![Website](https://img.shields.io/badge/website-hypha.app-lightgrey)](https://hypha.app)
 
 ## Submission management software for open calls
 Features
@@ -56,11 +62,8 @@ Hypha is an open source project made possible thanks to the support of sponsors.
 
 ## More information
 
-* Website: coming soon
+* Website: https://hypha.app
 * Docs: https://github.com/OpenTechFund/hypha/wiki
+* Gitter/Chat: https://gitter.im/HyphaApp/community
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
-* Copyright (C) 2020 - Open Technology Fund
-
-### License
-
-[BSD 3-clause](./LICENSE)
+* Copyright (C) 2021 - Open Technology Fund
