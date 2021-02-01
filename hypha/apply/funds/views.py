@@ -427,7 +427,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
 
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = 'funds/submissions.html'
+    template_name = 'funds/submissions_react.html'
     form_views = [
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
