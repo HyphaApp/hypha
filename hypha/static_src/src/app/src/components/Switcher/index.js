@@ -21,6 +21,7 @@ class Switcher extends React.Component {
     }
 
     render() {
+        if(!this.el) { return null }
         const { handleOpen, handleClose, open } = this.props;
 
         return ReactDOM.createPortal(
