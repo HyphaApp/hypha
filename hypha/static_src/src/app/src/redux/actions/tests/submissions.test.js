@@ -171,6 +171,21 @@ describe("Test actions", () => {
         expect(results.length).toEqual(1);
       });
 
+      it("Should return load submission from url action type with both url id & submission id is equal", () => {
+        const params = "?submission=2"
+        const results = []
+        const firstFunc = result => results.push(result);
+        const secFunc = () => {
+          return {
+            submissions : {
+              current : 2
+            }
+          }
+        }
+        expect(actions.loadSubmissionFromURL(params)(firstFunc, secFunc)).toBe(true);
+        expect(results.length).toEqual(0);
+      });
+
       it("Should return load submission from url if url doesn't have id action type", () => {
         const params = ""
         const results = []
@@ -200,6 +215,22 @@ describe("Test actions", () => {
         }
         actions.clearCurrentSubmissionParam()(firstFunc, secFunc)
         expect(results.length).toEqual(1);
+      });
+
+      it("Should return clear current submission param action type if search is empty", () => {
+        const results = []
+        const firstFunc = result => results.push(result);
+        const secFunc = () => {
+          return {
+            router : {
+              location : {
+                search : ""
+              }
+            }
+          }
+        }
+        actions.clearCurrentSubmissionParam()(firstFunc, secFunc)
+        expect(results.length).toEqual(0);
       });
 
       it("Should return set current submission param action type", () => {
@@ -368,7 +399,7 @@ describe("Test actions", () => {
         expect(results.length).toEqual(1);
       });
 
-      it("Should return setSubmissionParam action type with shouldUpdate true", () => {
+      it("Should return setSubmissionParam action type with id null", () => {
         const results = []
         const id = null
         const firstFunc = result => results.push(result);
@@ -387,6 +418,26 @@ describe("Test actions", () => {
         actions.setSubmissionParam(id)(firstFunc, secFunc)
         expect(results.length).toEqual(1);
         expect(typeof results[0]).toEqual("function")
+      });
+
+      it("Should return setSubmissionParam action type with shouldSet & shouldUpdate false & id not null", () => {
+        const results = []
+        const id = 2
+        const firstFunc = result => results.push(result);
+        const secFunc = () => {
+          return {
+            router : {
+              location : {
+                search : "?submission=2"
+              }
+            },
+            submissions : {
+              current : 2
+            }
+          }
+        }
+        actions.setSubmissionParam(id)(firstFunc, secFunc)
+        expect(results.length).toEqual(0);
       });
 
       it("Should return loadCurrentRound action type without required fields ", () => {
@@ -409,6 +460,28 @@ describe("Test actions", () => {
                 }
               }
               
+            }
+          }
+        }
+        actions.loadCurrentRound(["workflow"])(firstFunc, secFunc)
+        expect(results.length).toEqual(1);
+        expect(typeof results[0]).toEqual("object");
+        expect(results[0].roundID).toEqual(2);
+      });
+
+      it("Should return loadCurrentRound action type without having byID", () => {
+        const results = []
+        const firstFunc = result => results.push(result);
+        const secFunc = () => {
+          return {
+            router : {
+              location : {
+                search : "?submission="
+              }
+            },
+            rounds : {
+              current : 2,
+              byID :{ }
             }
           }
         }

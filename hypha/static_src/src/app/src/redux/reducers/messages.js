@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 
 import { ADD_MESSAGE, DISMISS_MESSAGE } from '@actions/messages';
 
-const message = (state, action) => {
+export const message = (state, action) => {
     switch (action.type) {
         case ADD_MESSAGE:
             return {

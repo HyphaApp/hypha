@@ -81,6 +81,24 @@ describe("test reducer", () => {
     toEqual({ "loading": false, "status1": [1], "status2": [2] });
   });
 
+  it("On update by statuses using submissionsByStatuses with state contains status already", () => {
+    const action = {
+      type : Actions.UPDATE_BY_STATUSES,
+      data : {
+        results : [
+          {status : "status1", id: 1} ,
+          {status : "status2", id: 2} 
+        ]
+      }
+    }
+    const state = {
+      loading : false,
+      status1 : [1,3]
+    }
+    expect(Reducer.submissionsByStatuses(state, action)).
+    toEqual({ "loading": false, "status1": [1,3], "status2": [2] });
+  });
+
   it("On update submission using submissionsByStatuses", () => {
     const action = {
       type : Actions.UPDATE_SUBMISSION,
@@ -94,5 +112,20 @@ describe("test reducer", () => {
     }
     expect(Reducer.submissionsByStatuses(state, action)).
     toEqual({ "status1": [2,3,1] });
+  });
+
+  it("On update submission using submissionsByStatuses with state status empty", () => {
+    const action = {
+      type : Actions.UPDATE_SUBMISSION,
+      data : {
+        id : 1,
+        status : "status1"
+      }
+    }
+    const state = {
+      "status2" : []
+    }
+    expect(Reducer.submissionsByStatuses(state, action)).
+    toEqual({ "status1": [1], "status2" : [] });
   });
 })

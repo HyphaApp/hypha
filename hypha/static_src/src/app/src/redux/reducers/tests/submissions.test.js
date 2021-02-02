@@ -104,6 +104,16 @@ describe("test reducer", () => {
         expect(isDeterminationDraftExist(undefined, action)).toBe(true);
     });
 
+    it("On fetch determination draft on false", () => {
+        const action = {
+            type : SubmissionsActions.FETCH_DETERMINATION_DRAFT,
+            data :{
+                isDraft : false
+            }
+        };
+        expect(isDeterminationDraftExist(undefined, action)).toBe(false);
+    });
+
     it("On fetch review draft", () => {
         const action = {
             type : SubmissionsActions.FETCH_REVIEW_DRAFT,
@@ -112,6 +122,23 @@ describe("test reducer", () => {
             }
         };
         expect(isReviewDraftExist(undefined, action)).toBe(true);
+    });
+
+    it("On fetch review draft on false", () => {
+        const action = {
+            type : SubmissionsActions.FETCH_REVIEW_DRAFT,
+            data :{
+                isDraft : false
+            }
+        };
+        expect(isReviewDraftExist(undefined, action)).toBe(false);
+    });
+
+    it("On clear review draft", () => {
+        const action = {
+            type : SubmissionsActions.CLEAR_REVIEW_DRAFT,
+        };
+        expect(isReviewDraftExist(undefined, action)).toBe(false);
     });
 
     it("On start loading submission", () => {
@@ -228,6 +255,27 @@ describe("test reducer", () => {
             1 : { 
                 id : 1,
                 comments : [1, 3]
+                },
+            loading : false
+        }
+        expect(submissionsByID(state, action)).toEqual(expected);
+    });
+
+    it("On update note with state comments empty", () => {
+        const action = {
+            type : NotesActions.UPDATE_NOTE,
+            data : { id : 1 },
+            submissionID : 1,
+            note : { id : 2 }
+        };
+        const state = {
+            1 : { id : 1, comments : []},
+            loading : false
+        }
+        const expected = {
+            1 : { 
+                id : 1,
+                comments : [1]
                 },
             loading : false
         }

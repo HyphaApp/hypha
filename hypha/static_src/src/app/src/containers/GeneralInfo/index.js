@@ -13,7 +13,7 @@ import "./styles.scss";
 
 
 
-class GeneralInfoContainer extends React.PureComponent {
+export class GeneralInfoContainer extends React.PureComponent {
 
   componentDidMount(){
     this.props.initializeAction()

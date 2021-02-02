@@ -538,7 +538,7 @@ exports[`Test form field component should render PagedownWidget render a form fi
               onEditorChange={[Function]}
             >
               <textarea
-                id="tiny-react_81816531741612164355014"
+                id="tiny-react_77905473841612265198847"
                 style={
                   Object {
                     "visibility": "hidden",
@@ -917,7 +917,7 @@ exports[`Test form field component should render ScoredAnswerWidget render a for
                 onEditorChange={[Function]}
               >
                 <textarea
-                  id="tiny-react_53784992531612164354986"
+                  id="tiny-react_34403043331612265198826"
                   style={
                     Object {
                       "visibility": "hidden",
@@ -1389,7 +1389,7 @@ exports[`Test form field component should render TinyMCE render a form field com
           onEditorChange={[Function]}
         >
           <textarea
-            id="tiny-react_61742437121612164354911"
+            id="tiny-react_2369789821612265198753"
             style={
               Object {
                 "visibility": "hidden",

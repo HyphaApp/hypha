@@ -79,6 +79,14 @@ describe("test reducer", () => {
         expect(Reducer.errorMessage(undefined, action)).toEqual("text");
     });
 
+    it("On fail loading round with empty message", () => {
+        const action = {
+            type : Actions.FAIL_LOADING_ROUND,
+            message : null
+        }
+        expect(Reducer.errorMessage(undefined, action)).toEqual("");
+    });
+
     it("On update submissions by round", () => {
         const action = {
             type : Actions.UPDATE_SUBMISSIONS_BY_ROUND,
