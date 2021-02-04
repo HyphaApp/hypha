@@ -1,5 +1,5 @@
 import React from "react";
-import { mount } from "enzyme";
+import { mount, shallow } from "enzyme";
 import sinon from "sinon";
 import FormField from "../index";
 import * as enzyme from "enzyme";
@@ -63,7 +63,7 @@ describe("Test form field component should render TinyMCE", () => {
     const kwargs = { help_text: "help_text", help_link: "link1", label: "label1", required: true, choices : [[0,1]], text: "text1"}
     const type = "TinyMCE"
 
-    const subject = mount(<FormField
+    const subject = shallow(<FormField
       fieldProps={fieldProps}
       onChange={onChange}
       value={value}
@@ -253,7 +253,7 @@ describe("Test form field component should render Textarea", () => {
     const kwargs = { help_text: "help_text", help_link: "link1", label: "label1", required: true, choices : [[0,1]], text: "text1", fields: [{},{choices: [1]}]}
     const type = "ScoredAnswerWidget"
 
-    const subject = mount(<FormField
+    const subject = shallow(<FormField
       fieldProps={fieldProps}
       onChange={onChange}
       value={value}
@@ -327,7 +327,7 @@ describe("Test form field component should render Textarea", () => {
     const kwargs = { help_text: "help_text", help_link: "link1", label: "label1", required: true, choices : [[0,1]], text: "text1", fields: [{},{choices: [1]}]}
     const type = ""
 
-    const subject = mount(<FormField
+    const subject = shallow(<FormField
       fieldProps={fieldProps}
       onChange={onChange}
       value={value}

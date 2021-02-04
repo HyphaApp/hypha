@@ -1,121 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Test tinymce component render a TinyMCE component 1`] = `
-<TinyMCE
-  helperProps={Object {}}
-  init={
-    Object {
-      "a": 1,
-    }
-  }
-  label="test label"
-  name="test name"
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "test name",
-          1,
-        ],
-      ],
-    }
-  }
-  required={false}
-  text="test name"
-  value="abc"
+<div
+  className="form__group "
 >
-  <div
-    className="form__group "
+  <label
+    className="form__question form__question--choice_field select"
+    htmlFor="test name"
+    required=""
   >
-    <label
-      className="form__question form__question--choice_field select"
-      htmlFor="test name"
-      required=""
-    >
-      <span>
-        test label
-      </span>
-    </label>
-    <HelperComponent />
-    <Editor
-      cloudChannel="5"
-      id="test name"
-      init={
-        Object {
-          "a": 1,
-          "menubar": false,
-        }
+    <span>
+      test label
+    </span>
+  </label>
+  <HelperComponent />
+  <Editor
+    cloudChannel="5"
+    id="test name"
+    init={
+      Object {
+        "a": 1,
+        "menubar": false,
       }
-      initialValue="abc"
-      onEditorChange={[Function]}
-    >
-      <textarea
-        id="test name"
-        style={
-          Object {
-            "visibility": "hidden",
-          }
-        }
-      />
-    </Editor>
-  </div>
-</TinyMCE>
+    }
+    initialValue="abc"
+    onEditorChange={[Function]}
+  />
+</div>
 `;
 
 exports[`Test tinymce component with required render a TinyMCE component with required 1`] = `
-<TinyMCE
-  helperProps={Object {}}
-  init={
-    Object {
-      "a": 1,
-    }
-  }
-  label="test label"
-  name="test name"
-  onChange={[MockFunction]}
-  required={true}
-  text="test name"
-  value="abc"
+<div
+  className="form__group "
 >
-  <div
-    className="form__group "
+  <label
+    className="form__question form__question--choice_field select"
+    htmlFor="test name"
+    required=""
   >
-    <label
-      className="form__question form__question--choice_field select"
-      htmlFor="test name"
-      required=""
+    <span>
+      test label
+    </span>
+    <span
+      className="form__required"
     >
-      <span>
-        test label
-      </span>
-      <span
-        className="form__required"
-      >
-         *
-      </span>
-    </label>
-    <HelperComponent />
-    <Editor
-      cloudChannel="5"
-      id="test name"
-      init={
-        Object {
-          "a": 1,
-          "menubar": false,
-        }
+       *
+    </span>
+  </label>
+  <HelperComponent />
+  <Editor
+    cloudChannel="5"
+    id="test name"
+    init={
+      Object {
+        "a": 1,
+        "menubar": false,
       }
-      initialValue="abc"
-      onEditorChange={[Function]}
-    >
-      <textarea
-        id="test name"
-        style={
-          Object {
-            "visibility": "hidden",
-          }
-        }
-      />
-    </Editor>
-  </div>
-</TinyMCE>
+    }
+    initialValue="abc"
+    onEditorChange={[Function]}
+  />
+</div>
 `;

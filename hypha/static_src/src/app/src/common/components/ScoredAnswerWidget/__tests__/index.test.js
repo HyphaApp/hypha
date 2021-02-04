@@ -1,5 +1,5 @@
 import React from "react";
-import { mount } from "enzyme";
+import { shallow } from "enzyme";
 import sinon from "sinon";
 import ScoredAnswerWidget from "../index";
 import * as enzyme from "enzyme";
@@ -21,7 +21,7 @@ describe("Test scoredanswerwidget component", () => {
   const kwargs = { fields : [{"id": 1}, {"choices" : [1,2]}]}
   const onChange = jest.fn();
 
-  const subject = mount(<ScoredAnswerWidget
+  const subject = shallow(<ScoredAnswerWidget
     name={name}
     label={label}
     required={required}
@@ -38,9 +38,9 @@ describe("Test scoredanswerwidget component", () => {
   });
 
   it("Should have searched classes and span element with passed text", () => {
-    expect(subject.find('.form__group').length).toBe(3);
+    expect(subject.find('.form__group').length).toBe(1);
     expect(subject.find('.form__required').length).toBe(0);
-    expect(subject.children().length).toEqual(1);
+    expect(subject.children().length).toEqual(3);
     expect(subject.find('span').first().text()).toBe(label);
     expect(subject.containsMatchingElement(<TinyMCE />)).toEqual(true);
 
@@ -69,7 +69,7 @@ describe("Test scoredanswerwidget component with required", () => {
   const kwargs = { fields : [{"id": 1}, {"choices" : [1,2]}]}
   const onChange = jest.fn();
 
-  const subject = mount(<ScoredAnswerWidget
+  const subject = shallow(<ScoredAnswerWidget
     name={name}
     label={label}
     required={required}

@@ -377,194 +377,32 @@ exports[`Test form field component should render LoadHTML render a form field co
 `;
 
 exports[`Test form field component should render PagedownWidget render a form field component with PagedownWidget 1`] = `
-<FormField
-  error="error text"
-  fieldProps={
-    Object {
-      "name": "name text",
-    }
-  }
-  kwargs={
-    Object {
-      "choices": Array [
-        Array [
-          0,
-          1,
-        ],
-      ],
-      "fields": Array [
-        Object {},
-        Object {
-          "choices": Array [
-            1,
-          ],
-        },
-      ],
-      "help_link": "link1",
-      "help_text": "help_text",
-      "label": "label1",
-      "required": true,
-      "text": "text1",
-    }
-  }
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "name text",
-          Array [
-            "value",
-          ],
-        ],
-      ],
-    }
-  }
-  type=""
-  value="value"
-  widget={
-    Object {
-      "attrs": Object {
-        "cols": 1,
-        "rows": 1,
-      },
-      "mce_attrs": Object {
-        "key": "mce_attrs1",
-      },
-      "type": "PagedownWidget",
-      "widgets": Array [
-        Object {
-          "mce_attrs": Object {
-            "key": "mce_attrs2",
-          },
-        },
-      ],
-    }
-  }
+<div
+  className="formFieldcontainer"
 >
+  <PageDownWidget
+    helperProps={
+      Object {
+        "link": "link1",
+        "text": "help_text",
+      }
+    }
+    init={
+      Object {
+        "key": "mce_attrs1",
+      }
+    }
+    label="label1"
+    onChange={[Function]}
+    required={true}
+    value="value"
+  />
   <div
-    className="formFieldcontainer"
+    className="error"
   >
-    <PageDownWidget
-      helperProps={
-        Object {
-          "link": "link1",
-          "text": "help_text",
-        }
-      }
-      init={
-        Object {
-          "key": "mce_attrs1",
-        }
-      }
-      label="label1"
-      onChange={[Function]}
-      required={true}
-      value="value"
-    >
-      <div>
-        <TinyMCE
-          helperProps={
-            Object {
-              "link": "link1",
-              "text": "help_text",
-            }
-          }
-          init={
-            Object {
-              "key": "mce_attrs1",
-            }
-          }
-          label="label1"
-          onChange={[Function]}
-          required={true}
-          value="value"
-        >
-          <div
-            className="form__group "
-          >
-            <label
-              className="form__question form__question--choice_field select"
-              required=""
-            >
-              <span>
-                label1
-              </span>
-              <span
-                className="form__required"
-              >
-                 *
-              </span>
-            </label>
-            <HelperComponent
-              link="link1"
-              text="help_text"
-            >
-              <p
-                className="form__help"
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "help_text",
-                  }
-                }
-              />
-              <p
-                className="form__help-link"
-              >
-                <a
-                  href="link1"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  See help guide for more information.
-                  <svg
-                    className="form__open-icon"
-                  >
-                    <use
-                      href="#open-in-new-tab"
-                    />
-                  </svg>
-                </a>
-              </p>
-            </HelperComponent>
-            <Editor
-              cloudChannel="5"
-              init={
-                Object {
-                  "key": "mce_attrs1",
-                  "menubar": false,
-                }
-              }
-              initialValue="value"
-              onEditorChange={[Function]}
-            >
-              <textarea
-                id="tiny-react_77905473841612265198847"
-                style={
-                  Object {
-                    "visibility": "hidden",
-                  }
-                }
-              />
-            </Editor>
-          </div>
-        </TinyMCE>
-        <div
-          className="preview"
-          dangerouslySetInnerHTML={
-            Object {
-              "__html": "value",
-            }
-          }
-        />
-      </div>
-    </PageDownWidget>
-    <div
-      className="error"
-    >
-      error text
-    </div>
+    error text
   </div>
-</FormField>
+</div>
 `;
 
 exports[`Test form field component should render Radio render a form field component with Radio 1`] = `
@@ -727,253 +565,60 @@ exports[`Test form field component should render Radio render a form field compo
 `;
 
 exports[`Test form field component should render ScoredAnswerWidget render a form field component with ScoredAnswerWidget 1`] = `
-<FormField
-  error="error text"
-  fieldProps={
-    Object {
-      "name": "name text",
+<div
+  className="formFieldcontainer"
+>
+  <ScoredAnswerWidget
+    help_text="help_text"
+    helperProps={
+      Object {
+        "link": "link1",
+        "text": "help_text",
+      }
     }
-  }
-  kwargs={
-    Object {
-      "choices": Array [
-        Array [
-          0,
-          1,
-        ],
-      ],
-      "fields": Array [
-        Object {},
-        Object {
-          "choices": Array [
+    kwargs={
+      Object {
+        "choices": Array [
+          Array [
+            0,
             1,
           ],
-        },
-      ],
-      "help_link": "link1",
-      "help_text": "help_text",
-      "label": "label1",
-      "required": true,
-      "text": "text1",
-    }
-  }
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "name text",
-          Array [
-            "value",
-          ],
         ],
-      ],
+        "fields": Array [
+          Object {},
+          Object {
+            "choices": Array [
+              1,
+            ],
+          },
+        ],
+        "help_link": "link1",
+        "help_text": "help_text",
+        "label": "label1",
+        "required": true,
+        "text": "text1",
+      }
     }
-  }
-  type="ScoredAnswerWidget"
-  value="value"
-  widget={
-    Object {
-      "attrs": Object {
-        "cols": 1,
-        "rows": 1,
-      },
-      "mce_attrs": Object {
-        "key": "mce_attrs1",
-      },
-      "type": "",
-      "widgets": Array [
+    label="label1"
+    onChange={[Function]}
+    required={true}
+    value={Array []}
+    widget={
+      Array [
         Object {
           "mce_attrs": Object {
             "key": "mce_attrs2",
           },
         },
-      ],
+      ]
     }
-  }
->
+  />
   <div
-    className="formFieldcontainer"
+    className="error"
   >
-    <ScoredAnswerWidget
-      help_text="help_text"
-      helperProps={
-        Object {
-          "link": "link1",
-          "text": "help_text",
-        }
-      }
-      kwargs={
-        Object {
-          "choices": Array [
-            Array [
-              0,
-              1,
-            ],
-          ],
-          "fields": Array [
-            Object {},
-            Object {
-              "choices": Array [
-                1,
-              ],
-            },
-          ],
-          "help_link": "link1",
-          "help_text": "help_text",
-          "label": "label1",
-          "required": true,
-          "text": "text1",
-        }
-      }
-      label="label1"
-      onChange={[Function]}
-      required={true}
-      value={Array []}
-      widget={
-        Array [
-          Object {
-            "mce_attrs": Object {
-              "key": "mce_attrs2",
-            },
-          },
-        ]
-      }
-    >
-      <div
-        className="form__group "
-      >
-        <label
-          className="form__question form__question--scored_answer_field scored_answer_widget"
-        >
-          <span>
-            label1
-          </span>
-          <span
-            className="form__required"
-          >
-             *
-          </span>
-        </label>
-        <HelperComponent
-          link="link1"
-          text="help_text"
-        >
-          <p
-            className="form__help"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "help_text",
-              }
-            }
-          />
-          <p
-            className="form__help-link"
-          >
-            <a
-              href="link1"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              See help guide for more information.
-              <svg
-                className="form__open-icon"
-              >
-                <use
-                  href="#open-in-new-tab"
-                />
-              </svg>
-            </a>
-          </p>
-        </HelperComponent>
-        <div
-          className="form__item"
-        >
-          <TinyMCE
-            init={
-              Object {
-                "key": "mce_attrs2",
-              }
-            }
-            onChange={[Function]}
-          >
-            <div
-              className="form__group "
-            >
-              <label
-                className="form__question form__question--choice_field select"
-                required=""
-              >
-                <span />
-              </label>
-              <HelperComponent />
-              <Editor
-                cloudChannel="5"
-                init={
-                  Object {
-                    "key": "mce_attrs2",
-                    "menubar": false,
-                  }
-                }
-                onEditorChange={[Function]}
-              >
-                <textarea
-                  id="tiny-react_34403043331612265198826"
-                  style={
-                    Object {
-                      "visibility": "hidden",
-                    }
-                  }
-                />
-              </Editor>
-            </div>
-          </TinyMCE>
-          <div
-            className="form__select"
-          >
-            <DropDown
-              choices={
-                Array [
-                  1,
-                ]
-              }
-              onChange={[Function]}
-            >
-              <div
-                className="form__group "
-              >
-                <label
-                  className="form__question form__question--choice_field select"
-                  required=""
-                >
-                  <span />
-                </label>
-                <HelperComponent />
-                <div
-                  className="form__item"
-                >
-                  <div
-                    className="form__select"
-                  >
-                    <select
-                      onChange={[Function]}
-                    >
-                      <option />
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </DropDown>
-          </div>
-        </div>
-      </div>
-    </ScoredAnswerWidget>
-    <div
-      className="error"
-    >
-      error text
-    </div>
+    error text
   </div>
-</FormField>
+</div>
 `;
 
 exports[`Test form field component should render TextBox render a form field component with textbox 1`] = `
@@ -1264,148 +909,32 @@ exports[`Test form field component should render Textarea render a form field co
 `;
 
 exports[`Test form field component should render TinyMCE render a form field component with TinyMCE 1`] = `
-<FormField
-  error="error text"
-  fieldProps={
-    Object {
-      "name": "name text",
-    }
-  }
-  kwargs={
-    Object {
-      "choices": Array [
-        Array [
-          0,
-          1,
-        ],
-      ],
-      "help_link": "link1",
-      "help_text": "help_text",
-      "label": "label1",
-      "required": true,
-      "text": "text1",
-    }
-  }
-  onChange={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          "name text",
-          Array [
-            "value",
-          ],
-        ],
-      ],
-    }
-  }
-  type="TinyMCE"
-  value="value"
-  widget={
-    Object {
-      "mce_attrs": Object {
-        "key": "mce_attrs1",
-      },
-      "type": "",
-      "widgets": Array [],
-    }
-  }
+<div
+  className="formFieldcontainer"
 >
+  <TinyMCE
+    helperProps={
+      Object {
+        "link": "link1",
+        "text": "help_text",
+      }
+    }
+    init={
+      Object {
+        "key": "mce_attrs1",
+      }
+    }
+    label="label1"
+    onChange={[Function]}
+    required={true}
+    value="value"
+  />
   <div
-    className="formFieldcontainer"
+    className="error"
   >
-    <TinyMCE
-      helperProps={
-        Object {
-          "link": "link1",
-          "text": "help_text",
-        }
-      }
-      init={
-        Object {
-          "key": "mce_attrs1",
-        }
-      }
-      label="label1"
-      onChange={[Function]}
-      required={true}
-      value="value"
-    >
-      <div
-        className="form__group "
-      >
-        <label
-          className="form__question form__question--choice_field select"
-          required=""
-        >
-          <span>
-            label1
-          </span>
-          <span
-            className="form__required"
-          >
-             *
-          </span>
-        </label>
-        <HelperComponent
-          link="link1"
-          text="help_text"
-        >
-          <p
-            className="form__help"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "help_text",
-              }
-            }
-          />
-          <p
-            className="form__help-link"
-          >
-            <a
-              href="link1"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              See help guide for more information.
-              <svg
-                className="form__open-icon"
-              >
-                <use
-                  href="#open-in-new-tab"
-                />
-              </svg>
-            </a>
-          </p>
-        </HelperComponent>
-        <Editor
-          cloudChannel="5"
-          init={
-            Object {
-              "key": "mce_attrs1",
-              "menubar": false,
-            }
-          }
-          initialValue="value"
-          onEditorChange={[Function]}
-        >
-          <textarea
-            id="tiny-react_2369789821612265198753"
-            style={
-              Object {
-                "visibility": "hidden",
-              }
-            }
-          />
-        </Editor>
-      </div>
-    </TinyMCE>
-    <div
-      className="error"
-    >
-      error text
-    </div>
+    error text
   </div>
-</FormField>
+</div>
 `;
 
 exports[`Test form field component should render unknown type render a form field component with unknown type passed 1`] = `

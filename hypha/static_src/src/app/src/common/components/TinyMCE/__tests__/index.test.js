@@ -1,5 +1,5 @@
 import React from "react";
-import { mount } from "enzyme";
+import { shallow } from "enzyme";
 import sinon from "sinon";
 import TinyMCE from "../index";
 import * as enzyme from "enzyme";
@@ -19,7 +19,7 @@ describe("Test tinymce component", () => {
   const init = { "a" : 1}
   const onChange = jest.fn();
 
-  const subject = mount(<TinyMCE
+  const subject = shallow(<TinyMCE
     init = {init}
     text={text}
     name={name}
@@ -36,7 +36,7 @@ describe("Test tinymce component", () => {
 
   it("Should have select and span element with passed text", () => {
     expect(subject.find('.form__required').length).toBe(0);
-    expect(subject.children().length).toEqual(1);
+    expect(subject.children().length).toEqual(3);
     expect(subject.find('span').first().text()).toBe(label);
     expect(subject.containsMatchingElement(<Editor />)).toEqual(true);
     expect(subject.containsMatchingElement(<HelperComponent />)).toEqual(true);
@@ -62,7 +62,7 @@ describe("Test tinymce component with required", () => {
   const init = { "a" : 1}
   const onChange = jest.fn();
 
-  const subject = mount(<TinyMCE
+  const subject = shallow(<TinyMCE
     init = {init}
     text={text}
     name={name}

@@ -1,11 +1,10 @@
 import React from "react";
-import { mount } from "enzyme";
+import { shallow } from "enzyme";
 import sinon from "sinon";
 import PageDownWidget from "../index";
 import * as enzyme from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 enzyme.configure({ adapter: new Adapter() });
-// import  "../index.scss";
 
 
 describe("Test pagedownwidget component", () => {
@@ -18,7 +17,7 @@ describe("Test pagedownwidget component", () => {
   const id = "1"
   const init = { "a" : 1}
 
-  const subject = mount(<PageDownWidget
+  const subject = shallow(<PageDownWidget
     id = {id}
     init = {init}
     text={text}
@@ -35,7 +34,7 @@ describe("Test pagedownwidget component", () => {
 
   it("Should have searched classes", () => {
     expect(subject.find('.preview').length).toBe(1);
-    expect(subject.children().length).toEqual(1)
+    expect(subject.children().length).toEqual(2)
   });
 
   test('render a pagedownwidget component', () => {

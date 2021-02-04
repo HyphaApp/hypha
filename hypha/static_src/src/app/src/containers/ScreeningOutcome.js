@@ -6,7 +6,7 @@ import SidebarBlock from '@components/SidebarBlock'
 import { getSubmissionOfID } from '@selectors/submissions'
 
 
-const ScreeningOutcome = ({ submission }) => {
+export const ScreeningOutcome = ({ submission }) => {
     const outcome = submission && submission.screening;
     return <SidebarBlock title="Screening Outcome">
         {  outcome ? outcome : "Not yet screened"}
