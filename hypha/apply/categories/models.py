@@ -29,7 +29,7 @@ class Category(ClusterableModel):
     """
     name = models.CharField(max_length=255)
     filter_on_dashboard = models.BooleanField(
-        default=True, help_text='Make available to filter on dashboard'
+        default=False, help_text='Make available to filter on dashboard'
     )
     help_text = models.CharField(max_length=255, blank=True)
 

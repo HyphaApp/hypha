@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='category',
             name='filter_on_dashboard',
-            field=models.BooleanField(default=True, help_text='Make available to filter on dashboard'),
+            field=models.BooleanField(default=False, help_text='Make available to filter on dashboard'),
         ),
     ]
