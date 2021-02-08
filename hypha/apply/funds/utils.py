@@ -57,12 +57,12 @@ def get_category_options():
 
     return: list of set of suitable category options
     """
-    submission_data = ApplicationSubmission.objects.values('form_data', 'form_fields')
+    submission_data = ApplicationSubmission.objects.values_list('form_data', 'form_fields')
     used_category_options = []
     for item in submission_data:
-        for field in item['form_fields']:
+        for field in item[1]:
             if isinstance(field.block, CategoryQuestionBlock):
-                used_category_options.append(item['form_data'].get(field.id, 0))
+                used_category_options.append(item[0].get(field.id, 0))
     options = Option.objects.filter(
         category__filter_on_dashboard=True,
         id__in=used_category_options
