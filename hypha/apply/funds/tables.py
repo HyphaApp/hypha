@@ -15,13 +15,14 @@ from django_tables2.utils import A
 from wagtail.core.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
-from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.categories.models import MetaTerm
 from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
+from .utils import get_category_options
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import STATUSES, get_review_active_statuses
 
@@ -203,32 +204,6 @@ def get_reviewers(request):
 def get_screening_statuses(request):
     return ScreeningStatus.objects.filter(
         id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
-
-
-def get_category_options():
-    """
-    Get all category options to show as filter options in the submission table.
-
-    - Only show options for the Category which has filter_on_dashboard set as True.
-    - And only show options which are used in submissions:
-      - To get this we need to first get all ApplicationSubmission form_data and form_fields.
-      - Then in form_fields we need to check for Category Fields by checking the instance of CategoryQuestionBlock
-      - With the field ids get the correct options selected in form_data
-      - Use the list of correct option to filter options
-
-    return: list of set of suitable category options
-    """
-    submission_data = ApplicationSubmission.objects.values('form_data', 'form_fields')
-    used_category_options = []
-    for item in submission_data:
-        for field in item['form_fields']:
-            if isinstance(field.block, CategoryQuestionBlock):
-                used_category_options.append(item['form_data'].get(field.id, 0))
-    options = Option.objects.filter(
-        category__filter_on_dashboard=True,
-        id__in=used_category_options
-    )
-    return [(option.id, option.value) for option in options]
 
 
 def get_meta_terms(request):
