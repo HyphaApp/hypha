@@ -1,10 +1,10 @@
+from django.apps import apps
+
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
-
-from.models.submissions import ApplicationSubmission
 
 
 def render_icon(image):
@@ -57,6 +57,7 @@ def get_category_options():
 
     return: list of set of suitable category options
     """
+    ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
     submission_data = ApplicationSubmission.objects.values_list('form_data', 'form_fields')
     used_category_options = []
     for item in submission_data:
@@ -68,3 +69,6 @@ def get_category_options():
         id__in=used_category_options
     )
     return [(option.id, option.value) for option in options]
+
+
+caregory_question_options = get_category_options()

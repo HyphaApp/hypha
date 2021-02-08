@@ -22,7 +22,7 @@ from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
-from .utils import get_category_options
+from .utils import caregory_question_options
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import STATUSES, get_review_active_statuses
 
@@ -260,7 +260,7 @@ class SubmissionFilter(filters.FilterSet):
         (100, '100'),
     )
 
-    CATEGORY_OPTION_CHOICES = get_category_options()
+    CATEGORY_OPTION_CHOICES = caregory_question_options
 
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
