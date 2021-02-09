@@ -1,4 +1,3 @@
-from hypha.apply.categories.models import Option
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -39,13 +38,3 @@ def get_default_screening_statues():
             default_no.default = True
             default_no.save()
     return [default_yes, default_no]
-
-
-def get_category_options():
-    options = Option.objects.filter(
-        category__filter_on_dashboard=True
-    )
-    return [(option.id, option.value) for option in options]
-
-
-caregory_question_options = get_category_options()

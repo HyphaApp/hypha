@@ -15,14 +15,13 @@ from django_tables2.utils import A
 from wagtail.core.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
-from .utils import caregory_question_options
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import STATUSES, get_review_active_statuses
 
@@ -260,15 +259,13 @@ class SubmissionFilter(filters.FilterSet):
         (100, '100'),
     )
 
-    CATEGORY_OPTION_CHOICES = caregory_question_options
-
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
     category_options = Select2MultipleChoiceFilter(
-        choices=CATEGORY_OPTION_CHOICES, label='Category Options',
+        choices=[], label='Category Options',
         method='filter_category_options'
     )
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
@@ -282,7 +279,10 @@ class SubmissionFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
 
         self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
-
+        self.filters['category_options'].extra['choices'] = [
+            (option.id, option.value)
+            for option in Option.objects.filter(category__filter_on_dashboard=True)
+        ]
         self.filters = {
             field: filter
             for field, filter in self.filters.items()
