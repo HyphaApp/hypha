@@ -1,6 +1,3 @@
-from django.apps import apps
-
-from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
 from hypha.apply.utils.image import generate_image_tag
 
@@ -45,28 +42,8 @@ def get_default_screening_statues():
 
 
 def get_category_options():
-    """
-    Get all category options to show as filter options in the submission table.
-
-    - Only show options for the Category which has filter_on_dashboard set as True.
-    - And only show options which are used in submissions:
-      - To get this we need to first get all ApplicationSubmission form_data and form_fields.
-      - Then in form_fields we need to check for Category Fields by checking the instance of CategoryQuestionBlock
-      - With the field ids get the correct options selected in form_data
-      - Use the list of correct option to filter options
-
-    return: list of set of suitable category options
-    """
-    ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
-    submission_data = ApplicationSubmission.objects.values_list('form_data', 'form_fields')
-    used_category_options = []
-    for item in submission_data:
-        for field in item[1]:
-            if isinstance(field.block, CategoryQuestionBlock):
-                used_category_options.append(item[0].get(field.id, 0))
     options = Option.objects.filter(
-        category__filter_on_dashboard=True,
-        id__in=used_category_options
+        category__filter_on_dashboard=True
     )
     return [(option.id, option.value) for option in options]
 
