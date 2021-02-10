@@ -265,7 +265,7 @@ class SubmissionFilter(filters.FilterSet):
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
     category_options = Select2MultipleChoiceFilter(
-        choices=[], label='Category Options',
+        choices=[], label='Category',
         method='filter_category_options'
     )
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')

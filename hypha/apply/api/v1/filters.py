@@ -46,7 +46,7 @@ class SubmissionsFilter(filters.FilterSet):
         queryset=get_round_leads(),
     )
     category_options = filters.MultipleChoiceFilter(
-        choices=[], label='Category Options',
+        choices=[], label='Category',
         method='filter_category_options'
     )
 

@@ -105,7 +105,7 @@ class SubmissionFilters(APIView):
                 {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
                 for reviewer in get_reviewers().values()
             ])),
-            self.format("category_options", "Category Options", self.filter_unique_options([
+            self.format("category_options", "Category", self.filter_unique_options([
                 {"key": option.get('id'), "label": option.get('value')}
                 for option in get_category_options().values()
             ])),
