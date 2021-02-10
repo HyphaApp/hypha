@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test inline loading component render a inline loading component 1`] = `
+<MessageBar
+  dismissMessage="dismiss message"
+  message="message text"
+  onDismiss={
+    [MockFunction] {
+      "calls": Array [
+        Array [],
+      ],
+    }
+  }
+  type="success"
+>
+  <li
+    className="messages__text messages__text--success"
+  >
+    <div
+      className="messages__inner"
+    >
+      <p
+        className="messages__copy"
+      >
+        message text
+      </p>
+      <button
+        className="button messages__button"
+        onClick={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+          }
+        }
+      >
+        dismiss message
+      </button>
+    </div>
+  </li>
+</MessageBar>
+`;

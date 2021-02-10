@@ -8,7 +8,7 @@ import * as Actions from './actions';
 import { toggleReviewFormAction, clearCurrentReviewAction } from '../../redux/actions/submissions'
 import { apiFetch } from '@api/utils'
 
-function* initialFetch(action) {
+export function* initialFetch(action) {
   
   try {
     yield put(Actions.showLoadingAction())
@@ -37,7 +37,7 @@ function* initialFetch(action) {
   }
 }
 
-function* submitReview(action){
+export function* submitReview(action){
   const url = `/v1/submissions/${action.id}/reviews/`
   try{
     yield put(Actions.showLoadingAction())
@@ -58,7 +58,7 @@ function* submitReview(action){
   }
 }
 
-function* deleteReview(action){
+export function* deleteReview(action){
   const url = `/v1/submissions/${action.id}/reviews/${action.reviewId}`
   try{
     yield put(Actions.showLoadingAction())
@@ -79,7 +79,7 @@ function* deleteReview(action){
   }
 }
 
-function* updateReview(action){
+export function* updateReview(action){
   const url = `/v1/submissions/${action.id}/reviews/${action.reviewId}/`
   try{
     yield put(Actions.showLoadingAction())

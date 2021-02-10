@@ -8,7 +8,7 @@ const Textarea = props => {
   return <div className="form__group ">
     <div className="form__group  form__group--wrap" data-word-limit="1000">
       <label htmlFor={props.name} className="form__question form__question--char_field textarea">
-        <span>{props.label} </span>
+        <span>{props.label}</span>
         {props.required ? <span className="form__required"> *</span> : ""}
       </label>
       <HelperComponent {...props.helperProps}/>

@@ -8,7 +8,7 @@ import * as Actions from './actions';
 import { toggleDeterminationFormAction } from '../../redux/actions/submissions'
 import { apiFetch } from '@api/utils'
 
-function* initialFetch(action) {
+export function* initialFetch(action) {
   
   try {
     yield put(Actions.showLoadingAction())
@@ -25,7 +25,7 @@ function* initialFetch(action) {
 
        response = yield call(apiFetch, {path : url})
        data = yield response.json()
-       if(data.length)
+       if(data)
        {
        yield put(Actions.toggleSaveDraftAction(data.is_draft))
      }
@@ -37,7 +37,7 @@ function* initialFetch(action) {
   }
 }
 
-function* submitDetermination(action){
+export function* submitDetermination(action){
   const url = `/v1/submissions/${action.id}/determinations/`
   try{
     yield put(Actions.showLoadingAction())
@@ -58,7 +58,7 @@ function* submitDetermination(action){
   }
 }
 
-function* updateDetermination(action){
+export function* updateDetermination(action){
   const url = `/v1/submissions/${action.id}/determinations/${action.determinationId}/`
   try{
     yield put(Actions.showLoadingAction())

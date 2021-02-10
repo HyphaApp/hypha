@@ -2,7 +2,7 @@ import initialState, {formInitialState} from './models';
 import * as ActionTypes from './constants';
 
 
-const FormReducer = (
+export const FormReducer = (
     state = formInitialState,
     action
 ) => {

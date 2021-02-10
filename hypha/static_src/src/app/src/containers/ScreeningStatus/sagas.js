@@ -11,7 +11,7 @@ import * as Selectors from './selectors';
 import {select} from 'redux-saga/effects';
 
 
-function* initialize(action) {
+export function* initialize(action) {
   
   try {
     if(!action.id)  return false;
@@ -27,12 +27,12 @@ function* initialize(action) {
     yield put(Actions.hideLoadingAction())
 
   } catch (e) {
-    console.log("error", e)
+    // console.log("error", e)
     yield put(Actions.hideLoadingAction())
   }
 }
 
-function* setDefaultValue(action){
+export function* setDefaultValue(action){
   try{
     if(!action.id)  return false;
 
@@ -51,13 +51,13 @@ function* setDefaultValue(action){
   yield put(Actions.hideLoadingAction())
 
   }catch(e){
-    console.log("error", e)
+    // console.log("error", e)
     yield put(Actions.hideLoadingAction())
 
   }
 }
 
-function* setVisibleOption(action){
+export function* setVisibleOption(action){
   try{
     if(!action.id)  return false;
     yield delay(300);
@@ -87,7 +87,7 @@ function* setVisibleOption(action){
   }
     yield put(Actions.hideLoadingAction())
   }catch(e){
-    console.log("error", e)
+    // console.log("error", e)
     yield put(Actions.hideLoadingAction())
   }
 }

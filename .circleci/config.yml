@@ -47,6 +47,8 @@ jobs:
             npm install --quiet
             npm install -g gulp-cli
 
+
+
       - save_cache:
           paths:
             - ./node_modules
@@ -62,7 +64,6 @@ jobs:
           root: ~/repo
           paths:
             - hypha/static_compiled
-
 
   build-be:
     executor: python
@@ -99,7 +100,25 @@ jobs:
           paths:
             - venv
 
-  test:
+  test-fe:
+    executor: node
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: set owner on /usr/local
+          command: sudo chown -R circleci:circleci /usr/local
+
+      - run:
+          name: Run functional unit test cases [REACT.JS]
+          command: |
+            npm install --quiet
+            npm install -g gulp-cli
+            npm run test
+
+  test-be:
     executor: with-database
     working_directory: ~/repo
     steps:
@@ -133,9 +152,12 @@ workflows:
     version: 2.1
     process:
       jobs:
-        - build-fe
+        - test-fe
+        - build-fe:
+            requires:
+            - test-fe
         - build-be
-        - test:
+        - test-be:
             requires:
             - build-fe
             - build-be

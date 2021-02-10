@@ -16,7 +16,7 @@ const reviewFormReducer = (state = initialState, action) => {
       return state.set("initialValues", null)
     case ActionTypes.TOGGLE_SAVE_DRAFT:
       return state.set("saveAsDraft", action.status)
-	default:
+    default:
       return state;
   }
 };

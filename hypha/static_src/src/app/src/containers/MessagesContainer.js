@@ -7,7 +7,7 @@ import MessagesList from '@components/MessagesList'
 import { getMessages } from '@selectors/messages'
 import { dismissMessage } from '@actions/messages'
 
-const MessagesContainer = ({ messages, dismiss }) => {
+export const MessagesContainer = ({ messages, dismiss }) => {
     return (
         <MessagesList>
             {Object.values(messages).map(({ message, type, id}) =>

@@ -47,7 +47,6 @@ export default class SubmissionDisplay extends Component {
 
     render() {
         const { metaQuestions = [], questions = [], stage } = this.props.submission || {};
-
         if (this.props.isError) {
             return (
                 <div className="display-panel__loading">

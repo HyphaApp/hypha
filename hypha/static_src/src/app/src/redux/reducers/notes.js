@@ -14,7 +14,7 @@ import {
     REMOVE_NOTE,
 } from '@actions/notes';
 
-function notesFetching(state = false, action) {
+export function notesFetching(state = false, action) {
     switch (action.type) {
         case START_FETCHING_NOTES:
             return true;
@@ -26,7 +26,7 @@ function notesFetching(state = false, action) {
     }
 }
 
-function notesErrored(state = {errored: false, message: null}, action) {
+export function notesErrored(state = {errored: false, message: null}, action) {
     switch (action.type) {
         case UPDATE_NOTES:
         case START_FETCHING_NOTES:
@@ -45,7 +45,7 @@ function notesErrored(state = {errored: false, message: null}, action) {
     }
 }
 
-function note(state, action) {
+export function note(state, action) {
     switch (action.type) {
         case UPDATE_NOTE:
         case CREATE_NOTE:
@@ -58,7 +58,7 @@ function note(state, action) {
     }
 }
 
-function notesCreating(state = [], action) {
+export function notesCreating(state = [], action) {
     switch (action.type) {
         case START_CREATING_NOTE_FOR_SUBMISSION:
         case START_EDITING_NOTE_FOR_SUBMISSION:
@@ -77,7 +77,7 @@ function notesCreating(state = [], action) {
 }
 
 
-function notesFailedCreating(state = {}, action) {
+export function notesFailedCreating(state = {}, action) {
     switch (action.type) {
         case UPDATE_NOTE:
         case CREATE_NOTE:
@@ -100,7 +100,7 @@ function notesFailedCreating(state = {}, action) {
     }
 }
 
-function notesByID(state = {}, action) {
+export function notesByID(state = {}, action) {
     switch (action.type) {
         case UPDATE_NOTES:
             return {
@@ -127,7 +127,7 @@ function notesByID(state = {}, action) {
     }
 }
 
-function editingNote(state={}, action) {
+export function editingNote(state={}, action) {
     switch (action.type) {
         case STORE_NOTE:
             return {
