@@ -79,19 +79,20 @@ class SubmissionsFilter(filters.FilterSet):
         And then use those category fields to filter submissions with their form_data.
         """
         query = Q()
-        category_fields = []
-        submission_form_fields = qs.all().values('form_fields').distinct()
-        for form_field in submission_form_fields:
-            for field in form_field['form_fields']:
+        submission_data = queryset.values('form_fields', 'form_data').distinct()
+        for submission in submission_data:
+            for field in submission['form_fields']:
                 if isinstance(field.block, CategoryQuestionBlock):
-                    category_fields.append(field.id)
-        for v in value:
-            for category_field in category_fields:
-                kwargs = {
-                    '{0}__{1}'.format('form_data', category_field): v
-                }
-                query |= Q(**kwargs)
-        return qs.filter(query)
+                    category_options = submission['form_data'][field.id]
+                    include_in_filter = set(list(category_options)) & set(value)
+                    # Check if filter options has any value in category options
+                    # If yes then those submissions should be filtered in the list
+                    if include_in_filter:
+                        kwargs = {
+                            '{0}__{1}'.format('form_data', field.id): category_options
+                        }
+                        query |= Q(**kwargs)
+        return queryset.filter(query)
 
 
 class NewerThanFilter(filters.ModelChoiceFilter):
