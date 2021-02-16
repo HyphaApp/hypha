@@ -20,7 +20,6 @@ const SlideInRight = ({ children, in: inProp }) => {
         exiting: { transform: 'translate3d(100%, 0, 0)' },
         exited: { transform: 'translate3d(0, 0, 0)' }
     };
-
     return (
         <Transition in={inProp} timeout={duration}>
             {(state) => (

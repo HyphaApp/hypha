@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 const TinyMCE = props => {
   return <div className="form__group ">
     <label htmlFor={props.name} className="form__question form__question--choice_field select" required="">
-      <span>{props.label} </span>
+      <span>{props.label}</span>
       {props.required ? <span className="form__required"> *</span> : ""}
     </label>
     <HelperComponent {...props.helperProps} />

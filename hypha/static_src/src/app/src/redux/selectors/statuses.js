@@ -11,7 +11,6 @@ const getSubmissionsByStatuses = state => state.statuses.byStatuses;
 const getSubmissionIDsForCurrentStatuses = createSelector(
     [ getSubmissionsByStatuses, getCurrentStatuses ],
     (grouped, current) => {
-        
         if (!current.length){
             let acc = []
             for (let status in grouped){
@@ -35,6 +34,8 @@ const getByStatusesLoading = createSelector(
 
 export {
     getCurrentStatuses,
+    getStatusesFetchingState,
+    getSubmissionsByStatuses,
     getByStatusesLoading,
     getByStatusesError,
     getSubmissionIDsForCurrentStatuses,

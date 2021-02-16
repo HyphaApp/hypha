@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import HelperComponent from "@common/components/HelperComponent";
 
 
-const DropDown = props => {
+const Radio = props => {
   return <div className="form__group ">
     <label htmlFor={props.name} className="form__question form__question--choice_field radio_select" required="">
       <span>{props.label}</span>
@@ -32,7 +32,7 @@ const DropDown = props => {
   </div>
 }
 
-DropDown.propTypes = {
+Radio.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   required: PropTypes.bool,
@@ -42,5 +42,5 @@ DropDown.propTypes = {
   choices: PropTypes.array,
 }
 
-DropDown.displayName = 'DropDown';
-export default DropDown;
+Radio.displayName = 'Radio';
+export default Radio;

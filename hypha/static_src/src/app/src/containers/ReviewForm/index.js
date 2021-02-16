@@ -17,7 +17,7 @@ import LoadingPanel from '@components/LoadingPanel'
 import { toggleReviewFormAction } from '../../redux/actions/submissions'
 
 
-class ReviewFormContainer extends React.PureComponent {
+export class ReviewFormContainer extends React.PureComponent {
 
   componentDidMount(){
     this.props.initializeAction(this.props.submissionID, this.props.reviewId ? this.props.reviewId : null)

@@ -16,7 +16,7 @@ import Chip from '@material-ui/core/Chip';
 import DoneIcon from '@material-ui/icons/Done';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-class ScreeningStatusContainer extends React.PureComponent {
+export class ScreeningStatusContainer extends React.PureComponent {
 
   componentDidMount(){
     if(this.props.submissionID){

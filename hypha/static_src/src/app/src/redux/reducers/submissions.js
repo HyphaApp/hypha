@@ -26,7 +26,7 @@ import {
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
 
 
-function submission(state={comments: []}, action) {
+export function submission(state={comments: []}, action) {
     switch(action.type) {
         case START_LOADING_SUBMISSION:
             return {
@@ -95,7 +95,7 @@ function submission(state={comments: []}, action) {
 }
 
 
-function submissionsByID(state = {}, action) {
+export function submissionsByID(state = {}, action) {
     switch(action.type) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
@@ -132,7 +132,7 @@ function submissionsByID(state = {}, action) {
 }
 
 
-function currentSubmission(state = null, action) {
+export function currentSubmission(state = null, action) {
     switch(action.type) {
         case SET_CURRENT_SUBMISSION:
             return action.id;
@@ -145,7 +145,7 @@ function currentSubmission(state = null, action) {
     }
 }
 
-function toggleReviewForm(state= false, action){
+export function toggleReviewForm(state= false, action){
     switch(action.type){
         case TOGGLE_REVIEW_FORM:
             return action.status
@@ -154,7 +154,7 @@ function toggleReviewForm(state= false, action){
     }
 }
 
-function currentReview(state = null, action) {
+export function currentReview(state = null, action) {
     switch(action.type) {
         case SET_CURRENT_REVIEW:
             return action.reviewId;
@@ -165,7 +165,7 @@ function currentReview(state = null, action) {
     }
 }
 
-function isReviewDraftExist(state = false, action) {
+export function isReviewDraftExist(state = false, action) {
     switch(action.type) {
         case FETCH_REVIEW_DRAFT:
             return action.data.isDraft ? true : false;
@@ -176,7 +176,7 @@ function isReviewDraftExist(state = false, action) {
     }
 }
 
-function toggleDeterminationForm(state= false, action){
+export function toggleDeterminationForm(state= false, action){
     switch(action.type){
         case TOGGLE_DETERMINATION_FORM:
             return action.status
@@ -185,7 +185,7 @@ function toggleDeterminationForm(state= false, action){
     }
 }
 
-function currentDetermination(state = null, action) {
+export function currentDetermination(state = null, action) {
     switch(action.type) {
         case SET_CURRENT_DETERMINATION:
             return action.determinationId;
@@ -196,7 +196,7 @@ function currentDetermination(state = null, action) {
     }
 }
 
-function isDeterminationDraftExist(state = false, action) {
+export function isDeterminationDraftExist(state = false, action) {
     switch(action.type) {
         case FETCH_DETERMINATION_DRAFT:
             return action.data.isDraft ? true : false;

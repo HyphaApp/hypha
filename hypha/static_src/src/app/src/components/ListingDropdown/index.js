@@ -24,7 +24,6 @@ export default class ListingDropdown extends React.Component {
 
     renderListDropdown() {
         const { groups } = this.props;
-
         return (
             <form className="form form__select">
                 <select onChange={(e) => this.handleChange(e)} aria-label="Jump to listing group">

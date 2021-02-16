@@ -16,7 +16,7 @@ import LoadingPanel from '@components/LoadingPanel'
 import { toggleDeterminationFormAction, clearCurrentDeterminationAction } from '../../redux/actions/submissions'
 
 
-class DeterminationFormContainer extends React.PureComponent {
+export class DeterminationFormContainer extends React.PureComponent {
 
   componentDidMount(){
     this.props.initializeAction(this.props.submissionID, this.props.determinationId ? this.props.determinationId : null)
@@ -98,7 +98,7 @@ DeterminationFormContainer.propTypes = {
 }
 
 
-const mapStateToProps = state =>  ({
+export const mapStateToProps = state =>  ({
     formData: Selectors.selectFieldsInfo(state),
     currentDetermination: getCurrentDetermination(state)
   });

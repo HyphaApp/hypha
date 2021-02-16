@@ -10,7 +10,7 @@ import {
 } from '@actions/submissions';
 
 
-function current(state = [], action) {
+export function current(state = [], action) {
     switch (action.type) {
         case SET_CURRENT_STATUSES:
             return [...action.statuses]
@@ -19,7 +19,7 @@ function current(state = [], action) {
     }
 }
 
-function submissionsByStatuses(state = {}, action) {
+export function submissionsByStatuses(state = {}, action) {
     switch (action.type) {
         case UPDATE_BY_STATUSES:
             return {
@@ -50,7 +50,7 @@ function submissionsByStatuses(state = {}, action) {
 }
 
 
-function statusFetchingState(state = {isFetching: false, isError: false}, action) {
+export function statusFetchingState(state = {isFetching: false, isError: false}, action) {
     switch (action.type) {
         case FAIL_LOADING_BY_STATUSES:
             return {

@@ -16,7 +16,7 @@ import {
 
 const submissionsDefaultState = {ids: [], isFetching: false};
 
-function submissions(state=submissionsDefaultState, action) {
+export function submissions(state=submissionsDefaultState, action) {
     switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
             return {
@@ -40,7 +40,7 @@ function submissions(state=submissionsDefaultState, action) {
 }
 
 
-function round(state={id: null, submissions: submissionsDefaultState, isFetching: false}, action) {
+export function round(state={id: null, submissions: submissionsDefaultState, isFetching: false}, action) {
     switch(action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
@@ -73,7 +73,7 @@ function round(state={id: null, submissions: submissionsDefaultState, isFetching
 }
 
 
-function roundsByID(state = {}, action) {
+export function roundsByID(state = {}, action) {
     switch(action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
@@ -105,7 +105,7 @@ function roundsByID(state = {}, action) {
 }
 
 
-function errorMessage(state = '', action) {
+export function errorMessage(state = '', action) {
     switch(action.type) {
     case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
     case FAIL_LOADING_ROUND:
@@ -121,7 +121,7 @@ function errorMessage(state = '', action) {
 
 }
 
-function roundsErrored(state = false, action) {
+export function roundsErrored(state = false, action) {
     switch (action.type) {
         case START_LOADING_ROUNDS:
         case UPDATE_ROUNDS:
@@ -133,7 +133,7 @@ function roundsErrored(state = false, action) {
     }
 }
 
-function roundsFetching(state = false, action) {
+export function roundsFetching(state = false, action) {
     switch (action.type) {
         case FAIL_LOADING_ROUNDS:
         case UPDATE_ROUNDS:
@@ -146,7 +146,7 @@ function roundsFetching(state = false, action) {
 }
 
 
-function currentRound(state = null, action) {
+export function currentRound(state = null, action) {
     switch(action.type) {
         case SET_CURRENT_SUBMISSION_ROUND:
             return action.id;

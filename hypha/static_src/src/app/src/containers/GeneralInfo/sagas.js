@@ -7,7 +7,7 @@ import * as ActionTypes from './constants';
 import * as Actions from './actions';
 import { apiFetch } from '@api/utils'
 
-function* userFetch() {
+export function* userFetch() {
   
   try {
     yield put(Actions.showLoadingAction())

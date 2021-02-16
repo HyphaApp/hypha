@@ -28,7 +28,7 @@ const styles = {
   },
 };
 
-class SubmissionFiltersContainer extends React.PureComponent {
+export class SubmissionFiltersContainer extends React.PureComponent {
 
   componentDidMount(){
     this.props.initializeAction()

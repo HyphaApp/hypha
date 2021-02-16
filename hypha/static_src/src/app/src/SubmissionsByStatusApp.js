@@ -9,7 +9,7 @@ import { setCurrentStatuses } from '@actions/submissions';
 import { getCurrentStatusesSubmissions } from '@selectors/submissions';
 
 
-class SubmissionsByStatusApp extends React.Component {
+export class SubmissionsByStatusApp extends React.Component {
     static propTypes = {
         pageContent: PropTypes.node.isRequired,
         statuses: PropTypes.arrayOf(PropTypes.string),
