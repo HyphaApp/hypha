@@ -302,8 +302,12 @@ class SubmissionFilter(filters.FilterSet):
         for submission in submission_data:
             for field in submission['form_fields']:
                 if isinstance(field.block, CategoryQuestionBlock):
-                    category_options = submission['form_data'][field.id]
-                    include_in_filter = set(list(category_options)) & set(value)
+                    try:
+                        category_options = submission['form_data'][field.id]
+                    except KeyError:
+                        include_in_filter = False
+                    else:
+                        include_in_filter = set(list(category_options)) & set(value)
                     # Check if filter options has any value in category options
                     # If yes then those submissions should be filtered in the list
                     if include_in_filter:
