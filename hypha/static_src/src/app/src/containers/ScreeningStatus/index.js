@@ -30,8 +30,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
     }
   }
   updateDefaultValue = (submissionID, defaultOption) => () => {
-    if(!this.props.screeningInfo.selectedValues.length && 
-          this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id) 
+    if(this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id) 
           {
             this.props.selectDefautValue(submissionID, defaultOption)
           }
@@ -51,9 +50,11 @@ export class ScreeningStatusContainer extends React.PureComponent {
         <div className="screening-status-box" style={{ padding: '1rem'}}>
           <div className="screening-default-options" >
             <div 
-              className={screeningInfo.selectedValues.length ||
+              className={
                 screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? 
-                "screening-status-yes-disabled": "screening-status-yes-enabled"} 
+                "screening-status-yes-disabled": 
+                "screening-status-yes-enabled"
+              } 
               onClick={this.updateDefaultValue(submissionID, defaultOptions.yes)} 
             >
                 <SvgIcon
@@ -65,9 +66,11 @@ export class ScreeningStatusContainer extends React.PureComponent {
                 <div>{defaultOptions.yes.title}</div>
             </div>
             <div 
-              className={screeningInfo.selectedValues.length || 
+              className={
                 screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? 
-                "screening-status-no-disabled" :"screening-status-no-enabled"}  
+                "screening-status-no-disabled" :
+                "screening-status-no-enabled"
+              }  
               onClick={this.updateDefaultValue(submissionID, defaultOptions.no)} 
             >
                 <SvgIcon 
@@ -80,7 +83,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
             </div>
           </div>
           {visibleOptions.length > 0 && 
-            <div className="screening-visible-options" >
+            <div className="screening-visible-options">
               <h6 style={{ fontWeight: '550', width : '100%'}}>Screening reasons</h6>
               {visibleOptions.map(option => 
                 <Chip 
