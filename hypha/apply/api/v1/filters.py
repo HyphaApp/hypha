@@ -43,10 +43,15 @@ class SubmissionsFilter(filters.FilterSet):
         field_name='lead',
         queryset=get_round_leads(),
     )
+    id = filters.ModelMultipleChoiceFilter(
+        field_name='id',
+        queryset=ApplicationSubmission.objects.current().with_latest_update(),
+        method='filter_id'
+    )
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
+        fields = ('id', 'status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
     def filter_active(self, qs, name, value):
         if value is None:
@@ -56,6 +61,11 @@ class SubmissionsFilter(filters.FilterSet):
             return qs.active()
         else:
             return qs.inactive()
+
+    def filter_id(self, qs, name, value):
+        if not value:
+            return qs
+        return qs.filter(id__in=self.request.GET.getlist('id'))
 
 
 class NewerThanFilter(filters.ModelChoiceFilter):

@@ -142,7 +142,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'status', 'url', 'round', 'last_update')
+        fields = ('id', 'title', 'status', 'url', 'round', 'last_update', 'summary')
 
     def get_round(self, obj):
         """
@@ -162,14 +162,19 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     screening = ScreeningStatusSerializer(source='screening_statuses.all', many=True)
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
+    is_user_staff = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached')
+        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
             yield obj.serialize(field_id)
+
+    def get_is_user_staff(self, obj):
+        request = self.context['request']
+        return request.user.is_staff
 
     def get_meta_questions(self, obj):
         meta_questions = {
@@ -205,7 +210,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         )
         return {
             'add_review': add_review,
-            'show_determination_button': show_determination
+            'show_determination_button': show_determination,
         }
 
 

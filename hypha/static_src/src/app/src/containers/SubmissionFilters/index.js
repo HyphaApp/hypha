@@ -17,6 +17,9 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterDropDown from '@common/components/FilterDropDown'
+import { getGroupedIconStatus, getSubmissions } from '@selectors/submissions';
+import ShareIcon from '@material-ui/icons/Share';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = {
   filterButton: {
@@ -26,6 +29,10 @@ const styles = {
       marginRight: 10,
       height: 40
   },
+  share:{
+    marginRight: 10,
+    height: 40
+  }
 };
 
 export class SubmissionFiltersContainer extends React.PureComponent {
@@ -91,13 +98,32 @@ export class SubmissionFiltersContainer extends React.PureComponent {
           >
             Filter
           </Button>
+          
+          {this.props.isGroupedIconShown && Object.keys(this.props.submissions).length != 0 &&
+           <Tooltip 
+           title={<span 
+             style={{ fontSize : '15px'}}>
+               share
+             </span>} 
+             placement="bottom-end">
+          <IconButton
+            variant="outlined" 
+            color="primary"
+            classes={{  root : classes.share }} 
+            target="_blank"
+            href={"/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()}
+          >
+            <ShareIcon fontSize="large" style={{color : "#0c72a0"}}/>
+          </IconButton>
+          </Tooltip>
+          }
 
           <Tooltip 
             title={<span 
               style={{ fontSize : '15px'}}>
                 clear
               </span>} 
-              placement="right">
+              placement="bottom">
             <HighlightOffIcon 
               style={{ 
                 visibility: Object.keys(this.props.submissionFilters.selectedFilters).length !=0 ?
@@ -120,12 +146,16 @@ SubmissionFiltersContainer.propTypes = {
   onFilter: PropTypes.func,
   doNotRender: PropTypes.array,
   deleteSelectedFilters: PropTypes.func,
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  isGroupedIconShown: PropTypes.bool,
+  submissions: PropTypes.object,
 }
 
 
 const mapStateToProps = state =>  ({
     submissionFilters: Selectors.SelectSubmissionFiltersInfo(state),
+    isGroupedIconShown : getGroupedIconStatus(state),
+    submissions: getSubmissions(state)
 });
 
 
@@ -136,7 +166,7 @@ function mapDispatchToProps(dispatch) {
       updateSelectedFilter: Actions.updateSelectedFilterAction,
       clearAllSubmissions : clearAllSubmissionsAction,
       updateFilterQuery: Actions.updateFiltersQueryAction,
-      deleteSelectedFilters: Actions.deleteSelectedFiltersAction
+      deleteSelectedFilters: Actions.deleteSelectedFiltersAction,
     },
     dispatch,
   );

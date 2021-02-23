@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
 from django_filters import rest_framework as filters
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -41,7 +41,7 @@ from .utils import (
 )
 
 
-class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
+class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
@@ -60,6 +60,19 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
         return ApplicationSubmission.objects.all().prefetch_related(
             Prefetch('reviews', Review.objects.submitted()),
         )
+
+    @action(detail=True, methods=['put'])
+    def set_summary(self, request, pk=None):
+        applicationSubmission = self.get_object()
+        applicationSubmission.summary = request.data.get("summary")
+        serializer = self.get_serializer(
+            applicationSubmission, data=request.data, partial=True)
+        if serializer.is_valid():
+            applicationSubmission.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class SubmissionFilters(APIView):

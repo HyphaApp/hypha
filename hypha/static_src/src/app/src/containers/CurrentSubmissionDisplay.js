@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import useInterval from '@rooks/use-interval'
 
-import { loadCurrentSubmission } from '@actions/submissions'
+import { loadCurrentSubmission, updateSummaryEditor } from '@actions/submissions'
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
+    getSummaryEditorStatus
 } from '@selectors/submissions'
 import SubmissionDisplay from '@components/SubmissionDisplay';
 import LoadingPanel from '@components/LoadingPanel'
@@ -53,7 +54,7 @@ const  CurrentSubmissionDisplay = props => {
             return;
         }
 
-        if (!localSubmission || localSubmission.id !== submissionID) {
+        if (!localSubmission || localSubmission.id !== submissionID || localSubmission.summary !== submission.summary) {
             setSubmission(submission)
         } else if (hasContentUpdated(localSubmission, submission)) {
             setUpdated(true)
@@ -80,28 +81,32 @@ const  CurrentSubmissionDisplay = props => {
                />
         </MessagesList>
     }
-
     return <>
         {updated && renderUpdatedMessage()}
         <SubmissionDisplay
                 submission={localSubmission}
                 isLoading={!localSubmission || localSubmission.isFetching}
-                isError={localSubmission && localSubmission.isErrored} />
+                isError={localSubmission && localSubmission.isErrored} 
+                updateSummaryEditor={props.updateSummaryEditor}
+                />
     </>
 }
 
 CurrentSubmissionDisplay.propTypes = {
     submission: PropTypes.object,
     submissionID: PropTypes.number,
+    updateSummaryEditor: PropTypes.func
 }
 
 const mapStateToProps = state => ({
     submissionID: getCurrentSubmissionID(state),
     submission: getCurrentSubmission(state),
+    isSummaryEditorOpened: getSummaryEditorStatus(state)
 })
 
 const mapDispatchToProps = dispatch => ({
-    loadCurrentSubmission: (fields, options) => dispatch(loadCurrentSubmission(fields, options))
+    loadCurrentSubmission: (fields, options) => dispatch(loadCurrentSubmission(fields, options)),
+    updateSummaryEditor: (submissionID, summary) => dispatch(updateSummaryEditor(submissionID, summary))
 })
 
 
