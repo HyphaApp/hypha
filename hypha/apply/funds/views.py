@@ -47,6 +47,7 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.review.views import ReviewContextMixin
+from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
@@ -956,7 +957,13 @@ class BaseSubmissionEditView(UpdateView):
 
     def get_form_class(self):
         draft = self.request.POST.get('save', False)
-        return self.object.get_form_class(draft)
+        form_fields = self.object.get_form_fields(draft, self.object.raw_data)
+        field_blocks = self.object.get_defined_fields()
+        for field_block in field_blocks:
+            if isinstance(field_block.block, GroupToggleBlock):
+                # Disable group toggle field as it is not supported on edit forms.
+                form_fields[field_block.id].disabled = True
+        return type('WagtailStreamForm', (self.object.submission_form_class,), form_fields)
 
 
 @method_decorator(staff_required, name='dispatch')
