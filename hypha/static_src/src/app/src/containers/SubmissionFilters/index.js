@@ -17,6 +17,12 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterDropDown from '@common/components/FilterDropDown'
+import { getGroupedIconStatus, getSubmissions } from '@selectors/submissions';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const styles = {
   filterButton: {
@@ -26,9 +32,18 @@ const styles = {
       marginRight: 10,
       height: 40
   },
+  share:{
+    marginRight: 10,
+    height: 40
+  }
 };
 
 export class SubmissionFiltersContainer extends React.PureComponent {
+
+  state = {
+    options : ["Create Grouped Applications Link"],
+    anchorEl : null,
+  }
 
   componentDidMount(){
     this.props.initializeAction()
@@ -57,6 +72,14 @@ export class SubmissionFiltersContainer extends React.PureComponent {
     }
     return []
   }
+
+  handleClick = (event) => {
+    this.setState({anchorEl: event.currentTarget});
+  };
+
+  handleClose = () => {
+    this.setState({anchorEl: null});
+  };
 
   renderValues = (selected, filter) => {
     return filter.options
@@ -91,13 +114,50 @@ export class SubmissionFiltersContainer extends React.PureComponent {
           >
             Filter
           </Button>
+          
+          {this.props.isGroupedIconShown && Object.keys(this.props.submissions).length != 0 &&
+          <>
+               <IconButton
+                  aria-label="more"
+                  aria-controls="long-menu"
+                  aria-haspopup="true"
+                  onClick={this.handleClick}
+                  classes={{  root : classes.share }} 
+                >
+                  <MoreVertIcon fontSize="large"/>
+                </IconButton>
+                <Menu
+                  id="long-menu"
+                  anchorEl={this.state.anchorEl}
+                  keepMounted
+                  open={Boolean(this.state.anchorEl)}
+                  onClose={this.handleClose}
+                  PaperProps={{
+                    style: {
+                      maxHeight: 48 * 4.5,
+                      width: '20ch',
+                    },
+                  }}
+                >
+                  {this.state.options.map((option) => (
+                    <MenuItem key={option} selected={option === 'Create Grouped Applications Link'} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
+                      <Typography variant="inherit">
+                      <a style={{color : "black"}} target="_blank" rel="noreferrer" href={option == "Create Grouped Applications Link" 
+                      ? "/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()
+                    : ""}>
+                        {option}</a></Typography>
+                    </MenuItem>
+                ))}
+              </Menu>
+          </>
+          }
 
           <Tooltip 
             title={<span 
               style={{ fontSize : '15px'}}>
                 clear
               </span>} 
-              placement="right">
+              placement="bottom">
             <HighlightOffIcon 
               style={{ 
                 visibility: Object.keys(this.props.submissionFilters.selectedFilters).length !=0 ?
@@ -120,12 +180,16 @@ SubmissionFiltersContainer.propTypes = {
   onFilter: PropTypes.func,
   doNotRender: PropTypes.array,
   deleteSelectedFilters: PropTypes.func,
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  isGroupedIconShown: PropTypes.bool,
+  submissions: PropTypes.object,
 }
 
 
 const mapStateToProps = state =>  ({
     submissionFilters: Selectors.SelectSubmissionFiltersInfo(state),
+    isGroupedIconShown : getGroupedIconStatus(state),
+    submissions: getSubmissions(state)
 });
 
 
@@ -136,7 +200,7 @@ function mapDispatchToProps(dispatch) {
       updateSelectedFilter: Actions.updateSelectedFilterAction,
       clearAllSubmissions : clearAllSubmissionsAction,
       updateFilterQuery: Actions.updateFiltersQueryAction,
-      deleteSelectedFilters: Actions.deleteSelectedFiltersAction
+      deleteSelectedFilters: Actions.deleteSelectedFiltersAction,
     },
     dispatch,
   );

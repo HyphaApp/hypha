@@ -570,7 +570,7 @@ describe("Test actions", () => {
 
       it("Should return loadCurrentRoundSubmissions action type without filters", () => {
         const results = []
-        const firstFunc = result => results.push(result);
+        const firstFunc = result => Promise.resolve(results.push(result));
         const secFunc = () => {
           return {
             router : {
@@ -597,7 +597,7 @@ describe("Test actions", () => {
 
       it("Should return loadCurrentRoundSubmissions action type with filters", () => {
         const results = []
-        const firstFunc = result => results.push(result);
+        const firstFunc = result => Promise.resolve(results.push(result));
         const secFunc = () => {
           return {
             rounds : {
@@ -626,7 +626,7 @@ describe("Test actions", () => {
 
       it("Should return loadSubmissionsForCurrentStatus action type with filters", () => {
         const results = []
-        const firstFunc = result => results.push(result);
+        const firstFunc = result => Promise.resolve(results.push(result));
         const secFunc = () => {
           return {
             statuses : {
@@ -653,7 +653,7 @@ describe("Test actions", () => {
 
       it("Should return loadSubmissionsForCurrentStatus action type without filters", () => {
         const results = []
-        const firstFunc = result => results.push(result);
+        const firstFunc = result => Promise.resolve(results.push(result));
         const secFunc = () => {
           return {
             statuses : {

@@ -5,7 +5,7 @@ import api from '@api';
 import {
     getCurrentSubmission,
     getCurrentSubmissionID,
-    getCurrentStatusesSubmissions
+    getCurrentStatusesSubmissions,
 } from '@selectors/submissions';
 
 import {
@@ -75,6 +75,22 @@ export const CLEAR_CURRENT_DETERMINATION = 'CLEAR_CURRENT_DETERMINATION';
 export const FETCH_DETERMINATION_DRAFT = 'FETCH_DETERMINATION_DRAFT';
 export const CLEAR_DETERMINATION_DRAFT = 'CLEAR_DETERMINATION_DRAFT';
 
+export const UPDATE_SUMMARY_EDITOR = 'UPDATE_SUMMARY_EDITOR';
+export const SHOW_GROUPED_ICON = 'SHOW_GROUPED_ICON'
+
+export const toggleGroupedIcon = (status) => ({
+    type: SHOW_GROUPED_ICON,
+    status
+})
+
+export const updateSummaryEditor = (submissionID, summary) => ({
+    [CALL_API]: {
+        types: [ START_LOADING_SUBMISSION, UPDATE_SUMMARY_EDITOR, FAIL_LOADING_SUBMISSION],
+        endpoint: api.updateSummaryEditor(submissionID, summary),
+    },
+    submissionID,
+    summary,
+})
 
 export const fetchDeterminationDraft = (submissionID) => ({
     [CALL_API]: {
@@ -243,7 +259,13 @@ export const loadCurrentRoundSubmissions = () => (dispatch, getState) => {
         return null
     }
 
-    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state), filters))
+    return dispatch(fetchSubmissionsByRound(getCurrentRoundID(state), filters)).
+    then(res => {
+        if(filters && filters.length){
+            return dispatch(toggleGroupedIcon(true))
+        }
+        return dispatch(toggleGroupedIcon(false))
+    })
 }
 
 
@@ -308,7 +330,14 @@ export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
         return null
     }
 
-    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state), filters))
+    return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state), filters)).
+    then(res => {
+        // debugger
+        if(filters && filters.length){
+            return dispatch(toggleGroupedIcon(true))
+        }
+        return dispatch(toggleGroupedIcon(false))
+    })
 }
 
 export const fetchSubmission = (submissionID) => ({

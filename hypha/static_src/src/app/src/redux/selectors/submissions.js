@@ -8,6 +8,8 @@ import {
     getSubmissionIDsForCurrentStatuses,
 } from '@selectors/statuses';
 
+import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors'
+
 
 const getSubmissions = state => state.submissions.byID;
 
@@ -26,6 +28,12 @@ const getCurrentDetermination = state => state.submissions.currentDetermination;
 const getDeterminationDraftStatus = state => state.submissions.isDeterminationDraftExist;
 
 const getSubmissionsForListing = state => Object.values(state.submissions.byID)
+
+const getSubmissionFilters = state => SelectSelectedFilters(state)
+
+const getSummaryEditorStatus = state => state.submissions.isSummaryEditorOpened;
+
+const getGroupedIconStatus = state => state.submissions.showGroupedIcon
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -83,4 +91,7 @@ export {
     getSubmissionErrorState,
     getSubmissionOfID,
     getCurrentStatusesSubmissions,
+    getSubmissionFilters,
+    getSummaryEditorStatus,
+    getGroupedIconStatus
 };
