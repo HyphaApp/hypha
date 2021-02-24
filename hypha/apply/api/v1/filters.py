@@ -34,6 +34,7 @@ class SubmissionsFilter(filters.FilterSet):
     screening_statuses = filters.ModelMultipleChoiceFilter(
         field_name='screening_statuses',
         queryset=get_screening_statuses(),
+        null_label="No Screening"
     )
     reviewers = filters.ModelMultipleChoiceFilter(
         field_name='reviewers',
