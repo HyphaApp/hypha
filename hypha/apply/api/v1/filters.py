@@ -84,16 +84,18 @@ class SubmissionsFilter(filters.FilterSet):
             for field in submission['form_fields']:
                 if isinstance(field.block, CategoryQuestionBlock):
                     try:
-                        category_options = submission['form_data'][field.id]
+                        category_options = category_ids = submission['form_data'][field.id]
                     except KeyError:
                         include_in_filter = False
                     else:
+                        if isinstance(category_options, str):
+                            category_options = [category_options]
                         include_in_filter = set(list(category_options)) & set(value)
                     # Check if filter options has any value in category options
                     # If yes then those submissions should be filtered in the list
                     if include_in_filter:
                         kwargs = {
-                            '{0}__{1}'.format('form_data', field.id): category_options
+                            '{0}__{1}'.format('form_data', field.id): category_ids
                         }
                         query |= Q(**kwargs)
         return queryset.filter(query)
