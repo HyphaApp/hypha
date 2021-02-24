@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import PropTypes from 'prop-types';
+import LoadingPanel from '@components/LoadingPanel'
 import './styles.scss';
 
 const styles = {
@@ -32,7 +33,8 @@ class HoverEditor extends React.Component {
 
     state = {
         isEditorOpened: false,
-        value: this.props.value ? this.props.value : ""
+        value: this.props.value ? this.props.value : "",
+        loading : false
     };
 
     toggleEditor = (status) => this.setState({isEditorOpened : status})
@@ -44,6 +46,7 @@ class HoverEditor extends React.Component {
      componentDidUpdate(prevProps, prevState){
         if (this.props.value !== prevProps.value) {
             this.toggleEditor(false);
+            this.setState({loading: false});
             this.updateValue("", this.props.value ? this.props.value : "")
         }
      }
@@ -52,7 +55,7 @@ class HoverEditor extends React.Component {
         const { classes } = this.props;
         
         return (<div>
-            {this.state.isEditorOpened ? 
+            {!this.state.loading ? this.state.isEditorOpened ? 
                 <div className={"editor-container"}>
                     <TinyMCE 
                         label={this.props.label}
@@ -79,7 +82,7 @@ class HoverEditor extends React.Component {
                         variant="contained" 
                         size={"small"}
                         classes={{  root : classes.submitButton }} 
-                        onClick={() => {this.props.onChange(this.state.value); this.toggleEditor(false)}}
+                        onClick={() => {this.setState({loading : true}); this.props.onChange(this.state.value); this.toggleEditor(false)}}
                     >
                         Submit
                     </Button>
@@ -108,7 +111,7 @@ class HoverEditor extends React.Component {
                         </div>
                     </Tooltip>
 
-                }
+                : <LoadingPanel/>}
             </div>)
 }
 }

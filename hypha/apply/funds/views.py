@@ -437,6 +437,7 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     ]
 
 
+@method_decorator(staff_required, name='dispatch')
 class GroupingApplicationsListView(TemplateView):
     template_name = 'funds/grouped_application_list.html'
 
