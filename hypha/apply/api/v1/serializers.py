@@ -151,6 +151,10 @@ class SubmissionListSerializer(serializers.ModelSerializer):
         return obj.round_id or obj.page_id
 
 
+class SubmissionSummarySerializer(serializers.Serializer):
+    summary = serializers.CharField(write_only=True)
+
+
 class SubmissionDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     meta_questions = serializers.SerializerMethodField()

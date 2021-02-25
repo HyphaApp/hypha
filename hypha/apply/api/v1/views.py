@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
 from django_filters import rest_framework as filters
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -30,6 +30,7 @@ from .serializers import (
     SubmissionActionSerializer,
     SubmissionDetailSerializer,
     SubmissionListSerializer,
+    SubmissionSummarySerializer,
     UserSerializer,
 )
 from .utils import (
@@ -41,7 +42,7 @@ from .utils import (
 )
 
 
-class SubmissionViewSet(viewsets.ModelViewSet):
+class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
@@ -63,16 +64,14 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['put'])
     def set_summary(self, request, pk=None):
-        applicationSubmission = self.get_object()
-        applicationSubmission.summary = request.data.get("summary")
-        serializer = self.get_serializer(
-            applicationSubmission, data=request.data, partial=True)
-        if serializer.is_valid():
-            applicationSubmission.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        submission = self.get_object()
+        ser = SubmissionSummarySerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        summary = ser.validated_data['summary']
+        submission.summary = summary
+        submission.save()
+        ser = self.get_serializer(submission)
+        return Response(ser.data)
 
 
 class SubmissionFilters(APIView):
