@@ -8,7 +8,8 @@
         }
     }
 
-    &--target {
+    &--target,
+    &--block {
         display: none;
     }
 
@@ -18,6 +19,10 @@
         &:checked {
             & ~ .show-more--target {
                 display: flex;
+            }
+
+            & ~ .show-more--block {
+                display: block;
             }
 
             & ~ .show-more--button {

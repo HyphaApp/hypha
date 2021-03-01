@@ -42,6 +42,16 @@ class BoxBlock(blocks.StructBlock):
         template = "blocks/box_block.html"
 
 
+class MoreBlock(blocks.StructBlock):
+    more_content = blocks.RichTextBlock()
+    more_content_more = blocks.RichTextBlock()
+    more_class = blocks.CharBlock(required=False)
+
+    class Meta:
+        icon = "doc-full"
+        template = "blocks/more_block.html"
+
+
 class ApplyLinkBlock(blocks.StructBlock):
     application = blocks.PageChooserBlock()
 
@@ -55,6 +65,7 @@ class StoryBlock(blocks.StreamBlock):
     heading = blocks.CharBlock(classname="full title", icon='title')
     paragraph = blocks.RichTextBlock()
     box = BoxBlock()
+    more = MoreBlock()
     apply_link = ApplyLinkBlock()
     image = ImageBlock()
     quote = QuoteBlock()

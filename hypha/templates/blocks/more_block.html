@@ -1,0 +1,10 @@
+<div class="more-content {{ value.more_class|slugify }}">
+    <div class="wrapper wrapper--medium wrapper--bottom-space">
+        {{ value.more_content }}
+        <input class="show-more--checkbox" type="checkbox" id="toggle-{{ block.id|slugify }}">
+        <label class="link link--button link--button__center show-more--button" for="toggle-{{ block.id|slugify }}">Show more</label>
+        <div class="show-more--block">
+            {{ value.more_content_more }}
+        </div>
+    </div>
+</div>
