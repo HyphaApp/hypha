@@ -101,12 +101,23 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
     name = 'duration'
     description = 'Duration'
 
+    DAYS = 'days'
     WEEKS = 'weeks'
     MONTHS = 'months'
     DURATION_TYPE_CHOICES = (
+        (DAYS, 'Days'),
         (WEEKS, 'Weeks'),
         (MONTHS, 'Months')
     )
+    DURATION_DAY_OPTIONS = {
+        1: "1 day",
+        2: "2 days",
+        3: "3 days",
+        4: "4 days",
+        5: "5 days",
+        6: "6 days",
+        7: "7 days",
+    }
     DURATION_WEEK_OPTIONS = {
         1: "1 week",
         2: "2 weeks",
@@ -140,7 +151,7 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
     field_class = forms.ChoiceField
     duration_type = blocks.ChoiceBlock(
         help_text=(
-            'Duration type is used to display duration choices in Weeks or Months in application forms. '
+            'Duration type is used to display duration choices in Days, Weeks or Months in application forms. '
             'Be careful, changing the duration type in the active round can result in data inconsistency.'
         ),
         choices=DURATION_TYPE_CHOICES, default=MONTHS,
@@ -148,13 +159,17 @@ class DurationBlock(ApplicationMustIncludeFieldBlock):
 
     def get_field_kwargs(self, struct_value, *args, **kwargs):
         field_kwargs = super().get_field_kwargs(struct_value, *args, **kwargs)
-        if struct_value['duration_type'] == self.WEEKS:
+        if struct_value['duration_type'] == self.DAYS:
+            field_kwargs['choices'] = self.DURATION_DAY_OPTIONS.items()
+        elif struct_value['duration_type'] == self.WEEKS:
             field_kwargs['choices'] = self.DURATION_WEEK_OPTIONS.items()
         else:
             field_kwargs['choices'] = self.DURATION_MONTH_OPTIONS.items()
         return field_kwargs
 
     def prepare_data(self, value, data, serialize):
+        if value['duration_type'] == self.DAYS:
+            return self.DURATION_DAY_OPTIONS[int(data)]
         if value['duration_type'] == self.WEEKS:
             return self.DURATION_WEEK_OPTIONS[int(data)]
         return self.DURATION_MONTH_OPTIONS[int(data)]
