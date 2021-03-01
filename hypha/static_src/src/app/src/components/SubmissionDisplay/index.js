@@ -46,7 +46,8 @@ export default class SubmissionDisplay extends Component {
     }
 
     render() {
-        const { metaQuestions = [], questions = [], stage } = this.props.submission || {};
+        console.log(this.props.submission);
+        const { metaQuestions = [], questions = [], title } = this.props.submission || {};
         if (this.props.isError) {
             return (
                 <div className="display-panel__loading">
@@ -75,7 +76,7 @@ export default class SubmissionDisplay extends Component {
                         <InlineLoading />
                     }
 
-                    <h3>{stage} Information</h3>
+                    <h3>{title}</h3>
 
                     <div className="grid grid--proposal-info">
                         {metaQuestions.map((response, index) => (
