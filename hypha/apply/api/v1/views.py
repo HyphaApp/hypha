@@ -73,7 +73,7 @@ class SubmissionFilters(APIView):
 
     def format(self, filterKey, label, options):
         if label == "Screenings":
-            options.append({"key": None, "label": "No Screening"})
+            options.insert(0, {"key": None, "label": "No Screening"})
         return {
             "filterKey": filterKey,
             "label": label,
