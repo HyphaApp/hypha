@@ -72,6 +72,8 @@ class SubmissionFilters(APIView):
         return list(filter(lambda x: len(x.get("label")), unique_items))
 
     def format(self, filterKey, label, options):
+        if label == "Screenings":
+            options.insert(0, {"key": None, "label": "No Screening"})
         return {
             "filterKey": filterKey,
             "label": label,
