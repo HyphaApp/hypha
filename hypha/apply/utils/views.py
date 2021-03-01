@@ -12,7 +12,7 @@ from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from wagtail.admin import messages
 from wagtail.admin.auth import require_admin_access
-from wagtail.admin.views.pages import delete
+from wagtail.admin.views.pages.delete import delete
 from wagtail.core.models import Page
 
 
