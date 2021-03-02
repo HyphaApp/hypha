@@ -191,11 +191,10 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
             reverse_lazy('api:v1:submission-screening_statuses-default', kwargs={'submission_pk': self.submission.id}),
             data={'yes': False}
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.json()['detail'],
-            "Can't set default as more than one screening status is already set."
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        default_set = self.submission.screening_statuses.get(default=True)
+        self.assertEqual(response.json()['id'], default_set.id)
+        self.assertEqual(response.json()['yes'], default_set.yes)
 
     def test_remove_submission_screening_status(self):
         user = StaffFactory()

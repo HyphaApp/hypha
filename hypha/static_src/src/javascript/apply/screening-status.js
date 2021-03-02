@@ -16,14 +16,20 @@
             success: function (json) {
                 if (json) {
                     var screeningOptions = $('<p id="screening-options-para">' + '<a id="screening-options-ajax" data-fancybox="" data-src="#screen-application" data-yes=' + yes + ' class="link link--secondary-change" href="#"> Screening Options</a></p>');
+                    if ($.trim($('.show-screening-options').find('#screening-options-para').html()) === '') {
+                        $('.show-screening-options').find('#Options').remove();
+                        $('.show-screening-options').find('#screening-options').remove();
+                    }
                     $('.show-screening-options').find('#screening-options-para').remove();
                     $('.show-screening-options').append(screeningOptions);
                     if (yes === true) {
                         $('.icon--dislike').removeClass('icon--dislike-no');
+                        $('.icon--dislike').removeClass('icon--dislike-disable');
                         $current.find('.icon').addClass('icon--like-yes');
                     }
                     else {
                         $('.icon--like').removeClass('icon--like-yes');
+                        $('.icon--like').removeClass('icon--like-disable');
                         $current.find('.icon').addClass('icon--dislike-no');
                     }
                 }

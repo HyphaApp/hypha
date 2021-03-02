@@ -5,7 +5,7 @@
         <div class="sidebar__screening-thumbs screening-status-box">
             <div class="sidebar__screening-status-yes">
                 <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true" style="align-self: center;">
-                    <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.can_not_edit_default %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
+                    <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.has_yes_default_screening_status_set %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
                 </div>
                 <div>
                     {{ default_yes }}
@@ -13,7 +13,7 @@
             </div>
             <div class="sidebar__screening-status-no">
                 <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false" style="align-self: center;">
-                    <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.can_not_edit_default %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
+                    <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.has_no_default_screening_status_set %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
                 </div>
                 <div>
                     {{ default_no }}
@@ -26,7 +26,7 @@
         {% if object.has_default_screening_status_set %}
             <p id="screening-options-para">
                 {% if object.screening_statuses.all.count > 1 %}
-                <div class="sidebar__screening-selected-options">
+                <div class="sidebar__screening-selected-options" id="Options">
                     {% for status in object.screening_statuses.all%}
                             <span class="sidebar__screening-option">{{ status }}</span>
                     {% endfor%}

@@ -72,9 +72,7 @@ class SubmissionScreeningStatusViewSet(
         yes = ser.validated_data['yes']
         submission = self.get_submission_object()
         if submission.screening_statuses.filter(default=False).exists():
-            raise ValidationError({
-                'detail': "Can't set default as more than one screening status is already set."
-            })
+            submission.screening_statuses.remove(*submission.screening_statuses.filter(default=False))
         screening_status = ScreeningStatus.objects.get(default=True, yes=yes)
         if submission.has_default_screening_status_set:
             default_status = submission.screening_statuses.get()

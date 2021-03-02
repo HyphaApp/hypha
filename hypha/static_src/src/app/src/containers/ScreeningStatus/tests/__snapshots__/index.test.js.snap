@@ -128,7 +128,7 @@ exports[`Test screening status Container Should render review form with Sidebarb
             </div>
           </div>
           <div
-            className="screening-status-no-disabled"
+            className="screening-status-no-enabled"
             onClick={[Function]}
           >
             <WithStyles(ForwardRef(SvgIcon))
